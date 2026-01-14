@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import AnnouncementComposer from '../components/AnnouncementComposer';
 import AccountingDashboard from '../components/AccountingDashboard';
 import PermissionsManager from '../components/PermissionsManager';
-import ScrollableTable from '../components/ScrollableTable';
+import ScrollableTable from '../components/ScrollableTable.js';
 import logo from '../images/lasalle.jpg';
 
 export default function AdminDashboard() {
