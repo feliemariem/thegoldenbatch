@@ -287,4 +287,22 @@ router.get('/balance', async (req, res) => {
   }
 });
 
+// Public route - get unique donor names (for thank you credits)
+router.get('/donors', async (req, res) => {
+  try {
+    const result = await db.query(
+      `SELECT DISTINCT name FROM ledger 
+       WHERE deposit > 0 AND name IS NOT NULL AND name != ''
+       ORDER BY name ASC`
+    );
+
+    res.json({
+      donors: result.rows.map(r => r.name)
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 module.exports = router;

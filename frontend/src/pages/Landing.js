@@ -4,9 +4,9 @@ import { useTheme } from '../context/ThemeContext';
 import logo from '../images/lasalle.jpg';
 
 export default function Landing() {
+  const { theme, toggleTheme } = useTheme();
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [showFormModal, setShowFormModal] = useState(false);
-  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const reunionDate = new Date('2028-12-16T00:00:00');
@@ -52,7 +52,6 @@ export default function Landing() {
             onClick={toggleTheme}
             className="landing-theme-toggle"
             aria-label="Toggle theme"
-            title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
           >
             {theme === 'dark' ? '☀️' : '🌙'}
           </button>
@@ -63,10 +62,10 @@ export default function Landing() {
       {/* Hero Section */}
       <section className="hero-section">
         <h1>25th Alumni Homecoming</h1>
-        <p className="tagline">"Golden Batch 2003"</p>
+        <p className="tagline">The Golden Batch 2003</p>
         <div className="event-details">
           <span>📅 December 16, 2028</span>
-          <span>📍 Bacolod City</span>
+          <span>📍 USLS School Grounds, Bacolod City</span>
         </div>
         <button onClick={() => setShowFormModal(true)} className="btn-hero">
           Register Now
@@ -116,51 +115,85 @@ export default function Landing() {
           <div className="pledge-card">
             <h3>Bank Transfer</h3>
             <div className="bank-details">
-              <p><strong>Bank:</strong> BDO</p>
-              <p><strong>Account Name:</strong> USLS-IS Batch 2003</p>
-              <p><strong>Account Number:</strong> 1234-5678-9012</p>
+              <p><strong>PNB (Philippine National Bank)</strong></p>
+              <p className="bank-label">Account Number</p>
+              <p className="bank-value">307770014898</p>
+              <p className="bank-label" style={{ marginTop: '12px' }}>Account Name(s)</p>
+              <p className="bank-value">NARCISO F. JAVELOSA OR<br/>MARY ROSE FRANCES M. UY</p>
             </div>
           </div>
 
           <div className="pledge-card">
             <h3>GCash</h3>
             <div className="qr-placeholder">
-              <div className="qr-code">
-                {/* Placeholder QR - replace with actual image */}
-                <svg viewBox="0 0 100 100" width="150" height="150">
-                  <rect width="100" height="100" fill="#fff"/>
-                  <rect x="10" y="10" width="20" height="20" fill="#000"/>
-                  <rect x="70" y="10" width="20" height="20" fill="#000"/>
-                  <rect x="10" y="70" width="20" height="20" fill="#000"/>
-                  <rect x="15" y="15" width="10" height="10" fill="#fff"/>
-                  <rect x="75" y="15" width="10" height="10" fill="#fff"/>
-                  <rect x="15" y="75" width="10" height="10" fill="#fff"/>
-                  <rect x="40" y="10" width="5" height="5" fill="#000"/>
-                  <rect x="50" y="10" width="5" height="5" fill="#000"/>
-                  <rect x="40" y="20" width="5" height="5" fill="#000"/>
-                  <rect x="45" y="25" width="5" height="5" fill="#000"/>
-                  <rect x="40" y="40" width="20" height="20" fill="#000"/>
-                  <rect x="45" y="45" width="10" height="10" fill="#fff"/>
-                  <rect x="10" y="40" width="5" height="5" fill="#000"/>
-                  <rect x="20" y="45" width="5" height="5" fill="#000"/>
-                  <rect x="85" y="40" width="5" height="5" fill="#000"/>
-                  <rect x="75" y="50" width="5" height="5" fill="#000"/>
-                  <rect x="40" y="85" width="5" height="5" fill="#000"/>
-                  <rect x="55" y="75" width="5" height="5" fill="#000"/>
-                  <rect x="70" y="70" width="20" height="20" fill="#000"/>
-                  <rect x="75" y="75" width="10" height="10" fill="#fff"/>
-                </svg>
+              <p className="bank-label">Account Name</p>
+              <p className="bank-value">[Name]</p>
+              <p className="bank-label" style={{ marginTop: '12px' }}>Mobile Number</p>
+              <p className="gcash-number">0917-XXX-XXXX</p>
+              {/* Placeholder for QR code */}
+              <div className="qr-code" style={{ marginTop: '16px' }}>
+                <div style={{
+                  width: '120px',
+                  height: '120px',
+                  background: '#f0f0f0',
+                  borderRadius: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#999',
+                  fontSize: '0.8rem'
+                }}>
+                  QR Code
+                </div>
               </div>
-              <p className="gcash-number">0917-123-4567</p>
-              <p className="gcash-name">Juan D. Cruz</p>
             </div>
           </div>
         </div>
+
+        {/* International Transfers - Separate Section */}
+        <div className="intl-transfers-card">
+          <h3>For International Transfers</h3>
+          <div className="intl-transfers-content">
+            <div className="intl-branch-info">
+              <p className="intl-branch-name">PNB Bacolod Lacson Branch</p>
+              <p className="intl-branch-address">
+                10th Lacson Street<br/>
+                Bacolod City, Negros Occidental 6100
+              </p>
+              <p className="intl-branch-tel">Tel: (63) (034) 432-0605 / 434-8007</p>
+            </div>
+            <div className="intl-codes">
+              <div className="intl-row">
+                <span className="intl-label">SWIFT Code</span>
+                <span className="intl-value">PNBMPHMM</span>
+              </div>
+              <div className="intl-row">
+                <span className="intl-label">Routing No.</span>
+                <span className="intl-value">040080019</span>
+              </div>
+              <div className="intl-row">
+                <span className="intl-label">Email</span>
+                <span className="intl-value intl-email">bacolod_lacson@pnb.com.ph</span>
+              </div>
+              <div className="intl-row">
+                <span className="intl-label">Website</span>
+                <span className="intl-value intl-email">pnb.com.ph</span>
+              </div>
+            </div>
+          </div>
+          <p className="intl-note">Transfer fees and applicable taxes are shouldered by sender.</p>
+        </div>
+
+        <p className="receipt-note">
+          Please send a screenshot of your receipt to{' '}
+          <a href="mailto:uslsis.batch2003@gmail.com">uslsis.batch2003@gmail.com</a>
+          {' '}for confirmation.
+        </p>
       </section>
 
       {/* Footer */}
       <footer className="landing-footer">
-        <p>© 2025 USLS-IS Batch 2003 | Golden Batch</p>
+        <p>{'\u00A9'} 2025 USLS-IS Batch 2003 | Golden Batch</p>
         <p>
           <a href="https://www.facebook.com/groups/478382298877930" target="_blank" rel="noopener noreferrer">
             Facebook Group
@@ -175,7 +208,7 @@ export default function Landing() {
         <div className="modal-overlay" onClick={() => setShowFormModal(false)}>
           <div className="modal-content modal-large" onClick={(e) => e.stopPropagation()}>
             <button className="modal-close" onClick={() => setShowFormModal(false)}>
-              ✕
+              âœ•
             </button>
             <h2 style={{ textAlign: 'center', marginBottom: '20px', color: '#CFB53B' }}>
               Register for the Reunion
@@ -208,7 +241,7 @@ export default function Landing() {
                 marginWidth="0"
                 title="Registration Form"
               >
-                Loading…
+                Loadingâ€¦
               </iframe>
             </div>
           </div>

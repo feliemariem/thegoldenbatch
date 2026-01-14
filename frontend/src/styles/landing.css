@@ -145,7 +145,7 @@
 
 .countdown-section h2 {
   font-size: 1.8rem;
-  color: #ffffff;
+  color: #CFB53B;
   margin-bottom: 40px;
 }
 
@@ -209,8 +209,8 @@
 }
 
 .pledge-section h2 {
-  font-size: 1.8rem;
-  color: #ffffff;
+  font-size: 2.2rem;
+  color: #CFB53B;
   margin-bottom: 16px;
 }
 
@@ -225,7 +225,7 @@
 .pledge-options {
   display: flex;
   justify-content: center;
-  gap: 32px;
+  gap: 24px;
   flex-wrap: wrap;
   max-width: 800px;
   margin: 0 auto;
@@ -235,20 +235,21 @@
   background: rgba(30, 40, 35, 0.8);
   border: 1px solid rgba(207, 181, 59, 0.15);
   border-radius: 20px;
-  padding: 32px;
+  padding: 24px;
   min-width: 280px;
   flex: 1;
-  max-width: 350px;
+  max-width: 400px;
 }
 
 .pledge-card h3 {
   font-size: 1.2rem;
   color: #CFB53B;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
+  text-align: center;
 }
 
 .bank-details {
-  text-align: left;
+  text-align: center;
 }
 
 .bank-details p {
@@ -258,7 +259,132 @@
 }
 
 .bank-details strong {
-  color: #909090;
+  color: #e0e0e0;
+}
+
+.bank-label {
+  font-size: 0.7rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+
+.bank-value {
+  color: #e0e0e0;
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+}
+
+.bank-branch {
+  color: #aaa;
+  font-size: 0.85rem;
+  margin-bottom: 0;
+}
+
+/* International Transfers Card - Separate Section */
+.intl-transfers-card {
+  background: rgba(30, 40, 35, 0.6);
+  border: 1px solid rgba(207, 181, 59, 0.1);
+  border-radius: 16px;
+  padding: 20px 28px;
+  margin-top: 16px;
+  max-width: 650px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.intl-transfers-card h3 {
+  font-size: 0.8rem;
+  color: #CFB53B;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 16px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.intl-transfers-content {
+  display: flex;
+  gap: 32px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.intl-branch-info {
+  text-align: center;
+  flex: 1;
+  min-width: 200px;
+}
+
+.intl-branch-name {
+  color: #e0e0e0;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.intl-branch-address {
+  color: #999;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.intl-branch-tel {
+  color: #888;
+  font-size: 0.8rem;
+}
+
+.intl-codes {
+  flex: 1;
+  min-width: 200px;
+}
+
+.intl-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-size: 0.85rem;
+}
+
+.intl-label {
+  color: #666;
+}
+
+.intl-value {
+  color: #e0e0e0;
+  font-family: monospace;
+}
+
+.intl-email {
+  font-family: inherit;
+  font-size: 0.8rem;
+}
+
+.intl-note {
+  font-size: 0.75rem;
+  color: #666;
+  margin-top: 16px;
+  font-style: italic;
+  text-align: center;
+}
+
+.receipt-note {
+  margin-top: 24px;
+  margin-bottom: 0;
+  font-size: 0.85rem;
+  color: #b0b0b0 !important;
+  text-align: center;
+}
+
+.receipt-note a {
+  color: #CFB53B;
+  text-decoration: none;
+}
+
+.receipt-note a:hover {
+  text-decoration: underline;
 }
 
 .qr-placeholder {

@@ -8,6 +8,9 @@ export default function Funds() {
   const [totalWithdrawals, setTotalWithdrawals] = useState(0);
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState(null);
+  const [donors, setDonors] = useState([]);
+
+  const PESO = '\u20B1'; // Philippine Peso sign
 
   const fetchBalance = async () => {
     try {
@@ -24,14 +27,32 @@ export default function Funds() {
     }
   };
 
+  const fetchDonors = async () => {
+    try {
+      const res = await fetch('http://localhost:5000/api/ledger/donors');
+      const data = await res.json();
+      setDonors(data.donors || []);
+    } catch (err) {
+      console.error('Failed to fetch donors');
+    }
+  };
+
   useEffect(() => {
     fetchBalance();
+    fetchDonors();
     
     // Auto-refresh every 30 seconds
     const interval = setInterval(fetchBalance, 30000);
     
     return () => clearInterval(interval);
   }, []);
+
+  const formatPeso = (amount, decimals = 2) => {
+    return PESO + amount.toLocaleString('en-PH', { 
+      minimumFractionDigits: decimals, 
+      maximumFractionDigits: decimals 
+    });
+  };
 
   return (
     <div className="container">
@@ -55,7 +76,7 @@ export default function Funds() {
           ) : (
             <>
               <p className="funds-total-amount">
-                ₱{balance.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                {formatPeso(balance)}
               </p>
               
               {/* Progress Bar */}
@@ -67,7 +88,7 @@ export default function Funds() {
                   />
                 </div>
                 <p className="funds-progress-text">
-                  {((balance / 1700000) * 100).toFixed(1)}% of ₱1,700,000 goal
+                  {((balance / 1700000) * 100).toFixed(1)}% of {formatPeso(1700000, 0)} goal
                 </p>
               </div>
 
@@ -80,10 +101,10 @@ export default function Funds() {
                 fontSize: '0.9rem'
               }}>
                 <span style={{ color: '#4ade80' }}>
-                  ↑ ₱{totalDeposits.toLocaleString('en-PH', { minimumFractionDigits: 0 })} in
+                  {'\u2191'} {formatPeso(totalDeposits, 0)} in
                 </span>
                 <span style={{ color: '#f87171' }}>
-                  ↓ ₱{totalWithdrawals.toLocaleString('en-PH', { minimumFractionDigits: 0 })} out
+                  {'\u2193'} {formatPeso(totalWithdrawals, 0)} out
                 </span>
               </div>
 
@@ -101,10 +122,25 @@ export default function Funds() {
           )}
         </div>
 
+        {/* Thank You Roll Credits */}
+        {donors.length > 0 && (
+          <div className="thank-you-section">
+            <h3 className="thank-you-title">Thank You for Your Contributions!</h3>
+            <div className="credits-container">
+              <div className="credits-scroll">
+                {/* Duplicate the list for seamless loop */}
+                {[...donors, ...donors].map((name, index) => (
+                  <p key={index} className="donor-name">{name}</p>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* How to Donate */}
         <div style={{ marginBottom: '32px' }}>
           <h3 style={{ textAlign: 'center', marginBottom: '20px' }} className="donate-heading">
-            💚 How to Donate
+            How to Donate
           </h3>
 
           <div style={{
@@ -114,23 +150,28 @@ export default function Funds() {
           }}>
             {/* Bank Transfer */}
             <div className="donate-card">
-              <p style={{ fontSize: '1.5rem', marginBottom: '12px' }}>🏦</p>
               <h4 className="donate-card-title">Bank Transfer</h4>
-              <p className="donate-card-text">
-                <strong>BDO</strong><br />
-                Account Name: [Account Name]<br />
-                Account No: [Account Number]
-              </p>
+              <div className="donate-card-content">
+                <p className="donate-bank-name">PNB (Philippine National Bank)</p>
+                <p className="donate-label">Account Number</p>
+                <p className="donate-value">307770014898</p>
+                
+                <p className="donate-label" style={{ marginTop: '16px' }}>Account Name(s)</p>
+                <p className="donate-value">NARCISO F. JAVELOSA OR</p>
+                <p className="donate-value">MARY ROSE FRANCES M. UY</p>
+              </div>
             </div>
 
             {/* GCash */}
             <div className="donate-card">
-              <p style={{ fontSize: '1.5rem', marginBottom: '12px' }}>📱</p>
               <h4 className="donate-card-title">GCash</h4>
-              <p className="donate-card-text">
-                <strong>[Name]</strong><br />
-                0917-XXX-XXXX
-              </p>
+              <div className="donate-card-content">
+                <p className="donate-label">Account Name</p>
+                <p className="donate-value">[Name]</p>
+                
+                <p className="donate-label" style={{ marginTop: '16px' }}>Mobile Number</p>
+                <p className="donate-value">0917-XXX-XXXX</p>
+              </div>
               {/* Placeholder for QR code */}
               <div style={{
                 width: '120px',
@@ -148,100 +189,132 @@ export default function Funds() {
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Note */}
-        <p className="donate-note">
-          Please send a screenshot of your donation to our Facebook page or email for confirmation.
-        </p>
+          {/* International Transfers - Separate Section */}
+          <div className="intl-transfers-card">
+            <h4 className="intl-transfers-header">For International Transfers</h4>
+            <div className="intl-transfers-content">
+              <div className="intl-branch-info">
+                <p className="intl-branch-name">PNB Bacolod Lacson Branch</p>
+                <p className="intl-branch-address">
+                  10th Lacson Street<br/>
+                  Bacolod City, Negros Occidental 6100
+                </p>
+                <p className="intl-branch-tel">Tel: (63) (034) 432-0605 / 434-8007</p>
+              </div>
+              <div className="intl-codes">
+                <div className="intl-row">
+                  <span className="intl-label">SWIFT Code</span>
+                  <span className="intl-value">PNBMPHMM</span>
+                </div>
+                <div className="intl-row">
+                  <span className="intl-label">Routing No.</span>
+                  <span className="intl-value">040080019</span>
+                </div>
+                <div className="intl-row">
+                  <span className="intl-label">Email</span>
+                  <span className="intl-value intl-email">bacolod_lacson@pnb.com.ph</span>
+                </div>
+                <div className="intl-row">
+                  <span className="intl-label">Website</span>
+                  <span className="intl-value intl-email">pnb.com.ph</span>
+                </div>
+              </div>
+            </div>
+            <p className="intl-note">Transfer fees and applicable taxes are shouldered by sender.</p>
+          </div>
+
+          <p className="receipt-note">
+            Please send a screenshot of your receipt to{' '}
+            <a href="mailto:uslsis.batch2003@gmail.com">uslsis.batch2003@gmail.com</a>
+            {' '}for confirmation.
+          </p>
+        </div>
 
         {/* Cost Transparency */}
         <div style={{ marginBottom: '32px' }}>
           <h3 className="budget-heading">
-            📊 25th Alumni Homecoming (2028)
+            25th Alumni Homecoming (2028)
           </h3>
           <p className="budget-target">
-            Target Budget: ₱1,700,000
+            Target Budget: {formatPeso(1700000, 0)}
           </p>
           <p className="budget-description">
             This budget prioritizes alumni participation, fair compensation, and a well-run milestone event held on school grounds.
           </p>
           
           <div className="budget-container">
-            <p className="budget-hint">
-              💡 Tap or hover on each item for details
-            </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {/* Food & Catering */}
-              <div 
-                className="budget-row"
-                title="Meals, service staff, and logistics for the entire event. Wherever possible, alumni-owned or batch-connected suppliers will be prioritized."
-              >
-                <span className="budget-label">🍽️ Food & Catering</span>
-                <span className="budget-amount">₱680,000</span>
+              <div className="budget-row-with-desc">
+                <div className="budget-row">
+                  <span className="budget-label">Food & Catering</span>
+                  <span className="budget-amount">{formatPeso(680000, 0)}</span>
+                </div>
+                <p className="budget-desc">Meals, service staff, and logistics. Alumni-owned suppliers prioritized.</p>
               </div>
               
               {/* Event Infrastructure */}
-              <div 
-                className="budget-row"
-                title="What replaces venue rental. Ensures comfort, safety, and proper setup for all attendees."
-              >
-                <span className="budget-label">🏗️ Event Infrastructure</span>
-                <span className="budget-amount">₱180,000</span>
+              <div className="budget-row-with-desc">
+                <div className="budget-row">
+                  <span className="budget-label">Event Infrastructure</span>
+                  <span className="budget-amount">{formatPeso(180000, 0)}</span>
+                </div>
+                <p className="budget-desc">Replaces venue rental. Ensures comfort, safety, and proper setup.</p>
               </div>
               
               {/* Sound, Lights & Power */}
-              <div 
-                className="budget-row"
-                title="Professional audio, lighting, and power supply so programs, performances, and speeches run smoothly."
-              >
-                <span className="budget-label">🎤 Sound, Lights & Power</span>
-                <span className="budget-amount">₱185,000</span>
+              <div className="budget-row-with-desc">
+                <div className="budget-row">
+                  <span className="budget-label">Sound, Lights & Power</span>
+                  <span className="budget-amount">{formatPeso(185000, 0)}</span>
+                </div>
+                <p className="budget-desc">Professional audio, lighting, and power for programs and performances.</p>
               </div>
               
               {/* Decorations & Anniversary Setup */}
-              <div 
-                className="budget-row"
-                title="25th-anniversary branding, backdrops, and memory elements that make the event meaningful."
-              >
-                <span className="budget-label">🎨 Decorations & Setup</span>
-                <span className="budget-amount">₱125,000</span>
+              <div className="budget-row-with-desc">
+                <div className="budget-row">
+                  <span className="budget-label">Decorations & Setup</span>
+                  <span className="budget-amount">{formatPeso(125000, 0)}</span>
+                </div>
+                <p className="budget-desc">25th-anniversary branding, backdrops, and memory elements.</p>
               </div>
               
               {/* Photo & Video */}
-              <div 
-                className="budget-row"
-                title="Professional coverage to preserve memories and share the event with batchmates who can't attend."
-              >
-                <span className="budget-label">📸 Photo & Video</span>
-                <span className="budget-amount">₱95,000</span>
+              <div className="budget-row-with-desc">
+                <div className="budget-row">
+                  <span className="budget-label">Photo & Video</span>
+                  <span className="budget-amount">{formatPeso(95000, 0)}</span>
+                </div>
+                <p className="budget-desc">Professional coverage to preserve and share memories.</p>
               </div>
               
               {/* Tokens & Giveaways */}
-              <div 
-                className="budget-row"
-                title="Commemorative items for attendees, volunteers, and contributors."
-              >
-                <span className="budget-label">🎁 Tokens & Giveaways</span>
-                <span className="budget-amount">₱120,000</span>
+              <div className="budget-row-with-desc">
+                <div className="budget-row">
+                  <span className="budget-label">Tokens & Giveaways</span>
+                  <span className="budget-amount">{formatPeso(120000, 0)}</span>
+                </div>
+                <p className="budget-desc">Commemorative items for attendees, volunteers, and contributors.</p>
               </div>
               
               {/* Program, Security & Operations */}
-              <div 
-                className="budget-row"
-                title="Hosts, performers, event marshals, coordination, permits, and volunteer meals."
-              >
-                <span className="budget-label">🛡️ Program & Operations</span>
-                <span className="budget-amount">₱145,000</span>
+              <div className="budget-row-with-desc">
+                <div className="budget-row">
+                  <span className="budget-label">Program & Operations</span>
+                  <span className="budget-amount">{formatPeso(145000, 0)}</span>
+                </div>
+                <p className="budget-desc">Hosts, performers, marshals, coordination, permits, volunteer meals.</p>
               </div>
               
               {/* Contingency */}
-              <div 
-                className="budget-row"
-                title="Reserved for weather, last-minute needs, or unavoidable cost increases. Any unused amount will be transparently reported."
-              >
-                <span className="budget-label">🔒 Contingency & Buffer</span>
-                <span className="budget-amount">₱170,000</span>
+              <div className="budget-row-with-desc">
+                <div className="budget-row">
+                  <span className="budget-label">Contingency & Buffer</span>
+                  <span className="budget-amount">{formatPeso(170000, 0)}</span>
+                </div>
+                <p className="budget-desc">Reserved for weather, last-minute needs. Unused amount will be reported.</p>
               </div>
               
               {/* Divider */}
@@ -250,7 +323,7 @@ export default function Funds() {
               {/* Total */}
               <div className="budget-row budget-total-row">
                 <span className="budget-total-label">Total Budget</span>
-                <span className="budget-total-amount">₱1,700,000</span>
+                <span className="budget-total-amount">{formatPeso(1700000, 0)}</span>
               </div>
             </div>
           </div>
@@ -262,7 +335,7 @@ export default function Funds() {
 
         {/* Back to Profile */}
         <p style={{ textAlign: 'center' }}>
-          <Link to="/profile" className="btn-link">← Back to Profile</Link>
+          <Link to="/profile" className="btn-link">Back to Profile</Link>
         </p>
       </div>
     </div>

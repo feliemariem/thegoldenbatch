@@ -714,6 +714,32 @@ body[data-theme="light"] .progress-bar-track {
   background: rgba(0, 102, 51, 0.15) !important;
 }
 
+/* Thank You Credits - Light Mode */
+body[data-theme="light"] .thank-you-section {
+  background: transparent;
+}
+
+body[data-theme="light"] .thank-you-title {
+  color: #006633 !important;
+}
+
+body[data-theme="light"] .credits-container {
+  background: rgba(0, 102, 51, 0.05) !important;
+  border-color: rgba(0, 102, 51, 0.15) !important;
+}
+
+body[data-theme="light"] .credits-container::before {
+  background: linear-gradient(to bottom, rgba(250, 248, 244, 1) 0%, rgba(250, 248, 244, 0) 100%) !important;
+}
+
+body[data-theme="light"] .credits-container::after {
+  background: linear-gradient(to top, rgba(250, 248, 244, 1) 0%, rgba(250, 248, 244, 0) 100%) !important;
+}
+
+body[data-theme="light"] .donor-name {
+  color: #333 !important;
+}
+
 body[data-theme="light"] .donate-heading {
   color: #006633 !important;
 }
@@ -725,6 +751,59 @@ body[data-theme="light"] .donate-card {
 
 body[data-theme="light"] .donate-card-title {
   color: #006633 !important;
+}
+
+body[data-theme="light"] .donate-bank-name {
+  color: #222 !important;
+}
+
+body[data-theme="light"] .donate-label {
+  color: #666 !important;
+}
+
+body[data-theme="light"] .donate-value {
+  color: #222 !important;
+}
+
+body[data-theme="light"] .donate-value-sub {
+  color: #444 !important;
+}
+
+body[data-theme="light"] .donate-intl-section {
+  border-top-color: rgba(0, 102, 51, 0.15) !important;
+}
+
+body[data-theme="light"] .intl-transfers-card {
+  background: rgba(0, 102, 51, 0.04) !important;
+  border-color: rgba(0, 102, 51, 0.12) !important;
+}
+
+body[data-theme="light"] .intl-transfers-header {
+  color: #996515 !important;
+}
+
+body[data-theme="light"] .intl-branch-name {
+  color: #222 !important;
+}
+
+body[data-theme="light"] .intl-branch-address {
+  color: #555 !important;
+}
+
+body[data-theme="light"] .intl-branch-tel {
+  color: #666 !important;
+}
+
+body[data-theme="light"] .intl-label {
+  color: #666 !important;
+}
+
+body[data-theme="light"] .intl-value {
+  color: #222 !important;
+}
+
+body[data-theme="light"] .intl-note {
+  color: #666 !important;
 }
 
 body[data-theme="light"] .donate-card-text {

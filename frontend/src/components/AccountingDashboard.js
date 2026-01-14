@@ -530,10 +530,10 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
               <h4>Receipt - {viewingReceipt.name || viewingReceipt.description || 'Transaction'}</h4>
               <button onClick={() => setViewingReceipt(null)} className="receipt-modal-close">✕</button>
             </div>
-            <div className="receipt-modal-body">
+            <div className="receipt-modal-image">
               <img src={viewingReceipt.receipt_url} alt="Receipt" />
             </div>
-            <div className="receipt-modal-footer">
+            <div className="receipt-modal-actions">
               <a 
                 href={viewingReceipt.receipt_url} 
                 target="_blank" 
