@@ -362,6 +362,44 @@
   background: rgba(255, 255, 255, 0.2);
 }
 
+/* Form Disclaimer Styles */
+.form-disclaimer {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(207, 181, 59, 0.15);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.form-disclaimer p {
+  color: #c0c0c0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.form-disclaimer ul {
+  margin: 0 0 16px 20px;
+  padding: 0;
+}
+
+.form-disclaimer li {
+  color: #a0a0a0;
+  font-size: 0.9rem;
+  line-height: 1.8;
+  margin-bottom: 4px;
+}
+
+.form-disclaimer .privacy-note {
+  font-size: 0.85rem;
+  color: #808080;
+  font-style: italic;
+  margin-bottom: 0;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
 .form-embed-container {
   background: #fff;
   border-radius: 12px;
@@ -432,5 +470,17 @@
   .pledge-card {
     width: 100%;
     max-width: 320px;
+  }
+
+  .form-disclaimer {
+    padding: 16px 18px;
+  }
+
+  .form-disclaimer p {
+    font-size: 0.9rem;
+  }
+
+  .form-disclaimer li {
+    font-size: 0.85rem;
   }
 }

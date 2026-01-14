@@ -51,7 +51,8 @@ router.post('/', authenticateAdmin, async (req, res) => {
       deposit, 
       withdrawal, 
       reference_no, 
-      verified 
+      verified,
+      remarks
     } = req.body;
 
     // Validate - must have either deposit or withdrawal
@@ -76,8 +77,8 @@ router.post('/', authenticateAdmin, async (req, res) => {
     }
 
     const result = await db.query(
-      `INSERT INTO ledger (transaction_date, name, description, deposit, withdrawal, reference_no, verified, recorded_by)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      `INSERT INTO ledger (transaction_date, name, description, deposit, withdrawal, reference_no, verified, remarks, recorded_by)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
        RETURNING *`,
       [
         transaction_date || new Date(),
@@ -87,6 +88,7 @@ router.post('/', authenticateAdmin, async (req, res) => {
         withdrawal ? parseFloat(withdrawal) : null,
         reference_no || null,
         verified || 'Pending',
+        remarks || null,
         recorderName
       ]
     );
@@ -109,7 +111,8 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
       deposit, 
       withdrawal, 
       reference_no, 
-      verified 
+      verified,
+      remarks
     } = req.body;
 
     const result = await db.query(
@@ -120,8 +123,9 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
         deposit = $4,
         withdrawal = $5,
         reference_no = COALESCE($6, reference_no),
-        verified = COALESCE($7, verified)
-       WHERE id = $8
+        verified = COALESCE($7, verified),
+        remarks = COALESCE($8, remarks)
+       WHERE id = $9
        RETURNING *`,
       [
         transaction_date,
@@ -131,6 +135,7 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
         withdrawal ? parseFloat(withdrawal) : null,
         reference_no,
         verified,
+        remarks,
         id
       ]
     );

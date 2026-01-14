@@ -16,7 +16,8 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
     description: '',
     amount: '',
     reference_no: '',
-    verified: 'Pending'
+    verified: 'Pending',
+    remarks: ''
   });
   const [result, setResult] = useState(null);
   
@@ -53,7 +54,8 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
       description: '',
       amount: '',
       reference_no: '',
-      verified: 'Pending'
+      verified: 'Pending',
+      remarks: ''
     });
     setTransactionType('deposit');
     setEditingId(null);
@@ -72,7 +74,8 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
       deposit: transactionType === 'deposit' ? form.amount : null,
       withdrawal: transactionType === 'withdrawal' ? form.amount : null,
       reference_no: form.reference_no,
-      verified: form.verified
+      verified: form.verified,
+      remarks: form.remarks
     };
 
     try {
@@ -113,7 +116,8 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
       description: transaction.description || '',
       amount: isDeposit ? transaction.deposit : transaction.withdrawal,
       reference_no: transaction.reference_no || '',
-      verified: transaction.verified || 'Pending'
+      verified: transaction.verified || 'Pending',
+      remarks: transaction.remarks || ''
     });
     setEditingId(transaction.id);
     setShowForm(true);
@@ -180,45 +184,55 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
       });
 
       if (res.ok) {
-        fetchTransactions();
         setViewingReceipt(null);
+        fetchTransactions();
       }
     } catch (err) {
       console.error('Failed to delete receipt');
     }
   };
 
+  // Drag and drop handlers
   const handleDragOver = (e, transactionId) => {
     e.preventDefault();
+    e.stopPropagation();
     setDragOver(transactionId);
   };
 
   const handleDragLeave = (e) => {
     e.preventDefault();
+    e.stopPropagation();
     setDragOver(null);
   };
 
   const handleDrop = (e, transactionId) => {
     e.preventDefault();
+    e.stopPropagation();
     const file = e.dataTransfer.files[0];
     if (file) {
       handleReceiptUpload(transactionId, file);
     }
+    setDragOver(null);
+  };
+
+  const formatCurrency = (amount) => {
+    return '₱' + parseFloat(amount).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
 
   const exportToCSV = () => {
     if (!transactions.length) return;
 
-    const headers = ['Date', 'Name', 'Description', 'Deposit', 'Withdrawal', 'Balance', 'Reference No.', 'Verified', 'Recorded By', 'Receipt'];
+    const headers = ['Date', 'Name', 'Description', 'Deposit', 'Withdrawal', 'Balance', 'Reference No.', 'Verified', 'Remarks', 'Recorded By', 'Receipt URL'];
     const rows = transactions.map(t => [
       t.transaction_date ? new Date(t.transaction_date).toLocaleDateString() : '',
       t.name || '',
       t.description || '',
       t.deposit || '',
       t.withdrawal || '',
-      t.balance?.toFixed(2) || '',
+      t.balance || '',
       t.reference_no || '',
       t.verified || '',
+      t.remarks || '',
       t.recorded_by || '',
       t.receipt_url || ''
     ]);
@@ -232,33 +246,28 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
     a.click();
   };
 
-  const formatCurrency = (amount) => {
-    if (amount === null || amount === undefined) return '';
-    return '₱' + parseFloat(amount).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  };
-
   if (loading) {
-    return <p className="perm-muted">Loading transactions...</p>;
+    return <p style={{ color: '#999' }}>Loading transactions...</p>;
   }
 
   return (
     <div>
-      <h3>Accounting Ledger</h3>
-      <p className="perm-muted" style={{ marginBottom: '24px' }}>Track all deposits and withdrawals for the reunion fund.</p>
+      <h3>💰 Accounting Ledger</h3>
+      <p style={{ color: '#999', marginBottom: '24px' }}>Track all deposits, withdrawals, and running balance.</p>
 
       {/* Summary Cards */}
       <div className="ledger-summary">
         <div className="ledger-summary-card deposits">
-          <span className="ledger-summary-label">Total Deposits</span>
-          <span className="ledger-summary-amount deposit">{formatCurrency(totalDeposits)}</span>
+          <p className="ledger-summary-label">Total Deposits</p>
+          <p className="ledger-summary-value">{formatCurrency(totalDeposits)}</p>
         </div>
         <div className="ledger-summary-card withdrawals">
-          <span className="ledger-summary-label">Total Withdrawals</span>
-          <span className="ledger-summary-amount withdrawal">{formatCurrency(totalWithdrawals)}</span>
+          <p className="ledger-summary-label">Total Withdrawals</p>
+          <p className="ledger-summary-value">{formatCurrency(totalWithdrawals)}</p>
         </div>
         <div className="ledger-summary-card balance">
-          <span className="ledger-summary-label">Current Balance</span>
-          <span className="ledger-summary-amount">{formatCurrency(balance)}</span>
+          <p className="ledger-summary-label">Current Balance</p>
+          <p className="ledger-summary-value">{formatCurrency(balance)}</p>
         </div>
       </div>
 
@@ -365,6 +374,16 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
               </div>
             </div>
 
+            <div className="form-group">
+              <label>Remarks</label>
+              <input
+                type="text"
+                value={form.remarks}
+                onChange={(e) => setForm({ ...form, remarks: e.target.value })}
+                placeholder="e.g., FULL, FOR YEAR 2026, Partial payment"
+              />
+            </div>
+
             {result && (
               <div className={`invite-result ${result.success ? 'success' : 'error'}`}>
                 <p>{result.message}</p>
@@ -407,6 +426,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
                   <th className="amount-col">Balance</th>
                   <th>Reference No.</th>
                   <th>Verified</th>
+                  <th>Remarks</th>
                   <th>Recorded By</th>
                   <th>Receipt</th>
                   {canEdit && <th>Actions</th>}
@@ -435,6 +455,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
                         {t.verified || 'Pending'}
                       </span>
                     </td>
+                    <td style={{ fontSize: '0.85rem', color: '#888' }}>{t.remarks || '-'}</td>
                     <td style={{ fontSize: '0.85rem', color: '#888' }}>{t.recorded_by || '-'}</td>
                     <td>
                       {/* Receipt column with drag & drop */}
@@ -501,45 +522,36 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
         )}
       </div>
 
-      {/* Receipt Lightbox Modal */}
+      {/* Receipt Viewing Modal */}
       {viewingReceipt && (
         <div className="receipt-modal-overlay" onClick={() => setViewingReceipt(null)}>
           <div className="receipt-modal" onClick={(e) => e.stopPropagation()}>
-            <button className="receipt-modal-close" onClick={() => setViewingReceipt(null)}>
-              ✕
-            </button>
             <div className="receipt-modal-header">
-              <h3>Receipt</h3>
-              <p>
-                {viewingReceipt.name || 'Unknown'} - {formatCurrency(viewingReceipt.deposit || viewingReceipt.withdrawal)}
-                <br />
-                <span style={{ fontSize: '0.85rem', color: '#888' }}>
-                  {viewingReceipt.transaction_date ? new Date(viewingReceipt.transaction_date).toLocaleDateString() : ''}
-                </span>
-              </p>
+              <h4>Receipt - {viewingReceipt.name || viewingReceipt.description || 'Transaction'}</h4>
+              <button onClick={() => setViewingReceipt(null)} className="receipt-modal-close">✕</button>
             </div>
-            <div className="receipt-modal-image">
+            <div className="receipt-modal-body">
               <img src={viewingReceipt.receipt_url} alt="Receipt" />
             </div>
-            {canEdit && (
-              <div className="receipt-modal-actions">
-                <a 
-                  href={viewingReceipt.receipt_url} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="btn-secondary"
-                >
-                  Open Full Size
-                </a>
+            <div className="receipt-modal-footer">
+              <a 
+                href={viewingReceipt.receipt_url} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="btn-secondary"
+              >
+                Open Full Size
+              </a>
+              {canEdit && (
                 <button 
                   onClick={() => handleDeleteReceipt(viewingReceipt.id)}
-                  className="btn-secondary"
-                  style={{ color: '#dc3545', borderColor: '#dc3545' }}
+                  className="btn-link"
+                  style={{ color: '#dc3545' }}
                 >
                   Delete Receipt
                 </button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       )}

@@ -2,10 +2,33 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext(null);
 
+const SESSION_TIMEOUT = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
+
+  // Check session timeout on load
+  useEffect(() => {
+    const lastActivity = localStorage.getItem('lastActivity');
+    if (lastActivity && token) {
+      const elapsed = Date.now() - parseInt(lastActivity, 10);
+      if (elapsed > SESSION_TIMEOUT) {
+        // Session expired - clear everything
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        localStorage.removeItem('lastActivity');
+        setToken(null);
+        setLoading(false);
+        return;
+      }
+    }
+    // Update activity timestamp
+    if (token) {
+      localStorage.setItem('lastActivity', Date.now().toString());
+    }
+  }, []);
 
   useEffect(() => {
     if (token) {
@@ -36,6 +59,7 @@ export function AuthProvider({ children }) {
             .catch(() => {
               localStorage.removeItem('token');
               localStorage.removeItem('user');
+              localStorage.removeItem('lastActivity');
               setToken(null);
             })
             .finally(() => setLoading(false));
@@ -43,6 +67,7 @@ export function AuthProvider({ children }) {
       } catch {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+        localStorage.removeItem('lastActivity');
         setToken(null);
         setLoading(false);
       }
@@ -54,6 +79,7 @@ export function AuthProvider({ children }) {
   const login = (newToken, userData) => {
     localStorage.setItem('token', newToken);
     localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem('lastActivity', Date.now().toString());
     setToken(newToken);
     setUser(userData);
   };
@@ -61,6 +87,7 @@ export function AuthProvider({ children }) {
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('lastActivity');
     setToken(null);
     setUser(null);
   };
