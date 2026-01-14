@@ -1,0 +1,116 @@
+/* ========================================
+   PROFILE STYLES
+   User Profile Page
+   ======================================== */
+
+/* RSVP Section */
+.rsvp-section {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 28px;
+  border-radius: 16px;
+  margin-bottom: 32px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.rsvp-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-rsvp {
+  padding: 14px 28px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #b0b0b0;
+}
+
+.btn-rsvp:hover:not(:disabled) {
+  border-color: rgba(207, 181, 59, 0.5);
+  color: #e0e0e0;
+}
+
+.btn-rsvp.active.going {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  border-color: #059669;
+  color: white;
+}
+
+.btn-rsvp.active.maybe {
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+  border-color: #d97706;
+  color: white;
+}
+
+.btn-rsvp.active.not-going {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  border-color: #dc2626;
+  color: white;
+}
+
+/* Profile Section */
+.profile-section {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 28px;
+}
+
+.profile-display p {
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: #c0c0c0;
+}
+
+.profile-display p strong {
+  color: #909090;
+  font-weight: 500;
+}
+
+.profile-display p:last-child {
+  border-bottom: none;
+}
+
+/* Welcome Section */
+.welcome-section {
+  background: linear-gradient(135deg, rgba(207, 181, 59, 0.1) 0%, rgba(207, 181, 59, 0.05) 100%);
+  border: 1px solid rgba(207, 181, 59, 0.2);
+  border-radius: 16px;
+  padding: 28px;
+  margin-bottom: 28px;
+  text-align: center;
+}
+
+.welcome-section h2 {
+  color: #CFB53B;
+  margin-bottom: 12px;
+}
+
+.welcome-section p {
+  color: #a0a0a0;
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+.welcome-section a {
+  color: #CFB53B;
+  font-weight: 500;
+}
+
+/* Mobile Responsive - Profile */
+@media (max-width: 600px) {
+  .rsvp-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btn-rsvp {
+    width: 100%;
+    padding: 16px;
+  }
+}

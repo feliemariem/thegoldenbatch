@@ -1,0 +1,436 @@
+/* ========================================
+   LANDING PAGE STYLES
+   Public Landing Page (Preview)
+   ======================================== */
+
+.landing-page {
+  min-height: 100vh;
+}
+
+/* Header */
+.landing-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  background: rgba(10, 15, 13, 0.9);
+  backdrop-filter: blur(10px);
+  z-index: 100;
+  border-bottom: 1px solid rgba(207, 181, 59, 0.1);
+}
+
+.landing-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.landing-logo img {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.landing-logo span {
+  font-weight: 600;
+  color: #CFB53B;
+  font-size: 1.1rem;
+}
+
+.btn-login {
+  padding: 10px 24px;
+  background: linear-gradient(135deg, #CFB53B 0%, #a89030 100%);
+  color: #0a0f0d;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.btn-login:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(207, 181, 59, 0.3);
+}
+
+/* Header Actions - Theme Toggle + Login */
+.landing-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.landing-theme-toggle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(207, 181, 59, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.landing-theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+/* Hero Section */
+.hero-section {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 120px 20px 80px;
+}
+
+.hero-section h1 {
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: #CFB53B;
+  margin-bottom: 16px;
+  letter-spacing: -0.02em;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+}
+
+.tagline {
+  font-size: 1.4rem;
+  color: #e0e0e0;
+  margin-bottom: 24px;
+  font-style: italic;
+}
+
+.event-details {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 40px;
+  font-size: 1.1rem;
+  color: #9ca3af;
+}
+
+.btn-hero {
+  display: inline-block;
+  padding: 18px 48px;
+  background: linear-gradient(135deg, #CFB53B 0%, #a89030 100%);
+  color: #0a0f0d;
+  text-decoration: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: all 0.2s ease;
+}
+
+.btn-hero:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(207, 181, 59, 0.3);
+}
+
+/* Countdown Section */
+.countdown-section {
+  padding: 80px 20px;
+  background: rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.countdown-section h2 {
+  font-size: 1.8rem;
+  color: #ffffff;
+  margin-bottom: 40px;
+}
+
+.countdown-grid {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.countdown-item {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(207, 181, 59, 0.2);
+  border-radius: 16px;
+  padding: 24px 32px;
+  min-width: 100px;
+}
+
+.countdown-number {
+  display: block;
+  font-size: 3rem;
+  font-weight: 700;
+  color: #CFB53B;
+  line-height: 1;
+}
+
+.countdown-label {
+  display: block;
+  font-size: 0.85rem;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 8px;
+}
+
+/* About Section */
+.about-section {
+  padding: 80px 20px;
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.about-section h2 {
+  font-size: 1.8rem;
+  color: #CFB53B;
+  margin-bottom: 24px;
+}
+
+.about-section p {
+  font-size: 1.15rem;
+  color: #c0c0c0;
+  line-height: 1.8;
+}
+
+/* Pledge Section */
+.pledge-section {
+  padding: 80px 20px;
+  background: rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.pledge-section h2 {
+  font-size: 1.8rem;
+  color: #ffffff;
+  margin-bottom: 16px;
+}
+
+.pledge-section > p {
+  color: #9ca3af;
+  margin-bottom: 40px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.pledge-options {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  flex-wrap: wrap;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.pledge-card {
+  background: rgba(30, 40, 35, 0.8);
+  border: 1px solid rgba(207, 181, 59, 0.15);
+  border-radius: 20px;
+  padding: 32px;
+  min-width: 280px;
+  flex: 1;
+  max-width: 350px;
+}
+
+.pledge-card h3 {
+  font-size: 1.2rem;
+  color: #CFB53B;
+  margin-bottom: 20px;
+}
+
+.bank-details {
+  text-align: left;
+}
+
+.bank-details p {
+  color: #c0c0c0;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+.bank-details strong {
+  color: #909090;
+}
+
+.qr-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.qr-code {
+  background: #fff;
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+.gcash-number {
+  font-size: 1.1rem;
+  color: #CFB53B;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.gcash-name {
+  font-size: 0.9rem;
+  color: #9ca3af;
+}
+
+/* Footer */
+.landing-footer {
+  padding: 40px 20px;
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.landing-footer p {
+  color: #707070;
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.landing-footer a {
+  color: #CFB53B;
+  text-decoration: none;
+}
+
+.landing-footer a:hover {
+  text-decoration: underline;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal-content {
+  background: linear-gradient(165deg, rgba(30, 40, 35, 0.98) 0%, rgba(20, 28, 24, 0.99) 100%);
+  border-radius: 20px;
+  padding: 32px;
+  position: relative;
+  border: 1px solid rgba(207, 181, 59, 0.2);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-large {
+  width: 100%;
+  max-width: 700px;
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #fff;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.form-embed-container {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.form-embed-container iframe {
+  display: block;
+}
+
+/* Mobile Responsive - Landing */
+@media (max-width: 768px) {
+  .landing-header {
+    padding: 16px 20px;
+  }
+
+  .landing-logo span {
+    display: none;
+  }
+
+  .hero-section h1 {
+    font-size: 2.2rem;
+  }
+
+  .tagline {
+    font-size: 1.1rem;
+  }
+
+  .event-details {
+    flex-direction: column;
+    gap: 12px;
+    font-size: 1rem;
+  }
+
+  .btn-hero {
+    padding: 16px 36px;
+    font-size: 1rem;
+  }
+
+  .countdown-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    max-width: 300px;
+    margin: 0 auto;
+  }
+
+  .countdown-item {
+    padding: 20px 16px;
+    min-width: auto;
+  }
+
+  .countdown-number {
+    font-size: 2rem;
+  }
+
+  .countdown-section h2,
+  .about-section h2,
+  .pledge-section h2 {
+    font-size: 1.5rem;
+  }
+
+  .pledge-options {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .pledge-card {
+    width: 100%;
+    max-width: 320px;
+  }
+}

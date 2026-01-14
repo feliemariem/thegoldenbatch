@@ -1,0 +1,729 @@
+/* ========================================
+   BASE STYLES
+   Reset, Body, Typography, Containers
+   ======================================== */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: linear-gradient(145deg, rgba(10, 15, 13, 0.92) 0%, rgba(26, 42, 31, 0.9) 50%, rgba(13, 21, 16, 0.92) 100%),
+              url('../images/batchpic2013.png') center center / cover no-repeat fixed;
+  min-height: 100vh;
+  color: #e8e8e8;
+}
+
+.container {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 48px 20px;
+}
+
+.admin-container {
+  max-width: 1000px;
+}
+
+.card {
+  background: linear-gradient(165deg, rgba(30, 40, 35, 0.95) 0%, rgba(20, 28, 24, 0.98) 100%);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 
+    0 4px 24px rgba(0, 0, 0, 0.4),
+    0 1px 0 rgba(255, 255, 255, 0.05) inset;
+  border: 1px solid rgba(207, 181, 59, 0.15);
+  backdrop-filter: blur(10px);
+  animation: fadeIn 0.4s ease-out;
+}
+
+.card-narrow {
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+/* Typography */
+h1 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #e0e0e0;
+  margin-bottom: 24px;
+}
+
+h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #d0d0d0;
+  margin-bottom: 16px;
+}
+
+.subtitle {
+  color: #9ca3af;
+  margin-bottom: 28px;
+  font-size: 0.95rem;
+}
+
+.logo {
+  display: block;
+  max-width: 90px;
+  height: auto;
+  margin: 0 auto 24px auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Messages */
+.error {
+  color: #f87171;
+  background: rgba(220, 38, 38, 0.1);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+  padding: 14px 18px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+}
+
+.success {
+  color: #4ade80;
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  padding: 14px 18px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+}
+
+.help-text {
+  text-align: center;
+  color: #707070;
+  font-size: 0.85rem;
+  margin-top: 28px;
+}
+
+.help-text a {
+  color: #CFB53B;
+}
+
+.help-text-small {
+  font-size: 0.85rem;
+  color: #606060;
+  margin-bottom: 12px;
+}
+
+.no-data {
+  color: #606060;
+  text-align: center;
+  padding: 40px;
+  font-style: italic;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Mobile Responsive - Base */
+@media (max-width: 600px) {
+  .container {
+    padding: 24px 16px;
+  }
+
+  .card {
+    padding: 28px 20px;
+    border-radius: 16px;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+  }
+
+  h2 {
+    font-size: 1rem;
+  }
+}
+
+/* Make date picker icon white */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+/* ========================================
+   FUNDS PAGE STYLES
+   ======================================== */
+
+/* Funds display */
+.funds-label {
+  color: #999;
+  font-size: 1rem;
+  margin-bottom: 12px;
+}
+
+.funds-total-loading {
+  color: #CFB53B;
+  font-size: 2rem;
+}
+
+.funds-total-amount {
+  color: #CFB53B;
+  font-size: clamp(1.8rem, 7vw, 3.5rem);
+  font-weight: 700;
+  text-shadow: 0 2px 10px rgba(207, 181, 59, 0.3);
+}
+
+.funds-progress-text {
+  color: #999;
+  font-size: 0.85rem;
+  margin-top: 8px;
+}
+
+.funds-date {
+  color: #666;
+  font-size: 0.9rem;
+  margin-top: 12px;
+}
+
+.progress-bar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  height: 20px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  background: linear-gradient(90deg, #006633 0%, #CFB53B 100%);
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.5s ease;
+}
+
+/* Donate section */
+.donate-heading {
+  color: #006633;
+}
+
+.donate-card {
+  background: rgba(0, 102, 51, 0.05);
+  border: 1px solid rgba(0, 102, 51, 0.2);
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+}
+
+.donate-card-title {
+  color: #006633;
+  margin-bottom: 12px;
+}
+
+.donate-card-text {
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.donate-note {
+  text-align: center;
+  color: #666;
+  font-size: 0.85rem;
+  font-style: italic;
+  margin-bottom: 24px;
+}
+
+/* Budget breakdown */
+.budget-heading {
+  text-align: center;
+  margin-bottom: 8px;
+  color: #4CAF50;
+}
+
+.budget-target {
+  text-align: center;
+  color: #CFB53B;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.budget-description {
+  text-align: center;
+  color: #aaa;
+  font-size: 0.85rem;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.budget-container {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.budget-hint {
+  color: #999;
+  font-size: 0.75rem;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.budget-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  cursor: help;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.budget-row:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.budget-label {
+  color: #e0e0e0;
+  font-size: 0.9rem;
+}
+
+.budget-amount {
+  color: #CFB53B;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.budget-divider {
+  border-top: 2px solid rgba(207, 181, 59, 0.3);
+  margin: 8px 0;
+}
+
+.budget-total-row {
+  cursor: default;
+}
+
+.budget-total-row:hover {
+  background: transparent;
+}
+
+.budget-total-label {
+  color: #4CAF50;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.budget-total-amount {
+  color: #CFB53B;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.budget-footnote {
+  text-align: center;
+  color: #999;
+  font-size: 0.8rem;
+  margin-top: 12px;
+  font-style: italic;
+}
+
+/* ========================================
+   PERMISSIONS MANAGER STYLES
+   ======================================== */
+
+.perm-muted {
+  color: #999;
+}
+
+.perm-container {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.perm-super-admin-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+}
+
+.perm-super-admin-row.active {
+  background: rgba(207, 181, 59, 0.2);
+  border: 1px solid rgba(207, 181, 59, 0.5);
+}
+
+.perm-super-admin-label {
+  color: #CFB53B;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.perm-check-all-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.perm-check-all-label {
+  color: #e0e0e0;
+  font-weight: 600;
+}
+
+.perm-section-title {
+  color: #4CAF50;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+}
+
+.perm-label {
+  color: #e0e0e0;
+  font-size: 0.9rem;
+}
+
+/* ========================================
+   LEDGER / ACCOUNTING STYLES
+   ======================================== */
+
+.ledger-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.ledger-summary-card {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+}
+
+.ledger-summary-card.deposits {
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.ledger-summary-card.withdrawals {
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.ledger-summary-card.balance {
+  background: rgba(207, 181, 59, 0.1);
+  border-color: rgba(207, 181, 59, 0.3);
+}
+
+.ledger-summary-label {
+  display: block;
+  font-size: 0.8rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+.ledger-summary-amount {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #CFB53B;
+}
+
+.ledger-summary-amount.deposit {
+  color: #4ade80;
+}
+
+.ledger-summary-amount.withdrawal {
+  color: #f87171;
+}
+
+.ledger-type-toggle {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.ledger-type-btn {
+  flex: 1;
+  padding: 12px 16px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  color: #888;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ledger-type-btn:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.ledger-type-btn.active.deposit {
+  background: rgba(34, 197, 94, 0.15);
+  border-color: rgba(34, 197, 94, 0.5);
+  color: #4ade80;
+}
+
+.ledger-type-btn.active.withdrawal {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #f87171;
+}
+
+.ledger-table .amount-col {
+  text-align: right;
+  font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.ledger-table {
+  min-width: 900px;
+}
+
+.ledger-table .deposit-cell {
+  color: #4ade80;
+}
+
+.ledger-table .withdrawal-cell {
+  color: #f87171;
+}
+
+.ledger-table .balance-cell {
+  color: #CFB53B;
+  font-weight: 600;
+}
+
+.verified-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.verified-badge.verified {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+}
+
+.verified-badge.pending {
+  background: rgba(156, 163, 175, 0.15);
+  color: #9ca3af;
+}
+
+@media (max-width: 768px) {
+  .ledger-summary {
+    grid-template-columns: 1fr;
+  }
+  
+  .ledger-type-toggle {
+    flex-direction: column;
+  }
+}
+
+/* ========================================
+   RECEIPT UPLOAD STYLES
+   ======================================== */
+
+.receipt-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 50px;
+  min-height: 40px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.receipt-cell.drag-over {
+  background: rgba(207, 181, 59, 0.2);
+  border: 2px dashed #CFB53B;
+}
+
+.receipt-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  background: transparent;
+}
+
+.receipt-icon.has-receipt {
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.receipt-icon.has-receipt:hover {
+  background: rgba(34, 197, 94, 0.25);
+  transform: scale(1.1);
+}
+
+.receipt-icon.empty {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  color: #666;
+  font-size: 1rem;
+}
+
+.receipt-icon.empty:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(207, 181, 59, 0.5);
+  color: #CFB53B;
+}
+
+.receipt-upload-label {
+  cursor: pointer;
+}
+
+.receipt-uploading {
+  font-size: 1.2rem;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Receipt Modal */
+.receipt-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.receipt-modal {
+  background: linear-gradient(165deg, rgba(30, 40, 35, 0.98) 0%, rgba(20, 28, 24, 0.99) 100%);
+  border: 1px solid rgba(207, 181, 59, 0.2);
+  border-radius: 16px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.receipt-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.2s ease;
+}
+
+.receipt-modal-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.receipt-modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.receipt-modal-header h3 {
+  color: #CFB53B;
+  margin-bottom: 8px;
+}
+
+.receipt-modal-header p {
+  color: #c0c0c0;
+  margin: 0;
+}
+
+.receipt-modal-image {
+  flex: 1;
+  overflow: auto;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.receipt-modal-image img {
+  max-width: 100%;
+  max-height: 60vh;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.receipt-modal-actions {
+  padding: 16px 24px;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
