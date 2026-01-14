@@ -9,7 +9,13 @@ router.get('/', authenticateAdmin, async (req, res) => {
   try {
     // Get transactions ordered by date ASC to calculate running balance
     const result = await db.query(
-      `SELECT * FROM ledger ORDER BY transaction_date ASC, created_at ASC`
+      `SELECT l.*, 
+              m.first_name as ml_first_name, 
+              m.last_name as ml_last_name,
+              m.section as ml_section
+       FROM ledger l
+       LEFT JOIN master_list m ON l.master_list_id = m.id
+       ORDER BY l.transaction_date ASC, l.created_at ASC`
     );
 
     // Calculate running balance
@@ -52,7 +58,8 @@ router.post('/', authenticateAdmin, async (req, res) => {
       withdrawal, 
       reference_no, 
       verified,
-      remarks
+      payment_type,
+      master_list_id
     } = req.body;
 
     // Validate - must have either deposit or withdrawal
@@ -77,8 +84,8 @@ router.post('/', authenticateAdmin, async (req, res) => {
     }
 
     const result = await db.query(
-      `INSERT INTO ledger (transaction_date, name, description, deposit, withdrawal, reference_no, verified, remarks, recorded_by)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      `INSERT INTO ledger (transaction_date, name, description, deposit, withdrawal, reference_no, verified, payment_type, master_list_id, recorded_by)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
        RETURNING *`,
       [
         transaction_date || new Date(),
@@ -88,7 +95,8 @@ router.post('/', authenticateAdmin, async (req, res) => {
         withdrawal ? parseFloat(withdrawal) : null,
         reference_no || null,
         verified || 'Pending',
-        remarks || null,
+        payment_type || null,
+        master_list_id || null,
         recorderName
       ]
     );
@@ -112,7 +120,8 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
       withdrawal, 
       reference_no, 
       verified,
-      remarks
+      payment_type,
+      master_list_id
     } = req.body;
 
     const result = await db.query(
@@ -124,8 +133,9 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
         withdrawal = $5,
         reference_no = COALESCE($6, reference_no),
         verified = COALESCE($7, verified),
-        remarks = COALESCE($8, remarks)
-       WHERE id = $9
+        payment_type = $8,
+        master_list_id = $9
+       WHERE id = $10
        RETURNING *`,
       [
         transaction_date,
@@ -135,7 +145,8 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
         withdrawal ? parseFloat(withdrawal) : null,
         reference_no,
         verified,
-        remarks,
+        payment_type || null,
+        master_list_id !== undefined ? master_list_id : null,
         id
       ]
     );
@@ -299,6 +310,69 @@ router.get('/donors', async (req, res) => {
     res.json({
       donors: result.rows.map(r => r.name)
     });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Get master list entries for linking dropdown
+router.get('/master-list-options', authenticateAdmin, async (req, res) => {
+  try {
+    const result = await db.query(
+      `SELECT id, first_name, last_name, section 
+       FROM master_list 
+       WHERE in_memoriam IS NOT TRUE
+       ORDER BY last_name, first_name`
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Link transaction to master list entry
+router.put('/:id/link', authenticateAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { master_list_id } = req.body;
+
+    if (!master_list_id) {
+      return res.status(400).json({ error: 'master_list_id is required' });
+    }
+
+    const result = await db.query(
+      `UPDATE ledger SET master_list_id = $1 WHERE id = $2 RETURNING *`,
+      [master_list_id, id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Transaction not found' });
+    }
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Unlink transaction from master list entry
+router.put('/:id/unlink', authenticateAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const result = await db.query(
+      `UPDATE ledger SET master_list_id = NULL WHERE id = $1 RETURNING *`,
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Transaction not found' });
+    }
+
+    res.json(result.rows[0]);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });

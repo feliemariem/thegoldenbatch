@@ -37,10 +37,30 @@ router.get('/', authenticateAdmin, async (req, res) => {
           WHEN u.id IS NOT NULL THEN 'Registered'
           WHEN i.id IS NOT NULL THEN 'Invited'
           ELSE 'Not Invited'
-        END as status
+        END as status,
+        CASE 
+          WHEN m.section = 'Non-Graduate' OR m.in_memoriam = true THEN NULL
+          ELSE COALESCE(ledger_totals.total_paid, 0)
+        END as total_paid,
+        CASE 
+          WHEN m.section = 'Non-Graduate' OR m.in_memoriam = true THEN NULL
+          ELSE 25000 - COALESCE(ledger_totals.total_paid, 0)
+        END as balance,
+        CASE
+          WHEN m.section = 'Non-Graduate' OR m.in_memoriam = true THEN NULL
+          WHEN COALESCE(ledger_totals.total_paid, 0) >= 25000 THEN 'Full'
+          WHEN COALESCE(ledger_totals.total_paid, 0) > 0 THEN 'Partial'
+          ELSE 'Unpaid'
+        END as payment_status
       FROM master_list m
       LEFT JOIN invites i ON LOWER(m.email) = LOWER(i.email)
       LEFT JOIN users u ON LOWER(m.email) = LOWER(u.email)
+      LEFT JOIN (
+        SELECT master_list_id, SUM(deposit) as total_paid
+        FROM ledger
+        WHERE master_list_id IS NOT NULL AND deposit > 0
+        GROUP BY master_list_id
+      ) ledger_totals ON m.id = ledger_totals.master_list_id
     `;
     
     const params = [];
@@ -77,6 +97,23 @@ router.get('/', authenticateAdmin, async (req, res) => {
       LEFT JOIN users u ON LOWER(m.email) = LOWER(u.email)
     `);
     
+    // Get payment stats (graduates only, excluding in memoriam)
+    const paymentStatsResult = await db.query(`
+      SELECT 
+        COUNT(*) as total_graduates,
+        COUNT(CASE WHEN COALESCE(ledger_totals.total_paid, 0) >= 25000 THEN 1 END) as full_paid,
+        COUNT(CASE WHEN COALESCE(ledger_totals.total_paid, 0) > 0 AND COALESCE(ledger_totals.total_paid, 0) < 25000 THEN 1 END) as partial_paid,
+        COUNT(CASE WHEN COALESCE(ledger_totals.total_paid, 0) = 0 THEN 1 END) as unpaid
+      FROM master_list m
+      LEFT JOIN (
+        SELECT master_list_id, SUM(deposit) as total_paid
+        FROM ledger
+        WHERE master_list_id IS NOT NULL AND deposit > 0
+        GROUP BY master_list_id
+      ) ledger_totals ON m.id = ledger_totals.master_list_id
+      WHERE m.section != 'Non-Graduate' AND (m.in_memoriam IS NULL OR m.in_memoriam = false)
+    `);
+    
     // Get sections for dropdown
     const sectionsResult = await db.query(`
       SELECT DISTINCT section FROM master_list ORDER BY section
@@ -84,7 +121,10 @@ router.get('/', authenticateAdmin, async (req, res) => {
     
     res.json({
       entries: result.rows,
-      stats: statsResult.rows[0],
+      stats: {
+        ...statsResult.rows[0],
+        ...paymentStatsResult.rows[0]
+      },
       sections: sectionsResult.rows.map(r => r.section)
     });
   } catch (err) {

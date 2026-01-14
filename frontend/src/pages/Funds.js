@@ -157,7 +157,7 @@ export default function Funds() {
                 <p className="donate-value">307770014898</p>
                 
                 <p className="donate-label" style={{ marginTop: '16px' }}>Account Name(s)</p>
-                <p className="donate-value">NARCISO F. JAVELOSA OR</p>
+                <p className="donate-value">NARCISO F. JAVELOSA or</p>
                 <p className="donate-value">MARY ROSE FRANCES M. UY</p>
               </div>
             </div>

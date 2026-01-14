@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import AnnouncementComposer from '../components/AnnouncementComposer';
 import AccountingDashboard from '../components/AccountingDashboard';
 import PermissionsManager from '../components/PermissionsManager';
+import ScrollableTable from '../components/ScrollableTable';
+import logo from '../images/lasalle.jpg';
 
 export default function AdminDashboard() {
   const { token, user, logout } = useAuth();
@@ -39,10 +41,23 @@ export default function AdminDashboard() {
   const [masterListSections, setMasterListSections] = useState([]);
   const [masterListFilter, setMasterListFilter] = useState('all');
   const [masterListStatusFilter, setMasterListStatusFilter] = useState('all');
+  const [masterListPaymentFilter, setMasterListPaymentFilter] = useState('all');
   const [masterListSearch, setMasterListSearch] = useState('');
   const [masterListUploading, setMasterListUploading] = useState(false);
   const [masterListUploadResult, setMasterListUploadResult] = useState(null);
   const [editingEntry, setEditingEntry] = useState(null);
+  const [showGuide, setShowGuide] = useState(false);
+
+  // Scroll refs
+  const invitesTableRef = useRef(null);
+  const registeredTableRef = useRef(null);
+  const masterListTableRef = useRef(null);
+
+  const scrollToTop = (ref) => {
+    if (ref.current) {
+      ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   useEffect(() => {
     fetchPermissions();
@@ -428,6 +443,18 @@ export default function AdminDashboard() {
       return false;
     }
     
+    // Payment filter (only applies to graduates, not Non-Graduate or In Memoriam)
+    if (masterListPaymentFilter !== 'all') {
+      // Skip non-graduates and in memoriam for payment filter
+      if (entry.section === 'Non-Graduate' || entry.in_memoriam) {
+        return false;
+      }
+      const paymentStatus = (entry.payment_status || 'Unpaid').toLowerCase();
+      if (paymentStatus !== masterListPaymentFilter.toLowerCase()) {
+        return false;
+      }
+    }
+    
     // Name search
     if (!masterListSearch.trim()) return true;
     const search = masterListSearch.toLowerCase().trim();
@@ -540,13 +567,94 @@ export default function AdminDashboard() {
   return (
     <div className="container admin-container">
       <div className="card">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
+          <img src={logo} alt="La Salle" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
+          <h2 style={{
+            background: 'linear-gradient(135deg, #CFB53B 0%, #F5E6A3 50%, #CFB53B 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            fontSize: '1.1rem',
+            fontWeight: '700',
+            letterSpacing: '0.15em',
+            textTransform: 'uppercase',
+            margin: 0
+          }}>The Golden Batch</h2>
+        </div>
         <p style={{color: '#666', marginBottom: '4px', fontSize: '0.9rem'}}>Welcome, {user?.first_name || 'Admin'}!</p>
         <div className="header-row">
           <h1>Admin Dashboard</h1>
-          <button onClick={handleLogout} className="btn-link">
-            Logout
-          </button>
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+            <button
+              onClick={() => setShowGuide(!showGuide)}
+              style={{
+                background: 'none',
+                border: '1px solid rgba(207, 181, 59, 0.3)',
+                borderRadius: '8px',
+                padding: '6px 12px',
+                color: '#CFB53B',
+                cursor: 'pointer',
+                fontSize: '0.8rem'
+              }}
+            >
+              {showGuide ? '✕ Hide' : '❓ Guide'}
+            </button>
+            <button onClick={handleLogout} className="btn-link">
+              Logout
+            </button>
+          </div>
         </div>
+
+        {showGuide && (
+          <div style={{
+            background: 'var(--card-bg)',
+            border: '1px solid rgba(207, 181, 59, 0.3)',
+            borderRadius: '12px',
+            padding: '20px',
+            marginBottom: '24px',
+            fontSize: '0.9rem',
+            lineHeight: '1.6',
+            color: '#666'
+          }}>
+            <h3 style={{ color: '#006633', marginBottom: '16px', fontSize: '1rem' }}>📖 Admin Guide</h3>
+            
+            <div style={{ marginBottom: '16px' }}>
+              <strong style={{ color: '#006633' }}>Registry Mode:</strong>
+              <ul style={{ margin: '8px 0 0 20px' }}>
+                <li><strong style={{ color: '#006633' }}>Invites</strong> — Add batchmates and send them registration links via email</li>
+                <li><strong style={{ color: '#006633' }}>Registered</strong> — View who has signed up and their RSVP status (Going/Maybe/Not Going)</li>
+                <li><strong style={{ color: '#006633' }}>Master List</strong> — Track all batchmates, their invite status, and payment progress toward ₱25k</li>
+              </ul>
+            </div>
+
+            <div style={{ marginBottom: '16px' }}>
+              <strong style={{ color: '#006633' }}>Announce Mode:</strong>
+              <ul style={{ margin: '8px 0 0 20px' }}>
+                <li>Send email announcements to registered batchmates (filter by RSVP status)</li>
+              </ul>
+            </div>
+
+            <div style={{ marginBottom: '16px' }}>
+              <strong style={{ color: '#006633' }}>Accounting Mode:</strong>
+              <ul style={{ margin: '8px 0 0 20px' }}>
+                <li>Record deposits (contributions) and withdrawals (expenses)</li>
+                <li>Link payments to batchmates — this updates their Payment status in Master List</li>
+                <li>Upload receipts for each transaction</li>
+              </ul>
+            </div>
+
+            <div>
+              <strong style={{ color: '#006633' }}>Permissions Mode:</strong>
+              <ul style={{ margin: '8px 0 0 20px' }}>
+                <li>Control what each admin can view/edit (Super Admins only)</li>
+              </ul>
+            </div>
+
+            <p style={{ marginTop: '16px', fontSize: '0.85rem' }}>
+              💡 Tip: Use the filters and search in each tab to quickly find what you need.
+            </p>
+          </div>
+        )}
 
         {/* Dashboard Mode Toggle */}
         <div style={{
@@ -801,14 +909,21 @@ export default function AdminDashboard() {
             )}
 
             {/* Invites Table */}
-            <div className="users-section">
+            <div className="users-section" ref={invitesTableRef}>
               <div className="section-header">
                 <h3>All Invites ({invites.length})</h3>
-                {(isSuperAdmin || permissions?.invites_export) && (
-                <button onClick={exportInvitesCSV} className="btn-secondary">
-                  Export CSV
-                </button>
-                )}
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  {filteredInvites.length > 10 && (
+                    <button onClick={() => scrollToTop(invitesTableRef)} className="btn-secondary" title="Scroll to top">
+                      ↑ Top
+                    </button>
+                  )}
+                  {(isSuperAdmin || permissions?.invites_export) && (
+                  <button onClick={exportInvitesCSV} className="btn-secondary">
+                    Export CSV
+                  </button>
+                  )}
+                </div>
               </div>
 
               <div className="search-bar">
@@ -826,7 +941,7 @@ export default function AdminDashboard() {
               </div>
 
               {filteredInvites.length > 0 ? (
-                <div className="table-wrapper">
+                <ScrollableTable>
                   <table>
                     <thead>
                       <tr>
@@ -905,7 +1020,7 @@ export default function AdminDashboard() {
                                   <span className={`rsvp-badge ${invite.used ? 'going' : 'pending'}`} style={{minWidth: '120px', textAlign: 'center'}}>
                                     {invite.used ? 'Registered ✓' : 'Pending'}
                                   </span>
-                                  {invite.email_sent && <span>✉️</span>}
+                                  {invite.email_sent && <span>✉️</span>}
                                 </span>
                               </td>
                               {(isSuperAdmin || permissions?.invites_link) && (
@@ -978,7 +1093,7 @@ export default function AdminDashboard() {
                       ))}
                     </tbody>
                   </table>
-                </div>
+                </ScrollableTable>
               ) : (
                 <p className="no-data">{inviteSearch ? 'No matching invites' : 'No invites yet'}</p>
               )}
@@ -988,12 +1103,19 @@ export default function AdminDashboard() {
 
         {/* Registered Tab */}
         {activeTab === 'registered' && (
-          <div className="users-section">
+          <div className="users-section" ref={registeredTableRef}>
             <div className="section-header">
               <h3>Registered Alumni ({data?.users?.length || 0})</h3>
-              <button onClick={exportToCSV} className="btn-secondary">
-                Export CSV
-              </button>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                {filteredUsers.length > 10 && (
+                  <button onClick={() => scrollToTop(registeredTableRef)} className="btn-secondary" title="Scroll to top">
+                    ↑ Top
+                  </button>
+                )}
+                <button onClick={exportToCSV} className="btn-secondary">
+                  Export CSV
+                </button>
+              </div>
             </div>
 
             <div className="filter-row">
@@ -1017,7 +1139,7 @@ export default function AdminDashboard() {
             </div>
 
             {filteredUsers.length > 0 ? (
-              <div className="table-wrapper">
+              <ScrollableTable>
                 <table>
                   <thead>
                     <tr>
@@ -1056,7 +1178,7 @@ export default function AdminDashboard() {
                     ))}
                   </tbody>
                 </table>
-              </div>
+              </ScrollableTable>
             ) : (
               <p className="no-data">{registeredSearch ? 'No matching alumni' : 'No registrations yet'}</p>
             )}
@@ -1065,18 +1187,48 @@ export default function AdminDashboard() {
 
         {/* Master List Tab */}
         {activeTab === 'masterlist' && (
-          <div className="users-section">
+          <div className="users-section" ref={masterListTableRef}>
             {/* Stats */}
             {masterListStats && (
-              <div className="percentage-stats">
-                <div className="percentage-box">
-                  <span className="percentage-label">Master List Status:</span>
-                  <div className="percentage-grid">
-                    <span className="percentage-item going">{masterListStats.registered || 0} Registered</span>
-                    <span className="percentage-item maybe">{masterListStats.invited || 0} Invited</span>
-                    <span className="percentage-item not-going">{masterListStats.not_invited || 0} Not Invited</span>
-                    <span className="percentage-item memoriam">{masterListStats.in_memoriam || 0} In Memoriam ✝️</span>
-                    <span className="percentage-item" style={{color: '#9ca3af', background: 'rgba(156, 163, 175, 0.1)'}}>{masterListStats.unreachable || 0} Unreachable</span>
+              <div style={{ 
+                display: 'flex', 
+                gap: '16px', 
+                marginBottom: '20px',
+                flexWrap: 'wrap',
+                fontSize: '0.85rem',
+                color: '#666'
+              }}>
+                <div style={{ 
+                  background: 'rgba(0,102,51,0.08)',
+                  border: '1px solid rgba(0,102,51,0.2)',
+                  padding: '12px 16px', 
+                  borderRadius: '8px',
+                  flex: '1',
+                  minWidth: '280px'
+                }}>
+                  <div style={{ color: '#006633', marginBottom: '8px', fontSize: '0.7rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Master List Status</div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
+                    <span><strong style={{color: '#006633'}}>{masterListStats.registered || 0}</strong> Registered</span>
+                    <span><strong style={{color: '#006633'}}>{masterListStats.invited || 0}</strong> Invited</span>
+                    <span><strong style={{color: '#006633'}}>{masterListStats.not_invited || 0}</strong> Not Invited</span>
+                    <span><strong style={{color: '#006633'}}>{masterListStats.in_memoriam || 0}</strong> In Memoriam</span>
+                    <span><strong style={{color: '#006633'}}>{masterListStats.unreachable || 0}</strong> Unreachable</span>
+                  </div>
+                </div>
+                <div style={{ 
+                  background: 'rgba(0,102,51,0.08)',
+                  border: '1px solid rgba(0,102,51,0.2)',
+                  padding: '12px 16px', 
+                  borderRadius: '8px',
+                  flex: '1',
+                  minWidth: '280px'
+                }}>
+                  <div style={{ color: '#006633', marginBottom: '8px', fontSize: '0.7rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Payment Status (Graduates)</div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
+                    <span><strong style={{color: '#28a745'}}>{parseInt(masterListStats.full_paid) || 0}</strong> Full ({parseInt(masterListStats.total_graduates) ? Math.round((parseInt(masterListStats.full_paid) / parseInt(masterListStats.total_graduates)) * 100) : 0}%)</span>
+                    <span><strong style={{color: '#CFB53B'}}>{parseInt(masterListStats.partial_paid) || 0}</strong> Partial ({parseInt(masterListStats.total_graduates) ? Math.round((parseInt(masterListStats.partial_paid) / parseInt(masterListStats.total_graduates)) * 100) : 0}%)</span>
+                    <span><strong style={{color: '#dc3545'}}>{parseInt(masterListStats.unpaid) || 0}</strong> Unpaid ({parseInt(masterListStats.total_graduates) ? Math.round((parseInt(masterListStats.unpaid) / parseInt(masterListStats.total_graduates)) * 100) : 0}%)</span>
+                    <span>/ {parseInt(masterListStats.total_graduates) || 0} total</span>
                   </div>
                 </div>
               </div>
@@ -1120,11 +1272,18 @@ export default function AdminDashboard() {
             {/* Filter and Search */}
             <div className="section-header">
               <h3>Batch Directory ({filteredMasterList.length})</h3>
-              {(isSuperAdmin || permissions?.masterlist_export) && (
-              <button onClick={exportMasterListCSV} className="btn-secondary">
-                Export CSV
-              </button>
-              )}
+              <div style={{ display: 'flex', gap: '8px' }}>
+                {filteredMasterList.length > 10 && (
+                  <button onClick={() => scrollToTop(masterListTableRef)} className="btn-secondary" title="Scroll to top">
+                    ↑ Top
+                  </button>
+                )}
+                {(isSuperAdmin || permissions?.masterlist_export) && (
+                <button onClick={exportMasterListCSV} className="btn-secondary">
+                  Export CSV
+                </button>
+                )}
+              </div>
             </div>
 
             <div className="filter-row">
@@ -1147,6 +1306,16 @@ export default function AdminDashboard() {
                 <option value="in memoriam">In Memoriam</option>
                 <option value="unreachable">Unreachable</option>
               </select>
+              <select 
+                value={masterListPaymentFilter} 
+                onChange={(e) => setMasterListPaymentFilter(e.target.value)}
+                style={{width: '150px'}}
+              >
+                <option value="all">All Payment</option>
+                <option value="full">Full (Paid)</option>
+                <option value="partial">Partial</option>
+                <option value="unpaid">Unpaid</option>
+              </select>
               <input
                 type="text"
                 placeholder="Search by name..."
@@ -1154,11 +1323,34 @@ export default function AdminDashboard() {
                 onChange={(e) => setMasterListSearch(e.target.value)}
                 className="search-input"
               />
+              {(masterListFilter !== 'all' || masterListStatusFilter !== 'all' || masterListPaymentFilter !== 'all' || masterListSearch) && (
+                <button
+                  onClick={() => {
+                    setMasterListFilter('all');
+                    setMasterListStatusFilter('all');
+                    setMasterListPaymentFilter('all');
+                    setMasterListSearch('');
+                    fetchMasterList('all');
+                  }}
+                  style={{
+                    background: 'rgba(220, 53, 69, 0.1)',
+                    border: '1px solid rgba(220, 53, 69, 0.3)',
+                    borderRadius: '8px',
+                    padding: '8px 12px',
+                    color: '#dc3545',
+                    cursor: 'pointer',
+                    fontSize: '0.85rem',
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  ✕ Clear
+                </button>
+              )}
             </div>
 
             {/* Table */}
             {filteredMasterList.length > 0 ? (
-              <div className="table-wrapper">
+              <ScrollableTable>
                 <table>
                   <thead>
                     <tr>
@@ -1167,6 +1359,8 @@ export default function AdminDashboard() {
                       <th>Nickname</th>
                       <th>Email</th>
                       <th>Status</th>
+                      <th>Payment</th>
+                      <th style={{fontSize: '0.85rem'}}>Balance<br/><span style={{fontWeight: 'normal', color: '#888', fontSize: '0.75rem'}}>(₱25k target)</span></th>
                       {(isSuperAdmin || permissions?.masterlist_edit) && <th>Actions</th>}
                     </tr>
                   </thead>
@@ -1237,6 +1431,8 @@ export default function AdminDashboard() {
                                 </label>
                               </div>
                             </td>
+                            <td style={{color: '#666', textAlign: 'center'}}>-</td>
+                            <td style={{color: '#666', textAlign: 'center'}}>-</td>
                             {(isSuperAdmin || permissions?.masterlist_edit) && (
                             <td>
                               <div style={{display: 'flex', gap: '8px', whiteSpace: 'nowrap'}}>
@@ -1279,6 +1475,35 @@ export default function AdminDashboard() {
                                 {entry.status === 'In Memoriam' ? 'IN MEMORIAM ✝️' : entry.status === 'Unreachable' ? 'UNREACHABLE' : entry.status}
                               </span>
                             </td>
+                            <td>
+                              {entry.in_memoriam || entry.section === 'Non-Graduate' ? (
+                                <span style={{color: '#666'}}>-</span>
+                              ) : (
+                                <span style={{
+                                  padding: '4px 10px',
+                                  borderRadius: '12px',
+                                  fontSize: '0.8rem',
+                                  fontWeight: '600',
+                                  background: entry.payment_status === 'Full' ? 'rgba(40, 167, 69, 0.15)' : 
+                                             entry.payment_status === 'Partial' ? 'rgba(207, 181, 59, 0.15)' : 
+                                             'rgba(220, 53, 69, 0.15)',
+                                  color: entry.payment_status === 'Full' ? '#28a745' : 
+                                         entry.payment_status === 'Partial' ? '#CFB53B' : 
+                                         '#dc3545'
+                                }}>
+                                  {entry.payment_status || 'Unpaid'}
+                                </span>
+                              )}
+                            </td>
+                            <td style={{whiteSpace: 'nowrap', fontSize: '0.9rem'}}>
+                              {entry.in_memoriam || entry.section === 'Non-Graduate' ? (
+                                <span style={{color: '#666'}}>-</span>
+                              ) : entry.payment_status === 'Full' ? (
+                                <span style={{color: '#28a745', fontWeight: '600'}}>Paid</span>
+                              ) : (
+                                <span style={{color: 'var(--text-primary)'}}>₱{parseFloat(entry.balance || 25000).toLocaleString()}</span>
+                              )}
+                            </td>
                             {(isSuperAdmin || permissions?.masterlist_edit) && (
                             <td>
                               <button onClick={() => setEditingEntry(entry.id)} className="btn-link">
@@ -1292,7 +1517,7 @@ export default function AdminDashboard() {
                     ))}
                   </tbody>
                 </table>
-              </div>
+              </ScrollableTable>
             ) : (
               <p className="no-data">{masterListSearch ? 'No matching entries' : 'No master list entries.'}</p>
             )}
