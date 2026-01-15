@@ -10,6 +10,8 @@ const masterListRoutes = require('./routes/masterlist');
 const donationRoutes = require('./routes/donations');
 const permissionRoutes = require('./routes/permissions');
 const ledgerRoutes = require('./routes/ledger');
+const meetingRoutes = require('./routes/meetings');
+const announcementRoutes = require('./routes/announcements');
 
 const app = express();
 
@@ -26,6 +28,8 @@ app.use('/api/master-list', masterListRoutes);
 app.use('/api/donations', donationRoutes);
 app.use('/api/permissions', permissionRoutes);
 app.use('/api/ledger', ledgerRoutes);
+app.use('/api/meetings', meetingRoutes);
+app.use('/api/announcements', announcementRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

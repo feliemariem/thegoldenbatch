@@ -9,15 +9,21 @@ const toTitleCase = (str) => {
   return str.trim().toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
 };
 
-// Get current user's profile with RSVP
+// Get current user's profile with RSVP, section, and payment status
 router.get('/', authenticateToken, async (req, res) => {
   try {
     const userResult = await db.query(
       `SELECT u.id, u.email, u.first_name, u.last_name, u.birthday, 
               u.mobile, u.address, u.city, u.country, u.occupation, u.company,
-              r.status as rsvp_status
+              u.profile_photo,
+              r.status as rsvp_status,
+              m.id as master_list_id,
+              m.section,
+              m.nickname
        FROM users u
        LEFT JOIN rsvps r ON u.id = r.user_id
+       LEFT JOIN invites i ON u.invite_id = i.id
+       LEFT JOIN master_list m ON i.master_list_id = m.id
        WHERE u.id = $1`,
       [req.user.id]
     );
@@ -26,7 +32,26 @@ router.get('/', authenticateToken, async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    res.json(userResult.rows[0]);
+    const user = userResult.rows[0];
+
+    // Get payment total if user is linked to master_list
+    let totalPaid = 0;
+    if (user.master_list_id) {
+      const paymentResult = await db.query(
+        `SELECT COALESCE(SUM(deposit), 0) as total_paid
+         FROM ledger
+         WHERE master_list_id = $1`,
+        [user.master_list_id]
+      );
+      totalPaid = parseFloat(paymentResult.rows[0].total_paid) || 0;
+    }
+
+    res.json({
+      ...user,
+      total_paid: totalPaid,
+      amount_due: 25000,
+      is_graduate: user.section && user.section !== 'Non-Graduate'
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -92,6 +117,76 @@ router.put('/', authenticateToken, async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Update RSVP only
+router.put('/rsvp', authenticateToken, async (req, res) => {
+  try {
+    const { status } = req.body;
+
+    if (!status || !['going', 'not_going', 'maybe'].includes(status)) {
+      return res.status(400).json({ error: 'Invalid RSVP status' });
+    }
+
+    await db.query(
+      `INSERT INTO rsvps (user_id, status, updated_at)
+       VALUES ($1, $2, CURRENT_TIMESTAMP)
+       ON CONFLICT (user_id) 
+       DO UPDATE SET status = $2, updated_at = CURRENT_TIMESTAMP`,
+      [req.user.id, status]
+    );
+
+    res.json({ status });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Upload profile photo
+const { upload, uploadToCloudinary, deleteFromCloudinary } = require('../utils/cloudinary');
+
+router.post('/photo', authenticateToken, upload.single('photo'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    // Get current photo to delete if exists
+    const current = await db.query(
+      'SELECT profile_photo FROM users WHERE id = $1',
+      [req.user.id]
+    );
+
+    // Upload to Cloudinary
+    const result = await uploadToCloudinary(req.file.buffer, 'profile-photos');
+
+    // Update database
+    await db.query(
+      'UPDATE users SET profile_photo = $1 WHERE id = $2',
+      [result.secure_url, req.user.id]
+    );
+
+    res.json({ profile_photo: result.secure_url });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to upload photo' });
+  }
+});
+
+// Delete profile photo
+router.delete('/photo', authenticateToken, async (req, res) => {
+  try {
+    await db.query(
+      'UPDATE users SET profile_photo = NULL WHERE id = $1',
+      [req.user.id]
+    );
+
+    res.json({ message: 'Photo removed' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to remove photo' });
   }
 });
 

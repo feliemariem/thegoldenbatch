@@ -14,6 +14,7 @@ export default function PermissionsManager({ token }) {
     'invites_link',
     'invites_upload',
     'invites_export',
+    'registered_export',
     'masterlist_edit',
     'masterlist_upload',
     'masterlist_export',
@@ -21,7 +22,9 @@ export default function PermissionsManager({ token }) {
     'announcements_send',
     'accounting_view',
     'accounting_edit',
-    'accounting_export'
+    'accounting_export',
+    'minutes_view',
+    'minutes_edit'
   ];
 
   const permissionLabels = {
@@ -29,6 +32,7 @@ export default function PermissionsManager({ token }) {
     invites_link: 'Link Invites to Master List',
     invites_upload: 'Upload CSV (Invites)',
     invites_export: 'Export CSV (Invites)',
+    registered_export: 'Export CSV (Registered)',
     masterlist_edit: 'Edit Master List entries',
     masterlist_upload: 'Upload CSV (Master List)',
     masterlist_export: 'Export CSV (Master List)',
@@ -36,7 +40,9 @@ export default function PermissionsManager({ token }) {
     announcements_send: 'Send Announcements',
     accounting_view: 'Show Accounting tab',
     accounting_edit: 'Add/Edit Donations',
-    accounting_export: 'Export CSV (Donations)'
+    accounting_export: 'Export CSV (Donations)',
+    minutes_view: 'Show Minutes tab',
+    minutes_edit: 'Create/Edit Minutes'
   };
 
   useEffect(() => {
@@ -206,7 +212,7 @@ export default function PermissionsManager({ token }) {
               <div style={{ marginBottom: '20px' }}>
                 <h4 className="perm-section-title">REGISTRY</h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingLeft: '12px' }}>
-                  {['invites_add', 'invites_link', 'invites_upload', 'invites_export', 'masterlist_edit', 'masterlist_upload', 'masterlist_export'].map(perm => (
+                  {['invites_add', 'invites_link', 'invites_upload', 'invites_export', 'registered_export', 'masterlist_edit', 'masterlist_upload', 'masterlist_export'].map(perm => (
                     <label key={perm} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
                       <input
                         type="checkbox"
@@ -243,6 +249,24 @@ export default function PermissionsManager({ token }) {
                 <h4 className="perm-section-title">ACCOUNTING</h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingLeft: '12px' }}>
                   {['accounting_view', 'accounting_edit', 'accounting_export'].map(perm => (
+                    <label key={perm} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+                      <input
+                        type="checkbox"
+                        checked={permissions[perm] || false}
+                        onChange={() => handlePermissionChange(perm)}
+                        style={{ width: '16px', height: '16px' }}
+                      />
+                      <span className="perm-label">{permissionLabels[perm]}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Minutes Permissions */}
+              <div style={{ marginBottom: '20px' }}>
+                <h4 className="perm-section-title">MINUTES</h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingLeft: '12px' }}>
+                  {['minutes_view', 'minutes_edit'].map(perm => (
                     <label key={perm} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
                       <input
                         type="checkbox"

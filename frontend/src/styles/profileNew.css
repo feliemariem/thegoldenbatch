@@ -1,0 +1,930 @@
+/* ========================================
+   PROFILE STYLES - New Card Layout
+   User Profile Page
+   ======================================== */
+
+/* Container */
+.profile-container {
+  min-height: 100vh;
+  background: linear-gradient(165deg, #0a0f0d 0%, #1a2520 50%, #0d1210 100%);
+}
+
+.profile-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  color: #a0a0a0;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(207, 181, 59, 0.2);
+  border-top-color: #CFB53B;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Header */
+.profile-header {
+  background: rgba(0, 0, 0, 0.4);
+  border-bottom: 1px solid rgba(207, 181, 59, 0.15);
+  padding: 16px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(10px);
+}
+
+.profile-header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.profile-logo-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.profile-logo {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(207, 181, 59, 0.3);
+}
+
+.profile-title h1 {
+  font-size: 1.2rem;
+  color: #CFB53B;
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: 3px;
+}
+
+.profile-subtitle {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* Navigation */
+.profile-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-link {
+  padding: 8px 16px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.nav-link:hover {
+  color: #CFB53B;
+  background: rgba(207, 181, 59, 0.1);
+}
+
+.nav-link-badge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-badge {
+  background: #CFB53B;
+  color: #1a1a2e;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 10px;
+  min-width: 18px;
+  text-align: center;
+}
+
+.logout-btn {
+  color: #CFB53B;
+}
+
+.logout-btn:hover {
+  color: #e0c84a;
+  background: rgba(207, 181, 59, 0.1);
+}
+
+/* Main Content */
+.profile-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+/* Welcome Banner */
+.profile-welcome {
+  background: linear-gradient(135deg, rgba(0, 102, 51, 0.3) 0%, rgba(0, 102, 51, 0.1) 100%);
+  border: 1px solid rgba(0, 102, 51, 0.3);
+  border-radius: 16px;
+  padding: 32px;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.welcome-content h2 {
+  color: #CFB53B;
+  font-size: 1.8rem;
+  margin: 0 0 8px 0;
+  font-weight: 600;
+}
+
+.welcome-content p {
+  color: #b0b0b0;
+  font-size: 1.05rem;
+  margin: 0;
+}
+
+/* Message */
+.profile-message {
+  padding: 12px 20px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.profile-message.success {
+  background: rgba(40, 167, 69, 0.15);
+  border: 1px solid rgba(40, 167, 69, 0.3);
+  color: #28a745;
+}
+
+/* Profile Grid */
+.profile-grid {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 24px;
+}
+
+.profile-left,
+.profile-right {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Profile Cards */
+.profile-card {
+  background: linear-gradient(165deg, rgba(30, 40, 35, 0.95) 0%, rgba(20, 28, 24, 0.98) 100%);
+  border: 1px solid rgba(207, 181, 59, 0.12);
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.card-header h3 {
+  color: #e0e0e0;
+  font-size: 1.1rem;
+  margin: 0;
+  font-weight: 600;
+}
+
+/* RSVP Card */
+.event-details {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.event-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(135deg, rgba(0, 102, 51, 0.25) 0%, rgba(0, 102, 51, 0.15) 100%);
+  border: 1px solid rgba(0, 102, 51, 0.3);
+  border-radius: 12px;
+  padding: 16px 20px;
+  min-width: 80px;
+}
+
+.event-day {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #CFB53B;
+  line-height: 1;
+}
+
+.event-month {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #e0e0e0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.event-year {
+  font-size: 0.75rem;
+  color: #808080;
+}
+
+.event-info {
+  flex: 1;
+}
+
+.event-name {
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 6px 0;
+}
+
+.event-location {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.rsvp-section {
+  text-align: center;
+}
+
+.rsvp-label {
+  color: #a0a0a0;
+  font-size: 0.9rem;
+  margin: 0 0 16px 0;
+}
+
+.rsvp-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.btn-rsvp {
+  padding: 12px 20px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #909090;
+}
+
+.btn-rsvp:hover:not(:disabled) {
+  border-color: rgba(207, 181, 59, 0.4);
+  color: #c0c0c0;
+}
+
+.btn-rsvp.active.going {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  border-color: #059669;
+  color: white;
+}
+
+.btn-rsvp.active.maybe {
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+  border-color: #d97706;
+  color: white;
+}
+
+.btn-rsvp.active.not-going {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  border-color: #dc2626;
+  color: white;
+}
+
+.btn-rsvp:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Payment Card */
+.payment-badge {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.payment-badge.full {
+  background: rgba(40, 167, 69, 0.2);
+  color: #28a745;
+}
+
+.payment-badge.partial {
+  background: rgba(207, 181, 59, 0.2);
+  color: #CFB53B;
+}
+
+.payment-badge.unpaid {
+  background: rgba(220, 53, 69, 0.2);
+  color: #dc3545;
+}
+
+.payment-progress {
+  margin-bottom: 20px;
+}
+
+.progress-bar {
+  height: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #006633 0%, #28a745 100%);
+  border-radius: 6px;
+  transition: width 0.5s ease;
+}
+
+.payment-amounts {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+  font-size: 1.1rem;
+}
+
+.payment-amounts .paid {
+  color: #CFB53B;
+  font-weight: 600;
+}
+
+.payment-amounts .total {
+  color: #707070;
+}
+
+.payment-remaining {
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.payment-remaining p {
+  color: #a0a0a0;
+  font-size: 0.9rem;
+  margin: 0 0 12px 0;
+}
+
+.payment-remaining strong {
+  color: #e0e0e0;
+}
+
+.payment-link {
+  color: #CFB53B;
+  font-size: 0.9rem;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.payment-link:hover {
+  text-decoration: underline;
+}
+
+.payment-complete {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.payment-complete .checkmark {
+  width: 32px;
+  height: 32px;
+  background: rgba(40, 167, 69, 0.2);
+  color: #28a745;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.payment-complete p {
+  color: #28a745;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* Donate Card (Non-Graduates) */
+.donate-text {
+  color: #a0a0a0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0 0 20px 0;
+}
+
+.btn-donate {
+  display: inline-block;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #006633 0%, #004d26 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.btn-donate:hover {
+  background: linear-gradient(135deg, #007a3d 0%, #006633 100%);
+  transform: translateY(-1px);
+}
+
+/* Info Card */
+.btn-edit {
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px solid rgba(207, 181, 59, 0.3);
+  color: #CFB53B;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-edit:hover {
+  background: rgba(207, 181, 59, 0.1);
+  border-color: #CFB53B;
+}
+
+/* Profile Photo Section */
+.profile-photo-section {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.profile-photo-container {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 3px solid rgba(207, 181, 59, 0.3);
+}
+
+.profile-photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-photo-initials {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(0, 102, 51, 0.4) 0%, rgba(0, 102, 51, 0.2) 100%);
+  color: #CFB53B;
+  font-size: 2rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.profile-photo-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.btn-photo-upload {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, rgba(207, 181, 59, 0.2) 0%, rgba(207, 181, 59, 0.1) 100%);
+  border: 1px solid rgba(207, 181, 59, 0.3);
+  color: #CFB53B;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-photo-upload:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(207, 181, 59, 0.3) 0%, rgba(207, 181, 59, 0.2) 100%);
+  border-color: #CFB53B;
+}
+
+.btn-photo-upload:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-photo-remove {
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px solid rgba(220, 53, 69, 0.3);
+  color: #dc3545;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-photo-remove:hover {
+  background: rgba(220, 53, 69, 0.1);
+  border-color: #dc3545;
+}
+
+.info-display .info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-item.full-width {
+  grid-column: 1 / -1;
+}
+
+.info-label {
+  font-size: 0.75rem;
+  color: #707070;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+.info-value {
+  color: #d0d0d0;
+  font-size: 0.95rem;
+}
+
+/* Edit Form */
+.edit-form .form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.edit-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.edit-form .form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.edit-form label {
+  font-size: 0.8rem;
+  color: #909090;
+  font-weight: 500;
+}
+
+.edit-form input {
+  padding: 12px 14px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #e0e0e0;
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease;
+}
+
+.edit-form input:focus {
+  outline: none;
+  border-color: rgba(207, 181, 59, 0.5);
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.btn-save {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #CFB53B 0%, #b8a235 100%);
+  color: #1a1a2e;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-save:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(207, 181, 59, 0.3);
+}
+
+.btn-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-cancel {
+  padding: 12px 24px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #a0a0a0;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-cancel:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #c0c0c0;
+}
+
+/* Quick Links */
+.quick-links-card h3 {
+  color: #e0e0e0;
+  font-size: 1.1rem;
+  margin: 0 0 16px 0;
+  font-weight: 600;
+}
+
+.quick-links {
+  display: flex;
+  gap: 12px;
+}
+
+.quick-link {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.quick-link:hover {
+  background: rgba(207, 181, 59, 0.1);
+  border-color: rgba(207, 181, 59, 0.3);
+  transform: translateY(-2px);
+}
+
+.quick-link-icon {
+  font-size: 1.5rem;
+}
+
+.quick-link span:last-child {
+  color: #b0b0b0;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.quick-link:hover span:last-child {
+  color: #CFB53B;
+}
+
+/* Footer */
+.profile-footer {
+  text-align: center;
+  padding: 40px 0 20px 0;
+  margin-top: 20px;
+}
+
+.profile-footer p {
+  color: #707070;
+  font-size: 0.9rem;
+  margin: 0 0 12px 0;
+}
+
+.fb-link {
+  color: #CFB53B;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.fb-link:hover {
+  text-decoration: underline;
+}
+
+/* Mobile Responsive */
+@media (max-width: 900px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .profile-left,
+  .profile-right {
+    order: unset;
+  }
+}
+
+@media (max-width: 768px) {
+  .profile-header-content {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .profile-nav {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .nav-link {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+  
+  .profile-main {
+    padding: 20px 16px;
+  }
+  
+  .profile-welcome {
+    padding: 24px 20px;
+  }
+  
+  .welcome-content h2 {
+    font-size: 1.4rem;
+  }
+  
+  .profile-card {
+    padding: 20px;
+  }
+  
+  .event-details {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .rsvp-buttons {
+    flex-direction: column;
+  }
+  
+  .btn-rsvp {
+    width: 100%;
+  }
+  
+  .info-display .info-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .edit-form .form-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .edit-form .form-group.full-width {
+    grid-column: 1;
+  }
+  
+  .quick-links {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-logo-section {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .profile-title h1 {
+    font-size: 1rem;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .btn-save,
+  .btn-cancel {
+    width: 100%;
+  }
+}
+
+/* Light mode overrides */
+[data-theme="light"] .profile-container {
+  background: linear-gradient(165deg, #f5f5f0 0%, #e8e8e0 50%, #f0f0e8 100%);
+}
+
+[data-theme="light"] .profile-header {
+  background: rgba(255, 255, 255, 0.9);
+  border-bottom: 1px solid rgba(0, 102, 51, 0.15);
+}
+
+[data-theme="light"] .profile-card {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 102, 51, 0.12);
+}
+
+[data-theme="light"] .card-header h3 {
+  color: #1a1a1a;
+}
+
+[data-theme="light"] .event-name {
+  color: #1a1a1a !important;
+}
+
+[data-theme="light"] .event-location {
+  color: #555 !important;
+}
+
+[data-theme="light"] .rsvp-label {
+  color: #555 !important;
+}
+
+[data-theme="light"] .profile-subtitle {
+  color: #555 !important;
+}
+
+[data-theme="light"] .welcome-content p {
+  color: #555;
+}
+
+[data-theme="light"] .info-label {
+  color: #666;
+}
+
+[data-theme="light"] .info-value {
+  color: #1a1a1a;
+}
+
+[data-theme="light"] .donate-text {
+  color: #555;
+}
+
+[data-theme="light"] .payment-remaining p {
+  color: #555;
+}
+
+[data-theme="light"] .payment-remaining strong {
+  color: #1a1a1a;
+}
+
+[data-theme="light"] .btn-rsvp {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.15);
+  color: #555;
+}
+
+[data-theme="light"] .btn-rsvp:hover:not(:disabled) {
+  border-color: #006633;
+  color: #006633;
+}
+
+[data-theme="light"] .edit-form input {
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  color: #1a1a1a;
+}
+
+[data-theme="light"] .edit-form label {
+  color: #555;
+}
+
+[data-theme="light"] .profile-footer p {
+  color: #666;
+}

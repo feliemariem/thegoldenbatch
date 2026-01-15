@@ -106,90 +106,7 @@ export default function Landing() {
         </p>
       </section>
 
-      {/* Pledge/Donate Section */}
-      <section className="pledge-section">
-        <h2>Support the Reunion</h2>
-        <p>Help make our 25th reunion unforgettable! Your contributions will go towards venue, food, and activities.</p>
-        
-        <div className="pledge-options">
-          <div className="pledge-card">
-            <h3>Bank Transfer</h3>
-            <div className="bank-details">
-              <p><strong>PNB (Philippine National Bank)</strong></p>
-              <p className="bank-label">Account Number</p>
-              <p className="bank-value">307770014898</p>
-              <p className="bank-label" style={{ marginTop: '12px' }}>Account Name(s)</p>
-              <p className="bank-value">NARCISO F. JAVELOSA OR<br/>MARY ROSE FRANCES M. UY</p>
-            </div>
-          </div>
 
-          <div className="pledge-card">
-            <h3>GCash</h3>
-            <div className="qr-placeholder">
-              <p className="bank-label">Account Name</p>
-              <p className="bank-value">[Name]</p>
-              <p className="bank-label" style={{ marginTop: '12px' }}>Mobile Number</p>
-              <p className="gcash-number">0917-XXX-XXXX</p>
-              {/* Placeholder for QR code */}
-              <div className="qr-code" style={{ marginTop: '16px' }}>
-                <div style={{
-                  width: '120px',
-                  height: '120px',
-                  background: '#f0f0f0',
-                  borderRadius: '8px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#999',
-                  fontSize: '0.8rem'
-                }}>
-                  QR Code
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* International Transfers - Separate Section */}
-        <div className="intl-transfers-card">
-          <h3>For International Transfers</h3>
-          <div className="intl-transfers-content">
-            <div className="intl-branch-info">
-              <p className="intl-branch-name">PNB Bacolod Lacson Branch</p>
-              <p className="intl-branch-address">
-                10th Lacson Street<br/>
-                Bacolod City, Negros Occidental 6100
-              </p>
-              <p className="intl-branch-tel">Tel: (63) (034) 432-0605 / 434-8007</p>
-            </div>
-            <div className="intl-codes">
-              <div className="intl-row">
-                <span className="intl-label">SWIFT Code</span>
-                <span className="intl-value">PNBMPHMM</span>
-              </div>
-              <div className="intl-row">
-                <span className="intl-label">Routing No.</span>
-                <span className="intl-value">040080019</span>
-              </div>
-              <div className="intl-row">
-                <span className="intl-label">Email</span>
-                <span className="intl-value intl-email">bacolod_lacson@pnb.com.ph</span>
-              </div>
-              <div className="intl-row">
-                <span className="intl-label">Website</span>
-                <span className="intl-value intl-email">pnb.com.ph</span>
-              </div>
-            </div>
-          </div>
-          <p className="intl-note">Transfer fees and applicable taxes are shouldered by sender.</p>
-        </div>
-
-        <p className="receipt-note">
-          Please send a screenshot of your receipt to{' '}
-          <a href="mailto:uslsis.batch2003@gmail.com">uslsis.batch2003@gmail.com</a>
-          {' '}for confirmation.
-        </p>
-      </section>
 
       {/* Footer */}
       <footer className="landing-footer">
@@ -208,7 +125,7 @@ export default function Landing() {
         <div className="modal-overlay" onClick={() => setShowFormModal(false)}>
           <div className="modal-content modal-large" onClick={(e) => e.stopPropagation()}>
             <button className="modal-close" onClick={() => setShowFormModal(false)}>
-              âœ•
+              &#10005;
             </button>
             <h2 style={{ textAlign: 'center', marginBottom: '20px', color: '#CFB53B' }}>
               Register for the Reunion

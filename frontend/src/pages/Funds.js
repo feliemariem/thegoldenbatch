@@ -148,19 +148,6 @@ export default function Funds() {
             gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
             gap: '20px'
           }}>
-            {/* Bank Transfer */}
-            <div className="donate-card">
-              <h4 className="donate-card-title">Bank Transfer</h4>
-              <div className="donate-card-content">
-                <p className="donate-bank-name">PNB (Philippine National Bank)</p>
-                <p className="donate-label">Account Number</p>
-                <p className="donate-value">307770014898</p>
-                
-                <p className="donate-label" style={{ marginTop: '16px' }}>Account Name(s)</p>
-                <p className="donate-value">NARCISO F. JAVELOSA or</p>
-                <p className="donate-value">MARY ROSE FRANCES M. UY</p>
-              </div>
-            </div>
 
             {/* GCash */}
             <div className="donate-card">

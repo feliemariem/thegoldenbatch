@@ -676,6 +676,23 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   margin-bottom: 8px;
 }
 
+.ledger-summary-value {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #CFB53B;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.ledger-summary-card.deposits .ledger-summary-value {
+  color: #4ade80;
+}
+
+.ledger-summary-card.withdrawals .ledger-summary-value {
+  color: #f87171;
+}
+
 .ledger-summary-amount {
   display: block;
   font-size: 1.5rem;
@@ -770,11 +787,34 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 @media (max-width: 768px) {
   .ledger-summary {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  
+  .ledger-summary-card {
+    padding: 16px 12px;
+  }
+  
+  .ledger-summary-value {
+    font-size: 1.1rem;
+  }
+  
+  .ledger-summary-card.balance {
+    grid-column: 1 / -1;
   }
   
   .ledger-type-toggle {
     flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .ledger-summary {
+    grid-template-columns: 1fr;
+  }
+  
+  .ledger-summary-value {
+    font-size: 1.3rem;
   }
 }
 

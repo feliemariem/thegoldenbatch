@@ -11,6 +11,9 @@ import ResetPassword from './pages/ResetPassword';
 import Funds from './pages/Funds';
 import Profile from './pages/Profile';
 import AdminDashboard from './pages/AdminDashboard';
+import ProfileWrapper from './pages/ProfileWrapper';
+import ProfileNew from './pages/ProfileNew';
+import Inbox from './pages/Inbox';
 import './styles/base.css';
 import './styles/components.css';
 import './styles/auth.css';
@@ -22,27 +25,38 @@ import './styles/theme.css';
 // Protected route wrapper
 function ProtectedRoute({ children }) {
   const { token, loading } = useAuth();
-  
+
   if (loading) {
     return <div className="container"><div className="card"><p>Loading...</p></div></div>;
   }
-  
+
   if (!token) {
     return <Navigate to="/login" replace />;
   }
-  
+
+  return children;
+}
+
+// Admin-only route wrapper
+function AdminOnly({ children }) {
+  const { user } = useAuth();
+
+  if (!user?.isAdmin) {
+    return <Navigate to="/profile" replace />;
+  }
+
   return children;
 }
 
 // Conditional ThemeToggle - hidden on landing page
 function ConditionalThemeToggle() {
   const location = useLocation();
-  
+
   // Don't show on landing page (it has its own toggle in header area)
   if (location.pathname === '/preview') {
     return null;
   }
-  
+
   return <ThemeToggle />;
 }
 
@@ -60,7 +74,9 @@ function AppRoutes() {
         path="/funds"
         element={
           <ProtectedRoute>
-            <Funds />
+            <AdminOnly>
+              <Funds />
+            </AdminOnly>
           </ProtectedRoute>
         }
       />
@@ -68,7 +84,17 @@ function AppRoutes() {
         path="/profile"
         element={
           <ProtectedRoute>
-            <Profile />
+            <ProfileWrapper />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profile-preview"
+        element={
+          <ProtectedRoute>
+            <AdminOnly>
+              <ProfileNew />
+            </AdminOnly>
           </ProtectedRoute>
         }
       />
@@ -76,7 +102,19 @@ function AppRoutes() {
         path="/admin"
         element={
           <ProtectedRoute>
-            <AdminDashboard />
+            <AdminOnly>
+              <AdminDashboard />
+            </AdminOnly>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/inbox"
+        element={
+          <ProtectedRoute>
+            <AdminOnly>
+              <Inbox />
+            </AdminOnly>
           </ProtectedRoute>
         }
       />

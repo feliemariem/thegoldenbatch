@@ -284,7 +284,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
   };
 
   const formatCurrency = (amount) => {
-    return '₱' + parseFloat(amount).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return 'P' + parseFloat(amount).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
 
   const exportToCSV = () => {
@@ -325,40 +325,22 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
 
   return (
     <div>
-      <h3>💰 Accounting Dashboard</h3>
+      <h3>Accounting Dashboard</h3>
       <p style={{ color: '#999', marginBottom: '24px' }}>Track funds for the reunion.</p>
 
       {/* Summary Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '24px' }}>
-        <div style={{
-          background: 'rgba(207, 181, 59, 0.1)',
-          border: '1px solid rgba(207, 181, 59, 0.3)',
-          borderRadius: '12px',
-          padding: '20px',
-          textAlign: 'center'
-        }}>
-          <p style={{ color: '#999', fontSize: '0.85rem', marginBottom: '4px' }}>Total Deposits</p>
-          <p style={{ color: '#28a745', fontSize: '1.5rem', fontWeight: '700' }}>{formatCurrency(totalDeposits)}</p>
+      <div className="ledger-summary">
+        <div className="ledger-summary-card deposits">
+          <p className="ledger-summary-label">Total Deposits</p>
+          <p className="ledger-summary-value">{formatCurrency(totalDeposits)}</p>
         </div>
-        <div style={{
-          background: 'rgba(207, 181, 59, 0.1)',
-          border: '1px solid rgba(207, 181, 59, 0.3)',
-          borderRadius: '12px',
-          padding: '20px',
-          textAlign: 'center'
-        }}>
-          <p style={{ color: '#999', fontSize: '0.85rem', marginBottom: '4px' }}>Total Withdrawals</p>
-          <p style={{ color: '#dc3545', fontSize: '1.5rem', fontWeight: '700' }}>{formatCurrency(totalWithdrawals)}</p>
+        <div className="ledger-summary-card withdrawals">
+          <p className="ledger-summary-label">Total Withdrawals</p>
+          <p className="ledger-summary-value">{formatCurrency(totalWithdrawals)}</p>
         </div>
-        <div style={{
-          background: 'rgba(207, 181, 59, 0.1)',
-          border: '1px solid rgba(207, 181, 59, 0.3)',
-          borderRadius: '12px',
-          padding: '20px',
-          textAlign: 'center'
-        }}>
-          <p style={{ color: '#999', fontSize: '0.85rem', marginBottom: '4px' }}>Current Balance</p>
-          <p style={{ color: '#CFB53B', fontSize: '1.5rem', fontWeight: '700' }}>{formatCurrency(balance)}</p>
+        <div className="ledger-summary-card balance">
+          <p className="ledger-summary-label">Current Balance</p>
+          <p className="ledger-summary-value">{formatCurrency(balance)}</p>
         </div>
       </div>
 
@@ -392,7 +374,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
                   color: transactionType === 'deposit' ? '#28a745' : '#888'
                 }}
               >
-                ↓ Deposit
+                + Deposit
               </button>
               <button
                 type="button"
@@ -407,7 +389,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
                   color: transactionType === 'withdrawal' ? '#dc3545' : '#888'
                 }}
               >
-                ↑ Withdrawal
+                - Withdrawal
               </button>
             </div>
 
@@ -422,7 +404,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
                 />
               </div>
               <div className="form-group">
-                <label>Amount (₱) *</label>
+                <label>Amount (PHP) *</label>
                 <input
                   type="text"
                   value={form.amount}
@@ -549,7 +531,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
         fontSize: '0.85rem',
         color: '#888'
       }}>
-        🔗 = Linked to Master List (counts toward ₱25k target)
+        [L] = Linked to Master List (counts toward P25k target)
       </div>
 
       {/* Transactions Table */}
@@ -593,9 +575,9 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
                       {t.master_list_id && (
                         <span 
                           title={t.ml_first_name ? `Linked to: ${t.ml_first_name} ${t.ml_last_name} (${t.ml_section})` : 'Linked to Master List'}
-                          style={{ marginLeft: '6px', cursor: 'help' }}
+                          style={{ marginLeft: '6px', cursor: 'help', color: '#CFB53B' }}
                         >
-                          🔗
+                          [L]
                         </span>
                       )}
                     </td>
@@ -626,14 +608,15 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
                         onDrop={(e) => canEdit && handleDrop(e, t.id)}
                       >
                         {uploadingReceipt === t.id ? (
-                          <span className="receipt-uploading">⏳</span>
+                          <span className="receipt-uploading">...</span>
                         ) : t.receipt_url ? (
                           <button
                             className="receipt-icon has-receipt"
                             onClick={() => setViewingReceipt(t)}
                             title="View receipt"
+                            style={{ color: '#4ade80' }}
                           >
-                            🧾
+                            r
                           </button>
                         ) : canEdit ? (
                           <>
@@ -648,7 +631,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
                                 }}
                                 style={{ display: 'none' }}
                               />
-                              <span className="receipt-icon empty">＋</span>
+                              <span className="receipt-icon empty">[ + ]</span>
                             </label>
                           </>
                         ) : (
@@ -706,7 +689,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
           <div className="receipt-modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '500px' }}>
             <div className="receipt-modal-header">
               <h4>Link to Master List</h4>
-              <button onClick={() => { setLinkingTransaction(null); setLinkSearch(''); }} className="receipt-modal-close">✕</button>
+              <button onClick={() => { setLinkingTransaction(null); setLinkSearch(''); }} className="receipt-modal-close">x</button>
             </div>
             <div style={{ padding: '16px' }}>
               <p style={{ color: '#999', marginBottom: '16px', fontSize: '0.9rem' }}>
@@ -766,7 +749,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
           <div className="receipt-modal" onClick={(e) => e.stopPropagation()}>
             <div className="receipt-modal-header">
               <h4>Receipt - {viewingReceipt.name || viewingReceipt.description || 'Transaction'}</h4>
-              <button onClick={() => setViewingReceipt(null)} className="receipt-modal-close">✕</button>
+              <button onClick={() => setViewingReceipt(null)} className="receipt-modal-close">x</button>
             </div>
             <div className="receipt-modal-image">
               <img src={viewingReceipt.receipt_url} alt="Receipt" />
