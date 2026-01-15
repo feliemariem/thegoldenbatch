@@ -1268,7 +1268,8 @@ export default function AdminDashboard() {
                   </div>
                 )}
 
-               {/* BULK UPLOAD MASTER LIST - ENABLED FOR NOW      <div className="invite-section">
+               {/* BULK UPLOAD MASTER LIST - ENABLED FOR NOW        */}      
+               <div className="invite-section">
               <h3>Upload Master List (CSV)</h3>
               <p className="help-text-small">CSV format: Section, Last Name, First Name, Nickname (optional)</p>
               <div className="upload-row">
@@ -1300,7 +1301,7 @@ export default function AdminDashboard() {
                 </div>
               )}
             </div>
-         */}
+  
        
 
                 {/* Filter and Search */}
