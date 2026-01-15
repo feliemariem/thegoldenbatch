@@ -4,6 +4,9 @@ const db = require('../db');
 const { authenticateAdmin } = require('../middleware/auth');
 const { sendInviteEmail } = require('../utils/email');
 
+// Get frontend URL from environment or fallback to localhost
+const getFrontendUrl = () => process.env.FRONTEND_URL || 'http://localhost:3000';
+
 // Create a new invite (admin only)
 router.post('/', authenticateAdmin, async (req, res) => {
   try {
@@ -21,7 +24,7 @@ router.post('/', authenticateAdmin, async (req, res) => {
     const invite = result.rows[0];
     
     // Return the full registration URL
-    const registrationUrl = `http://localhost:3000/register/${invite.invite_token}`;
+    const registrationUrl = `${getFrontendUrl()}/register/${invite.invite_token}`;
 
     // Send email
     const emailResult = await sendInviteEmail(email, first_name, registrationUrl);
@@ -67,7 +70,7 @@ router.post('/bulk', authenticateAdmin, async (req, res) => {
         );
         
         const newInvite = result.rows[0];
-        const registrationUrl = `http://localhost:3000/register/${newInvite.invite_token}`;
+        const registrationUrl = `${getFrontendUrl()}/register/${newInvite.invite_token}`;
         
         // Send email
         const emailResult = await sendInviteEmail(invite.email, invite.first_name, registrationUrl);

@@ -14,7 +14,7 @@ export default function Funds() {
 
   const fetchBalance = async () => {
     try {
-      const res = await fetch('https://the-golden-batch-api.onrender.com/api/ledger/balance');
+      const res = await fetch('http://localhost:5000/api/ledger/balance');
       const data = await res.json();
       setBalance(data.balance || 0);
       setTotalDeposits(data.totalDeposits || 0);
@@ -29,7 +29,7 @@ export default function Funds() {
 
   const fetchDonors = async () => {
     try {
-      const res = await fetch('https://the-golden-batch-api.onrender.com/api/ledger/donors');
+      const res = await fetch('http://localhost:5000/api/ledger/donors');
       const data = await res.json();
       setDonors(data.donors || []);
     } catch (err) {
@@ -148,6 +148,19 @@ export default function Funds() {
             gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
             gap: '20px'
           }}>
+            {/* Bank Transfer <div className="donate-card">
+              <h4 className="donate-card-title">Bank Transfer</h4>
+              <div className="donate-card-content">
+                <p className="donate-bank-name">PNB (Philippine National Bank)</p>
+                <p className="donate-label">Account Number</p>
+                <p className="donate-value">307770014898</p>
+                
+                <p className="donate-label" style={{ marginTop: '16px' }}>Account Name(s)</p>
+                <p className="donate-value">NARCISO F. JAVELOSA or</p>
+                <p className="donate-value">MARY ROSE FRANCES M. UY</p>
+              </div>
+            </div> */}
+            
 
             {/* GCash */}
             <div className="donate-card">

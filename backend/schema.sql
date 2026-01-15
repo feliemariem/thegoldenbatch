@@ -2,10 +2,11 @@
 -- The Golden Batch - USLS-IS Batch 2003
 
 -- Drop tables in correct order (respecting foreign keys)
+DROP TABLE IF EXISTS announcement_reads;
 DROP TABLE IF EXISTS meeting_attachments;
 DROP TABLE IF EXISTS meeting_minutes;
 DROP TABLE IF EXISTS permissions;
-DROP TABLE IF EXISTS password_reset_tokens;
+DROP TABLE IF EXISTS password_resets;
 DROP TABLE IF EXISTS announcements;
 DROP TABLE IF EXISTS ledger;
 DROP TABLE IF EXISTS rsvps;
@@ -114,11 +115,20 @@ CREATE TABLE announcements (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Password reset tokens
-CREATE TABLE password_reset_tokens (
+-- Announcement reads table (tracks which users have read which announcements)
+CREATE TABLE announcement_reads (
     id SERIAL PRIMARY KEY,
-    admin_id INTEGER REFERENCES admins(id),
-    token UUID DEFAULT gen_random_uuid() UNIQUE NOT NULL,
+    announcement_id INTEGER REFERENCES announcements(id) ON DELETE CASCADE,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    read_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(announcement_id, user_id)
+);
+
+-- Password resets table (for user password recovery)
+CREATE TABLE password_resets (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) NOT NULL,
+    token VARCHAR(255) UNIQUE NOT NULL,
     expires_at TIMESTAMP NOT NULL,
     used BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -170,4 +180,15 @@ CREATE INDEX idx_ledger_date ON ledger(transaction_date);
 CREATE INDEX idx_permissions_admin ON permissions(admin_id);
 CREATE INDEX idx_meeting_minutes_date ON meeting_minutes(meeting_date DESC);
 CREATE INDEX idx_meeting_attachments_meeting ON meeting_attachments(meeting_id);
-CREATE INDEX idx_reset_tokens ON password_reset_tokens(token);
+CREATE INDEX idx_password_resets_token ON password_resets(token);
+CREATE INDEX idx_password_resets_email ON password_resets(email);
+CREATE INDEX idx_announcement_reads_user ON announcement_reads(user_id);
+CREATE INDEX idx_announcement_reads_announcement ON announcement_reads(announcement_id);
+
+-- ============================================================
+-- INITIAL DATA: Create System Super Admin
+-- ============================================================
+-- NOTE: After running schema, run setup-admin.js to set password:
+--   node setup-admin.js uslsis.batch2003@gmail.com YOUR_PASSWORD
+-- Then run this SQL to set as System super admin:
+--   UPDATE admins SET first_name = 'System', is_super_admin = TRUE WHERE email = 'uslsis.batch2003@gmail.com';
