@@ -40,7 +40,7 @@ export default function ProfileNew() {
 
   const fetchUnreadCount = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/announcements/inbox', {
+      const res = await fetch('https://the-golden-batch-api.onrender.com/api/announcements/inbox', {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -53,7 +53,7 @@ export default function ProfileNew() {
 
   const fetchProfile = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/me', {
+      const res = await fetch('https://the-golden-batch-api.onrender.com/api/me', {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -84,7 +84,7 @@ export default function ProfileNew() {
     setMessage('');
 
     try {
-      const res = await fetch('http://localhost:5000/api/me', {
+      const res = await fetch('https://the-golden-batch-api.onrender.com/api/me', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -112,7 +112,7 @@ export default function ProfileNew() {
     setMessage('');
 
     try {
-      const res = await fetch('http://localhost:5000/api/me/rsvp', {
+      const res = await fetch('https://the-golden-batch-api.onrender.com/api/me/rsvp', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -156,7 +156,7 @@ export default function ProfileNew() {
     formData.append('photo', file);
 
     try {
-      const res = await fetch('http://localhost:5000/api/me/photo', {
+      const res = await fetch('https://the-golden-batch-api.onrender.com/api/me/photo', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -186,7 +186,7 @@ export default function ProfileNew() {
 
   const handleRemovePhoto = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/me/photo', {
+      const res = await fetch('https://the-golden-batch-api.onrender.com/api/me/photo', {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,

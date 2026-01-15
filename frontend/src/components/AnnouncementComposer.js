@@ -20,7 +20,7 @@ export default function AnnouncementComposer({ token, registeredCount = 0, going
 
   const fetchHistory = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/announcements/history', {
+      const res = await fetch('https://the-golden-batch-api.onrender.com/api/announcements/history', {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -51,7 +51,7 @@ export default function AnnouncementComposer({ token, registeredCount = 0, going
     setResult(null);
 
     try {
-      const res = await fetch('http://localhost:5000/api/announcements', {
+      const res = await fetch('https://the-golden-batch-api.onrender.com/api/announcements', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

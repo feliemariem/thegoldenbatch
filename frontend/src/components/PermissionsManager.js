@@ -51,7 +51,7 @@ export default function PermissionsManager({ token }) {
 
   const fetchAdmins = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/permissions/admins', {
+      const res = await fetch('https://the-golden-batch-api.onrender.com/api/permissions/admins', {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -113,7 +113,7 @@ export default function PermissionsManager({ token }) {
     setResult(null);
 
     try {
-      const res = await fetch(`http://localhost:5000/api/permissions/admins/${selectedAdminId}`, {
+      const res = await fetch(`https://the-golden-batch-api.onrender.com/api/permissions/admins/${selectedAdminId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

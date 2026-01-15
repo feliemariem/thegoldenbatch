@@ -18,7 +18,7 @@ export default function Inbox() {
 
   const fetchInbox = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/announcements/inbox', {
+      const res = await fetch('https://the-golden-batch-api.onrender.com/api/announcements/inbox', {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -32,7 +32,7 @@ export default function Inbox() {
 
   const markAsRead = async (id) => {
     try {
-      await fetch(`http://localhost:5000/api/announcements/${id}/read`, {
+      await fetch(`https://the-golden-batch-api.onrender.com/api/announcements/${id}/read`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
       });

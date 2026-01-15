@@ -46,7 +46,7 @@ export function AuthProvider({ children }) {
           setLoading(false);
         } else {
           // Regular user - fetch profile
-          fetch('http://localhost:5000/api/me', {
+          fetch('https://the-golden-batch-api.onrender.com/api/me', {
             headers: { Authorization: `Bearer ${token}` },
           })
             .then((res) => {

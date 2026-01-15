@@ -74,7 +74,7 @@ export default function AdminDashboard() {
 
   const fetchPermissions = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/permissions/me', {
+      const res = await fetch('https://the-golden-batch-api.onrender.com/api/permissions/me', {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -89,7 +89,7 @@ export default function AdminDashboard() {
 
   const fetchDashboard = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/admin/dashboard', {
+      const res = await fetch('https://the-golden-batch-api.onrender.com/api/admin/dashboard', {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -110,8 +110,8 @@ export default function AdminDashboard() {
   const fetchMasterList = async (section = 'all') => {
     try {
       const url = section === 'all'
-        ? 'http://localhost:5000/api/master-list'
-        : `http://localhost:5000/api/master-list?section=${section}`;
+        ? 'https://the-golden-batch-api.onrender.com/api/master-list'
+        : `https://the-golden-batch-api.onrender.com/api/master-list?section=${section}`;
       const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -126,7 +126,7 @@ export default function AdminDashboard() {
 
   const fetchInvites = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/invites', {
+      const res = await fetch('https://the-golden-batch-api.onrender.com/api/invites', {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -142,7 +142,7 @@ export default function AdminDashboard() {
     setInviteResult(null);
 
     try {
-      const res = await fetch('http://localhost:5000/api/invites', {
+      const res = await fetch('https://the-golden-batch-api.onrender.com/api/invites', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -170,7 +170,7 @@ export default function AdminDashboard() {
 
   const handleUpdateInvite = async (id, updates) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/invites/${id}`, {
+      const res = await fetch(`https://the-golden-batch-api.onrender.com/api/invites/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -194,7 +194,7 @@ export default function AdminDashboard() {
       message: 'Delete this invite? This cannot be undone.',
       onConfirm: async () => {
         try {
-          await fetch(`http://localhost:5000/api/invites/${id}`, {
+          await fetch(`https://the-golden-batch-api.onrender.com/api/invites/${id}`, {
             method: 'DELETE',
             headers: { Authorization: `Bearer ${token}` },
           });
@@ -241,7 +241,7 @@ export default function AdminDashboard() {
         }
       }
 
-      const res = await fetch('http://localhost:5000/api/invites/bulk', {
+      const res = await fetch('https://the-golden-batch-api.onrender.com/api/invites/bulk', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -300,7 +300,7 @@ export default function AdminDashboard() {
         }
       }
 
-      const res = await fetch('http://localhost:5000/api/master-list/bulk', {
+      const res = await fetch('https://the-golden-batch-api.onrender.com/api/master-list/bulk', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -328,7 +328,7 @@ export default function AdminDashboard() {
 
   const handleUpdateEntry = async (id, updates) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/master-list/${id}`, {
+      const res = await fetch(`https://the-golden-batch-api.onrender.com/api/master-list/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -352,7 +352,7 @@ export default function AdminDashboard() {
       message: 'Are you sure you want to clear the entire master list?',
       onConfirm: async () => {
         try {
-          await fetch('http://localhost:5000/api/master-list', {
+          await fetch('https://the-golden-batch-api.onrender.com/api/master-list', {
             method: 'DELETE',
             headers: { Authorization: `Bearer ${token}` },
           });
@@ -369,7 +369,7 @@ export default function AdminDashboard() {
     if (!masterListId) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/api/invites/${inviteId}/link`, {
+      const res = await fetch(`https://the-golden-batch-api.onrender.com/api/invites/${inviteId}/link`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -393,7 +393,7 @@ export default function AdminDashboard() {
       message: 'Unlink from master list?',
       onConfirm: async () => {
         try {
-          const res = await fetch(`http://localhost:5000/api/invites/${inviteId}/unlink`, {
+          const res = await fetch(`https://the-golden-batch-api.onrender.com/api/invites/${inviteId}/unlink`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',

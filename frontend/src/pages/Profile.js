@@ -32,7 +32,7 @@ export default function Profile() {
 
   const fetchProfile = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/me', {
+      const res = await fetch('https://the-golden-batch-api.onrender.com/api/me', {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -64,7 +64,7 @@ export default function Profile() {
     setMessage('');
 
     try {
-      const res = await fetch('http://localhost:5000/api/me', {
+      const res = await fetch('https://the-golden-batch-api.onrender.com/api/me', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -91,7 +91,7 @@ export default function Profile() {
     setMessage('');
 
     try {
-      const res = await fetch('http://localhost:5000/api/me/rsvp', {
+      const res = await fetch('https://the-golden-batch-api.onrender.com/api/me/rsvp', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

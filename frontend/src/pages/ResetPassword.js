@@ -19,7 +19,7 @@ export default function ResetPassword() {
 
   useEffect(() => {
     // Validate token on page load
-    fetch(`http://localhost:5000/api/auth/reset-password/${token}`)
+    fetch(`https://the-golden-batch-api.onrender.com/api/auth/reset-password/${token}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.valid) {
@@ -50,7 +50,7 @@ export default function ResetPassword() {
     setSubmitting(true);
 
     try {
-      const res = await fetch('http://localhost:5000/api/auth/reset-password', {
+      const res = await fetch('https://the-golden-batch-api.onrender.com/api/auth/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token, password }),

@@ -43,7 +43,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
 
   const fetchTransactions = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/ledger', {
+      const res = await fetch('https://the-golden-batch-api.onrender.com/api/ledger', {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -60,7 +60,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
 
   const fetchMasterListOptions = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/ledger/master-list-options', {
+      const res = await fetch('https://the-golden-batch-api.onrender.com/api/ledger/master-list-options', {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -105,8 +105,8 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
 
     try {
       const url = editingId 
-        ? `http://localhost:5000/api/ledger/${editingId}`
-        : 'http://localhost:5000/api/ledger';
+        ? `https://the-golden-batch-api.onrender.com/api/ledger/${editingId}`
+        : 'https://the-golden-batch-api.onrender.com/api/ledger';
       
       const res = await fetch(url, {
         method: editingId ? 'PUT' : 'POST',
@@ -158,7 +158,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
     if (!window.confirm('Delete this transaction?')) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/api/ledger/${id}`, {
+      const res = await fetch(`https://the-golden-batch-api.onrender.com/api/ledger/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -174,7 +174,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
   // Link/Unlink handlers
   const handleLink = async (transactionId, masterListId) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/ledger/${transactionId}/link`, {
+      const res = await fetch(`https://the-golden-batch-api.onrender.com/api/ledger/${transactionId}/link`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -195,7 +195,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
 
   const handleUnlink = async (transactionId) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/ledger/${transactionId}/unlink`, {
+      const res = await fetch(`https://the-golden-batch-api.onrender.com/api/ledger/${transactionId}/unlink`, {
         method: 'PUT',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -221,7 +221,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
     formData.append('receipt', file);
 
     try {
-      const res = await fetch(`http://localhost:5000/api/ledger/${transactionId}/receipt`, {
+      const res = await fetch(`https://the-golden-batch-api.onrender.com/api/ledger/${transactionId}/receipt`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData
@@ -246,7 +246,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
     if (!window.confirm('Delete this receipt?')) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/api/ledger/${transactionId}/receipt`, {
+      const res = await fetch(`https://the-golden-batch-api.onrender.com/api/ledger/${transactionId}/receipt`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });

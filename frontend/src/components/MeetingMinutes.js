@@ -31,7 +31,7 @@ export default function MeetingMinutes({ token, canEdit = false }) {
 
   const fetchMeetings = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/meetings', {
+      const res = await fetch('https://the-golden-batch-api.onrender.com/api/meetings', {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -70,8 +70,8 @@ export default function MeetingMinutes({ token, canEdit = false }) {
     setSaving(true);
     try {
       const url = editMode 
-        ? `http://localhost:5000/api/meetings/${selectedMeeting.id}`
-        : 'http://localhost:5000/api/meetings';
+        ? `https://the-golden-batch-api.onrender.com/api/meetings/${selectedMeeting.id}`
+        : 'https://the-golden-batch-api.onrender.com/api/meetings';
       
       const res = await fetch(url, {
         method: editMode ? 'PUT' : 'POST',
@@ -99,7 +99,7 @@ export default function MeetingMinutes({ token, canEdit = false }) {
 
   const handleDelete = async (id) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/meetings/${id}`, {
+      const res = await fetch(`https://the-golden-batch-api.onrender.com/api/meetings/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -133,7 +133,7 @@ export default function MeetingMinutes({ token, canEdit = false }) {
     formData.append('file', file);
 
     try {
-      const res = await fetch(`http://localhost:5000/api/meetings/${selectedMeeting.id}/attachments`, {
+      const res = await fetch(`https://the-golden-batch-api.onrender.com/api/meetings/${selectedMeeting.id}/attachments`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData
@@ -163,7 +163,7 @@ export default function MeetingMinutes({ token, canEdit = false }) {
   const handleDeleteAttachment = async (attachmentId) => {
     try {
       const res = await fetch(
-        `http://localhost:5000/api/meetings/${selectedMeeting.id}/attachments/${attachmentId}`,
+        `https://the-golden-batch-api.onrender.com/api/meetings/${selectedMeeting.id}/attachments/${attachmentId}`,
         {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${token}` }
