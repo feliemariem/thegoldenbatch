@@ -1,16 +1,55 @@
--- Alumni Homecoming Database Schema
+-- Alumni Homecoming Database Schema (Complete)
+-- The Golden Batch - USLS-IS Batch 2003
 
--- Drop tables if they exist (for clean setup)
+-- Drop tables in correct order (respecting foreign keys)
+DROP TABLE IF EXISTS meeting_attachments;
+DROP TABLE IF EXISTS meetings;
+DROP TABLE IF EXISTS permissions;
+DROP TABLE IF EXISTS password_reset_tokens;
+DROP TABLE IF EXISTS announcements;
+DROP TABLE IF EXISTS ledger;
 DROP TABLE IF EXISTS rsvps;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS invites;
+DROP TABLE IF EXISTS master_list;
+DROP TABLE IF EXISTS admins;
+
+-- Admins table
+CREATE TABLE admins (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    first_name VARCHAR(100),
+    last_name VARCHAR(100),
+    is_super_admin BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Master list table: all batch members for tracking
+CREATE TABLE master_list (
+    id SERIAL PRIMARY KEY,
+    section VARCHAR(50) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    first_name VARCHAR(100) NOT NULL,
+    nickname VARCHAR(100),
+    email VARCHAR(255),
+    in_memoriam BOOLEAN DEFAULT FALSE,
+    is_unreachable BOOLEAN DEFAULT FALSE,
+    is_admin BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 -- Invites table: the allow-list of emails
 CREATE TABLE invites (
     id SERIAL PRIMARY KEY,
     email VARCHAR(255) UNIQUE NOT NULL,
+    first_name VARCHAR(100),
+    last_name VARCHAR(100),
     invite_token UUID DEFAULT gen_random_uuid() UNIQUE NOT NULL,
     used BOOLEAN DEFAULT FALSE,
+    email_sent BOOLEAN DEFAULT FALSE,
+    master_list_id INTEGER REFERENCES master_list(id),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -41,28 +80,87 @@ CREATE TABLE rsvps (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Admin user for dashboard access (optional, can also use a flag on users table)
-CREATE TABLE admins (
+-- Ledger table: financial tracking
+CREATE TABLE ledger (
     id SERIAL PRIMARY KEY,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Index for faster token lookups
-CREATE INDEX idx_invite_token ON invites(invite_token);
-
--- Master list table: all batch members for tracking
-CREATE TABLE master_list (
-    id SERIAL PRIMARY KEY,
-    section VARCHAR(20) NOT NULL,
-    last_name VARCHAR(100) NOT NULL,
-    first_name VARCHAR(100) NOT NULL,
-    nickname VARCHAR(100),
-    email VARCHAR(255),
+    transaction_date DATE NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    deposit DECIMAL(12,2) DEFAULT 0,
+    withdrawal DECIMAL(12,2) DEFAULT 0,
+    master_list_id INTEGER REFERENCES master_list(id),
+    receipt_url VARCHAR(500),
+    notes TEXT,
+    created_by VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Announcements table
+CREATE TABLE announcements (
+    id SERIAL PRIMARY KEY,
+    subject VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    audience VARCHAR(50) NOT NULL,
+    recipients_count INTEGER DEFAULT 0,
+    emails_sent INTEGER DEFAULT 0,
+    emails_failed INTEGER DEFAULT 0,
+    sent_by VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Password reset tokens
+CREATE TABLE password_reset_tokens (
+    id SERIAL PRIMARY KEY,
+    admin_id INTEGER REFERENCES admins(id),
+    token UUID DEFAULT gen_random_uuid() UNIQUE NOT NULL,
+    expires_at TIMESTAMP NOT NULL,
+    used BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Permissions table
+CREATE TABLE permissions (
+    id SERIAL PRIMARY KEY,
+    admin_id INTEGER REFERENCES admins(id) ON DELETE CASCADE,
+    permission VARCHAR(100) NOT NULL,
+    enabled BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(admin_id, permission)
+);
+
+-- Meetings table
+CREATE TABLE meetings (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    meeting_date DATE NOT NULL,
+    attendees TEXT,
+    notes TEXT,
+    created_by INTEGER REFERENCES admins(id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Meeting attachments table
+CREATE TABLE meeting_attachments (
+    id SERIAL PRIMARY KEY,
+    meeting_id INTEGER REFERENCES meetings(id) ON DELETE CASCADE,
+    file_name VARCHAR(255) NOT NULL,
+    file_url VARCHAR(500) NOT NULL,
+    file_type VARCHAR(100),
+    file_size INTEGER,
+    uploaded_by INTEGER REFERENCES admins(id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Indexes for performance
+CREATE INDEX idx_invite_token ON invites(invite_token);
+CREATE INDEX idx_invites_email ON invites(email);
+CREATE INDEX idx_invites_master_list ON invites(master_list_id);
+CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_master_list_email ON master_list(email);
 CREATE INDEX idx_master_list_section ON master_list(section);
+CREATE INDEX idx_ledger_master_list ON ledger(master_list_id);
+CREATE INDEX idx_ledger_date ON ledger(transaction_date);
+CREATE INDEX idx_permissions_admin ON permissions(admin_id);
+CREATE INDEX idx_meetings_date ON meetings(meeting_date);
+CREATE INDEX idx_reset_tokens ON password_reset_tokens(token);
