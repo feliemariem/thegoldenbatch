@@ -3,7 +3,7 @@
 
 -- Drop tables in correct order (respecting foreign keys)
 DROP TABLE IF EXISTS meeting_attachments;
-DROP TABLE IF EXISTS meetings;
+DROP TABLE IF EXISTS meeting_minutes;
 DROP TABLE IF EXISTS permissions;
 DROP TABLE IF EXISTS password_reset_tokens;
 DROP TABLE IF EXISTS announcements;
@@ -68,6 +68,7 @@ CREATE TABLE users (
     country VARCHAR(100) NOT NULL,
     occupation VARCHAR(100),
     company VARCHAR(100),
+    profile_photo VARCHAR(500),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -84,12 +85,17 @@ CREATE TABLE rsvps (
 CREATE TABLE ledger (
     id SERIAL PRIMARY KEY,
     transaction_date DATE NOT NULL,
-    description VARCHAR(255) NOT NULL,
+    name VARCHAR(255),
+    description VARCHAR(255),
     deposit DECIMAL(12,2) DEFAULT 0,
     withdrawal DECIMAL(12,2) DEFAULT 0,
+    reference_no VARCHAR(100),
+    verified VARCHAR(50) DEFAULT 'Pending',
+    payment_type VARCHAR(50),
     master_list_id INTEGER REFERENCES master_list(id),
     receipt_url VARCHAR(500),
     notes TEXT,
+    recorded_by VARCHAR(255),
     created_by VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -128,8 +134,8 @@ CREATE TABLE permissions (
     UNIQUE(admin_id, permission)
 );
 
--- Meetings table
-CREATE TABLE meetings (
+-- Meeting Minutes table
+CREATE TABLE meeting_minutes (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     meeting_date DATE NOT NULL,
@@ -140,16 +146,16 @@ CREATE TABLE meetings (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Meeting attachments table
+-- Meeting Attachments table
 CREATE TABLE meeting_attachments (
     id SERIAL PRIMARY KEY,
-    meeting_id INTEGER REFERENCES meetings(id) ON DELETE CASCADE,
+    meeting_id INTEGER REFERENCES meeting_minutes(id) ON DELETE CASCADE,
     file_name VARCHAR(255) NOT NULL,
-    file_url VARCHAR(500) NOT NULL,
-    file_type VARCHAR(100),
+    file_url TEXT NOT NULL,
+    file_type VARCHAR(50),
     file_size INTEGER,
     uploaded_by INTEGER REFERENCES admins(id),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Indexes for performance
@@ -162,5 +168,6 @@ CREATE INDEX idx_master_list_section ON master_list(section);
 CREATE INDEX idx_ledger_master_list ON ledger(master_list_id);
 CREATE INDEX idx_ledger_date ON ledger(transaction_date);
 CREATE INDEX idx_permissions_admin ON permissions(admin_id);
-CREATE INDEX idx_meetings_date ON meetings(meeting_date);
+CREATE INDEX idx_meeting_minutes_date ON meeting_minutes(meeting_date DESC);
+CREATE INDEX idx_meeting_attachments_meeting ON meeting_attachments(meeting_id);
 CREATE INDEX idx_reset_tokens ON password_reset_tokens(token);
