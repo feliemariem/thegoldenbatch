@@ -292,7 +292,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
 
     const headers = ['Date', 'Name', 'Description', 'Deposit', 'Withdrawal', 'Balance', 'Reference No.', 'Verified', 'Payment Type', 'Recorded By'];
     const rows = transactions.map(t => [
-      t.transaction_date ? new Date(t.transaction_date).toLocaleDateString() : '',
+      t.transaction_date ? new Date(t.transaction_date + 'T00:00:00').toLocaleDateString() : '',
       t.name || '',
       t.description || '',
       t.deposit || '',
@@ -568,7 +568,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
                 {transactions.map((t) => (
                   <tr key={t.id}>
                     <td style={{ whiteSpace: 'nowrap' }}>
-                      {t.transaction_date ? new Date(t.transaction_date).toLocaleDateString('en-PH', { month: 'numeric', day: 'numeric', year: '2-digit' }) : '-'}
+                      {t.transaction_date ? new Date(t.transaction_date + 'T00:00:00').toLocaleDateString('en-PH', { month: 'numeric', day: 'numeric', year: '2-digit' }) : '-'}
                     </td>
                     <td>
                       {t.name || '-'}
