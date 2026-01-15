@@ -1300,10 +1300,7 @@ export default function AdminDashboard() {
                 </div>
               )}
             </div> 
-            */}      
-               
-  
-       
+            */}  
 
                 {/* Filter and Search */}
                 <div className="section-header">
