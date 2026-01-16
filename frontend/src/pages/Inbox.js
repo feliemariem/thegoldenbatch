@@ -173,9 +173,31 @@ export default function Inbox() {
               <span className="detail-date">{formatFullDate(selectedAnnouncement.created_at)}</span>
             </div>
             <div className="detail-body">
-              {selectedAnnouncement.message.split('\n').map((line, i) => (
-                <p key={i}>{line || '\u00A0'}</p>
-              ))}
+              {selectedAnnouncement.message.split('\n').map((line, i) => {
+                // Convert URLs to clickable links
+                const urlRegex = /(https?:\/\/[^\s]+)/g;
+                const parts = line.split(urlRegex);
+                
+                return (
+                  <p key={i}>
+                    {parts.map((part, j) => 
+                      urlRegex.test(part) ? (
+                        <a 
+                          key={j} 
+                          href={part} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          style={{ color: '#CFB53B', textDecoration: 'underline' }}
+                        >
+                          {part}
+                        </a>
+                      ) : (
+                        part || '\u00A0'
+                      )
+                    )}
+                  </p>
+                );
+              })}
             </div>
             <div className="detail-footer">
               <span className="detail-from">From: The Organizing Committee</span>
