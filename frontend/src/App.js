@@ -14,6 +14,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import ProfileWrapper from './pages/ProfileWrapper';
 import ProfileNew from './pages/ProfileNew';
 import Inbox from './pages/Inbox';
+import Events from './pages/Events';
 import './styles/base.css';
 import './styles/components.css';
 import './styles/auth.css';
@@ -114,6 +115,16 @@ function AppRoutes() {
           <ProtectedRoute>
             <AdminOnly>
               <Inbox />
+            </AdminOnly>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/events"
+        element={
+          <ProtectedRoute>
+            <AdminOnly>
+              <Events />
             </AdminOnly>
           </ProtectedRoute>
         }
