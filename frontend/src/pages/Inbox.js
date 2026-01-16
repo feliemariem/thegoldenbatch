@@ -118,7 +118,9 @@ export default function Inbox() {
             </div>
           </div>
           <nav className="inbox-nav">
+            <Link to="/events" className="nav-link">Events</Link>
             <Link to="/funds" className="nav-link">Funds</Link>
+            <Link to="/inbox" className="nav-link active">Inbox</Link>
             <Link to="/profile" className="nav-link">Profile</Link>
             {user?.isAdmin && <Link to="/admin" className="nav-link">Admin</Link>}
             <ThemeToggle />
@@ -165,7 +167,7 @@ export default function Inbox() {
       {showModal && selectedAnnouncement && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close" onClick={closeModal}>×</button>
+            <button className="modal-close" onClick={closeModal}>Ã—</button>
             <div className="detail-header">
               <h3>{selectedAnnouncement.subject}</h3>
               <span className="detail-date">{formatFullDate(selectedAnnouncement.created_at)}</span>

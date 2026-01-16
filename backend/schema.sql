@@ -245,6 +245,13 @@ CREATE INDEX idx_event_rsvps_user ON event_rsvps(user_id);
 --   DELETE FROM invites;
 --   DELETE FROM admins WHERE is_super_admin = false;
 
+-- Reset Master List (keep names, clear linked data):
+--   UPDATE master_list SET
+--     email = NULL,
+--     is_admin = FALSE,
+--     is_unreachable = FALSE
+--   WHERE id > 0;
+
 -- ============================================================
 -- ADD TABLES TO EXISTING DATABASE (without dropping)
 -- ============================================================

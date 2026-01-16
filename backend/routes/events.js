@@ -241,13 +241,14 @@ router.post('/', authenticateAdmin, async (req, res) => {
         });
 
         // Build announcement message
-        let message = `**${title}**\n\n`;
+        let message = `${title}\n\n`;
         message += `📅 ${eventDateFormatted}`;
         if (event_time) message += ` • ${event_time}`;
         message += '\n';
         if (location) message += `📍 ${location}\n`;
         if (description) message += `\n${description}\n`;
-        message += '\nCheck it out and let us know if you\'re going!';
+        message += '\nCheck it out and let us know if you\'re going!\n\n';
+        message += '👉 View Event: ' + (process.env.FRONTEND_URL || 'https://the-golden-batch.onrender.com') + '/events';
 
         // Get all registered users
         const usersResult = await db.query('SELECT id, email, first_name FROM users');
