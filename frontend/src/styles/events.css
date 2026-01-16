@@ -890,3 +890,46 @@
   background: rgba(0, 0, 0, 0.03);
   border-color: rgba(0, 0, 0, 0.1);
 }
+
+/* ========================================
+   HIGHLIGHTED EVENT (from URL parameter)
+   ======================================== */
+
+.event-card.highlighted {
+  animation: highlightPulse 1.5s ease-out 2;
+  border-color: #CFB53B !important;
+  box-shadow: 0 0 20px rgba(207, 181, 59, 0.4), 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes highlightPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(207, 181, 59, 0.6), 0 12px 40px rgba(0, 0, 0, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px 10px rgba(207, 181, 59, 0.3), 0 12px 40px rgba(0, 0, 0, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 20px rgba(207, 181, 59, 0.4), 0 12px 40px rgba(0, 0, 0, 0.3);
+  }
+}
+
+[data-theme="light"] .event-card.highlighted {
+  border-color: #006633 !important;
+  box-shadow: 0 0 20px rgba(0, 102, 51, 0.3), 0 12px 40px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .event-card.highlighted {
+  animation: highlightPulseLight 1.5s ease-out 2;
+}
+
+@keyframes highlightPulseLight {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 102, 51, 0.5), 0 12px 40px rgba(0, 0, 0, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 30px 10px rgba(0, 102, 51, 0.2), 0 12px 40px rgba(0, 0, 0, 0.1);
+  }
+  100% {
+    box-shadow: 0 0 20px rgba(0, 102, 51, 0.3), 0 12px 40px rgba(0, 0, 0, 0.1);
+  }
+}

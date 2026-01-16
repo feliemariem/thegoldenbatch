@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import ThemeToggle from '../components/ThemeToggle';
 import logo from '../images/lasalle.jpg';
@@ -9,9 +9,12 @@ import '../styles/events.css';
 export default function Events() {
   const { user, token, logout } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const isAdmin = user?.isAdmin;
 
   const [events, setEvents] = useState([]);
+  const [highlightedEventId, setHighlightedEventId] = useState(null);
+  const eventRefs = useRef({});
   const [loading, setLoading] = useState(true);
   const [mainEventStats, setMainEventStats] = useState({ going: 0, maybe: 0, not_going: 0 });
 
@@ -34,6 +37,28 @@ export default function Events() {
     fetchEvents();
     fetchMainEventStats();
   }, [token]);
+
+  // Handle scroll to specific event when URL has id parameter
+  useEffect(() => {
+    const eventId = searchParams.get('id');
+    if (eventId && events.length > 0 && !loading) {
+      const id = parseInt(eventId, 10);
+      const targetRef = eventRefs.current[id];
+
+      if (targetRef) {
+        // Scroll to the event card with offset for header
+        setTimeout(() => {
+          targetRef.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          setHighlightedEventId(id);
+
+          // Remove highlight after animation completes
+          setTimeout(() => {
+            setHighlightedEventId(null);
+          }, 3000);
+        }, 100);
+      }
+    }
+  }, [searchParams, events, loading]);
 
   const fetchEvents = async () => {
     try {
@@ -421,7 +446,11 @@ export default function Events() {
                 const interestedAttendees = event.attendees?.filter(a => a.status === 'interested') || [];
 
                 return (
-                  <div key={event.id} className={`event-card ${event.type}`}>
+                  <div
+                    key={event.id}
+                    ref={el => eventRefs.current[event.id] = el}
+                    className={`event-card ${event.type}${highlightedEventId === event.id ? ' highlighted' : ''}`}
+                  >
                     <div className="event-card-header">
                       <div className="event-date-block">
                         <span className="event-day">{date.day}</span>

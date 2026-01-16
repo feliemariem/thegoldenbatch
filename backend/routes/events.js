@@ -248,7 +248,7 @@ router.post('/', authenticateAdmin, async (req, res) => {
         if (location) message += `📍 ${location}\n`;
         if (description) message += `\n${description}\n`;
         message += '\nCheck it out and let us know if you\'re going!\n\n';
-        message += '👉 View Event: ' + (process.env.FRONTEND_URL || 'https://the-golden-batch.onrender.com') + '/events';
+        message += '👉 View Event: ' + (process.env.FRONTEND_URL || 'https://the-golden-batch.onrender.com') + '/events?id=' + event.id;
 
         // Get all registered users
         const usersResult = await db.query('SELECT id, email, first_name FROM users');
@@ -305,7 +305,7 @@ router.post('/', authenticateAdmin, async (req, res) => {
                   </p>
                   
                   <div style="text-align: center; margin: 30px 0;">
-                    <a href="${siteUrl}/events" style="display: inline-block; background: #006633; color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px;">View Event</a>
+                    <a href="${siteUrl}/events?id=${event.id}" style="display: inline-block; background: #006633; color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px;">View Event</a>
                   </div>
                   
                   <p style="color: #666; font-size: 14px; margin: 30px 0 0 0;">
