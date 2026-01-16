@@ -36,9 +36,13 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
   const [linkingTransaction, setLinkingTransaction] = useState(null);
   const [linkSearch, setLinkSearch] = useState('');
 
+  // Autocomplete names from existing ledger entries
+  const [existingNames, setExistingNames] = useState([]);
+
   useEffect(() => {
     fetchTransactions();
     fetchMasterListOptions();
+    fetchExistingNames();
   }, [token]);
 
   const fetchTransactions = async () => {
@@ -67,6 +71,16 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
       setMasterListOptions(data || []);
     } catch (err) {
       console.error('Failed to fetch master list options');
+    }
+  };
+
+  const fetchExistingNames = async () => {
+    try {
+      const res = await fetch('https://the-golden-batch-api.onrender.com/api/ledger/donors');
+      const data = await res.json();
+      setExistingNames(data.donors || []);
+    } catch (err) {
+      console.error('Failed to fetch existing names');
     }
   };
 
@@ -121,6 +135,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
         setResult({ success: true, message: editingId ? 'Transaction updated!' : 'Transaction added!' });
         resetForm();
         fetchTransactions();
+        fetchExistingNames(); // Refresh autocomplete list
       } else {
         const data = await res.json();
         setResult({ success: false, message: data.error || 'Failed to save' });
@@ -426,7 +441,14 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   placeholder={transactionType === 'deposit' ? 'e.g., Juan Dela Cruz' : 'e.g., PNB, Vendor Name'}
+                  list="existing-names"
+                  autoComplete="off"
                 />
+                <datalist id="existing-names">
+                  {existingNames.map((name, idx) => (
+                    <option key={idx} value={name} />
+                  ))}
+                </datalist>
               </div>
               <div className="form-group">
                 <label>Description</label>
