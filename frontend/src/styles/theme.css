@@ -1124,15 +1124,15 @@ body[data-theme="light"] .permission-section span {
    ========================================= */
 
 body[data-theme="light"] ::-webkit-scrollbar-track {
-  background: rgba(0, 77, 38, 0.05) !important;
+  background: rgba(0, 77, 38, 0.12) !important;
 }
 
 body[data-theme="light"] ::-webkit-scrollbar-thumb {
-  background: rgba(0, 77, 38, 0.2) !important;
+  background: rgba(0, 77, 38, 0.4) !important;
 }
 
 body[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 77, 38, 0.3) !important;
+  background: rgba(0, 77, 38, 0.55) !important;
 }
 
 /* =========================================
