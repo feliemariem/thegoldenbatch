@@ -417,6 +417,15 @@
   margin-bottom: 40px;
 }
 
+.events-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
 .section-title {
   color: var(--text-primary);
   font-size: 1.3rem;
@@ -427,7 +436,43 @@
 .section-subtitle {
   color: var(--text-secondary);
   font-size: 0.95rem;
-  margin: 0 0 24px 0;
+  margin: 0;
+}
+
+/* Toggle Past Events Button */
+.btn-toggle-past {
+  padding: 10px 18px;
+  background: rgba(207, 181, 59, 0.1);
+  border: 1px solid rgba(207, 181, 59, 0.3);
+  border-radius: 20px;
+  color: #CFB53B;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-toggle-past:hover {
+  background: rgba(207, 181, 59, 0.2);
+  border-color: #CFB53B;
+}
+
+.btn-toggle-past.active {
+  background: rgba(207, 181, 59, 0.2);
+  border-color: #CFB53B;
+}
+
+[data-theme="light"] .btn-toggle-past {
+  background: rgba(0, 102, 51, 0.08);
+  border-color: rgba(0, 102, 51, 0.3);
+  color: #006633;
+}
+
+[data-theme="light"] .btn-toggle-past:hover,
+[data-theme="light"] .btn-toggle-past.active {
+  background: rgba(0, 102, 51, 0.15);
+  border-color: #006633;
 }
 
 /* Events Grid */
@@ -536,6 +581,31 @@
 .event-type-badge.in-person {
   background: rgba(74, 222, 128, 0.2);
   color: #4ade80;
+}
+
+.event-type-badge.past {
+  background: rgba(180, 140, 80, 0.25);
+  color: #c9a857;
+  text-transform: uppercase;
+}
+
+/* Past Event Card Styling */
+.event-card.past {
+  opacity: 0.75;
+  border-left-color: #a08040 !important;
+}
+
+.event-card.past:hover {
+  opacity: 0.9;
+}
+
+.event-card.past .event-date-block {
+  background: linear-gradient(135deg, rgba(180, 140, 80, 0.2) 0%, rgba(180, 140, 80, 0.1) 100%);
+  border-color: rgba(180, 140, 80, 0.3);
+}
+
+.event-card.past .event-day {
+  color: #c9a857;
 }
 
 .event-card-body {
@@ -801,6 +871,24 @@
 
 [data-theme="light"] .event-year {
   color: #555;
+}
+
+[data-theme="light"] .event-card.past {
+  opacity: 0.7;
+}
+
+[data-theme="light"] .event-card.past .event-date-block {
+  background: linear-gradient(135deg, rgba(160, 128, 64, 0.15) 0%, rgba(160, 128, 64, 0.08) 100%);
+  border-color: rgba(160, 128, 64, 0.3);
+}
+
+[data-theme="light"] .event-card.past .event-day {
+  color: #8b6914;
+}
+
+[data-theme="light"] .event-type-badge.past {
+  background: rgba(160, 128, 64, 0.2);
+  color: #8b6914;
 }
 
 [data-theme="light"] .events-note {
