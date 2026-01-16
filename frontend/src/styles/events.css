@@ -531,19 +531,21 @@
   display: flex;
   gap: 8px;
   align-items: center;
-  padding: 8px 12px;
-  background: rgba(0, 0, 0, 0.6);
-  border-radius: 6px;
-  margin: 12px 20px 0 20px;
+  justify-content: center;
+  padding: 10px 16px;
+  background: rgba(0, 102, 51, 0.08);
+  border-radius: 8px;
+  margin: 12px 20px 16px 20px;
 }
 
 .event-admin-actions .btn-link {
-  font-size: 0.8rem;
-  padding: 4px 8px;
-  color: #CFB53B;
+  font-size: 0.85rem;
+  padding: 4px 12px;
+  color: #006633;
   background: none;
   border: none;
   cursor: pointer;
+  font-weight: 500;
 }
 
 .event-admin-actions .btn-link:hover {
@@ -551,6 +553,19 @@
 }
 
 .event-admin-actions .btn-link.delete {
+  color: #dc2626;
+}
+
+/* Dark mode */
+[data-theme="dark"] .event-admin-actions {
+  background: rgba(207, 181, 59, 0.1);
+}
+
+[data-theme="dark"] .event-admin-actions .btn-link {
+  color: #CFB53B;
+}
+
+[data-theme="dark"] .event-admin-actions .btn-link.delete {
   color: #dc3545;
 }
 
@@ -717,19 +732,6 @@
 [data-theme="light"] .attendee-name {
   background: rgba(0, 102, 51, 0.1);
   color: #006633;
-}
-
-[data-theme="light"] .event-admin-actions {
-  background: rgba(0, 102, 51, 0.1);
-  border: 1px solid rgba(0, 102, 51, 0.2);
-}
-
-[data-theme="light"] .event-admin-actions .btn-link {
-  color: #006633;
-}
-
-[data-theme="light"] .event-admin-actions .btn-link.delete {
-  color: #dc2626;
 }
 
 /* ========================================
