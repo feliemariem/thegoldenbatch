@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import logo from '../images/lasalle.jpg';
 
+const REMEMBERED_EMAIL_KEY = 'rememberedEmail';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -11,8 +12,18 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  // Pre-fill email from localStorage if saved
+  useEffect(() => {
+    const savedEmail = localStorage.getItem(REMEMBERED_EMAIL_KEY);
+    if (savedEmail) {
+      setEmail(savedEmail);
+      setRememberMe(true);
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,13 +34,20 @@ export default function Login() {
       const res = await fetch('https://the-golden-batch-api.onrender.com/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, rememberMe }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
         throw new Error(data.error || 'Login failed');
+      }
+
+      // Handle Remember Me: save or remove email from localStorage
+      if (rememberMe) {
+        localStorage.setItem(REMEMBERED_EMAIL_KEY, email);
+      } else {
+        localStorage.removeItem(REMEMBERED_EMAIL_KEY);
       }
 
       login(data.token, data.user);
@@ -100,6 +118,17 @@ return (
                 {showPassword ? 'Hide' : 'Show'}
               </button>
             </div>
+          </div>
+
+          <div className="remember-me-container">
+            <label className="remember-me-label">
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+              />
+              <span>Remember Me</span>
+            </label>
           </div>
 
           <button type="submit" className="btn-primary" disabled={submitting}>
