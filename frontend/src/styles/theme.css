@@ -1136,6 +1136,60 @@ body[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
 }
 
 /* =========================================
+   SCROLLABLE TABLE - Light Mode
+   ========================================= */
+
+/* Top scrollbar - light mode */
+body[data-theme="light"] .scrollable-table-top-scrollbar {
+  scrollbar-color: rgba(0, 77, 38, 0.3) rgba(0, 77, 38, 0.08);
+}
+
+body[data-theme="light"] .scrollable-table-top-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 77, 38, 0.08) !important;
+}
+
+body[data-theme="light"] .scrollable-table-top-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 77, 38, 0.3) !important;
+  border-color: rgba(0, 77, 38, 0.08) !important;
+}
+
+body[data-theme="light"] .scrollable-table-top-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 77, 38, 0.4) !important;
+}
+
+/* Table wrapper - light mode */
+body[data-theme="light"] .scrollable-table-wrapper {
+  border-color: rgba(0, 102, 51, 0.15) !important;
+  scrollbar-color: rgba(0, 77, 38, 0.3) rgba(0, 77, 38, 0.08);
+}
+
+body[data-theme="light"] .scrollable-table-wrapper::-webkit-scrollbar-track {
+  background: rgba(0, 77, 38, 0.08) !important;
+}
+
+body[data-theme="light"] .scrollable-table-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(0, 77, 38, 0.3) !important;
+  border-color: rgba(0, 77, 38, 0.08) !important;
+}
+
+body[data-theme="light"] .scrollable-table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 77, 38, 0.4) !important;
+}
+
+body[data-theme="light"] .scrollable-table-wrapper::-webkit-scrollbar-corner {
+  background: rgba(0, 77, 38, 0.08) !important;
+}
+
+/* Sticky header - light mode */
+body[data-theme="light"] .scrollable-table-wrapper.sticky-header thead th {
+  background: linear-gradient(165deg,
+      rgba(235, 245, 238, 0.98) 0%,
+      rgba(228, 240, 232, 0.99) 100%) !important;
+  backdrop-filter: blur(10px) !important;
+  box-shadow: 0 1px 0 rgba(0, 102, 51, 0.1) !important;
+}
+
+/* =========================================
    MOBILE ADJUSTMENTS
    ========================================= */
 

@@ -269,6 +269,40 @@ tr:last-child td {
 }
 
 /* ========================================
+   ENHANCED TABLE SCROLLING
+   Works with ScrollableTable component
+   ======================================== */
+
+/* Ensure scrollable table wrapper inherits proper styling */
+.scrollable-table-container .table-wrapper {
+  border: none;
+}
+
+.scrollable-table-container .scrollable-table-wrapper {
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Sticky header background for dark mode */
+.scrollable-table-wrapper.sticky-header thead th {
+  background: rgba(15, 20, 18, 0.98);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* Ensure proper overflow handling */
+.users-section .scrollable-table-container {
+  width: 100%;
+  overflow: visible;
+}
+
+/* Make scrollbars more visible on tables */
+.scrollable-table-wrapper {
+  /* Ensure scrollbar is always visible when content overflows */
+  overflow: auto;
+}
+
+/* ========================================
    MOBILE RESPONSIVE - Admin
    ======================================== */
 @media (max-width: 600px) {
@@ -419,6 +453,17 @@ tr:last-child td {
 
 [data-theme="light"] tr:hover {
   background: rgba(0, 102, 51, 0.06);
+}
+
+/* Light mode scrollable table */
+[data-theme="light"] .scrollable-table-container .scrollable-table-wrapper {
+  border: 1px solid rgba(0, 102, 51, 0.14);
+}
+
+[data-theme="light"] .scrollable-table-wrapper.sticky-header thead th {
+  background: linear-gradient(165deg,
+      rgba(235, 245, 238, 0.98) 0%,
+      rgba(228, 240, 232, 0.99) 100%);
 }
 
 /* Invite sections in light mode */
