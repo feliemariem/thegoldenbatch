@@ -991,7 +991,7 @@ export default function AdminDashboard() {
                   </div>
 
                   {filteredInvites.length > 0 ? (
-                    <ScrollableTable>
+                    <ScrollableTable maxRows={20} stickyHeader={true}>
                       <table>
                         <thead>
                           <tr>
@@ -1191,7 +1191,7 @@ export default function AdminDashboard() {
                 </div>
 
                 {filteredUsers.length > 0 ? (
-                  <ScrollableTable>
+                  <ScrollableTable maxRows={20} stickyHeader={true}>
                     <table>
                       <thead>
                         <tr>
@@ -1403,7 +1403,7 @@ export default function AdminDashboard() {
 
                 {/* Table */}
                 {filteredMasterList.length > 0 ? (
-                  <ScrollableTable>
+                  <ScrollableTable maxRows={25} stickyHeader={true}>
                     <table>
                       <thead>
                         <tr>

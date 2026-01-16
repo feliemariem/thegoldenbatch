@@ -584,7 +584,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
         </div>
 
         {transactions.length > 0 ? (
-          <ScrollableTable>
+          <ScrollableTable maxRows={15} stickyHeader={true}>
             <table className="ledger-table">
               <thead>
                 <tr>

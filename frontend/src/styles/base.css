@@ -159,6 +159,111 @@ h3 {
   background: rgba(255, 255, 255, 0.25);
 }
 
+/* ========================================
+   SCROLLABLE TABLE COMPONENT STYLES
+   Consolidated scroll styling for tables
+   ======================================== */
+
+/* Container for the scrollable table */
+.scrollable-table-container {
+  position: relative;
+  width: 100%;
+}
+
+/* Top scrollbar - synchronized with bottom */
+.scrollable-table-top-scrollbar {
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin-bottom: 4px;
+  border-radius: 8px;
+  /* Make scrollbar always visible */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) rgba(0, 0, 0, 0.2);
+}
+
+.scrollable-table-top-scrollbar::-webkit-scrollbar {
+  height: 10px;
+}
+
+.scrollable-table-top-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+}
+
+.scrollable-table-top-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 5px;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+}
+
+.scrollable-table-top-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+/* Table wrapper with scroll support */
+.scrollable-table-wrapper {
+  overflow-x: auto;
+  overflow-y: auto;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  /* Make scrollbar always visible */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) rgba(0, 0, 0, 0.2);
+}
+
+.scrollable-table-wrapper::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.scrollable-table-wrapper::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+}
+
+.scrollable-table-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 5px;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+}
+
+.scrollable-table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+/* Corner piece for scrollbars */
+.scrollable-table-wrapper::-webkit-scrollbar-corner {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* Sticky header support */
+.scrollable-table-wrapper.sticky-header thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.scrollable-table-wrapper.sticky-header thead th {
+  background: rgba(20, 28, 24, 0.98);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Ensure proper table layout */
+.scrollable-table-wrapper table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+
+/* Firefox scrollbar styling */
+@supports (scrollbar-width: thin) {
+  .scrollable-table-top-scrollbar,
+  .scrollable-table-wrapper {
+    scrollbar-width: thin;
+  }
+}
+
 /* Mobile Responsive - Base */
 @media (max-width: 600px) {
   .container {
