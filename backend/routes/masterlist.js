@@ -18,7 +18,7 @@ const toLowerEmail = (email) => {
 router.get('/', authenticateAdmin, async (req, res) => {
   try {
     const { section } = req.query;
-    
+
     let query = `
       SELECT 
         m.id,
@@ -62,9 +62,9 @@ router.get('/', authenticateAdmin, async (req, res) => {
         GROUP BY master_list_id
       ) ledger_totals ON m.id = ledger_totals.master_list_id
     `;
-    
+
     const params = [];
-    
+
     if (section && section !== 'all') {
       if (section === 'graduates') {
         query += ` WHERE m.section != 'Non-Graduate'`;
@@ -73,16 +73,16 @@ router.get('/', authenticateAdmin, async (req, res) => {
         params.push(section);
       }
     }
-    
+
     // Sort by last name only for 'all', otherwise by section then last name
     if (section && section !== 'all') {
       query += ` ORDER BY m.last_name, m.first_name`;
     } else {
       query += ` ORDER BY m.last_name, m.first_name`;
     }
-    
+
     const result = await db.query(query, params);
-    
+
     // Get stats
     const statsResult = await db.query(`
       SELECT 
@@ -96,7 +96,7 @@ router.get('/', authenticateAdmin, async (req, res) => {
       LEFT JOIN invites i ON LOWER(m.email) = LOWER(i.email)
       LEFT JOIN users u ON LOWER(m.email) = LOWER(u.email)
     `);
-    
+
     // Get payment stats (graduates only, excluding in memoriam)
     const paymentStatsResult = await db.query(`
       SELECT 
@@ -113,12 +113,12 @@ router.get('/', authenticateAdmin, async (req, res) => {
       ) ledger_totals ON m.id = ledger_totals.master_list_id
       WHERE m.section != 'Non-Graduate' AND (m.in_memoriam IS NULL OR m.in_memoriam = false)
     `);
-    
+
     // Get sections for dropdown
     const sectionsResult = await db.query(`
       SELECT DISTINCT section FROM master_list ORDER BY section
     `);
-    
+
     res.json({
       entries: result.rows,
       stats: {
@@ -137,16 +137,16 @@ router.get('/', authenticateAdmin, async (req, res) => {
 router.post('/bulk', authenticateAdmin, async (req, res) => {
   try {
     const { entries } = req.body;
-    
+
     if (!entries || !Array.isArray(entries) || entries.length === 0) {
       return res.status(400).json({ error: 'Entries array is required' });
     }
-    
+
     const results = {
       success: 0,
       errors: []
     };
-    
+
     for (const entry of entries) {
       try {
         await db.query(
@@ -165,7 +165,7 @@ router.post('/bulk', authenticateAdmin, async (req, res) => {
         results.errors.push({ name: `${entry.last_name}, ${entry.first_name}`, error: err.message });
       }
     }
-    
+
     res.status(201).json({
       message: `Added ${results.success} entries`,
       ...results
@@ -181,25 +181,41 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const { last_name, first_name, nickname, email, section, in_memoriam, is_unreachable, is_admin } = req.body;
-    
+
+    // Only super admins can change is_admin or in_memoriam
+    const wantsToChangeProtectedFields =
+      typeof req.body.is_admin === 'boolean' || typeof req.body.in_memoriam === 'boolean';
+
+    if (wantsToChangeProtectedFields) {
+      const superAdminCheck = await db.query(
+        'SELECT is_super_admin FROM admins WHERE LOWER(email) = $1',
+        [req.user.email.toLowerCase()]
+      );
+
+      if (!superAdminCheck.rows[0]?.is_super_admin) {
+        return res.status(403).json({ error: 'Super Admin access required' });
+      }
+    }
+
+
     // Get the current entry to check if is_admin is changing
     const currentEntry = await db.query('SELECT * FROM master_list WHERE id = $1', [id]);
     if (currentEntry.rows.length === 0) {
       return res.status(404).json({ error: 'Entry not found' });
     }
-    
+
     const entry = currentEntry.rows[0];
     const wasAdmin = entry.is_admin;
     const willBeAdmin = is_admin;
     const entryEmail = toLowerEmail(email) || entry.email;
     const entryFirstName = toTitleCase(first_name) || entry.first_name;
     const entryLastName = toTitleCase(last_name) || entry.last_name;
-    
+
     // If becoming admin and has email, create admin entry
     if (willBeAdmin && !wasAdmin && entryEmail) {
       // Check if admin already exists with this email
       const existingAdmin = await db.query('SELECT id FROM admins WHERE email = $1', [entryEmail]);
-      
+
       if (existingAdmin.rows.length === 0) {
         // Create admin entry (no password - they'll use forgot password to set one)
         await db.query(
@@ -209,12 +225,45 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
         );
       }
     }
-    
-    // If removing admin status, remove from admins table
-    if (!willBeAdmin && wasAdmin && entry.email) {
-      await db.query('DELETE FROM admins WHERE email = $1 AND is_super_admin = false', [entry.email]);
+
+    // If removing admin status, fully remove from admins + permissions
+    if (!willBeAdmin && wasAdmin) {
+      const oldEmail = entry.email ? entry.email.toLowerCase() : null;
+      const newEmail = entryEmail ? entryEmail.toLowerCase() : null;
+
+      // Delete permissions first
+      await db.query(
+        `
+    DELETE FROM permissions
+    WHERE admin_id IN (
+      SELECT id FROM admins
+      WHERE is_super_admin = false
+        AND (
+          ( $1 IS NOT NULL AND LOWER(email) = $1 )
+          OR
+          ( $2 IS NOT NULL AND LOWER(email) = $2 )
+        )
+    )
+    `,
+        [oldEmail, newEmail]
+      );
+
+      // Then delete admin row
+      await db.query(
+        `
+    DELETE FROM admins
+    WHERE is_super_admin = false
+      AND (
+        ( $1 IS NOT NULL AND LOWER(email) = $1 )
+        OR
+        ( $2 IS NOT NULL AND LOWER(email) = $2 )
+      )
+    `,
+        [oldEmail, newEmail]
+      );
     }
-    
+
+
     const result = await db.query(
       `UPDATE master_list SET
         last_name = COALESCE($1, last_name),
@@ -240,7 +289,7 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
         id
       ]
     );
-    
+
     res.json(result.rows[0]);
   } catch (err) {
     console.error(err);
@@ -252,24 +301,24 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
 router.delete('/:id', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params;
-    
+
     // Get the entry first to check if admin
     const entry = await db.query('SELECT email, is_admin FROM master_list WHERE id = $1', [id]);
-    
+
     if (entry.rows.length === 0) {
       return res.status(404).json({ error: 'Entry not found' });
     }
-    
+
     // If was admin, remove from admins table (but not super admins)
     if (entry.rows[0].is_admin && entry.rows[0].email) {
       await db.query('DELETE FROM admins WHERE LOWER(email) = $1 AND is_super_admin = false', [entry.rows[0].email.toLowerCase()]);
     }
-    
+
     const result = await db.query(
       'DELETE FROM master_list WHERE id = $1 RETURNING *',
       [id]
     );
-    
+
     res.json({ message: 'Entry deleted' });
   } catch (err) {
     console.error(err);

@@ -1260,7 +1260,7 @@ export default function AdminDashboard() {
                   </div>
                 )}
 
-               {/* BULK UPLOAD MASTER LIST - DISABLED FOR NOW   
+                {/* BULK UPLOAD MASTER LIST - DISABLED FOR NOW   
                <div className="invite-section">
               <h3>Upload Master List (CSV)</h3>
               <p className="help-text-small">CSV format: Section, Last Name, First Name, Nickname (optional)</p>
@@ -1293,8 +1293,8 @@ export default function AdminDashboard() {
                 </div>
               )}
             </div> 
-            */} 
-            
+            */}
+
 
                 {/* Filter and Search */}
                 <div className="section-header">
@@ -1432,14 +1432,17 @@ export default function AdminDashboard() {
                                 </td>
                                 <td>
                                   <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.85rem' }}>
-                                    <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                      <input
-                                        type="checkbox"
-                                        defaultChecked={entry.in_memoriam}
-                                        id={`edit-memoriam-${entry.id}`}
-                                      />
-                                      In Memoriam
-                                    </label>
+                                    {isSuperAdmin && (
+                                      <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                        <input
+                                          type="checkbox"
+                                          defaultChecked={entry.in_memoriam}
+                                          id={`edit-memoriam-${entry.id}`}
+                                        />
+                                        In Memoriam
+                                      </label>
+                                    )}
+
                                     <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                                       <input
                                         type="checkbox"
@@ -1448,14 +1451,17 @@ export default function AdminDashboard() {
                                       />
                                       Unreachable
                                     </label>
-                                    <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                      <input
-                                        type="checkbox"
-                                        defaultChecked={entry.is_admin}
-                                        id={`edit-admin-${entry.id}`}
-                                      />
-                                      Admin
-                                    </label>
+
+                                    {isSuperAdmin && (
+                                      <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                        <input
+                                          type="checkbox"
+                                          defaultChecked={entry.is_admin}
+                                          id={`edit-admin-${entry.id}`}
+                                        />
+                                        Admin
+                                      </label>
+                                    )}
                                   </div>
                                 </td>
                                 <td style={{ color: '#666', textAlign: 'center' }}>-</td>
@@ -1465,16 +1471,22 @@ export default function AdminDashboard() {
                                     <div style={{ display: 'flex', gap: '8px', whiteSpace: 'nowrap' }}>
                                       <button
                                         onClick={() => {
-                                          handleUpdateEntry(entry.id, {
+                                          const updates = {
                                             last_name: document.getElementById(`edit-lastname-${entry.id}`).value,
                                             first_name: document.getElementById(`edit-firstname-${entry.id}`).value,
                                             nickname: document.getElementById(`edit-nickname-${entry.id}`).value,
                                             email: document.getElementById(`edit-email-${entry.id}`).value,
-                                            in_memoriam: document.getElementById(`edit-memoriam-${entry.id}`).checked,
                                             is_unreachable: document.getElementById(`edit-unreachable-${entry.id}`).checked,
-                                            is_admin: document.getElementById(`edit-admin-${entry.id}`).checked,
-                                          });
+                                          };
+
+                                          if (isSuperAdmin) {
+                                            updates.in_memoriam = document.getElementById(`edit-memoriam-${entry.id}`)?.checked;
+                                            updates.is_admin = document.getElementById(`edit-admin-${entry.id}`)?.checked;
+                                          }
+
+                                          handleUpdateEntry(entry.id, updates);
                                         }}
+
                                         className="btn-link"
                                       >
                                         Save
@@ -1586,47 +1598,49 @@ export default function AdminDashboard() {
       </div>
 
       {/* Confirm Modal */}
-      {confirmModal.show && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0,0,0,0.6)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000
-        }}>
+      {
+        confirmModal.show && (
           <div style={{
-            background: 'linear-gradient(165deg, rgba(30, 40, 35, 0.98) 0%, rgba(20, 28, 24, 0.99) 100%)',
-            border: '1px solid rgba(207, 181, 59, 0.2)',
-            borderRadius: '16px',
-            padding: '24px 32px',
-            maxWidth: '320px',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.5)'
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0,0,0,0.6)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000
           }}>
-            <p style={{ color: '#e0e0e0', marginBottom: '20px', fontSize: '0.95rem' }}>{confirmModal.message}</p>
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-              <button
-                onClick={() => setConfirmModal({ show: false, message: '', onConfirm: null })}
-                className="btn-secondary"
-                style={{ padding: '10px 20px' }}
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmModal.onConfirm}
-                className="btn-primary"
-                style={{ padding: '10px 20px', width: 'auto', marginTop: 0 }}
-              >
-                OK
-              </button>
+            <div style={{
+              background: 'linear-gradient(165deg, rgba(30, 40, 35, 0.98) 0%, rgba(20, 28, 24, 0.99) 100%)',
+              border: '1px solid rgba(207, 181, 59, 0.2)',
+              borderRadius: '16px',
+              padding: '24px 32px',
+              maxWidth: '320px',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.5)'
+            }}>
+              <p style={{ color: '#e0e0e0', marginBottom: '20px', fontSize: '0.95rem' }}>{confirmModal.message}</p>
+              <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+                <button
+                  onClick={() => setConfirmModal({ show: false, message: '', onConfirm: null })}
+                  className="btn-secondary"
+                  style={{ padding: '10px 20px' }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmModal.onConfirm}
+                  className="btn-primary"
+                  style={{ padding: '10px 20px', width: 'auto', marginTop: 0 }}
+                >
+                  OK
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )
+      }
+    </div >
   );
 }
