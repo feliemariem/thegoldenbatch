@@ -178,10 +178,6 @@ router.post('/bulk', authenticateAdmin, async (req, res) => {
 
 // Update a master list entry
 router.put('/:id', authenticateAdmin, async (req, res) => {
-  console.log('=== Master List Update ===');
-  console.log('ID:', req.params.id);
-  console.log('Body:', req.body);
-  console.log('User:', req.user.email);
   try {
     const { id } = req.params;
     const { last_name, first_name, nickname, email, section, in_memoriam, is_unreachable, is_admin } = req.body;
