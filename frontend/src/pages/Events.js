@@ -174,7 +174,16 @@ export default function Events() {
   };
 
   const formatDate = (dateStr) => {
-    const date = new Date(dateStr + 'T00:00:00');
+    if (!dateStr) return { day: '?', month: '???', year: '????', full: 'Date TBD' };
+    
+    // Handle both "2026-03-15" and "2026-03-15T00:00:00.000Z" formats
+    const dateOnly = dateStr.split('T')[0];
+    const date = new Date(dateOnly + 'T00:00:00');
+    
+    if (isNaN(date.getTime())) {
+      return { day: '?', month: '???', year: '????', full: 'Invalid Date' };
+    }
+    
     return {
       day: date.getDate(),
       month: date.toLocaleString('en-US', { month: 'short' }).toUpperCase(),
@@ -446,6 +455,7 @@ export default function Events() {
                     {isAdmin && (
                       <div className="event-admin-actions">
                         <button onClick={() => handleEdit(event)} className="btn-link">Edit</button>
+                        <span style={{ margin: '0 4px' }}>|</span>
                         <button onClick={() => handleDelete(event.id)} className="btn-link delete">Delete</button>
                       </div>
                     )}
