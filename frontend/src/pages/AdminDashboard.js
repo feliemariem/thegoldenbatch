@@ -1108,7 +1108,7 @@ export default function AdminDashboard() {
                                         className="btn-link"
                                         onClick={() => copyLink(invite.invite_token)}
                                       >
-                                        Copy registration link
+                                        Copy link
                                       </button>
                                     )}
                                   </td>
