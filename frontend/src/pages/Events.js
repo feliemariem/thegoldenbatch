@@ -95,7 +95,7 @@ export default function Events() {
   const handleRsvp = async (eventId, status) => {
     try {
       const event = events.find(e => e.id === eventId);
-      
+
       // If clicking the same status, remove RSVP
       if (event.user_rsvp === status) {
         await fetch(`https://the-golden-batch-api.onrender.com/api/events/${eventId}/rsvp`, {
@@ -112,7 +112,7 @@ export default function Events() {
           body: JSON.stringify({ status })
         });
       }
-      
+
       fetchEvents();
     } catch (err) {
       console.error('Failed to update RSVP');
@@ -200,15 +200,15 @@ export default function Events() {
 
   const formatDate = (dateStr) => {
     if (!dateStr) return { day: '?', month: '???', year: '????', full: 'Date TBD' };
-    
+
     // Handle both "2026-03-15" and "2026-03-15T00:00:00.000Z" formats
     const dateOnly = dateStr.split('T')[0];
     const date = new Date(dateOnly + 'T00:00:00');
-    
+
     if (isNaN(date.getTime())) {
       return { day: '?', month: '???', year: '????', full: 'Invalid Date' };
     }
-    
+
     return {
       day: date.getDate(),
       month: date.toLocaleString('en-US', { month: 'short' }).toUpperCase(),
@@ -448,7 +448,6 @@ export default function Events() {
                 const date = formatDate(event.event_date);
                 const goingAttendees = event.attendees?.filter(a => a.status === 'going') || [];
                 const interestedAttendees = event.attendees?.filter(a => a.status === 'interested') || [];
-
                 const eventIsPast = isPastEvent(event.event_date);
 
                 return (
