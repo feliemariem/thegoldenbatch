@@ -178,6 +178,10 @@ router.post('/bulk', authenticateAdmin, async (req, res) => {
 
 // Update a master list entry
 router.put('/:id', authenticateAdmin, async (req, res) => {
+  console.log('=== Master List Update ===');
+  console.log('ID:', req.params.id);
+  console.log('Body:', req.body);
+  console.log('User:', req.user.email);
   try {
     const { id } = req.params;
     const { last_name, first_name, nickname, email, section, in_memoriam, is_unreachable, is_admin } = req.body;
@@ -227,42 +231,24 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
     }
 
     // If removing admin status, fully remove from admins + permissions
-    if (!willBeAdmin && wasAdmin) {
-      const oldEmail = entry.email ? entry.email.toLowerCase() : null;
-      const newEmail = entryEmail ? entryEmail.toLowerCase() : null;
+    if (!willBeAdmin && wasAdmin && entry.email) {
+      const adminEmail = entry.email.toLowerCase();
 
       // Delete permissions first
       await db.query(
-        `
-    DELETE FROM permissions
-    WHERE admin_id IN (
-      SELECT id FROM admins
-      WHERE is_super_admin = false
-        AND (
-          ( $1 IS NOT NULL AND LOWER(email) = $1 )
-          OR
-          ( $2 IS NOT NULL AND LOWER(email) = $2 )
-        )
-    )
-    `,
-        [oldEmail, newEmail]
+        `DELETE FROM permissions
+         WHERE admin_id IN (
+           SELECT id FROM admins WHERE LOWER(email) = $1 AND is_super_admin = false
+         )`,
+        [adminEmail]
       );
 
       // Then delete admin row
       await db.query(
-        `
-    DELETE FROM admins
-    WHERE is_super_admin = false
-      AND (
-        ( $1 IS NOT NULL AND LOWER(email) = $1 )
-        OR
-        ( $2 IS NOT NULL AND LOWER(email) = $2 )
-      )
-    `,
-        [oldEmail, newEmail]
+        `DELETE FROM admins WHERE LOWER(email) = $1 AND is_super_admin = false`,
+        [adminEmail]
       );
     }
-
 
     const result = await db.query(
       `UPDATE master_list SET

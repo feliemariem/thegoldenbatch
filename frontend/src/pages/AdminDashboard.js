@@ -99,8 +99,8 @@ export default function AdminDashboard() {
         const data = await res.json();
 
         const normalizedPermissions = Array.isArray(data.permissions)
-          ? data.permissions
-          : (data.permissions ? Object.values(data.permissions) : []);
+          ? data.permissions.reduce((acc, perm) => ({ ...acc, [perm]: true }), {})
+          : (data.permissions || {});
 
         setPermissions(normalizedPermissions);
         setIsSuperAdmin(data.is_super_admin);

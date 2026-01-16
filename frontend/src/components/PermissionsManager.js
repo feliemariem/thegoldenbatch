@@ -60,9 +60,9 @@ export default function PermissionsManager({ token }) {
       if (data.length > 0) {
         setSelectedAdminId(data[0].id.toString());
 
-        const normalizedPermissions = Array.isArray(data[0].permissions)
-          ? data[0].permissions
-          : (data[0].permissions ? Object.values(data[0].permissions) : []);
+        const normalizedPermissions = Array.isArray(data.permissions)
+          ? data.permissions.reduce((acc, perm) => ({ ...acc, [perm]: true }), {})
+          : (data.permissions || {});
 
         setPermissions(normalizedPermissions);
         setIsSuperAdmin(data[0].is_super_admin);
@@ -83,8 +83,8 @@ export default function PermissionsManager({ token }) {
     const admin = admins.find(a => a.id.toString() === id);
     if (admin) {
       const normalizedPermissions = Array.isArray(admin.permissions)
-        ? admin.permissions
-        : (admin.permissions ? Object.values(admin.permissions) : []);
+        ? admin.permissions.reduce((acc, perm) => ({ ...acc, [perm]: true }), {})
+        : (admin.permissions || {});
 
       setPermissions(normalizedPermissions);
       setIsSuperAdmin(admin.is_super_admin);
