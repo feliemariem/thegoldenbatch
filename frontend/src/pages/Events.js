@@ -14,6 +14,7 @@ export default function Events() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [mainEventStats, setMainEventStats] = useState({ going: 0, maybe: 0, not_going: 0 });
+  const [showPastEvents, setShowPastEvents] = useState(false);
 
   // Admin form state
   const [showForm, setShowForm] = useState(false);
@@ -208,8 +209,21 @@ export default function Events() {
     }
   };
 
-  // Separate main event from pre-reunion events
+  const isPastEvent = (eventDate) => {
+    if (!eventDate) return false;
+    const dateOnly = eventDate.split('T')[0];
+    const eventDateObj = new Date(dateOnly + 'T23:59:59');
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return eventDateObj < today;
+  };
+
+  // Separate main event from pre-reunion events and filter past events
   const preReunionEvents = events.filter(e => !e.is_main_event);
+  const visibleEvents = showPastEvents
+    ? preReunionEvents
+    : preReunionEvents.filter(e => !isPastEvent(e.event_date));
+  const pastEventsCount = preReunionEvents.filter(e => isPastEvent(e.event_date)).length;
 
   if (loading) {
     return (
@@ -416,27 +430,44 @@ export default function Events() {
 
         {/* Pre-Reunion Events */}
         <section className="events-section">
-          <h3 className="section-title">Pre-Reunion Gatherings</h3>
-          <p className="section-subtitle">Connect with batchmates before the big day</p>
+          <div className="events-section-header">
+            <div>
+              <h3 className="section-title">Pre-Reunion Gatherings</h3>
+              <p className="section-subtitle">Connect with batchmates before the big day</p>
+            </div>
+            {pastEventsCount > 0 && (
+              <button
+                className={`btn-toggle-past ${showPastEvents ? 'active' : ''}`}
+                onClick={() => setShowPastEvents(!showPastEvents)}
+              >
+                {showPastEvents ? 'Hide Past Events' : `Show Past Events (${pastEventsCount})`}
+              </button>
+            )}
+          </div>
 
-          {preReunionEvents.length > 0 ? (
+          {visibleEvents.length > 0 ? (
             <div className="events-grid">
-              {preReunionEvents.map(event => {
+              {visibleEvents.map(event => {
                 const date = formatDate(event.event_date);
                 const goingAttendees = event.attendees?.filter(a => a.status === 'going') || [];
                 const interestedAttendees = event.attendees?.filter(a => a.status === 'interested') || [];
+                const eventIsPast = isPastEvent(event.event_date);
 
                 return (
-                  <div key={event.id} className={`event-card ${event.type}`}>
+                  <div key={event.id} className={`event-card ${event.type} ${eventIsPast ? 'past' : ''}`}>
                     <div className="event-card-header">
                       <div className="event-date-block">
                         <span className="event-day">{date.day}</span>
                         <span className="event-month">{date.month}</span>
                         <span className="event-year">{date.year}</span>
                       </div>
-                      <span className={`event-type-badge ${event.type}`}>
-                        {getEventTypeLabel(event.type)}
-                      </span>
+                      {eventIsPast ? (
+                        <span className="event-type-badge past">Past Event</span>
+                      ) : (
+                        <span className={`event-type-badge ${event.type}`}>
+                          {getEventTypeLabel(event.type)}
+                        </span>
+                      )}
                     </div>
 
                     <div className="event-card-body">
