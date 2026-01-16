@@ -305,7 +305,22 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
   const exportToCSV = () => {
     if (!transactions.length) return;
 
-    const headers = ['Date', 'Name', 'Description', 'Deposit', 'Withdrawal', 'Balance', 'Reference No.', 'Verified', 'Payment Type', 'Recorded By'];
+    // Title and timestamp
+    const now = new Date();
+    const timestamp = now.toLocaleString('en-US', { 
+      month: 'long', 
+      day: 'numeric', 
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    });
+    
+    const title = ['USLS-IS Batch 2003 - Golden Batch Ledger'];
+    const exportDate = [`Exported: ${timestamp}`];
+    const blankRow = [''];
+
+    const headers = ['Date', 'Name', 'Description', 'Deposit', 'Withdrawal', 'Balance', 'Reference No.', 'Verified', 'Payment Type', 'Recorded By', 'Receipt URL'];
     const rows = transactions.map(t => [
       t.transaction_date ? new Date(t.transaction_date.split('T')[0] + 'T00:00:00').toLocaleDateString() : '',
       t.name || '',
@@ -316,10 +331,11 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
       t.reference_no || '',
       t.verified || '',
       t.payment_type || '',
-      t.recorded_by || ''
+      t.recorded_by || '',
+      t.receipt_url || ''
     ]);
 
-    const csv = [headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+    const csv = [title, exportDate, blankRow, headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
