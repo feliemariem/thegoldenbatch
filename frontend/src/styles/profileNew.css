@@ -68,9 +68,12 @@
 
 .profile-title h1 {
   font-size: 1.2rem;
-  color: #CFB53B;
+  background: linear-gradient(135deg, #8B6914 0%, #CFB53B 50%, #8B6914 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   margin: 0;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 3px;
 }
 
@@ -927,4 +930,32 @@
 
 [data-theme="light"] .profile-footer p {
   color: #666;
+}
+
+/* =========================
+   LIGHT MODE NAV FIX
+   ========================= */
+
+[data-theme="light"] .profile-nav .nav-link {
+  color: #0f2a1d;          /* dark green for contrast */
+  font-weight: 600;
+}
+
+[data-theme="light"] .profile-nav .nav-link:hover {
+  color: #006633;
+  background: rgba(0, 102, 51, 0.08);
+}
+
+[data-theme="light"] .profile-nav .logout-btn {
+  color: #8B6914;          /* deeper gold */
+}
+
+[data-theme="light"] .profile-nav .logout-btn:hover {
+  color: #6f540f;
+  background: rgba(207, 181, 59, 0.14);
+}
+
+[data-theme="light"] .profile-nav .nav-badge {
+  background: #CFB53B;
+  color: #0f2a1d;
 }

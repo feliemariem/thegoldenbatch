@@ -130,8 +130,20 @@ export default function Profile() {
     <div className="container">
       <div className="card">
         <img src={logo} alt="USLS Logo" className="logo" />
+        <h2 style={{
+          textAlign: 'center',
+          background: 'linear-gradient(135deg, #8B6914 0%, #CFB53B 50%, #8B6914 100%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
+          fontSize: '1.1rem',
+          fontWeight: '700',
+          letterSpacing: '0.15em',
+          textTransform: 'uppercase',
+          marginBottom: '8px'
+        }}>The Golden Batch</h2>
         <div className="header-row">
-          <h1>USLS-IS HS 2003</h1>
+          <h4 style={{ margin: 0 }}>USLS-IS 2003</h4>
           <button onClick={handleLogout} className="btn-link">
             Logout
           </button>

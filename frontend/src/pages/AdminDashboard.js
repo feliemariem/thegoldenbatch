@@ -571,7 +571,7 @@ export default function AdminDashboard() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
           <img src={logo} alt="La Salle" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
           <h2 style={{
-            background: 'linear-gradient(135deg, #CFB53B 0%, #F5E6A3 50%, #CFB53B 100%)',
+            background: 'linear-gradient(135deg, #8B6914 0%, #CFB53B 50%, #8B6914 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
@@ -670,16 +670,8 @@ export default function AdminDashboard() {
         )}
 
         {/* Dashboard Mode Toggle */}
-        <div style={{
-          display: 'flex',
-          gap: '4px',
-          marginBottom: '24px',
-          background: 'rgba(0,0,0,0.2)',
-          padding: '4px',
-          borderRadius: '12px',
-          width: '100%',
-          overflowX: 'auto'
-        }}>
+        <div className="dashboard-mode-tabs">
+
           <button
             onClick={() => setDashboardMode('registry')}
             style={{

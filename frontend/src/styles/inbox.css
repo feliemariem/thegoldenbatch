@@ -455,3 +455,51 @@
     text-align: center;
   }
 }
+
+/* =========================
+   LIGHT MODE (INBOX) - define variables locally
+   ========================= */
+[data-theme="light"] .inbox-container {
+  --bg-primary: linear-gradient(165deg, #f5f5f0 0%, #e8e8e0 50%, #f0f0e8 100%);
+  --header-bg: rgba(245, 245, 240, 0.92);
+  --card-bg: rgba(255, 255, 255, 0.95);
+  --border-color: rgba(0, 102, 51, 0.18);
+
+  --text-primary: #1a1a1a;
+  --text-secondary: #334;
+  --text-muted: #666;
+}
+
+/* Light mode nav readability */
+[data-theme="light"] .inbox-nav .nav-link {
+  color: #0f2a1d;
+  font-weight: 600;
+}
+
+[data-theme="light"] .inbox-nav .nav-link:hover {
+  color: #006633;
+  background: rgba(0, 102, 51, 0.08);
+}
+
+[data-theme="light"] .inbox-nav .logout-btn {
+  color: #8B6914;
+}
+
+[data-theme="light"] .inbox-nav .logout-btn:hover {
+  color: #6f540f;
+  background: rgba(207, 181, 59, 0.14);
+}
+
+/* Light mode Inbox contrast fix */
+[data-theme="light"] .inbox-container {
+  background: #f4f5f2; /* soft warm gray */
+}
+
+[data-theme="light"] .message-list {
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+[data-theme="light"] .message-item:hover {
+  background: rgba(0, 102, 51, 0.06);
+}

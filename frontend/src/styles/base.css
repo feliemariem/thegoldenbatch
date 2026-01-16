@@ -162,20 +162,37 @@ h3 {
 /* Mobile Responsive - Base */
 @media (max-width: 600px) {
   .container {
-    padding: 24px 16px;
+    padding: 16px 8px;
   }
 
   .card {
-    padding: 28px 20px;
-    border-radius: 16px;
+    padding: 20px 12px;
+    border-radius: 12px;
   }
 
   h1 {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
   }
 
   h2 {
     font-size: 1rem;
+  }
+  
+  .header-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 380px) {
+  .container {
+    padding: 12px 6px;
+  }
+  
+  .card {
+    padding: 16px 10px;
+    border-radius: 10px;
   }
 }
 
@@ -975,3 +992,25 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   justify-content: flex-end;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+/* Full-bleed layout on mobile for pages using .container/.card */
+@media (max-width: 600px) {
+  .container,
+  .admin-container {
+    max-width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .card {
+    width: 100%;
+    border-radius: 0;
+    padding-left: 16px;
+    padding-right: 16px;
+
+    /* optional: if you want it to truly feel edge-to-edge */
+    border-left: none;
+    border-right: none;
+  }
+}
+

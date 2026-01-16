@@ -45,7 +45,7 @@ export default function Landing() {
       <header className="landing-header">
         <div className="landing-logo">
           <img src={logo} alt="USLS Logo" />
-          <span>University of St. La Salle HS 2003</span>
+          <span>University of St. La Salle - IS 2003</span>
         </div>
         <div className="landing-header-actions">
           <button

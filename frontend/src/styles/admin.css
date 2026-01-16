@@ -192,6 +192,36 @@
   padding: 14px 28px;
 }
 
+/* Dashboard Mode Tabs */
+.dashboard-mode-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 24px;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 4px;
+  border-radius: 12px;
+  width: 100%;
+}
+
+.dashboard-mode-tabs button {
+  flex: 1;
+  padding: 10px 8px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.75rem;
+  background: transparent;
+  color: #999;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.dashboard-mode-tabs button.active {
+  background: #CFB53B;
+  color: #1a1a2e;
+}
+
 /* Table */
 .users-section {
   border-top: 1px solid rgba(255, 255, 255, 0.05);
@@ -238,27 +268,42 @@ tr:last-child td {
   border-bottom: none;
 }
 
-/* Mobile Responsive - Admin */
+/* ========================================
+   MOBILE RESPONSIVE - Admin
+   ======================================== */
 @media (max-width: 600px) {
+  /* Dashboard mode tabs - wrap to fit */
+  .dashboard-mode-tabs {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  
+  .dashboard-mode-tabs button {
+    flex: 1 1 calc(33.33% - 4px);
+    min-width: calc(33.33% - 4px);
+    padding: 10px 4px;
+    font-size: 0.65rem;
+  }
+  
   .invite-form {
     flex-direction: column;
   }
   
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    gap: 10px;
   }
 
   .stat-card {
-    padding: 18px;
+    padding: 16px 12px;
   }
 
   .stat-number {
-    font-size: 1.75rem;
+    font-size: 1.6rem;
   }
 
   .table-wrapper {
-    margin: 0 -20px;
+    margin: 0 -12px;
     padding: 0;
     border-radius: 0;
     border-left: none;
@@ -270,7 +315,7 @@ tr:last-child td {
   }
 
   th, td {
-    padding: 12px 10px;
+    padding: 12px 8px;
   }
 
   .invite-url {
@@ -284,4 +329,202 @@ tr:last-child td {
   .percentage-stats {
     flex-direction: column;
   }
+  
+  .percentage-box {
+    min-width: 100%;
+  }
 }
+
+/* Extra small screens */
+@media (max-width: 380px) {
+  .dashboard-mode-tabs button {
+    flex: 1 1 calc(50% - 4px);
+    min-width: calc(50% - 4px);
+  }
+  
+  .stat-number {
+    font-size: 1.4rem;
+  }
+}
+
+/* =========================
+   LIGHT MODE OVERRIDES - ADMIN
+   ========================= */
+
+[data-theme="light"] .dashboard-mode-tabs {
+  background: rgba(0, 102, 51, 0.08);         /* soft green wash */
+  border: 1px solid rgba(0, 102, 51, 0.18);
+}
+
+[data-theme="light"] .dashboard-mode-tabs button {
+  color: rgba(15, 42, 29, 0.70);              /* readable, muted green */
+  font-weight: 700;                           /* helps legibility */
+}
+
+[data-theme="light"] .dashboard-mode-tabs button:hover {
+  background: rgba(0, 102, 51, 0.10);
+  color: #0f2a1d;
+}
+
+[data-theme="light"] .dashboard-mode-tabs button.active {
+  background: #006633;                        /* brand green */
+  color: #ffffff;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.10);
+}
+
+/* Stats cards in light mode */
+[data-theme="light"] .stat-card {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(0, 102, 51, 0.14);
+}
+
+[data-theme="light"] .stat-card:hover {
+  border-color: rgba(0, 102, 51, 0.24);
+}
+
+[data-theme="light"] .stat-number {
+  color: #0f2a1d;
+}
+
+[data-theme="light"] .stat-label {
+  color: rgba(15, 42, 29, 0.65);
+}
+
+/* Keep your colored status cards still “status-y” in light mode */
+[data-theme="light"] .stat-card.going,
+[data-theme="light"] .stat-card.maybe,
+[data-theme="light"] .stat-card.not-going {
+  background: rgba(255, 255, 255, 0.92);
+}
+
+/* Table in light mode */
+[data-theme="light"] .table-wrapper {
+  border: 1px solid rgba(0, 102, 51, 0.14);
+}
+
+[data-theme="light"] table {
+  background: rgba(255, 255, 255, 0.92);
+}
+
+[data-theme="light"] th {
+  color: rgba(15, 42, 29, 0.65);
+  background: rgba(0, 102, 51, 0.06);
+  border-bottom: 1px solid rgba(0, 102, 51, 0.12);
+}
+
+[data-theme="light"] td {
+  color: #1a1a1a;
+  border-bottom: 1px solid rgba(0, 102, 51, 0.10);
+}
+
+[data-theme="light"] tr:hover {
+  background: rgba(0, 102, 51, 0.06);
+}
+
+/* Invite sections in light mode */
+[data-theme="light"] .invite-section,
+[data-theme="light"] .percentage-box {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(0, 102, 51, 0.14);
+}
+
+[data-theme="light"] .percentage-label {
+  color: rgba(15, 42, 29, 0.65);
+}
+
+[data-theme="light"] .percentage-item {
+  background: rgba(0, 102, 51, 0.06);
+  color: #1a1a1a;
+}
+
+/* ========================================
+   Announcement Composer (Admin) - Themed UI
+   ======================================== */
+
+/* Confirm popup */
+.announce-confirm {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  margin-bottom: 8px;
+  min-width: 280px;
+  z-index: 100;
+
+  background: rgba(30, 30, 30, 0.98);
+  border: 1px solid rgba(207, 181, 59, 0.30);
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+
+.announce-confirm__text {
+  margin: 0 0 16px 0;
+  font-size: 0.95rem;
+  color: #e0e0e0;
+}
+
+.announce-confirm__text strong {
+  color: #CFB53B;
+}
+
+.announce-confirm__actions {
+  display: flex;
+  gap: 10px;
+}
+
+.announce-confirm__yes {
+  padding: 8px 20px;
+  background: #CFB53B;
+  color: #1a1a1a;
+  border: none;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.announce-confirm__no {
+  padding: 8px 20px;
+  background: rgba(255,255,255,0.10);
+  color: #c0c0c0;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.announce-confirm__arrow {
+  position: absolute;
+  bottom: -8px;
+  left: 30px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid rgba(30, 30, 30, 0.98);
+}
+
+/* LIGHT MODE */
+[data-theme="light"] .announce-confirm {
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(0, 102, 51, 0.18);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+}
+
+[data-theme="light"] .announce-confirm__text {
+  color: #1a1a1a;
+}
+
+[data-theme="light"] .announce-confirm__text strong {
+  color: #006633;
+}
+
+[data-theme="light"] .announce-confirm__no {
+  background: rgba(0,0,0,0.06);
+  color: rgba(0,0,0,0.70);
+}
+
+[data-theme="light"] .announce-confirm__arrow {
+  border-top-color: rgba(255, 255, 255, 0.96);
+}
+
+.announce-send-email-text { color: #e0e0e0; }
+[data-theme="light"] .announce-send-email-text { color: rgba(15, 42, 29, 0.75); }

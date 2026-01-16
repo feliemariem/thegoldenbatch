@@ -52,8 +52,8 @@ function AdminOnly({ children }) {
 function ConditionalThemeToggle() {
   const location = useLocation();
 
-  // Don't show on landing page (it has its own toggle in header area)
-  if (location.pathname === '/preview') {
+  // Landing page is now at "/" instead of "/preview"
+  if (location.pathname === '/') {
     return null;
   }
 
@@ -65,7 +65,7 @@ function AppRoutes() {
 
   return (
     <Routes>
-      <Route path="/preview" element={<Landing />} />
+      <Route path="/" element={<Landing />} />
       <Route path="/register/:token" element={<Register />} />
       <Route path="/login" element={token ? <Navigate to="/profile" replace /> : <Login />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -118,7 +118,7 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
-      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="/preview" element={<Navigate to="/" replace />} /> {/* Redirect old /preview URL to new landing page for backwards compatibility */}
     </Routes>
   );
 }
