@@ -34,6 +34,23 @@ export default function ProfileNew() {
   // Feature flag for new pages (Events, Directory, etc.)
   const showNewPages = process.env.REACT_APP_NEW_FEATURES === 'true';
 
+  // Helper function to safely format event dates
+  const formatEventDate = (dateStr) => {
+    if (!dateStr) return { day: '?', month: '???' };
+
+    const dateOnly = dateStr.split('T')[0];
+    const date = new Date(dateOnly + 'T00:00:00');
+
+    if (isNaN(date.getTime())) {
+      return { day: '?', month: '???' };
+    }
+
+    return {
+      day: date.getDate(),
+      month: date.toLocaleString('en-US', { month: 'short' }).toUpperCase()
+    };
+  };
+
   useEffect(() => {
     fetchProfile();
     fetchUnreadCount();
@@ -618,8 +635,8 @@ export default function ProfileNew() {
                   {myEvents.map(event => (
                     <div key={event.id} className="my-event-item">
                       <div className="my-event-date">
-                        <span className="my-event-day">{new Date(event.event_date + 'T00:00:00').getDate()}</span>
-                        <span className="my-event-month">{new Date(event.event_date + 'T00:00:00').toLocaleString('en-US', { month: 'short' }).toUpperCase()}</span>
+                        <span className="my-event-day">{formatEventDate(event.event_date).day}</span>
+                        <span className="my-event-month">{formatEventDate(event.event_date).month}</span>
                       </div>
                       <div className="my-event-info">
                         <p className="my-event-title">{event.title}</p>
