@@ -990,6 +990,7 @@ body[data-theme="light"] .verified-badge.pending {
 
 body[data-theme="light"] .table-wrapper {
   overflow-x: auto !important;
+  overflow-y: auto !important;
 }
 
 body[data-theme="light"] .ledger-table {
