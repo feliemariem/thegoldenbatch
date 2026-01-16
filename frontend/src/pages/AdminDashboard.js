@@ -1088,7 +1088,7 @@ export default function AdminDashboard() {
                                       <button
                                         onClick={() =>
                                           copyToClipboard(
-                                            `${process.env.REACT_APP_FRONTEND_URL}/register/${invite.invite_token}`
+                                            `${window.location.origin}/register/${invite.invite_token}`
                                           )
                                         }
                                         className="btn-link"
