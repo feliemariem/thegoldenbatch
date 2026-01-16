@@ -9,6 +9,7 @@ import React, { useRef, useState, useEffect, useCallback } from 'react';
  * - Sticky header support
  * - Visible scrollbar styling for both light/dark modes
  * - Proper overflow handling
+ * - Click-and-drag scrolling (grab to pan in any direction)
  *
  * Props:
  * - children: Table element to wrap
@@ -31,6 +32,10 @@ export default function ScrollableTable({
   const [containerHeight, setContainerHeight] = useState('auto');
   const [isScrolling, setIsScrolling] = useState(false);
 
+  // Drag-to-scroll state
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStartRef = useRef({ x: 0, y: 0, scrollLeft: 0, scrollTop: 0 });
+
   // Sync horizontal scroll between top scrollbar and table
   const handleTopScroll = useCallback(() => {
     if (tableWrapperRef.current && topScrollRef.current && !isScrolling) {
@@ -47,6 +52,57 @@ export default function ScrollableTable({
       requestAnimationFrame(() => setIsScrolling(false));
     }
   }, [isScrolling]);
+
+  // Drag-to-scroll handlers
+  const handleMouseDown = useCallback((e) => {
+    // Only trigger on left mouse button and not on interactive elements
+    if (e.button !== 0) return;
+    const target = e.target;
+    if (target.closest('a, button, input, select, textarea, [role="button"]')) return;
+
+    setIsDragging(true);
+    dragStartRef.current = {
+      x: e.clientX,
+      y: e.clientY,
+      scrollLeft: tableWrapperRef.current?.scrollLeft || 0,
+      scrollTop: tableWrapperRef.current?.scrollTop || 0
+    };
+
+    // Prevent text selection during drag
+    e.preventDefault();
+  }, []);
+
+  const handleMouseMove = useCallback((e) => {
+    if (!isDragging || !tableWrapperRef.current) return;
+
+    const deltaX = e.clientX - dragStartRef.current.x;
+    const deltaY = e.clientY - dragStartRef.current.y;
+
+    tableWrapperRef.current.scrollLeft = dragStartRef.current.scrollLeft - deltaX;
+    tableWrapperRef.current.scrollTop = dragStartRef.current.scrollTop - deltaY;
+
+    // Sync top scrollbar
+    if (topScrollRef.current) {
+      topScrollRef.current.scrollLeft = tableWrapperRef.current.scrollLeft;
+    }
+  }, [isDragging]);
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  // Add global mouse up listener to handle drag release outside component
+  useEffect(() => {
+    if (isDragging) {
+      const handleGlobalMouseUp = () => setIsDragging(false);
+      window.addEventListener('mouseup', handleGlobalMouseUp);
+      return () => window.removeEventListener('mouseup', handleGlobalMouseUp);
+    }
+  }, [isDragging]);
 
   // Calculate table width and container height
   useEffect(() => {
@@ -136,9 +192,15 @@ export default function ScrollableTable({
         className={`table-wrapper scrollable-table-wrapper ${stickyHeader ? 'sticky-header' : ''}`}
         ref={tableWrapperRef}
         onScroll={handleTableScroll}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseLeave}
         style={{
           maxHeight: containerHeight,
-          overflowY: maxRows ? 'auto' : 'visible'
+          overflowY: maxRows ? 'auto' : 'visible',
+          cursor: isDragging ? 'grabbing' : 'grab',
+          userSelect: isDragging ? 'none' : 'auto'
         }}
       >
         {children}
