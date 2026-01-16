@@ -1097,7 +1097,13 @@ export default function AdminDashboard() {
                                         >
                                           <option value="">-- Select --</option>
                                           {masterList
-                                            .filter(m => !m.email && !m.in_memoriam)
+                                            .filter(m => {
+                                              // Exclude in memoriam entries
+                                              if (m.in_memoriam) return false;
+                                              // Only exclude entries that are explicitly linked to an invite
+                                              const isLinked = invites.some(inv => inv.master_list_id === m.id);
+                                              return !isLinked;
+                                            })
                                             .sort((a, b) => a.last_name.localeCompare(b.last_name))
                                             .map(m => (
                                               <option key={m.id} value={m.id}>
