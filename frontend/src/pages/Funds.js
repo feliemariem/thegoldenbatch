@@ -14,7 +14,7 @@ export default function Funds() {
 
   const fetchBalance = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/ledger/balance');
+      const res = await fetch('https://the-golden-batch-api.onrender.com/api/ledger/balance');
       const data = await res.json();
       setBalance(data.balance || 0);
       setTotalDeposits(data.totalDeposits || 0);
@@ -29,7 +29,7 @@ export default function Funds() {
 
   const fetchDonors = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/ledger/donors');
+      const res = await fetch('https://the-golden-batch-api.onrender.com/api/ledger/donors');
       const data = await res.json();
       setDonors(data.donors || []);
     } catch (err) {

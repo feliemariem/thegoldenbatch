@@ -95,6 +95,7 @@ CREATE TABLE ledger (
     payment_type VARCHAR(50),
     master_list_id INTEGER REFERENCES master_list(id),
     receipt_url VARCHAR(500),
+    receipt_public_id VARCHAR(255),
     notes TEXT,
     recorded_by VARCHAR(255),
     created_by VARCHAR(255),
@@ -192,3 +193,19 @@ CREATE INDEX idx_announcement_reads_announcement ON announcement_reads(announcem
 --   node setup-admin.js uslsis.batch2003@gmail.com YOUR_PASSWORD
 -- Then run this SQL to set as System super admin:
 --   UPDATE admins SET first_name = 'System', is_super_admin = TRUE WHERE email = 'uslsis.batch2003@gmail.com';
+
+-- ============================================================
+-- USEFUL COMMANDS
+-- ============================================================
+-- Clear All Tables Except Master List & Super Admin:
+--   DELETE FROM announcement_reads;
+--   DELETE FROM meeting_attachments;
+--   DELETE FROM meeting_minutes;
+--   DELETE FROM permissions;
+--   DELETE FROM password_resets;
+--   DELETE FROM announcements;
+--   DELETE FROM ledger;
+--   DELETE FROM rsvps;
+--   DELETE FROM users;
+--   DELETE FROM invites;
+--   DELETE FROM admins WHERE is_super_admin = false;
