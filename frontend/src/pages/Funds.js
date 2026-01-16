@@ -58,7 +58,19 @@ export default function Funds() {
     <div className="container">
       <div className="card">
         <img src={logo} alt="USLS Logo" className="logo" />
-        <h1 style={{ textAlign: 'center' }}>USLS-IS Batch 2003</h1>
+        <h2 style={{
+            background: 'linear-gradient(135deg, #8B6914 0%, #CFB53B 50%, #8B6914 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            textAlign: 'center',
+            fontSize: '1.1rem',
+            fontWeight: '700',
+            letterSpacing: '0.15em',
+            textTransform: 'uppercase',
+            margin: 0
+          }}>The Golden Batch</h2>
+        <h3 style={{ textAlign: 'center' }}>USLS-IS 2003</h3>
         <p className="subtitle" style={{ textAlign: 'center' }}>25th Alumni Homecoming Fund</p>
 
         {/* Total Funds Display */}

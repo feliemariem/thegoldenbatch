@@ -85,7 +85,7 @@ router.post('/', authenticateToken, async (req, res) => {
           await sgMail.send({
             to: recipient.email,
             from: process.env.FROM_EMAIL || 'noreply@goldenbatch2003.com',
-            subject: `[USLS-IS Batch 2003] New message in your Inbox`,
+            subject: `USLS-IS 2003 [The Golden Batch]:New message in your Inbox`,
             html: `
               <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
                 <!-- Header with golden batch centered -->
@@ -95,7 +95,7 @@ router.post('/', authenticateToken, async (req, res) => {
                 
                 <!-- Green band -->
                 <div style="background: #006633; color: white; padding: 25px 30px; text-align: center;">
-                  <h1 style="margin: 0; font-size: 22px; font-weight: 700;">USLS-IS Batch 2003</h1>
+                  <h1 style="margin: 0; font-size: 22px; font-weight: 700;">University of St. La Salle - IS 2003</h1>
                   <p style="margin: 8px 0 0 0; opacity: 0.9; font-size: 14px;">25th Alumni Homecoming</p>
                 </div>
                 
@@ -119,12 +119,12 @@ router.post('/', authenticateToken, async (req, res) => {
                 
                 <!-- Footer -->
                 <div style="background: #333; color: #999; padding: 25px 20px; text-align: center; font-size: 12px;">
-                  <p style="margin: 0; color: #ccc;">USLS-IS High School Batch 2003</p>
+                  <p style="margin: 0; color: #ccc;">USLS-IS 2003</p>
                   <p style="margin: 8px 0 0 0;">Questions? Email us at <a href="mailto:uslsis.batch2003@gmail.com" style="color: #CFB53B;">uslsis.batch2003@gmail.com</a></p>
                 </div>
               </div>
             `,
-            text: `Hi ${recipient.first_name || 'Batchmate'},\n\nYou have a new message in your Inbox!\n\nSubject: ${subject}\n\nView it here: ${siteUrl}/inbox\n\n- The Organizing Committee\n\nUSLS-IS High School Batch 2003\nQuestions? Email us at uslsis.batch2003@gmail.com`
+            text: `Hi ${recipient.first_name || 'Batchmate'},\n\nYou have a new message in your Inbox!\n\nSubject: ${subject}\n\nView it here: ${siteUrl}/inbox\n\n- The Organizing Committee\n\nUSLS-IS 2003\nQuestions? Email us at uslsis.batch2003@gmail.com`
           });
           emailsSent++;
         } catch (emailErr) {

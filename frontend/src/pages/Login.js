@@ -52,7 +52,18 @@ return (
     <div className="container">
       <div className="card card-narrow">
         <img src={logo} alt="USLS Logo" className="logo" />
-        <h1 style={{ textAlign: 'center' }}>
+        <h1 style={{ 
+          background: 'linear-gradient(135deg, #8B6914 0%, #CFB53B 50%, #8B6914 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            textAlign: 'center',
+            fontSize: '1.1rem',
+            fontWeight: '700',
+            letterSpacing: '0.15em',
+            textTransform: 'uppercase',
+            margin: 0
+          }}>
           University of St. La Salle<br />HS 2003
         </h1>
         <p className="subtitle" style={{ textAlign: 'center' }}>
@@ -103,7 +114,7 @@ return (
         </p>
 
         <p className="help-text">
-          Don't have an account? You need an invite link to register.<br />
+          Don't have an account? <br />You need an invite link to register.<br />
           Please email{' '}
           <a href="mailto:uslsis.batch2003@gmail.com">
             uslsis.batch2003@gmail.com
