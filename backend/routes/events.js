@@ -271,42 +271,60 @@ router.post('/', authenticateAdmin, async (req, res) => {
         if (process.env.SENDGRID_API_KEY && users.length > 0) {
           const sgMail = require('@sendgrid/mail');
           sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+          
+          const siteUrl = process.env.SITE_URL || 'https://the-golden-batch.onrender.com';
 
           const emailPromises = users.map(user => {
             const htmlContent = `
-              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                <div style="background: linear-gradient(135deg, #006633 0%, #004d26 100%); padding: 20px; text-align: center;">
-                  <h1 style="color: #CFB53B; margin: 0;">THE GOLDEN BATCH</h1>
-                  <p style="color: #ffffff; margin: 5px 0 0 0;">25th Alumni Homecoming</p>
+              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+                <!-- Header with golden batch centered -->
+                <div style="background: #1a2520; padding: 25px 30px; text-align: center;">
+                  <span style="color: #CFB53B; font-size: 20px; font-weight: 600; letter-spacing: 3px;">THE GOLDEN BATCH</span>
                 </div>
-                <div style="padding: 30px; background: #f9f9f9;">
-                  <h2 style="color: #006633; margin-top: 0;">🎉 New Event: ${title}</h2>
-                  <p style="font-size: 16px; color: #333;"><strong>${title}</strong></p>
-                  <p style="font-size: 14px; color: #555;">
-                    📅 ${eventDateFormatted}${event_time ? ` • ${event_time}` : ''}
-                  </p>
-                  ${location ? `<p style="font-size: 14px; color: #555;">📍 ${location}</p>` : ''}
-                  ${description ? `<p style="font-size: 14px; color: #555;">${description}</p>` : ''}
-                  <p style="font-size: 14px; color: #CFB53B; font-style: italic; margin-top: 20px;">
+                
+                <!-- Green band -->
+                <div style="background: #006633; color: white; padding: 25px 30px; text-align: center;">
+                  <h1 style="margin: 0; font-size: 22px; font-weight: 700;">USLS-IS Batch 2003</h1>
+                  <p style="margin: 8px 0 0 0; opacity: 0.9; font-size: 14px;">25th Alumni Homecoming</p>
+                </div>
+                
+                <!-- Main content -->
+                <div style="padding: 40px 30px; background: #f9f9f9;">
+                  <p style="color: #333; font-size: 16px; margin: 0 0 25px 0;">Hi ${user.first_name || 'Batchmate'},</p>
+                  
+                  <div style="background: white; padding: 25px; border-radius: 8px; margin: 0 0 25px 0; border-left: 4px solid #CFB53B; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                    <h2 style="color: #006633; margin: 0 0 15px 0; font-size: 18px;">🎉 New Event: ${title}</h2>
+                    <p style="color: #333; margin: 0 0 10px 0; font-size: 15px;"><strong>${title}</strong></p>
+                    <p style="color: #666; margin: 0 0 8px 0; font-size: 14px;">📅 ${eventDateFormatted}${event_time ? ` • ${event_time}` : ''}</p>
+                    ${location ? `<p style="color: #666; margin: 0 0 8px 0; font-size: 14px;">📍 ${location}</p>` : ''}
+                    ${description ? `<p style="color: #666; margin: 15px 0 0 0; font-size: 14px;">${description}</p>` : ''}
+                  </div>
+                  
+                  <p style="color: #CFB53B; font-size: 14px; margin: 0 0 25px 0; font-style: italic;">
                     Check it out and let us know if you're going!
                   </p>
-                  <div style="text-align: center; margin-top: 30px;">
-                    <a href="${process.env.FRONTEND_URL || 'https://the-golden-batch.onrender.com'}/events" 
-                       style="background: #CFB53B; color: #1a1a2e; padding: 12px 30px; text-decoration: none; border-radius: 8px; font-weight: bold;">
-                      View Event
-                    </a>
+                  
+                  <div style="text-align: center; margin: 30px 0;">
+                    <a href="${siteUrl}/events" style="display: inline-block; background: #006633; color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px;">View Event</a>
                   </div>
+                  
+                  <p style="color: #666; font-size: 14px; margin: 30px 0 0 0;">
+                    - The Organizing Committee
+                  </p>
                 </div>
-                <div style="padding: 20px; text-align: center; color: #888; font-size: 12px;">
-                  <p>USLS-IS Batch 2003 - The Golden Batch</p>
+                
+                <!-- Footer -->
+                <div style="background: #333; color: #999; padding: 25px 20px; text-align: center; font-size: 12px;">
+                  <p style="margin: 0; color: #ccc;">USLS-IS High School Batch 2003</p>
+                  <p style="margin: 8px 0 0 0;">Questions? Email us at <a href="mailto:uslsis.batch2003@gmail.com" style="color: #CFB53B;">uslsis.batch2003@gmail.com</a></p>
                 </div>
               </div>
             `;
 
             return sgMail.send({
               to: user.email,
-              from: process.env.SENDGRID_FROM_EMAIL || 'noreply@thegoldenbatch.com',
-              subject: `🎉 New Event: ${title}`,
+              from: process.env.FROM_EMAIL || 'noreply@goldenbatch2003.com',
+              subject: `[USLS-IS Batch 2003] New message in your Inbox`,
               html: htmlContent
             }).catch(err => {
               console.error(`Failed to send to ${user.email}:`, err.message);
