@@ -99,6 +99,73 @@ router.get('/my-rsvps', authenticateToken, async (req, res) => {
   }
 });
 
+// Get a single event by ID with full details
+router.get('/:id', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const eventResult = await db.query(`
+      SELECT
+        e.*,
+        a.first_name as creator_first_name,
+        a.last_name as creator_last_name
+      FROM events e
+      LEFT JOIN admins a ON e.created_by = a.id
+      WHERE e.id = $1 AND e.is_published = true
+    `, [id]);
+
+    if (eventResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    const event = eventResult.rows[0];
+
+    // Get RSVP counts
+    const countsResult = await db.query(`
+      SELECT
+        COUNT(CASE WHEN status = 'going' THEN 1 END) as going_count,
+        COUNT(CASE WHEN status = 'interested' THEN 1 END) as interested_count,
+        COUNT(CASE WHEN status = 'not_going' THEN 1 END) as not_going_count
+      FROM event_rsvps
+      WHERE event_id = $1
+    `, [id]);
+
+    // Get attendees (going and interested)
+    const attendeesResult = await db.query(`
+      SELECT
+        er.status,
+        u.id as user_id,
+        u.first_name,
+        u.last_name,
+        u.profile_photo
+      FROM event_rsvps er
+      JOIN users u ON er.user_id = u.id
+      WHERE er.event_id = $1 AND er.status IN ('going', 'interested')
+      ORDER BY er.created_at ASC
+    `, [id]);
+
+    // Get current user's RSVP
+    const userRsvpResult = await db.query(`
+      SELECT status FROM event_rsvps
+      WHERE event_id = $1 AND user_id = (
+        SELECT id FROM users WHERE LOWER(email) = $2
+      )
+    `, [id, req.user.email.toLowerCase()]);
+
+    res.json({
+      ...event,
+      going_count: parseInt(countsResult.rows[0].going_count) || 0,
+      interested_count: parseInt(countsResult.rows[0].interested_count) || 0,
+      not_going_count: parseInt(countsResult.rows[0].not_going_count) || 0,
+      attendees: attendeesResult.rows,
+      user_rsvp: userRsvpResult.rows[0]?.status || null
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // RSVP to an event
 router.post('/:id/rsvp', authenticateToken, async (req, res) => {
   try {
@@ -248,7 +315,7 @@ router.post('/', authenticateAdmin, async (req, res) => {
         if (location) message += `📍 ${location}\n`;
         if (description) message += `\n${description}\n`;
         message += '\nCheck it out and let us know if you\'re going!\n\n';
-        message += '👉 View Event: ' + (process.env.FRONTEND_URL || 'https://the-golden-batch.onrender.com') + '/events';
+        message += '👉 View Event: ' + (process.env.FRONTEND_URL || 'https://the-golden-batch.onrender.com') + '/events/' + event.id;
 
         // Get all registered users
         const usersResult = await db.query('SELECT id, email, first_name FROM users');
@@ -305,7 +372,7 @@ router.post('/', authenticateAdmin, async (req, res) => {
                   </p>
                   
                   <div style="text-align: center; margin: 30px 0;">
-                    <a href="${siteUrl}/events" style="display: inline-block; background: #006633; color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px;">View Event</a>
+                    <a href="${siteUrl}/events/${event.id}" style="display: inline-block; background: #006633; color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px;">View Event</a>
                   </div>
                   
                   <p style="color: #666; font-size: 14px; margin: 30px 0 0 0;">
