@@ -195,19 +195,21 @@ router.get('/admin/all', authenticateAdmin, async (req, res) => {
 // Create event - Admin only
 router.post('/', authenticateAdmin, async (req, res) => {
   try {
-    const { title, description, event_date, event_time, location, type, is_main_event, is_published } = req.body;
+    const { title, description, event_date, event_time, location, type, is_main_event, is_published, send_announcement } = req.body;
 
     if (!title || !event_date) {
       return res.status(400).json({ error: 'Title and date are required' });
     }
 
-    // Get admin ID
+    // Get admin ID and name
     const adminResult = await db.query(
-      'SELECT id FROM admins WHERE LOWER(email) = $1',
+      'SELECT id, first_name, last_name FROM admins WHERE LOWER(email) = $1',
       [req.user.email.toLowerCase()]
     );
 
-    const adminId = adminResult.rows[0]?.id || null;
+    const admin = adminResult.rows[0];
+    const adminId = admin?.id || null;
+    const adminName = admin ? `${admin.first_name || ''} ${admin.last_name || ''}`.trim() : 'Admin';
 
     const result = await db.query(`
       INSERT INTO events (title, description, event_date, event_time, location, type, is_main_event, is_published, created_by)
@@ -225,7 +227,108 @@ router.post('/', authenticateAdmin, async (req, res) => {
       adminId
     ]);
 
-    res.status(201).json(result.rows[0]);
+    const event = result.rows[0];
+
+    // Send announcement if requested
+    if (send_announcement && is_published !== false) {
+      try {
+        // Format date for announcement
+        const eventDateFormatted = new Date(event_date + 'T00:00:00').toLocaleDateString('en-US', {
+          weekday: 'long',
+          month: 'long',
+          day: 'numeric',
+          year: 'numeric'
+        });
+
+        // Build announcement message
+        let message = `**${title}**\n\n`;
+        message += `📅 ${eventDateFormatted}`;
+        if (event_time) message += ` • ${event_time}`;
+        message += '\n';
+        if (location) message += `📍 ${location}\n`;
+        if (description) message += `\n${description}\n`;
+        message += '\nCheck it out and let us know if you\'re going!';
+
+        // Get all registered users
+        const usersResult = await db.query('SELECT id, email, first_name FROM users');
+        const users = usersResult.rows;
+
+        // Create announcement record
+        const announcementResult = await db.query(`
+          INSERT INTO announcements (subject, message, audience, recipients_count, sent_by)
+          VALUES ($1, $2, $3, $4, $5)
+          RETURNING id
+        `, [
+          `🎉 New Event: ${title}`,
+          message,
+          'all',
+          users.length,
+          adminName
+        ]);
+
+        // Send emails via SendGrid if available
+        if (process.env.SENDGRID_API_KEY && users.length > 0) {
+          const sgMail = require('@sendgrid/mail');
+          sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+          const emailPromises = users.map(user => {
+            const htmlContent = `
+              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <div style="background: linear-gradient(135deg, #006633 0%, #004d26 100%); padding: 20px; text-align: center;">
+                  <h1 style="color: #CFB53B; margin: 0;">THE GOLDEN BATCH</h1>
+                  <p style="color: #ffffff; margin: 5px 0 0 0;">25th Alumni Homecoming</p>
+                </div>
+                <div style="padding: 30px; background: #f9f9f9;">
+                  <h2 style="color: #006633; margin-top: 0;">🎉 New Event: ${title}</h2>
+                  <p style="font-size: 16px; color: #333;"><strong>${title}</strong></p>
+                  <p style="font-size: 14px; color: #555;">
+                    📅 ${eventDateFormatted}${event_time ? ` • ${event_time}` : ''}
+                  </p>
+                  ${location ? `<p style="font-size: 14px; color: #555;">📍 ${location}</p>` : ''}
+                  ${description ? `<p style="font-size: 14px; color: #555;">${description}</p>` : ''}
+                  <p style="font-size: 14px; color: #CFB53B; font-style: italic; margin-top: 20px;">
+                    Check it out and let us know if you're going!
+                  </p>
+                  <div style="text-align: center; margin-top: 30px;">
+                    <a href="${process.env.FRONTEND_URL || 'https://the-golden-batch.onrender.com'}/events" 
+                       style="background: #CFB53B; color: #1a1a2e; padding: 12px 30px; text-decoration: none; border-radius: 8px; font-weight: bold;">
+                      View Event
+                    </a>
+                  </div>
+                </div>
+                <div style="padding: 20px; text-align: center; color: #888; font-size: 12px;">
+                  <p>USLS-IS Batch 2003 - The Golden Batch</p>
+                </div>
+              </div>
+            `;
+
+            return sgMail.send({
+              to: user.email,
+              from: process.env.SENDGRID_FROM_EMAIL || 'noreply@thegoldenbatch.com',
+              subject: `🎉 New Event: ${title}`,
+              html: htmlContent
+            }).catch(err => {
+              console.error(`Failed to send to ${user.email}:`, err.message);
+              return null;
+            });
+          });
+
+          const results = await Promise.all(emailPromises);
+          const successCount = results.filter(r => r !== null).length;
+
+          // Update announcement with email stats
+          await db.query(
+            'UPDATE announcements SET emails_sent = $1, emails_failed = $2 WHERE id = $3',
+            [successCount, users.length - successCount, announcementResult.rows[0].id]
+          );
+        }
+      } catch (announcementErr) {
+        console.error('Failed to send announcement:', announcementErr);
+        // Don't fail the event creation if announcement fails
+      }
+    }
+
+    res.status(201).json(event);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });

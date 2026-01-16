@@ -26,7 +26,8 @@ export default function Events() {
     event_time: '',
     location: '',
     type: 'in-person',
-    is_published: true
+    is_published: true,
+    send_announcement: false
   });
 
   useEffect(() => {
@@ -110,7 +111,8 @@ export default function Events() {
       event_time: '',
       location: '',
       type: 'in-person',
-      is_published: true
+      is_published: true,
+      send_announcement: false
     });
     setEditingEvent(null);
     setShowForm(false);
@@ -354,6 +356,43 @@ export default function Events() {
                       Published (visible to all users)
                     </label>
                   </div>
+
+                  {/* Send Announcement Toggle - only for new events */}
+                  {!editingEvent && (
+                    <div className="announcement-toggle-section">
+                      <div className="announcement-toggle">
+                        <label className="toggle-switch">
+                          <input
+                            type="checkbox"
+                            checked={form.send_announcement}
+                            onChange={(e) => setForm({ ...form, send_announcement: e.target.checked })}
+                          />
+                          <span className="toggle-slider"></span>
+                        </label>
+                        <div className="toggle-label">
+                          <span className="toggle-title">📢 Notify Everyone</span>
+                          <span className="toggle-desc">Send email & inbox announcement to all registered users</span>
+                        </div>
+                      </div>
+
+                      {/* Preview */}
+                      {form.send_announcement && form.title && (
+                        <div className="announcement-preview">
+                          <p className="preview-label">Preview</p>
+                          <div className="preview-card">
+                            <p className="preview-subject">🎉 New Event: {form.title}</p>
+                            <div className="preview-body">
+                              <p><strong>{form.title}</strong></p>
+                              {form.event_date && <p>📅 {new Date(form.event_date + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}{form.event_time && ` • ${form.event_time}`}</p>}
+                              {form.location && <p>📍 {form.location}</p>}
+                              {form.description && <p>{form.description}</p>}
+                              <p className="preview-cta">Check it out and let us know if you're going!</p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                   <div className="form-actions">
                     <button type="submit" className="btn-save" disabled={saving}>
