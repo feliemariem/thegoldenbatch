@@ -167,7 +167,7 @@ export default function Inbox() {
       {showModal && selectedAnnouncement && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close" onClick={closeModal}>Ã—</button>
+            <button className="modal-close" onClick={closeModal}>&times;</button>
             <div className="detail-header">
               <h3>{selectedAnnouncement.subject}</h3>
               <span className="detail-date">{formatFullDate(selectedAnnouncement.created_at)}</span>
