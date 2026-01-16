@@ -30,6 +30,7 @@ app.use('/api/permissions', permissionRoutes);
 app.use('/api/ledger', ledgerRoutes);
 app.use('/api/meetings', meetingRoutes);
 app.use('/api/announcements', announcementRoutes);
+app.use('/api/events', require('./routes/events'));
 
 // Health check
 app.get('/api/health', (req, res) => {

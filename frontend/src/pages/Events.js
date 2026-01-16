@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import ThemeToggle from '../components/ThemeToggle';
@@ -7,97 +7,170 @@ import '../styles/profileNew.css';
 import '../styles/events.css';
 
 export default function Events() {
-  const { user, logout } = useAuth();
+  const { user, token, logout } = useAuth();
   const navigate = useNavigate();
+  const isAdmin = user?.isAdmin;
 
-  // Sample events data - static for now
-  const [events, setEvents] = useState([
-    {
-      id: 1,
-      title: 'Pre-Reunion Planning Meeting',
-      date: '2026-03-15',
-      time: '7:00 PM',
-      location: 'Zoom / Online',
-      description: 'Join us for our first virtual planning session to discuss ideas and volunteer roles for the big reunion.',
-      type: 'virtual',
-      rsvp: null, // null = not responded, 'going', 'interested', 'not_going'
-      attendees: 12,
-      interested: 8
-    },
-    {
-      id: 2,
-      title: 'Manila Mini-Reunion',
-      date: '2026-06-21',
-      time: '6:00 PM',
-      location: 'TBD - Makati Area',
-      description: 'A casual get-together for batchmates based in Metro Manila. Dinner and drinks!',
-      type: 'in-person',
-      rsvp: null,
-      attendees: 24,
-      interested: 15
-    },
-    {
-      id: 3,
-      title: 'Bacolod Pre-Reunion Dinner',
-      date: '2026-09-14',
-      time: '7:00 PM',
-      location: 'L\'Fisher Hotel, Bacolod City',
-      description: 'For those in Bacolod - let\'s reconnect before the main event! Partners welcome.',
-      type: 'in-person',
-      rsvp: null,
-      attendees: 18,
-      interested: 22
-    },
-    {
-      id: 4,
-      title: 'US/Canada Virtual Hangout',
-      date: '2026-11-08',
-      time: '9:00 AM PST / 1:00 AM PHT',
-      location: 'Zoom / Online',
-      description: 'Time-zone friendly virtual meetup for our batchmates in North America.',
-      type: 'virtual',
-      rsvp: null,
-      attendees: 8,
-      interested: 12
-    },
-    {
-      id: 5,
-      title: '25th Alumni Homecoming',
-      date: '2028-12-16',
-      time: '5:00 PM',
-      location: 'USLS School Grounds, Bacolod City',
-      description: 'The main event! 25 years since graduation. Let\'s make it unforgettable.',
-      type: 'main-event',
-      rsvp: null,
-      attendees: 45,
-      interested: 32
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [mainEventStats, setMainEventStats] = useState({ going: 0, maybe: 0, not_going: 0 });
+
+  // Admin form state
+  const [showForm, setShowForm] = useState(false);
+  const [editingEvent, setEditingEvent] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [form, setForm] = useState({
+    title: '',
+    description: '',
+    event_date: '',
+    event_time: '',
+    location: '',
+    type: 'in-person',
+    is_published: true
+  });
+
+  useEffect(() => {
+    fetchEvents();
+    fetchMainEventStats();
+  }, [token]);
+
+  const fetchEvents = async () => {
+    try {
+      const res = await fetch('https://the-golden-batch-api.onrender.com/api/events', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setEvents(data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch events');
+    } finally {
+      setLoading(false);
     }
-  ]);
+  };
+
+  const fetchMainEventStats = async () => {
+    try {
+      const res = await fetch('https://the-golden-batch-api.onrender.com/api/admin/dashboard', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setMainEventStats({
+          going: data.stats?.going || 0,
+          maybe: data.stats?.maybe || 0,
+          not_going: data.stats?.not_going || 0
+        });
+      }
+    } catch (err) {
+      console.error('Failed to fetch main event stats');
+    }
+  };
 
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
 
-  const handleRsvp = (eventId, status) => {
-    setEvents(events.map(event => 
-      event.id === eventId 
-        ? { 
-            ...event, 
-            rsvp: event.rsvp === status ? null : status,
-            attendees: event.rsvp === 'going' && status !== 'going' 
-              ? event.attendees - 1 
-              : status === 'going' && event.rsvp !== 'going'
-                ? event.attendees + 1
-                : event.attendees,
-            interested: event.rsvp === 'interested' && status !== 'interested'
-              ? event.interested - 1
-              : status === 'interested' && event.rsvp !== 'interested'
-                ? event.interested + 1
-                : event.interested
-          }
-        : event
-    ));
+  // RSVP handlers
+  const handleRsvp = async (eventId, status) => {
+    try {
+      const event = events.find(e => e.id === eventId);
+      
+      // If clicking the same status, remove RSVP
+      if (event.user_rsvp === status) {
+        await fetch(`https://the-golden-batch-api.onrender.com/api/events/${eventId}/rsvp`, {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      } else {
+        await fetch(`https://the-golden-batch-api.onrender.com/api/events/${eventId}/rsvp`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({ status })
+        });
+      }
+      
+      fetchEvents();
+    } catch (err) {
+      console.error('Failed to update RSVP');
+    }
+  };
+
+  // Admin handlers
+  const resetForm = () => {
+    setForm({
+      title: '',
+      description: '',
+      event_date: '',
+      event_time: '',
+      location: '',
+      type: 'in-person',
+      is_published: true
+    });
+    setEditingEvent(null);
+    setShowForm(false);
+  };
+
+  const handleEdit = (event) => {
+    setForm({
+      title: event.title,
+      description: event.description || '',
+      event_date: event.event_date?.split('T')[0] || '',
+      event_time: event.event_time || '',
+      location: event.location || '',
+      type: event.type || 'in-person',
+      is_published: event.is_published
+    });
+    setEditingEvent(event);
+    setShowForm(true);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+
+    try {
+      const url = editingEvent
+        ? `https://the-golden-batch-api.onrender.com/api/events/${editingEvent.id}`
+        : 'https://the-golden-batch-api.onrender.com/api/events';
+
+      const res = await fetch(url, {
+        method: editingEvent ? 'PUT' : 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(form)
+      });
+
+      if (res.ok) {
+        resetForm();
+        fetchEvents();
+      }
+    } catch (err) {
+      console.error('Failed to save event');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async (eventId) => {
+    if (!window.confirm('Delete this event? All RSVPs will be lost.')) return;
+
+    try {
+      await fetch(`https://the-golden-batch-api.onrender.com/api/events/${eventId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      fetchEvents();
+    } catch (err) {
+      console.error('Failed to delete event');
+    }
   };
 
   const formatDate = (dateStr) => {
@@ -114,14 +187,23 @@ export default function Events() {
     switch(type) {
       case 'virtual': return 'Virtual';
       case 'in-person': return 'In-Person';
-      case 'main-event': return 'Main Event';
       default: return type;
     }
   };
 
   // Separate main event from pre-reunion events
-  const mainEvent = events.find(e => e.type === 'main-event');
-  const preReunionEvents = events.filter(e => e.type !== 'main-event');
+  const preReunionEvents = events.filter(e => !e.is_main_event);
+
+  if (loading) {
+    return (
+      <div className="profile-container">
+        <div className="profile-loading">
+          <div className="loading-spinner"></div>
+          <p>Loading events...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="profile-container">
@@ -155,40 +237,126 @@ export default function Events() {
         </section>
 
         {/* Main Event Highlight */}
-        {mainEvent && (
-          <div className="main-event-card">
-            <div className="main-event-badge">Main Event</div>
-            <div className="main-event-content">
-              <div className="event-date-block main">
-                <span className="event-day">{formatDate(mainEvent.date).day}</span>
-                <span className="event-month">{formatDate(mainEvent.date).month}</span>
-                <span className="event-year">{formatDate(mainEvent.date).year}</span>
-              </div>
-              <div className="main-event-info">
-                <h3>{mainEvent.title}</h3>
-                <p className="event-datetime">{formatDate(mainEvent.date).full} • {mainEvent.time}</p>
-                <p className="event-location-text">📍 {mainEvent.location}</p>
-                <p className="event-description">{mainEvent.description}</p>
-                <div className="event-stats">
-                  <span className="stat-item going">{mainEvent.attendees} going</span>
-                  <span className="stat-item interested">{mainEvent.interested} interested</span>
-                </div>
-              </div>
-              <div className="main-event-actions">
-                <button 
-                  className={`btn-event-rsvp going ${mainEvent.rsvp === 'going' ? 'active' : ''}`}
-                  onClick={() => handleRsvp(mainEvent.id, 'going')}
-                >
-                  {mainEvent.rsvp === 'going' ? '✓ Going' : 'Going'}
-                </button>
-                <button 
-                  className={`btn-event-rsvp interested ${mainEvent.rsvp === 'interested' ? 'active' : ''}`}
-                  onClick={() => handleRsvp(mainEvent.id, 'interested')}
-                >
-                  {mainEvent.rsvp === 'interested' ? '✓ Interested' : 'Interested'}
-                </button>
-              </div>
+        <div className="main-event-card">
+          <div className="main-event-badge">Main Event</div>
+          <div className="main-event-content">
+            <div className="event-date-block main">
+              <span className="event-day">16</span>
+              <span className="event-month">DEC</span>
+              <span className="event-year">2028</span>
             </div>
+            <div className="main-event-info">
+              <h3>25th Alumni Homecoming</h3>
+              <p className="event-datetime">Saturday, December 16, 2028 • 5:00 PM</p>
+              <p className="event-location-text">📍 USLS School Grounds, Bacolod City</p>
+              <p className="event-description">The main event! 25 years since graduation. Let's make it unforgettable.</p>
+              <div className="main-event-rsvp-stats">
+                <span className="rsvp-stat going">{mainEventStats.going} Going</span>
+                <span className="rsvp-stat maybe">{mainEventStats.maybe} Maybe</span>
+                <span className="rsvp-stat not-going">{mainEventStats.not_going} Can't Make It</span>
+              </div>
+              <p className="rsvp-note">Update your RSVP on your <Link to="/profile">Profile</Link></p>
+            </div>
+          </div>
+        </div>
+
+        {/* Admin: Create Event Button/Form */}
+        {isAdmin && (
+          <div className="admin-events-section">
+            {!showForm ? (
+              <button onClick={() => setShowForm(true)} className="btn-create-event">
+                + Create Event
+              </button>
+            ) : (
+              <div className="event-form-card">
+                <h3>{editingEvent ? 'Edit Event' : 'Create New Event'}</h3>
+                <form onSubmit={handleSubmit}>
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label>Event Title *</label>
+                      <input
+                        type="text"
+                        value={form.title}
+                        onChange={(e) => setForm({ ...form, title: e.target.value })}
+                        placeholder="e.g., Manila Mini-Reunion"
+                        required
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Type</label>
+                      <select
+                        value={form.type}
+                        onChange={(e) => setForm({ ...form, type: e.target.value })}
+                      >
+                        <option value="in-person">In-Person</option>
+                        <option value="virtual">Virtual</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label>Date *</label>
+                      <input
+                        type="date"
+                        value={form.event_date}
+                        onChange={(e) => setForm({ ...form, event_date: e.target.value })}
+                        required
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Time</label>
+                      <input
+                        type="text"
+                        value={form.event_time}
+                        onChange={(e) => setForm({ ...form, event_time: e.target.value })}
+                        placeholder="e.g., 7:00 PM"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Location</label>
+                    <input
+                      type="text"
+                      value={form.location}
+                      onChange={(e) => setForm({ ...form, location: e.target.value })}
+                      placeholder="e.g., L'Fisher Hotel, Bacolod City"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Description</label>
+                    <textarea
+                      value={form.description}
+                      onChange={(e) => setForm({ ...form, description: e.target.value })}
+                      placeholder="Tell people what this event is about..."
+                      rows={3}
+                    />
+                  </div>
+
+                  <div className="form-group checkbox-group">
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={form.is_published}
+                        onChange={(e) => setForm({ ...form, is_published: e.target.checked })}
+                      />
+                      Published (visible to all users)
+                    </label>
+                  </div>
+
+                  <div className="form-actions">
+                    <button type="submit" className="btn-save" disabled={saving}>
+                      {saving ? 'Saving...' : editingEvent ? 'Update Event' : 'Create Event'}
+                    </button>
+                    <button type="button" onClick={resetForm} className="btn-cancel">
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
           </div>
         )}
 
@@ -196,61 +364,107 @@ export default function Events() {
         <section className="events-section">
           <h3 className="section-title">Pre-Reunion Gatherings</h3>
           <p className="section-subtitle">Connect with batchmates before the big day</p>
-          
-          <div className="events-grid">
-            {preReunionEvents.map(event => {
-              const date = formatDate(event.date);
-              return (
-                <div key={event.id} className={`event-card ${event.type}`}>
-                  <div className="event-card-header">
-                    <div className="event-date-block">
-                      <span className="event-day">{date.day}</span>
-                      <span className="event-month">{date.month}</span>
-                      <span className="event-year">{date.year}</span>
-                    </div>
-                    <span className={`event-type-badge ${event.type}`}>
-                      {getEventTypeLabel(event.type)}
-                    </span>
-                  </div>
-                  
-                  <div className="event-card-body">
-                    <h4 className="event-title">{event.title}</h4>
-                    <p className="event-time">🕐 {event.time}</p>
-                    <p className="event-location-text">📍 {event.location}</p>
-                    <p className="event-description">{event.description}</p>
-                  </div>
 
-                  <div className="event-card-footer">
-                    <div className="event-stats">
-                      <span className="stat-item going">{event.attendees} going</span>
-                      <span className="stat-item interested">{event.interested} interested</span>
+          {preReunionEvents.length > 0 ? (
+            <div className="events-grid">
+              {preReunionEvents.map(event => {
+                const date = formatDate(event.event_date);
+                const goingAttendees = event.attendees?.filter(a => a.status === 'going') || [];
+                const interestedAttendees = event.attendees?.filter(a => a.status === 'interested') || [];
+
+                return (
+                  <div key={event.id} className={`event-card ${event.type}`}>
+                    <div className="event-card-header">
+                      <div className="event-date-block">
+                        <span className="event-day">{date.day}</span>
+                        <span className="event-month">{date.month}</span>
+                        <span className="event-year">{date.year}</span>
+                      </div>
+                      <span className={`event-type-badge ${event.type}`}>
+                        {getEventTypeLabel(event.type)}
+                      </span>
                     </div>
-                    <div className="event-actions">
-                      <button 
-                        className={`btn-event-rsvp small going ${event.rsvp === 'going' ? 'active' : ''}`}
-                        onClick={() => handleRsvp(event.id, 'going')}
-                      >
-                        {event.rsvp === 'going' ? '✓' : ''} Going
-                      </button>
-                      <button 
-                        className={`btn-event-rsvp small interested ${event.rsvp === 'interested' ? 'active' : ''}`}
-                        onClick={() => handleRsvp(event.id, 'interested')}
-                      >
-                        {event.rsvp === 'interested' ? '✓' : ''} Interested
-                      </button>
+
+                    <div className="event-card-body">
+                      <h4 className="event-title">{event.title}</h4>
+                      {event.event_time && <p className="event-time">🕐 {event.event_time}</p>}
+                      {event.location && <p className="event-location-text">📍 {event.location}</p>}
+                      {event.description && <p className="event-description">{event.description}</p>}
+
+                      {/* Attendees List */}
+                      {goingAttendees.length > 0 && (
+                        <div className="attendees-section">
+                          <p className="attendees-label">Going:</p>
+                          <div className="attendees-list">
+                            {goingAttendees.slice(0, 5).map(a => (
+                              <span key={a.user_id} className="attendee-name">{a.first_name}</span>
+                            ))}
+                            {goingAttendees.length > 5 && (
+                              <span className="attendee-more">+{goingAttendees.length - 5} more</span>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {interestedAttendees.length > 0 && (
+                        <div className="attendees-section">
+                          <p className="attendees-label">Interested:</p>
+                          <div className="attendees-list">
+                            {interestedAttendees.slice(0, 5).map(a => (
+                              <span key={a.user_id} className="attendee-name">{a.first_name}</span>
+                            ))}
+                            {interestedAttendees.length > 5 && (
+                              <span className="attendee-more">+{interestedAttendees.length - 5} more</span>
+                            )}
+                          </div>
+                        </div>
+                      )}
                     </div>
+
+                    <div className="event-card-footer">
+                      <div className="event-stats">
+                        <span className="stat-item going">{event.going_count} going</span>
+                        <span className="stat-item interested">{event.interested_count} interested</span>
+                      </div>
+                      <div className="event-actions">
+                        <button
+                          className={`btn-event-rsvp small going ${event.user_rsvp === 'going' ? 'active' : ''}`}
+                          onClick={() => handleRsvp(event.id, 'going')}
+                        >
+                          {event.user_rsvp === 'going' ? '✓' : ''} Going
+                        </button>
+                        <button
+                          className={`btn-event-rsvp small interested ${event.user_rsvp === 'interested' ? 'active' : ''}`}
+                          onClick={() => handleRsvp(event.id, 'interested')}
+                        >
+                          {event.user_rsvp === 'interested' ? '✓' : ''} Interested
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Admin Edit/Delete */}
+                    {isAdmin && (
+                      <div className="event-admin-actions">
+                        <button onClick={() => handleEdit(event)} className="btn-link">Edit</button>
+                        <button onClick={() => handleDelete(event.id)} className="btn-link delete">Delete</button>
+                      </div>
+                    )}
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="no-events">
+              <p>No upcoming events yet.</p>
+              {isAdmin && <p>Click "Create Event" to add one!</p>}
+            </div>
+          )}
         </section>
 
         {/* Info Note */}
         <div className="events-note">
           <p>
-            <strong>Note:</strong> This is a preview of upcoming events. 
-            Event details may change. Check back for updates or watch your inbox for announcements.
+            <strong>Note:</strong> Event details may change. Check back for updates or watch your inbox for announcements.
           </p>
         </div>
 

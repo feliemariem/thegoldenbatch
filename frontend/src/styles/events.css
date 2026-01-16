@@ -434,7 +434,20 @@
 }
 
 [data-theme="light"] .event-date-block {
-  background: linear-gradient(135deg, rgba(207, 181, 59, 0.15) 0%, rgba(207, 181, 59, 0.08) 100%);
+  background: linear-gradient(135deg, rgba(0, 102, 51, 0.15) 0%, rgba(0, 102, 51, 0.08) 100%);
+  border-color: rgba(0, 102, 51, 0.3);
+}
+
+[data-theme="light"] .event-day {
+  color: #006633;
+}
+
+[data-theme="light"] .event-month {
+  color: #1a1a1a;
+}
+
+[data-theme="light"] .event-year {
+  color: #555;
 }
 
 [data-theme="light"] .events-note {
@@ -443,4 +456,50 @@
 
 [data-theme="light"] .event-card-footer {
   border-top-color: rgba(0, 0, 0, 0.06);
+}
+
+/* Main Event RSVP Stats */
+.main-event-rsvp-stats {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.rsvp-stat {
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.rsvp-stat.going {
+  background: rgba(5, 150, 105, 0.15);
+  color: #059669;
+}
+
+.rsvp-stat.maybe {
+  background: rgba(217, 119, 6, 0.15);
+  color: #d97706;
+}
+
+.rsvp-stat.not-going {
+  background: rgba(220, 38, 38, 0.15);
+  color: #dc2626;
+}
+
+.rsvp-note {
+  margin-top: 16px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.rsvp-note a {
+  color: #CFB53B;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.rsvp-note a:hover {
+  text-decoration: underline;
 }

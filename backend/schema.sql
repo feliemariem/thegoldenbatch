@@ -2,6 +2,8 @@
 -- The Golden Batch - USLS-IS Batch 2003
 
 -- Drop tables in correct order (respecting foreign keys)
+DROP TABLE IF EXISTS event_rsvps;
+DROP TABLE IF EXISTS events;
 DROP TABLE IF EXISTS announcement_reads;
 DROP TABLE IF EXISTS meeting_attachments;
 DROP TABLE IF EXISTS meeting_minutes;
@@ -74,7 +76,7 @@ CREATE TABLE users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- RSVPs table
+-- RSVPs table (for main event)
 CREATE TABLE rsvps (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) UNIQUE NOT NULL,
@@ -169,6 +171,33 @@ CREATE TABLE meeting_attachments (
     uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Events table: pre-reunion gatherings and main event
+CREATE TABLE events (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    event_date DATE NOT NULL,
+    event_time VARCHAR(50),
+    location VARCHAR(255),
+    type VARCHAR(50) DEFAULT 'in-person',
+    is_main_event BOOLEAN DEFAULT FALSE,
+    is_published BOOLEAN DEFAULT TRUE,
+    created_by INTEGER REFERENCES admins(id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Event RSVPs table: tracks who's going to which event
+CREATE TABLE event_rsvps (
+    id SERIAL PRIMARY KEY,
+    event_id INTEGER REFERENCES events(id) ON DELETE CASCADE,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    status VARCHAR(20) CHECK (status IN ('going', 'interested', 'not_going')) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(event_id, user_id)
+);
+
 -- Indexes for performance
 CREATE INDEX idx_invite_token ON invites(invite_token);
 CREATE INDEX idx_invites_email ON invites(email);
@@ -185,6 +214,10 @@ CREATE INDEX idx_password_resets_token ON password_resets(token);
 CREATE INDEX idx_password_resets_email ON password_resets(email);
 CREATE INDEX idx_announcement_reads_user ON announcement_reads(user_id);
 CREATE INDEX idx_announcement_reads_announcement ON announcement_reads(announcement_id);
+CREATE INDEX idx_events_date ON events(event_date);
+CREATE INDEX idx_events_published ON events(is_published);
+CREATE INDEX idx_event_rsvps_event ON event_rsvps(event_id);
+CREATE INDEX idx_event_rsvps_user ON event_rsvps(user_id);
 
 -- ============================================================
 -- INITIAL DATA: Create System Super Admin
@@ -198,6 +231,8 @@ CREATE INDEX idx_announcement_reads_announcement ON announcement_reads(announcem
 -- USEFUL COMMANDS
 -- ============================================================
 -- Clear All Tables Except Master List & Super Admin:
+--   DELETE FROM event_rsvps;
+--   DELETE FROM events;
 --   DELETE FROM announcement_reads;
 --   DELETE FROM meeting_attachments;
 --   DELETE FROM meeting_minutes;
@@ -209,3 +244,38 @@ CREATE INDEX idx_announcement_reads_announcement ON announcement_reads(announcem
 --   DELETE FROM users;
 --   DELETE FROM invites;
 --   DELETE FROM admins WHERE is_super_admin = false;
+
+-- ============================================================
+-- ADD TABLES TO EXISTING DATABASE (without dropping)
+-- ============================================================
+-- If you already have data and just need to add the new tables:
+--
+-- CREATE TABLE events (
+--     id SERIAL PRIMARY KEY,
+--     title VARCHAR(255) NOT NULL,
+--     description TEXT,
+--     event_date DATE NOT NULL,
+--     event_time VARCHAR(50),
+--     location VARCHAR(255),
+--     type VARCHAR(50) DEFAULT 'in-person',
+--     is_main_event BOOLEAN DEFAULT FALSE,
+--     is_published BOOLEAN DEFAULT TRUE,
+--     created_by INTEGER REFERENCES admins(id),
+--     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-- );
+--
+-- CREATE TABLE event_rsvps (
+--     id SERIAL PRIMARY KEY,
+--     event_id INTEGER REFERENCES events(id) ON DELETE CASCADE,
+--     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+--     status VARCHAR(20) CHECK (status IN ('going', 'interested', 'not_going')) NOT NULL,
+--     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--     UNIQUE(event_id, user_id)
+-- );
+--
+-- CREATE INDEX idx_events_date ON events(event_date);
+-- CREATE INDEX idx_events_published ON events(is_published);
+-- CREATE INDEX idx_event_rsvps_event ON event_rsvps(event_id);
+-- CREATE INDEX idx_event_rsvps_user ON event_rsvps(user_id);

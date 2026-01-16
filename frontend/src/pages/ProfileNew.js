@@ -16,6 +16,7 @@ export default function ProfileNew() {
   const [message, setMessage] = useState('');
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [myEvents, setMyEvents] = useState([]);
   const fileInputRef = useRef(null);
 
   const [form, setForm] = useState({
@@ -36,7 +37,22 @@ export default function ProfileNew() {
   useEffect(() => {
     fetchProfile();
     fetchUnreadCount();
+    fetchMyEvents();
   }, [token]);
+
+  const fetchMyEvents = async () => {
+    try {
+      const res = await fetch('https://the-golden-batch-api.onrender.com/api/events/my-rsvps', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setMyEvents(data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch my events');
+    }
+  };
 
   const fetchUnreadCount = async () => {
     try {
@@ -590,6 +606,33 @@ export default function ProfileNew() {
                 </div>
               )}
             </div>
+
+            {/* Your Upcoming Events */}
+            {myEvents.length > 0 && (
+              <div className="profile-card my-events-card">
+                <div className="card-header">
+                  <h3>Your Upcoming Events</h3>
+                  <Link to="/events" className="btn-link">View All</Link>
+                </div>
+                <div className="my-events-list">
+                  {myEvents.map(event => (
+                    <div key={event.id} className="my-event-item">
+                      <div className="my-event-date">
+                        <span className="my-event-day">{new Date(event.event_date + 'T00:00:00').getDate()}</span>
+                        <span className="my-event-month">{new Date(event.event_date + 'T00:00:00').toLocaleString('en-US', { month: 'short' }).toUpperCase()}</span>
+                      </div>
+                      <div className="my-event-info">
+                        <p className="my-event-title">{event.title}</p>
+                        <p className="my-event-location">{event.location || 'Location TBD'}</p>
+                      </div>
+                      <span className={`my-event-status ${event.status}`}>
+                        {event.status === 'going' ? 'Going' : 'Interested'}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Quick Links - only show if other new pages are enabled */}
             {showNewPages && (

@@ -959,3 +959,133 @@
   background: #CFB53B;
   color: #0f2a1d;
 }
+
+/* ========================================
+   YOUR UPCOMING EVENTS CARD
+   ======================================== */
+
+.my-events-card {
+  margin-top: 24px;
+}
+
+.my-events-card .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.my-events-card .card-header h3 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1.1rem;
+}
+
+.my-events-card .btn-link {
+  color: #CFB53B;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.my-events-card .btn-link:hover {
+  text-decoration: underline;
+}
+
+.my-events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.my-event-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  transition: background 0.2s ease;
+}
+
+.my-event-item:hover {
+  background: rgba(207, 181, 59, 0.1);
+}
+
+.my-event-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 50px;
+  padding: 8px 12px;
+  background: linear-gradient(135deg, rgba(0, 102, 51, 0.2) 0%, rgba(0, 102, 51, 0.1) 100%);
+  border-radius: 8px;
+}
+
+.my-event-day {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #CFB53B;
+  line-height: 1;
+}
+
+.my-event-month {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 2px;
+}
+
+.my-event-info {
+  flex: 1;
+}
+
+.my-event-title {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin: 0 0 4px 0;
+}
+
+.my-event-location {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  margin: 0;
+}
+
+.my-event-status {
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.my-event-status.going {
+  background: rgba(5, 150, 105, 0.15);
+  color: #059669;
+}
+
+.my-event-status.interested {
+  background: rgba(207, 181, 59, 0.15);
+  color: #CFB53B;
+}
+
+/* Light mode */
+[data-theme="light"] .my-event-item {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+[data-theme="light"] .my-event-item:hover {
+  background: rgba(0, 102, 51, 0.08);
+}
+
+[data-theme="light"] .my-event-date {
+  background: linear-gradient(135deg, rgba(0, 102, 51, 0.15) 0%, rgba(0, 102, 51, 0.08) 100%);
+}
+
+[data-theme="light"] .my-event-day {
+  color: #006633;
+}
