@@ -14,6 +14,7 @@ export default function Events() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [mainEventStats, setMainEventStats] = useState({ going: 0, maybe: 0, not_going: 0 });
+  const [showPastEvents, setShowPastEvents] = useState(false);
 
   // Admin form state
   const [showForm, setShowForm] = useState(false);
@@ -31,13 +32,19 @@ export default function Events() {
   });
 
   useEffect(() => {
-    fetchEvents();
     fetchMainEventStats();
   }, [token]);
 
+  useEffect(() => {
+    fetchEvents();
+  }, [token, showPastEvents]);
+
   const fetchEvents = async () => {
     try {
-      const res = await fetch('https://the-golden-batch-api.onrender.com/api/events', {
+      const url = showPastEvents
+        ? 'https://the-golden-batch-api.onrender.com/api/events?includePast=true'
+        : 'https://the-golden-batch-api.onrender.com/api/events';
+      const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -49,6 +56,16 @@ export default function Events() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Helper function to check if an event is in the past
+  const isPastEvent = (eventDate) => {
+    if (!eventDate) return false;
+    const dateOnly = eventDate.split('T')[0];
+    const eventDateObj = new Date(dateOnly + 'T23:59:59');
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return eventDateObj < today;
   };
 
   const fetchMainEventStats = async () => {
@@ -249,8 +266,14 @@ export default function Events() {
       <main className="profile-main">
         {/* Page Header */}
         <section className="events-header">
-          <h2>Upcoming Events</h2>
+          <h2>{showPastEvents ? 'All Events' : 'Upcoming Events'}</h2>
           <p>Pre-reunion gatherings and meetups leading up to our 25th homecoming</p>
+          <button
+            className={`btn-show-past ${showPastEvents ? 'active' : ''}`}
+            onClick={() => setShowPastEvents(!showPastEvents)}
+          >
+            {showPastEvents ? 'Hide Past Events' : 'Show Past Events'}
+          </button>
         </section>
 
         {/* Main Event Highlight */}
@@ -426,10 +449,13 @@ export default function Events() {
                 const goingAttendees = event.attendees?.filter(a => a.status === 'going') || [];
                 const interestedAttendees = event.attendees?.filter(a => a.status === 'interested') || [];
 
+                const eventIsPast = isPastEvent(event.event_date);
+
                 return (
-                  <div key={event.id} className={`event-card ${event.type}`}>
+                  <div key={event.id} className={`event-card ${event.type} ${eventIsPast ? 'past' : ''}`}>
+                    {eventIsPast && <div className="past-event-badge">Past Event</div>}
                     <div className="event-card-header">
-                      <div className="event-date-block">
+                      <div className={`event-date-block ${eventIsPast ? 'past' : ''}`}>
                         <span className="event-day">{date.day}</span>
                         <span className="event-month">{date.month}</span>
                         <span className="event-year">{date.year}</span>
@@ -510,8 +536,17 @@ export default function Events() {
             </div>
           ) : (
             <div className="no-events">
-              <p>No upcoming events yet.</p>
-              {isAdmin && <p>Click "Create Event" to add one!</p>}
+              <p>{showPastEvents ? 'No events found.' : 'No upcoming events yet.'}</p>
+              {isAdmin && !showPastEvents && <p>Click "Create Event" to add one!</p>}
+              {!showPastEvents && (
+                <button
+                  className="btn-link"
+                  onClick={() => setShowPastEvents(true)}
+                  style={{ marginTop: '12px' }}
+                >
+                  View past events
+                </button>
+              )}
             </div>
           )}
         </section>

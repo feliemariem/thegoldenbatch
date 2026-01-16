@@ -4,16 +4,22 @@ const db = require('../db');
 const { authenticateToken, authenticateAdmin } = require('../middleware/auth');
 
 // Get all published events with RSVP counts and attendee names
+// By default, only shows upcoming events. Use ?includePast=true to include past events
 router.get('/', authenticateToken, async (req, res) => {
   try {
+    const includePast = req.query.includePast === 'true';
+
+    // Build the date filter - by default only show upcoming events
+    const dateFilter = includePast ? '' : 'AND e.event_date >= CURRENT_DATE';
+
     const eventsResult = await db.query(`
-      SELECT 
+      SELECT
         e.*,
         a.first_name as creator_first_name,
         a.last_name as creator_last_name
       FROM events e
       LEFT JOIN admins a ON e.created_by = a.id
-      WHERE e.is_published = true
+      WHERE e.is_published = true ${dateFilter}
       ORDER BY e.event_date ASC
     `);
 
