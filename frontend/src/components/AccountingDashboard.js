@@ -514,7 +514,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
                       onChange={(e) => setForm({ ...form, payment_type: e.target.value })}
                       style={{ width: '18px', height: '18px' }}
                     />
-                    <span style={{ color: '#e0e0e0' }}>Full</span>
+                    <span style={{ color: '#888' }}>Full</span>
                   </label>
                   <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
                     <input
@@ -525,7 +525,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
                       onChange={(e) => setForm({ ...form, payment_type: e.target.value })}
                       style={{ width: '18px', height: '18px' }}
                     />
-                    <span style={{ color: '#e0e0e0' }}>Installment</span>
+                    <span style={{ color: '#888' }}>Installment</span>
                   </label>
                   <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
                     <input
