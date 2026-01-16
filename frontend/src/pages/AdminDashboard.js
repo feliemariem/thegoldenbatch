@@ -7,6 +7,7 @@ import PermissionsManager from '../components/PermissionsManager';
 import ScrollableTable from '../components/ScrollableTable.js';
 import logo from '../images/lasalle.jpg';
 import MeetingMinutes from '../components/MeetingMinutes';
+import CopiedToast from "../components/CopiedToast";
 
 export default function AdminDashboard() {
   const { token, user, logout } = useAuth();
@@ -29,6 +30,22 @@ export default function AdminDashboard() {
   const [inviteSearch, setInviteSearch] = useState('');
   const [registeredSearch, setRegisteredSearch] = useState('');
   const [registeredRsvpFilter, setRegisteredRsvpFilter] = useState('all');
+  const [copied, setCopied] = useState(false);
+
+
+  // Copies the registration link and triggers the "Copied!" toast
+  const copyLink = async (inviteToken) => {
+    const link = `${window.location.origin}/register/${inviteToken}`;
+    await navigator.clipboard.writeText(link);
+    setCopied(true);
+  };
+
+  // Copies an already-built URL and triggers the "Copied!" toast
+  const copyFullUrl = async (url) => {
+    await navigator.clipboard.writeText(url);
+    setCopied(true);
+  };
+
 
   // Confirm modal state
   const [confirmModal, setConfirmModal] = useState({ show: false, message: '', onConfirm: null });
@@ -267,10 +284,12 @@ export default function AdminDashboard() {
     navigate('/login');
   };
 
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text);
-    alert('Link copied to clipboard!');
+  const copyToClipboard = async (inviteToken) => {
+    const link = `${window.location.origin}/register/${inviteToken}`;
+    await navigator.clipboard.writeText(link);
+    setCopied(true);
   };
+
 
   // Master List handlers
   const handleMasterListCSVUpload = async (e) => {
@@ -504,7 +523,7 @@ export default function AdminDashboard() {
       i.last_name || '',
       i.email,
       i.used ? 'Registered' : 'Pending',
-      `http://localhost:3000/register/${i.invite_token}`
+      `${window.location.origin}/register/${i.invite_token}`
     ]);
 
     const csv = [headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
@@ -566,7 +585,7 @@ export default function AdminDashboard() {
   });
 
   return (
-    <div className="container admin-container">
+    <div className="container admin-container" style={{ position: 'relative' }}>
       <div className="card">
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
           <img src={logo} alt="La Salle" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
@@ -881,7 +900,7 @@ export default function AdminDashboard() {
                             <div className="invite-url">
                               <code>{inviteResult.url}</code>
                               <button
-                                onClick={() => copyToClipboard(inviteResult.url)}
+                                onClick={() => copyFullUrl(inviteResult.url)}
                                 className="btn-copy"
                               >
                                 Copy
@@ -1086,14 +1105,10 @@ export default function AdminDashboard() {
                                   <td>
                                     {!invite.used && (
                                       <button
-                                        onClick={() =>
-                                          copyToClipboard(
-                                            `${window.location.origin}/register/${invite.invite_token}`
-                                          )
-                                        }
                                         className="btn-link"
+                                        onClick={() => copyLink(invite.invite_token)}
                                       >
-                                        Copy Link
+                                        Copy registration link
                                       </button>
                                     )}
                                   </td>
@@ -1645,6 +1660,11 @@ export default function AdminDashboard() {
           </div>
         )
       }
-    </div >
+      {/* Copied toast */}
+      <CopiedToast
+        show={copied}
+        onClose={() => setCopied(false)}
+      />
+    </div>
   );
 }
