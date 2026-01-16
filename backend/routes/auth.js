@@ -122,11 +122,14 @@ router.post('/register', async (req, res) => {
 // Login
 router.post('/login', async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, rememberMe } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password required' });
     }
+
+    // Set JWT expiry based on rememberMe: 30 days if checked, 1 day otherwise
+    const tokenExpiry = rememberMe ? '30d' : '1d';
 
     // Check users table first
     const userResult = await db.query(
@@ -152,7 +155,7 @@ router.post('/login', async (req, res) => {
       const token = jwt.sign(
         { id: user.id, email: user.email, isAdmin },
         process.env.JWT_SECRET,
-        { expiresIn: '7d' }
+        { expiresIn: tokenExpiry }
       );
 
       return res.json({
@@ -184,7 +187,7 @@ router.post('/login', async (req, res) => {
       const token = jwt.sign(
         { id: admin.id, email: admin.email, isAdmin: true },
         process.env.JWT_SECRET,
-        { expiresIn: '7d' }
+        { expiresIn: tokenExpiry }
       );
 
       return res.json({
