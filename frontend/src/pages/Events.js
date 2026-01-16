@@ -494,7 +494,7 @@ export default function Events() {
                     {isAdmin && (
                       <div className="event-admin-actions">
                         <button onClick={() => handleEdit(event)} className="btn-link">Edit</button>
-                        <span style={{ margin: '0 4px' }}>|</span>
+                        <span style={{ color: '#555' }}>|</span>
                         <button onClick={() => handleDelete(event.id)} className="btn-link delete">Delete</button>
                       </div>
                     )}

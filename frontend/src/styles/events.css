@@ -528,18 +528,26 @@
 
 /* Admin Actions on Event Card */
 .event-admin-actions {
-  position: absolute;
-  top: 12px;
-  right: 12px;
   display: flex;
   gap: 8px;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 6px;
+  margin: 12px 20px 0 20px;
 }
 
 .event-admin-actions .btn-link {
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   padding: 4px 8px;
-  background: rgba(0, 0, 0, 0.5);
-  border-radius: 4px;
+  color: #CFB53B;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.event-admin-actions .btn-link:hover {
+  text-decoration: underline;
 }
 
 .event-admin-actions .btn-link.delete {
