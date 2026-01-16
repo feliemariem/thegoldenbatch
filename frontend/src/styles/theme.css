@@ -256,7 +256,8 @@ body[data-theme="light"] .invite-url code {
 body[data-theme="light"] .table-wrapper {
   border: 1px solid rgba(0, 102, 51, 0.12) !important;
   border-radius: 12px !important;
-  overflow: hidden !important;
+  overflow-x: auto !important;
+  overflow-y: visible !important;
 }
 
 body[data-theme="light"] table {
@@ -988,10 +989,6 @@ body[data-theme="light"] .verified-badge.pending {
   color: #6b7280 !important;
 }
 
-body[data-theme="light"] .table-wrapper {
-  overflow-x: auto !important;
-}
-
 body[data-theme="light"] .ledger-table {
   min-width: 900px;
 }
@@ -1132,6 +1129,23 @@ body[data-theme="light"] ::-webkit-scrollbar-thumb {
 }
 
 body[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 77, 38, 0.3) !important;
+}
+
+/* Top scrollbar for ScrollableTable - Light Mode */
+body[data-theme="light"] .top-scrollbar {
+  scrollbar-color: rgba(0, 77, 38, 0.2) rgba(0, 77, 38, 0.05);
+}
+
+body[data-theme="light"] .top-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 77, 38, 0.05) !important;
+}
+
+body[data-theme="light"] .top-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 77, 38, 0.2) !important;
+}
+
+body[data-theme="light"] .top-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 77, 38, 0.3) !important;
 }
 

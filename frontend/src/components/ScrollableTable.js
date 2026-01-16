@@ -39,17 +39,19 @@ export default function ScrollableTable({ children, className = '' }) {
   return (
     <>
       {/* Top horizontal scrollbar */}
-      <div 
+      <div
         ref={topScrollRef}
         onScroll={handleTopScroll}
-        style={{ 
-          overflowX: 'auto', 
+        className="top-scrollbar"
+        style={{
+          overflowX: 'auto',
           overflowY: 'hidden',
           marginBottom: '4px',
-          borderRadius: '8px'
+          borderRadius: '8px',
+          minHeight: '12px'
         }}
       >
-        <div style={{ width: tableWidth, height: '1px' }} />
+        <div style={{ width: tableWidth, height: '12px' }} />
       </div>
       
       {/* Table wrapper with bottom scrollbar */}
