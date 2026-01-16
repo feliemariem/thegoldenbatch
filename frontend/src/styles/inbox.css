@@ -490,16 +490,3 @@
   background: rgba(207, 181, 59, 0.14);
 }
 
-/* Light mode Inbox contrast fix */
-[data-theme="light"] .inbox-container {
-  background: #f4f5f2; /* soft warm gray */
-}
-
-[data-theme="light"] .message-list {
-  background: #ffffff;
-  border: 1px solid rgba(0,0,0,0.08);
-}
-
-[data-theme="light"] .message-item:hover {
-  background: rgba(0, 102, 51, 0.06);
-}

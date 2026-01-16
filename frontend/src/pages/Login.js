@@ -47,12 +47,17 @@ export default function Login() {
     }
   };
 
-  return (
+return (
+  <div className="login-page">
     <div className="container">
       <div className="card card-narrow">
         <img src={logo} alt="USLS Logo" className="logo" />
-        <h1 style={{textAlign: 'center'}}>University of St. La Salle<br/>HS 2003</h1>
-        <p className="subtitle" style={{textAlign: 'center'}}>Welcome back, Batchmate!</p>
+        <h1 style={{ textAlign: 'center' }}>
+          University of St. La Salle<br />HS 2003
+        </h1>
+        <p className="subtitle" style={{ textAlign: 'center' }}>
+          Welcome back, Batchmate!
+        </p>
 
         {error && <p className="error">{error}</p>}
 
@@ -67,39 +72,46 @@ export default function Login() {
             />
           </div>
 
-         <div className="form-group">
-          <label>Password</label>
-          <div className="password-wrapper">
-            <input
-              type={showPassword ? 'text' : 'password'}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <button 
-              type="button" 
-              className="toggle-password"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? 'Hide' : 'Show'}
-            </button>
+          <div className="form-group">
+            <label>Password</label>
+            <div className="password-wrapper">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                className="toggle-password"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? 'Hide' : 'Show'}
+              </button>
+            </div>
           </div>
-        </div>
 
           <button type="submit" className="btn-primary" disabled={submitting}>
             {submitting ? 'Logging in...' : 'Login'}
           </button>
         </form>
 
-        <p style={{textAlign: 'center', marginTop: '16px'}}>
-          <Link to="/forgot-password" className="btn-link">Forgot Password?</Link>
+        <p style={{ textAlign: 'center', marginTop: '16px' }}>
+          <Link to="/forgot-password" className="btn-link">
+            Forgot Password?
+          </Link>
         </p>
 
-<p className="help-text">
-  Don't have an account? You need an invite link to register.<br />
-  Please email <a href="mailto:uslsis.batch2003@gmail.com">uslsis.batch2003@gmail.com</a> for questions.
-</p>
+        <p className="help-text">
+          Don't have an account? You need an invite link to register.<br />
+          Please email{' '}
+          <a href="mailto:uslsis.batch2003@gmail.com">
+            uslsis.batch2003@gmail.com
+          </a>{' '}
+          for questions.
+        </p>
       </div>
     </div>
-  );
+  </div>
+);
 }
