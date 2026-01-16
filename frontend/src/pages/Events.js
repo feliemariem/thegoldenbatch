@@ -151,8 +151,14 @@ export default function Events() {
       });
 
       if (res.ok) {
+        const savedEvent = await res.json();
         resetForm();
-        fetchEvents();
+        // Navigate to the specific event page after creation
+        if (!editingEvent && savedEvent?.id) {
+          navigate(`/events/${savedEvent.id}`);
+        } else {
+          fetchEvents();
+        }
       }
     } catch (err) {
       console.error('Failed to save event');
