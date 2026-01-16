@@ -14,4 +14,3 @@ async function setPassword() {
 }
 
 setPassword();
-Goldenbatch2003

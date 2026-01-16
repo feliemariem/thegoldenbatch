@@ -1086,7 +1086,11 @@ export default function AdminDashboard() {
                                   <td>
                                     {!invite.used && (
                                       <button
-                                        onClick={() => copyToClipboard(`http://localhost:3000/register/${invite.invite_token}`)}
+                                        onClick={() =>
+                                          copyToClipboard(
+                                            `${process.env.REACT_APP_FRONTEND_URL}/register/${invite.invite_token}`
+                                          )
+                                        }
                                         className="btn-link"
                                       >
                                         Copy Link
