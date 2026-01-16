@@ -243,9 +243,9 @@ export default function ProfileNew() {
             </div>
           </div>
           <nav className="profile-nav">
+            <Link to="/events" className="nav-link">Events</Link>
             {showNewPages && (
               <>
-                <Link to="/events" className="nav-link">Events</Link>
                 <Link to="/directory" className="nav-link">Directory</Link>
                 <Link to="/media" className="nav-link">Media</Link>
               </>
