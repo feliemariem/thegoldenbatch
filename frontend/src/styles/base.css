@@ -802,6 +802,39 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   color: #9ca3af;
 }
 
+/* Scrollable table container with sticky header */
+.scrollable-table-container {
+  position: relative;
+  border-radius: 8px;
+}
+
+.scrollable-table-container table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.scrollable-table-container thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.scrollable-table-container thead th {
+  background: rgba(20, 28, 24, 0.98);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Ensure first header cell has rounded corner on left */
+.scrollable-table-container thead th:first-child {
+  border-top-left-radius: 8px;
+}
+
+/* Ensure last header cell has rounded corner on right */
+.scrollable-table-container thead th:last-child {
+  border-top-right-radius: 8px;
+}
+
 @media (max-width: 768px) {
   .ledger-summary {
     grid-template-columns: 1fr 1fr;
