@@ -232,6 +232,21 @@
   overflow-x: auto;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.05);
+  position: relative;
+}
+
+/* Left-side visual element to match scrollbar on right */
+.table-wrapper::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px 0 0 4px;
+  z-index: 1;
+  pointer-events: none;
 }
 
 table {
@@ -400,6 +415,10 @@ tr:last-child td {
 /* Table in light mode */
 [data-theme="light"] .table-wrapper {
   border: 1px solid rgba(0, 102, 51, 0.14);
+}
+
+[data-theme="light"] .table-wrapper::before {
+  background: rgba(0, 102, 51, 0.08);
 }
 
 [data-theme="light"] table {
