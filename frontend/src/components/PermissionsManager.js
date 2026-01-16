@@ -56,12 +56,18 @@ export default function PermissionsManager({ token }) {
       });
       const data = await res.json();
       setAdmins(data);
-      
+
       if (data.length > 0) {
         setSelectedAdminId(data[0].id.toString());
-        setPermissions(data[0].permissions);
+
+        const normalizedPermissions = Array.isArray(data[0].permissions)
+          ? data[0].permissions
+          : (data[0].permissions ? Object.values(data[0].permissions) : []);
+
+        setPermissions(normalizedPermissions);
         setIsSuperAdmin(data[0].is_super_admin);
       }
+
     } catch (err) {
       console.error('Failed to fetch admins');
     } finally {
@@ -73,12 +79,17 @@ export default function PermissionsManager({ token }) {
     const id = e.target.value;
     setSelectedAdminId(id);
     setResult(null);
-    
+
     const admin = admins.find(a => a.id.toString() === id);
     if (admin) {
-      setPermissions(admin.permissions);
+      const normalizedPermissions = Array.isArray(admin.permissions)
+        ? admin.permissions
+        : (admin.permissions ? Object.values(admin.permissions) : []);
+
+      setPermissions(normalizedPermissions);
       setIsSuperAdmin(admin.is_super_admin);
     }
+
   };
 
   const handlePermissionChange = (permission) => {
@@ -99,7 +110,7 @@ export default function PermissionsManager({ token }) {
   const handleSuperAdminToggle = () => {
     const newValue = !isSuperAdmin;
     setIsSuperAdmin(newValue);
-    
+
     // If making super admin, check all permissions
     if (newValue) {
       const newPerms = {};
@@ -164,10 +175,10 @@ export default function PermissionsManager({ token }) {
         <select
           value={selectedAdminId}
           onChange={handleAdminChange}
-          style={{ 
-            width: '100%', 
-            padding: '12px', 
-            borderRadius: '8px', 
+          style={{
+            width: '100%',
+            padding: '12px',
+            borderRadius: '8px',
             border: '1px solid #ddd',
             fontSize: '1rem'
           }}
@@ -288,9 +299,9 @@ export default function PermissionsManager({ token }) {
             </div>
           )}
 
-          <button 
-            onClick={handleSave} 
-            className="btn-primary" 
+          <button
+            onClick={handleSave}
+            className="btn-primary"
             disabled={saving}
             style={{ width: 'auto', padding: '12px 32px' }}
           >

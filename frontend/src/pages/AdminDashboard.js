@@ -94,15 +94,22 @@ export default function AdminDashboard() {
       const res = await fetch('https://the-golden-batch-api.onrender.com/api/permissions/me', {
         headers: { Authorization: `Bearer ${token}` }
       });
+
       if (res.ok) {
         const data = await res.json();
-        setPermissions(data.permissions);
+
+        const normalizedPermissions = Array.isArray(data.permissions)
+          ? data.permissions
+          : (data.permissions ? Object.values(data.permissions) : []);
+
+        setPermissions(normalizedPermissions);
         setIsSuperAdmin(data.is_super_admin);
       }
     } catch (err) {
       console.error('Failed to fetch permissions');
     }
   };
+
 
   const fetchDashboard = async () => {
     try {
