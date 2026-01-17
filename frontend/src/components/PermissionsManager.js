@@ -55,17 +55,20 @@ export default function PermissionsManager({ token }) {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
-      setAdmins(data);
 
-      if (data.length > 0) {
-        setSelectedAdminId(data[0].id.toString());
+      // Ensure adminList is always an array
+      const adminList = Array.isArray(data) ? data : (Array.isArray(data?.admins) ? data.admins : []);
+      setAdmins(adminList);
 
-        const normalizedPermissions = Array.isArray(data.permissions)
-          ? data.permissions.reduce((acc, perm) => ({ ...acc, [perm]: true }), {})
-          : (data.permissions || {});
+      if (adminList.length > 0) {
+        setSelectedAdminId(adminList[0].id.toString());
+
+        const normalizedPermissions = Array.isArray(adminList[0].permissions)
+          ? adminList[0].permissions.reduce((acc, perm) => ({ ...acc, [perm]: true }), {})
+          : (adminList[0].permissions || {});
 
         setPermissions(normalizedPermissions);
-        setIsSuperAdmin(data[0].is_super_admin);
+        setIsSuperAdmin(adminList[0].is_super_admin);
       }
 
     } catch (err) {
