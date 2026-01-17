@@ -24,11 +24,13 @@ const ALL_PERMISSIONS = [
 // Middleware to check if user is super admin
 const requireSuperAdmin = async (req, res, next) => {
   try {
+    // Query by email instead of ID, since users logging in via the users table
+    // have a different ID than their corresponding entry in the admins table
     const result = await db.query(
-      'SELECT is_super_admin FROM admins WHERE id = $1',
-      [req.user.id]
+      'SELECT is_super_admin FROM admins WHERE LOWER(email) = $1',
+      [req.user.email.toLowerCase()]
     );
-    
+
     if (!result.rows[0]?.is_super_admin) {
       return res.status(403).json({ error: 'Super Admin access required' });
     }
