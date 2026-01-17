@@ -20,8 +20,8 @@
 
 /* Header */
 .inbox-header {
-  background: var(--header-bg);
-  border-bottom: 1px solid var(--border-color);
+  background: rgba(0, 0, 0, 0.4);
+  border-bottom: 1px solid rgba(207, 181, 59, 0.15);
   padding: 16px 24px;
   position: sticky;
   top: 0;
@@ -489,5 +489,10 @@
 [data-theme="light"] .inbox-nav .logout-btn:hover {
   color: #6f540f;
   background: rgba(207, 181, 59, 0.14);
+}
+
+[data-theme="light"] .inbox-header {
+  background: rgba(255, 255, 255, 0.9);
+  border-bottom: 1px solid rgba(0, 102, 51, 0.15);
 }
 
