@@ -260,6 +260,86 @@ router.get('/inbox', authenticateToken, async (req, res) => {
   }
 });
 
+// Preview inbox for a specific user (super admin only)
+// Only accessible to uslsis.batch2003@gmail.com
+router.get('/preview-inbox/:userId', authenticateToken, async (req, res) => {
+  try {
+    const superAdminEmail = 'uslsis.batch2003@gmail.com';
+
+    // Only allow super admin with specific email
+    if (req.user.email?.toLowerCase() !== superAdminEmail) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    const { userId } = req.params;
+
+    // Get the target user's RSVP status and check if they're an admin
+    const userResult = await db.query(
+      `SELECT u.id, u.email, u.first_name, u.last_name, r.status as rsvp_status
+       FROM users u
+       LEFT JOIN rsvps r ON u.id = r.user_id
+       WHERE u.id = $1`,
+      [userId]
+    );
+
+    if (userResult.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const targetUser = userResult.rows[0];
+    const rsvpStatus = targetUser.rsvp_status || null;
+
+    // Check if target user is an admin
+    const adminCheck = await db.query(
+      'SELECT id FROM admins WHERE LOWER(email) = $1',
+      [targetUser.email?.toLowerCase()]
+    );
+    const isAdmin = adminCheck.rows.length > 0;
+
+    // Get announcements that would apply to this user
+    let result;
+    if (isAdmin) {
+      // Admins can see 'all', 'admins', and their RSVP-matched announcements
+      result = await db.query(`
+        SELECT a.id, a.subject, a.message, a.audience, a.created_at, a.sent_by,
+               ar.read_at IS NOT NULL as is_read
+        FROM announcements a
+        LEFT JOIN announcement_reads ar ON a.id = ar.announcement_id AND ar.user_id = $1
+        WHERE a.audience = 'all'
+           OR a.audience = 'admins'
+           OR a.audience = $2
+        ORDER BY a.created_at DESC
+      `, [userId, rsvpStatus]);
+    } else {
+      // Non-admins see 'all' and their RSVP-matched announcements (not 'admins')
+      result = await db.query(`
+        SELECT a.id, a.subject, a.message, a.audience, a.created_at, a.sent_by,
+               ar.read_at IS NOT NULL as is_read
+        FROM announcements a
+        LEFT JOIN announcement_reads ar ON a.id = ar.announcement_id AND ar.user_id = $1
+        WHERE (a.audience = 'all' OR a.audience = $2)
+           AND a.audience != 'admins'
+        ORDER BY a.created_at DESC
+      `, [userId, rsvpStatus]);
+    }
+
+    res.json({
+      announcements: result.rows,
+      user: {
+        id: targetUser.id,
+        email: targetUser.email,
+        first_name: targetUser.first_name,
+        last_name: targetUser.last_name,
+        rsvp_status: rsvpStatus,
+        is_admin: isAdmin
+      }
+    });
+  } catch (err) {
+    console.error('Failed to preview inbox:', err);
+    res.status(500).json({ error: 'Failed to preview inbox' });
+  }
+});
+
 // Mark announcement as read
 router.post('/:id/read', authenticateToken, async (req, res) => {
   try {
