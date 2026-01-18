@@ -1089,3 +1089,73 @@
 [data-theme="light"] .my-event-day {
   color: #006633;
 }
+
+/* =========================================
+   GOLD COLOR OVERRIDES FOR LIGHT MODE
+   Using darker gold (#B8960C) for better contrast
+   ========================================= */
+
+[data-theme="light"] .payment-badge.partial {
+  background: rgba(184, 150, 12, 0.2);
+  color: #B8960C;
+}
+
+[data-theme="light"] .payment-amounts .paid {
+  color: #B8960C;
+}
+
+[data-theme="light"] .payment-link {
+  color: #B8960C;
+}
+
+[data-theme="light"] .payment-link:hover {
+  color: #8B6914;
+}
+
+[data-theme="light"] .welcome-content h2 {
+  color: #B8960C;
+}
+
+[data-theme="light"] .nav-link:hover {
+  color: #B8960C;
+}
+
+[data-theme="light"] .nav-badge {
+  background: #B8960C;
+  color: #ffffff;
+}
+
+[data-theme="light"] .btn-edit {
+  border-color: rgba(184, 150, 12, 0.4);
+  color: #B8960C;
+}
+
+[data-theme="light"] .btn-edit:hover {
+  background: rgba(184, 150, 12, 0.1);
+  border-color: #B8960C;
+}
+
+[data-theme="light"] .fb-link {
+  color: #B8960C;
+}
+
+[data-theme="light"] .quick-link:hover span:last-child {
+  color: #B8960C;
+}
+
+[data-theme="light"] .my-events-card .btn-link {
+  color: #B8960C;
+}
+
+[data-theme="light"] .my-event-status.interested {
+  background: rgba(184, 150, 12, 0.18);
+  color: #B8960C;
+}
+
+[data-theme="light"] .event-day {
+  color: #B8960C;
+}
+
+[data-theme="light"] .my-event-day {
+  color: #B8960C;
+}

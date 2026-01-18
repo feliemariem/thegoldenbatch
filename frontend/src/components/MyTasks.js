@@ -77,13 +77,13 @@ export default function MyTasks({ token }) {
 
   const getStatusBadge = (status) => {
     const styles = {
-      not_started: { bg: 'rgba(128, 128, 128, 0.2)', color: '#888', text: 'Not Started' },
-      in_progress: { bg: 'rgba(255, 193, 7, 0.2)', color: '#ffc107', text: 'In Progress' },
-      done: { bg: 'rgba(40, 167, 69, 0.2)', color: '#28a745', text: 'Done' }
+      not_started: { bg: 'rgba(128, 128, 128, 0.2)', color: '#888', text: 'Not Started', className: 'status-not-started' },
+      in_progress: { bg: 'rgba(255, 193, 7, 0.2)', color: '#ffc107', text: 'In Progress', className: 'status-in-progress' },
+      done: { bg: 'rgba(40, 167, 69, 0.2)', color: '#28a745', text: 'Done', className: 'status-done' }
     };
     const style = styles[status] || styles.not_started;
     return (
-      <span style={{
+      <span className={`task-status-badge ${style.className}`} style={{
         padding: '2px 8px',
         borderRadius: '12px',
         fontSize: '0.7rem',
@@ -98,14 +98,14 @@ export default function MyTasks({ token }) {
 
   const getPriorityBadge = (priority) => {
     const styles = {
-      critical: { bg: 'rgba(220, 53, 69, 0.2)', color: '#dc3545', text: 'Critical' },
-      high: { bg: 'rgba(255, 140, 0, 0.2)', color: '#ff8c00', text: 'High' },
-      medium: { bg: 'rgba(255, 193, 7, 0.2)', color: '#ffc107', text: 'Medium' },
-      low: { bg: 'rgba(128, 128, 128, 0.2)', color: '#888', text: 'Low' }
+      critical: { bg: 'rgba(220, 53, 69, 0.2)', color: '#dc3545', text: 'Critical', className: 'priority-critical' },
+      high: { bg: 'rgba(255, 140, 0, 0.2)', color: '#ff8c00', text: 'High', className: 'priority-high' },
+      medium: { bg: 'rgba(255, 193, 7, 0.2)', color: '#ffc107', text: 'Medium', className: 'priority-medium' },
+      low: { bg: 'rgba(128, 128, 128, 0.2)', color: '#888', text: 'Low', className: 'priority-low' }
     };
     const style = styles[priority] || styles.medium;
     return (
-      <span style={{
+      <span className={`task-priority-badge ${style.className}`} style={{
         padding: '2px 6px',
         borderRadius: '4px',
         fontSize: '0.65rem',
@@ -184,10 +184,10 @@ export default function MyTasks({ token }) {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <h3 style={{ margin: 0, color: '#CFB53B', fontSize: '1rem' }}>
+          <h3 className="my-tasks-heading" style={{ margin: 0, color: '#CFB53B', fontSize: '1rem' }}>
             My Tasks
           </h3>
-          <span style={{
+          <span className={summary.completed === summary.total ? 'my-tasks-badge completed' : 'my-tasks-badge pending'} style={{
             fontSize: '0.75rem',
             color: summary.completed === summary.total ? '#28a745' : '#CFB53B',
             background: summary.completed === summary.total
@@ -237,6 +237,7 @@ export default function MyTasks({ token }) {
 
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'center', fontSize: '0.8rem' }}>
                 <button
+                  className="task-meeting-link"
                   onClick={() => navigateToMeeting(task.meeting_id)}
                   style={{
                     background: 'none',
