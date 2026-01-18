@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import AnnouncementComposer from '../components/AnnouncementComposer';
 import AccountingDashboard from '../components/AccountingDashboard';
 import PermissionsManager from '../components/PermissionsManager';
+import PreviewInbox from '../components/PreviewInbox';
 import ScrollableTable from '../components/ScrollableTable.js';
 import logo from '../images/lasalle.jpg';
 import MeetingMinutes from '../components/MeetingMinutes';
@@ -822,6 +823,25 @@ export default function AdminDashboard() {
               }}
             >
               Permissions
+            </button>
+          )}
+          {user?.email?.toLowerCase() === 'uslsis.batch2003@gmail.com' && (
+            <button
+              onClick={() => setDashboardMode('preview')}
+              style={{
+                flex: 1,
+                padding: '10px 8px',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontWeight: '600',
+                fontSize: '0.75rem',
+                background: dashboardMode === 'preview' ? '#CFB53B' : 'transparent',
+                color: dashboardMode === 'preview' ? '#1a1a2e' : '#999',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              Preview
             </button>
           )}
         </div>
@@ -1661,6 +1681,11 @@ export default function AdminDashboard() {
         {/* PERMISSIONS MODE - Super Admin Only */}
         {dashboardMode === 'permissions' && isSuperAdmin && (
           <PermissionsManager token={token} />
+        )}
+
+        {/* PREVIEW MODE - Super Admin (uslsis.batch2003@gmail.com) Only */}
+        {dashboardMode === 'preview' && user?.email?.toLowerCase() === 'uslsis.batch2003@gmail.com' && (
+          <PreviewInbox token={token} users={data?.users || []} />
         )}
       </div>
 
