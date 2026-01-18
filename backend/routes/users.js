@@ -190,4 +190,22 @@ router.delete('/photo', authenticateToken, async (req, res) => {
   }
 });
 
+// Get today's birthdays
+router.get('/birthdays/today', authenticateToken, async (req, res) => {
+  try {
+    const result = await db.query(
+      `SELECT id, first_name, last_name, profile_photo, birthday
+       FROM users
+       WHERE EXTRACT(MONTH FROM birthday) = EXTRACT(MONTH FROM CURRENT_DATE)
+         AND EXTRACT(DAY FROM birthday) = EXTRACT(DAY FROM CURRENT_DATE)
+       ORDER BY first_name, last_name`
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 module.exports = router;

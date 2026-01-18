@@ -5,6 +5,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import { ActionItemsProvider } from './context/ActionItemsContext';
 import { InboxProvider } from './context/InboxContext';
 import ThemeToggle from './components/ThemeToggle';
+import BirthdayWidget from './components/BirthdayWidget';
 import Landing from './pages/Landing';
 import Register from './pages/Register';
 import Login from './pages/Login';
@@ -64,6 +65,19 @@ function ConditionalThemeToggle() {
   }
 
   return <ThemeToggle />;
+}
+
+// Conditional BirthdayWidget - hidden on landing page and public routes
+function ConditionalBirthdayWidget() {
+  const location = useLocation();
+  const { token } = useAuth();
+
+  // Hide on landing page and when not logged in
+  if (location.pathname === '/' || !token) {
+    return null;
+  }
+
+  return <BirthdayWidget />;
 }
 
 function AppRoutes() {
@@ -177,6 +191,7 @@ function App() {
           <ActionItemsProvider>
             <BrowserRouter>
               <ConditionalThemeToggle />
+              <ConditionalBirthdayWidget />
               <AppRoutes />
             </BrowserRouter>
           </ActionItemsProvider>
