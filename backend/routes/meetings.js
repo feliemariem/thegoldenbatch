@@ -411,10 +411,11 @@ router.get('/:meetingId/action-items', authenticateToken, async (req, res) => {
       WHERE ai.meeting_id = $1
       ORDER BY
         CASE ai.priority
-          WHEN 'high' THEN 1
-          WHEN 'medium' THEN 2
-          WHEN 'low' THEN 3
-          ELSE 4
+          WHEN 'critical' THEN 1
+          WHEN 'high' THEN 2
+          WHEN 'medium' THEN 3
+          WHEN 'low' THEN 4
+          ELSE 5
         END,
         ai.due_date ASC NULLS LAST,
         ai.created_at ASC

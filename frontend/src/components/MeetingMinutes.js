@@ -62,7 +62,18 @@ export default function MeetingMinutes({ token, canEdit = false }) {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
-      setMeetings(data.meetings || []);
+      const meetingsList = data.meetings || [];
+      setMeetings(meetingsList);
+
+      // Check if there's a selectedMeetingId from MyTasks navigation
+      const storedMeetingId = localStorage.getItem('selectedMeetingId');
+      if (storedMeetingId) {
+        const meetingToSelect = meetingsList.find(m => m.id === parseInt(storedMeetingId));
+        if (meetingToSelect) {
+          setSelectedMeeting(meetingToSelect);
+        }
+        localStorage.removeItem('selectedMeetingId');
+      }
     } catch (err) {
       console.error('Failed to fetch meetings:', err);
     } finally {
@@ -167,7 +178,7 @@ export default function MeetingMinutes({ token, canEdit = false }) {
 
   const getStatusBadge = (status) => {
     const styles = {
-      not_started: { bg: 'rgba(128, 128, 128, 0.2)', color: '#999', text: 'Not Started' },
+      not_started: { bg: 'rgba(128, 128, 128, 0.2)', color: '#888', text: 'Not Started' },
       in_progress: { bg: 'rgba(255, 193, 7, 0.2)', color: '#ffc107', text: 'In Progress' },
       done: { bg: 'rgba(40, 167, 69, 0.2)', color: '#28a745', text: 'Done' }
     };
@@ -188,9 +199,10 @@ export default function MeetingMinutes({ token, canEdit = false }) {
 
   const getPriorityBadge = (priority) => {
     const styles = {
-      high: { bg: 'rgba(220, 53, 69, 0.2)', color: '#dc3545', text: 'High' },
-      medium: { bg: 'rgba(255, 193, 7, 0.2)', color: '#ffc107', text: 'Med' },
-      low: { bg: 'rgba(108, 117, 125, 0.2)', color: '#6c757d', text: 'Low' }
+      critical: { bg: 'rgba(220, 53, 69, 0.2)', color: '#dc3545', text: 'Critical' },
+      high: { bg: 'rgba(255, 140, 0, 0.2)', color: '#ff8c00', text: 'High' },
+      medium: { bg: 'rgba(255, 193, 7, 0.2)', color: '#ffc107', text: 'Medium' },
+      low: { bg: 'rgba(128, 128, 128, 0.2)', color: '#888', text: 'Low' }
     };
     const style = styles[priority] || styles.medium;
     return (
@@ -568,7 +580,7 @@ export default function MeetingMinutes({ token, canEdit = false }) {
                       padding: '2px 8px',
                       borderRadius: '10px'
                     }}>
-                      {getActionItemSummary().completed}/{getActionItemSummary().total} done
+                      {getActionItemSummary().completed}/{getActionItemSummary().total} completed
                     </span>
                   )}
                 </div>
@@ -1573,6 +1585,7 @@ Tip: Use ## for headers, - for bullet points"
                   <option value="low">Low</option>
                   <option value="medium">Medium</option>
                   <option value="high">High</option>
+                  <option value="critical">Critical</option>
                 </select>
               </div>
             </div>

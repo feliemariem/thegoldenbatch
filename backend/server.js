@@ -12,6 +12,7 @@ const permissionRoutes = require('./routes/permissions');
 const ledgerRoutes = require('./routes/ledger');
 const meetingRoutes = require('./routes/meetings');
 const announcementRoutes = require('./routes/announcements');
+const actionItemRoutes = require('./routes/action-items');
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use('/api/permissions', permissionRoutes);
 app.use('/api/ledger', ledgerRoutes);
 app.use('/api/meetings', meetingRoutes);
 app.use('/api/announcements', announcementRoutes);
+app.use('/api/action-items', actionItemRoutes);
 app.use('/api/events', require('./routes/events'));
 
 // Health check
