@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import AnnouncementComposer from '../components/AnnouncementComposer';
 import AccountingDashboard from '../components/AccountingDashboard';
@@ -13,11 +13,25 @@ import AdminRoleErrorToast from "../components/AdminRoleErrorToast";
 export default function AdminDashboard() {
   const { token, user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Parse URL parameters for tab navigation (e.g., /admin?tab=meetings&meetingId=5)
+  const urlParams = new URLSearchParams(location.search);
+  const urlTab = urlParams.get('tab');
+  const urlMeetingId = urlParams.get('meetingId');
 
   const [activeTab, setActiveTab] = useState(() => {
     return localStorage.getItem('adminActiveTab') || 'invites';
   });
-  const [dashboardMode, setDashboardMode] = useState('registry');
+  const [dashboardMode, setDashboardMode] = useState(() => {
+    // If URL has tab=meetings, start in minutes mode
+    if (urlTab === 'meetings') return 'minutes';
+    return 'registry';
+  });
+  // Store the meeting ID from URL before it gets cleared
+  const [selectedMeetingIdFromUrl, setSelectedMeetingIdFromUrl] = useState(() => {
+    return urlMeetingId ? parseInt(urlMeetingId) : null;
+  });
   const [permissions, setPermissions] = useState(null);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [data, setData] = useState(null);
@@ -85,6 +99,15 @@ export default function AdminDashboard() {
     fetchInvites();
     fetchMasterList();
   }, [token]);
+
+  // Handle URL parameter changes for deep linking (e.g., /admin?tab=meetings&meetingId=5)
+  useEffect(() => {
+    if (urlTab === 'meetings') {
+      setDashboardMode('minutes');
+      // Clear URL params after processing to keep URL clean
+      navigate('/admin', { replace: true });
+    }
+  }, [urlTab, urlMeetingId, navigate]);
 
   // Save active tab to localStorage
   useEffect(() => {
@@ -1626,7 +1649,12 @@ export default function AdminDashboard() {
 
         {/* MINUTES MODE */}
         {dashboardMode === 'minutes' && (
-          <MeetingMinutes token={token} canEdit={isSuperAdmin || permissions?.minutes_edit} />
+          <MeetingMinutes
+            token={token}
+            canEdit={isSuperAdmin || permissions?.minutes_edit}
+            initialMeetingId={selectedMeetingIdFromUrl}
+            onMeetingSelected={() => setSelectedMeetingIdFromUrl(null)}
+          />
         )}
 
         {/* PERMISSIONS MODE - Super Admin Only */}

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-export default function MeetingMinutes({ token, canEdit = false }) {
+export default function MeetingMinutes({ token, canEdit = false, initialMeetingId = null, onMeetingSelected = null }) {
   const { user } = useAuth();
   const [meetings, setMeetings] = useState([]);
   const [selectedMeeting, setSelectedMeeting] = useState(null);
@@ -65,14 +65,26 @@ export default function MeetingMinutes({ token, canEdit = false }) {
       const meetingsList = data.meetings || [];
       setMeetings(meetingsList);
 
-      // Check if there's a selectedMeetingId from MyTasks navigation
-      const storedMeetingId = localStorage.getItem('selectedMeetingId');
-      if (storedMeetingId) {
-        const meetingToSelect = meetingsList.find(m => m.id === parseInt(storedMeetingId));
+      // Check if there's an initialMeetingId from URL navigation (priority)
+      if (initialMeetingId) {
+        const meetingToSelect = meetingsList.find(m => m.id === initialMeetingId);
         if (meetingToSelect) {
           setSelectedMeeting(meetingToSelect);
+          // Notify parent that meeting was selected (so it can clear the URL state)
+          if (onMeetingSelected) {
+            onMeetingSelected();
+          }
         }
-        localStorage.removeItem('selectedMeetingId');
+      } else {
+        // Fallback: Check if there's a selectedMeetingId from localStorage (legacy)
+        const storedMeetingId = localStorage.getItem('selectedMeetingId');
+        if (storedMeetingId) {
+          const meetingToSelect = meetingsList.find(m => m.id === parseInt(storedMeetingId));
+          if (meetingToSelect) {
+            setSelectedMeeting(meetingToSelect);
+          }
+          localStorage.removeItem('selectedMeetingId');
+        }
       }
     } catch (err) {
       console.error('Failed to fetch meetings:', err);
