@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import AnnouncementComposer from '../components/AnnouncementComposer';
 import AccountingDashboard from '../components/AccountingDashboard';
 import PermissionsManager from '../components/PermissionsManager';
-import PreviewInbox from '../components/PreviewInbox';
+import SystemTest from '../components/SystemTest';
 import ScrollableTable from '../components/ScrollableTable.js';
 import logo from '../images/lasalle.jpg';
 import MeetingMinutes from '../components/MeetingMinutes';
@@ -827,7 +827,7 @@ export default function AdminDashboard() {
           )}
           {user?.email?.toLowerCase() === 'uslsis.batch2003@gmail.com' && (
             <button
-              onClick={() => setDashboardMode('preview')}
+              onClick={() => setDashboardMode('systemTest')}
               style={{
                 flex: 1,
                 padding: '10px 8px',
@@ -836,12 +836,12 @@ export default function AdminDashboard() {
                 cursor: 'pointer',
                 fontWeight: '600',
                 fontSize: '0.75rem',
-                background: dashboardMode === 'preview' ? '#CFB53B' : 'transparent',
-                color: dashboardMode === 'preview' ? '#1a1a2e' : '#999',
+                background: dashboardMode === 'systemTest' ? '#CFB53B' : 'transparent',
+                color: dashboardMode === 'systemTest' ? '#1a1a2e' : '#999',
                 whiteSpace: 'nowrap'
               }}
             >
-              Preview
+              System Test
             </button>
           )}
         </div>
@@ -1683,9 +1683,9 @@ export default function AdminDashboard() {
           <PermissionsManager token={token} />
         )}
 
-        {/* PREVIEW MODE - Super Admin (uslsis.batch2003@gmail.com) Only */}
-        {dashboardMode === 'preview' && user?.email?.toLowerCase() === 'uslsis.batch2003@gmail.com' && (
-          <PreviewInbox token={token} users={data?.users || []} />
+        {/* SYSTEM TEST MODE - Super Admin (uslsis.batch2003@gmail.com) Only */}
+        {dashboardMode === 'systemTest' && user?.email?.toLowerCase() === 'uslsis.batch2003@gmail.com' && (
+          <SystemTest token={token} users={data?.users || []} />
         )}
       </div>
 
