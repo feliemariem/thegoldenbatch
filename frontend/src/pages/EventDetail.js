@@ -135,6 +135,7 @@ export default function EventDetail() {
             <nav className="profile-nav">
               <Link to="/events" className="nav-link">Events</Link>
               {user?.isAdmin && <Link to="/media" className="nav-link">Media</Link>}
+              {user?.isAdmin && <Link to="/committee" className="nav-link">Committee</Link>}
               <Link to="/inbox" className="nav-link">Inbox</Link>
               <Link to="/funds" className="nav-link">Funds</Link>
               <Link to={user?.isAdmin ? "/profile-preview" : "/profile"} className="nav-link">Profile</Link>

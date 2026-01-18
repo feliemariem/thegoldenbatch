@@ -45,7 +45,9 @@ router.get('/admins', authenticateAdmin, requireSuperAdmin, async (req, res) => 
   try {
     // JOIN with master_list to get current_name for display
     const adminsResult = await db.query(
-      `SELECT a.id, a.email, a.first_name, a.last_name, a.is_super_admin, m.current_name
+      `SELECT a.id, a.email, a.first_name, a.last_name, a.is_super_admin,
+              a.role_title, a.sub_committees, a.is_core_leader,
+              m.current_name
        FROM admins a
        LEFT JOIN master_list m ON LOWER(a.email) = LOWER(m.email)
        ORDER BY COALESCE(m.current_name, a.first_name), a.last_name`
@@ -80,13 +82,39 @@ router.get('/admins', authenticateAdmin, requireSuperAdmin, async (req, res) => 
 router.put('/admins/:id', authenticateAdmin, requireSuperAdmin, async (req, res) => {
   try {
     const { id } = req.params;
-    const { permissions, is_super_admin } = req.body;
+    const { permissions, is_super_admin, role_title, sub_committees, is_core_leader } = req.body;
 
-    // Update super admin status
+    // Build dynamic update for admin fields
+    const updateFields = [];
+    const updateValues = [];
+    let paramIndex = 1;
+
     if (typeof is_super_admin === 'boolean') {
+      updateFields.push(`is_super_admin = $${paramIndex++}`);
+      updateValues.push(is_super_admin);
+    }
+
+    if (role_title !== undefined) {
+      updateFields.push(`role_title = $${paramIndex++}`);
+      updateValues.push(role_title || null);
+    }
+
+    if (sub_committees !== undefined) {
+      updateFields.push(`sub_committees = $${paramIndex++}`);
+      updateValues.push(sub_committees || null);
+    }
+
+    if (typeof is_core_leader === 'boolean') {
+      updateFields.push(`is_core_leader = $${paramIndex++}`);
+      updateValues.push(is_core_leader);
+    }
+
+    // Update admin fields if any
+    if (updateFields.length > 0) {
+      updateValues.push(id);
       await db.query(
-        'UPDATE admins SET is_super_admin = $1 WHERE id = $2',
-        [is_super_admin, id]
+        `UPDATE admins SET ${updateFields.join(', ')} WHERE id = $${paramIndex}`,
+        updateValues
       );
     }
 

@@ -9,6 +9,11 @@ export default function PermissionsManager({ token }) {
   const [saving, setSaving] = useState(false);
   const [result, setResult] = useState(null);
 
+  // Committee fields
+  const [roleTitle, setRoleTitle] = useState('');
+  const [subCommittees, setSubCommittees] = useState('');
+  const [isCoreLeader, setIsCoreLeader] = useState(false);
+
   const allPermissions = [
     'invites_add',
     'invites_link',
@@ -69,6 +74,11 @@ export default function PermissionsManager({ token }) {
 
         setPermissions(normalizedPermissions);
         setIsSuperAdmin(adminList[0].is_super_admin);
+
+        // Set committee fields
+        setRoleTitle(adminList[0].role_title || '');
+        setSubCommittees(adminList[0].sub_committees || '');
+        setIsCoreLeader(adminList[0].is_core_leader || false);
       }
 
     } catch (err) {
@@ -91,6 +101,11 @@ export default function PermissionsManager({ token }) {
 
       setPermissions(normalizedPermissions);
       setIsSuperAdmin(admin.is_super_admin);
+
+      // Set committee fields
+      setRoleTitle(admin.role_title || '');
+      setSubCommittees(admin.sub_committees || '');
+      setIsCoreLeader(admin.is_core_leader || false);
     }
 
   };
@@ -133,7 +148,13 @@ export default function PermissionsManager({ token }) {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({ permissions, is_super_admin: isSuperAdmin })
+        body: JSON.stringify({
+          permissions,
+          is_super_admin: isSuperAdmin,
+          role_title: roleTitle,
+          sub_committees: subCommittees,
+          is_core_leader: isCoreLeader
+        })
       });
 
       if (res.ok) {
@@ -295,6 +316,73 @@ export default function PermissionsManager({ token }) {
               </div>
             </>
           )}
+
+          {/* Committee Profile Section */}
+          <div style={{ marginTop: '24px', paddingTop: '24px', borderTop: '1px solid #ddd' }}>
+            <h4 className="perm-section-title">COMMITTEE PROFILE</h4>
+            <p className="perm-muted" style={{ marginBottom: '16px', fontSize: '0.9rem' }}>
+              These fields appear on the Committee page. Leave role title blank to hide from committee page.
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', paddingLeft: '12px' }}>
+              {/* Role Title */}
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label style={{ display: 'block', marginBottom: '6px', fontWeight: '500' }}>
+                  Role Title
+                </label>
+                <input
+                  type="text"
+                  value={roleTitle}
+                  onChange={(e) => setRoleTitle(e.target.value)}
+                  placeholder="e.g., Treasurer, Events Coordinator"
+                  style={{
+                    width: '100%',
+                    padding: '10px 12px',
+                    borderRadius: '6px',
+                    border: '1px solid #ddd',
+                    fontSize: '0.95rem'
+                  }}
+                />
+              </div>
+
+              {/* Sub-Committees */}
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label style={{ display: 'block', marginBottom: '6px', fontWeight: '500' }}>
+                  Sub-Committees
+                </label>
+                <input
+                  type="text"
+                  value={subCommittees}
+                  onChange={(e) => setSubCommittees(e.target.value)}
+                  placeholder="e.g., Financial Controller, Fundraising"
+                  style={{
+                    width: '100%',
+                    padding: '10px 12px',
+                    borderRadius: '6px',
+                    border: '1px solid #ddd',
+                    fontSize: '0.95rem'
+                  }}
+                />
+                <span style={{ fontSize: '0.8rem', color: '#666', marginTop: '4px', display: 'block' }}>
+                  Comma-separated list of sub-committees
+                </span>
+              </div>
+
+              {/* Core Leader Checkbox */}
+              <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+                <input
+                  type="checkbox"
+                  checked={isCoreLeader}
+                  onChange={(e) => setIsCoreLeader(e.target.checked)}
+                  style={{ width: '18px', height: '18px' }}
+                />
+                <span style={{ fontWeight: '500' }}>Core Leader</span>
+                <span style={{ fontSize: '0.85rem', color: '#666' }}>
+                  (displays in top row on Committee page)
+                </span>
+              </label>
+            </div>
+          </div>
 
           {result && (
             <div className={`invite-result ${result.success ? 'success' : 'error'}`} style={{ marginBottom: '16px' }}>

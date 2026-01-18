@@ -18,6 +18,7 @@ import Inbox from './pages/Inbox';
 import Events from './pages/Events';
 import EventDetail from './pages/EventDetail';
 import Media from './pages/Media';
+import Committee from './pages/Committee';
 import './styles/base.css';
 import './styles/components.css';
 import './styles/auth.css';
@@ -148,6 +149,16 @@ function AppRoutes() {
           <ProtectedRoute>
             <AdminOnly>
               <Media />
+            </AdminOnly>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/committee"
+        element={
+          <ProtectedRoute>
+            <AdminOnly>
+              <Committee />
             </AdminOnly>
           </ProtectedRoute>
         }
