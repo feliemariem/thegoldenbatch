@@ -37,6 +37,12 @@ body[data-theme="dark"] .theme-toggle {
    Sophisticated, elegant, matches dark mode aesthetic
    =========================================== */
 
+/* Overscroll background color for light theme */
+html[data-theme="light"],
+body[data-theme="light"] {
+  background-color: #faf8f4 !important;
+}
+
 /* Landing page - HS building background for light theme */
 body[data-theme="light"] .landing-page {
   background:
