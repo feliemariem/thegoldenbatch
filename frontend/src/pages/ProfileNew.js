@@ -277,15 +277,12 @@ export default function ProfileNew() {
           </div>
           <nav className="profile-nav">
             <Link to="/events" className="nav-link">Events</Link>
-            {showNewPages && (
-              <Link to="/directory" className="nav-link">Directory</Link>
-            )}
             {user?.isAdmin && <Link to="/media" className="nav-link">Media</Link>}
-            <Link to="/funds" className="nav-link">Funds</Link>
             <Link to="/inbox" className="nav-link nav-link-badge">
               Inbox
               {unreadCount > 0 && <span className="nav-badge">{unreadCount}</span>}
             </Link>
+            <Link to="/funds" className="nav-link">Funds</Link>
             <Link to="/profile" className="nav-link">Profile</Link>
             {user?.isAdmin && <Link to="/admin" className="nav-link">Admin</Link>}
             <ThemeToggle />
