@@ -11,6 +11,34 @@ export default function AnnouncementComposer({ token, registeredCount = 0, going
   const [showHistory, setShowHistory] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [viewAnnouncement, setViewAnnouncement] = useState(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = React.useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const audienceOptions = [
+    { value: 'all', label: `All Registered (${registeredCount})`, isAdmin: false },
+    { value: 'admins', label: `ADMINS ONLY (${adminsCount})`, isAdmin: true },
+    { value: 'going', label: `Going Only (${goingCount})`, isAdmin: false },
+    { value: 'maybe', label: `Maybe Only (${maybeCount})`, isAdmin: false },
+    { value: 'not_going', label: `Not Going Only (${notGoingCount})`, isAdmin: false },
+  ];
+
+  const selectedOption = audienceOptions.find(opt => opt.value === audience);
+
+  const handleSelectAudience = (value) => {
+    setAudience(value);
+    setDropdownOpen(false);
+  };
 
   useEffect(() => {
     if (showHistory) {
@@ -115,25 +143,105 @@ export default function AnnouncementComposer({ token, registeredCount = 0, going
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>To:</label>
-            <select
-              value={audience}
-              onChange={(e) => setAudience(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '12px',
-                borderRadius: '8px',
-                border: '1px solid rgba(255,255,255,0.1)',
-                background: 'rgba(0,0,0,0.2)',
-                color: '#e0e0e0',
-                fontSize: '1rem'
-              }}
-            >
-              <option value="all">All Registered ({registeredCount})</option>
-              <option value="admins">Admins Only ({adminsCount})</option>
-              <option value="going">Going Only ({goingCount})</option>
-              <option value="maybe">Maybe Only ({maybeCount})</option>
-              <option value="not_going">Not Going Only ({notGoingCount})</option>
-            </select>
+            <div ref={dropdownRef} style={{ position: 'relative' }}>
+              {/* Dropdown trigger */}
+              <button
+                type="button"
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  background: 'rgba(0,0,0,0.2)',
+                  color: selectedOption?.isAdmin ? '#FF6B6B' : '#e0e0e0',
+                  fontSize: '1rem',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  fontWeight: selectedOption?.isAdmin ? 'bold' : 'normal'
+                }}
+              >
+                <span>{selectedOption?.label}</span>
+                <span style={{ marginLeft: '8px', fontSize: '0.8rem' }}>▼</span>
+              </button>
+
+              {/* Dropdown menu */}
+              {dropdownOpen && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '100%',
+                    left: 0,
+                    right: 0,
+                    marginTop: '4px',
+                    background: '#1e1e1e',
+                    border: '1px solid rgba(255,255,255,0.15)',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
+                    zIndex: 100,
+                    overflow: 'hidden'
+                  }}
+                >
+                  {audienceOptions.map((option, index) => (
+                    <React.Fragment key={option.value}>
+                      {/* Separator line before ADMINS ONLY */}
+                      {option.isAdmin && (
+                        <div
+                          style={{
+                            height: '1px',
+                            background: 'linear-gradient(to right, transparent, rgba(255, 107, 107, 0.5), transparent)',
+                            margin: '4px 0'
+                          }}
+                        />
+                      )}
+                      <div
+                        onClick={() => handleSelectAudience(option.value)}
+                        style={{
+                          padding: '12px 16px',
+                          cursor: 'pointer',
+                          color: option.isAdmin ? '#FF6B6B' : '#e0e0e0',
+                          fontWeight: option.isAdmin ? 'bold' : 'normal',
+                          background: audience === option.value
+                            ? 'rgba(207, 181, 59, 0.15)'
+                            : option.isAdmin
+                              ? 'rgba(255, 107, 107, 0.08)'
+                              : 'transparent',
+                          borderLeft: option.isAdmin ? '3px solid #FF6B6B' : '3px solid transparent',
+                          transition: 'background 0.15s ease'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = option.isAdmin
+                            ? 'rgba(255, 107, 107, 0.15)'
+                            : 'rgba(255,255,255,0.05)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = audience === option.value
+                            ? 'rgba(207, 181, 59, 0.15)'
+                            : option.isAdmin
+                              ? 'rgba(255, 107, 107, 0.08)'
+                              : 'transparent';
+                        }}
+                      >
+                        {option.label}
+                      </div>
+                      {/* Separator line after ADMINS ONLY */}
+                      {option.isAdmin && (
+                        <div
+                          style={{
+                            height: '1px',
+                            background: 'linear-gradient(to right, transparent, rgba(255, 107, 107, 0.5), transparent)',
+                            margin: '4px 0'
+                          }}
+                        />
+                      )}
+                    </React.Fragment>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="form-group">
