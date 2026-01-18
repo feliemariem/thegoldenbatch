@@ -134,8 +134,9 @@ export default function EventDetail() {
             </div>
             <nav className="profile-nav">
               <Link to="/events" className="nav-link">Events</Link>
-              <Link to="/funds" className="nav-link">Funds</Link>
+              {user?.isAdmin && <Link to="/media" className="nav-link">Media</Link>}
               <Link to="/inbox" className="nav-link">Inbox</Link>
+              <Link to="/funds" className="nav-link">Funds</Link>
               <Link to="/profile" className="nav-link">Profile</Link>
               {user?.isAdmin && <Link to="/admin" className="nav-link">Admin</Link>}
               <ThemeToggle />
