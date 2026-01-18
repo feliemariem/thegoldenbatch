@@ -3,6 +3,17 @@
    Admin Dashboard, Tables, Stats
    ======================================== */
 
+/* Admin Dashboard Background - matches Events/ProfileNew pages */
+.admin-container {
+  min-height: 100vh;
+  background: linear-gradient(165deg, #0a0f0d 0%, #1a2520 50%, #0d1210 100%);
+}
+
+/* Light mode admin background */
+[data-theme="light"] .admin-container {
+  background: linear-gradient(165deg, #f5f5f0 0%, #e8e8e0 50%, #f0f0e8 100%);
+}
+
 /* Stats Grid */
 .stats-grid {
   display: grid;
