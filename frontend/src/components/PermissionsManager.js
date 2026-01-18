@@ -188,7 +188,7 @@ export default function PermissionsManager({ token }) {
         >
           {admins.map(admin => (
             <option key={admin.id} value={admin.id}>
-              {admin.first_name} {admin.last_name} {admin.is_super_admin ? '(Super Admin)' : ''}
+              {admin.current_name || `${admin.first_name} ${admin.last_name}`.trim()} {admin.is_super_admin ? '(Super Admin)' : ''}
             </option>
           ))}
         </select>
