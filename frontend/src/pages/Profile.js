@@ -116,6 +116,15 @@ export default function Profile() {
     navigate('/login');
   };
 
+  // Helper function to format birthday without timezone conversion
+  const formatBirthday = (dateStr) => {
+    if (!dateStr) return '';
+    const dateOnly = dateStr.split('T')[0];
+    const date = new Date(dateOnly + 'T00:00:00');
+    if (isNaN(date.getTime())) return '';
+    return date.toLocaleDateString();
+  };
+
   if (!profile) {
     return (
       <div className="container">
@@ -313,7 +322,7 @@ export default function Profile() {
             <div className="profile-display">
               <p><strong>Email:</strong> {profile.email}</p>
               <p><strong>Name:</strong> {profile.first_name} {profile.last_name}</p>
-              {profile.birthday && <p><strong>Birthday:</strong> {new Date(profile.birthday).toLocaleDateString()}</p>}
+              {profile.birthday && <p><strong>Birthday:</strong> {formatBirthday(profile.birthday)}</p>}
               {profile.mobile && <p><strong>Mobile:</strong> {profile.mobile}</p>}
               {profile.address && <p><strong>Address:</strong> {profile.address}</p>}
               <p><strong>Location:</strong> {profile.city}, {profile.country}</p>

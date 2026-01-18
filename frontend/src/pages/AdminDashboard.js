@@ -64,6 +64,14 @@ export default function AdminDashboard() {
     setCopied(true);
   };
 
+  // Helper function to format birthday without timezone conversion
+  const formatBirthday = (dateStr) => {
+    if (!dateStr) return '';
+    const dateOnly = dateStr.split('T')[0];
+    const date = new Date(dateOnly + 'T00:00:00');
+    if (isNaN(date.getTime())) return '';
+    return date.toLocaleDateString();
+  };
 
   // Confirm modal state
   const [confirmModal, setConfirmModal] = useState({ show: false, message: '', onConfirm: null });
@@ -536,7 +544,7 @@ export default function AdminDashboard() {
       u.first_name,
       u.last_name,
       u.email,
-      u.birthday ? new Date(u.birthday).toLocaleDateString() : '',
+      formatBirthday(u.birthday),
       u.mobile || '',
       u.address || '',
       u.city,
@@ -1298,7 +1306,7 @@ export default function AdminDashboard() {
                           <tr key={user.id}>
                             <td style={{ whiteSpace: 'nowrap' }}>{user.first_name} {user.last_name}</td>
                             <td>{user.email}</td>
-                            <td>{user.birthday ? new Date(user.birthday).toLocaleDateString() : '-'}</td>
+                            <td>{formatBirthday(user.birthday) || '-'}</td>
                             <td>{user.mobile || '-'}</td>
                             <td>{user.address || '-'}</td>
                             <td>{user.city}</td>
