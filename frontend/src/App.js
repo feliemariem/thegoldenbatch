@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { ActionItemsProvider } from './context/ActionItemsContext';
+import { InboxProvider } from './context/InboxContext';
 import ThemeToggle from './components/ThemeToggle';
 import Landing from './pages/Landing';
 import Register from './pages/Register';
@@ -172,12 +173,14 @@ function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <ActionItemsProvider>
-          <BrowserRouter>
-            <ConditionalThemeToggle />
-            <AppRoutes />
-          </BrowserRouter>
-        </ActionItemsProvider>
+        <InboxProvider>
+          <ActionItemsProvider>
+            <BrowserRouter>
+              <ConditionalThemeToggle />
+              <AppRoutes />
+            </BrowserRouter>
+          </ActionItemsProvider>
+        </InboxProvider>
       </AuthProvider>
     </ThemeProvider>
   );

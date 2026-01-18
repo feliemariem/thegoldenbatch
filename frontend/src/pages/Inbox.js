@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useInbox } from '../context/InboxContext';
 import ThemeToggle from '../components/ThemeToggle';
 import logo from '../images/lasalle.jpg';
 import '../styles/inbox.css';
 
 export default function Inbox() {
   const { user, token, logout } = useAuth();
+  const { decrementUnreadCount } = useInbox();
   const [announcements, setAnnouncements] = useState([]);
   const [messages, setMessages] = useState([]);
   const [sentMessages, setSentMessages] = useState([]);
@@ -93,6 +95,8 @@ export default function Inbox() {
       setAnnouncements(prev =>
         prev.map(a => a.id === id ? { ...a, is_read: true } : a)
       );
+      // Update global unread count
+      decrementUnreadCount();
     } catch (err) {
       console.error('Failed to mark as read');
     }
@@ -108,6 +112,8 @@ export default function Inbox() {
       setMessages(prev =>
         prev.map(m => m.id === id ? { ...m, is_read: true } : m)
       );
+      // Update global unread count
+      decrementUnreadCount();
     } catch (err) {
       console.error('Failed to mark message as read');
     }
@@ -260,7 +266,7 @@ export default function Inbox() {
             <Link to="/events" className="nav-link">Events</Link>
             {user?.isAdmin && <Link to="/media" className="nav-link">Media</Link>}
             {user?.isAdmin && <Link to="/committee" className="nav-link">Committee</Link>}
-            <Link to="/inbox" className="nav-link active">Inbox</Link>
+            <Link to="/inbox" className="nav-link active">Inbox{unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}</Link>
             <Link to="/funds" className="nav-link">Funds</Link>
             <Link to={user?.isAdmin ? "/profile-preview" : "/profile"} className="nav-link">Profile</Link>
             {user?.isAdmin && <Link to="/admin" className="nav-link">Admin</Link>}

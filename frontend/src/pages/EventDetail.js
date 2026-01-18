@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useInbox } from '../context/InboxContext';
 import ThemeToggle from '../components/ThemeToggle';
 import logo from '../images/lasalle.jpg';
 import '../styles/profileNew.css';
@@ -9,6 +10,7 @@ import '../styles/events.css';
 export default function EventDetail() {
   const { id } = useParams();
   const { user, token, logout } = useAuth();
+  const { unreadCount } = useInbox();
   const navigate = useNavigate();
   const isAdmin = user?.isAdmin;
 
@@ -136,7 +138,7 @@ export default function EventDetail() {
               <Link to="/events" className="nav-link">Events</Link>
               {user?.isAdmin && <Link to="/media" className="nav-link">Media</Link>}
               {user?.isAdmin && <Link to="/committee" className="nav-link">Committee</Link>}
-              <Link to="/inbox" className="nav-link">Inbox</Link>
+              <Link to="/inbox" className="nav-link">Inbox{unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}</Link>
               <Link to="/funds" className="nav-link">Funds</Link>
               <Link to={user?.isAdmin ? "/profile-preview" : "/profile"} className="nav-link">Profile</Link>
               {user?.isAdmin && <Link to="/admin" className="nav-link">Admin</Link>}
@@ -173,7 +175,7 @@ export default function EventDetail() {
           <nav className="profile-nav">
             <Link to="/events" className="nav-link">Events</Link>
             <Link to="/funds" className="nav-link">Funds</Link>
-            <Link to="/inbox" className="nav-link">Inbox</Link>
+            <Link to="/inbox" className="nav-link">Inbox{unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}</Link>
             <Link to={user?.isAdmin ? "/profile-preview" : "/profile"} className="nav-link">Profile</Link>
             {user?.isAdmin && <Link to="/admin" className="nav-link">Admin</Link>}
             <ThemeToggle />
