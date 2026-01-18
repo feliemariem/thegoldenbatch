@@ -209,6 +209,10 @@ h3 {
   /* Make scrollbar always visible */
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.3) rgba(0, 0, 0, 0.2);
+  /* Ensure consistent height behavior during re-renders */
+  contain: layout style;
+  /* Prevent height collapse - use min-height as fallback */
+  min-height: 100px;
 }
 
 .scrollable-table-wrapper::-webkit-scrollbar {
