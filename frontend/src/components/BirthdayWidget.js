@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 
-const API_URL = process.env.REACT_APP_API_URL || '';
+const API_URL = 'https://the-golden-batch-api.onrender.com';
 
 export default function BirthdayWidget() {
   const { token } = useAuth();
