@@ -9,18 +9,23 @@ export default function Inbox() {
   const { user, token, logout } = useAuth();
   const [announcements, setAnnouncements] = useState([]);
   const [messages, setMessages] = useState([]);
+  const [sentMessages, setSentMessages] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
-  const [selectedType, setSelectedType] = useState(null); // 'announcement' or 'message'
+  const [selectedType, setSelectedType] = useState(null); // 'announcement', 'message', or 'sent'
   const [showModal, setShowModal] = useState(false);
   const [showComposeModal, setShowComposeModal] = useState(false);
   const [composeForm, setComposeForm] = useState({ subject: '', message: '' });
   const [sending, setSending] = useState(false);
   const [toast, setToast] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [thread, setThread] = useState([]);
+  const [loadingThread, setLoadingThread] = useState(false);
+  const [activeTab, setActiveTab] = useState('inbox'); // 'inbox' or 'sent'
 
   useEffect(() => {
     fetchInbox();
     fetchMessages();
+    fetchSentMessages();
   }, [token]);
 
   const fetchInbox = async () => {
@@ -46,6 +51,34 @@ export default function Inbox() {
       setMessages(data.messages || []);
     } catch (err) {
       console.error('Failed to fetch messages');
+    }
+  };
+
+  const fetchSentMessages = async () => {
+    try {
+      const res = await fetch('https://the-golden-batch-api.onrender.com/api/messages/user-sent', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      setSentMessages(data.messages || []);
+    } catch (err) {
+      console.error('Failed to fetch sent messages');
+    }
+  };
+
+  const fetchThread = async (id) => {
+    setLoadingThread(true);
+    try {
+      const res = await fetch(`https://the-golden-batch-api.onrender.com/api/messages/thread/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      setThread(data.thread || []);
+    } catch (err) {
+      console.error('Failed to fetch thread:', err);
+      setThread([]);
+    } finally {
+      setLoadingThread(false);
     }
   };
 
@@ -80,16 +113,22 @@ export default function Inbox() {
     }
   };
 
-  const handleSelect = (item, type) => {
+  const handleSelect = async (item, type) => {
     setSelectedId(item.id);
     setSelectedType(type);
     setShowModal(true);
     if (!item.is_read) {
       if (type === 'announcement') {
         markAsRead(item.id);
-      } else {
+      } else if (type === 'message') {
         markMessageAsRead(item.id);
       }
+    }
+    // Fetch thread for messages and sent messages
+    if (type === 'message' || type === 'sent') {
+      await fetchThread(item.id);
+    } else {
+      setThread([]);
     }
   };
 
@@ -115,6 +154,7 @@ export default function Inbox() {
         setToast({ message: 'Message sent to the committee', type: 'success' });
         setShowComposeModal(false);
         setComposeForm({ subject: '', message: '' });
+        fetchSentMessages(); // Refresh sent messages
         setTimeout(() => setToast(null), 3000);
       } else {
         const data = await res.json();
@@ -143,6 +183,7 @@ export default function Inbox() {
     setShowModal(false);
     setSelectedId(null);
     setSelectedType(null);
+    setThread([]);
   };
 
   // Combine announcements and messages into a single sorted list
@@ -186,8 +227,11 @@ export default function Inbox() {
 
   const selectedItem = selectedType === 'message'
     ? messages.find(m => m.id === selectedId)
+    : selectedType === 'sent'
+    ? sentMessages.find(m => m.id === selectedId)
     : announcements.find(a => a.id === selectedId);
   const unreadCount = allItems.filter(item => !item.is_read).length;
+  const sentWithReplies = sentMessages.filter(m => m.has_reply).length;
 
   if (loading) {
     return (
@@ -246,7 +290,57 @@ export default function Inbox() {
 
       <main className="inbox-main">
         <div className="inbox-header-bar">
-          <h2>Inbox {unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}</h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+            <button
+              onClick={() => setActiveTab('inbox')}
+              style={{
+                background: 'none',
+                border: 'none',
+                padding: '8px 0',
+                color: activeTab === 'inbox' ? 'var(--accent-gold)' : 'var(--text-secondary)',
+                fontWeight: activeTab === 'inbox' ? '600' : '400',
+                fontSize: '1.1rem',
+                cursor: 'pointer',
+                borderBottom: activeTab === 'inbox' ? '2px solid var(--accent-gold)' : '2px solid transparent',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}
+            >
+              Inbox
+              {unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}
+            </button>
+            <button
+              onClick={() => setActiveTab('sent')}
+              style={{
+                background: 'none',
+                border: 'none',
+                padding: '8px 0',
+                color: activeTab === 'sent' ? 'var(--accent-gold)' : 'var(--text-secondary)',
+                fontWeight: activeTab === 'sent' ? '600' : '400',
+                fontSize: '1.1rem',
+                cursor: 'pointer',
+                borderBottom: activeTab === 'sent' ? '2px solid var(--accent-gold)' : '2px solid transparent',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}
+            >
+              Sent Messages
+              {sentMessages.length > 0 && (
+                <span style={{
+                  background: 'rgba(207, 181, 59, 0.15)',
+                  color: 'var(--accent-gold)',
+                  padding: '2px 8px',
+                  borderRadius: '10px',
+                  fontSize: '0.75rem',
+                  fontWeight: '500'
+                }}>
+                  {sentMessages.length}
+                </span>
+              )}
+            </button>
+          </div>
           <button
             onClick={() => setShowComposeModal(true)}
             className="btn-reply"
@@ -256,77 +350,138 @@ export default function Inbox() {
           </button>
         </div>
 
-        {allItems.length === 0 ? (
-          <div className="inbox-empty">
-            <p>No messages yet</p>
-            <span>Announcements from the committee will appear here</span>
-          </div>
-        ) : (
-          <div className="message-list">
-            {allItems.map((item) => (
-              <div
-                key={`${item.type}-${item.id}`}
-                className={`message-item ${selectedId === item.id && selectedType === item.type ? 'selected' : ''} ${!item.is_read ? 'unread' : ''}`}
-                onClick={() => handleSelect(item, item.type)}
-              >
-                <div className="message-indicator"></div>
-                <div className="message-preview">
-                  <div className="message-header">
-                    <span className="message-subject">
-                      {item.subject || '(No Subject)'}
-                      {item.type === 'message' && (
-                        <span style={{
-                          marginLeft: '8px',
-                          padding: '2px 6px',
-                          borderRadius: '4px',
-                          fontSize: '0.65rem',
-                          fontWeight: '600',
-                          background: 'rgba(207, 181, 59, 0.15)',
-                          color: '#CFB53B',
-                          verticalAlign: 'middle'
-                        }}>
-                          Reply
-                        </span>
-                      )}
-                      {item.audience === 'admins' && (
-                        <span style={{
-                          marginLeft: '8px',
-                          padding: '2px 6px',
-                          borderRadius: '4px',
-                          fontSize: '0.65rem',
-                          fontWeight: '600',
-                          background: 'rgba(220, 53, 69, 0.15)',
-                          color: '#dc3545',
-                          verticalAlign: 'middle'
-                        }}>
-                          Admin Only
-                        </span>
-                      )}
-                    </span>
-                    <span className="message-date">{formatDate(item.created_at)}</span>
+        {activeTab === 'inbox' ? (
+          // Inbox Tab - Announcements and Replies from Committee
+          allItems.length === 0 ? (
+            <div className="inbox-empty">
+              <p>No messages yet</p>
+              <span>Announcements from the committee will appear here</span>
+            </div>
+          ) : (
+            <div className="message-list">
+              {allItems.map((item) => (
+                <div
+                  key={`${item.type}-${item.id}`}
+                  className={`message-item ${selectedId === item.id && selectedType === item.type ? 'selected' : ''} ${!item.is_read ? 'unread' : ''}`}
+                  onClick={() => handleSelect(item, item.type)}
+                >
+                  <div className="message-indicator"></div>
+                  <div className="message-preview">
+                    <div className="message-header">
+                      <span className="message-subject">
+                        {item.subject || '(No Subject)'}
+                        {item.type === 'message' && (
+                          <span style={{
+                            marginLeft: '8px',
+                            padding: '2px 6px',
+                            borderRadius: '4px',
+                            fontSize: '0.65rem',
+                            fontWeight: '600',
+                            background: 'rgba(207, 181, 59, 0.15)',
+                            color: '#CFB53B',
+                            verticalAlign: 'middle'
+                          }}>
+                            Reply
+                          </span>
+                        )}
+                        {item.audience === 'admins' && (
+                          <span style={{
+                            marginLeft: '8px',
+                            padding: '2px 6px',
+                            borderRadius: '4px',
+                            fontSize: '0.65rem',
+                            fontWeight: '600',
+                            background: 'rgba(220, 53, 69, 0.15)',
+                            color: '#dc3545',
+                            verticalAlign: 'middle'
+                          }}>
+                            Admin Only
+                          </span>
+                        )}
+                      </span>
+                      <span className="message-date">{formatDate(item.created_at)}</span>
+                    </div>
+                    <p className="message-snippet">
+                      {item.type === 'message' && <span style={{ color: '#CFB53B', fontWeight: '500' }}>Committee: </span>}
+                      {item.message.substring(0, 100)}{item.message.length > 100 ? '...' : ''}
+                    </p>
                   </div>
-                  <p className="message-snippet">
-                    {item.type === 'message' && <span style={{ color: '#CFB53B', fontWeight: '500' }}>Committee: </span>}
-                    {item.message.substring(0, 100)}{item.message.length > 100 ? '...' : ''}
-                  </p>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )
+        ) : (
+          // Sent Messages Tab
+          sentMessages.length === 0 ? (
+            <div className="inbox-empty">
+              <p>No sent messages</p>
+              <span>Messages you send to the committee will appear here</span>
+            </div>
+          ) : (
+            <div className="message-list">
+              {sentMessages.map((item) => (
+                <div
+                  key={`sent-${item.id}`}
+                  className={`message-item ${selectedId === item.id && selectedType === 'sent' ? 'selected' : ''}`}
+                  onClick={() => handleSelect(item, 'sent')}
+                >
+                  <div className="message-indicator" style={{ background: item.has_reply ? '#28a745' : 'transparent' }}></div>
+                  <div className="message-preview">
+                    <div className="message-header">
+                      <span className="message-subject">
+                        {item.subject || '(No Subject)'}
+                        {item.has_reply && (
+                          <span style={{
+                            marginLeft: '8px',
+                            padding: '2px 6px',
+                            borderRadius: '4px',
+                            fontSize: '0.65rem',
+                            fontWeight: '600',
+                            background: 'rgba(40, 167, 69, 0.15)',
+                            color: '#28a745',
+                            verticalAlign: 'middle'
+                          }}>
+                            Replied
+                          </span>
+                        )}
+                      </span>
+                      <span className="message-date">{formatDate(item.created_at)}</span>
+                    </div>
+                    <p className="message-snippet">
+                      <span style={{ color: 'var(--text-secondary)', fontWeight: '500' }}>To Committee: </span>
+                      {item.message.substring(0, 100)}{item.message.length > 100 ? '...' : ''}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )
         )}
       </main>
 
       {/* Message Detail Modal */}
       {showModal && selectedItem && (
         <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxHeight: '85vh' }}>
             <button className="modal-close" onClick={closeModal}>&times;</button>
             <div className="detail-header">
-              <h3>
+              <h3 style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
                 {selectedItem.subject || '(No Subject)'}
+                {selectedType === 'sent' && selectedItem.has_reply && (
+                  <span style={{
+                    padding: '3px 8px',
+                    borderRadius: '4px',
+                    fontSize: '0.7rem',
+                    fontWeight: '600',
+                    background: 'rgba(40, 167, 69, 0.15)',
+                    color: '#28a745',
+                    verticalAlign: 'middle'
+                  }}>
+                    Replied
+                  </span>
+                )}
                 {selectedType === 'message' && (
                   <span style={{
-                    marginLeft: '10px',
                     padding: '3px 8px',
                     borderRadius: '4px',
                     fontSize: '0.7rem',
@@ -340,7 +495,6 @@ export default function Inbox() {
                 )}
                 {selectedItem.audience === 'admins' && (
                   <span style={{
-                    marginLeft: '10px',
                     padding: '3px 8px',
                     borderRadius: '4px',
                     fontSize: '0.7rem',
@@ -352,46 +506,157 @@ export default function Inbox() {
                     Admin Only
                   </span>
                 )}
+                {(selectedType === 'message' || selectedType === 'sent') && thread.length > 1 && (
+                  <span style={{
+                    padding: '3px 10px',
+                    borderRadius: '12px',
+                    fontSize: '0.7rem',
+                    fontWeight: '500',
+                    background: 'rgba(207, 181, 59, 0.15)',
+                    color: '#CFB53B'
+                  }}>
+                    {thread.length} messages
+                  </span>
+                )}
               </h3>
-              <span className="detail-date">{formatFullDate(selectedItem.created_at)}</span>
+              {selectedType === 'announcement' && (
+                <span className="detail-date">{formatFullDate(selectedItem.created_at)}</span>
+              )}
             </div>
-            <div className="detail-body">
-              {selectedItem.message.split('\n').map((line, i) => {
-                // Convert URLs to clickable links
-                const urlRegex = /(https?:\/\/[^\s]+)/g;
-                const parts = line.split(urlRegex);
 
-                return (
-                  <p key={i}>
-                    {parts.map((part, j) =>
-                      urlRegex.test(part) ? (
-                        <a
-                          key={j}
-                          href={part}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{ color: '#CFB53B', textDecoration: 'underline' }}
-                        >
-                          {part}
-                        </a>
-                      ) : (
-                        part || '\u00A0'
-                      )
-                    )}
-                  </p>
-                );
-              })}
+            <div className="detail-body" style={{ maxHeight: '50vh', overflowY: 'auto' }}>
+              {selectedType === 'announcement' ? (
+                // Announcement - show single message
+                selectedItem.message.split('\n').map((line, i) => {
+                  const urlRegex = /(https?:\/\/[^\s]+)/g;
+                  const parts = line.split(urlRegex);
+                  return (
+                    <p key={i}>
+                      {parts.map((part, j) =>
+                        urlRegex.test(part) ? (
+                          <a
+                            key={j}
+                            href={part}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ color: '#CFB53B', textDecoration: 'underline' }}
+                          >
+                            {part}
+                          </a>
+                        ) : (
+                          part || '\u00A0'
+                        )
+                      )}
+                    </p>
+                  );
+                })
+              ) : loadingThread ? (
+                <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-secondary)' }}>
+                  Loading conversation...
+                </div>
+              ) : thread.length === 0 ? (
+                // Fallback to single message
+                <div style={{
+                  padding: '16px',
+                  background: selectedType === 'sent' ? 'rgba(0, 102, 51, 0.08)' : 'rgba(207, 181, 59, 0.08)',
+                  borderRadius: '12px',
+                  borderLeft: `3px solid ${selectedType === 'sent' ? '#006633' : '#CFB53B'}`
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
+                    <span style={{ color: selectedType === 'sent' ? '#006633' : '#CFB53B', fontWeight: '600', fontSize: '0.9rem' }}>
+                      {selectedType === 'sent' ? 'You' : 'Committee'}
+                    </span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>
+                      {formatFullDate(selectedItem.created_at)}
+                    </span>
+                  </div>
+                  {selectedItem.message.split('\n').map((line, i) => (
+                    <p key={i} style={{ lineHeight: '1.6', margin: i === 0 ? 0 : '8px 0 0 0', fontSize: '0.95rem' }}>
+                      {line || '\u00A0'}
+                    </p>
+                  ))}
+                </div>
+              ) : (
+                // Full thread view
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  {thread.map((msg) => {
+                    const isFromUser = msg.from_user_id !== null;
+                    const senderName = isFromUser ? 'You' : 'Committee';
+                    return (
+                      <div
+                        key={msg.id}
+                        style={{
+                          padding: '16px',
+                          background: isFromUser ? 'rgba(0, 102, 51, 0.08)' : 'rgba(207, 181, 59, 0.08)',
+                          borderRadius: '12px',
+                          borderLeft: `3px solid ${isFromUser ? '#006633' : '#CFB53B'}`
+                        }}
+                      >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
+                          <span style={{ color: isFromUser ? '#006633' : '#CFB53B', fontWeight: '600', fontSize: '0.9rem' }}>
+                            {senderName}
+                            {!isFromUser && (
+                              <span style={{
+                                marginLeft: '8px',
+                                padding: '2px 6px',
+                                borderRadius: '4px',
+                                fontSize: '0.6rem',
+                                fontWeight: '600',
+                                background: 'rgba(40, 167, 69, 0.15)',
+                                color: '#28a745'
+                              }}>
+                                Reply
+                              </span>
+                            )}
+                          </span>
+                          <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>
+                            {formatFullDate(msg.created_at)}
+                          </span>
+                        </div>
+                        {msg.message.split('\n').map((line, i) => {
+                          const urlRegex = /(https?:\/\/[^\s]+)/g;
+                          const parts = line.split(urlRegex);
+                          return (
+                            <p key={i} style={{ lineHeight: '1.6', margin: i === 0 ? 0 : '8px 0 0 0', fontSize: '0.95rem' }}>
+                              {parts.map((part, j) =>
+                                urlRegex.test(part) ? (
+                                  <a
+                                    key={j}
+                                    href={part}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{ color: '#CFB53B', textDecoration: 'underline' }}
+                                  >
+                                    {part}
+                                  </a>
+                                ) : (
+                                  part || '\u00A0'
+                                )
+                              )}
+                            </p>
+                          );
+                        })}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
+
             <div className="detail-footer">
               <span className="detail-from">
-                From: {selectedType === 'message' ? 'Committee' : 'The Organizing Committee'}
+                {selectedType === 'sent'
+                  ? 'To: Committee'
+                  : `From: ${selectedType === 'message' ? 'Committee' : 'The Organizing Committee'}`}
               </span>
-              <button
-                onClick={() => handleReplyToCommittee(selectedItem.subject)}
-                className="btn-reply"
-              >
-                Reply to Committee
-              </button>
+              {selectedType !== 'sent' && (
+                <button
+                  onClick={() => handleReplyToCommittee(selectedItem.subject)}
+                  className="btn-reply"
+                >
+                  Reply to Committee
+                </button>
+              )}
             </div>
           </div>
         </div>
