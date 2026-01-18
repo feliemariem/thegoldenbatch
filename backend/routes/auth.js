@@ -92,10 +92,17 @@ router.post('/register', async (req, res) => {
     // Mark invite as used
     await db.query('UPDATE invites SET used = TRUE WHERE id = $1', [invite.id]);
 
-    // Update master_list status to 'Registered' and email if linked
-    console.log('[Registration] Checking master_list_id:', invite.master_list_id);
+    // Update master_list status to 'Registered' if linked
+    console.log('[Registration] Checking master_list_id:', invite.master_list_id, 'type:', typeof invite.master_list_id);
     if (invite.master_list_id) {
-      console.log('[Registration] Updating master_list to Registered for id:', invite.master_list_id);
+      // First, check what the current state of the master_list entry is
+      const beforeUpdate = await db.query(
+        'SELECT id, status, email, first_name, last_name FROM master_list WHERE id = $1',
+        [invite.master_list_id]
+      );
+      console.log('[Registration] master_list BEFORE update:', beforeUpdate.rows[0] || 'NOT FOUND');
+
+      console.log('[Registration] Executing UPDATE master_list SET status=Registered for id:', invite.master_list_id);
       const updateResult = await db.query(
         `UPDATE master_list SET
           status = 'Registered',
@@ -105,26 +112,10 @@ router.post('/register', async (req, res) => {
          RETURNING id, status, email`,
         [toLowerEmail(invite.email), invite.master_list_id]
       );
-      console.log('[Registration] master_list update result:', updateResult.rows[0] || 'NO ROWS UPDATED');
+      console.log('[Registration] UPDATE rowCount:', updateResult.rowCount);
+      console.log('[Registration] master_list AFTER update:', updateResult.rows[0] || 'NO ROWS RETURNED');
     } else {
-      // Fallback: Try to find and update master_list entry by email match
-      console.log('[Registration] WARNING: No master_list_id linked to invite. Trying email fallback...');
-      const emailFallbackResult = await db.query(
-        `UPDATE master_list SET
-          status = 'Registered',
-          updated_at = CURRENT_TIMESTAMP
-         WHERE LOWER(email) = $1
-         RETURNING id, status, email`,
-        [toLowerEmail(invite.email)]
-      );
-      if (emailFallbackResult.rows.length > 0) {
-        console.log('[Registration] Email fallback SUCCESS - updated master_list:', emailFallbackResult.rows[0]);
-        // Also link the invite to this master_list entry for future reference
-        await db.query('UPDATE invites SET master_list_id = $1 WHERE id = $2',
-          [emailFallbackResult.rows[0].id, invite.id]);
-      } else {
-        console.log('[Registration] Email fallback found NO matching master_list entry for:', toLowerEmail(invite.email));
-      }
+      console.log('[Registration] No master_list_id linked to invite - skipping master_list update');
     }
 
     const user = userResult.rows[0];
