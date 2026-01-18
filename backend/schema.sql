@@ -28,6 +28,10 @@ CREATE TABLE admins (
     first_name VARCHAR(100),
     last_name VARCHAR(100),
     is_super_admin BOOLEAN DEFAULT FALSE,
+    role_title VARCHAR(100),                    -- Committee role (e.g., "Treasurer")
+    sub_committees TEXT,                        -- Sub-committees (e.g., "Financial Controller, Fundraising")
+    is_core_leader BOOLEAN DEFAULT FALSE,       -- If true, shows in top row on committee page
+    display_order INT DEFAULT 99,               -- Lower number = shows first on committee page
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -239,6 +243,8 @@ CREATE TABLE volunteer_interests (
     UNIQUE(user_id, role)                       -- One interest per role per user
 );
 
+
+
 -- Indexes for performance
 CREATE INDEX idx_invite_token ON invites(invite_token);
 CREATE INDEX idx_invites_email ON invites(email);
@@ -345,3 +351,21 @@ CREATE INDEX idx_volunteer_interests_user ON volunteer_interests(user_id);
 --
 -- CREATE INDEX idx_action_items_meeting ON action_items(meeting_id);
 -- CREATE INDEX idx_action_items_assignee ON action_items(assignee_id);
+
+-- ============================================================
+-- COMMITTEE PAGE ORDERING
+-- ============================================================
+-- To arrange committee members on the Committee page:
+-- Lower display_order = shows first
+-- 
+-- Example:
+--   UPDATE admins SET display_order = 1 WHERE email = 'mary@example.com';      -- First
+--   UPDATE admins SET display_order = 2 WHERE email = 'nikki@example.com';     -- Second
+--   UPDATE admins SET display_order = 3 WHERE email = 'bianca@example.com';    -- Third
+--   UPDATE admins SET display_order = 4 WHERE email = 'felie@example.com';     -- Fourth
+--
+-- Or view current order:
+--   SELECT email, first_name, role_title, is_core_leader, display_order 
+--   FROM admins 
+--   WHERE role_title IS NOT NULL 
+--   ORDER BY is_core_leader DESC, display_order ASC;
