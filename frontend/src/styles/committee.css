@@ -377,8 +377,8 @@
 
 /* Dark Theme Adjustments */
 body[data-theme="dark"] .committee-card {
-  background: var(--card-bg-dark, #1e1e1e);
-  border-color: var(--border-color-dark, #333);
+  background: rgba(26, 42, 31, 0.9);
+  border-color: rgba(45, 70, 52, 0.6);
 }
 
 body[data-theme="dark"] .committee-card-name,
@@ -388,17 +388,17 @@ body[data-theme="dark"] .committee-card.member .committee-card-name {
 }
 
 body[data-theme="dark"] .committee-card-subcommittees li {
-  background: var(--tag-bg-dark, #2a2a2a);
+  background: rgba(35, 55, 40, 0.8);
   color: var(--text-secondary-dark, #aaa);
 }
 
 body[data-theme="dark"] .volunteer-section {
-  background: var(--section-bg-dark, #1a1a1a);
+  background: rgba(20, 35, 25, 0.8);
 }
 
 body[data-theme="dark"] .volunteer-card {
-  background: var(--card-bg-dark, #1e1e1e);
-  border-color: var(--border-color-dark, #333);
+  background: rgba(26, 42, 31, 0.9);
+  border-color: rgba(45, 70, 52, 0.6);
 }
 
 body[data-theme="dark"] .volunteer-card-description {
@@ -406,8 +406,8 @@ body[data-theme="dark"] .volunteer-card-description {
 }
 
 body[data-theme="dark"] .committee-empty {
-  background: var(--card-bg-dark, #1e1e1e);
-  border-color: var(--border-color-dark, #444);
+  background: rgba(26, 42, 31, 0.9);
+  border-color: rgba(45, 70, 52, 0.6);
 }
 
 body[data-theme="dark"] .volunteer-interest-btn.interested {
