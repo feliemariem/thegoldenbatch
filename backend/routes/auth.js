@@ -43,7 +43,7 @@ router.post('/register', async (req, res) => {
 
     // Validate invite token
     const inviteResult = await db.query(
-      'SELECT id, email, used FROM invites WHERE invite_token = $1',
+      'SELECT id, email, used, master_list_id FROM invites WHERE invite_token = $1',
       [invite_token]
     );
 
@@ -87,16 +87,16 @@ router.post('/register', async (req, res) => {
     await db.query('UPDATE invites SET used = TRUE WHERE id = $1', [invite.id]);
 
     // Update master_list status to 'Registered' and email if linked
-    await db.query(
-      `UPDATE master_list SET
-        status = 'Registered',
-        email = $1,
-        updated_at = CURRENT_TIMESTAMP
-       WHERE id IN (
-         SELECT master_list_id FROM invites WHERE id = $2 AND master_list_id IS NOT NULL
-       )`,
-      [toLowerEmail(invite.email), invite.id]
-    );
+    if (invite.master_list_id) {
+      await db.query(
+        `UPDATE master_list SET
+          status = 'Registered',
+          email = $1,
+          updated_at = CURRENT_TIMESTAMP
+         WHERE id = $2`,
+        [toLowerEmail(invite.email), invite.master_list_id]
+      );
+    }
 
     const user = userResult.rows[0];
 
