@@ -366,9 +366,13 @@ export default function AdminDashboard() {
       if (res.ok) {
         fetchMasterList(masterListFilter);
         setEditingEntry(null);
+      } else {
+        const data = await res.json();
+        alert(data.error || 'Failed to update entry');
       }
     } catch (err) {
       console.error('Failed to update entry');
+      alert('Failed to update entry');
     }
   };
 
