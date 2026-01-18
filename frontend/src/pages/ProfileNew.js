@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useInbox } from '../context/InboxContext';
 import ThemeToggle from '../components/ThemeToggle';
 import MyTasks from '../components/MyTasks';
 import logo from '../images/lasalle.jpg';
@@ -8,6 +9,7 @@ import '../styles/profileNew.css';
 
 export default function ProfileNew() {
   const { user, token, logout } = useAuth();
+  const { unreadCount } = useInbox();
   const navigate = useNavigate();
 
   const [profile, setProfile] = useState(null);
@@ -16,7 +18,6 @@ export default function ProfileNew() {
   const [rsvpSaving, setRsvpSaving] = useState(false);
   const [message, setMessage] = useState('');
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(0);
   const [myEvents, setMyEvents] = useState([]);
   const fileInputRef = useRef(null);
 
