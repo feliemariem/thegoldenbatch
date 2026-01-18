@@ -569,10 +569,10 @@ export default function ProfileNew() {
                       <span className="info-label">Name</span>
                       <span className="info-value">{profile.first_name} {profile.last_name}</span>
                     </div>
-                    {profile.nickname && (
+                    {profile.current_name && (
                       <div className="info-item">
-                        <span className="info-label">Nickname</span>
-                        <span className="info-value">{profile.nickname}</span>
+                        <span className="info-label">Current Name</span>
+                        <span className="info-value">{profile.current_name}</span>
                       </div>
                     )}
                     {profile.section && (

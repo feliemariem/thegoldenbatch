@@ -231,8 +231,17 @@ router.delete('/:id', authenticateAdmin, async (req, res) => {
         );
       }
 
-      // Clear the email and admin status from master list
-      await db.query('UPDATE master_list SET email = NULL, is_admin = false WHERE id = $1', [masterListId]);
+      // Clear current_name, email, admin status, and reset status to 'Not Invited'
+      await db.query(
+        `UPDATE master_list SET
+          current_name = NULL,
+          email = NULL,
+          status = 'Not Invited',
+          is_admin = false,
+          updated_at = CURRENT_TIMESTAMP
+         WHERE id = $1`,
+        [masterListId]
+      );
     }
 
     await db.query('DELETE FROM invites WHERE id = $1', [id]);
@@ -249,20 +258,31 @@ router.put('/:id/link', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const { master_list_id } = req.body;
-    
-    // Get invite email
-    const inviteResult = await db.query('SELECT email FROM invites WHERE id = $1', [id]);
+
+    // Get invite details
+    const inviteResult = await db.query('SELECT email, first_name, last_name FROM invites WHERE id = $1', [id]);
     if (inviteResult.rows.length === 0) {
       return res.status(404).json({ error: 'Invite not found' });
     }
-    const email = inviteResult.rows[0].email;
-    
-    // Update master list entry with email
-    await db.query('UPDATE master_list SET email = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2', [email, master_list_id]);
-    
+    const { email, first_name, last_name } = inviteResult.rows[0];
+
+    // Build current_name from invite's first_name and last_name
+    const currentName = [first_name, last_name].filter(Boolean).join(' ') || null;
+
+    // Update master list entry with email, current_name, and status = 'Pending'
+    await db.query(
+      `UPDATE master_list SET
+        email = $1,
+        current_name = $2,
+        status = 'Pending',
+        updated_at = CURRENT_TIMESTAMP
+       WHERE id = $3`,
+      [email, currentName, master_list_id]
+    );
+
     // Update invite with master_list_id
     await db.query('UPDATE invites SET master_list_id = $1 WHERE id = $2', [master_list_id, id]);
-    
+
     res.json({ success: true });
   } catch (err) {
     console.error(err);
@@ -308,8 +328,17 @@ router.put('/:id/unlink', authenticateAdmin, async (req, res) => {
         );
       }
 
-      // Clear email and admin status from master list entry
-      await db.query('UPDATE master_list SET email = NULL, is_admin = false, updated_at = CURRENT_TIMESTAMP WHERE id = $1', [masterListId]);
+      // Clear current_name, email, admin status, and reset status to 'Not Invited'
+      await db.query(
+        `UPDATE master_list SET
+          current_name = NULL,
+          email = NULL,
+          status = 'Not Invited',
+          is_admin = false,
+          updated_at = CURRENT_TIMESTAMP
+         WHERE id = $1`,
+        [masterListId]
+      );
     }
 
     // Remove link from invite

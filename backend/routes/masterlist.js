@@ -20,23 +20,21 @@ router.get('/', authenticateAdmin, async (req, res) => {
     const { section } = req.query;
 
     let query = `
-      SELECT 
+      SELECT
         m.id,
         m.section,
         m.last_name,
         m.first_name,
-        m.nickname,
+        m.current_name,
         m.email,
         m.in_memoriam,
         m.is_unreachable,
         m.is_admin,
         m.created_at,
-        CASE 
+        CASE
           WHEN m.in_memoriam = true THEN 'In Memoriam'
           WHEN m.is_unreachable = true THEN 'Unreachable'
-          WHEN u.id IS NOT NULL THEN 'Registered'
-          WHEN i.id IS NOT NULL THEN 'Invited'
-          ELSE 'Not Invited'
+          ELSE COALESCE(m.status, 'Not Invited')
         END as status,
         CASE 
           WHEN m.section = 'Non-Graduate' OR m.in_memoriam = true THEN NULL
@@ -53,8 +51,6 @@ router.get('/', authenticateAdmin, async (req, res) => {
           ELSE 'Unpaid'
         END as payment_status
       FROM master_list m
-      LEFT JOIN invites i ON LOWER(m.email) = LOWER(i.email)
-      LEFT JOIN users u ON LOWER(m.email) = LOWER(u.email)
       LEFT JOIN (
         SELECT master_list_id, SUM(deposit) as total_paid
         FROM ledger
@@ -83,18 +79,16 @@ router.get('/', authenticateAdmin, async (req, res) => {
 
     const result = await db.query(query, params);
 
-    // Get stats
+    // Get stats (using stored status column)
     const statsResult = await db.query(`
-      SELECT 
+      SELECT
         COUNT(*) as total,
-        COUNT(CASE WHEN u.id IS NOT NULL THEN 1 END) as registered,
-        COUNT(CASE WHEN i.id IS NOT NULL AND u.id IS NULL AND (m.in_memoriam IS NULL OR m.in_memoriam = false) AND (m.is_unreachable IS NULL OR m.is_unreachable = false) THEN 1 END) as invited,
-        COUNT(CASE WHEN i.id IS NULL AND u.id IS NULL AND (m.in_memoriam IS NULL OR m.in_memoriam = false) AND (m.is_unreachable IS NULL OR m.is_unreachable = false) THEN 1 END) as not_invited,
+        COUNT(CASE WHEN m.status = 'Registered' AND (m.in_memoriam IS NULL OR m.in_memoriam = false) AND (m.is_unreachable IS NULL OR m.is_unreachable = false) THEN 1 END) as registered,
+        COUNT(CASE WHEN m.status = 'Pending' AND (m.in_memoriam IS NULL OR m.in_memoriam = false) AND (m.is_unreachable IS NULL OR m.is_unreachable = false) THEN 1 END) as pending,
+        COUNT(CASE WHEN m.status = 'Not Invited' AND (m.in_memoriam IS NULL OR m.in_memoriam = false) AND (m.is_unreachable IS NULL OR m.is_unreachable = false) THEN 1 END) as not_invited,
         COUNT(CASE WHEN m.in_memoriam = true THEN 1 END) as in_memoriam,
         COUNT(CASE WHEN m.is_unreachable = true THEN 1 END) as unreachable
       FROM master_list m
-      LEFT JOIN invites i ON LOWER(m.email) = LOWER(i.email)
-      LEFT JOIN users u ON LOWER(m.email) = LOWER(u.email)
     `);
 
     // Get payment stats (graduates only, excluding in memoriam)
@@ -180,7 +174,7 @@ router.post('/bulk', authenticateAdmin, async (req, res) => {
 router.put('/:id', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params;
-    const { last_name, first_name, nickname, email, section, in_memoriam, is_unreachable, is_admin } = req.body;
+    const { last_name, first_name, current_name, email, section, in_memoriam, is_unreachable, is_admin } = req.body;
 
     // Only super admins can change is_admin or in_memoriam
     const wantsToChangeProtectedFields =
@@ -265,7 +259,7 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
       `UPDATE master_list SET
         last_name = COALESCE($1, last_name),
         first_name = COALESCE($2, first_name),
-        nickname = COALESCE($3, nickname),
+        current_name = COALESCE($3, current_name),
         email = COALESCE($4, email),
         section = COALESCE($5, section),
         in_memoriam = COALESCE($6, in_memoriam),
@@ -277,7 +271,7 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
       [
         toTitleCase(last_name),
         toTitleCase(first_name),
-        toTitleCase(nickname),
+        toTitleCase(current_name),
         toLowerEmail(email),
         section,
         in_memoriam,
