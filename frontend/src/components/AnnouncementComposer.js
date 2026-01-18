@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-export default function AnnouncementComposer({ token, registeredCount = 0, goingCount = 0, maybeCount = 0, notGoingCount = 0 }) {
+export default function AnnouncementComposer({ token, registeredCount = 0, goingCount = 0, maybeCount = 0, notGoingCount = 0, adminsCount = 0 }) {
   const [audience, setAudience] = useState('all');
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
@@ -33,6 +33,7 @@ export default function AnnouncementComposer({ token, registeredCount = 0, going
   const getRecipientCount = () => {
     switch (audience) {
       case 'all': return registeredCount;
+      case 'admins': return adminsCount;
       case 'going': return goingCount;
       case 'maybe': return maybeCount;
       case 'not_going': return notGoingCount;
@@ -124,7 +125,7 @@ export default function AnnouncementComposer({ token, registeredCount = 0, going
               }}
             >
               <option value="all">All Registered ({registeredCount})</option>
-              <option value="admins">Admins Only</option>
+              <option value="admins">Admins Only ({adminsCount})</option>
               <option value="going">Going Only ({goingCount})</option>
               <option value="maybe">Maybe Only ({maybeCount})</option>
               <option value="not_going">Not Going Only ({notGoingCount})</option>

@@ -40,11 +40,18 @@ router.get('/dashboard', authenticateAdmin, async (req, res) => {
     `);
 
     const inviteStats = await db.query(`
-      SELECT 
+      SELECT
         COUNT(*) as total_invited,
         COUNT(CASE WHEN used = true THEN 1 END) as used,
         COUNT(CASE WHEN used = false THEN 1 END) as pending
       FROM invites
+    `);
+
+    // Get count of admins who are also registered users (for admin-only announcements)
+    const adminsCountResult = await db.query(`
+      SELECT COUNT(*) as admin_count
+      FROM users u
+      INNER JOIN admins a ON LOWER(u.email) = LOWER(a.email)
     `);
 
     res.json({
@@ -52,6 +59,7 @@ router.get('/dashboard', authenticateAdmin, async (req, res) => {
       stats: {
         ...statsResult.rows[0],
         invites: inviteStats.rows[0],
+        admins_count: parseInt(adminsCountResult.rows[0].admin_count) || 0,
       },
     });
   } catch (err) {
