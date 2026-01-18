@@ -230,8 +230,8 @@ export default function Committee() {
             </div>
             <Link to="/committee" className="nav-link active">Committee</Link>
             {isAdmin && <Link to="/directory" className="nav-link">Directory</Link>}
-            <Link to="/inbox" className="nav-link">Inbox{unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}</Link>
             <Link to="/funds" className="nav-link">Funds</Link>
+            <Link to="/inbox" className="nav-link">Inbox{unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}</Link>
             <Link to={isAdmin ? "/profile-preview" : "/profile"} className="nav-link">Profile</Link>
             {isAdmin && <Link to="/admin" className="nav-link">Admin</Link>}
             <button onClick={handleLogout} className="nav-link logout-btn">Logout</button>
