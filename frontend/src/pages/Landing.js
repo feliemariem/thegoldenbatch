@@ -49,6 +49,7 @@ export default function Landing() {
           <span>University of St. La Salle - IS 2003</span>
         </div>
         <div className="landing-header-actions">
+          <Link to="/login" className="btn-login">Login</Link>
           <button
             onClick={toggleTheme}
             className="landing-theme-toggle"
@@ -56,7 +57,6 @@ export default function Landing() {
           >
             {theme === 'dark' ? '☀️' : '🌙'}
           </button>
-          <Link to="/login" className="btn-login">Login</Link>
         </div>
       </header>
 
