@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import logo from '../images/lasalle.jpg';
-import MyTasks from '../components/MyTasks';
 
 export default function Profile() {
   const { user, token, logout, setUser } = useAuth();
@@ -156,9 +155,6 @@ export default function Profile() {
           <p>Thank you for registering for our <strong>25th Alumni Homecoming</strong>!</p>
           <p>Stay tuned for exciting updates on events, galleries, and more features coming to this site. You can also visit our <a href="https://www.facebook.com/groups/478382298877930" target="_blank" rel="noopener noreferrer">Facebook page</a>!</p>
         </div>
-
-        {/* My Tasks Section - Only shows for admins */}
-        {user?.isAdmin && <MyTasks token={token} />}
 
         {message && <p className="success">{message}</p>}
 
