@@ -423,49 +423,74 @@ export default function Media() {
             {/* Featured Hype Video */}
             <div style={{
               background: 'linear-gradient(165deg, rgba(30, 40, 35, 0.95) 0%, rgba(20, 28, 24, 0.98) 100%)',
-              border: '1px solid rgba(207, 181, 59, 0.12)',
+              border: '2px solid rgba(207, 181, 59, 0.25)',
               borderRadius: '16px',
-              padding: '20px',
+              padding: '24px',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(207, 181, 59, 0.1)',
             }}>
-              <h3 style={{ color: '#CFB53B', marginBottom: '16px', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                Featured Video
-              </h3>
-              <div style={{
-                position: 'relative',
-                paddingTop: '56.25%',
-                background: 'linear-gradient(135deg, rgba(0, 102, 51, 0.2) 0%, rgba(0, 102, 51, 0.05) 100%)',
-                borderRadius: '12px',
-                overflow: 'hidden',
-                border: '1px solid rgba(207, 181, 59, 0.1)',
-              }}>
-                <div style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  height: '100%',
+              {/* Header with film emoji */}
+              <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                <h3 style={{
+                  color: '#CFB53B',
+                  fontSize: '1.4rem',
+                  fontWeight: '600',
+                  margin: '0 0 8px 0',
+                  textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)',
                   display: 'flex',
-                  flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#888',
+                  gap: '10px',
                 }}>
-                  <div style={{
-                    width: '64px',
-                    height: '64px',
-                    background: 'rgba(207, 181, 59, 0.15)',
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    marginBottom: '12px',
-                  }}>
-                    <span style={{ fontSize: '2rem' }}>&#9654;</span>
-                  </div>
-                  <p style={{ margin: 0, fontSize: '0.9rem' }}>25th Reunion Hype Video</p>
-                  <p style={{ margin: '4px 0 0 0', fontSize: '0.75rem', color: '#666' }}>Coming Soon</p>
-                </div>
+                  <span role="img" aria-label="film">🎬</span>
+                  Coming Soon: The Golden Batch Hype Video
+                </h3>
+                <div style={{
+                  width: '60px',
+                  height: '3px',
+                  background: 'linear-gradient(90deg, transparent, #CFB53B, transparent)',
+                  margin: '0 auto',
+                  borderRadius: '2px',
+                }}></div>
               </div>
+
+              {/* Responsive 16:9 Video Container */}
+              <div style={{
+                position: 'relative',
+                paddingTop: '56.25%', /* 16:9 Aspect Ratio */
+                background: 'linear-gradient(135deg, rgba(0, 102, 51, 0.15) 0%, rgba(0, 0, 0, 0.3) 100%)',
+                borderRadius: '12px',
+                overflow: 'hidden',
+                border: '1px solid rgba(207, 181, 59, 0.15)',
+                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)',
+              }}>
+                <iframe
+                  src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                  title="The Golden Batch Hype Video Preview"
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    border: 'none',
+                  }}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                />
+              </div>
+
+              {/* Caption */}
+              <p style={{
+                textAlign: 'center',
+                color: '#9a9a9a',
+                fontSize: '0.9rem',
+                fontStyle: 'italic',
+                marginTop: '16px',
+                marginBottom: '0',
+                letterSpacing: '0.02em',
+              }}>
+                <span role="img" aria-label="sparkles">✨</span> Stay tuned for our official 25th reunion hype video! <span role="img" aria-label="sparkles">✨</span>
+              </p>
             </div>
 
             {/* News Cards */}
