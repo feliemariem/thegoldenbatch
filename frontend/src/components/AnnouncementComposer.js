@@ -118,8 +118,9 @@ export default function AnnouncementComposer({ token, registeredCount = 0, going
             <select
               value={audience}
               onChange={(e) => {
-                console.log('Audience dropdown changed to:', e.target.value);
-                setAudience(e.target.value);
+                const newValue = e.target.value;
+                console.log('Audience dropdown onChange fired - new value:', newValue, 'previous value:', audience);
+                setAudience(newValue);
               }}
               style={{
                 width: '100%',
@@ -137,6 +138,10 @@ export default function AnnouncementComposer({ token, registeredCount = 0, going
               <option value="maybe">Maybe Only ({maybeCount})</option>
               <option value="not_going">Not Going Only ({notGoingCount})</option>
             </select>
+            {/* DEBUG: Remove this after fixing the issue */}
+            <p style={{ color: '#ff6b6b', fontSize: '12px', marginTop: '4px' }}>
+              DEBUG - Current audience state: "{audience}"
+            </p>
           </div>
 
           <div className="form-group">
