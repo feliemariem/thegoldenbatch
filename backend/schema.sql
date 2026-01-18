@@ -2,6 +2,7 @@
 -- The Golden Batch - USLS-IS Batch 2003
 
 -- Drop tables in correct order (respecting foreign keys)
+DROP TABLE IF EXISTS action_items;
 DROP TABLE IF EXISTS event_rsvps;
 DROP TABLE IF EXISTS events;
 DROP TABLE IF EXISTS announcement_reads;
@@ -111,7 +112,7 @@ CREATE TABLE announcements (
     id SERIAL PRIMARY KEY,
     subject VARCHAR(255) NOT NULL,
     message TEXT NOT NULL,
-    audience VARCHAR(50) NOT NULL,
+    audience VARCHAR(50) DEFAULT 'all',
     recipients_count INTEGER DEFAULT 0,
     emails_sent INTEGER DEFAULT 0,
     emails_failed INTEGER DEFAULT 0,
@@ -172,6 +173,18 @@ CREATE TABLE meeting_attachments (
     uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Action Items table (for meeting tasks)
+CREATE TABLE action_items (
+    id SERIAL PRIMARY KEY,
+    meeting_id INTEGER REFERENCES meeting_minutes(id) ON DELETE CASCADE,
+    task TEXT NOT NULL,
+    assignee_id INTEGER REFERENCES admins(id) ON DELETE SET NULL,
+    due_date DATE,
+    status VARCHAR(20) DEFAULT 'Not Started',
+    priority VARCHAR(10) DEFAULT 'Medium',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Events table: pre-reunion gatherings and main event
 CREATE TABLE events (
     id SERIAL PRIMARY KEY,
@@ -211,6 +224,8 @@ CREATE INDEX idx_ledger_date ON ledger(transaction_date);
 CREATE INDEX idx_permissions_admin ON permissions(admin_id);
 CREATE INDEX idx_meeting_minutes_date ON meeting_minutes(meeting_date DESC);
 CREATE INDEX idx_meeting_attachments_meeting ON meeting_attachments(meeting_id);
+CREATE INDEX idx_action_items_meeting ON action_items(meeting_id);
+CREATE INDEX idx_action_items_assignee ON action_items(assignee_id);
 CREATE INDEX idx_password_resets_token ON password_resets(token);
 CREATE INDEX idx_password_resets_email ON password_resets(email);
 CREATE INDEX idx_announcement_reads_user ON announcement_reads(user_id);
@@ -226,64 +241,62 @@ CREATE INDEX idx_event_rsvps_user ON event_rsvps(user_id);
 -- NOTE: After running schema, run setup-admin.js to set password:
 --   node setup-admin.js uslsis.batch2003@gmail.com YOUR_PASSWORD
 -- Then run this SQL to set as System super admin:
---   UPDATE admins SET first_name = 'System', is_super_admin = TRUE WHERE email = 'uslsis.batch2003@gmail.com';
+--   UPDATE admins SET first_name = 'Admin', last_name = '', is_super_admin = TRUE WHERE email = 'uslsis.batch2003@gmail.com';
+
+-- ============================================================
+-- CLEAN SLATE FOR TESTING (before public release)
+-- ============================================================
+-- Run this to wipe all test data while keeping master_list names, ledger, and Super Admin (id=1):
+--
+-- psql "YOUR_EXTERNAL_URL" -c "
+-- DELETE FROM action_items;
+-- DELETE FROM announcement_reads;
+-- DELETE FROM meeting_attachments;
+-- DELETE FROM meeting_minutes;
+-- DELETE FROM permissions WHERE admin_id != 1;
+-- DELETE FROM password_resets;
+-- DELETE FROM announcements;
+-- DELETE FROM rsvps;
+-- DELETE FROM event_rsvps;
+-- DELETE FROM events;
+-- DELETE FROM users;
+-- DELETE FROM invites;
+-- DELETE FROM admins WHERE id != 1;
+-- UPDATE master_list SET email = NULL, is_admin = FALSE, current_name = NULL, status = 'Not Invited';
+-- UPDATE admins SET last_name = '' WHERE id = 1;
+-- "
 
 -- ============================================================
 -- USEFUL COMMANDS
 -- ============================================================
--- Clear All Tables Except Master List & Super Admin:
---   DELETE FROM event_rsvps;
---   DELETE FROM events;
---   DELETE FROM announcement_reads;
---   DELETE FROM meeting_attachments;
---   DELETE FROM meeting_minutes;
---   DELETE FROM permissions;
---   DELETE FROM password_resets;
---   DELETE FROM announcements;
---   DELETE FROM ledger;
---   DELETE FROM rsvps;
---   DELETE FROM users;
---   DELETE FROM invites;
---   DELETE FROM admins WHERE is_super_admin = false;
-
--- Reset Master List (keep names, clear linked data):
+-- Reset Master List only (keep names, clear linked data):
 --   UPDATE master_list SET
 --     email = NULL,
+--     current_name = NULL,
+--     status = 'Not Invited',
 --     is_admin = FALSE,
 --     is_unreachable = FALSE
 --   WHERE id > 0;
 
 -- ============================================================
--- ADD TABLES TO EXISTING DATABASE (without dropping)
+-- ADD NEW TABLES TO EXISTING DATABASE (without dropping)
 -- ============================================================
--- If you already have data and just need to add the new tables:
+-- If you already have data and just need to add the new columns/tables:
 --
--- CREATE TABLE events (
+-- ALTER TABLE master_list RENAME COLUMN nickname TO current_name;
+-- ALTER TABLE master_list ADD COLUMN status VARCHAR(50) DEFAULT 'Not Invited';
+-- ALTER TABLE announcements ADD COLUMN audience VARCHAR(20) DEFAULT 'all';
+--
+-- CREATE TABLE action_items (
 --     id SERIAL PRIMARY KEY,
---     title VARCHAR(255) NOT NULL,
---     description TEXT,
---     event_date DATE NOT NULL,
---     event_time VARCHAR(50),
---     location VARCHAR(255),
---     type VARCHAR(50) DEFAULT 'in-person',
---     is_main_event BOOLEAN DEFAULT FALSE,
---     is_published BOOLEAN DEFAULT TRUE,
---     created_by INTEGER REFERENCES admins(id),
---     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
---     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+--     meeting_id INTEGER REFERENCES meeting_minutes(id) ON DELETE CASCADE,
+--     task TEXT NOT NULL,
+--     assignee_id INTEGER REFERENCES admins(id) ON DELETE SET NULL,
+--     due_date DATE,
+--     status VARCHAR(20) DEFAULT 'Not Started',
+--     priority VARCHAR(10) DEFAULT 'Medium',
+--     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 -- );
 --
--- CREATE TABLE event_rsvps (
---     id SERIAL PRIMARY KEY,
---     event_id INTEGER REFERENCES events(id) ON DELETE CASCADE,
---     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
---     status VARCHAR(20) CHECK (status IN ('going', 'interested', 'not_going')) NOT NULL,
---     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
---     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
---     UNIQUE(event_id, user_id)
--- );
---
--- CREATE INDEX idx_events_date ON events(event_date);
--- CREATE INDEX idx_events_published ON events(is_published);
--- CREATE INDEX idx_event_rsvps_event ON event_rsvps(event_id);
--- CREATE INDEX idx_event_rsvps_user ON event_rsvps(user_id);
+-- CREATE INDEX idx_action_items_meeting ON action_items(meeting_id);
+-- CREATE INDEX idx_action_items_assignee ON action_items(assignee_id);
