@@ -446,12 +446,12 @@ export default function AdminDashboard() {
   const exportMasterListCSV = () => {
     if (!masterList?.length) return;
 
-    const headers = ['Section', 'Last Name', 'First Name', 'Nickname', 'Email', 'Status'];
+    const headers = ['Section', 'Last Name', 'First Name', 'Current Name', 'Email', 'Status'];
     const rows = masterList.map(m => [
       m.section,
       m.last_name,
       m.first_name,
-      m.nickname || '',
+      m.current_name || '',
       m.email || '',
       m.status
     ]);
@@ -493,7 +493,7 @@ export default function AdminDashboard() {
 
     return (
       name.includes(search) ||
-      (entry.nickname || '').toLowerCase().includes(search)
+      (entry.current_name || '').toLowerCase().includes(search)
     );
   });
 
@@ -1267,7 +1267,7 @@ export default function AdminDashboard() {
                       <div style={{ color: '#006633', marginBottom: '8px', fontSize: '0.7rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Master List Status</div>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
                         <span><strong style={{ color: '#006633' }}>{masterListStats.registered || 0}</strong> Registered</span>
-                        <span><strong style={{ color: '#006633' }}>{masterListStats.invited || 0}</strong> Invited</span>
+                        <span><strong style={{ color: '#006633' }}>{masterListStats.pending || 0}</strong> Pending</span>
                         <span><strong style={{ color: '#006633' }}>{masterListStats.not_invited || 0}</strong> Not Invited</span>
                         <span><strong style={{ color: '#006633' }}>{masterListStats.in_memoriam || 0}</strong> In Memoriam</span>
                         <span><strong style={{ color: '#006633' }}>{masterListStats.unreachable || 0}</strong> Unreachable</span>
@@ -1360,7 +1360,7 @@ export default function AdminDashboard() {
                   >
                     <option value="all">All Status</option>
                     <option value="not invited">Not Invited</option>
-                    <option value="invited">Invited</option>
+                    <option value="pending">Pending</option>
                     <option value="registered">Registered</option>
                     <option value="in memoriam">In Memoriam</option>
                     <option value="unreachable">Unreachable</option>
@@ -1415,7 +1415,7 @@ export default function AdminDashboard() {
                         <tr>
                           <th>Last Name</th>
                           <th>First Name</th>
-                          <th>Nickname</th>
+                          <th>Current Name</th>
                           <th>Email</th>
                           <th>Status</th>
                           <th>Payment</th>
@@ -1447,8 +1447,8 @@ export default function AdminDashboard() {
                                 <td>
                                   <input
                                     type="text"
-                                    defaultValue={entry.nickname || ''}
-                                    id={`edit-nickname-${entry.id}`}
+                                    defaultValue={entry.current_name || ''}
+                                    id={`edit-current-name-${entry.id}`}
                                     style={{ width: '100%', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '8px 12px', color: '#fff' }}
                                   />
                                 </td>
@@ -1506,7 +1506,7 @@ export default function AdminDashboard() {
                                           const updates = {
                                             last_name: document.getElementById(`edit-lastname-${entry.id}`).value,
                                             first_name: document.getElementById(`edit-firstname-${entry.id}`).value,
-                                            nickname: document.getElementById(`edit-nickname-${entry.id}`).value,
+                                            current_name: document.getElementById(`edit-current-name-${entry.id}`).value,
                                             email: document.getElementById(`edit-email-${entry.id}`).value,
                                             is_unreachable: document.getElementById(`edit-unreachable-${entry.id}`).checked,
                                           };
@@ -1539,10 +1539,10 @@ export default function AdminDashboard() {
                                 <td style={{ whiteSpace: 'nowrap' }}>
                                   {entry.first_name}
                                 </td>
-                                <td>{entry.nickname || '-'}</td>
+                                <td>{entry.current_name || '-'}</td>
                                 <td>{entry.email || '-'}</td>
                                 <td>
-                                  <span style={{ whiteSpace: 'nowrap' }} className={`rsvp-badge ${entry.status === 'Registered' ? 'going' : entry.status === 'Invited' ? 'maybe' : entry.status === 'In Memoriam' ? 'memoriam' : entry.status === 'Unreachable' ? 'pending' : 'pending'}`}>
+                                  <span style={{ whiteSpace: 'nowrap' }} className={`rsvp-badge ${entry.status === 'Registered' ? 'going' : entry.status === 'Pending' ? 'maybe' : entry.status === 'In Memoriam' ? 'memoriam' : entry.status === 'Unreachable' ? 'pending' : 'pending'}`}>
                                     {entry.status === 'In Memoriam' ? 'IN MEMORIAM' : entry.status === 'Unreachable' ? 'UNREACHABLE' : entry.status}
                                   </span>
                                 </td>

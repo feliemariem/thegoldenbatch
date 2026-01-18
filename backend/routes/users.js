@@ -13,13 +13,13 @@ const toTitleCase = (str) => {
 router.get('/', authenticateToken, async (req, res) => {
   try {
     const userResult = await db.query(
-      `SELECT u.id, u.email, u.first_name, u.last_name, u.birthday, 
+      `SELECT u.id, u.email, u.first_name, u.last_name, u.birthday,
               u.mobile, u.address, u.city, u.country, u.occupation, u.company,
               u.profile_photo,
               r.status as rsvp_status,
               m.id as master_list_id,
               m.section,
-              m.nickname
+              m.current_name
        FROM users u
        LEFT JOIN rsvps r ON u.id = r.user_id
        LEFT JOIN invites i ON u.invite_id = i.id

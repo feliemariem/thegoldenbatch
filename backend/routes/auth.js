@@ -86,6 +86,18 @@ router.post('/register', async (req, res) => {
     // Mark invite as used
     await db.query('UPDATE invites SET used = TRUE WHERE id = $1', [invite.id]);
 
+    // Update master_list status to 'Registered' and email if linked
+    await db.query(
+      `UPDATE master_list SET
+        status = 'Registered',
+        email = $1,
+        updated_at = CURRENT_TIMESTAMP
+       WHERE id IN (
+         SELECT master_list_id FROM invites WHERE id = $2 AND master_list_id IS NOT NULL
+       )`,
+      [toLowerEmail(invite.email), invite.id]
+    );
+
     const user = userResult.rows[0];
 
     // Save RSVP if provided
