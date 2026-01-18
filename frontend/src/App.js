@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { ActionItemsProvider } from './context/ActionItemsContext';
 import ThemeToggle from './components/ThemeToggle';
 import Landing from './pages/Landing';
 import Register from './pages/Register';
@@ -160,10 +161,12 @@ function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <BrowserRouter>
-          <ConditionalThemeToggle />
-          <AppRoutes />
-        </BrowserRouter>
+        <ActionItemsProvider>
+          <BrowserRouter>
+            <ConditionalThemeToggle />
+            <AppRoutes />
+          </BrowserRouter>
+        </ActionItemsProvider>
       </AuthProvider>
     </ThemeProvider>
   );

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useActionItems } from '../context/ActionItemsContext';
 
 export default function MeetingMinutes({ token, canEdit = false, initialMeetingId = null, onMeetingSelected = null }) {
   const { user } = useAuth();
+  const { updateVersion, lastUpdatedItem, notifyActionItemUpdate } = useActionItems();
   const [meetings, setMeetings] = useState([]);
   const [selectedMeeting, setSelectedMeeting] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -55,6 +57,20 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
       setActionItems([]);
     }
   }, [selectedMeeting?.id]);
+
+  // Listen for action item updates from other components (e.g., MyTasks)
+  useEffect(() => {
+    if (updateVersion > 0 && lastUpdatedItem) {
+      // Update the local action items state if the updated item is in our list
+      setActionItems(prevItems =>
+        prevItems.map(item =>
+          item.id === lastUpdatedItem.id
+            ? { ...item, status: lastUpdatedItem.status }
+            : item
+        )
+      );
+    }
+  }, [updateVersion, lastUpdatedItem]);
 
   const fetchMeetings = async () => {
     try {
@@ -161,6 +177,10 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
       if (res.ok) {
         setShowActionItemModal(false);
         fetchActionItems(selectedMeeting.id);
+        // Notify other components (like MyTasks) about the update
+        if (editingActionItem) {
+          notifyActionItemUpdate(editingActionItem.id, actionItemForm.status);
+        }
       }
     } catch (err) {
       console.error('Failed to save action item:', err);
