@@ -5,26 +5,28 @@ import { useTheme } from '../context/ThemeContext';
 const API_URL = 'https://the-golden-batch-api.onrender.com';
 
 export default function BirthdayWidget() {
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const { theme } = useTheme();
   const [birthdays, setBirthdays] = useState([]);
   const [isHidden, setIsHidden] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Get today's date key for localStorage
+  // Get today's date key for localStorage (per-user)
   const getTodayKey = () => {
+    if (!user?.id) return null;
     const today = new Date();
-    return `birthday-widget-hidden-${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
+    return `birthday-widget-hidden-${user.id}-${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
   };
 
   // Check localStorage for today's preference
   useEffect(() => {
     const todayKey = getTodayKey();
+    if (!todayKey) return;
     const hidden = localStorage.getItem(todayKey);
     if (hidden === 'true') {
       setIsHidden(true);
     }
-  }, []);
+  }, [user]);
 
   // Fetch today's birthdays
   useEffect(() => {
@@ -56,7 +58,9 @@ export default function BirthdayWidget() {
 
   const handleHide = () => {
     const todayKey = getTodayKey();
-    localStorage.setItem(todayKey, 'true');
+    if (todayKey) {
+      localStorage.setItem(todayKey, 'true');
+    }
     setIsHidden(true);
   };
 
