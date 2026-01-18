@@ -4,7 +4,6 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { ActionItemsProvider } from './context/ActionItemsContext';
 import { InboxProvider } from './context/InboxContext';
-import ThemeToggle from './components/ThemeToggle';
 import BirthdayWidget from './components/BirthdayWidget';
 import Landing from './pages/Landing';
 import Register from './pages/Register';
@@ -53,18 +52,6 @@ function AdminOnly({ children }) {
   }
 
   return children;
-}
-
-// Conditional ThemeToggle - hidden on landing page
-function ConditionalThemeToggle() {
-  const location = useLocation();
-
-  // Landing page is now at "/" instead of "/preview"
-  if (location.pathname === '/') {
-    return null;
-  }
-
-  return <ThemeToggle />;
 }
 
 // Conditional BirthdayWidget - hidden on landing page and public routes
@@ -190,7 +177,6 @@ function App() {
         <InboxProvider>
           <ActionItemsProvider>
             <BrowserRouter>
-              <ConditionalThemeToggle />
               <ConditionalBirthdayWidget />
               <AppRoutes />
             </BrowserRouter>

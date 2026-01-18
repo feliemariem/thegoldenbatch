@@ -11,6 +11,7 @@ import MeetingMinutes from '../components/MeetingMinutes';
 import CopiedToast from "../components/CopiedToast";
 import AdminRoleErrorToast from "../components/AdminRoleErrorToast";
 import AdminMessages from '../components/AdminMessages';
+import ThemeToggle from '../components/ThemeToggle';
 
 export default function AdminDashboard() {
   const { token, user, logout } = useAuth();
@@ -672,6 +673,7 @@ export default function AdminDashboard() {
             <Link to="/profile-preview" className="btn-link" style={{ marginRight: '8px' }}>
               My Profile
             </Link>
+            <ThemeToggle />
             <button onClick={handleLogout} className="btn-link">
               Logout
             </button>
