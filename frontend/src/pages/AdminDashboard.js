@@ -167,7 +167,6 @@ export default function AdminDashboard() {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
-      console.log(`[MasterList] API returned ${(data.entries || []).length} entries`);
       setMasterList(data.entries || []);
       setMasterListStats(data.stats);
       setMasterListSections(data.sections || []);
