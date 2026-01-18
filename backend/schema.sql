@@ -18,6 +18,7 @@ DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS invites;
 DROP TABLE IF EXISTS master_list;
 DROP TABLE IF EXISTS admins;
+DROP TABLE IF EXISTS volunteer_interests;
 
 -- Admins table
 CREATE TABLE admins (
@@ -215,6 +216,29 @@ CREATE TABLE event_rsvps (
     UNIQUE(event_id, user_id)
 );
 
+-- Admins table
+CREATE TABLE admins (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    first_name VARCHAR(100),
+    last_name VARCHAR(100),
+    is_super_admin BOOLEAN DEFAULT FALSE,
+    role_title VARCHAR(100),                    -- Committee role (e.g., "Treasurer")
+    sub_committees TEXT,                        -- Sub-committees (e.g., "Financial Controller, Fundraising")
+    is_core_leader BOOLEAN DEFAULT FALSE,       -- If true, shows in top row on committee page
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Volunteer interests table (tracks who wants to help with which role)
+CREATE TABLE volunteer_interests (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    role VARCHAR(100) NOT NULL,                 -- Role they're interested in (e.g., "Fundraising")
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, role)                       -- One interest per role per user
+);
+
 -- Indexes for performance
 CREATE INDEX idx_invite_token ON invites(invite_token);
 CREATE INDEX idx_invites_email ON invites(email);
@@ -239,6 +263,7 @@ CREATE INDEX idx_events_date ON events(event_date);
 CREATE INDEX idx_events_published ON events(is_published);
 CREATE INDEX idx_event_rsvps_event ON event_rsvps(event_id);
 CREATE INDEX idx_event_rsvps_user ON event_rsvps(user_id);
+CREATE INDEX idx_volunteer_interests_user ON volunteer_interests(user_id);
 
 -- ============================================================
 -- INITIAL DATA: Create System Super Admin
