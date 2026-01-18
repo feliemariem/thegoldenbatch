@@ -259,25 +259,28 @@ router.put('/:id/link', authenticateAdmin, async (req, res) => {
     const { id } = req.params;
     const { master_list_id } = req.body;
 
-    // Get invite details
-    const inviteResult = await db.query('SELECT email, first_name, last_name FROM invites WHERE id = $1', [id]);
+    // Get invite details including used status
+    const inviteResult = await db.query('SELECT email, first_name, last_name, used FROM invites WHERE id = $1', [id]);
     if (inviteResult.rows.length === 0) {
       return res.status(404).json({ error: 'Invite not found' });
     }
-    const { email, first_name, last_name } = inviteResult.rows[0];
+    const { email, first_name, last_name, used } = inviteResult.rows[0];
 
     // Build current_name from invite's first_name and last_name
     const currentName = [first_name, last_name].filter(Boolean).join(' ') || null;
 
-    // Update master list entry with email, current_name, and status = 'Pending'
+    // Set status based on whether invite is already used (user already registered)
+    const status = used ? 'Registered' : 'Pending';
+
+    // Update master list entry with email, current_name, and appropriate status
     await db.query(
       `UPDATE master_list SET
         email = $1,
         current_name = $2,
-        status = 'Pending',
+        status = $3,
         updated_at = CURRENT_TIMESTAMP
-       WHERE id = $3`,
-      [email, currentName, master_list_id]
+       WHERE id = $4`,
+      [email, currentName, status, master_list_id]
     );
 
     // Update invite with master_list_id
