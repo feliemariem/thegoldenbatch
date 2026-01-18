@@ -51,6 +51,10 @@ export default function AnnouncementComposer({ token, registeredCount = 0, going
     setSending(true);
     setResult(null);
 
+    // Capture current audience value to ensure it's sent correctly
+    const currentAudience = audience;
+    console.log('Sending announcement with audience:', currentAudience);
+
     try {
       const res = await fetch('https://the-golden-batch-api.onrender.com/api/announcements', {
         method: 'POST',
@@ -58,7 +62,7 @@ export default function AnnouncementComposer({ token, registeredCount = 0, going
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ audience, subject, message, sendEmail }),
+        body: JSON.stringify({ audience: currentAudience, subject, message, sendEmail }),
       });
 
       const data = await res.json();
