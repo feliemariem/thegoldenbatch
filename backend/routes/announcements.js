@@ -49,15 +49,12 @@ router.post('/', authenticateToken, async (req, res) => {
     // Validate audience - must be one of the allowed values
     const validAudiences = ['all', 'admins', 'going', 'maybe', 'not_going'];
     if (!audience || !validAudiences.includes(audience)) {
-      console.error('Invalid audience received:', audience, 'Full body:', req.body);
       return res.status(400).json({ error: 'Invalid audience selection. Please select a valid audience.' });
     }
 
     if (!subject || !message) {
       return res.status(400).json({ error: 'Subject and message are required' });
     }
-
-    console.log('Processing announcement - audience:', audience, 'subject:', subject);
 
     // Get recipients based on audience
     let query;

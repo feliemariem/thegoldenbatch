@@ -51,10 +51,6 @@ export default function AnnouncementComposer({ token, registeredCount = 0, going
     setSending(true);
     setResult(null);
 
-    // Capture current audience value to ensure it's sent correctly
-    const currentAudience = audience;
-    console.log('Sending announcement with audience:', currentAudience);
-
     try {
       const res = await fetch('https://the-golden-batch-api.onrender.com/api/announcements', {
         method: 'POST',
@@ -62,7 +58,7 @@ export default function AnnouncementComposer({ token, registeredCount = 0, going
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ audience: currentAudience, subject, message, sendEmail }),
+        body: JSON.stringify({ audience, subject, message, sendEmail }),
       });
 
       const data = await res.json();
@@ -117,11 +113,7 @@ export default function AnnouncementComposer({ token, registeredCount = 0, going
             <label>To:</label>
             <select
               value={audience}
-              onChange={(e) => {
-                const newValue = e.target.value;
-                console.log('Audience dropdown onChange fired - new value:', newValue, 'previous value:', audience);
-                setAudience(newValue);
-              }}
+              onChange={(e) => setAudience(e.target.value)}
               style={{
                 width: '100%',
                 padding: '12px',
@@ -138,10 +130,6 @@ export default function AnnouncementComposer({ token, registeredCount = 0, going
               <option value="maybe">Maybe Only ({maybeCount})</option>
               <option value="not_going">Not Going Only ({notGoingCount})</option>
             </select>
-            {/* DEBUG: Remove this after fixing the issue */}
-            <p style={{ color: '#ff6b6b', fontSize: '12px', marginTop: '4px' }}>
-              DEBUG - Current audience state: "{audience}"
-            </p>
           </div>
 
           <div className="form-group">
