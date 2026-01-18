@@ -419,8 +419,8 @@ export default function Media() {
           {/* Left Column - Featured Content */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             {/* Featured Hype Video */}
-            <div style={{
-              background: 'linear-gradient(165deg, rgba(30, 40, 35, 0.95) 0%, rgba(20, 28, 24, 0.98) 100%)',
+            <div className="media-card-green" style={{
+              background: '#1a2a1f',
               border: '2px solid rgba(207, 181, 59, 0.25)',
               borderRadius: '16px',
               padding: '24px',
@@ -428,7 +428,7 @@ export default function Media() {
             }}>
               {/* Header with film emoji */}
               <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-                <h3 style={{
+                <h3 className="media-card-heading" style={{
                   color: '#CFB53B',
                   fontSize: '1.4rem',
                   fontWeight: '600',
@@ -492,13 +492,13 @@ export default function Media() {
             </div>
 
             {/* News Cards */}
-            <div style={{
-              background: 'linear-gradient(165deg, rgba(30, 40, 35, 0.95) 0%, rgba(20, 28, 24, 0.98) 100%)',
+            <div className="media-card-green" style={{
+              background: '#1a2a1f',
               border: '1px solid rgba(207, 181, 59, 0.12)',
               borderRadius: '16px',
               padding: '20px',
             }}>
-              <h3 style={{ color: '#CFB53B', marginBottom: '16px', fontSize: '1.1rem' }}>Latest News</h3>
+              <h3 className="media-card-heading" style={{ color: '#CFB53B', marginBottom: '16px', fontSize: '1.1rem' }}>Latest News</h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {/* News Item 1 */}
                 <div style={{
@@ -537,13 +537,13 @@ export default function Media() {
             </div>
 
             {/* Podcast Section */}
-            <div style={{
-              background: 'linear-gradient(165deg, rgba(30, 40, 35, 0.95) 0%, rgba(20, 28, 24, 0.98) 100%)',
+            <div className="media-card-green" style={{
+              background: '#1a2a1f',
               border: '1px solid rgba(207, 181, 59, 0.12)',
               borderRadius: '16px',
               padding: '20px',
             }}>
-              <h3 style={{ color: '#CFB53B', marginBottom: '16px', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <h3 className="media-card-heading" style={{ color: '#CFB53B', marginBottom: '16px', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 Batch Podcast
               </h3>
               <div style={{
@@ -586,13 +586,13 @@ export default function Media() {
             </div>
 
             {/* Spotlight Section */}
-            <div style={{
-              background: 'linear-gradient(165deg, rgba(30, 40, 35, 0.95) 0%, rgba(20, 28, 24, 0.98) 100%)',
+            <div className="media-card-green" style={{
+              background: '#1a2a1f',
               border: '1px solid rgba(207, 181, 59, 0.12)',
               borderRadius: '16px',
               padding: '20px',
             }}>
-              <h3 style={{ color: '#CFB53B', marginBottom: '16px', fontSize: '1.1rem' }}>Batchmate Spotlight</h3>
+              <h3 className="media-card-heading" style={{ color: '#CFB53B', marginBottom: '16px', fontSize: '1.1rem' }}>Batchmate Spotlight</h3>
               <div style={{
                 background: 'rgba(0, 0, 0, 0.2)',
                 borderRadius: '12px',
@@ -626,14 +626,14 @@ export default function Media() {
           </div>
 
           {/* Right Column - Photo & Video Gallery */}
-          <div style={{
-            background: 'linear-gradient(165deg, rgba(30, 40, 35, 0.95) 0%, rgba(20, 28, 24, 0.98) 100%)',
+          <div className="media-card-green" style={{
+            background: '#1a2a1f',
             border: '1px solid rgba(207, 181, 59, 0.12)',
             borderRadius: '16px',
             padding: '20px',
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 style={{ color: '#CFB53B', margin: 0, fontSize: '1.1rem' }}>Photo & Video Gallery</h3>
+              <h3 className="media-card-heading" style={{ color: '#CFB53B', margin: 0, fontSize: '1.1rem' }}>Photo & Video Gallery</h3>
             </div>
 
             {/* Submission CTA */}

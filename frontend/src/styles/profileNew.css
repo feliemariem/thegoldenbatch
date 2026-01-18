@@ -1282,3 +1282,47 @@
   color: #006633;
   background: rgba(0, 102, 51, 0.06);
 }
+
+/* ========================================
+   MEDIA PAGE - Dark Green Cards (Light Mode)
+   Keep dark green styling in light mode for visual consistency
+   ======================================== */
+
+.media-card-green {
+  background: #1a2a1f !important;
+}
+
+.media-card-heading {
+  color: #CFB53B !important;
+}
+
+/* Light mode: keep media cards dark green for contrast */
+[data-theme="light"] .media-card-green {
+  background: #1a2a1f !important;
+  border-color: rgba(207, 181, 59, 0.2) !important;
+}
+
+[data-theme="light"] .media-card-green .media-card-heading {
+  color: #CFB53B !important;
+}
+
+[data-theme="light"] .media-card-green h4 {
+  color: #e8e8e0 !important;
+}
+
+[data-theme="light"] .media-card-green p {
+  color: #b0b0a8 !important;
+}
+
+[data-theme="light"] .media-card-green span {
+  color: inherit;
+}
+
+/* News item text in light mode */
+[data-theme="light"] .media-card-green .news-item-title {
+  color: #e8e8e0 !important;
+}
+
+[data-theme="light"] .media-card-green .news-item-desc {
+  color: #9a9a92 !important;
+}
