@@ -33,6 +33,7 @@ app.use('/api/meetings', meetingRoutes);
 app.use('/api/announcements', announcementRoutes);
 app.use('/api/action-items', actionItemRoutes);
 app.use('/api/events', require('./routes/events'));
+app.use('/api/committee', require('./routes/committee'));
 
 // Health check
 app.get('/api/health', (req, res) => {

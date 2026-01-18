@@ -279,6 +279,7 @@ export default function ProfileNew() {
           <nav className="profile-nav">
             <Link to="/events" className="nav-link">Events</Link>
             {user?.isAdmin && <Link to="/media" className="nav-link">Media</Link>}
+            {user?.isAdmin && <Link to="/committee" className="nav-link">Committee</Link>}
             <Link to="/inbox" className="nav-link nav-link-badge">
               Inbox
               {unreadCount > 0 && <span className="nav-badge">{unreadCount}</span>}
@@ -669,6 +670,12 @@ export default function ProfileNew() {
                     <Link to="/media" className="quick-link">
                       <span className="quick-link-icon">📸</span>
                       <span>Media Gallery</span>
+                    </Link>
+                  )}
+                  {user?.isAdmin && (
+                    <Link to="/committee" className="quick-link">
+                      <span className="quick-link-icon">👔</span>
+                      <span>Committee</span>
                     </Link>
                   )}
                 </div>
