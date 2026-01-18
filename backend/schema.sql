@@ -5,6 +5,7 @@
 DROP TABLE IF EXISTS event_rsvps;
 DROP TABLE IF EXISTS events;
 DROP TABLE IF EXISTS announcement_reads;
+DROP TABLE IF EXISTS action_items;
 DROP TABLE IF EXISTS meeting_attachments;
 DROP TABLE IF EXISTS meeting_minutes;
 DROP TABLE IF EXISTS permissions;
@@ -172,6 +173,19 @@ CREATE TABLE meeting_attachments (
     uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Action Items table (for meeting tasks)
+CREATE TABLE action_items (
+    id SERIAL PRIMARY KEY,
+    meeting_id INTEGER REFERENCES meeting_minutes(id) ON DELETE CASCADE,
+    task TEXT NOT NULL,
+    assignee_id INTEGER REFERENCES admins(id) ON DELETE SET NULL,
+    due_date DATE,
+    status VARCHAR(20) DEFAULT 'Not Started',
+    priority VARCHAR(10) DEFAULT 'Medium',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Events table: pre-reunion gatherings and main event
 CREATE TABLE events (
     id SERIAL PRIMARY KEY,
@@ -211,6 +225,10 @@ CREATE INDEX idx_ledger_date ON ledger(transaction_date);
 CREATE INDEX idx_permissions_admin ON permissions(admin_id);
 CREATE INDEX idx_meeting_minutes_date ON meeting_minutes(meeting_date DESC);
 CREATE INDEX idx_meeting_attachments_meeting ON meeting_attachments(meeting_id);
+CREATE INDEX idx_action_items_meeting ON action_items(meeting_id);
+CREATE INDEX idx_action_items_assignee ON action_items(assignee_id);
+CREATE INDEX idx_action_items_status ON action_items(status);
+CREATE INDEX idx_action_items_due_date ON action_items(due_date);
 CREATE INDEX idx_password_resets_token ON password_resets(token);
 CREATE INDEX idx_password_resets_email ON password_resets(email);
 CREATE INDEX idx_announcement_reads_user ON announcement_reads(user_id);
@@ -235,6 +253,7 @@ CREATE INDEX idx_event_rsvps_user ON event_rsvps(user_id);
 --   DELETE FROM event_rsvps;
 --   DELETE FROM events;
 --   DELETE FROM announcement_reads;
+--   DELETE FROM action_items;
 --   DELETE FROM meeting_attachments;
 --   DELETE FROM meeting_minutes;
 --   DELETE FROM permissions;
