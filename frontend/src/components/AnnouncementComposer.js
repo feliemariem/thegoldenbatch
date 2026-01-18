@@ -91,6 +91,7 @@ export default function AnnouncementComposer({ token, registeredCount = 0, going
   const getAudienceLabel = (aud) => {
     switch (aud) {
       case 'all': return 'All Registered';
+      case 'admins': return 'Admins Only';
       case 'going': return 'Going Only';
       case 'maybe': return 'Maybe Only';
       case 'not_going': return 'Not Going Only';
@@ -123,6 +124,7 @@ export default function AnnouncementComposer({ token, registeredCount = 0, going
               }}
             >
               <option value="all">All Registered ({registeredCount})</option>
+              <option value="admins">Admins Only</option>
               <option value="going">Going Only ({goingCount})</option>
               <option value="maybe">Maybe Only ({maybeCount})</option>
               <option value="not_going">Not Going Only ({notGoingCount})</option>

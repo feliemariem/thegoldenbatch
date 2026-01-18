@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 export default function MeetingMinutes({ token, canEdit = false }) {
@@ -21,13 +22,39 @@ export default function MeetingMinutes({ token, canEdit = false }) {
     notes: ''
   });
 
+  // Action items state
+  const [actionItems, setActionItems] = useState([]);
+  const [admins, setAdmins] = useState([]);
+  const [showActionItems, setShowActionItems] = useState(true);
+  const [showActionItemModal, setShowActionItemModal] = useState(false);
+  const [editingActionItem, setEditingActionItem] = useState(null);
+  const [savingActionItem, setSavingActionItem] = useState(false);
+  const [confirmDeleteActionItem, setConfirmDeleteActionItem] = useState(null);
+  const [actionItemForm, setActionItemForm] = useState({
+    task: '',
+    assignee_id: '',
+    due_date: '',
+    status: 'not_started',
+    priority: 'medium'
+  });
+
   useEffect(() => {
     fetchMeetings();
-    
+    fetchAdmins();
+
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [token]);
+
+  // Fetch action items when a meeting is selected
+  useEffect(() => {
+    if (selectedMeeting?.id) {
+      fetchActionItems(selectedMeeting.id);
+    } else {
+      setActionItems([]);
+    }
+  }, [selectedMeeting?.id]);
 
   const fetchMeetings = async () => {
     try {
@@ -41,6 +68,149 @@ export default function MeetingMinutes({ token, canEdit = false }) {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchAdmins = async () => {
+    try {
+      const res = await fetch('https://the-golden-batch-api.onrender.com/api/meetings/admins/list', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      setAdmins(data.admins || []);
+    } catch (err) {
+      console.error('Failed to fetch admins:', err);
+    }
+  };
+
+  const fetchActionItems = async (meetingId) => {
+    try {
+      const res = await fetch(`https://the-golden-batch-api.onrender.com/api/meetings/${meetingId}/action-items`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      setActionItems(data.actionItems || []);
+    } catch (err) {
+      console.error('Failed to fetch action items:', err);
+    }
+  };
+
+  // Action item handlers
+  const handleCreateActionItem = () => {
+    setActionItemForm({
+      task: '',
+      assignee_id: '',
+      due_date: '',
+      status: 'not_started',
+      priority: 'medium'
+    });
+    setEditingActionItem(null);
+    setShowActionItemModal(true);
+  };
+
+  const handleEditActionItem = (item) => {
+    setActionItemForm({
+      task: item.task,
+      assignee_id: item.assignee_id || '',
+      due_date: item.due_date ? item.due_date.split('T')[0] : '',
+      status: item.status,
+      priority: item.priority || 'medium'
+    });
+    setEditingActionItem(item);
+    setShowActionItemModal(true);
+  };
+
+  const handleSaveActionItem = async () => {
+    setSavingActionItem(true);
+    try {
+      const url = editingActionItem
+        ? `https://the-golden-batch-api.onrender.com/api/meetings/${selectedMeeting.id}/action-items/${editingActionItem.id}`
+        : `https://the-golden-batch-api.onrender.com/api/meetings/${selectedMeeting.id}/action-items`;
+
+      const res = await fetch(url, {
+        method: editingActionItem ? 'PUT' : 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(actionItemForm)
+      });
+
+      if (res.ok) {
+        setShowActionItemModal(false);
+        fetchActionItems(selectedMeeting.id);
+      }
+    } catch (err) {
+      console.error('Failed to save action item:', err);
+    } finally {
+      setSavingActionItem(false);
+    }
+  };
+
+  const handleDeleteActionItem = async (actionItemId) => {
+    try {
+      const res = await fetch(
+        `https://the-golden-batch-api.onrender.com/api/meetings/${selectedMeeting.id}/action-items/${actionItemId}`,
+        {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+
+      if (res.ok) {
+        setActionItems(actionItems.filter(ai => ai.id !== actionItemId));
+        setConfirmDeleteActionItem(null);
+      }
+    } catch (err) {
+      console.error('Failed to delete action item:', err);
+    }
+  };
+
+  const getStatusBadge = (status) => {
+    const styles = {
+      not_started: { bg: 'rgba(128, 128, 128, 0.2)', color: '#999', text: 'Not Started' },
+      in_progress: { bg: 'rgba(255, 193, 7, 0.2)', color: '#ffc107', text: 'In Progress' },
+      done: { bg: 'rgba(40, 167, 69, 0.2)', color: '#28a745', text: 'Done' }
+    };
+    const style = styles[status] || styles.not_started;
+    return (
+      <span style={{
+        padding: '2px 8px',
+        borderRadius: '12px',
+        fontSize: '0.7rem',
+        fontWeight: '500',
+        background: style.bg,
+        color: style.color
+      }}>
+        {style.text}
+      </span>
+    );
+  };
+
+  const getPriorityBadge = (priority) => {
+    const styles = {
+      high: { bg: 'rgba(220, 53, 69, 0.2)', color: '#dc3545', text: 'High' },
+      medium: { bg: 'rgba(255, 193, 7, 0.2)', color: '#ffc107', text: 'Med' },
+      low: { bg: 'rgba(108, 117, 125, 0.2)', color: '#6c757d', text: 'Low' }
+    };
+    const style = styles[priority] || styles.medium;
+    return (
+      <span style={{
+        padding: '2px 6px',
+        borderRadius: '4px',
+        fontSize: '0.65rem',
+        fontWeight: '600',
+        background: style.bg,
+        color: style.color
+      }}>
+        {style.text}
+      </span>
+    );
+  };
+
+  const getActionItemSummary = () => {
+    const total = actionItems.length;
+    const completed = actionItems.filter(ai => ai.status === 'done').length;
+    return { total, completed };
   };
 
   const handleCreate = () => {
@@ -365,6 +535,115 @@ export default function MeetingMinutes({ token, canEdit = false }) {
                 </div>
               ) : (
                 <p style={{ color: '#666', fontStyle: 'italic' }}>No notes recorded</p>
+              )}
+            </div>
+
+            {/* Action Items Section - Mobile */}
+            <div style={{
+              padding: '16px',
+              borderTop: '1px solid rgba(255,255,255,0.08)',
+              background: 'rgba(0,0,0,0.1)'
+            }}>
+              <div
+                onClick={() => setShowActionItems(!showActionItems)}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: showActionItems ? '12px' : 0,
+                  cursor: 'pointer'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <h4 style={{ margin: 0, color: 'var(--text-primary)', fontSize: '0.85rem' }}>
+                    Action Items
+                  </h4>
+                  {actionItems.length > 0 && (
+                    <span style={{
+                      fontSize: '0.7rem',
+                      color: getActionItemSummary().completed === getActionItemSummary().total ? '#28a745' : '#CFB53B',
+                      background: getActionItemSummary().completed === getActionItemSummary().total
+                        ? 'rgba(40, 167, 69, 0.15)'
+                        : 'rgba(207, 181, 59, 0.15)',
+                      padding: '2px 8px',
+                      borderRadius: '10px'
+                    }}>
+                      {getActionItemSummary().completed}/{getActionItemSummary().total} done
+                    </span>
+                  )}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  {canEdit && showActionItems && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleCreateActionItem(); }}
+                      className="btn-secondary"
+                      style={{ padding: '4px 10px', fontSize: '0.75rem' }}
+                    >
+                      + Add
+                    </button>
+                  )}
+                  <span style={{ color: '#888', fontSize: '0.8rem' }}>{showActionItems ? '▼' : '▶'}</span>
+                </div>
+              </div>
+
+              {showActionItems && (
+                actionItems.length > 0 ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {actionItems.map(item => (
+                      <div
+                        key={item.id}
+                        style={{
+                          background: 'rgba(255,255,255,0.03)',
+                          border: '1px solid rgba(255,255,255,0.06)',
+                          borderRadius: '8px',
+                          padding: '10px 12px'
+                        }}
+                      >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '6px' }}>
+                          <div style={{ flex: 1, fontSize: '0.85rem', color: 'var(--text-primary)' }}>
+                            {item.task}
+                          </div>
+                          <div style={{ display: 'flex', gap: '4px', marginLeft: '8px' }}>
+                            {getPriorityBadge(item.priority)}
+                            {getStatusBadge(item.status)}
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', fontSize: '0.75rem', color: '#888' }}>
+                          {item.assignee_name && (
+                            <Link
+                              to={`/profile/${item.assignee_email}`}
+                              style={{ color: '#CFB53B', textDecoration: 'none' }}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {item.assignee_name}
+                            </Link>
+                          )}
+                          {item.due_date && (
+                            <span>Due: {new Date(item.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                          )}
+                          {canEdit && (
+                            <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
+                              <button
+                                onClick={() => handleEditActionItem(item)}
+                                style={{ background: 'none', border: 'none', color: '#CFB53B', cursor: 'pointer', fontSize: '0.75rem' }}
+                              >
+                                Edit
+                              </button>
+                              <button
+                                onClick={() => setConfirmDeleteActionItem(item.id)}
+                                style={{ background: 'none', border: 'none', color: '#dc3545', cursor: 'pointer', fontSize: '0.75rem' }}
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p style={{ color: '#666', fontSize: '0.8rem', margin: 0 }}>No action items yet</p>
+                )
               )}
             </div>
 
@@ -797,6 +1076,118 @@ Tip: Use ## for headers, - for bullet points"
                 )}
               </div>
 
+              {/* Action Items Section - Desktop */}
+              <div style={{
+                padding: '20px 24px',
+                borderTop: '1px solid rgba(255,255,255,0.08)',
+                background: 'rgba(0,0,0,0.1)'
+              }}>
+                <div
+                  onClick={() => setShowActionItems(!showActionItems)}
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: showActionItems ? '16px' : 0,
+                    cursor: 'pointer'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <h4 style={{ margin: 0, color: 'var(--text-primary)', fontSize: '0.9rem' }}>
+                      Action Items
+                    </h4>
+                    {actionItems.length > 0 && (
+                      <span style={{
+                        fontSize: '0.75rem',
+                        color: getActionItemSummary().completed === getActionItemSummary().total ? '#28a745' : '#CFB53B',
+                        background: getActionItemSummary().completed === getActionItemSummary().total
+                          ? 'rgba(40, 167, 69, 0.15)'
+                          : 'rgba(207, 181, 59, 0.15)',
+                        padding: '3px 10px',
+                        borderRadius: '12px'
+                      }}>
+                        {getActionItemSummary().completed}/{getActionItemSummary().total} completed
+                      </span>
+                    )}
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    {canEdit && showActionItems && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleCreateActionItem(); }}
+                        className="btn-secondary"
+                        style={{ padding: '6px 14px', fontSize: '0.8rem' }}
+                      >
+                        + Add Item
+                      </button>
+                    )}
+                    <span style={{ color: '#888', fontSize: '0.85rem' }}>{showActionItems ? '▼' : '▶'}</span>
+                  </div>
+                </div>
+
+                {showActionItems && (
+                  actionItems.length > 0 ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      {actionItems.map(item => (
+                        <div
+                          key={item.id}
+                          style={{
+                            background: 'rgba(255,255,255,0.03)',
+                            border: '1px solid rgba(255,255,255,0.06)',
+                            borderRadius: '8px',
+                            padding: '14px 16px'
+                          }}
+                        >
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                            <div style={{ flex: 1, fontSize: '0.9rem', color: 'var(--text-primary)', fontWeight: '500' }}>
+                              {item.task}
+                            </div>
+                            <div style={{ display: 'flex', gap: '6px', marginLeft: '12px' }}>
+                              {getPriorityBadge(item.priority)}
+                              {getStatusBadge(item.status)}
+                            </div>
+                          </div>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', fontSize: '0.8rem', color: '#888', alignItems: 'center' }}>
+                            {item.assignee_name && (
+                              <span>
+                                Assigned to:{' '}
+                                <Link
+                                  to={`/profile/${item.assignee_email}`}
+                                  style={{ color: '#CFB53B', textDecoration: 'none' }}
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  {item.assignee_name}
+                                </Link>
+                              </span>
+                            )}
+                            {item.due_date && (
+                              <span>Due: {new Date(item.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                            )}
+                            {canEdit && (
+                              <div style={{ marginLeft: 'auto', display: 'flex', gap: '12px' }}>
+                                <button
+                                  onClick={() => handleEditActionItem(item)}
+                                  style={{ background: 'none', border: 'none', color: '#CFB53B', cursor: 'pointer', fontSize: '0.8rem' }}
+                                >
+                                  Edit
+                                </button>
+                                <button
+                                  onClick={() => setConfirmDeleteActionItem(item.id)}
+                                  style={{ background: 'none', border: 'none', color: '#dc3545', cursor: 'pointer', fontSize: '0.8rem' }}
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p style={{ color: '#666', fontSize: '0.85rem', margin: 0 }}>No action items yet</p>
+                  )
+                )}
+              </div>
+
               {/* Attachments */}
               <div style={{
                 padding: '20px 24px',
@@ -1055,6 +1446,213 @@ Tip: Use ## for headers, - for bullet points"
               </button>
               <button
                 onClick={() => handleDelete(confirmDelete)}
+                className="btn-primary"
+                style={{ padding: '10px 20px', width: 'auto', marginTop: 0, background: '#dc3545' }}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Action Item Modal */}
+      {showActionItemModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0,0,0,0.7)',
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'center',
+          paddingTop: isMobile ? '20px' : '80px',
+          zIndex: 1000,
+          overflowY: 'auto'
+        }}>
+          <div style={{
+            background: 'linear-gradient(165deg, rgba(30, 40, 35, 0.98) 0%, rgba(20, 28, 24, 0.99) 100%)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: '16px',
+            padding: isMobile ? '20px' : '28px',
+            width: isMobile ? '95%' : '450px',
+            maxWidth: '450px'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h2 style={{ margin: 0, color: '#CFB53B', fontSize: '1.1rem' }}>
+                {editingActionItem ? 'Edit Action Item' : 'New Action Item'}
+              </h2>
+              <button
+                onClick={() => setShowActionItemModal(false)}
+                style={{ background: 'none', border: 'none', color: '#888', fontSize: '1.5rem', cursor: 'pointer' }}
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="form-group">
+              <label>Task Description *</label>
+              <textarea
+                value={actionItemForm.task}
+                onChange={(e) => setActionItemForm({ ...actionItemForm, task: e.target.value })}
+                placeholder="What needs to be done?"
+                rows={3}
+                style={{
+                  width: '100%',
+                  padding: '12px 14px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '12px',
+                  fontSize: '0.9rem',
+                  background: 'rgba(0, 0, 0, 0.3)',
+                  color: '#ffffff',
+                  resize: 'vertical'
+                }}
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Assignee</label>
+              <select
+                value={actionItemForm.assignee_id}
+                onChange={(e) => setActionItemForm({ ...actionItemForm, assignee_id: e.target.value })}
+                style={{
+                  width: '100%',
+                  padding: '12px 14px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '12px',
+                  fontSize: '0.9rem',
+                  background: 'rgba(0, 0, 0, 0.3)',
+                  color: '#ffffff'
+                }}
+              >
+                <option value="">Unassigned</option>
+                {admins.map(admin => (
+                  <option key={admin.id} value={admin.id}>
+                    {admin.display_name || `${admin.first_name || ''} ${admin.last_name || ''}`.trim() || admin.email}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <div className="form-group" style={{ flex: 1 }}>
+                <label>Due Date</label>
+                <input
+                  type="date"
+                  value={actionItemForm.due_date}
+                  onChange={(e) => setActionItemForm({ ...actionItemForm, due_date: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '12px 14px',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '12px',
+                    fontSize: '0.9rem',
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    color: '#ffffff'
+                  }}
+                />
+              </div>
+
+              <div className="form-group" style={{ flex: 1 }}>
+                <label>Priority</label>
+                <select
+                  value={actionItemForm.priority}
+                  onChange={(e) => setActionItemForm({ ...actionItemForm, priority: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '12px 14px',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: '12px',
+                    fontSize: '0.9rem',
+                    background: 'rgba(0, 0, 0, 0.3)',
+                    color: '#ffffff'
+                  }}
+                >
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label>Status</label>
+              <select
+                value={actionItemForm.status}
+                onChange={(e) => setActionItemForm({ ...actionItemForm, status: e.target.value })}
+                style={{
+                  width: '100%',
+                  padding: '12px 14px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '12px',
+                  fontSize: '0.9rem',
+                  background: 'rgba(0, 0, 0, 0.3)',
+                  color: '#ffffff'
+                }}
+              >
+                <option value="not_started">Not Started</option>
+                <option value="in_progress">In Progress</option>
+                <option value="done">Done</option>
+              </select>
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '20px' }}>
+              <button
+                onClick={() => setShowActionItemModal(false)}
+                className="btn-secondary"
+                style={{ padding: '10px 20px' }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveActionItem}
+                className="btn-primary"
+                style={{ width: 'auto', padding: '10px 24px', marginTop: 0 }}
+                disabled={savingActionItem || !actionItemForm.task}
+              >
+                {savingActionItem ? 'Saving...' : editingActionItem ? 'Save' : 'Add Item'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confirm Delete Action Item Modal */}
+      {confirmDeleteActionItem && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0,0,0,0.6)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1001
+        }}>
+          <div style={{
+            background: 'linear-gradient(165deg, rgba(30, 40, 35, 0.98) 0%, rgba(20, 28, 24, 0.99) 100%)',
+            border: '1px solid rgba(207, 181, 59, 0.2)',
+            borderRadius: '16px',
+            padding: '24px 32px',
+            maxWidth: '320px'
+          }}>
+            <p style={{ color: '#e0e0e0', marginBottom: '20px', fontSize: '0.95rem' }}>
+              Delete this action item?
+            </p>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => setConfirmDeleteActionItem(null)}
+                className="btn-secondary"
+                style={{ padding: '10px 20px' }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleDeleteActionItem(confirmDeleteActionItem)}
                 className="btn-primary"
                 style={{ padding: '10px 20px', width: 'auto', marginTop: 0, background: '#dc3545' }}
               >
