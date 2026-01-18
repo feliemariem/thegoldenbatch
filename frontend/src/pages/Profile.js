@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import Footer from '../components/Footer';
 import logo from '../images/lasalle.jpg';
 
 export default function Profile() {
@@ -131,6 +132,7 @@ export default function Profile() {
         <div className="card">
           <p>Loading...</p>
         </div>
+        <Footer />
       </div>
     );
   }
@@ -332,6 +334,7 @@ export default function Profile() {
           )}
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import Footer from '../components/Footer';
 import logo from '../images/lasalle.jpg';
 
 export default function Register() {
@@ -120,6 +121,7 @@ export default function Register() {
         <div className="card">
           <p>Validating your invite...</p>
         </div>
+        <Footer />
       </div>
     );
   }
@@ -132,6 +134,7 @@ export default function Register() {
           <p className="error">{error}</p>
           <p>Please contact the organizer for a valid invite link.</p>
         </div>
+        <Footer />
       </div>
     );
   }
@@ -496,6 +499,7 @@ export default function Register() {
           </form>
         )}
       </div>
+      <Footer />
     </div>
   );
 }

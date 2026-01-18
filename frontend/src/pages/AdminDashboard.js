@@ -11,6 +11,7 @@ import MeetingMinutes from '../components/MeetingMinutes';
 import CopiedToast from "../components/CopiedToast";
 import AdminRoleErrorToast from "../components/AdminRoleErrorToast";
 import AdminMessages from '../components/AdminMessages';
+import Footer from '../components/Footer';
 
 export default function AdminDashboard() {
   const { token, user, logout } = useAuth();
@@ -591,6 +592,7 @@ export default function AdminDashboard() {
         <div className="card">
           <p>Loading dashboard...</p>
         </div>
+        <Footer />
       </div>
     );
   }
@@ -1777,6 +1779,7 @@ export default function AdminDashboard() {
           </div>
         )
       }
+      <Footer />
       {/* Copied toast */}
       <CopiedToast
         show={copied}

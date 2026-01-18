@@ -1,0 +1,51 @@
+/* ===========================================
+   SITE FOOTER - Unified footer across all pages
+   =========================================== */
+
+.site-footer {
+  text-align: center;
+  padding: 32px 20px 24px;
+  margin-top: 40px;
+}
+
+.site-footer-copyright {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0 0 6px 0;
+  letter-spacing: 0.02em;
+}
+
+.site-footer-credits {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+
+/* Light mode styles */
+body[data-theme="light"] .site-footer-copyright {
+  color: rgba(0, 77, 38, 0.6);
+}
+
+body[data-theme="light"] .site-footer-credits {
+  color: rgba(0, 77, 38, 0.45);
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+  .site-footer {
+    padding: 24px 16px 20px;
+    margin-top: 32px;
+  }
+
+  .site-footer-copyright {
+    font-size: 0.8125rem;
+  }
+
+  .site-footer-credits {
+    font-size: 0.6875rem;
+    line-height: 1.5;
+  }
+}

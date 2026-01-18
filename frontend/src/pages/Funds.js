@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useInbox } from '../context/InboxContext';
+import Footer from '../components/Footer';
 import logo from '../images/lasalle.jpg';
 import '../styles/profileNew.css';
 
@@ -392,6 +393,8 @@ export default function Funds() {
         </div>
 
         </div>
+
+        <Footer />
       </main>
     </div>
   );

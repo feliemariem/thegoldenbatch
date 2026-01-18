@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import Footer from '../components/Footer';
 import logo from '../images/lasalle.jpg';
 
 const REMEMBERED_EMAIL_KEY = 'rememberedEmail';
@@ -151,6 +152,7 @@ return (
           for questions.
         </p>
       </div>
+      <Footer />
     </div>
   </div>
 );

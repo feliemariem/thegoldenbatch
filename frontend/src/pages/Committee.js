@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useInbox } from '../context/InboxContext';
+import Footer from '../components/Footer';
 import logo from '../images/lasalle.jpg';
 import '../styles/profileNew.css';
 import '../styles/committee.css';
@@ -330,6 +331,8 @@ export default function Committee() {
         <div className="committee-back">
           <Link to={isAdmin ? "/profile-preview" : "/profile"} className="btn-link">&larr; Back to Profile</Link>
         </div>
+
+        <Footer />
       </main>
     </div>
   );

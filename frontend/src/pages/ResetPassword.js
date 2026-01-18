@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import Footer from '../components/Footer';
 import logo from '../images/lasalle.jpg';
 
 export default function ResetPassword() {
@@ -76,6 +77,7 @@ export default function ResetPassword() {
         <div className="card card-narrow">
           <p style={{textAlign: 'center'}}>Validating reset link...</p>
         </div>
+        <Footer />
       </div>
     );
   }
@@ -94,6 +96,7 @@ export default function ResetPassword() {
             <Link to="/forgot-password" className="btn-link">Request a new reset link</Link>
           </p>
         </div>
+        <Footer />
       </div>
     );
   }
@@ -113,6 +116,7 @@ export default function ResetPassword() {
             </Link>
           </p>
         </div>
+        <Footer />
       </div>
     );
   }
@@ -171,6 +175,7 @@ export default function ResetPassword() {
           <Link to="/login" className="btn-link">Back to Login</Link>
         </p>
       </div>
+      <Footer />
     </div>
   );
 }
