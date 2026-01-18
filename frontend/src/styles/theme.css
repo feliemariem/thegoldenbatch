@@ -87,7 +87,7 @@ body[data-theme="light"] .help-text {
 }
 
 body[data-theme="light"] .help-text a {
-  color: #996515 !important;
+  color: #B8960C !important;
 }
 
 body[data-theme="light"] .help-text-small {
@@ -547,7 +547,7 @@ body[data-theme="light"] .landing-logo span {
 }
 
 body[data-theme="light"] .hero-section h1 {
-  color: #996515 !important;
+  color: #B8960C !important;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
 }
 
@@ -576,7 +576,7 @@ body[data-theme="light"] .countdown-item {
 }
 
 body[data-theme="light"] .countdown-number {
-  color: #996515 !important;
+  color: #B8960C !important;
 }
 
 body[data-theme="light"] .countdown-label {
@@ -612,7 +612,7 @@ body[data-theme="light"] .pledge-card {
 }
 
 body[data-theme="light"] .pledge-card h3 {
-  color: #996515 !important;
+  color: #B8960C !important;
 }
 
 body[data-theme="light"] .bank-details p {
@@ -624,7 +624,7 @@ body[data-theme="light"] .bank-details strong {
 }
 
 body[data-theme="light"] .gcash-number {
-  color: #996515 !important;
+  color: #B8960C !important;
 }
 
 body[data-theme="light"] .gcash-name {
@@ -657,7 +657,7 @@ body[data-theme="light"] .modal-content.modal-large {
 }
 
 body[data-theme="light"] .modal-content.modal-large h2 {
-  color: #996515 !important;
+  color: #B8960C !important;
 }
 
 body[data-theme="light"] .modal-close {
@@ -697,11 +697,11 @@ body[data-theme="light"] .funds-label {
 }
 
 body[data-theme="light"] .funds-total-loading {
-  color: #996515 !important;
+  color: #B8960C !important;
 }
 
 body[data-theme="light"] .funds-total-amount {
-  color: #996515 !important;
+  color: #B8960C !important;
   text-shadow: none !important;
 }
 
@@ -782,7 +782,7 @@ body[data-theme="light"] .intl-transfers-card {
 }
 
 body[data-theme="light"] .intl-transfers-header {
-  color: #996515 !important;
+  color: #B8960C !important;
 }
 
 body[data-theme="light"] .intl-branch-name {
@@ -822,7 +822,7 @@ body[data-theme="light"] .budget-heading {
 }
 
 body[data-theme="light"] .budget-target {
-  color: #996515 !important;
+  color: #B8960C !important;
 }
 
 body[data-theme="light"] .budget-description {
@@ -847,7 +847,7 @@ body[data-theme="light"] .budget-label {
 }
 
 body[data-theme="light"] .budget-amount {
-  color: #996515 !important;
+  color: #B8960C !important;
 }
 
 body[data-theme="light"] .budget-divider {
@@ -859,7 +859,7 @@ body[data-theme="light"] .budget-total-label {
 }
 
 body[data-theme="light"] .budget-total-amount {
-  color: #996515 !important;
+  color: #B8960C !important;
 }
 
 body[data-theme="light"] .budget-footnote {
@@ -889,7 +889,7 @@ body[data-theme="light"] .perm-super-admin-row.active {
 }
 
 body[data-theme="light"] .perm-super-admin-label {
-  color: #996515 !important;
+  color: #B8960C !important;
 }
 
 body[data-theme="light"] .perm-check-all-row {
@@ -937,7 +937,7 @@ body[data-theme="light"] .ledger-summary-label {
 }
 
 body[data-theme="light"] .ledger-summary-amount {
-  color: #996515 !important;
+  color: #B8960C !important;
 }
 
 body[data-theme="light"] .ledger-summary-amount.deposit {
@@ -975,7 +975,7 @@ body[data-theme="light"] .ledger-table .withdrawal-cell {
 }
 
 body[data-theme="light"] .ledger-table .balance-cell {
-  color: #996515 !important;
+  color: #B8960C !important;
 }
 
 body[data-theme="light"] .verified-badge.verified {
@@ -1275,11 +1275,119 @@ body[data-theme="light"] [style*="background: linear-gradient(165deg, rgba(30, 4
 /* Modal header text */
 body[data-theme="light"] [style*="color: '#CFB53B'"],
 body[data-theme="light"] [style*="color: #CFB53B"] {
-  color: #996515 !important;
+  color: #B8960C !important;
 }
 
 /* Notes section headers */
 body[data-theme="light"] h4[style*="color: '#006633'"],
 body[data-theme="light"] h4[style*="color: #006633"] {
   color: #004d26 !important;
+}
+
+/* =========================================
+   GOLD COLOR OVERRIDES FOR LIGHT MODE
+   Using darker, richer gold (#B8960C) for better contrast
+   ========================================= */
+
+/* Generic gold text overrides - inline styles */
+body[data-theme="light"] [style*="color: '#ffc107'"],
+body[data-theme="light"] [style*="color: #ffc107"] {
+  color: #B8860B !important;
+}
+
+/* My Tasks section - heading and links */
+body[data-theme="light"] h3[style*="color: #CFB53B"],
+body[data-theme="light"] h3[style*="color: '#CFB53B'"] {
+  color: #B8960C !important;
+}
+
+/* Task/action item links (meeting title links) */
+body[data-theme="light"] button[style*="color: #CFB53B"],
+body[data-theme="light"] button[style*="color: '#CFB53B'"] {
+  color: #B8960C !important;
+}
+
+/* Links styled with gold */
+body[data-theme="light"] a[style*="color: #CFB53B"],
+body[data-theme="light"] a[style*="color: '#CFB53B'"] {
+  color: #B8960C !important;
+}
+
+/* Priority badge - Medium (yellow/gold) */
+body[data-theme="light"] span[style*="color: #ffc107"],
+body[data-theme="light"] span[style*="color: '#ffc107'"] {
+  color: #B8860B !important;
+}
+
+/* In Progress status badge background adjustments */
+body[data-theme="light"] span[style*="background: rgba(255, 193, 7"],
+body[data-theme="light"] span[style*="background: rgba(255,193,7"] {
+  background: rgba(184, 134, 11, 0.25) !important;
+}
+
+/* Medium priority badge background adjustments */
+body[data-theme="light"] [style*="background: rgba(255, 193, 7, 0.2)"] {
+  background: rgba(184, 134, 11, 0.2) !important;
+}
+
+/* Action item summary badges with gold */
+body[data-theme="light"] span[style*="background: rgba(207, 181, 59, 0.15)"] {
+  background: rgba(184, 150, 12, 0.2) !important;
+}
+
+body[data-theme="light"] span[style*="background: rgba(207, 181, 59"] {
+  color: #B8960C !important;
+}
+
+/* My Tasks container border */
+body[data-theme="light"] div[style*="border: 1px solid rgba(207, 181, 59, 0.2)"] {
+  border-color: rgba(184, 150, 12, 0.35) !important;
+}
+
+body[data-theme="light"] div[style*="background: rgba(207, 181, 59, 0.05)"] {
+  background: rgba(184, 150, 12, 0.08) !important;
+}
+
+/* =========================================
+   TASK/ACTION ITEM BADGE LIGHT MODE OVERRIDES
+   ========================================= */
+
+/* Priority Badge - Medium (gold/yellow) */
+body[data-theme="light"] .task-priority-badge.priority-medium {
+  background: rgba(184, 134, 11, 0.2) !important;
+  color: #B8860B !important;
+}
+
+/* Status Badge - In Progress (gold/yellow) */
+body[data-theme="light"] .task-status-badge.status-in-progress {
+  background: rgba(184, 134, 11, 0.2) !important;
+  color: #B8860B !important;
+}
+
+/* My Tasks heading */
+body[data-theme="light"] .my-tasks-heading {
+  color: #B8960C !important;
+}
+
+/* My Tasks badge (pending) */
+body[data-theme="light"] .my-tasks-badge.pending {
+  background: rgba(184, 150, 12, 0.2) !important;
+  color: #B8960C !important;
+}
+
+/* Task meeting link */
+body[data-theme="light"] .task-meeting-link {
+  color: #B8960C !important;
+}
+
+/* Action item assignee links */
+body[data-theme="light"] a[style*="color: #CFB53B"],
+body[data-theme="light"] a[style*="color: '#CFB53B'"] {
+  color: #B8960C !important;
+}
+
+/* Action item summary badges */
+body[data-theme="light"] .action-item-summary {
+  background: rgba(184, 150, 12, 0.2) !important;
+  color: #B8960C !important;
 }
