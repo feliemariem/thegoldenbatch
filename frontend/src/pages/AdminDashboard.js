@@ -8,6 +8,7 @@ import ScrollableTable from '../components/ScrollableTable.js';
 import logo from '../images/lasalle.jpg';
 import MeetingMinutes from '../components/MeetingMinutes';
 import CopiedToast from "../components/CopiedToast";
+import AdminRoleErrorToast from "../components/AdminRoleErrorToast";
 
 export default function AdminDashboard() {
   const { token, user, logout } = useAuth();
@@ -31,6 +32,7 @@ export default function AdminDashboard() {
   const [registeredSearch, setRegisteredSearch] = useState('');
   const [registeredRsvpFilter, setRegisteredRsvpFilter] = useState('all');
   const [copied, setCopied] = useState(false);
+  const [showAdminRoleError, setShowAdminRoleError] = useState(false);
 
 
   // Copies the registration link and triggers the "Copied!" toast
@@ -368,7 +370,11 @@ export default function AdminDashboard() {
         setEditingEntry(null);
       } else {
         const data = await res.json();
-        alert(data.error || 'Failed to update entry');
+        if (data.error === 'Cannot assign admin role: user has not completed registration') {
+          setShowAdminRoleError(true);
+        } else {
+          alert(data.error || 'Failed to update entry');
+        }
       }
     } catch (err) {
       console.error('Failed to update entry');
@@ -1677,6 +1683,11 @@ export default function AdminDashboard() {
       <CopiedToast
         show={copied}
         onClose={() => setCopied(false)}
+      />
+      {/* Admin role error toast */}
+      <AdminRoleErrorToast
+        show={showAdminRoleError}
+        onClose={() => setShowAdminRoleError(false)}
       />
     </div>
   );
