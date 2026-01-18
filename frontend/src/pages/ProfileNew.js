@@ -324,6 +324,7 @@ export default function ProfileNew() {
               </div>
             </div>
             {user?.isAdmin && <Link to="/committee" className="nav-link">Committee</Link>}
+            {user?.isAdmin && <Link to="/directory" className="nav-link">Directory</Link>}
             <Link to="/inbox" className="nav-link nav-link-badge">
               Inbox
               {unreadCount > 0 && <span className="nav-badge">{unreadCount}</span>}

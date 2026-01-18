@@ -21,6 +21,7 @@ import Events from './pages/Events';
 import EventDetail from './pages/EventDetail';
 import Media from './pages/Media';
 import Committee from './pages/Committee';
+import Directory from './pages/Directory';
 import './styles/base.css';
 import './styles/components.css';
 import './styles/auth.css';
@@ -175,6 +176,16 @@ function AppRoutes() {
           <ProtectedRoute>
             <AdminOnly>
               <Committee />
+            </AdminOnly>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/directory"
+        element={
+          <ProtectedRoute>
+            <AdminOnly>
+              <Directory />
             </AdminOnly>
           </ProtectedRoute>
         }

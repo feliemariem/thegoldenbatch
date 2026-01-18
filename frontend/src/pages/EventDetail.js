@@ -162,6 +162,7 @@ export default function EventDetail() {
                 </div>
               </div>
               {user?.isAdmin && <Link to="/committee" className="nav-link">Committee</Link>}
+              {user?.isAdmin && <Link to="/directory" className="nav-link">Directory</Link>}
               <Link to="/inbox" className="nav-link">Inbox{unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}</Link>
               <Link to="/funds" className="nav-link">Funds</Link>
               <Link to={user?.isAdmin ? "/profile-preview" : "/profile"} className="nav-link">Profile</Link>
@@ -209,6 +210,7 @@ export default function EventDetail() {
               </div>
             </div>
             {user?.isAdmin && <Link to="/committee" className="nav-link">Committee</Link>}
+            {user?.isAdmin && <Link to="/directory" className="nav-link">Directory</Link>}
             <Link to="/inbox" className="nav-link">Inbox{unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}</Link>
             <Link to="/funds" className="nav-link">Funds</Link>
             <Link to={user?.isAdmin ? "/profile-preview" : "/profile"} className="nav-link">Profile</Link>
