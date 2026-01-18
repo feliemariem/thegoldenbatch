@@ -83,6 +83,28 @@ export default function ProfileNew() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Scroll to My Tasks section when navigated with scrollToMyTasks state
+  useEffect(() => {
+    if (location.state?.scrollToMyTasks) {
+      // Wait a brief moment for the MyTasks component to render
+      const timeout = setTimeout(() => {
+        const myTasksSection = document.getElementById('my-tasks-section');
+        if (myTasksSection) {
+          myTasksSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // Add a brief highlight effect
+          myTasksSection.style.transition = 'box-shadow 0.3s ease';
+          myTasksSection.style.boxShadow = '0 0 0 3px rgba(207, 181, 59, 0.5)';
+          setTimeout(() => {
+            myTasksSection.style.boxShadow = '';
+          }, 2000);
+        }
+      }, 500);
+      // Clear the state to prevent re-scrolling on refresh
+      window.history.replaceState({}, document.title);
+      return () => clearTimeout(timeout);
+    }
+  }, [location.state]);
+
   const fetchMyEvents = async () => {
     try {
       const res = await fetch('https://the-golden-batch-api.onrender.com/api/events/my-rsvps', {

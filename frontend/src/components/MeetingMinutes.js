@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useActionItems } from '../context/ActionItemsContext';
 
 export default function MeetingMinutes({ token, canEdit = false, initialMeetingId = null, onMeetingSelected = null }) {
   const { user } = useAuth();
   const { updateVersion, lastUpdatedItem, notifyActionItemUpdate } = useActionItems();
+  const navigate = useNavigate();
   const [meetings, setMeetings] = useState([]);
   const [selectedMeeting, setSelectedMeeting] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -255,6 +256,25 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
     const total = actionItems.length;
     const completed = actionItems.filter(ai => ai.status === 'done').length;
     return { total, completed };
+  };
+
+  // Navigate to assignee's profile or committee page
+  const handleAssigneeClick = (e, assigneeEmail, assigneeName) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    // Check if the assignee is the current user (case-insensitive email comparison)
+    const isCurrentUser = user?.email && assigneeEmail &&
+      user.email.toLowerCase() === assigneeEmail.toLowerCase();
+
+    if (isCurrentUser) {
+      // Navigate to own profile page and scroll to My Tasks section
+      const profilePath = user?.isAdmin ? '/profile-preview' : '/profile';
+      navigate(profilePath, { state: { scrollToMyTasks: true } });
+    } else {
+      // Navigate to Committee page and highlight this person
+      navigate('/committee', { state: { highlightEmail: assigneeEmail, highlightName: assigneeName } });
+    }
   };
 
   const handleCreate = () => {
@@ -654,14 +674,22 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
                         </div>
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', fontSize: '0.75rem', color: '#888' }}>
                           {item.assignee_name && (
-                            <Link
-                              to={`/profile/${item.assignee_email}`}
+                            <button
                               className="meeting-assignee-link"
-                              style={{ color: '#CFB53B', textDecoration: 'none' }}
-                              onClick={(e) => e.stopPropagation()}
+                              style={{
+                                color: '#CFB53B',
+                                textDecoration: 'none',
+                                background: 'none',
+                                border: 'none',
+                                padding: 0,
+                                cursor: 'pointer',
+                                fontSize: 'inherit',
+                                fontFamily: 'inherit'
+                              }}
+                              onClick={(e) => handleAssigneeClick(e, item.assignee_email, item.assignee_name)}
                             >
                               {item.assignee_name}
-                            </Link>
+                            </button>
                           )}
                           {item.due_date && (
                             <span>Due: {new Date(item.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
@@ -1195,14 +1223,22 @@ Tip: Use ## for headers, - for bullet points"
                             {item.assignee_name && (
                               <span>
                                 Assigned to:{' '}
-                                <Link
-                                  to={`/profile/${item.assignee_email}`}
+                                <button
                                   className="meeting-assignee-link"
-                                  style={{ color: '#CFB53B', textDecoration: 'none' }}
-                                  onClick={(e) => e.stopPropagation()}
+                                  style={{
+                                    color: '#CFB53B',
+                                    textDecoration: 'none',
+                                    background: 'none',
+                                    border: 'none',
+                                    padding: 0,
+                                    cursor: 'pointer',
+                                    fontSize: 'inherit',
+                                    fontFamily: 'inherit'
+                                  }}
+                                  onClick={(e) => handleAssigneeClick(e, item.assignee_email, item.assignee_name)}
                                 >
                                   {item.assignee_name}
-                                </Link>
+                                </button>
                               </span>
                             )}
                             {item.due_date && (

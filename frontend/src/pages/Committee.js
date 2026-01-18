@@ -79,6 +79,39 @@ export default function Committee() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Scroll to and highlight a specific member when navigated with highlightEmail state
+  useEffect(() => {
+    if (location.state?.highlightEmail && members.length > 0 && !loading) {
+      const highlightEmail = location.state.highlightEmail.toLowerCase();
+      const highlightName = location.state.highlightName;
+
+      // Find the member card element by email
+      const memberCard = document.querySelector(`[data-member-email="${highlightEmail}"]`);
+
+      if (memberCard) {
+        // Scroll to the member card
+        setTimeout(() => {
+          memberCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          // Add highlight effect
+          memberCard.style.transition = 'box-shadow 0.3s ease, transform 0.3s ease';
+          memberCard.style.boxShadow = '0 0 0 3px rgba(207, 181, 59, 0.7)';
+          memberCard.style.transform = 'scale(1.02)';
+          setTimeout(() => {
+            memberCard.style.boxShadow = '';
+            memberCard.style.transform = '';
+          }, 2500);
+        }, 300);
+      } else if (highlightName) {
+        // Member not found in committee - show a toast
+        setToast({ message: `${highlightName} is not on the committee page`, type: 'info' });
+        setTimeout(() => setToast(null), 4000);
+      }
+
+      // Clear the state to prevent re-highlighting on refresh
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state, members, loading]);
+
   const fetchCommitteeData = async () => {
     try {
       // Fetch committee members and user interests in parallel
@@ -225,7 +258,7 @@ export default function Committee() {
             <h3 className="committee-section-title">Our Organizers</h3>
             <div className="committee-grid core-leaders">
               {coreLeaders.map(member => (
-                <div key={member.id} className="committee-card core">
+                <div key={member.id} className="committee-card core" data-member-email={member.email?.toLowerCase()}>
                   <div className="committee-card-photo">
                     {member.profile_photo ? (
                       <img src={member.profile_photo} alt={getDisplayName(member)} />
@@ -258,7 +291,7 @@ export default function Committee() {
             <h3 className="committee-section-title">Committee Members</h3>
             <div className="committee-grid members">
               {otherMembers.map(member => (
-                <div key={member.id} className="committee-card member">
+                <div key={member.id} className="committee-card member" data-member-email={member.email?.toLowerCase()}>
                   <div className="committee-card-photo small">
                     {member.profile_photo ? (
                       <img src={member.profile_photo} alt={getDisplayName(member)} />

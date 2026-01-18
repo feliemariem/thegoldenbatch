@@ -170,13 +170,16 @@ export default function MyTasks({ token }) {
   const summary = getSummary();
 
   return (
-    <div style={{
-      background: 'rgba(207, 181, 59, 0.05)',
-      border: '1px solid rgba(207, 181, 59, 0.2)',
-      borderRadius: '12px',
-      padding: '16px',
-      marginBottom: '20px'
-    }}>
+    <div
+      id="my-tasks-section"
+      style={{
+        background: 'rgba(207, 181, 59, 0.05)',
+        border: '1px solid rgba(207, 181, 59, 0.2)',
+        borderRadius: '12px',
+        padding: '16px',
+        marginBottom: '20px'
+      }}
+    >
       <div
         onClick={() => setExpanded(!expanded)}
         style={{
