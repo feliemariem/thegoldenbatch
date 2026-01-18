@@ -1031,7 +1031,9 @@ export default function AdminDashboard() {
                                       type="email"
                                       defaultValue={invite.email}
                                       id={`edit-invite-email-${invite.id}`}
-                                      style={{ width: '100%', padding: '4px 8px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px', color: '#fff' }}
+                                      style={{ width: '100%', padding: '4px 8px', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '4px', color: '#666', cursor: 'not-allowed' }}
+                                      readOnly
+                                      title="Email cannot be changed after invite is created"
                                     />
                                   </td>
                                   <td>
