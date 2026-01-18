@@ -3,6 +3,8 @@ const router = express.Router();
 const db = require('../db');
 const { authenticateToken } = require('../middleware/auth');
 
+console.log('[ROUTES] users.js loaded - registering /api/me routes');
+
 // Helper function for text normalization
 const toTitleCase = (str) => {
   if (!str) return str;

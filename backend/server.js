@@ -42,6 +42,41 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// Debug endpoint to list all registered routes
+app.get('/api/debug/routes', (req, res) => {
+  const routes = [];
+
+  app._router.stack.forEach((middleware) => {
+    if (middleware.route) {
+      // Routes registered directly on the app
+      routes.push({
+        path: middleware.route.path,
+        methods: Object.keys(middleware.route.methods)
+      });
+    } else if (middleware.name === 'router') {
+      // Router-level middleware
+      const basePath = middleware.regexp.source
+        .replace('\\/?(?=\\/|$)', '')
+        .replace(/\\\//g, '/')
+        .replace(/\^|\$/g, '');
+
+      middleware.handle.stack.forEach((handler) => {
+        if (handler.route) {
+          routes.push({
+            path: basePath + handler.route.path,
+            methods: Object.keys(handler.route.methods)
+          });
+        }
+      });
+    }
+  });
+
+  res.json({
+    total: routes.length,
+    routes: routes.sort((a, b) => a.path.localeCompare(b.path))
+  });
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -52,4 +87,21 @@ const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log('[SERVER] Routes mounted:');
+  console.log('  /api/auth');
+  console.log('  /api/invites');
+  console.log('  /api/me');
+  console.log('  /api/admin');
+  console.log('  /api/master-list');
+  console.log('  /api/donations');
+  console.log('  /api/permissions');
+  console.log('  /api/ledger');
+  console.log('  /api/meetings');
+  console.log('  /api/announcements');
+  console.log('  /api/action-items');
+  console.log('  /api/messages');
+  console.log('  /api/events');
+  console.log('  /api/committee');
+  console.log('  /api/health');
+  console.log('  /api/debug/routes');
 });
