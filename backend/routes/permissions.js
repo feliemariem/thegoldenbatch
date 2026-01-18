@@ -43,22 +43,26 @@ const requireSuperAdmin = async (req, res, next) => {
 // Get all admins with their permissions (Super Admin only)
 router.get('/admins', authenticateAdmin, requireSuperAdmin, async (req, res) => {
   try {
+    // JOIN with master_list to get current_name for display
     const adminsResult = await db.query(
-      'SELECT id, email, first_name, last_name, is_super_admin FROM admins ORDER BY first_name, last_name'
+      `SELECT a.id, a.email, a.first_name, a.last_name, a.is_super_admin, m.current_name
+       FROM admins a
+       LEFT JOIN master_list m ON LOWER(a.email) = LOWER(m.email)
+       ORDER BY COALESCE(m.current_name, a.first_name), a.last_name`
     );
 
     const admins = [];
-    
+
     for (const admin of adminsResult.rows) {
       const permsResult = await db.query(
         'SELECT permission, enabled FROM permissions WHERE admin_id = $1',
         [admin.id]
       );
-      
+
       const permissions = {};
       ALL_PERMISSIONS.forEach(p => permissions[p] = false);
       permsResult.rows.forEach(p => permissions[p.permission] = p.enabled);
-      
+
       admins.push({
         ...admin,
         permissions

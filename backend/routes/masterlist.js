@@ -204,6 +204,7 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
     const entryEmail = toLowerEmail(email) || entry.email;
     const entryFirstName = toTitleCase(first_name) || entry.first_name;
     const entryLastName = toTitleCase(last_name) || entry.last_name;
+    const entryCurrentName = toTitleCase(current_name) || entry.current_name;
 
     // If becoming admin and has email, validate and create admin entry
     if (willBeAdmin && !wasAdmin) {
@@ -227,10 +228,13 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
 
       if (existingAdmin.rows.length === 0) {
         // Create admin entry (no password - they'll use forgot password to set one)
+        // Use current_name if available, otherwise fall back to first_name/last_name
+        const adminFirstName = entryCurrentName || entryFirstName;
+        const adminLastName = entryCurrentName ? '' : entryLastName;
         await db.query(
           `INSERT INTO admins (email, first_name, last_name, password_hash, is_super_admin)
            VALUES ($1, $2, $3, $4, $5)`,
-          [entryEmail, entryFirstName, entryLastName, '', false]
+          [entryEmail, adminFirstName, adminLastName, '', false]
         );
       }
     }
