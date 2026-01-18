@@ -1634,6 +1634,7 @@ export default function AdminDashboard() {
             goingCount={data?.stats?.going || 0}
             maybeCount={data?.stats?.maybe || 0}
             notGoingCount={data?.stats?.not_going || 0}
+            adminsCount={data?.stats?.admins_count || 0}
             canSend={isSuperAdmin || permissions?.announcements_send}
           />
         )}
