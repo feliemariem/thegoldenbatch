@@ -687,7 +687,7 @@ export default function AdminDashboard() {
             marginBottom: '24px',
             fontSize: '0.9rem',
             lineHeight: '1.6',
-            color: '#666'
+            color: '#d0d0d0'
           }}>
             <h3 style={{ color: '#006633', marginBottom: '16px', fontSize: '1rem' }}>Admin Guide</h3>
 
