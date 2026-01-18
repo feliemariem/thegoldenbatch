@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useActionItems } from '../context/ActionItemsContext';
 
 export default function MyTasks({ token }) {
   const navigate = useNavigate();
+  const { notifyActionItemUpdate, updateVersion, lastUpdatedItem } = useActionItems();
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState(null);
@@ -11,6 +13,20 @@ export default function MyTasks({ token }) {
   useEffect(() => {
     fetchMyTasks();
   }, [token]);
+
+  // Listen for action item updates from other components (e.g., MeetingMinutes)
+  useEffect(() => {
+    if (updateVersion > 0 && lastUpdatedItem) {
+      // Update the local tasks state if the updated item is in our list
+      setTasks(prevTasks =>
+        prevTasks.map(task =>
+          task.id === lastUpdatedItem.id
+            ? { ...task, status: lastUpdatedItem.status }
+            : task
+        )
+      );
+    }
+  }, [updateVersion, lastUpdatedItem]);
 
   const fetchMyTasks = async () => {
     try {
@@ -44,6 +60,8 @@ export default function MyTasks({ token }) {
         setTasks(tasks.map(task =>
           task.id === taskId ? { ...task, status: newStatus } : task
         ));
+        // Notify other components (like MeetingMinutes) about the update
+        notifyActionItemUpdate(taskId, newStatus);
       }
     } catch (err) {
       console.error('Failed to update task status:', err);
