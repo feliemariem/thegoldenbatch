@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import logo from '../images/lasalle.jpg';
 
 export default function Funds() {
+  const { user } = useAuth();
   const [balance, setBalance] = useState(0);
   const [totalDeposits, setTotalDeposits] = useState(0);
   const [totalWithdrawals, setTotalWithdrawals] = useState(0);
@@ -347,7 +349,7 @@ export default function Funds() {
 
         {/* Back to Profile */}
         <p style={{ textAlign: 'center' }}>
-          <Link to="/profile" className="btn-link">Back to Profile</Link>
+          <Link to={user?.isAdmin ? "/profile-preview" : "/profile"} className="btn-link">Back to Profile</Link>
         </p>
       </div>
     </div>

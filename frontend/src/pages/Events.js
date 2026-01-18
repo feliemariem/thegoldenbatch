@@ -256,7 +256,7 @@ export default function Events() {
             {user?.isAdmin && <Link to="/media" className="nav-link">Media</Link>}
             <Link to="/inbox" className="nav-link">Inbox</Link>
             <Link to="/funds" className="nav-link">Funds</Link>
-            <Link to="/profile" className="nav-link">Profile</Link>
+            <Link to={user?.isAdmin ? "/profile-preview" : "/profile"} className="nav-link">Profile</Link>
             {user?.isAdmin && <Link to="/admin" className="nav-link">Admin</Link>}
             <ThemeToggle />
             <button onClick={handleLogout} className="nav-link logout-btn">Logout</button>
@@ -296,7 +296,7 @@ export default function Events() {
                 <span className="rsvp-stat maybe">{mainEventStats.maybe} Maybe</span>
                 <span className="rsvp-stat not-going">{mainEventStats.not_going} Can't Make It</span>
               </div>
-              <p className="rsvp-note">Update your RSVP on your <Link to="/profile">Profile</Link></p>
+              <p className="rsvp-note">Update your RSVP on your <Link to={user?.isAdmin ? "/profile-preview" : "/profile"}>Profile</Link></p>
             </div>
           </div>
         </div>
@@ -560,7 +560,7 @@ export default function Events() {
 
         {/* Back Link */}
         <div className="events-back">
-          <Link to="/profile" className="btn-link">← Back to Profile</Link>
+          <Link to={user?.isAdmin ? "/profile-preview" : "/profile"} className="btn-link">← Back to Profile</Link>
         </div>
       </main>
     </div>

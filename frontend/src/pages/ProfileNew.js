@@ -284,7 +284,7 @@ export default function ProfileNew() {
               {unreadCount > 0 && <span className="nav-badge">{unreadCount}</span>}
             </Link>
             <Link to="/funds" className="nav-link">Funds</Link>
-            <Link to="/profile" className="nav-link">Profile</Link>
+            <Link to={user?.isAdmin ? "/profile-preview" : "/profile"} className="nav-link">Profile</Link>
             {user?.isAdmin && <Link to="/admin" className="nav-link">Admin</Link>}
             <ThemeToggle />
             <button onClick={handleLogout} className="nav-link logout-btn">Logout</button>

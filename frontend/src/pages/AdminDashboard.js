@@ -659,7 +659,7 @@ export default function AdminDashboard() {
             >
               {showGuide ? 'Hide' : '📖 Guide'}
             </button>
-            <Link to="/profile" className="btn-link" style={{ marginRight: '8px' }}>
+            <Link to="/profile-preview" className="btn-link" style={{ marginRight: '8px' }}>
               My Profile
             </Link>
             <button onClick={handleLogout} className="btn-link">
