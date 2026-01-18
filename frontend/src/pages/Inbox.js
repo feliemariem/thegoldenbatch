@@ -267,21 +267,22 @@ export default function Inbox() {
 
   return (
     <div className="profile-container">
-      {/* Header */}
-      <header className="profile-header">
-        <div className="profile-header-content">
-          <div className="profile-logo-section">
-            <img src={logo} alt="USLS Logo" className="profile-logo" />
-            <div className="profile-title">
-              <h1>THE GOLDEN BATCH</h1>
-              <span className="profile-subtitle">25th Alumni Homecoming</span>
+      <div className="card">
+        {/* Header */}
+        <header className="profile-header">
+          <div className="profile-header-content">
+            <div className="profile-logo-section">
+              <img src={logo} alt="USLS Logo" className="profile-logo" />
+              <div className="profile-title">
+                <h1>THE GOLDEN BATCH</h1>
+                <span className="profile-subtitle">25th Alumni Homecoming</span>
+              </div>
             </div>
-          </div>
-          <nav className="profile-nav">
-            <div className={`nav-dropdown ${eventsDropdownOpen ? 'open' : ''}`} ref={eventsDropdownRef}>
-              <button
-                className={`nav-dropdown-trigger ${location.pathname === '/events' || location.pathname === '/media' ? 'active' : ''} ${eventsDropdownOpen ? 'open' : ''}`}
-                onClick={() => setEventsDropdownOpen(!eventsDropdownOpen)}
+            <nav className="profile-nav">
+              <div className={`nav-dropdown ${eventsDropdownOpen ? 'open' : ''}`} ref={eventsDropdownRef}>
+                <button
+                  className={`nav-dropdown-trigger ${location.pathname === '/events' || location.pathname === '/media' ? 'active' : ''} ${eventsDropdownOpen ? 'open' : ''}`}
+                  onClick={() => setEventsDropdownOpen(!eventsDropdownOpen)}
               >
                 Events <span className="dropdown-arrow">▼</span>
               </button>
@@ -489,8 +490,9 @@ export default function Inbox() {
           )
         )}
 
-        <Footer />
       </main>
+      </div>
+      <Footer />
 
       {/* Message Detail Modal */}
       {showModal && selectedItem && (
