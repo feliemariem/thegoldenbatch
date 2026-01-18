@@ -4,6 +4,8 @@ const db = require('../db');
 const { authenticateToken } = require('../middleware/auth');
 const sgMail = require('@sendgrid/mail');
 
+console.log('[ROUTES] announcements.js loaded - registering /api/announcements routes');
+
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 // Helper to check announce permission
