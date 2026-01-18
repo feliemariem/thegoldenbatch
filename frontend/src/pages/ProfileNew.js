@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import ThemeToggle from '../components/ThemeToggle';
+import MyTasks from '../components/MyTasks';
 import logo from '../images/lasalle.jpg';
 import '../styles/profileNew.css';
 
@@ -305,6 +306,9 @@ export default function ProfileNew() {
             {message}
           </div>
         )}
+
+        {/* My Tasks Section - Only shows for admins */}
+        {user?.isAdmin && <MyTasks token={token} />}
 
         <div className="profile-grid">
           {/* Left Column */}
