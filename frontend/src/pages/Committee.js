@@ -197,7 +197,7 @@ export default function Committee() {
         {/* Core Leaders Section */}
         {coreLeaders.length > 0 && (
           <section className="committee-section">
-            <h3 className="committee-section-title">Core Leadership</h3>
+            <h3 className="committee-section-title">Our Organizers</h3>
             <div className="committee-grid core-leaders">
               {coreLeaders.map(member => (
                 <div key={member.id} className="committee-card core">
