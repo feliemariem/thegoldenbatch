@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useInbox } from '../context/InboxContext';
 import ThemeToggle from '../components/ThemeToggle';
@@ -12,15 +12,29 @@ export default function EventDetail() {
   const { user, token, logout } = useAuth();
   const { unreadCount } = useInbox();
   const navigate = useNavigate();
+  const location = useLocation();
   const isAdmin = user?.isAdmin;
 
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [eventsDropdownOpen, setEventsDropdownOpen] = useState(false);
+  const eventsDropdownRef = useRef(null);
 
   useEffect(() => {
     fetchEvent();
   }, [id, token]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (eventsDropdownRef.current && !eventsDropdownRef.current.contains(event.target)) {
+        setEventsDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const fetchEvent = async () => {
     try {
@@ -135,8 +149,18 @@ export default function EventDetail() {
               </div>
             </div>
             <nav className="profile-nav">
-              <Link to="/events" className="nav-link">Events</Link>
-              {user?.isAdmin && <Link to="/media" className="nav-link">Media</Link>}
+              <div className={`nav-dropdown ${eventsDropdownOpen ? 'open' : ''}`} ref={eventsDropdownRef}>
+                <button
+                  className={`nav-dropdown-trigger ${location.pathname.startsWith('/events') || location.pathname === '/media' ? 'active' : ''} ${eventsDropdownOpen ? 'open' : ''}`}
+                  onClick={() => setEventsDropdownOpen(!eventsDropdownOpen)}
+                >
+                  Events <span className="dropdown-arrow">▼</span>
+                </button>
+                <div className="nav-dropdown-menu">
+                  <Link to="/events" className={`nav-dropdown-item ${location.pathname.startsWith('/events') ? 'active' : ''}`} onClick={() => setEventsDropdownOpen(false)}>Upcoming</Link>
+                  <Link to="/media" className={`nav-dropdown-item ${location.pathname === '/media' ? 'active' : ''}`} onClick={() => setEventsDropdownOpen(false)}>Media</Link>
+                </div>
+              </div>
               {user?.isAdmin && <Link to="/committee" className="nav-link">Committee</Link>}
               <Link to="/inbox" className="nav-link">Inbox{unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}</Link>
               <Link to="/funds" className="nav-link">Funds</Link>
@@ -173,9 +197,21 @@ export default function EventDetail() {
             </div>
           </div>
           <nav className="profile-nav">
-            <Link to="/events" className="nav-link">Events</Link>
-            <Link to="/funds" className="nav-link">Funds</Link>
+            <div className={`nav-dropdown ${eventsDropdownOpen ? 'open' : ''}`} ref={eventsDropdownRef}>
+              <button
+                className={`nav-dropdown-trigger ${location.pathname.startsWith('/events') || location.pathname === '/media' ? 'active' : ''} ${eventsDropdownOpen ? 'open' : ''}`}
+                onClick={() => setEventsDropdownOpen(!eventsDropdownOpen)}
+              >
+                Events <span className="dropdown-arrow">▼</span>
+              </button>
+              <div className="nav-dropdown-menu">
+                <Link to="/events" className={`nav-dropdown-item ${location.pathname.startsWith('/events') ? 'active' : ''}`} onClick={() => setEventsDropdownOpen(false)}>Upcoming</Link>
+                <Link to="/media" className={`nav-dropdown-item ${location.pathname === '/media' ? 'active' : ''}`} onClick={() => setEventsDropdownOpen(false)}>Media</Link>
+              </div>
+            </div>
+            {user?.isAdmin && <Link to="/committee" className="nav-link">Committee</Link>}
             <Link to="/inbox" className="nav-link">Inbox{unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}</Link>
+            <Link to="/funds" className="nav-link">Funds</Link>
             <Link to={user?.isAdmin ? "/profile-preview" : "/profile"} className="nav-link">Profile</Link>
             {user?.isAdmin && <Link to="/admin" className="nav-link">Admin</Link>}
             <ThemeToggle />
