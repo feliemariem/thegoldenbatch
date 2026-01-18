@@ -3,6 +3,7 @@ import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useInbox } from '../context/InboxContext';
 import MyTasks from '../components/MyTasks';
+import Footer from '../components/Footer';
 import logo from '../images/lasalle.jpg';
 import '../styles/profileNew.css';
 
@@ -795,18 +796,7 @@ export default function ProfileNew() {
           </div>
         </div>
 
-        {/* Footer */}
-        <footer className="profile-footer">
-          <p>Stay connected with us!</p>
-          <a 
-            href="https://www.facebook.com/groups/478382298877930" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="fb-link"
-          >
-            Join our Facebook Group
-          </a>
-        </footer>
+        <Footer />
       </main>
     </div>
   );

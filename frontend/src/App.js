@@ -28,6 +28,7 @@ import './styles/profile.css';
 import './styles/admin.css';
 import './styles/landing.css';
 import './styles/theme.css';
+import './styles/footer.css';
 
 // Protected route wrapper
 function ProtectedRoute({ children }) {

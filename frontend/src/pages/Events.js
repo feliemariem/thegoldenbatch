@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useInbox } from '../context/InboxContext';
+import Footer from '../components/Footer';
 import logo from '../images/lasalle.jpg';
 import '../styles/profileNew.css';
 import '../styles/events.css';
@@ -587,6 +588,8 @@ export default function Events() {
         <div className="events-back">
           <Link to={user?.isAdmin ? "/profile-preview" : "/profile"} className="btn-link">← Back to Profile</Link>
         </div>
+
+        <Footer />
       </main>
     </div>
   );

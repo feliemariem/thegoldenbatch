@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import Footer from '../components/Footer';
 import logo from '../images/lasalle.jpg';
 
 export default function ForgotPassword() {
@@ -82,6 +83,7 @@ export default function ForgotPassword() {
           </>
         )}
       </div>
+      <Footer />
     </div>
   );
 }

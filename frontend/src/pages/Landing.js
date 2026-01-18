@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
+import Footer from '../components/Footer';
 import logo from '../images/lasalle.jpg';
 
 export default function Landing() {
@@ -108,17 +109,7 @@ export default function Landing() {
 
 
 
-      {/* Footer */}
-      <footer className="landing-footer">
-        <p>{'\u00A9'} 2025 USLS-IS Batch 2003 | Golden Batch</p>
-        <p>
-          <a href="https://www.facebook.com/groups/478382298877930" target="_blank" rel="noopener noreferrer">
-            Facebook Group
-          </a>
-          {' | '}
-          <a href="mailto:uslsis.batch2003@gmail.com">Contact Us</a>
-        </p>
-      </footer>
+      <Footer />
 
       {/* Google Form Modal */}
       {showFormModal && (
