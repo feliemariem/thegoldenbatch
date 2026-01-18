@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useCallback } from 'react';
+import React, { useRef, useState, useEffect, useLayoutEffect, useCallback } from 'react';
 
 /**
  * ScrollableTable - A comprehensive scrollable table wrapper
@@ -105,8 +105,15 @@ export default function ScrollableTable({
   }, [isDragging]);
 
   // Calculate table width and container height
-  useEffect(() => {
-    const updateDimensions = () => {
+  // Use a ref to track the last valid calculated height to prevent flickering
+  const lastValidHeightRef = useRef(null);
+
+  useLayoutEffect(() => {
+    let rafId = null;
+    let retryCount = 0;
+    const MAX_RETRIES = 5;
+
+    const updateDimensions = (isRetry = false) => {
       if (tableWrapperRef.current) {
         const table = tableWrapperRef.current.querySelector('table');
         if (table) {
@@ -124,20 +131,52 @@ export default function ScrollableTable({
               // Get average row height from first few rows
               let totalRowHeight = 0;
               const rowsToMeasure = Math.min(rows.length, maxRows);
+              let validRowCount = 0;
+
               for (let i = 0; i < rowsToMeasure; i++) {
-                totalRowHeight += rows[i].offsetHeight;
+                const rowHeight = rows[i].offsetHeight;
+                if (rowHeight > 0) {
+                  totalRowHeight += rowHeight;
+                  validRowCount++;
+                }
               }
-              const avgRowHeight = totalRowHeight / rowsToMeasure;
 
-              // Calculate container height: header + (maxRows * avgRowHeight) + buffer
-              const calculatedHeight = headerHeight + (avgRowHeight * maxRows) + 2;
+              // If we got valid measurements
+              if (validRowCount > 0 && headerHeight > 0) {
+                const avgRowHeight = totalRowHeight / validRowCount;
 
-              // Only apply if we have more rows than maxRows
-              if (rows.length > maxRows) {
-                setContainerHeight(`${calculatedHeight}px`);
-              } else {
-                setContainerHeight('auto');
+                // Calculate container height: header + (maxRows * avgRowHeight) + buffer
+                const calculatedHeight = headerHeight + (avgRowHeight * maxRows) + 2;
+
+                // Only apply if we have more rows than maxRows
+                if (rows.length > maxRows) {
+                  lastValidHeightRef.current = calculatedHeight;
+                  setContainerHeight(`${calculatedHeight}px`);
+                } else {
+                  lastValidHeightRef.current = null;
+                  setContainerHeight('auto');
+                }
+              } else if (retryCount < MAX_RETRIES) {
+                // Rows aren't rendered yet, schedule a retry with double-RAF
+                // to ensure browser has completed layout and paint
+                retryCount++;
+                rafId = requestAnimationFrame(() => {
+                  rafId = requestAnimationFrame(() => {
+                    updateDimensions(true);
+                  });
+                });
+              } else if (lastValidHeightRef.current) {
+                // Use last valid height as fallback
+                setContainerHeight(`${lastValidHeightRef.current}px`);
               }
+            } else if (retryCount < MAX_RETRIES) {
+              // No rows yet, retry
+              retryCount++;
+              rafId = requestAnimationFrame(() => {
+                rafId = requestAnimationFrame(() => {
+                  updateDimensions(true);
+                });
+              });
             }
           } else {
             setContainerHeight('auto');
@@ -146,23 +185,68 @@ export default function ScrollableTable({
       }
     };
 
-    // Initial calculation
-    updateDimensions();
+    // Use double requestAnimationFrame to ensure DOM is fully painted
+    // First RAF waits for next frame, second RAF ensures paint is complete
+    rafId = requestAnimationFrame(() => {
+      rafId = requestAnimationFrame(() => {
+        updateDimensions();
+      });
+    });
 
     // Recalculate on window resize
-    window.addEventListener('resize', updateDimensions);
+    const handleResize = () => {
+      retryCount = 0;
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        rafId = requestAnimationFrame(() => {
+          updateDimensions();
+        });
+      });
+    };
+
+    window.addEventListener('resize', handleResize);
 
     // Use ResizeObserver for dynamic content changes
     let resizeObserver;
     if (tableWrapperRef.current && typeof ResizeObserver !== 'undefined') {
-      resizeObserver = new ResizeObserver(updateDimensions);
+      resizeObserver = new ResizeObserver(() => {
+        retryCount = 0;
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => {
+          rafId = requestAnimationFrame(() => {
+            updateDimensions();
+          });
+        });
+      });
       resizeObserver.observe(tableWrapperRef.current);
     }
 
+    // Also observe the table itself for content changes (e.g., when data loads)
+    let mutationObserver;
+    if (tableWrapperRef.current && typeof MutationObserver !== 'undefined') {
+      mutationObserver = new MutationObserver(() => {
+        retryCount = 0;
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => {
+          rafId = requestAnimationFrame(() => {
+            updateDimensions();
+          });
+        });
+      });
+      mutationObserver.observe(tableWrapperRef.current, {
+        childList: true,
+        subtree: true
+      });
+    }
+
     return () => {
-      window.removeEventListener('resize', updateDimensions);
+      if (rafId) cancelAnimationFrame(rafId);
+      window.removeEventListener('resize', handleResize);
       if (resizeObserver) {
         resizeObserver.disconnect();
+      }
+      if (mutationObserver) {
+        mutationObserver.disconnect();
       }
     };
   }, [children, maxRows]);
