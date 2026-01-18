@@ -10,6 +10,7 @@ import logo from '../images/lasalle.jpg';
 import MeetingMinutes from '../components/MeetingMinutes';
 import CopiedToast from "../components/CopiedToast";
 import AdminRoleErrorToast from "../components/AdminRoleErrorToast";
+import AdminMessages from '../components/AdminMessages';
 
 export default function AdminDashboard() {
   const { token, user, logout } = useAuth();
@@ -804,6 +805,25 @@ export default function AdminDashboard() {
               }}
             >
               Meetings
+            </button>
+          )}
+          {(isSuperAdmin || permissions?.messages_view) && (
+            <button
+              onClick={() => setDashboardMode('messages')}
+              style={{
+                flex: 1,
+                padding: '10px 8px',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontWeight: '600',
+                fontSize: '0.75rem',
+                background: dashboardMode === 'messages' ? '#CFB53B' : 'transparent',
+                color: dashboardMode === 'messages' ? '#1a1a2e' : '#999',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              Messages
             </button>
           )}
           {isSuperAdmin && (
@@ -1676,6 +1696,11 @@ export default function AdminDashboard() {
             initialMeetingId={selectedMeetingIdFromUrl}
             onMeetingSelected={() => setSelectedMeetingIdFromUrl(null)}
           />
+        )}
+
+        {/* MESSAGES MODE */}
+        {dashboardMode === 'messages' && (
+          <AdminMessages token={token} />
         )}
 
         {/* PERMISSIONS MODE - Super Admin Only */}

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 const { authenticateToken, authenticateAdmin } = require('../middleware/auth');
+const { createVolunteerInterestMessage } = require('./messages');
 
 // Get all committee members (admins with role_title set)
 router.get('/', authenticateAdmin, async (req, res) => {
@@ -72,6 +73,9 @@ router.post('/interests', authenticateToken, async (req, res) => {
       'INSERT INTO volunteer_interests (user_id, role) VALUES ($1, $2)',
       [req.user.id, role]
     );
+
+    // Create a message in the admin inbox
+    await createVolunteerInterestMessage(req.user.id, role);
 
     res.status(201).json({ message: 'Interest saved successfully' });
   } catch (err) {

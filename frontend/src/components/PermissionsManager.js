@@ -29,7 +29,8 @@ export default function PermissionsManager({ token }) {
     'accounting_edit',
     'accounting_export',
     'minutes_view',
-    'minutes_edit'
+    'minutes_edit',
+    'messages_view'
   ];
 
   const permissionLabels = {
@@ -47,7 +48,8 @@ export default function PermissionsManager({ token }) {
     accounting_edit: 'Add/Edit Donations',
     accounting_export: 'Export CSV (Donations)',
     minutes_view: 'Show Minutes tab',
-    minutes_edit: 'Create/Edit Minutes'
+    minutes_edit: 'Create/Edit Minutes',
+    messages_view: 'Show Messages tab'
   };
 
   useEffect(() => {
@@ -302,6 +304,24 @@ export default function PermissionsManager({ token }) {
                 <h4 className="perm-section-title">MINUTES</h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingLeft: '12px' }}>
                   {['minutes_view', 'minutes_edit'].map(perm => (
+                    <label key={perm} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+                      <input
+                        type="checkbox"
+                        checked={permissions[perm] || false}
+                        onChange={() => handlePermissionChange(perm)}
+                        style={{ width: '16px', height: '16px' }}
+                      />
+                      <span className="perm-label">{permissionLabels[perm]}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Messages Permissions */}
+              <div style={{ marginBottom: '20px' }}>
+                <h4 className="perm-section-title">MESSAGES</h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingLeft: '12px' }}>
+                  {['messages_view'].map(perm => (
                     <label key={perm} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
                       <input
                         type="checkbox"
