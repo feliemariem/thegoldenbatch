@@ -271,7 +271,15 @@ tr:last-child td {
 /* ========================================
    ENHANCED TABLE SCROLLING
    Works with ScrollableTable component
+   CSS-first approach for reliable scrolling
    ======================================== */
+
+/* Container must not constrain the scrollable wrapper */
+.scrollable-table-container {
+  width: 100%;
+  overflow: visible; /* CRITICAL: Don't cut off scroll content */
+  position: relative;
+}
 
 /* Ensure scrollable table wrapper inherits proper styling */
 .scrollable-table-container .table-wrapper {
@@ -282,6 +290,14 @@ tr:last-child td {
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+/* Admin-specific height for scrollable tables - use vh for responsiveness */
+.users-section .scrollable-table-wrapper {
+  max-height: 60vh; /* Viewport-relative for better responsiveness */
+  min-height: 200px; /* Ensure minimum visible content */
+  overflow-y: auto !important;
+  overflow-x: auto !important;
+}
+
 /* Sticky header background for dark mode */
 .scrollable-table-wrapper.sticky-header thead th {
   background: rgba(15, 20, 18, 0.98);
@@ -290,16 +306,15 @@ tr:last-child td {
   z-index: 10;
 }
 
-/* Ensure proper overflow handling */
+/* Ensure users-section doesn't collapse or hide overflow */
+.users-section {
+  overflow: visible; /* Don't cut off table scroll */
+  display: block; /* Ensure proper block layout */
+}
+
 .users-section .scrollable-table-container {
   width: 100%;
   overflow: visible;
-}
-
-/* Make scrollbars more visible on tables */
-.scrollable-table-wrapper {
-  /* Ensure scrollbar is always visible when content overflows */
-  overflow: auto;
 }
 
 /* ========================================

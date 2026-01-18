@@ -3,25 +3,29 @@ import React, { useRef, useState, useEffect, useCallback } from 'react';
 /**
  * ScrollableTable - A comprehensive scrollable table wrapper
  *
+ * SCROLL APPROACH: CSS-first for reliability
+ * - Height and overflow are handled by CSS classes (base.css, admin.css)
+ * - This prevents intermittent scroll bugs caused by JS timing issues
+ * - Component only provides structure and optional drag-to-scroll
+ *
  * Features:
- * - Vertical scroll with fixed height (simple CSS approach)
+ * - Vertical scroll with CSS max-height (60vh in admin, 500px default)
  * - Horizontal scrollbars (top and bottom, synchronized)
  * - Sticky header support
  * - Visible scrollbar styling for both light/dark modes
- * - Proper overflow handling
  * - Click-and-drag scrolling (grab to pan in any direction)
  *
  * Props:
  * - children: Table element to wrap
  * - className: Additional CSS classes
- * - height: Fixed height for vertical scroll (default: '500px') - use fixed height, not maxHeight
+ * - height: Optional custom max-height (CSS handles default)
  * - stickyHeader: Enable sticky header (default: true)
  * - showTopScrollbar: Show top horizontal scrollbar (default: true)
  */
 export default function ScrollableTable({
   children,
   className = '',
-  height = '500px',
+  height = null, // Let CSS handle height by default
   stickyHeader = true,
   showTopScrollbar = true
 }) {
@@ -145,6 +149,7 @@ export default function ScrollableTable({
       )}
 
       {/* Table wrapper with both horizontal and vertical scroll */}
+      {/* Height and overflow are handled by CSS for reliability - see base.css and admin.css */}
       <div
         className={`table-wrapper scrollable-table-wrapper ${stickyHeader ? 'sticky-header' : ''}`}
         ref={tableWrapperRef}
@@ -154,8 +159,9 @@ export default function ScrollableTable({
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseLeave}
         style={{
-          height: height,
-          overflowY: 'scroll',
+          // Only apply custom height if explicitly provided
+          ...(height && { maxHeight: height }),
+          // Drag cursor styles
           cursor: isDragging ? 'grabbing' : 'grab',
           userSelect: isDragging ? 'none' : 'auto'
         }}

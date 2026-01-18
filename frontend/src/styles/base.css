@@ -205,19 +205,24 @@ h3 {
   background: rgba(255, 255, 255, 0.4);
 }
 
-/* Table wrapper with scroll support */
+/* Table wrapper with scroll support - CSS-first approach for reliable scrolling */
 .scrollable-table-wrapper {
+  /* CRITICAL: Explicit height bounds for consistent scrolling */
+  max-height: 500px;
+  min-height: 100px;
+  /* Overflow must be auto, not scroll, to avoid always-visible scrollbars when not needed */
   overflow-x: auto;
-  overflow-y: auto;
+  overflow-y: auto !important; /* !important to override any conflicting styles */
+  /* Visual styling */
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.05);
-  /* Make scrollbar always visible */
+  /* Scrollbar styling */
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.3) rgba(0, 0, 0, 0.2);
-  /* Ensure consistent height behavior during re-renders */
-  contain: layout style;
-  /* Prevent height collapse - use min-height as fallback */
-  min-height: 100px;
+  /* Display block ensures proper height calculation */
+  display: block;
+  /* Prevent collapsing in flex/grid contexts */
+  flex-shrink: 0;
 }
 
 .scrollable-table-wrapper::-webkit-scrollbar {
