@@ -117,7 +117,10 @@ export default function AnnouncementComposer({ token, registeredCount = 0, going
             <label>To:</label>
             <select
               value={audience}
-              onChange={(e) => setAudience(e.target.value)}
+              onChange={(e) => {
+                console.log('Audience dropdown changed to:', e.target.value);
+                setAudience(e.target.value);
+              }}
               style={{
                 width: '100%',
                 padding: '12px',
