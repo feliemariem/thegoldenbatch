@@ -52,6 +52,12 @@ router.post('/register', async (req, res) => {
     }
 
     const invite = inviteResult.rows[0];
+    console.log('[Registration] Invite found:', {
+      invite_id: invite.id,
+      email: invite.email,
+      master_list_id: invite.master_list_id,
+      used: invite.used
+    });
 
     if (invite.used) {
       return res.status(400).json({ error: 'Invite already used' });
@@ -86,16 +92,30 @@ router.post('/register', async (req, res) => {
     // Mark invite as used
     await db.query('UPDATE invites SET used = TRUE WHERE id = $1', [invite.id]);
 
-    // Update master_list status to 'Registered' and email if linked
+    // Update master_list status to 'Registered' if linked
+    console.log('[Registration] Checking master_list_id:', invite.master_list_id, 'type:', typeof invite.master_list_id);
     if (invite.master_list_id) {
-      await db.query(
+      // First, check what the current state of the master_list entry is
+      const beforeUpdate = await db.query(
+        'SELECT id, status, email, first_name, last_name FROM master_list WHERE id = $1',
+        [invite.master_list_id]
+      );
+      console.log('[Registration] master_list BEFORE update:', beforeUpdate.rows[0] || 'NOT FOUND');
+
+      console.log('[Registration] Executing UPDATE master_list SET status=Registered for id:', invite.master_list_id);
+      const updateResult = await db.query(
         `UPDATE master_list SET
           status = 'Registered',
           email = $1,
           updated_at = CURRENT_TIMESTAMP
-         WHERE id = $2`,
+         WHERE id = $2
+         RETURNING id, status, email`,
         [toLowerEmail(invite.email), invite.master_list_id]
       );
+      console.log('[Registration] UPDATE rowCount:', updateResult.rowCount);
+      console.log('[Registration] master_list AFTER update:', updateResult.rows[0] || 'NO ROWS RETURNED');
+    } else {
+      console.log('[Registration] No master_list_id linked to invite - skipping master_list update');
     }
 
     const user = userResult.rows[0];
