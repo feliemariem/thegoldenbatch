@@ -167,6 +167,131 @@
   margin: 0;
 }
 
+.welcome-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  text-align: left;
+}
+
+.welcome-header-row > div {
+  flex: 1;
+}
+
+.btn-guide {
+  background: none;
+  border: 1px solid rgba(207, 181, 59, 0.3);
+  border-radius: 8px;
+  padding: 8px 16px;
+  color: #CFB53B;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-guide:hover {
+  background: rgba(207, 181, 59, 0.1);
+  border-color: #CFB53B;
+}
+
+/* User Guide Section */
+.user-guide-section {
+  background: linear-gradient(165deg, rgba(30, 40, 35, 0.95) 0%, rgba(20, 28, 24, 0.98) 100%);
+  border: 1px solid rgba(207, 181, 59, 0.2);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.guide-title {
+  color: #006633;
+  font-size: 1.3rem;
+  margin: 0 0 20px 0;
+  font-weight: 700;
+  text-align: center;
+}
+
+.guide-content {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.guide-item {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.guide-item h4 {
+  color: #CFB53B;
+  font-size: 0.95rem;
+  margin: 0 0 10px 0;
+  font-weight: 600;
+}
+
+.guide-item ul {
+  margin: 0;
+  padding-left: 18px;
+  color: #b0b0b0;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.guide-item li {
+  margin-bottom: 4px;
+}
+
+.guide-item li:last-child {
+  margin-bottom: 0;
+}
+
+.guide-tip {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  background: linear-gradient(135deg, rgba(0, 102, 51, 0.2) 0%, rgba(0, 102, 51, 0.1) 100%);
+  border: 1px solid rgba(0, 102, 51, 0.3);
+  border-radius: 12px;
+  color: #d0d0d0;
+  font-size: 0.9rem;
+}
+
+.guide-tip .tip-icon {
+  font-size: 1.2rem;
+}
+
+.guide-tip strong {
+  color: #CFB53B;
+}
+
+/* Mobile responsive for guide */
+@media (max-width: 768px) {
+  .welcome-header-row {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .welcome-header-row > div {
+    text-align: center;
+  }
+
+  .guide-content {
+    grid-template-columns: 1fr;
+  }
+
+  .guide-tip {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
 /* Message */
 .profile-message {
   padding: 12px 20px;
@@ -887,6 +1012,48 @@
 
 [data-theme="light"] .welcome-content p {
   color: #555;
+}
+
+/* User Guide - Light Mode */
+[data-theme="light"] .btn-guide {
+  border-color: rgba(184, 150, 12, 0.4);
+  color: #B8960C;
+}
+
+[data-theme="light"] .btn-guide:hover {
+  background: rgba(184, 150, 12, 0.1);
+  border-color: #B8960C;
+}
+
+[data-theme="light"] .user-guide-section {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 102, 51, 0.2);
+}
+
+[data-theme="light"] .guide-title {
+  color: #006633;
+}
+
+[data-theme="light"] .guide-item {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+[data-theme="light"] .guide-item h4 {
+  color: #B8960C;
+}
+
+[data-theme="light"] .guide-item ul {
+  color: #555;
+}
+
+[data-theme="light"] .guide-tip {
+  background: linear-gradient(135deg, rgba(0, 102, 51, 0.1) 0%, rgba(0, 102, 51, 0.05) 100%);
+  border-color: rgba(0, 102, 51, 0.2);
+  color: #333;
+}
+
+[data-theme="light"] .guide-tip strong {
+  color: #B8960C;
 }
 
 [data-theme="light"] .info-label {

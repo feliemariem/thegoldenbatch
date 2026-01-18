@@ -20,6 +20,7 @@ export default function ProfileNew() {
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [myEvents, setMyEvents] = useState([]);
   const [eventsDropdownOpen, setEventsDropdownOpen] = useState(false);
+  const [showGuide, setShowGuide] = useState(false);
   const fileInputRef = useRef(null);
   const eventsDropdownRef = useRef(null);
 
@@ -316,10 +317,95 @@ export default function ProfileNew() {
         {/* Welcome Banner */}
         <section className="profile-welcome">
           <div className="welcome-content">
-            <h2>Welcome back, {profile.first_name}!</h2>
-            <p>Thank you for registering for our 25th Alumni Homecoming</p>
+            <div className="welcome-header-row">
+              <div>
+                <h2>Welcome back, {profile.first_name}!</h2>
+                <p>Thank you for registering for our 25th Alumni Homecoming</p>
+              </div>
+              <button
+                onClick={() => setShowGuide(!showGuide)}
+                className="btn-guide"
+              >
+                {showGuide ? 'Hide' : '📖 Guide'}
+              </button>
+            </div>
           </div>
         </section>
+
+        {/* User Guide */}
+        {showGuide && (
+          <div className="user-guide-section">
+            <h3 className="guide-title">Welcome to The Golden Batch!</h3>
+
+            <div className="guide-content">
+              <div className="guide-item">
+                <h4>Your Profile:</h4>
+                <ul>
+                  <li>Update your personal information and upload a profile photo</li>
+                  <li>Your info helps batchmates reconnect with you</li>
+                </ul>
+              </div>
+
+              <div className="guide-item">
+                <h4>RSVP:</h4>
+                <ul>
+                  <li>Let us know if you're attending the 25th Alumni Homecoming</li>
+                  <li>You can change your RSVP anytime</li>
+                </ul>
+              </div>
+
+              {profile.is_graduate && (
+                <div className="guide-item">
+                  <h4>Payment Status:</h4>
+                  <ul>
+                    <li>Track your contribution progress</li>
+                    <li>View payment details in the Funds page</li>
+                  </ul>
+                </div>
+              )}
+
+              <div className="guide-item">
+                <h4>Events:</h4>
+                <ul>
+                  <li>Browse upcoming batch events and activities</li>
+                  <li>RSVP to events you want to attend</li>
+                </ul>
+              </div>
+
+              <div className="guide-item">
+                <h4>Media:</h4>
+                <ul>
+                  <li>View photos and videos from past reunions and high school days</li>
+                  <li>Watch featured hype videos and podcast episodes</li>
+                  <li>Read batch news and spotlight interviews</li>
+                  <li>Browse the gallery for throwback memories</li>
+                </ul>
+              </div>
+
+              <div className="guide-item">
+                <h4>Inbox:</h4>
+                <ul>
+                  <li>Receive announcements from the committee</li>
+                  <li>Reply to the committee directly from your inbox</li>
+                  <li>Send suggestions or feedback to the organizers</li>
+                </ul>
+              </div>
+
+              <div className="guide-item">
+                <h4>Committee:</h4>
+                <ul>
+                  <li>See who's organizing the reunion</li>
+                  <li>Volunteer to help out</li>
+                </ul>
+              </div>
+
+              <div className="guide-tip">
+                <span className="tip-icon">💡</span>
+                <strong>Tip:</strong> Keep your profile updated so batchmates can find and connect with you!
+              </div>
+            </div>
+          </div>
+        )}
 
         {message && (
           <div className="profile-message success">
