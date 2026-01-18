@@ -16,6 +16,7 @@ import ProfileNew from './pages/ProfileNew';
 import Inbox from './pages/Inbox';
 import Events from './pages/Events';
 import EventDetail from './pages/EventDetail';
+import Media from './pages/Media';
 import './styles/base.css';
 import './styles/components.css';
 import './styles/auth.css';
@@ -136,6 +137,16 @@ function AppRoutes() {
           <ProtectedRoute>
             <AdminOnly>
               <EventDetail />
+            </AdminOnly>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/media"
+        element={
+          <ProtectedRoute>
+            <AdminOnly>
+              <Media />
             </AdminOnly>
           </ProtectedRoute>
         }

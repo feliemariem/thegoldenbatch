@@ -278,11 +278,9 @@ export default function ProfileNew() {
           <nav className="profile-nav">
             <Link to="/events" className="nav-link">Events</Link>
             {showNewPages && (
-              <>
-                <Link to="/directory" className="nav-link">Directory</Link>
-                <Link to="/media" className="nav-link">Media</Link>
-              </>
+              <Link to="/directory" className="nav-link">Directory</Link>
             )}
+            {user?.isAdmin && <Link to="/media" className="nav-link">Media</Link>}
             <Link to="/funds" className="nav-link">Funds</Link>
             <Link to="/inbox" className="nav-link nav-link-badge">
               Inbox
@@ -651,8 +649,8 @@ export default function ProfileNew() {
               </div>
             )}
 
-            {/* Quick Links - only show if other new pages are enabled */}
-            {showNewPages && (
+            {/* Quick Links - only show if other new pages are enabled or user is admin */}
+            {(showNewPages || user?.isAdmin) && (
               <div className="profile-card quick-links-card">
                 <h3>Quick Links</h3>
                 <div className="quick-links">
@@ -660,14 +658,18 @@ export default function ProfileNew() {
                     <span className="quick-link-icon">📅</span>
                     <span>View Events</span>
                   </Link>
-                  <Link to="/directory" className="quick-link">
-                    <span className="quick-link-icon">👥</span>
-                    <span>Batch Directory</span>
-                  </Link>
-                  <Link to="/media" className="quick-link">
-                    <span className="quick-link-icon">📸</span>
-                    <span>View Media</span>
-                  </Link>
+                  {showNewPages && (
+                    <Link to="/directory" className="quick-link">
+                      <span className="quick-link-icon">👥</span>
+                      <span>Batch Directory</span>
+                    </Link>
+                  )}
+                  {user?.isAdmin && (
+                    <Link to="/media" className="quick-link">
+                      <span className="quick-link-icon">📸</span>
+                      <span>Media Gallery</span>
+                    </Link>
+                  )}
                 </div>
               </div>
             )}
