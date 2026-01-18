@@ -4,7 +4,7 @@
 
 .theme-toggle {
   position: fixed;
-  top: 20px;
+  top: 70px;
   right: 20px;
   width: 36px;
   height: 36px;
@@ -1210,7 +1210,7 @@ body[data-theme="light"] .scrollable-table-wrapper.sticky-header thead th {
 
 @media (max-width: 600px) {
   .theme-toggle {
-    top: 10px;
+    top: 60px;
     right: 10px;
     width: 32px;
     height: 32px;
