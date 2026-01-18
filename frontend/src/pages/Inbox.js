@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useInbox } from '../context/InboxContext';
 import ThemeToggle from '../components/ThemeToggle';
 import logo from '../images/lasalle.jpg';
+import '../styles/profileNew.css';
 import '../styles/inbox.css';
 
 export default function Inbox() {
@@ -241,8 +242,8 @@ export default function Inbox() {
 
   if (loading) {
     return (
-      <div className="inbox-container">
-        <div className="inbox-loading">
+      <div className="profile-container">
+        <div className="profile-loading">
           <div className="loading-spinner"></div>
           <p>Loading messages...</p>
         </div>
@@ -251,18 +252,18 @@ export default function Inbox() {
   }
 
   return (
-    <div className="inbox-container">
+    <div className="profile-container">
       {/* Header */}
-      <header className="inbox-header">
-        <div className="inbox-header-content">
-          <div className="inbox-logo-section">
-            <img src={logo} alt="USLS Logo" className="inbox-logo" />
-            <div className="inbox-title">
+      <header className="profile-header">
+        <div className="profile-header-content">
+          <div className="profile-logo-section">
+            <img src={logo} alt="USLS Logo" className="profile-logo" />
+            <div className="profile-title">
               <h1>THE GOLDEN BATCH</h1>
-              <span className="inbox-subtitle">25th Alumni Homecoming</span>
+              <span className="profile-subtitle">25th Alumni Homecoming</span>
             </div>
           </div>
-          <nav className="inbox-nav">
+          <nav className="profile-nav">
             <Link to="/events" className="nav-link">Events</Link>
             {user?.isAdmin && <Link to="/media" className="nav-link">Media</Link>}
             {user?.isAdmin && <Link to="/committee" className="nav-link">Committee</Link>}
