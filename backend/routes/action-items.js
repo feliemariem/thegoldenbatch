@@ -199,14 +199,21 @@ router.put('/:id', authenticateToken, async (req, res) => {
     const { id } = req.params;
     const { task, assignee_id, due_date, status, priority } = req.body;
 
+    // Parse and validate the action item ID
+    const actionItemId = parseInt(id, 10);
+    if (isNaN(actionItemId)) {
+      return res.status(400).json({ error: 'Invalid action item ID' });
+    }
+
     // Get current action item to check assignee
-    const currentItem = await db.query('SELECT * FROM action_items WHERE id = $1', [id]);
+    const currentItem = await db.query('SELECT * FROM action_items WHERE id = $1', [actionItemId]);
     if (currentItem.rows.length === 0) {
       return res.status(404).json({ error: 'Action item not found' });
     }
 
     const adminId = await getAdminId(req.user.email);
-    const isAssignee = adminId && currentItem.rows[0].assignee_id === adminId;
+    // Use loose equality to handle potential type mismatches between integer types
+    const isAssignee = adminId && currentItem.rows[0].assignee_id == adminId;
 
     // Check permissions: either has minutes_edit OR is the assignee (can only update status)
     const hasEditPermission = await checkMinutesEditPermission(req.user.email);
@@ -223,7 +230,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
         SET status = $1, updated_at = CURRENT_TIMESTAMP
         WHERE id = $2
         RETURNING *
-      `, [status || currentItem.rows[0].status, id]);
+      `, [status || currentItem.rows[0].status, actionItemId]);
 
       // Fetch the full action item with assignee info
       const fullResult = await db.query(`
@@ -234,7 +241,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
         LEFT JOIN admins a ON ai.assignee_id = a.id
         LEFT JOIN users u ON LOWER(a.email) = LOWER(u.email)
         WHERE ai.id = $1
-      `, [id]);
+      `, [actionItemId]);
 
       return res.json(fullResult.rows[0]);
     }
@@ -251,7 +258,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
       due_date !== undefined ? (due_date || null) : currentItem.rows[0].due_date,
       status || currentItem.rows[0].status,
       priority || currentItem.rows[0].priority,
-      id
+      actionItemId
     ]);
 
     // Fetch the full action item with assignee info
@@ -263,7 +270,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
       LEFT JOIN admins a ON ai.assignee_id = a.id
       LEFT JOIN users u ON LOWER(a.email) = LOWER(u.email)
       WHERE ai.id = $1
-    `, [id]);
+    `, [actionItemId]);
 
     res.json(fullResult.rows[0]);
   } catch (err) {
