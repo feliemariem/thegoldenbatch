@@ -1326,3 +1326,32 @@
 [data-theme="light"] .media-card-green .news-item-desc {
   color: #9a9a92 !important;
 }
+
+/* ========================================
+   QUICK LINKS - Light Mode Styling
+   Clean white cards with subtle green accents
+   ======================================== */
+
+[data-theme="light"] .quick-links-card h3 {
+  color: #1a1a1a;
+}
+
+[data-theme="light"] .quick-link {
+  background: #ffffff;
+  border: 1px solid rgba(0, 102, 51, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 102, 51, 0.06);
+}
+
+[data-theme="light"] .quick-link:hover {
+  background: rgba(0, 102, 51, 0.04);
+  border-color: rgba(0, 102, 51, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 102, 51, 0.1);
+}
+
+[data-theme="light"] .quick-link span:last-child {
+  color: #333;
+}
+
+[data-theme="light"] .quick-link:hover span:last-child {
+  color: #006633;
+}
