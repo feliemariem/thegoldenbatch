@@ -553,10 +553,6 @@ export default function AdminMessages({ token }) {
                 />
               </div>
 
-              <p style={{ color: '#888', fontSize: '0.85rem', marginBottom: '20px' }}>
-                This reply will be sent to {selectedMessage.sender_email} and an email notification will be sent.
-              </p>
-
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
                 <button
                   type="button"
