@@ -159,7 +159,11 @@ export default function MyTasks({ token }) {
     return null;
   }
 
-  if (tasks.length === 0) {
+  // Filter out completed tasks - only show 'not_started' and 'in_progress'
+  const activeTasks = tasks.filter(t => t.status !== 'done');
+
+  // Hide section if no active tasks (completed tasks still visible in Meetings tab)
+  if (activeTasks.length === 0) {
     return null;
   }
 
@@ -215,7 +219,7 @@ export default function MyTasks({ token }) {
 
       {expanded && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          {tasks.map(task => (
+          {activeTasks.map(task => (
             <div
               key={task.id}
               style={{
