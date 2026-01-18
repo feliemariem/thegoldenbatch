@@ -211,10 +211,25 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
     const entryFirstName = toTitleCase(first_name) || entry.first_name;
     const entryLastName = toTitleCase(last_name) || entry.last_name;
 
-    // If becoming admin and has email, create admin entry
-    if (willBeAdmin && !wasAdmin && entryEmail) {
+    // If becoming admin and has email, validate and create admin entry
+    if (willBeAdmin && !wasAdmin) {
+      // Validate: user must have an email and be registered
+      if (!entryEmail) {
+        return res.status(400).json({ error: 'Cannot assign admin role: user has no email address' });
+      }
+
+      // Check if user has completed registration (exists in users table)
+      const registeredUser = await db.query(
+        'SELECT id FROM users WHERE LOWER(email) = $1',
+        [entryEmail]
+      );
+
+      if (registeredUser.rows.length === 0) {
+        return res.status(400).json({ error: 'Cannot assign admin role: user has not completed registration' });
+      }
+
       // Check if admin already exists with this email
-      const existingAdmin = await db.query('SELECT id FROM admins WHERE email = $1', [entryEmail]);
+      const existingAdmin = await db.query('SELECT id FROM admins WHERE LOWER(email) = $1', [entryEmail]);
 
       if (existingAdmin.rows.length === 0) {
         // Create admin entry (no password - they'll use forgot password to set one)
@@ -291,9 +306,21 @@ router.delete('/:id', authenticateAdmin, async (req, res) => {
       return res.status(404).json({ error: 'Entry not found' });
     }
 
-    // If was admin, remove from admins table (but not super admins)
+    // If was admin, remove from permissions and admins tables (but not super admins)
     if (entry.rows[0].is_admin && entry.rows[0].email) {
-      await db.query('DELETE FROM admins WHERE LOWER(email) = $1 AND is_super_admin = false', [entry.rows[0].email.toLowerCase()]);
+      const adminEmail = entry.rows[0].email.toLowerCase();
+
+      // Delete permissions first
+      await db.query(
+        `DELETE FROM permissions
+         WHERE admin_id IN (
+           SELECT id FROM admins WHERE LOWER(email) = $1 AND is_super_admin = false
+         )`,
+        [adminEmail]
+      );
+
+      // Then delete admin row
+      await db.query('DELETE FROM admins WHERE LOWER(email) = $1 AND is_super_admin = false', [adminEmail]);
     }
 
     const result = await db.query(
@@ -311,7 +338,14 @@ router.delete('/:id', authenticateAdmin, async (req, res) => {
 // Clear all master list entries
 router.delete('/', authenticateAdmin, async (req, res) => {
   try {
-    // Remove all non-super admins first
+    // Delete permissions for non-super admins first
+    await db.query(
+      `DELETE FROM permissions
+       WHERE admin_id IN (
+         SELECT id FROM admins WHERE is_super_admin = false
+       )`
+    );
+    // Remove all non-super admins
     await db.query('DELETE FROM admins WHERE is_super_admin = false');
     // Then clear master list
     await db.query('DELETE FROM master_list');

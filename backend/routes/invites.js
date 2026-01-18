@@ -193,24 +193,50 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
 router.delete('/:id', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params;
-    
+
     // Check if invite exists and is not used
-    const checkResult = await db.query('SELECT used, master_list_id FROM invites WHERE id = $1', [id]);
+    const checkResult = await db.query('SELECT email, used, master_list_id FROM invites WHERE id = $1', [id]);
     if (checkResult.rows.length === 0) {
       return res.status(404).json({ error: 'Invite not found' });
     }
     if (checkResult.rows[0].used) {
       return res.status(400).json({ error: 'Cannot delete a used invite' });
     }
-    
-    // If linked to master list, clear the email
+
+    const inviteEmail = checkResult.rows[0].email?.toLowerCase();
     const masterListId = checkResult.rows[0].master_list_id;
+
+    // If linked to master list, check if they were an admin and clean up
     if (masterListId) {
-      await db.query('UPDATE master_list SET email = NULL WHERE id = $1', [masterListId]);
+      const masterListEntry = await db.query(
+        'SELECT is_admin FROM master_list WHERE id = $1',
+        [masterListId]
+      );
+
+      // If they were an admin, remove from permissions and admins tables
+      if (masterListEntry.rows[0]?.is_admin && inviteEmail) {
+        // Delete permissions first
+        await db.query(
+          `DELETE FROM permissions
+           WHERE admin_id IN (
+             SELECT id FROM admins WHERE LOWER(email) = $1 AND is_super_admin = false
+           )`,
+          [inviteEmail]
+        );
+
+        // Then delete admin row
+        await db.query(
+          'DELETE FROM admins WHERE LOWER(email) = $1 AND is_super_admin = false',
+          [inviteEmail]
+        );
+      }
+
+      // Clear the email and admin status from master list
+      await db.query('UPDATE master_list SET email = NULL, is_admin = false WHERE id = $1', [masterListId]);
     }
-    
+
     await db.query('DELETE FROM invites WHERE id = $1', [id]);
-    
+
     res.json({ message: 'Invite deleted' });
   } catch (err) {
     console.error(err);
@@ -248,22 +274,47 @@ router.put('/:id/link', authenticateAdmin, async (req, res) => {
 router.put('/:id/unlink', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params;
-    
-    // Get the current master_list_id
-    const inviteResult = await db.query('SELECT master_list_id FROM invites WHERE id = $1', [id]);
+
+    // Get the current master_list_id and invite email
+    const inviteResult = await db.query('SELECT email, master_list_id FROM invites WHERE id = $1', [id]);
     if (inviteResult.rows.length === 0) {
       return res.status(404).json({ error: 'Invite not found' });
     }
     const masterListId = inviteResult.rows[0].master_list_id;
-    
-    // Clear email from master list entry
+    const inviteEmail = inviteResult.rows[0].email?.toLowerCase();
+
+    // If linked to master list, check if they were an admin and clean up
     if (masterListId) {
-      await db.query('UPDATE master_list SET email = NULL, updated_at = CURRENT_TIMESTAMP WHERE id = $1', [masterListId]);
+      const masterListEntry = await db.query(
+        'SELECT is_admin FROM master_list WHERE id = $1',
+        [masterListId]
+      );
+
+      // If they were an admin, remove from permissions and admins tables
+      if (masterListEntry.rows[0]?.is_admin && inviteEmail) {
+        // Delete permissions first
+        await db.query(
+          `DELETE FROM permissions
+           WHERE admin_id IN (
+             SELECT id FROM admins WHERE LOWER(email) = $1 AND is_super_admin = false
+           )`,
+          [inviteEmail]
+        );
+
+        // Then delete admin row
+        await db.query(
+          'DELETE FROM admins WHERE LOWER(email) = $1 AND is_super_admin = false',
+          [inviteEmail]
+        );
+      }
+
+      // Clear email and admin status from master list entry
+      await db.query('UPDATE master_list SET email = NULL, is_admin = false, updated_at = CURRENT_TIMESTAMP WHERE id = $1', [masterListId]);
     }
-    
+
     // Remove link from invite
     await db.query('UPDATE invites SET master_list_id = NULL WHERE id = $1', [id]);
-    
+
     res.json({ success: true });
   } catch (err) {
     console.error(err);
