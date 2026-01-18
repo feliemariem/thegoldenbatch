@@ -588,3 +588,72 @@ tr:last-child td {
 
 .announce-send-email-text { color: #e0e0e0; }
 [data-theme="light"] .announce-send-email-text { color: rgba(15, 42, 29, 0.75); }
+
+/* ========================================
+   ADMIN GUIDE SECTION
+   Matches User Guide styling from profileNew.css
+   ======================================== */
+
+.admin-guide {
+  background: var(--card-bg);
+  border: 1px solid rgba(207, 181, 59, 0.3);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #d0d0d0;
+}
+
+.admin-guide-title {
+  color: #006633;
+  margin-bottom: 16px;
+  font-size: 1rem;
+}
+
+.admin-guide-item {
+  margin-bottom: 16px;
+}
+
+.admin-guide-heading {
+  color: #006633;
+}
+
+.admin-guide-item ul {
+  margin: 8px 0 0 20px;
+  padding: 0;
+  color: #d0d0d0;
+}
+
+.admin-guide-item li {
+  margin-bottom: 4px;
+}
+
+.admin-guide-tip {
+  margin-top: 16px;
+  font-size: 0.85rem;
+  color: #d0d0d0;
+}
+
+/* Light Mode - Admin Guide */
+[data-theme="light"] .admin-guide {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 102, 51, 0.2);
+  color: #333;
+}
+
+[data-theme="light"] .admin-guide-title {
+  color: #006633;
+}
+
+[data-theme="light"] .admin-guide-heading {
+  color: #006633;
+}
+
+[data-theme="light"] .admin-guide-item ul {
+  color: #333;
+}
+
+[data-theme="light"] .admin-guide-tip {
+  color: #444;
+}

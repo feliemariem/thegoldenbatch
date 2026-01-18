@@ -681,56 +681,47 @@ export default function AdminDashboard() {
         </div>
 
         {showGuide && (
-          <div style={{
-            background: 'var(--card-bg)',
-            border: '1px solid rgba(207, 181, 59, 0.3)',
-            borderRadius: '12px',
-            padding: '20px',
-            marginBottom: '24px',
-            fontSize: '0.9rem',
-            lineHeight: '1.6',
-            color: '#d0d0d0'
-          }}>
-            <h3 style={{ color: '#006633', marginBottom: '16px', fontSize: '1rem' }}>Admin Guide</h3>
+          <div className="admin-guide">
+            <h3 className="admin-guide-title">Admin Guide</h3>
 
-            <div style={{ marginBottom: '16px' }}>
-              <strong style={{ color: '#006633' }}>Registry Mode:</strong>
-              <ul style={{ margin: '8px 0 0 20px' }}>
-                <li><strong style={{ color: '#006633' }}>Invites</strong> — Add batchmates and send them registration links via email</li>
-                <li><strong style={{ color: '#006633' }}>Registered</strong> — View who has signed up and their RSVP status</li>
-                <li><strong style={{ color: '#006633' }}>Master List</strong> — Track all batchmates and their payment progress</li>
+            <div className="admin-guide-item">
+              <strong className="admin-guide-heading">Registry Mode:</strong>
+              <ul>
+                <li><strong className="admin-guide-heading">Invites</strong> — Add batchmates and send them registration links via email</li>
+                <li><strong className="admin-guide-heading">Registered</strong> — View who has signed up and their RSVP status</li>
+                <li><strong className="admin-guide-heading">Master List</strong> — Track all batchmates and their payment progress</li>
               </ul>
             </div>
 
-            <div style={{ marginBottom: '16px' }}>
-              <strong style={{ color: '#006633' }}>Accounting Mode:</strong>
-              <ul style={{ margin: '8px 0 0 20px' }}>
+            <div className="admin-guide-item">
+              <strong className="admin-guide-heading">Accounting Mode:</strong>
+              <ul>
                 <li>Record deposits (contributions) and withdrawals (expenses)</li>
                 <li>Link payments to batchmates — this updates their Payment status in Master List</li>
                 <li>Upload receipts for each transaction</li>
               </ul>
             </div>
 
-            <div style={{ marginBottom: '16px' }}>
-              <strong style={{ color: '#006633' }}>Announce Mode:</strong>
-              <ul style={{ margin: '8px 0 0 20px' }}>
+            <div className="admin-guide-item">
+              <strong className="admin-guide-heading">Announce Mode:</strong>
+              <ul>
                 <li>Send email announcements to registered batchmates (filter by RSVP status)</li>
                 <li>Batchmates also receive announcements in their Inbox on the site</li>
                 <li>View announcement history and export to CSV</li>
               </ul>
             </div>
 
-            <div style={{ marginBottom: '16px' }}>
-              <strong style={{ color: '#006633' }}>Meetings Mode:</strong>
-              <ul style={{ margin: '8px 0 0 20px' }}>
+            <div className="admin-guide-item">
+              <strong className="admin-guide-heading">Meetings Mode:</strong>
+              <ul>
                 <li>Upload and manage meeting minutes (PDF)</li>
                 <li>Keep a record of committee decisions and discussions</li>
               </ul>
             </div>
 
-            <div style={{ marginBottom: '16px' }}>
-              <strong style={{ color: '#006633' }}>Messages Mode:</strong>
-              <ul style={{ margin: '8px 0 0 20px' }}>
+            <div className="admin-guide-item">
+              <strong className="admin-guide-heading">Messages Mode:</strong>
+              <ul>
                 <li>Shared inbox for all admin committee members</li>
                 <li>View and respond to messages from batchmates</li>
                 <li>When users click "Reply to Committee" — it shows up here</li>
@@ -738,14 +729,14 @@ export default function AdminDashboard() {
               </ul>
             </div>
 
-            <div style={{ marginBottom: '16px' }}>
-              <strong style={{ color: '#006633' }}>Permissions Mode:</strong>
-              <ul style={{ margin: '8px 0 0 20px' }}>
+            <div className="admin-guide-item">
+              <strong className="admin-guide-heading">Permissions Mode:</strong>
+              <ul>
                 <li>Control what each admin can view/edit (Super Admins only)</li>
               </ul>
             </div>
 
-            <p style={{ marginTop: '16px', fontSize: '0.85rem' }}>
+            <p className="admin-guide-tip">
               💡 <strong>Tip:</strong> Use the filters and search in each tab to quickly find what you need.
             </p>
           </div>
