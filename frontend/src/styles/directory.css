@@ -227,6 +227,52 @@
   border: 1px solid rgba(207, 181, 59, 0.3);
 }
 
+/* Social Media Icons */
+.directory-card-socials {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 16px;
+  margin-top: 4px;
+}
+
+.social-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: #888;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.social-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.social-icon:hover {
+  transform: scale(1.1);
+}
+
+.social-icon.facebook:hover {
+  background: rgba(24, 119, 242, 0.2);
+  color: #1877f2;
+}
+
+.social-icon.linkedin:hover {
+  background: rgba(10, 102, 194, 0.2);
+  color: #0a66c2;
+}
+
+.social-icon.instagram:hover {
+  background: rgba(225, 48, 108, 0.2);
+  color: #e1306c;
+}
+
 /* Say Hi Button */
 .directory-say-hi-btn {
   width: 100%;
@@ -423,6 +469,27 @@ body[data-theme="light"] .directory-clear-filters:hover {
 
 body[data-theme="light"] .directory-back .btn-link {
   color: #006633 !important;
+}
+
+/* Social Icons Light Mode */
+body[data-theme="light"] .social-icon {
+  background: rgba(0, 0, 0, 0.06) !important;
+  color: #666 !important;
+}
+
+body[data-theme="light"] .social-icon.facebook:hover {
+  background: rgba(24, 119, 242, 0.15) !important;
+  color: #1877f2 !important;
+}
+
+body[data-theme="light"] .social-icon.linkedin:hover {
+  background: rgba(10, 102, 194, 0.15) !important;
+  color: #0a66c2 !important;
+}
+
+body[data-theme="light"] .social-icon.instagram:hover {
+  background: rgba(225, 48, 108, 0.15) !important;
+  color: #e1306c !important;
 }
 
 /* ===========================================

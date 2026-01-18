@@ -325,11 +325,11 @@ export default function ProfileNew() {
             </div>
             {user?.isAdmin && <Link to="/committee" className="nav-link">Committee</Link>}
             {user?.isAdmin && <Link to="/directory" className="nav-link">Directory</Link>}
+            <Link to="/funds" className="nav-link">Funds</Link>
             <Link to="/inbox" className="nav-link nav-link-badge">
               Inbox
               {unreadCount > 0 && <span className="nav-badge">{unreadCount}</span>}
             </Link>
-            <Link to="/funds" className="nav-link">Funds</Link>
             <Link to={user?.isAdmin ? "/profile-preview" : "/profile"} className="nav-link">Profile</Link>
             {user?.isAdmin && <Link to="/admin" className="nav-link">Admin</Link>}
             <button onClick={handleLogout} className="nav-link logout-btn">Logout</button>
