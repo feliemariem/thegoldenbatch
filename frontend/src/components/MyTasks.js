@@ -53,10 +53,8 @@ export default function MyTasks({ token }) {
   };
 
   const navigateToMeeting = (meetingId) => {
-    // Store the meeting ID and navigate to admin dashboard with meetings tab
-    localStorage.setItem('adminActiveTab', 'minutes');
-    localStorage.setItem('selectedMeetingId', meetingId.toString());
-    navigate('/admin');
+    // Navigate to admin dashboard with meetings tab and specific meeting ID in URL
+    navigate(`/admin?tab=meetings&meetingId=${meetingId}`);
   };
 
   const getStatusBadge = (status) => {
