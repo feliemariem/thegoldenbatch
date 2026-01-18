@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import logo from '../images/lasalle.jpg';
 
 export default function Media() {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('all');
   const [albums, setAlbums] = useState([]);
   const [selectedAlbum, setSelectedAlbum] = useState(null);
@@ -502,7 +504,7 @@ export default function Media() {
 
         {/* Back to Profile link */}
         <p style={{ textAlign: 'center', marginTop: '32px' }}>
-          <Link to="/profile" className="btn-link">Back to Profile</Link>
+          <Link to={user?.isAdmin ? "/profile-preview" : "/profile"} className="btn-link">Back to Profile</Link>
         </p>
 
         {/* Lightbox */}
