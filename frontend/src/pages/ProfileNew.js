@@ -300,8 +300,9 @@ export default function ProfileNew() {
 
   return (
     <div className="profile-container">
-      {/* Header */}
-      <header className="profile-header">
+      <div className="card">
+        {/* Header */}
+        <header className="profile-header">
         <div className="profile-header-content">
           <div className="profile-logo-section">
             <img src={logo} alt="USLS Logo" className="profile-logo" />
@@ -819,8 +820,9 @@ export default function ProfileNew() {
           </div>
         </div>
 
-        <Footer />
       </main>
+      </div>
+      <Footer />
     </div>
   );
 }

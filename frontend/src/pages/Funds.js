@@ -82,26 +82,27 @@ export default function Funds() {
 
   return (
     <div className="profile-container">
-      {/* Header */}
-      <header className="profile-header">
-        <div className="profile-header-content">
-          <div className="profile-logo-section">
-            <img src={logo} alt="USLS Logo" className="profile-logo" />
-            <div className="profile-title">
-              <h1>THE GOLDEN BATCH</h1>
-              <span className="profile-subtitle">25th Alumni Homecoming</span>
+      <div className="card">
+        {/* Header */}
+        <header className="profile-header">
+          <div className="profile-header-content">
+            <div className="profile-logo-section">
+              <img src={logo} alt="USLS Logo" className="profile-logo" />
+              <div className="profile-title">
+                <h1>THE GOLDEN BATCH</h1>
+                <span className="profile-subtitle">25th Alumni Homecoming</span>
+              </div>
             </div>
-          </div>
-          <nav className="profile-nav">
-            <div className={`nav-dropdown ${eventsDropdownOpen ? 'open' : ''}`} ref={eventsDropdownRef}>
-              <button
-                className={`nav-dropdown-trigger ${location.pathname === '/events' || location.pathname === '/media' ? 'active' : ''} ${eventsDropdownOpen ? 'open' : ''}`}
-                onClick={() => setEventsDropdownOpen(!eventsDropdownOpen)}
-              >
-                Events <span className="dropdown-arrow">▼</span>
-              </button>
-              <div className="nav-dropdown-menu">
-                <Link to="/events" className={`nav-dropdown-item ${location.pathname === '/events' ? 'active' : ''}`} onClick={() => setEventsDropdownOpen(false)}>Upcoming</Link>
+            <nav className="profile-nav">
+              <div className={`nav-dropdown ${eventsDropdownOpen ? 'open' : ''}`} ref={eventsDropdownRef}>
+                <button
+                  className={`nav-dropdown-trigger ${location.pathname === '/events' || location.pathname === '/media' ? 'active' : ''} ${eventsDropdownOpen ? 'open' : ''}`}
+                  onClick={() => setEventsDropdownOpen(!eventsDropdownOpen)}
+                >
+                  Events <span className="dropdown-arrow">▼</span>
+                </button>
+                <div className="nav-dropdown-menu">
+                  <Link to="/events" className={`nav-dropdown-item ${location.pathname === '/events' ? 'active' : ''}`} onClick={() => setEventsDropdownOpen(false)}>Upcoming</Link>
                 <Link to="/media" className={`nav-dropdown-item ${location.pathname === '/media' ? 'active' : ''}`} onClick={() => setEventsDropdownOpen(false)}>Media</Link>
               </div>
             </div>
@@ -394,9 +395,9 @@ export default function Funds() {
         </div>
 
         </div>
-
-        <Footer />
       </main>
+      </div>
+      <Footer />
     </div>
   );
 }

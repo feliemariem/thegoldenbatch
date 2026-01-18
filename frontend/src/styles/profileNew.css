@@ -3,10 +3,10 @@
    User Profile Page
    ======================================== */
 
-/* Container */
+/* Container - transparent to show body background image */
 .profile-container {
   min-height: 100vh;
-  background: linear-gradient(165deg, #0a0f0d 0%, #1a2520 50%, #0d1210 100%);
+  /* No background - body background with HS building image shows through */
 }
 
 .profile-loading {
