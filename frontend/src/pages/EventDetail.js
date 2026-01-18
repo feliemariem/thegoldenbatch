@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useInbox } from '../context/InboxContext';
-import ThemeToggle from '../components/ThemeToggle';
 import logo from '../images/lasalle.jpg';
 import '../styles/profileNew.css';
 import '../styles/events.css';
@@ -166,7 +165,6 @@ export default function EventDetail() {
               <Link to="/funds" className="nav-link">Funds</Link>
               <Link to={user?.isAdmin ? "/profile-preview" : "/profile"} className="nav-link">Profile</Link>
               {user?.isAdmin && <Link to="/admin" className="nav-link">Admin</Link>}
-              <ThemeToggle />
               <button onClick={handleLogout} className="nav-link logout-btn">Logout</button>
             </nav>
           </div>
@@ -214,7 +212,6 @@ export default function EventDetail() {
             <Link to="/funds" className="nav-link">Funds</Link>
             <Link to={user?.isAdmin ? "/profile-preview" : "/profile"} className="nav-link">Profile</Link>
             {user?.isAdmin && <Link to="/admin" className="nav-link">Admin</Link>}
-            <ThemeToggle />
             <button onClick={handleLogout} className="nav-link logout-btn">Logout</button>
           </nav>
         </div>
