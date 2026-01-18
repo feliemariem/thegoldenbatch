@@ -115,7 +115,8 @@
   gap: 6px;
 }
 
-.nav-badge {
+.nav-badge,
+.nav-link .unread-badge {
   background: #CFB53B;
   color: #1a1a2e;
   font-size: 0.7rem;
@@ -124,6 +125,7 @@
   border-radius: 10px;
   min-width: 18px;
   text-align: center;
+  margin-left: 6px;
 }
 
 .logout-btn {

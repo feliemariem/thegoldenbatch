@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useInbox } from '../context/InboxContext';
 import ThemeToggle from '../components/ThemeToggle';
 import logo from '../images/lasalle.jpg';
 import '../styles/profileNew.css';
@@ -48,6 +49,7 @@ const VOLUNTEER_ROLES = [
 
 export default function Committee() {
   const { user, token, logout } = useAuth();
+  const { unreadCount } = useInbox();
   const navigate = useNavigate();
   const isAdmin = user?.isAdmin;
 
@@ -170,7 +172,7 @@ export default function Committee() {
             <Link to="/events" className="nav-link">Events</Link>
             {isAdmin && <Link to="/media" className="nav-link">Media</Link>}
             <Link to="/committee" className="nav-link active">Committee</Link>
-            <Link to="/inbox" className="nav-link">Inbox</Link>
+            <Link to="/inbox" className="nav-link">Inbox{unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}</Link>
             <Link to="/funds" className="nav-link">Funds</Link>
             <Link to={isAdmin ? "/profile-preview" : "/profile"} className="nav-link">Profile</Link>
             {isAdmin && <Link to="/admin" className="nav-link">Admin</Link>}
