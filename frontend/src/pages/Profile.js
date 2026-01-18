@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import logo from '../images/lasalle.jpg';
 
@@ -144,9 +144,14 @@ export default function Profile() {
         }}>The Golden Batch</h2>
         <div className="header-row">
           <h4 style={{ margin: 0 }}>USLS-IS 2003</h4>
-          <button onClick={handleLogout} className="btn-link">
-            Logout
-          </button>
+          <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+            <Link to="/inbox" style={{ color: '#CFB53B', textDecoration: 'none', fontWeight: '500' }}>
+              Inbox
+            </Link>
+            <button onClick={handleLogout} className="btn-link">
+              Logout
+            </button>
+          </div>
         </div>
 
         {/* Welcome Section */}
