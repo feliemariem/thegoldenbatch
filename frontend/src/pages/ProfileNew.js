@@ -566,26 +566,18 @@ export default function ProfileNew() {
               ) : (
                 <div className="info-display">
                   <div className="info-grid">
-                    <div className="info-item">
-                      <span className="info-label">Name</span>
-                      <span className="info-value">{profile.first_name} {profile.last_name}</span>
-                    </div>
-                    {profile.current_name && (
+                    {(profile.first_name || profile.last_name) && (
                       <div className="info-item">
-                        <span className="info-label">Current Name</span>
-                        <span className="info-value">{profile.current_name}</span>
+                        <span className="info-label">Name</span>
+                        <span className="info-value">{profile.first_name} {profile.last_name}</span>
                       </div>
                     )}
-                    {profile.section && (
+                    {profile.email && (
                       <div className="info-item">
-                        <span className="info-label">Section</span>
-                        <span className="info-value">{profile.section}</span>
+                        <span className="info-label">Email</span>
+                        <span className="info-value">{profile.email}</span>
                       </div>
                     )}
-                    <div className="info-item">
-                      <span className="info-label">Email</span>
-                      <span className="info-value">{profile.email}</span>
-                    </div>
                     {profile.birthday && (
                       <div className="info-item">
                         <span className="info-label">Birthday</span>
@@ -604,10 +596,16 @@ export default function ProfileNew() {
                         <span className="info-value">{profile.address}</span>
                       </div>
                     )}
-                    <div className="info-item">
-                      <span className="info-label">Location</span>
-                      <span className="info-value">{profile.city}, {profile.country}</span>
-                    </div>
+                    {(profile.city || profile.country) && (
+                      <div className="info-item">
+                        <span className="info-label">Location</span>
+                        <span className="info-value">
+                          {profile.city && profile.country
+                            ? `${profile.city}, ${profile.country}`
+                            : profile.city || profile.country}
+                        </span>
+                      </div>
+                    )}
                     {profile.occupation && (
                       <div className="info-item">
                         <span className="info-label">Occupation</span>
