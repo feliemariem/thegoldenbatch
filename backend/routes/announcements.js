@@ -100,14 +100,90 @@ router.post('/', authenticateToken, async (req, res) => {
     let emailsFailed = 0;
 
     if (sendEmail) {
-      // Send emails via SendGrid
-      const siteUrl = process.env.SITE_URL || 'http://localhost:3000';
-      
-      for (const recipient of recipients) {
+      console.log('=== EMAIL SENDING PROCESS STARTED ===');
+      console.log('Total recipients to process:', recipients.length);
+
+      // Step 1: Validate SendGrid configuration
+      let sendGridConfigValid = false;
+      try {
+        console.log('[Step 1] Checking SendGrid configuration...');
+        const apiKey = process.env.SENDGRID_API_KEY;
+        if (!apiKey) {
+          console.error('[Step 1] CRITICAL: SENDGRID_API_KEY is not set!');
+        } else if (apiKey.length < 20) {
+          console.error('[Step 1] CRITICAL: SENDGRID_API_KEY appears invalid (too short)');
+        } else {
+          console.log('[Step 1] SendGrid API key present, length:', apiKey.length, ', starts with:', apiKey.substring(0, 5) + '...');
+          sendGridConfigValid = true;
+        }
+      } catch (configErr) {
+        console.error('[Step 1] Error checking SendGrid config:', configErr.message);
+        console.error('[Step 1] Config error stack:', configErr.stack);
+      }
+
+      // Step 2: Validate FROM email
+      let fromEmail;
+      try {
+        console.log('[Step 2] Checking FROM email configuration...');
+        fromEmail = process.env.FROM_EMAIL || 'noreply@goldenbatch2003.com';
+        console.log('[Step 2] FROM email:', fromEmail);
+        if (!fromEmail.includes('@')) {
+          console.error('[Step 2] CRITICAL: FROM_EMAIL is invalid:', fromEmail);
+        }
+      } catch (fromErr) {
+        console.error('[Step 2] Error checking FROM email:', fromErr.message);
+      }
+
+      // Step 3: Get site URL
+      let siteUrl;
+      try {
+        console.log('[Step 3] Getting site URL...');
+        siteUrl = process.env.SITE_URL || 'http://localhost:3000';
+        console.log('[Step 3] Site URL:', siteUrl);
+      } catch (siteErr) {
+        console.error('[Step 3] Error getting site URL:', siteErr.message);
+        siteUrl = 'http://localhost:3000';
+      }
+
+      console.log('[Step 4] Beginning email send loop...');
+
+      for (let i = 0; i < recipients.length; i++) {
+        const recipient = recipients[i];
+        const recipientNum = i + 1;
+
+        console.log(`\n--- Processing recipient ${recipientNum}/${recipients.length} ---`);
+
+        // Step 4a: Validate recipient
         try {
-          await sgMail.send({
+          console.log(`[${recipientNum}] Validating recipient...`);
+          console.log(`[${recipientNum}] Email: ${recipient.email}`);
+          console.log(`[${recipientNum}] Name: ${recipient.first_name || '(no first name)'} ${recipient.last_name || '(no last name)'}`);
+
+          if (!recipient.email) {
+            console.error(`[${recipientNum}] SKIPPING: No email address for recipient`);
+            emailsFailed++;
+            continue;
+          }
+
+          if (!recipient.email.includes('@')) {
+            console.error(`[${recipientNum}] SKIPPING: Invalid email format: ${recipient.email}`);
+            emailsFailed++;
+            continue;
+          }
+        } catch (validationErr) {
+          console.error(`[${recipientNum}] Recipient validation error:`, validationErr.message);
+          emailsFailed++;
+          continue;
+        }
+
+        // Step 4b: Build email message object
+        let emailMessage;
+        try {
+          console.log(`[${recipientNum}] Building email message object...`);
+
+          emailMessage = {
             to: recipient.email,
-            from: process.env.FROM_EMAIL || 'noreply@goldenbatch2003.com',
+            from: fromEmail,
             subject: `USLS-IS 2003 [The Golden Batch]:New message in your Inbox`,
             html: `
               <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
@@ -115,31 +191,31 @@ router.post('/', authenticateToken, async (req, res) => {
                 <div style="background: #1a2520; padding: 25px 30px; text-align: center;">
                   <span style="color: #CFB53B; font-size: 20px; font-weight: 600; letter-spacing: 3px;">THE GOLDEN BATCH</span>
                 </div>
-                
+
                 <!-- Green band -->
                 <div style="background: #006633; color: white; padding: 25px 30px; text-align: center;">
                   <h1 style="margin: 0; font-size: 22px; font-weight: 700;">University of St. La Salle - IS 2003</h1>
                   <p style="margin: 8px 0 0 0; opacity: 0.9; font-size: 14px;">25th Alumni Homecoming</p>
                 </div>
-                
+
                 <!-- Main content -->
                 <div style="padding: 40px 30px; background: #f9f9f9;">
                   <p style="color: #333; font-size: 16px; margin: 0 0 25px 0;">Hi ${recipient.first_name || 'Batchmate'},</p>
-                  
+
                   <div style="background: white; padding: 25px; border-radius: 8px; margin: 0 0 25px 0; border-left: 4px solid #CFB53B; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
                     <p style="color: #333; margin: 0 0 15px 0; font-size: 16px;">You have a new message in your Inbox!</p>
                     <p style="color: #666; margin: 0; font-size: 14px;">Subject: <strong style="color: #006633;">${subject}</strong></p>
                   </div>
-                  
+
                   <div style="text-align: center; margin: 30px 0;">
                     <a href="${siteUrl}/inbox" style="display: inline-block; background: #006633; color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px;">View Message</a>
                   </div>
-                  
+
                   <p style="color: #666; font-size: 14px; margin: 30px 0 0 0;">
                     - The Organizing Committee
                   </p>
                 </div>
-                
+
                 <!-- Footer -->
                 <div style="background: #333; color: #999; padding: 25px 20px; text-align: center; font-size: 12px;">
                   <p style="margin: 0; color: #ccc;">USLS-IS 2003</p>
@@ -148,13 +224,82 @@ router.post('/', authenticateToken, async (req, res) => {
               </div>
             `,
             text: `Hi ${recipient.first_name || 'Batchmate'},\n\nYou have a new message in your Inbox!\n\nSubject: ${subject}\n\nView it here: ${siteUrl}/inbox\n\n- The Organizing Committee\n\nUSLS-IS 2003\nQuestions? Email us at uslsis.batch2003@gmail.com`
-          });
+          };
+
+          console.log(`[${recipientNum}] Email message object built successfully`);
+          console.log(`[${recipientNum}] Message to: ${emailMessage.to}`);
+          console.log(`[${recipientNum}] Message from: ${emailMessage.from}`);
+          console.log(`[${recipientNum}] Message subject length: ${emailMessage.subject.length}`);
+          console.log(`[${recipientNum}] HTML content length: ${emailMessage.html.length}`);
+          console.log(`[${recipientNum}] Text content length: ${emailMessage.text.length}`);
+        } catch (buildErr) {
+          console.error(`[${recipientNum}] Error building email message:`, buildErr.message);
+          console.error(`[${recipientNum}] Build error stack:`, buildErr.stack);
+          emailsFailed++;
+          continue;
+        }
+
+        // Step 4c: Send via SendGrid API
+        try {
+          console.log(`[${recipientNum}] Calling SendGrid API...`);
+          const startTime = Date.now();
+
+          const response = await sgMail.send(emailMessage);
+
+          const endTime = Date.now();
+          console.log(`[${recipientNum}] SendGrid API call completed in ${endTime - startTime}ms`);
+
+          // Log SendGrid response details
+          if (response && response[0]) {
+            console.log(`[${recipientNum}] SendGrid response status code:`, response[0].statusCode);
+            console.log(`[${recipientNum}] SendGrid response headers:`, JSON.stringify(response[0].headers || {}, null, 2));
+          } else {
+            console.log(`[${recipientNum}] SendGrid response (raw):`, JSON.stringify(response));
+          }
+
+          console.log(`[${recipientNum}] SUCCESS: Email sent to ${recipient.email}`);
           emailsSent++;
-        } catch (emailErr) {
-          console.error(`Failed to send to ${recipient.email}:`, emailErr.message);
+        } catch (sendGridErr) {
+          console.error(`\n[${recipientNum}] ========== SENDGRID ERROR ==========`);
+          console.error(`[${recipientNum}] Failed to send to: ${recipient.email}`);
+          console.error(`[${recipientNum}] Error name:`, sendGridErr.name);
+          console.error(`[${recipientNum}] Error message:`, sendGridErr.message);
+          console.error(`[${recipientNum}] Error code:`, sendGridErr.code);
+
+          // SendGrid specific error details
+          if (sendGridErr.response) {
+            console.error(`[${recipientNum}] SendGrid HTTP status:`, sendGridErr.response.statusCode);
+            console.error(`[${recipientNum}] SendGrid response body:`, JSON.stringify(sendGridErr.response.body, null, 2));
+            console.error(`[${recipientNum}] SendGrid response headers:`, JSON.stringify(sendGridErr.response.headers, null, 2));
+          }
+
+          // Check for common error types
+          if (sendGridErr.code === 'ENOTFOUND') {
+            console.error(`[${recipientNum}] DIAGNOSIS: DNS resolution failed - check network connectivity`);
+          } else if (sendGridErr.code === 'ETIMEDOUT') {
+            console.error(`[${recipientNum}] DIAGNOSIS: Connection timed out - check network/firewall`);
+          } else if (sendGridErr.code === 'ECONNREFUSED') {
+            console.error(`[${recipientNum}] DIAGNOSIS: Connection refused - SendGrid may be blocked`);
+          } else if (sendGridErr.response && sendGridErr.response.statusCode === 401) {
+            console.error(`[${recipientNum}] DIAGNOSIS: Authentication failed - check SENDGRID_API_KEY`);
+          } else if (sendGridErr.response && sendGridErr.response.statusCode === 403) {
+            console.error(`[${recipientNum}] DIAGNOSIS: Forbidden - API key may lack permissions or sender not verified`);
+          } else if (sendGridErr.response && sendGridErr.response.statusCode === 400) {
+            console.error(`[${recipientNum}] DIAGNOSIS: Bad request - check email format/content`);
+          }
+
+          console.error(`[${recipientNum}] Full error stack:`, sendGridErr.stack);
+          console.error(`[${recipientNum}] ====================================\n`);
+
           emailsFailed++;
         }
       }
+
+      console.log('\n=== EMAIL SENDING PROCESS COMPLETED ===');
+      console.log('Total processed:', recipients.length);
+      console.log('Successfully sent:', emailsSent);
+      console.log('Failed:', emailsFailed);
+      console.log('========================================\n');
     }
 
     // Log the announcement
