@@ -262,7 +262,16 @@ body[data-theme="light"] .invite-url code {
 body[data-theme="light"] .table-wrapper {
   border: 1px solid rgba(0, 102, 51, 0.12) !important;
   border-radius: 12px !important;
-  overflow: hidden !important;
+}
+
+/* IMPORTANT: Do NOT set overflow:hidden on scrollable tables - it breaks scrolling */
+body[data-theme="light"] .table-wrapper:not(.scrollable-table-wrapper) {
+  overflow: hidden;
+}
+
+/* Scrollable tables must keep their overflow behavior */
+body[data-theme="light"] .scrollable-table-wrapper {
+  overflow: auto !important;
 }
 
 body[data-theme="light"] table {
