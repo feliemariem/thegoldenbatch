@@ -725,25 +725,6 @@ export default function AdminDashboard() {
           >
             Registry
           </button>
-          {(isSuperAdmin || permissions?.announcements_view) && (
-            <button
-              onClick={() => setDashboardMode('announcements')}
-              style={{
-                flex: 1,
-                padding: '10px 8px',
-                border: 'none',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontWeight: '600',
-                fontSize: '0.75rem',
-                background: dashboardMode === 'announcements' ? '#CFB53B' : 'transparent',
-                color: dashboardMode === 'announcements' ? '#1a1a2e' : '#999',
-                whiteSpace: 'nowrap'
-              }}
-            >
-              Announce
-            </button>
-          )}
           {(isSuperAdmin || permissions?.accounting_view) && (
             <button
               onClick={() => setDashboardMode('accounting')}
@@ -763,6 +744,25 @@ export default function AdminDashboard() {
               Accounting
             </button>
           )}
+          {(isSuperAdmin || permissions?.announcements_view) && (
+            <button
+              onClick={() => setDashboardMode('announcements')}
+              style={{
+                flex: 1,
+                padding: '10px 8px',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontWeight: '600',
+                fontSize: '0.75rem',
+                background: dashboardMode === 'announcements' ? '#CFB53B' : 'transparent',
+                color: dashboardMode === 'announcements' ? '#1a1a2e' : '#999',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              Announce
+            </button>
+          )}
           {(isSuperAdmin || permissions?.minutes_view) && (
             <button
               onClick={() => setDashboardMode('minutes')}
@@ -779,7 +779,7 @@ export default function AdminDashboard() {
                 whiteSpace: 'nowrap'
               }}
             >
-              Minutes
+              Meetings
             </button>
           )}
           {isSuperAdmin && (
