@@ -1161,3 +1161,12 @@
 [data-theme="light"] .my-event-day {
   color: #B8960C;
 }
+
+/* ========================================
+   FUNDS PAGE - Narrower Content Container
+   ======================================== */
+
+.funds-content {
+  max-width: 650px;
+  margin: 0 auto;
+}
