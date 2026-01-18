@@ -167,6 +167,7 @@ export default function AdminDashboard() {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
+      console.log(`[MasterList] API returned ${(data.entries || []).length} entries`);
       setMasterList(data.entries || []);
       setMasterListStats(data.stats);
       setMasterListSections(data.sections || []);
@@ -1064,7 +1065,7 @@ export default function AdminDashboard() {
                   </div>
 
                   {filteredInvites.length > 0 ? (
-                    <ScrollableTable maxHeight="500px" stickyHeader={true}>
+                    <ScrollableTable height="500px" stickyHeader={true}>
                       <table>
                         <thead>
                           <tr>
@@ -1266,7 +1267,7 @@ export default function AdminDashboard() {
                 </div>
 
                 {filteredUsers.length > 0 ? (
-                  <ScrollableTable maxHeight="500px" stickyHeader={true}>
+                  <ScrollableTable height="500px" stickyHeader={true}>
                     <table>
                       <thead>
                         <tr>
@@ -1478,7 +1479,7 @@ export default function AdminDashboard() {
 
                 {/* Table */}
                 {filteredMasterList.length > 0 ? (
-                  <ScrollableTable maxHeight="600px" stickyHeader={true}>
+                  <ScrollableTable height="500px" stickyHeader={true}>
                     <table>
                       <thead>
                         <tr>

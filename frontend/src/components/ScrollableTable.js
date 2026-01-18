@@ -4,7 +4,7 @@ import React, { useRef, useState, useEffect, useCallback } from 'react';
  * ScrollableTable - A comprehensive scrollable table wrapper
  *
  * Features:
- * - Vertical scroll with fixed maxHeight (simple CSS approach)
+ * - Vertical scroll with fixed height (simple CSS approach)
  * - Horizontal scrollbars (top and bottom, synchronized)
  * - Sticky header support
  * - Visible scrollbar styling for both light/dark modes
@@ -14,14 +14,14 @@ import React, { useRef, useState, useEffect, useCallback } from 'react';
  * Props:
  * - children: Table element to wrap
  * - className: Additional CSS classes
- * - maxHeight: Fixed maximum height for vertical scroll (default: '500px')
+ * - height: Fixed height for vertical scroll (default: '500px') - use fixed height, not maxHeight
  * - stickyHeader: Enable sticky header (default: true)
  * - showTopScrollbar: Show top horizontal scrollbar (default: true)
  */
 export default function ScrollableTable({
   children,
   className = '',
-  maxHeight = '500px',
+  height = '500px',
   stickyHeader = true,
   showTopScrollbar = true
 }) {
@@ -154,8 +154,8 @@ export default function ScrollableTable({
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseLeave}
         style={{
-          maxHeight: maxHeight,
-          overflowY: 'auto',
+          height: height,
+          overflowY: 'scroll',
           cursor: isDragging ? 'grabbing' : 'grab',
           userSelect: isDragging ? 'none' : 'auto'
         }}
