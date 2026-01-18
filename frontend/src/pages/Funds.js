@@ -93,7 +93,7 @@ export default function Funds() {
       </header>
 
       <main className="profile-main">
-        <div className="card">
+        <div className="card funds-content">
           <h2 style={{ textAlign: 'center', marginBottom: '8px' }}>USLS-IS 2003</h2>
           <p className="subtitle" style={{ textAlign: 'center' }}>25th Alumni Homecoming Fund</p>
 
