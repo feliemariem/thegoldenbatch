@@ -383,6 +383,14 @@ export default function ProfileNew() {
               </div>
 
               <div className="guide-item">
+                <h4>Funds:</h4>
+                <ul>
+                  <li>View the batch's fundraising progress</li>
+                  <li>See contribution history and how funds are being used</li>
+                </ul>
+              </div>
+
+              <div className="guide-item">
                 <h4>Inbox:</h4>
                 <ul>
                   <li>Receive announcements from the committee</li>
@@ -401,7 +409,7 @@ export default function ProfileNew() {
 
               <div className="guide-tip">
                 <span className="tip-icon">💡</span>
-                <strong>Tip:</strong> Keep your profile updated so batchmates can find and connect with you!
+                <strong>Tip:</strong> Have questions or suggestions? Go to your Inbox and click "Contact Committee" to reach the organizers!
               </div>
             </div>
           </div>
