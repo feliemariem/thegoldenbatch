@@ -1408,6 +1408,25 @@ body[data-theme="light"] .action-item-summary {
 }
 
 /* =========================================
+   MEETINGS SECTION - Light Mode Text Fixes
+   Dark green for dates and assignee names
+   ========================================= */
+
+/* Meeting dates - use dark green for better contrast */
+body[data-theme="light"] .meeting-date {
+  color: #006633 !important;
+}
+
+/* Assignee links - use dark green for better readability */
+body[data-theme="light"] .meeting-assignee-link {
+  color: #006633 !important;
+}
+
+body[data-theme="light"] .meeting-assignee-link:hover {
+  color: #004d26 !important;
+}
+
+/* =========================================
    BIRTHDAY BANNER
    ========================================= */
 

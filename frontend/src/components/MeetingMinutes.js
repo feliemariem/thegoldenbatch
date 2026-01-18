@@ -483,7 +483,7 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
                     cursor: 'pointer'
                   }}
                 >
-                  <div style={{ fontSize: '0.7rem', color: '#CFB53B', marginBottom: '4px' }}>
+                  <div className="meeting-date" style={{ fontSize: '0.7rem', color: '#CFB53B', marginBottom: '4px' }}>
                     {formatDate(meeting.meeting_date)}
                   </div>
                   <div style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '4px' }}>
@@ -519,7 +519,7 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
           }}>
             {/* Header */}
             <div style={{ padding: '16px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-              <div style={{ color: '#CFB53B', fontSize: '0.8rem', marginBottom: '6px' }}>
+              <div className="meeting-date" style={{ color: '#CFB53B', fontSize: '0.8rem', marginBottom: '6px' }}>
                 {formatDate(selectedMeeting.meeting_date)}
               </div>
               <h3 style={{ margin: '0 0 8px 0', color: 'var(--text-primary)', fontSize: '1.1rem' }}>
@@ -656,6 +656,7 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
                           {item.assignee_name && (
                             <Link
                               to={`/profile/${item.assignee_email}`}
+                              className="meeting-assignee-link"
                               style={{ color: '#CFB53B', textDecoration: 'none' }}
                               onClick={(e) => e.stopPropagation()}
                             >
@@ -1001,8 +1002,8 @@ Tip: Use ## for headers, - for bullet points"
                   transition: 'all 0.2s'
                 }}
               >
-                <div style={{ 
-                  fontSize: '0.75rem', 
+                <div className="meeting-date" style={{
+                  fontSize: '0.75rem',
                   color: '#CFB53B',
                   marginBottom: '6px'
                 }}>
@@ -1056,7 +1057,7 @@ Tip: Use ## for headers, - for bullet points"
                 alignItems: 'flex-start'
               }}>
                 <div>
-                  <div style={{ color: '#CFB53B', fontSize: '0.85rem', marginBottom: '6px' }}>
+                  <div className="meeting-date" style={{ color: '#CFB53B', fontSize: '0.85rem', marginBottom: '6px' }}>
                     {formatDate(selectedMeeting.meeting_date)}
                   </div>
                   <h3 style={{ margin: 0, color: 'var(--text-primary)', fontSize: '1.2rem' }}>
@@ -1196,6 +1197,7 @@ Tip: Use ## for headers, - for bullet points"
                                 Assigned to:{' '}
                                 <Link
                                   to={`/profile/${item.assignee_email}`}
+                                  className="meeting-assignee-link"
                                   style={{ color: '#CFB53B', textDecoration: 'none' }}
                                   onClick={(e) => e.stopPropagation()}
                                 >
