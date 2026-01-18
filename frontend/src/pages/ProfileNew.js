@@ -56,9 +56,18 @@ export default function ProfileNew() {
     };
   };
 
+  // Helper function to format birthday without timezone conversion
+  const formatBirthday = (dateStr) => {
+    if (!dateStr) return '';
+    // Extract just the date portion (YYYY-MM-DD) and parse at local midnight
+    const dateOnly = dateStr.split('T')[0];
+    const date = new Date(dateOnly + 'T00:00:00');
+    if (isNaN(date.getTime())) return '';
+    return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  };
+
   useEffect(() => {
     fetchProfile();
-    fetchUnreadCount();
     fetchMyEvents();
   }, [token]);
 
@@ -84,19 +93,6 @@ export default function ProfileNew() {
       }
     } catch (err) {
       console.error('Failed to fetch my events');
-    }
-  };
-
-  const fetchUnreadCount = async () => {
-    try {
-      const res = await fetch('https://the-golden-batch-api.onrender.com/api/announcements/inbox', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      const unread = (data.announcements || []).filter(a => !a.is_read).length;
-      setUnreadCount(unread);
-    } catch (err) {
-      console.error('Failed to fetch unread count');
     }
   };
 
@@ -605,7 +601,7 @@ export default function ProfileNew() {
                     {profile.birthday && (
                       <div className="info-item">
                         <span className="info-label">Birthday</span>
-                        <span className="info-value">{new Date(profile.birthday).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+                        <span className="info-value">{formatBirthday(profile.birthday)}</span>
                       </div>
                     )}
                     {profile.mobile && (
