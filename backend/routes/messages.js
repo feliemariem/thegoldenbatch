@@ -80,11 +80,14 @@ router.get('/admin-inbox', authenticateAdmin, async (req, res) => {
         u.first_name as sender_first_name,
         u.last_name as sender_last_name,
         u.email as sender_email,
-        ml.current_name as sender_current_name
+        ml.current_name as sender_current_name,
+        CASE WHEN EXISTS (
+          SELECT 1 FROM messages r WHERE r.parent_id = m.id
+        ) THEN true ELSE false END as has_reply
       FROM messages m
       LEFT JOIN users u ON m.from_user_id = u.id
       LEFT JOIN master_list ml ON LOWER(u.email) = LOWER(ml.email)
-      WHERE m.to_user_id IS NULL
+      WHERE m.to_user_id IS NULL AND m.parent_id IS NULL
       ORDER BY m.created_at DESC
     `);
 
@@ -121,6 +124,92 @@ router.get('/user-inbox', authenticateToken, async (req, res) => {
   } catch (err) {
     console.error('Failed to fetch user inbox:', err);
     res.status(500).json({ error: 'Failed to fetch messages' });
+  }
+});
+
+// Get messages sent BY user to committee
+router.get('/user-sent', authenticateToken, async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT
+        m.id,
+        m.subject,
+        m.message,
+        m.is_read,
+        m.created_at,
+        m.parent_id,
+        m.from_user_id,
+        CASE WHEN EXISTS (
+          SELECT 1 FROM messages r WHERE r.parent_id = m.id
+        ) THEN true ELSE false END as has_reply
+      FROM messages m
+      WHERE m.from_user_id = $1 AND m.to_user_id IS NULL AND m.parent_id IS NULL
+      ORDER BY m.created_at DESC
+    `, [req.user.id]);
+
+    res.json({ messages: result.rows });
+  } catch (err) {
+    console.error('Failed to fetch user sent messages:', err);
+    res.status(500).json({ error: 'Failed to fetch messages' });
+  }
+});
+
+// Get full thread for a message
+router.get('/thread/:id', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // First get the root message (either the message itself or find its root)
+    const rootResult = await db.query(`
+      WITH RECURSIVE thread AS (
+        SELECT id, parent_id, id as root_id
+        FROM messages
+        WHERE id = $1
+        UNION ALL
+        SELECT m.id, m.parent_id, t.root_id
+        FROM messages m
+        JOIN thread t ON m.id = t.parent_id
+      )
+      SELECT root_id FROM thread WHERE parent_id IS NULL
+    `, [id]);
+
+    const rootId = rootResult.rows[0]?.root_id || id;
+
+    // Now get all messages in the thread (root + all descendants)
+    const result = await db.query(`
+      WITH RECURSIVE thread AS (
+        SELECT id FROM messages WHERE id = $1
+        UNION ALL
+        SELECT m.id FROM messages m JOIN thread t ON m.parent_id = t.id
+      )
+      SELECT
+        m.id,
+        m.subject,
+        m.message,
+        m.is_read,
+        m.created_at,
+        m.parent_id,
+        m.from_user_id,
+        m.from_admin_id,
+        m.to_user_id,
+        u.first_name as user_first_name,
+        u.last_name as user_last_name,
+        u.email as user_email,
+        ml.current_name as user_current_name,
+        a.first_name as admin_first_name,
+        a.last_name as admin_last_name
+      FROM messages m
+      JOIN thread t ON m.id = t.id
+      LEFT JOIN users u ON m.from_user_id = u.id
+      LEFT JOIN master_list ml ON LOWER(u.email) = LOWER(ml.email)
+      LEFT JOIN admins a ON m.from_admin_id = a.id
+      ORDER BY m.created_at ASC
+    `, [rootId]);
+
+    res.json({ thread: result.rows, rootId });
+  } catch (err) {
+    console.error('Failed to fetch thread:', err);
+    res.status(500).json({ error: 'Failed to fetch thread' });
   }
 });
 
