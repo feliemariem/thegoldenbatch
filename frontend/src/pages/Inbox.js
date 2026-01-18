@@ -151,7 +151,23 @@ export default function Inbox() {
                 <div className="message-indicator"></div>
                 <div className="message-preview">
                   <div className="message-header">
-                    <span className="message-subject">{announcement.subject}</span>
+                    <span className="message-subject">
+                      {announcement.subject}
+                      {announcement.audience === 'admins' && (
+                        <span style={{
+                          marginLeft: '8px',
+                          padding: '2px 6px',
+                          borderRadius: '4px',
+                          fontSize: '0.65rem',
+                          fontWeight: '600',
+                          background: 'rgba(220, 53, 69, 0.15)',
+                          color: '#dc3545',
+                          verticalAlign: 'middle'
+                        }}>
+                          Admin Only
+                        </span>
+                      )}
+                    </span>
                     <span className="message-date">{formatDate(announcement.created_at)}</span>
                   </div>
                   <p className="message-snippet">
@@ -170,7 +186,23 @@ export default function Inbox() {
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <button className="modal-close" onClick={closeModal}>&times;</button>
             <div className="detail-header">
-              <h3>{selectedAnnouncement.subject}</h3>
+              <h3>
+                {selectedAnnouncement.subject}
+                {selectedAnnouncement.audience === 'admins' && (
+                  <span style={{
+                    marginLeft: '10px',
+                    padding: '3px 8px',
+                    borderRadius: '4px',
+                    fontSize: '0.7rem',
+                    fontWeight: '600',
+                    background: 'rgba(220, 53, 69, 0.15)',
+                    color: '#dc3545',
+                    verticalAlign: 'middle'
+                  }}>
+                    Admin Only
+                  </span>
+                )}
+              </h3>
               <span className="detail-date">{formatFullDate(selectedAnnouncement.created_at)}</span>
             </div>
             <div className="detail-body">

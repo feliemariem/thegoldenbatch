@@ -364,4 +364,178 @@ router.delete('/:meetingId/attachments/:attachmentId', authenticateToken, async 
   }
 });
 
+// =====================
+// ACTION ITEMS ROUTES
+// =====================
+
+// Get all admins (for assignee dropdown)
+router.get('/admins/list', authenticateToken, async (req, res) => {
+  try {
+    const hasPermission = await checkMinutesViewPermission(req.user.email);
+    if (!hasPermission) {
+      return res.status(403).json({ error: 'You do not have permission to view admins' });
+    }
+
+    const result = await db.query(`
+      SELECT a.id, a.email, a.first_name, a.last_name,
+             COALESCE(u.first_name || ' ' || u.last_name, a.first_name || ' ' || COALESCE(a.last_name, '')) as display_name
+      FROM admins a
+      LEFT JOIN users u ON LOWER(a.email) = LOWER(u.email)
+      ORDER BY display_name
+    `);
+
+    res.json({ admins: result.rows });
+  } catch (err) {
+    console.error('Failed to fetch admins:', err);
+    res.status(500).json({ error: 'Failed to fetch admins' });
+  }
+});
+
+// Get action items for a meeting
+router.get('/:meetingId/action-items', authenticateToken, async (req, res) => {
+  try {
+    const hasPermission = await checkMinutesViewPermission(req.user.email);
+    if (!hasPermission) {
+      return res.status(403).json({ error: 'You do not have permission to view action items' });
+    }
+
+    const { meetingId } = req.params;
+
+    const result = await db.query(`
+      SELECT ai.*,
+             a.email as assignee_email,
+             COALESCE(u.first_name || ' ' || u.last_name, a.first_name || ' ' || COALESCE(a.last_name, '')) as assignee_name
+      FROM action_items ai
+      LEFT JOIN admins a ON ai.assignee_id = a.id
+      LEFT JOIN users u ON LOWER(a.email) = LOWER(u.email)
+      WHERE ai.meeting_id = $1
+      ORDER BY
+        CASE ai.priority
+          WHEN 'high' THEN 1
+          WHEN 'medium' THEN 2
+          WHEN 'low' THEN 3
+          ELSE 4
+        END,
+        ai.due_date ASC NULLS LAST,
+        ai.created_at ASC
+    `, [meetingId]);
+
+    res.json({ actionItems: result.rows });
+  } catch (err) {
+    console.error('Failed to fetch action items:', err);
+    res.status(500).json({ error: 'Failed to fetch action items' });
+  }
+});
+
+// Create action item
+router.post('/:meetingId/action-items', authenticateToken, async (req, res) => {
+  try {
+    const hasPermission = await checkMinutesEditPermission(req.user.email);
+    if (!hasPermission) {
+      return res.status(403).json({ error: 'You do not have permission to create action items' });
+    }
+
+    const { meetingId } = req.params;
+    const { task, assignee_id, due_date, status, priority } = req.body;
+
+    if (!task) {
+      return res.status(400).json({ error: 'Task description is required' });
+    }
+
+    // Check meeting exists
+    const meeting = await db.query('SELECT id FROM meeting_minutes WHERE id = $1', [meetingId]);
+    if (meeting.rows.length === 0) {
+      return res.status(404).json({ error: 'Meeting not found' });
+    }
+
+    const result = await db.query(`
+      INSERT INTO action_items (meeting_id, task, assignee_id, due_date, status, priority)
+      VALUES ($1, $2, $3, $4, $5, $6)
+      RETURNING *
+    `, [meetingId, task, assignee_id || null, due_date || null, status || 'not_started', priority || 'medium']);
+
+    // Fetch the full action item with assignee info
+    const fullResult = await db.query(`
+      SELECT ai.*,
+             a.email as assignee_email,
+             COALESCE(u.first_name || ' ' || u.last_name, a.first_name || ' ' || COALESCE(a.last_name, '')) as assignee_name
+      FROM action_items ai
+      LEFT JOIN admins a ON ai.assignee_id = a.id
+      LEFT JOIN users u ON LOWER(a.email) = LOWER(u.email)
+      WHERE ai.id = $1
+    `, [result.rows[0].id]);
+
+    res.status(201).json(fullResult.rows[0]);
+  } catch (err) {
+    console.error('Failed to create action item:', err);
+    res.status(500).json({ error: 'Failed to create action item' });
+  }
+});
+
+// Update action item
+router.put('/:meetingId/action-items/:actionItemId', authenticateToken, async (req, res) => {
+  try {
+    const hasPermission = await checkMinutesEditPermission(req.user.email);
+    if (!hasPermission) {
+      return res.status(403).json({ error: 'You do not have permission to edit action items' });
+    }
+
+    const { meetingId, actionItemId } = req.params;
+    const { task, assignee_id, due_date, status, priority } = req.body;
+
+    const result = await db.query(`
+      UPDATE action_items
+      SET task = $1, assignee_id = $2, due_date = $3, status = $4, priority = $5
+      WHERE id = $6 AND meeting_id = $7
+      RETURNING *
+    `, [task, assignee_id || null, due_date || null, status || 'not_started', priority || 'medium', actionItemId, meetingId]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Action item not found' });
+    }
+
+    // Fetch the full action item with assignee info
+    const fullResult = await db.query(`
+      SELECT ai.*,
+             a.email as assignee_email,
+             COALESCE(u.first_name || ' ' || u.last_name, a.first_name || ' ' || COALESCE(a.last_name, '')) as assignee_name
+      FROM action_items ai
+      LEFT JOIN admins a ON ai.assignee_id = a.id
+      LEFT JOIN users u ON LOWER(a.email) = LOWER(u.email)
+      WHERE ai.id = $1
+    `, [actionItemId]);
+
+    res.json(fullResult.rows[0]);
+  } catch (err) {
+    console.error('Failed to update action item:', err);
+    res.status(500).json({ error: 'Failed to update action item' });
+  }
+});
+
+// Delete action item
+router.delete('/:meetingId/action-items/:actionItemId', authenticateToken, async (req, res) => {
+  try {
+    const hasPermission = await checkMinutesEditPermission(req.user.email);
+    if (!hasPermission) {
+      return res.status(403).json({ error: 'You do not have permission to delete action items' });
+    }
+
+    const { meetingId, actionItemId } = req.params;
+
+    const result = await db.query(
+      'DELETE FROM action_items WHERE id = $1 AND meeting_id = $2 RETURNING id',
+      [actionItemId, meetingId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Action item not found' });
+    }
+
+    res.json({ message: 'Action item deleted' });
+  } catch (err) {
+    console.error('Failed to delete action item:', err);
+    res.status(500).json({ error: 'Failed to delete action item' });
+  }
+});
+
 module.exports = router;
