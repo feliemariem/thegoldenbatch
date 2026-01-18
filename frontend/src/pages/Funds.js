@@ -1,10 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useInbox } from '../context/InboxContext';
+import ThemeToggle from '../components/ThemeToggle';
 import logo from '../images/lasalle.jpg';
+import '../styles/profileNew.css';
 
 export default function Funds() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const { unreadCount } = useInbox();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
   const [balance, setBalance] = useState(0);
   const [totalDeposits, setTotalDeposits] = useState(0);
   const [totalWithdrawals, setTotalWithdrawals] = useState(0);
@@ -57,23 +67,35 @@ export default function Funds() {
   };
 
   return (
-    <div className="container">
-      <div className="card">
-        <img src={logo} alt="USLS Logo" className="logo" />
-        <h2 style={{
-            background: 'linear-gradient(135deg, #8B6914 0%, #CFB53B 50%, #8B6914 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-            textAlign: 'center',
-            fontSize: '1.1rem',
-            fontWeight: '700',
-            letterSpacing: '0.15em',
-            textTransform: 'uppercase',
-            margin: 0
-          }}>The Golden Batch</h2>
-        <h3 style={{ textAlign: 'center' }}>USLS-IS 2003</h3>
-        <p className="subtitle" style={{ textAlign: 'center' }}>25th Alumni Homecoming Fund</p>
+    <div className="profile-container">
+      {/* Header */}
+      <header className="profile-header">
+        <div className="profile-header-content">
+          <div className="profile-logo-section">
+            <img src={logo} alt="USLS Logo" className="profile-logo" />
+            <div className="profile-title">
+              <h1>THE GOLDEN BATCH</h1>
+              <span className="profile-subtitle">25th Alumni Homecoming</span>
+            </div>
+          </div>
+          <nav className="profile-nav">
+            <Link to="/events" className="nav-link">Events</Link>
+            {user?.isAdmin && <Link to="/media" className="nav-link">Media</Link>}
+            {user?.isAdmin && <Link to="/committee" className="nav-link">Committee</Link>}
+            <Link to="/inbox" className="nav-link">Inbox{unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}</Link>
+            <Link to="/funds" className="nav-link active">Funds</Link>
+            <Link to={user?.isAdmin ? "/profile-preview" : "/profile"} className="nav-link">Profile</Link>
+            {user?.isAdmin && <Link to="/admin" className="nav-link">Admin</Link>}
+            <ThemeToggle />
+            <button onClick={handleLogout} className="nav-link logout-btn">Logout</button>
+          </nav>
+        </div>
+      </header>
+
+      <main className="profile-main">
+        <div className="card">
+          <h2 style={{ textAlign: 'center', marginBottom: '8px' }}>USLS-IS 2003</h2>
+          <p className="subtitle" style={{ textAlign: 'center' }}>25th Alumni Homecoming Fund</p>
 
         {/* Total Funds Display */}
         <div style={{
@@ -347,11 +369,8 @@ export default function Funds() {
           </p>
         </div>
 
-        {/* Back to Profile */}
-        <p style={{ textAlign: 'center' }}>
-          <Link to={user?.isAdmin ? "/profile-preview" : "/profile"} className="btn-link">Back to Profile</Link>
-        </p>
-      </div>
+        </div>
+      </main>
     </div>
   );
 }
