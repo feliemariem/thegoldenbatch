@@ -381,8 +381,10 @@ body[data-theme="dark"] .committee-card {
   border-color: var(--border-color-dark, #333);
 }
 
-body[data-theme="dark"] .committee-card-name {
-  color: var(--text-primary-dark, #f0f0f0);
+body[data-theme="dark"] .committee-card-name,
+body[data-theme="dark"] .committee-card.core .committee-card-name,
+body[data-theme="dark"] .committee-card.member .committee-card-name {
+  color: #fff;
 }
 
 body[data-theme="dark"] .committee-card-subcommittees li {
