@@ -1,10 +1,10 @@
-import React, { useRef, useState, useEffect, useLayoutEffect, useCallback } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 
 /**
  * ScrollableTable - A comprehensive scrollable table wrapper
  *
  * Features:
- * - Vertical scroll with maxRows support
+ * - Vertical scroll with fixed maxHeight (simple CSS approach)
  * - Horizontal scrollbars (top and bottom, synchronized)
  * - Sticky header support
  * - Visible scrollbar styling for both light/dark modes
@@ -14,14 +14,14 @@ import React, { useRef, useState, useEffect, useLayoutEffect, useCallback } from
  * Props:
  * - children: Table element to wrap
  * - className: Additional CSS classes
- * - maxRows: Maximum visible rows before vertical scroll (default: null = no limit)
+ * - maxHeight: Fixed maximum height for vertical scroll (default: '500px')
  * - stickyHeader: Enable sticky header (default: true)
  * - showTopScrollbar: Show top horizontal scrollbar (default: true)
  */
 export default function ScrollableTable({
   children,
   className = '',
-  maxRows = null,
+  maxHeight = '500px',
   stickyHeader = true,
   showTopScrollbar = true
 }) {
@@ -29,7 +29,6 @@ export default function ScrollableTable({
   const tableWrapperRef = useRef(null);
   const topScrollRef = useRef(null);
   const [tableWidth, setTableWidth] = useState(0);
-  const [containerHeight, setContainerHeight] = useState('auto');
   const [isScrolling, setIsScrolling] = useState(false);
 
   // Drag-to-scroll state
@@ -104,152 +103,26 @@ export default function ScrollableTable({
     }
   }, [isDragging]);
 
-  // Calculate table width and container height
-  // Use a ref to track the last valid calculated height to prevent flickering
-  const lastValidHeightRef = useRef(null);
-
-  useLayoutEffect(() => {
-    let rafId = null;
-    let retryCount = 0;
-    const MAX_RETRIES = 5;
-
-    const updateDimensions = (isRetry = false) => {
+  // Calculate table width for horizontal scrollbar sync
+  useEffect(() => {
+    const updateTableWidth = () => {
       if (tableWrapperRef.current) {
         const table = tableWrapperRef.current.querySelector('table');
         if (table) {
           setTableWidth(table.scrollWidth);
-
-          // Calculate height based on maxRows
-          if (maxRows && maxRows > 0) {
-            const rows = table.querySelectorAll('tbody tr');
-            const thead = table.querySelector('thead');
-
-            if (rows.length > 0) {
-              // Get header height
-              const headerHeight = thead ? thead.offsetHeight : 0;
-
-              // Get average row height from first few rows
-              let totalRowHeight = 0;
-              const rowsToMeasure = Math.min(rows.length, maxRows);
-              let validRowCount = 0;
-
-              for (let i = 0; i < rowsToMeasure; i++) {
-                const rowHeight = rows[i].offsetHeight;
-                if (rowHeight > 0) {
-                  totalRowHeight += rowHeight;
-                  validRowCount++;
-                }
-              }
-
-              // If we got valid measurements
-              if (validRowCount > 0 && headerHeight > 0) {
-                const avgRowHeight = totalRowHeight / validRowCount;
-
-                // Calculate container height: header + (maxRows * avgRowHeight) + buffer
-                const calculatedHeight = headerHeight + (avgRowHeight * maxRows) + 2;
-
-                // Only apply if we have more rows than maxRows
-                if (rows.length > maxRows) {
-                  lastValidHeightRef.current = calculatedHeight;
-                  setContainerHeight(`${calculatedHeight}px`);
-                } else {
-                  lastValidHeightRef.current = null;
-                  setContainerHeight('auto');
-                }
-              } else if (retryCount < MAX_RETRIES) {
-                // Rows aren't rendered yet, schedule a retry with double-RAF
-                // to ensure browser has completed layout and paint
-                retryCount++;
-                rafId = requestAnimationFrame(() => {
-                  rafId = requestAnimationFrame(() => {
-                    updateDimensions(true);
-                  });
-                });
-              } else if (lastValidHeightRef.current) {
-                // Use last valid height as fallback
-                setContainerHeight(`${lastValidHeightRef.current}px`);
-              }
-            } else if (retryCount < MAX_RETRIES) {
-              // No rows yet, retry
-              retryCount++;
-              rafId = requestAnimationFrame(() => {
-                rafId = requestAnimationFrame(() => {
-                  updateDimensions(true);
-                });
-              });
-            }
-          } else {
-            setContainerHeight('auto');
-          }
         }
       }
     };
 
-    // Use double requestAnimationFrame to ensure DOM is fully painted
-    // First RAF waits for next frame, second RAF ensures paint is complete
-    rafId = requestAnimationFrame(() => {
-      rafId = requestAnimationFrame(() => {
-        updateDimensions();
-      });
-    });
+    updateTableWidth();
 
     // Recalculate on window resize
-    const handleResize = () => {
-      retryCount = 0;
-      if (rafId) cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(() => {
-        rafId = requestAnimationFrame(() => {
-          updateDimensions();
-        });
-      });
-    };
-
-    window.addEventListener('resize', handleResize);
-
-    // Use ResizeObserver for dynamic content changes
-    let resizeObserver;
-    if (tableWrapperRef.current && typeof ResizeObserver !== 'undefined') {
-      resizeObserver = new ResizeObserver(() => {
-        retryCount = 0;
-        if (rafId) cancelAnimationFrame(rafId);
-        rafId = requestAnimationFrame(() => {
-          rafId = requestAnimationFrame(() => {
-            updateDimensions();
-          });
-        });
-      });
-      resizeObserver.observe(tableWrapperRef.current);
-    }
-
-    // Also observe the table itself for content changes (e.g., when data loads)
-    let mutationObserver;
-    if (tableWrapperRef.current && typeof MutationObserver !== 'undefined') {
-      mutationObserver = new MutationObserver(() => {
-        retryCount = 0;
-        if (rafId) cancelAnimationFrame(rafId);
-        rafId = requestAnimationFrame(() => {
-          rafId = requestAnimationFrame(() => {
-            updateDimensions();
-          });
-        });
-      });
-      mutationObserver.observe(tableWrapperRef.current, {
-        childList: true,
-        subtree: true
-      });
-    }
+    window.addEventListener('resize', updateTableWidth);
 
     return () => {
-      if (rafId) cancelAnimationFrame(rafId);
-      window.removeEventListener('resize', handleResize);
-      if (resizeObserver) {
-        resizeObserver.disconnect();
-      }
-      if (mutationObserver) {
-        mutationObserver.disconnect();
-      }
+      window.removeEventListener('resize', updateTableWidth);
     };
-  }, [children, maxRows]);
+  }, [children]);
 
   // Determine if we need to show scrollbars
   const needsHorizontalScroll = tableWidth > 0 && containerRef.current &&
@@ -281,8 +154,8 @@ export default function ScrollableTable({
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseLeave}
         style={{
-          maxHeight: containerHeight,
-          overflowY: maxRows ? 'auto' : 'visible',
+          maxHeight: maxHeight,
+          overflowY: 'auto',
           cursor: isDragging ? 'grabbing' : 'grab',
           userSelect: isDragging ? 'none' : 'auto'
         }}
