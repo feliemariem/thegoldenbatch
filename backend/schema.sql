@@ -6,6 +6,7 @@ DROP TABLE IF EXISTS action_items;
 DROP TABLE IF EXISTS event_rsvps;
 DROP TABLE IF EXISTS events;
 DROP TABLE IF EXISTS announcement_reads;
+DROP TABLE IF EXISTS action_items;
 DROP TABLE IF EXISTS meeting_attachments;
 DROP TABLE IF EXISTS meeting_minutes;
 DROP TABLE IF EXISTS permissions;
@@ -182,6 +183,8 @@ CREATE TABLE action_items (
     due_date DATE,
     status VARCHAR(20) DEFAULT 'Not Started',
     priority VARCHAR(10) DEFAULT 'Medium',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -226,6 +229,8 @@ CREATE INDEX idx_meeting_minutes_date ON meeting_minutes(meeting_date DESC);
 CREATE INDEX idx_meeting_attachments_meeting ON meeting_attachments(meeting_id);
 CREATE INDEX idx_action_items_meeting ON action_items(meeting_id);
 CREATE INDEX idx_action_items_assignee ON action_items(assignee_id);
+CREATE INDEX idx_action_items_status ON action_items(status);
+CREATE INDEX idx_action_items_due_date ON action_items(due_date);
 CREATE INDEX idx_password_resets_token ON password_resets(token);
 CREATE INDEX idx_password_resets_email ON password_resets(email);
 CREATE INDEX idx_announcement_reads_user ON announcement_reads(user_id);
@@ -246,6 +251,21 @@ CREATE INDEX idx_event_rsvps_user ON event_rsvps(user_id);
 -- ============================================================
 -- CLEAN SLATE FOR TESTING (before public release)
 -- ============================================================
+-- Clear All Tables Except Master List & Super Admin:
+--   DELETE FROM event_rsvps;
+--   DELETE FROM events;
+--   DELETE FROM announcement_reads;
+--   DELETE FROM action_items;
+--   DELETE FROM meeting_attachments;
+--   DELETE FROM meeting_minutes;
+--   DELETE FROM permissions;
+--   DELETE FROM password_resets;
+--   DELETE FROM announcements;
+--   DELETE FROM ledger;
+--   DELETE FROM rsvps;
+--   DELETE FROM users;
+--   DELETE FROM invites;
+--   DELETE FROM admins WHERE is_super_admin = false;
 -- Run this to wipe all test data while keeping master_list names, ledger, and Super Admin (id=1):
 --
 -- psql "YOUR_EXTERNAL_URL" -c "
