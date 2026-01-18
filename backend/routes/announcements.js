@@ -51,23 +51,37 @@ router.post('/', authenticateToken, async (req, res) => {
     }
 
     // Get recipients based on audience
-    let query = `
-      SELECT u.email, u.first_name, u.last_name
-      FROM users u
-      LEFT JOIN rsvps r ON u.id = r.user_id
-    `;
+    let query;
+    let recipients;
 
-    if (audience === 'going') {
-      query += ` WHERE r.status = 'going'`;
-    } else if (audience === 'maybe') {
-      query += ` WHERE r.status = 'maybe'`;
-    } else if (audience === 'not_going') {
-      query += ` WHERE r.status = 'not_going'`;
+    if (audience === 'admins') {
+      // Get users who are also admins (their email exists in both users and admins tables)
+      query = `
+        SELECT u.email, u.first_name, u.last_name
+        FROM users u
+        INNER JOIN admins a ON LOWER(u.email) = LOWER(a.email)
+      `;
+      const recipientsResult = await db.query(query);
+      recipients = recipientsResult.rows;
+    } else {
+      query = `
+        SELECT u.email, u.first_name, u.last_name
+        FROM users u
+        LEFT JOIN rsvps r ON u.id = r.user_id
+      `;
+
+      if (audience === 'going') {
+        query += ` WHERE r.status = 'going'`;
+      } else if (audience === 'maybe') {
+        query += ` WHERE r.status = 'maybe'`;
+      } else if (audience === 'not_going') {
+        query += ` WHERE r.status = 'not_going'`;
+      }
+      // 'all' = no filter, gets all registered users
+
+      const recipientsResult = await db.query(query);
+      recipients = recipientsResult.rows;
     }
-    // 'all' = no filter, gets all registered users
-
-    const recipientsResult = await db.query(query);
-    const recipients = recipientsResult.rows;
 
     if (recipients.length === 0) {
       return res.status(400).json({ error: 'No recipients found for selected audience' });
@@ -177,9 +191,9 @@ router.get('/history', authenticateToken, async (req, res) => {
 // Get announcements for inbox (regular users)
 router.get('/inbox', authenticateToken, async (req, res) => {
   try {
-    // Get user's RSVP status to filter relevant announcements
+    // Get user's RSVP status and check if they're an admin
     const userResult = await db.query(
-      `SELECT u.id, r.status as rsvp_status
+      `SELECT u.id, u.email, r.status as rsvp_status
        FROM users u
        LEFT JOIN rsvps r ON u.id = r.user_id
        WHERE u.id = $1`,
@@ -193,18 +207,42 @@ router.get('/inbox', authenticateToken, async (req, res) => {
     const user = userResult.rows[0];
     const rsvpStatus = user.rsvp_status || null;
 
+    // Check if user is an admin
+    const adminCheck = await db.query(
+      'SELECT id FROM admins WHERE LOWER(email) = $1',
+      [user.email?.toLowerCase()]
+    );
+    const isAdmin = adminCheck.rows.length > 0;
+
     // Get announcements that apply to this user
     // 'all' audience applies to everyone
+    // 'admins' audience only applies to admin users
     // specific audience only if it matches user's RSVP
-    const result = await db.query(`
-      SELECT a.id, a.subject, a.message, a.audience, a.created_at, a.sent_by,
-             ar.read_at IS NOT NULL as is_read
-      FROM announcements a
-      LEFT JOIN announcement_reads ar ON a.id = ar.announcement_id AND ar.user_id = $1
-      WHERE a.audience = 'all' 
-         OR a.audience = $2
-      ORDER BY a.created_at DESC
-    `, [req.user.id, rsvpStatus]);
+    let result;
+    if (isAdmin) {
+      // Admins can see 'all', 'admins', and their RSVP-matched announcements
+      result = await db.query(`
+        SELECT a.id, a.subject, a.message, a.audience, a.created_at, a.sent_by,
+               ar.read_at IS NOT NULL as is_read
+        FROM announcements a
+        LEFT JOIN announcement_reads ar ON a.id = ar.announcement_id AND ar.user_id = $1
+        WHERE a.audience = 'all'
+           OR a.audience = 'admins'
+           OR a.audience = $2
+        ORDER BY a.created_at DESC
+      `, [req.user.id, rsvpStatus]);
+    } else {
+      // Non-admins see 'all' and their RSVP-matched announcements (not 'admins')
+      result = await db.query(`
+        SELECT a.id, a.subject, a.message, a.audience, a.created_at, a.sent_by,
+               ar.read_at IS NOT NULL as is_read
+        FROM announcements a
+        LEFT JOIN announcement_reads ar ON a.id = ar.announcement_id AND ar.user_id = $1
+        WHERE (a.audience = 'all' OR a.audience = $2)
+           AND a.audience != 'admins'
+        ORDER BY a.created_at DESC
+      `, [req.user.id, rsvpStatus]);
+    }
 
     res.json({ announcements: result.rows });
   } catch (err) {
