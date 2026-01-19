@@ -127,14 +127,7 @@ export default function Funds() {
           <p className="funds-page-subtitle">25th Alumni Homecoming Fund</p>
 
         {/* Total Funds Display */}
-        <div style={{
-          background: 'linear-gradient(135deg, rgba(207, 181, 59, 0.15) 0%, rgba(207, 181, 59, 0.05) 100%)',
-          border: '2px solid rgba(207, 181, 59, 0.4)',
-          borderRadius: '16px',
-          padding: '40px',
-          textAlign: 'center',
-          marginBottom: '32px'
-        }}>
+        <div className="funds-balance-card">
           <p className="funds-label">Current Balance</p>
           {loading ? (
             <p className="funds-total-loading">Loading...</p>
