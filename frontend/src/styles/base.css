@@ -1112,21 +1112,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Passbook Screenshots Section */
-.passbook-header:hover {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.passbook-thumbnail:hover {
-  transform: scale(1.02);
-  border-color: rgba(207, 181, 59, 0.4) !important;
-}
-
-.passbook-upload-btn:hover:not(:disabled) {
-  background: rgba(207, 181, 59, 0.25);
-  border-color: rgba(207, 181, 59, 0.5);
-}
-
 /* Full-bleed layout on mobile for pages using .container/.card */
 @media (max-width: 600px) {
   .container,
