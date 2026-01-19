@@ -8,7 +8,6 @@ import SystemTest from '../components/SystemTest';
 import ScrollableTable from '../components/ScrollableTable.js';
 import logo from '../images/lasalle.jpg';
 import MeetingMinutes from '../components/MeetingMinutes';
-import CopiedToast from "../components/CopiedToast";
 import AdminRoleErrorToast from "../components/AdminRoleErrorToast";
 import AdminMessages from '../components/AdminMessages';
 import Footer from '../components/Footer';
@@ -48,21 +47,23 @@ export default function AdminDashboard() {
   const [inviteSearch, setInviteSearch] = useState('');
   const [registeredSearch, setRegisteredSearch] = useState('');
   const [registeredRsvpFilter, setRegisteredRsvpFilter] = useState('all');
-  const [copied, setCopied] = useState(false);
+  const [copiedId, setCopiedId] = useState(null);
   const [showAdminRoleError, setShowAdminRoleError] = useState(false);
 
 
-  // Copies the registration link and triggers the "Copied!" toast
+  // Copies the registration link and shows inline "Copied ✓" on the button
   const copyLink = async (inviteToken) => {
     const link = `${window.location.origin}/register/${inviteToken}`;
     await navigator.clipboard.writeText(link);
-    setCopied(true);
+    setCopiedId(inviteToken);
+    setTimeout(() => setCopiedId(null), 2500);
   };
 
-  // Copies an already-built URL and triggers the "Copied!" toast
+  // Copies an already-built URL and shows inline "Copied ✓" on the button
   const copyFullUrl = async (url) => {
     await navigator.clipboard.writeText(url);
-    setCopied(true);
+    setCopiedId('invite-url');
+    setTimeout(() => setCopiedId(null), 2500);
   };
 
   // Helper function to format birthday without timezone conversion
@@ -649,15 +650,7 @@ export default function AdminDashboard() {
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
             <button
               onClick={() => setShowGuide(!showGuide)}
-              style={{
-                background: 'none',
-                border: '1px solid rgba(207, 181, 59, 0.3)',
-                borderRadius: '8px',
-                padding: '6px 12px',
-                color: '#CFB53B',
-                cursor: 'pointer',
-                fontSize: '0.8rem'
-              }}
+              className="btn-guide"
             >
               {showGuide ? 'Hide' : '📖 Guide'}
             </button>
@@ -983,9 +976,10 @@ export default function AdminDashboard() {
                               <code>{inviteResult.url}</code>
                               <button
                                 onClick={() => copyFullUrl(inviteResult.url)}
-                                className="btn-copy"
+                                className={`btn-copy ${copiedId === 'invite-url' ? 'btn-copied' : ''}`}
+                                disabled={copiedId === 'invite-url'}
                               >
-                                Copy
+                                {copiedId === 'invite-url' ? 'Copied ✓' : 'Copy'}
                               </button>
                             </div>
                           </>
@@ -1189,10 +1183,11 @@ export default function AdminDashboard() {
                                   <td>
                                     {!invite.used && (
                                       <button
-                                        className="btn-link"
+                                        className={`btn-link ${copiedId === invite.invite_token ? 'btn-copied-link' : ''}`}
                                         onClick={() => copyLink(invite.invite_token)}
+                                        disabled={copiedId === invite.invite_token}
                                       >
-                                        Copy link
+                                        {copiedId === invite.invite_token ? 'Copied ✓' : 'Copy link'}
                                       </button>
                                     )}
                                   </td>
@@ -1732,11 +1727,6 @@ export default function AdminDashboard() {
         )
       }
       <Footer />
-      {/* Copied toast */}
-      <CopiedToast
-        show={copied}
-        onClose={() => setCopied(false)}
-      />
       {/* Admin role error toast */}
       <AdminRoleErrorToast
         show={showAdminRoleError}

@@ -122,9 +122,9 @@ export default function Funds() {
       </header>
 
       <main className="profile-main">
-        <div className="card funds-content">
-          <h2 style={{ textAlign: 'center', marginBottom: '8px' }}>USLS-IS 2003</h2>
-          <p className="subtitle" style={{ textAlign: 'center' }}>25th Alumni Homecoming Fund</p>
+        <div className="card funds-content funds-card">
+          <h2 className="funds-page-title">USLS-IS 2003</h2>
+          <p className="funds-page-subtitle">25th Alumni Homecoming Fund</p>
 
         {/* Total Funds Display */}
         <div style={{

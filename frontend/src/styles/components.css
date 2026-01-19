@@ -150,6 +150,26 @@ select option {
   background: linear-gradient(135deg, var(--color-hover) 0%, var(--color-title-gradient-start) 100%);
 }
 
+/* Success state for copy button */
+.btn-copy.btn-copied {
+  background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+  cursor: default;
+}
+
+.btn-copy.btn-copied:hover {
+  background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+}
+
+/* Success state for copy link */
+.btn-link.btn-copied-link {
+  color: #28a745;
+  cursor: default;
+}
+
+.btn-link.btn-copied-link:hover {
+  color: #28a745;
+}
+
 .button-row {
   display: flex;
   gap: 12px;

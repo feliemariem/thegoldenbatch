@@ -20,7 +20,8 @@ export default function Inbox() {
   const [showComposeModal, setShowComposeModal] = useState(false);
   const [composeForm, setComposeForm] = useState({ subject: '', message: '' });
   const [sending, setSending] = useState(false);
-  const [toast, setToast] = useState(null);
+  const [justSent, setJustSent] = useState(false);
+  const [sendError, setSendError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [thread, setThread] = useState([]);
   const [loadingThread, setLoadingThread] = useState(false);
@@ -158,6 +159,7 @@ export default function Inbox() {
     if (!composeForm.message.trim()) return;
 
     setSending(true);
+    setSendError(null);
     try {
       const res = await fetch('https://the-golden-batch-api.onrender.com/api/messages/to-committee', {
         method: 'POST',
@@ -172,20 +174,21 @@ export default function Inbox() {
       });
 
       if (res.ok) {
-        setToast({ message: 'Message sent to the committee', type: 'success' });
         setShowComposeModal(false);
         setComposeForm({ subject: '', message: '' });
         fetchSentMessages(); // Refresh sent messages
-        setTimeout(() => setToast(null), 3000);
+        // Show success state on button
+        setJustSent(true);
+        setTimeout(() => setJustSent(false), 2500);
       } else {
         const data = await res.json();
-        setToast({ message: data.error || 'Failed to send message', type: 'error' });
-        setTimeout(() => setToast(null), 4000);
+        setSendError(data.error || 'Failed to send message');
+        setTimeout(() => setSendError(null), 4000);
       }
     } catch (err) {
       console.error('Failed to send message:', err);
-      setToast({ message: 'Failed to send message', type: 'error' });
-      setTimeout(() => setToast(null), 4000);
+      setSendError('Failed to send message');
+      setTimeout(() => setSendError(null), 4000);
     } finally {
       setSending(false);
     }
@@ -306,84 +309,43 @@ export default function Inbox() {
         </div>
       </header>
 
-      {/* Toast Notification */}
-      {toast && (
-        <div style={{
-          position: 'fixed',
-          top: '20px',
-          right: '20px',
-          padding: '14px 24px',
-          borderRadius: '8px',
-          background: toast.type === 'success' ? 'rgba(40, 167, 69, 0.95)' : 'rgba(220, 53, 69, 0.95)',
-          color: '#fff',
-          fontWeight: '500',
-          zIndex: 1001,
-          boxShadow: '0 4px 16px rgba(0,0,0,0.2)'
-        }}>
-          {toast.message}
-        </div>
-      )}
-
       <main className="inbox-main">
+        <h2 className="inbox-title">Shared Inbox</h2>
         <div className="inbox-header-bar">
           <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
             <button
               onClick={() => setActiveTab('inbox')}
-              style={{
-                background: 'none',
-                border: 'none',
-                padding: '8px 0',
-                color: activeTab === 'inbox' ? 'var(--color-accent)' : 'var(--text-secondary)',
-                fontWeight: activeTab === 'inbox' ? '600' : '400',
-                fontSize: '1.1rem',
-                cursor: 'pointer',
-                borderBottom: activeTab === 'inbox' ? '2px solid var(--color-accent)' : '2px solid transparent',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
-              }}
+              className={`inbox-tab ${activeTab === 'inbox' ? 'active' : ''}`}
             >
               Inbox
               {unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}
             </button>
             <button
               onClick={() => setActiveTab('sent')}
-              style={{
-                background: 'none',
-                border: 'none',
-                padding: '8px 0',
-                color: activeTab === 'sent' ? 'var(--color-accent)' : 'var(--text-secondary)',
-                fontWeight: activeTab === 'sent' ? '600' : '400',
-                fontSize: '1.1rem',
-                cursor: 'pointer',
-                borderBottom: activeTab === 'sent' ? '2px solid var(--color-accent)' : '2px solid transparent',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
-              }}
+              className={`inbox-tab ${activeTab === 'sent' ? 'active' : ''}`}
             >
               Sent Messages
               {sentMessages.length > 0 && (
-                <span style={{
-                  background: 'rgba(207, 181, 59, 0.15)',
-                  color: 'var(--color-accent)',
-                  padding: '2px 8px',
-                  borderRadius: '10px',
-                  fontSize: '0.75rem',
-                  fontWeight: '500'
-                }}>
+                <span className="sent-count-badge">
                   {sentMessages.length}
                 </span>
               )}
             </button>
           </div>
+        </div>
+        <div style={{ marginTop: '16px', marginBottom: '20px' }}>
           <button
-            onClick={() => setShowComposeModal(true)}
-            className="btn-reply"
-            style={{ marginLeft: 'auto' }}
+            onClick={() => !justSent && setShowComposeModal(true)}
+            className={`btn-reply ${justSent ? 'btn-success-state' : ''}`}
+            disabled={justSent}
           >
-            Contact Committee
+            {justSent ? 'Message Sent ✓' : 'Contact Committee'}
           </button>
+          {sendError && (
+            <span style={{ marginLeft: '12px', color: '#dc3545', fontSize: '0.85rem' }}>
+              {sendError}
+            </span>
+          )}
         </div>
 
         {activeTab === 'inbox' ? (
@@ -578,7 +540,7 @@ export default function Inbox() {
                             href={part}
                             target="_blank"
                             rel="noopener noreferrer"
-                            style={{ color: '#CFB53B', textDecoration: 'underline' }}
+                            className="modal-link"
                           >
                             {part}
                           </a>
@@ -595,14 +557,9 @@ export default function Inbox() {
                 </div>
               ) : thread.length === 0 ? (
                 // Fallback to single message
-                <div style={{
-                  padding: '16px',
-                  background: selectedType === 'sent' ? 'rgba(0, 102, 51, 0.08)' : 'rgba(207, 181, 59, 0.08)',
-                  borderRadius: '12px',
-                  borderLeft: `3px solid ${selectedType === 'sent' ? '#006633' : '#CFB53B'}`
-                }}>
+                <div className={`thread-message-card ${selectedType === 'sent' ? 'from-user' : 'from-committee'}`}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
-                    <span style={{ color: selectedType === 'sent' ? '#006633' : '#CFB53B', fontWeight: '600', fontSize: '0.9rem' }}>
+                    <span className={`thread-sender ${selectedType === 'sent' ? 'user' : 'committee'}`}>
                       {selectedType === 'sent' ? 'You' : 'Committee'}
                     </span>
                     <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>
@@ -624,15 +581,10 @@ export default function Inbox() {
                     return (
                       <div
                         key={msg.id}
-                        style={{
-                          padding: '16px',
-                          background: isFromUser ? 'rgba(0, 102, 51, 0.08)' : 'rgba(207, 181, 59, 0.08)',
-                          borderRadius: '12px',
-                          borderLeft: `3px solid ${isFromUser ? '#006633' : '#CFB53B'}`
-                        }}
+                        className={`thread-message-card ${isFromUser ? 'from-user' : 'from-committee'}`}
                       >
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
-                          <span style={{ color: isFromUser ? '#006633' : '#CFB53B', fontWeight: '600', fontSize: '0.9rem' }}>
+                          <span className={`thread-sender ${isFromUser ? 'user' : 'committee'}`}>
                             {senderName}
                             {!isFromUser && (
                               <span style={{
@@ -664,7 +616,7 @@ export default function Inbox() {
                                     href={part}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    style={{ color: '#CFB53B', textDecoration: 'underline' }}
+                                    className="modal-link"
                                   >
                                     {part}
                                   </a>

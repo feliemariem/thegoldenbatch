@@ -148,21 +148,7 @@ export default function AnnouncementComposer({ token, registeredCount = 0, going
               <button
                 type="button"
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  borderRadius: '8px',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  background: 'rgba(0,0,0,0.2)',
-                  color: selectedOption?.isAdmin ? '#FF6B6B' : '#e0e0e0',
-                  fontSize: '1rem',
-                  textAlign: 'left',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  fontWeight: selectedOption?.isAdmin ? 'bold' : 'normal'
-                }}
+                className={`announce-dropdown-trigger ${selectedOption?.isAdmin ? 'admin-selected' : ''}`}
               >
                 <span>{selectedOption?.label}</span>
                 <span style={{ marginLeft: '8px', fontSize: '0.8rem' }}>▼</span>
@@ -170,21 +156,7 @@ export default function AnnouncementComposer({ token, registeredCount = 0, going
 
               {/* Dropdown menu */}
               {dropdownOpen && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: '100%',
-                    left: 0,
-                    right: 0,
-                    marginTop: '4px',
-                    background: '#1e1e1e',
-                    border: '1px solid rgba(255,255,255,0.15)',
-                    borderRadius: '8px',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
-                    zIndex: 100,
-                    overflow: 'hidden'
-                  }}
-                >
+                <div className="announce-dropdown-menu">
                   {audienceOptions.map((option, index) => (
                     <React.Fragment key={option.value}>
                       {/* Separator line before ADMINS ONLY */}
@@ -199,31 +171,7 @@ export default function AnnouncementComposer({ token, registeredCount = 0, going
                       )}
                       <div
                         onClick={() => handleSelectAudience(option.value)}
-                        style={{
-                          padding: '12px 16px',
-                          cursor: 'pointer',
-                          color: option.isAdmin ? '#FF6B6B' : '#e0e0e0',
-                          fontWeight: option.isAdmin ? 'bold' : 'normal',
-                          background: audience === option.value
-                            ? 'rgba(207, 181, 59, 0.15)'
-                            : option.isAdmin
-                              ? 'rgba(255, 107, 107, 0.08)'
-                              : 'transparent',
-                          borderLeft: option.isAdmin ? '3px solid #FF6B6B' : '3px solid transparent',
-                          transition: 'background 0.15s ease'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.background = option.isAdmin
-                            ? 'rgba(255, 107, 107, 0.15)'
-                            : 'rgba(255,255,255,0.05)';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.background = audience === option.value
-                            ? 'rgba(207, 181, 59, 0.15)'
-                            : option.isAdmin
-                              ? 'rgba(255, 107, 107, 0.08)'
-                              : 'transparent';
-                        }}
+                        className={`announce-dropdown-item ${audience === option.value ? 'selected' : ''} ${option.isAdmin ? 'admin-option' : ''}`}
                       >
                         {option.label}
                       </div>
