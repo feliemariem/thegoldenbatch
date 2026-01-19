@@ -508,27 +508,31 @@ export default function Directory() {
                 <span className="profile-subtitle">25th Alumni Homecoming</span>
               </div>
             </div>
-            <nav className="profile-nav">
-              <div className={`nav-dropdown ${eventsDropdownOpen ? 'open' : ''}`} ref={eventsDropdownRef}>
-                <button
-                  className={`nav-dropdown-trigger ${location.pathname === '/events' || location.pathname === '/media' ? 'active' : ''} ${eventsDropdownOpen ? 'open' : ''}`}
-                  onClick={() => setEventsDropdownOpen(!eventsDropdownOpen)}
-                >
-                  Events <span className="dropdown-arrow">&#9660;</span>
-                </button>
-                <div className="nav-dropdown-menu">
-                  <Link to="/events" className={`nav-dropdown-item ${location.pathname === '/events' ? 'active' : ''}`} onClick={() => setEventsDropdownOpen(false)}>Upcoming</Link>
-                <Link to="/media" className={`nav-dropdown-item ${location.pathname === '/media' ? 'active' : ''}`} onClick={() => setEventsDropdownOpen(false)}>Media</Link>
+            <div className="nav-section">
+              <div className="nav-logout-row">
+                <button onClick={handleLogout} className="nav-link logout-btn">Logout</button>
               </div>
+              <nav className="profile-nav">
+                <div className={`nav-dropdown ${eventsDropdownOpen ? 'open' : ''}`} ref={eventsDropdownRef}>
+                  <button
+                    className={`nav-dropdown-trigger ${location.pathname === '/events' || location.pathname === '/media' ? 'active' : ''} ${eventsDropdownOpen ? 'open' : ''}`}
+                    onClick={() => setEventsDropdownOpen(!eventsDropdownOpen)}
+                  >
+                    Events <span className="dropdown-arrow">&#9660;</span>
+                  </button>
+                  <div className="nav-dropdown-menu">
+                    <Link to="/events" className={`nav-dropdown-item ${location.pathname === '/events' ? 'active' : ''}`} onClick={() => setEventsDropdownOpen(false)}>Upcoming</Link>
+                    <Link to="/media" className={`nav-dropdown-item ${location.pathname === '/media' ? 'active' : ''}`} onClick={() => setEventsDropdownOpen(false)}>Media</Link>
+                  </div>
+                </div>
+                <Link to="/committee" className="nav-link">Committee</Link>
+                {isAdmin && <Link to="/directory" className="nav-link active">Directory</Link>}
+                <Link to="/funds" className="nav-link">Funds</Link>
+                <Link to="/inbox" className="nav-link">Inbox{unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}</Link>
+                <Link to={isAdmin ? "/profile-preview" : "/profile"} className="nav-link">Profile</Link>
+                {isAdmin && <Link to="/admin" className="nav-link">Admin</Link>}
+              </nav>
             </div>
-            <Link to="/committee" className="nav-link">Committee</Link>
-            {isAdmin && <Link to="/directory" className="nav-link active">Directory</Link>}
-            <Link to="/funds" className="nav-link">Funds</Link>
-            <Link to="/inbox" className="nav-link">Inbox{unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}</Link>
-            <Link to={isAdmin ? "/profile-preview" : "/profile"} className="nav-link">Profile</Link>
-            {isAdmin && <Link to="/admin" className="nav-link">Admin</Link>}
-            <button onClick={handleLogout} className="nav-link logout-btn">Logout</button>
-          </nav>
         </div>
       </header>
 
