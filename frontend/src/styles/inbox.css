@@ -496,3 +496,25 @@
   border-bottom: 1px solid rgba(0, 102, 51, 0.15);
 }
 
+/* Light mode: Tab text and empty state readability */
+[data-theme="light"] .inbox-header-bar button {
+  color: #444 !important;
+}
+
+[data-theme="light"] .inbox-header-bar button:hover {
+  color: #006633 !important;
+}
+
+[data-theme="light"] .inbox-empty p {
+  color: #444 !important;
+}
+
+[data-theme="light"] .inbox-empty span {
+  color: #555 !important;
+}
+
+/* Light mode: Fix inline style text-secondary variable */
+body[data-theme="light"] .inbox-main [style*="var(--text-secondary)"] {
+  color: #444 !important;
+}
+
