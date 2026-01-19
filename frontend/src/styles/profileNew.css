@@ -6,7 +6,25 @@
 /* Container - transparent to show body background image */
 .profile-container {
   min-height: 100vh;
+  padding: 48px 20px;
   /* No background - body background with HS building image shows through */
+}
+
+/* Card inside profile-container - constrain width to show background on sides */
+.profile-container > .card {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0;
+  overflow: hidden;
+}
+
+@media (max-width: 600px) {
+  .profile-container {
+    padding: 0;
+  }
+  .profile-container > .card {
+    border-radius: 0;
+  }
 }
 
 .profile-loading {
@@ -37,15 +55,10 @@
   background: rgba(0, 0, 0, 0.4);
   border-bottom: 1px solid rgba(207, 181, 59, 0.15);
   padding: 16px 24px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  backdrop-filter: blur(10px);
+  border-radius: 20px 20px 0 0;
 }
 
 .profile-header-content {
-  max-width: 1200px;
-  margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -139,8 +152,6 @@
 
 /* Main Content */
 .profile-main {
-  max-width: 1200px;
-  margin: 0 auto;
   padding: 32px 24px;
 }
 
