@@ -53,10 +53,21 @@
 
 .inbox-title h1 {
   font-size: 1.2rem;
-  color: var(--color-hover);
+  background: linear-gradient(135deg, var(--color-title-gradient-end) 0%, var(--color-title-gradient-start) 50%, var(--color-title-gradient-end) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   margin: 0;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 3px;
+}
+
+/* Light mode: Logo text should be green instead of gold */
+[data-theme="light"] .inbox-title h1 {
+  background: linear-gradient(135deg, #006633 0%, #004d26 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .inbox-subtitle {

@@ -769,3 +769,13 @@ tr:last-child td {
 [data-theme="light"] .announce-dropdown-item.selected {
   background: rgba(0, 102, 51, 0.12);
 }
+
+/* ========================================
+   ADMIN MESSAGES - Themed Styles
+   ======================================== */
+
+/* Light mode: unread message card uses green accents */
+[data-theme="light"] .admin-message-unread {
+  background: rgba(0, 102, 51, 0.06) !important;
+  border: 1px solid rgba(0, 102, 51, 0.2) !important;
+}

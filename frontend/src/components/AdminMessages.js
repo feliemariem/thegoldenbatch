@@ -183,7 +183,7 @@ export default function AdminMessages({ token }) {
       )}
 
       <div style={{ marginBottom: '24px' }}>
-        <h3 style={{ color: '#006633', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <h3 className="section-title-accent" style={{ marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '12px' }}>
           Shared Inbox
           {unreadCount > 0 && (
             <span style={{
@@ -220,13 +220,14 @@ export default function AdminMessages({ token }) {
             <div
               key={msg.id}
               onClick={() => handleSelectMessage(msg)}
+              className={msg.is_read ? '' : 'admin-message-unread'}
               style={{
                 display: 'flex',
                 alignItems: 'flex-start',
                 gap: '16px',
                 padding: '16px 20px',
-                background: msg.is_read ? 'rgba(0,0,0,0.05)' : 'rgba(0, 102, 51, 0.08)',
-                border: msg.is_read ? '1px solid rgba(255,255,255,0.05)' : '1px solid rgba(0, 102, 51, 0.2)',
+                background: msg.is_read ? 'rgba(0,0,0,0.05)' : 'rgba(184, 150, 12, 0.08)',
+                border: msg.is_read ? '1px solid rgba(255,255,255,0.05)' : '1px solid rgba(184, 150, 12, 0.2)',
                 borderRadius: '10px',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease'
@@ -237,7 +238,7 @@ export default function AdminMessages({ token }) {
                 width: '10px',
                 height: '10px',
                 borderRadius: '50%',
-                background: msg.is_read ? 'transparent' : '#006633',
+                background: msg.is_read ? 'transparent' : 'var(--color-hover)',
                 marginTop: '6px',
                 flexShrink: 0
               }} />
@@ -275,7 +276,7 @@ export default function AdminMessages({ token }) {
                 {msg.subject && (
                   <div style={{
                     fontWeight: '600',
-                    color: msg.is_read ? '#888' : '#006633',
+                    color: msg.is_read ? '#888' : 'var(--color-hover)',
                     marginBottom: '4px',
                     fontSize: '0.95rem'
                   }}>

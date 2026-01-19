@@ -517,3 +517,150 @@ body[data-theme="light"] .modal-content {
   background: var(--color-status-negative-bg);
   color: var(--color-status-negative);
 }
+
+/* ========================================
+   THEMED PAGE HEADERS
+   Solid background to prevent scroll bleed
+   ======================================== */
+
+.page-header {
+  background: #0d1a14;
+  border-bottom: 1px solid rgba(184, 150, 12, 0.2);
+  padding: 20px 28px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+[data-theme="light"] .page-header {
+  background: #f5f5f3;
+  border-bottom: 1px solid rgba(0, 102, 51, 0.2);
+}
+
+/* ========================================
+   THEMED ACCENT TITLES
+   Gold in dark mode, green in light mode
+   ======================================== */
+
+/* Section title - gold in dark, green in light */
+.section-title-accent {
+  color: var(--color-hover);
+  font-weight: 600;
+}
+
+[data-theme="light"] .section-title-accent {
+  color: #006633;
+}
+
+/* Page title with gold gradient (dark) / green (light) */
+.page-title-gold {
+  background: linear-gradient(135deg, var(--color-title-gradient-end) 0%, var(--color-title-gradient-start) 50%, var(--color-title-gradient-end) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+}
+
+[data-theme="light"] .page-title-gold {
+  background: linear-gradient(135deg, #006633 0%, #004d26 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ========================================
+   MASTER LIST / PAYMENT STATUS CARDS
+   Gold accents in dark mode, green in light
+   ======================================== */
+
+.status-card {
+  padding: 12px 16px;
+  border-radius: 8px;
+  flex: 1;
+  min-width: 280px;
+}
+
+/* Dark mode: gold accents */
+.status-card {
+  background: rgba(184, 150, 12, 0.08);
+  border: 1px solid rgba(184, 150, 12, 0.2);
+}
+
+.status-card-header {
+  color: var(--color-hover);
+  margin-bottom: 8px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.status-card-value {
+  color: var(--color-hover);
+  font-weight: 600;
+}
+
+/* Light mode: green accents */
+[data-theme="light"] .status-card {
+  background: rgba(0, 102, 51, 0.08);
+  border: 1px solid rgba(0, 102, 51, 0.2);
+}
+
+[data-theme="light"] .status-card-header {
+  color: #006633;
+}
+
+[data-theme="light"] .status-card-value {
+  color: #006633;
+}
+
+/* ========================================
+   PENDING TRANSACTIONS NOTICE
+   Warning notice with proper theming
+   ======================================== */
+
+.pending-notice {
+  background: var(--color-status-warning-bg);
+  border: 1px solid var(--color-status-warning);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  font-size: 0.85rem;
+  color: var(--color-text-primary);
+}
+
+[data-theme="light"] .pending-notice {
+  background: var(--color-status-warning-bg);
+  border: 1px solid #006633;
+}
+
+/* ========================================
+   LIGHT MODE - Input and Form Overrides
+   ======================================== */
+
+[data-theme="light"] input[type="text"],
+[data-theme="light"] input[type="email"],
+[data-theme="light"] input[type="password"],
+[data-theme="light"] input[type="tel"],
+[data-theme="light"] input[type="date"],
+[data-theme="light"] select {
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 102, 51, 0.15);
+  color: var(--color-text-primary);
+}
+
+[data-theme="light"] input:focus,
+[data-theme="light"] select:focus {
+  border-color: rgba(0, 102, 51, 0.5);
+  box-shadow: 0 0 0 3px rgba(0, 102, 51, 0.1);
+}
+
+[data-theme="light"] .tabs {
+  background: rgba(0, 102, 51, 0.06);
+  border: 1px solid rgba(0, 102, 51, 0.15);
+}
+
+[data-theme="light"] .tab.active {
+  background: #006633;
+  color: #ffffff;
+}

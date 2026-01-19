@@ -394,15 +394,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
 
       {/* Info banner about pending transactions */}
       {(pendingDeposits > 0 || pendingWithdrawals > 0) && (
-        <div style={{
-          background: 'rgba(245, 158, 11, 0.1)',
-          border: '1px solid rgba(245, 158, 11, 0.3)',
-          borderRadius: '8px',
-          padding: '12px 16px',
-          marginBottom: '16px',
-          fontSize: '0.85rem',
-          color: 'var(--color-status-warning)'
-        }}>
+        <div className="pending-notice">
           Pending transactions are shown in the table but excluded from totals until verified (OK).
         </div>
       )}

@@ -1322,32 +1322,18 @@ export default function AdminDashboard() {
                     fontSize: '0.85rem',
                     color: '#666'
                   }}>
-                    <div style={{
-                      background: 'rgba(0,102,51,0.08)',
-                      border: '1px solid rgba(0,102,51,0.2)',
-                      padding: '12px 16px',
-                      borderRadius: '8px',
-                      flex: '1',
-                      minWidth: '280px'
-                    }}>
-                      <div style={{ color: '#006633', marginBottom: '8px', fontSize: '0.7rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Master List Status</div>
+                    <div className="status-card">
+                      <div className="status-card-header">Master List Status</div>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
-                        <span><strong style={{ color: '#006633' }}>{masterListStats.registered || 0}</strong> Registered</span>
-                        <span><strong style={{ color: '#006633' }}>{masterListStats.pending || 0}</strong> Pending</span>
-                        <span><strong style={{ color: '#006633' }}>{masterListStats.not_invited || 0}</strong> Not Invited</span>
-                        <span><strong style={{ color: '#006633' }}>{masterListStats.in_memoriam || 0}</strong> In Memoriam</span>
-                        <span><strong style={{ color: '#006633' }}>{masterListStats.unreachable || 0}</strong> Unreachable</span>
+                        <span><strong className="status-card-value">{masterListStats.registered || 0}</strong> Registered</span>
+                        <span><strong className="status-card-value">{masterListStats.pending || 0}</strong> Pending</span>
+                        <span><strong className="status-card-value">{masterListStats.not_invited || 0}</strong> Not Invited</span>
+                        <span><strong className="status-card-value">{masterListStats.in_memoriam || 0}</strong> In Memoriam</span>
+                        <span><strong className="status-card-value">{masterListStats.unreachable || 0}</strong> Unreachable</span>
                       </div>
                     </div>
-                    <div style={{
-                      background: 'rgba(0,102,51,0.08)',
-                      border: '1px solid rgba(0,102,51,0.2)',
-                      padding: '12px 16px',
-                      borderRadius: '8px',
-                      flex: '1',
-                      minWidth: '280px'
-                    }}>
-                      <div style={{ color: '#006633', marginBottom: '8px', fontSize: '0.7rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Payment Status (Graduates)</div>
+                    <div className="status-card">
+                      <div className="status-card-header">Payment Status (Graduates)</div>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
                         <span><strong style={{ color: 'var(--color-status-positive)' }}>{parseInt(masterListStats.full_paid) || 0}</strong> Full ({parseInt(masterListStats.total_graduates) ? Math.round((parseInt(masterListStats.full_paid) / parseInt(masterListStats.total_graduates)) * 100) : 0}%)</span>
                         <span><strong style={{ color: 'var(--color-status-warning)' }}>{parseInt(masterListStats.partial_paid) || 0}</strong> Partial ({parseInt(masterListStats.total_graduates) ? Math.round((parseInt(masterListStats.partial_paid) / parseInt(masterListStats.total_graduates)) * 100) : 0}%)</span>
