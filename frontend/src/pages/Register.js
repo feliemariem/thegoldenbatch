@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import Footer from '../components/Footer';
 import logo from '../images/lasalle.jpg';
 
@@ -8,6 +9,7 @@ export default function Register() {
   const { token: inviteToken } = useParams();
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { theme, toggleTheme } = useTheme();
 
   const [validating, setValidating] = useState(true);
   const [email, setEmail] = useState('');
@@ -118,6 +120,13 @@ export default function Register() {
   if (validating) {
     return (
       <div className="login-page">
+        <button
+          onClick={toggleTheme}
+          className="theme-toggle"
+          aria-label="Toggle theme"
+        >
+          {theme === 'dark' ? '☀️' : '🌙'}
+        </button>
         <div className="container">
           <div className="card">
             <p>Validating your invite...</p>
@@ -131,6 +140,13 @@ export default function Register() {
   if (error && !email) {
     return (
       <div className="login-page">
+        <button
+          onClick={toggleTheme}
+          className="theme-toggle"
+          aria-label="Toggle theme"
+        >
+          {theme === 'dark' ? '☀️' : '🌙'}
+        </button>
         <div className="container">
           <div className="card">
             <h1>Invalid Invite</h1>
@@ -145,12 +161,31 @@ export default function Register() {
 
   return (
     <div className="login-page">
+      <button
+        onClick={toggleTheme}
+        className="theme-toggle"
+        aria-label="Toggle theme"
+      >
+        {theme === 'dark' ? '☀️' : '🌙'}
+      </button>
       <div className="container">
         <div className="card">
           <img src={logo} alt="USLS Logo" className="logo" />
-        <h1 style={{textAlign: 'center'}}>University of St. La Salle<br/>HS 2003</h1>
-        <p className="subtitle" style={{textAlign: 'center'}}>25th Alumni Homecoming</p>
-        <p className="email-display">Hi Batchmate! Please register using: <strong>{email}</strong></p>
+          <h1 style={{
+            background: 'linear-gradient(135deg, #8B6914 0%, #CFB53B 50%, #8B6914 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            textAlign: 'center',
+            fontSize: '1.1rem',
+            fontWeight: '700',
+            letterSpacing: '0.15em',
+            textTransform: 'uppercase',
+            margin: 0
+          }}>
+            University of St. La Salle<br />IS 2003
+          </h1>
+          <p className="email-display">Hi Batchmate! Please register using: <strong>{email}</strong></p>
 
         {error && <p className="error">{error}</p>}
 

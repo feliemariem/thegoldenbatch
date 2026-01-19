@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTheme } from '../context/ThemeContext';
 import Footer from '../components/Footer';
 import logo from '../images/lasalle.jpg';
 
 export default function ForgotPassword() {
+  const { theme, toggleTheme } = useTheme();
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -37,10 +39,31 @@ export default function ForgotPassword() {
 
   return (
     <div className="login-page">
+      <button
+        onClick={toggleTheme}
+        className="theme-toggle"
+        aria-label="Toggle theme"
+      >
+        {theme === 'dark' ? '☀️' : '🌙'}
+      </button>
       <div className="container">
         <div className="card card-narrow">
           <img src={logo} alt="USLS Logo" className="logo" />
-          <h1><center>Forgot Password</center></h1>
+          <h1 style={{
+            background: 'linear-gradient(135deg, #8B6914 0%, #CFB53B 50%, #8B6914 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            textAlign: 'center',
+            fontSize: '1.1rem',
+            fontWeight: '700',
+            letterSpacing: '0.15em',
+            textTransform: 'uppercase',
+            margin: 0
+          }}>
+            University of St. La Salle<br />IS 2003
+          </h1>
+          <h2 style={{ textAlign: 'center', marginTop: '20px' }}>Forgot Password</h2>
 
           {submitted ? (
             <>
