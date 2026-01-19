@@ -23,7 +23,7 @@
   width: 80px;
   height: 80px;
   margin: 0 auto 1.5rem;
-  background: linear-gradient(135deg, #CFB53B 0%, #a89330 100%);
+  background: linear-gradient(135deg, var(--color-title-gradient-start) 0%, var(--color-title-gradient-end) 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -60,7 +60,7 @@
 
 .system-admin-button {
   display: inline-block;
-  background: linear-gradient(135deg, #CFB53B 0%, #a89330 100%);
+  background: linear-gradient(135deg, var(--color-title-gradient-start) 0%, var(--color-title-gradient-end) 100%);
   color: #fff;
   font-weight: 600;
   padding: 0.875rem 2rem;

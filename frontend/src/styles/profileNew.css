@@ -15,14 +15,14 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  color: #a0a0a0;
+  color: var(--color-text-secondary);
 }
 
 .loading-spinner {
   width: 40px;
   height: 40px;
   border: 3px solid rgba(207, 181, 59, 0.2);
-  border-top-color: #CFB53B;
+  border-top-color: var(--color-hover);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 16px;
@@ -68,7 +68,7 @@
 
 .profile-title h1 {
   font-size: 1.2rem;
-  background: linear-gradient(135deg, #8B6914 0%, #CFB53B 50%, #8B6914 100%);
+  background: linear-gradient(135deg, var(--color-title-gradient-end) 0%, var(--color-title-gradient-start) 50%, var(--color-title-gradient-end) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -79,7 +79,7 @@
 
 .profile-subtitle {
   font-size: 0.8rem;
-  color: var(--text-secondary);
+  color: var(--color-text-secondary);
   font-weight: 500;
 }
 
@@ -103,7 +103,7 @@
 
 .nav-link {
   padding: 8px 16px;
-  color: var(--text-secondary);
+  color: var(--color-text-secondary);
   text-decoration: none;
   font-size: 0.9rem;
   font-weight: 500;
@@ -115,7 +115,7 @@
 }
 
 .nav-link:hover {
-  color: #CFB53B;
+  color: var(--color-hover);
   background: rgba(207, 181, 59, 0.1);
 }
 
@@ -128,8 +128,8 @@
 
 .nav-badge,
 .nav-link .unread-badge {
-  background: #CFB53B;
-  color: #1a1a2e;
+  background: var(--color-hover);
+  color: var(--color-bg-primary);
   font-size: 0.7rem;
   font-weight: 700;
   padding: 2px 6px;
@@ -140,11 +140,11 @@
 }
 
 .logout-btn {
-  color: #CFB53B;
+  color: var(--color-accent);
 }
 
 .logout-btn:hover {
-  color: #e0c84a;
+  color: var(--color-hover);
   background: rgba(207, 181, 59, 0.1);
 }
 
@@ -166,14 +166,14 @@
 }
 
 .welcome-content h2 {
-  color: #CFB53B;
+  color: var(--color-hover);
   font-size: 1.8rem;
   margin: 0 0 8px 0;
   font-weight: 600;
 }
 
 .welcome-content p {
-  color: #b0b0b0;
+  color: var(--color-text-secondary);
   font-size: 1.05rem;
   margin: 0;
 }
@@ -195,7 +195,7 @@
   border: 1px solid rgba(207, 181, 59, 0.3);
   border-radius: 8px;
   padding: 8px 16px;
-  color: #CFB53B;
+  color: var(--color-hover);
   cursor: pointer;
   font-size: 0.85rem;
   font-weight: 500;
@@ -205,7 +205,7 @@
 
 .btn-guide:hover {
   background: rgba(207, 181, 59, 0.1);
-  border-color: #CFB53B;
+  border-color: var(--color-hover);
 }
 
 /* User Guide Section */
@@ -238,7 +238,7 @@
 }
 
 .guide-item h4 {
-  color: #CFB53B;
+  color: var(--color-hover);
   font-size: 0.95rem;
   margin: 0 0 10px 0;
   font-weight: 600;
@@ -278,7 +278,7 @@
 }
 
 .guide-tip strong {
-  color: #CFB53B;
+  color: var(--color-hover);
 }
 
 /* Mobile responsive for guide */
@@ -378,7 +378,7 @@
 .event-day {
   font-size: 2rem;
   font-weight: 700;
-  color: #CFB53B;
+  color: var(--color-hover);
   line-height: 1;
 }
 
@@ -485,7 +485,7 @@
 
 .payment-badge.partial {
   background: rgba(207, 181, 59, 0.2);
-  color: #CFB53B;
+  color: var(--color-hover);
 }
 
 .payment-badge.unpaid {
@@ -520,7 +520,7 @@
 }
 
 .payment-amounts .paid {
-  color: #CFB53B;
+  color: var(--color-hover);
   font-weight: 600;
 }
 
@@ -544,7 +544,7 @@
 }
 
 .payment-link {
-  color: #CFB53B;
+  color: var(--color-hover);
   font-size: 0.9rem;
   text-decoration: none;
   font-weight: 500;
@@ -611,7 +611,7 @@
   padding: 8px 16px;
   background: transparent;
   border: 1px solid rgba(207, 181, 59, 0.3);
-  color: #CFB53B;
+  color: var(--color-hover);
   border-radius: 6px;
   font-size: 0.85rem;
   font-weight: 500;
@@ -621,7 +621,7 @@
 
 .btn-edit:hover {
   background: rgba(207, 181, 59, 0.1);
-  border-color: #CFB53B;
+  border-color: var(--color-hover);
 }
 
 /* Profile Photo Section */
@@ -656,7 +656,7 @@
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, rgba(0, 102, 51, 0.4) 0%, rgba(0, 102, 51, 0.2) 100%);
-  color: #CFB53B;
+  color: var(--color-hover);
   font-size: 2rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -672,7 +672,7 @@
   padding: 10px 20px;
   background: linear-gradient(135deg, rgba(207, 181, 59, 0.2) 0%, rgba(207, 181, 59, 0.1) 100%);
   border: 1px solid rgba(207, 181, 59, 0.3);
-  color: #CFB53B;
+  color: var(--color-hover);
   border-radius: 8px;
   font-size: 0.85rem;
   font-weight: 500;
@@ -682,7 +682,7 @@
 
 .btn-photo-upload:hover:not(:disabled) {
   background: linear-gradient(135deg, rgba(207, 181, 59, 0.3) 0%, rgba(207, 181, 59, 0.2) 100%);
-  border-color: #CFB53B;
+  border-color: var(--color-hover);
 }
 
 .btn-photo-upload:disabled {
@@ -865,7 +865,7 @@
 }
 
 .quick-link:hover span:last-child {
-  color: #CFB53B;
+  color: var(--color-hover);
 }
 
 /* Footer */
@@ -882,7 +882,7 @@
 }
 
 .fb-link {
-  color: #CFB53B;
+  color: var(--color-hover);
   text-decoration: none;
   font-weight: 500;
   font-size: 0.95rem;
@@ -1162,7 +1162,7 @@
 }
 
 .my-events-card .btn-link {
-  color: #CFB53B;
+  color: var(--color-hover);
   text-decoration: none;
   font-size: 0.85rem;
   font-weight: 500;
@@ -1205,7 +1205,7 @@
 .my-event-day {
   font-size: 1.4rem;
   font-weight: 700;
-  color: #CFB53B;
+  color: var(--color-hover);
   line-height: 1;
 }
 
@@ -1250,7 +1250,7 @@
 
 .my-event-status.interested {
   background: rgba(207, 181, 59, 0.15);
-  color: #CFB53B;
+  color: var(--color-hover);
 }
 
 /* Light mode */
@@ -1374,7 +1374,7 @@
 
 .nav-dropdown-trigger:hover,
 .nav-dropdown-trigger.active {
-  color: #CFB53B;
+  color: var(--color-hover);
   background: rgba(207, 181, 59, 0.1);
 }
 
@@ -1421,12 +1421,12 @@
 }
 
 .nav-dropdown-item:hover {
-  color: #CFB53B;
+  color: var(--color-hover);
   background: rgba(207, 181, 59, 0.1);
 }
 
 .nav-dropdown-item.active {
-  color: #CFB53B;
+  color: var(--color-hover);
   background: rgba(207, 181, 59, 0.08);
 }
 
