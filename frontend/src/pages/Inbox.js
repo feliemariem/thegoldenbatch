@@ -333,11 +333,11 @@ export default function Inbox() {
                 background: 'none',
                 border: 'none',
                 padding: '8px 0',
-                color: activeTab === 'inbox' ? 'var(--accent-gold)' : 'var(--text-secondary)',
+                color: activeTab === 'inbox' ? 'var(--color-accent)' : 'var(--text-secondary)',
                 fontWeight: activeTab === 'inbox' ? '600' : '400',
                 fontSize: '1.1rem',
                 cursor: 'pointer',
-                borderBottom: activeTab === 'inbox' ? '2px solid var(--accent-gold)' : '2px solid transparent',
+                borderBottom: activeTab === 'inbox' ? '2px solid var(--color-accent)' : '2px solid transparent',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px'
@@ -352,11 +352,11 @@ export default function Inbox() {
                 background: 'none',
                 border: 'none',
                 padding: '8px 0',
-                color: activeTab === 'sent' ? 'var(--accent-gold)' : 'var(--text-secondary)',
+                color: activeTab === 'sent' ? 'var(--color-accent)' : 'var(--text-secondary)',
                 fontWeight: activeTab === 'sent' ? '600' : '400',
                 fontSize: '1.1rem',
                 cursor: 'pointer',
-                borderBottom: activeTab === 'sent' ? '2px solid var(--accent-gold)' : '2px solid transparent',
+                borderBottom: activeTab === 'sent' ? '2px solid var(--color-accent)' : '2px solid transparent',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px'
@@ -366,7 +366,7 @@ export default function Inbox() {
               {sentMessages.length > 0 && (
                 <span style={{
                   background: 'rgba(207, 181, 59, 0.15)',
-                  color: 'var(--accent-gold)',
+                  color: 'var(--color-accent)',
                   padding: '2px 8px',
                   borderRadius: '10px',
                   fontSize: '0.75rem',

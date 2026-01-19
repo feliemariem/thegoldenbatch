@@ -32,15 +32,19 @@
   to { transform: rotate(360deg); }
 }
 
-/* Header */
+/* Header - sits directly on page background */
 .profile-header {
-  background: rgba(0, 0, 0, 0.4);
-  border-bottom: 1px solid rgba(207, 181, 59, 0.15);
-  padding: 16px 24px;
+  background: transparent;
+  border-bottom: 1px solid rgba(184, 150, 12, 0.2);
+  padding: 20px 28px;
   position: sticky;
   top: 0;
   z-index: 100;
-  backdrop-filter: blur(10px);
+}
+
+/* Light mode header border */
+[data-theme="light"] .profile-header {
+  border-bottom: 1px solid rgba(0, 102, 51, 0.2);
 }
 
 .profile-header-content {
@@ -210,8 +214,8 @@
 
 /* User Guide Section */
 .user-guide-section {
-  background: linear-gradient(165deg, rgba(30, 40, 35, 0.95) 0%, rgba(20, 28, 24, 0.98) 100%);
-  border: 1px solid rgba(207, 181, 59, 0.2);
+  background: var(--color-bg-card);
+  border: 1px solid rgba(184, 150, 12, 0.15);
   border-radius: 16px;
   padding: 24px;
   margin-bottom: 24px;
@@ -334,8 +338,8 @@
 
 /* Profile Cards */
 .profile-card {
-  background: linear-gradient(165deg, rgba(30, 40, 35, 0.95) 0%, rgba(20, 28, 24, 0.98) 100%);
-  border: 1px solid rgba(207, 181, 59, 0.12);
+  background: var(--color-bg-card);
+  border: 1px solid rgba(184, 150, 12, 0.15);
   border-radius: 16px;
   padding: 24px;
 }
@@ -988,21 +992,21 @@
 
 /* Light mode overrides */
 [data-theme="light"] .profile-container {
-  background: linear-gradient(165deg, #f5f5f0 0%, #e8e8e0 50%, #f0f0e8 100%);
+  background: transparent;
 }
 
 [data-theme="light"] .profile-header {
-  background: rgba(255, 255, 255, 0.9);
-  border-bottom: 1px solid rgba(0, 102, 51, 0.15);
+  background: transparent;
+  border-bottom: 1px solid rgba(0, 102, 51, 0.2);
 }
 
 [data-theme="light"] .profile-card {
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(0, 102, 51, 0.12);
+  background: var(--color-bg-card);
+  border: 1px solid rgba(0, 102, 51, 0.15);
 }
 
 [data-theme="light"] .card-header h3 {
-  color: #1a1a1a;
+  color: #006633;
 }
 
 [data-theme="light"] .event-name {
@@ -1025,20 +1029,20 @@
   color: #555;
 }
 
-/* User Guide - Light Mode */
+/* User Guide - Light Mode (green accent) */
 [data-theme="light"] .btn-guide {
-  border-color: rgba(184, 150, 12, 0.4);
-  color: #B8960C;
+  border-color: rgba(0, 102, 51, 0.3);
+  color: #006633;
 }
 
 [data-theme="light"] .btn-guide:hover {
-  background: rgba(184, 150, 12, 0.1);
-  border-color: #B8960C;
+  background: rgba(0, 102, 51, 0.1);
+  border-color: #006633;
 }
 
 [data-theme="light"] .user-guide-section {
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(0, 102, 51, 0.2);
+  background: var(--color-bg-card);
+  border: 1px solid rgba(0, 102, 51, 0.15);
 }
 
 [data-theme="light"] .guide-title {
