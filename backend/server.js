@@ -14,7 +14,6 @@ const meetingRoutes = require('./routes/meetings');
 const announcementRoutes = require('./routes/announcements');
 const actionItemRoutes = require('./routes/action-items');
 const messageRoutes = require('./routes/messages');
-const passbookRoutes = require('./routes/passbook');
 
 const app = express();
 
@@ -35,7 +34,6 @@ app.use('/api/meetings', meetingRoutes);
 app.use('/api/announcements', announcementRoutes);
 app.use('/api/action-items', actionItemRoutes);
 app.use('/api/messages', messageRoutes);
-app.use('/api/passbook', passbookRoutes);
 app.use('/api/events', require('./routes/events'));
 app.use('/api/committee', require('./routes/committee'));
 
@@ -102,7 +100,6 @@ app.listen(PORT, () => {
   console.log('  /api/announcements');
   console.log('  /api/action-items');
   console.log('  /api/messages');
-  console.log('  /api/passbook');
   console.log('  /api/events');
   console.log('  /api/committee');
   console.log('  /api/health');

@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useInbox } from '../context/InboxContext';
 import MyTasks from '../components/MyTasks';
 import Footer from '../components/Footer';
+import SystemAdminProfile from '../components/SystemAdminProfile';
 import logo from '../images/lasalle.jpg';
 import '../styles/profileNew.css';
 
@@ -14,6 +15,8 @@ export default function ProfileNew() {
   const location = useLocation();
 
   const [profile, setProfile] = useState(null);
+  const [isSystemAdmin, setIsSystemAdmin] = useState(false);
+  const [checkingAdmin, setCheckingAdmin] = useState(true);
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [rsvpSaving, setRsvpSaving] = useState(false);
@@ -70,7 +73,28 @@ export default function ProfileNew() {
   useEffect(() => {
     fetchProfile();
     fetchMyEvents();
+    checkSystemAdmin();
   }, [token]);
+
+  // Check if current user is System Admin (admin id=1)
+  const checkSystemAdmin = async () => {
+    try {
+      const res = await fetch('https://the-golden-batch-api.onrender.com/api/permissions/me', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        // System admin is admin id=1
+        if (data.is_super_admin && data.admin_id === 1) {
+          setIsSystemAdmin(true);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to check admin status');
+    } finally {
+      setCheckingAdmin(false);
+    }
+  };
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -277,7 +301,7 @@ export default function ProfileNew() {
     navigate('/login');
   };
 
-  if (!profile) {
+  if (!profile || checkingAdmin) {
     return (
       <div className="container admin-container">
         <div className="profile-loading">
@@ -286,6 +310,11 @@ export default function ProfileNew() {
         </div>
       </div>
     );
+  }
+
+  // Show System Administrator view for admin id=1
+  if (isSystemAdmin) {
+    return <SystemAdminProfile />;
   }
 
   const paymentProgress = profile.amount_due > 0 
