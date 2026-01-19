@@ -279,7 +279,7 @@ export default function ProfileNew() {
 
   if (!profile) {
     return (
-      <div className="profile-container">
+      <div className="container admin-container">
         <div className="profile-loading">
           <div className="loading-spinner"></div>
           <p>Loading your profile...</p>
@@ -299,7 +299,7 @@ export default function ProfileNew() {
       : 'Unpaid';
 
   return (
-    <div className="profile-container">
+    <div className="container admin-container">
       <div className="card">
         {/* Header */}
         <header className="profile-header">

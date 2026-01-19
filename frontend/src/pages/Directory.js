@@ -496,7 +496,7 @@ export default function Directory() {
   const industries = getUniqueIndustries(MOCK_BATCHMATES);
 
   return (
-    <div className="profile-container">
+    <div className="container admin-container">
       <div className="card">
         {/* Header */}
         <header className="profile-header">

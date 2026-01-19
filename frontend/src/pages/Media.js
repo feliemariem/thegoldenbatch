@@ -370,7 +370,7 @@ export default function Media() {
   };
 
   return (
-    <div className="profile-container">
+    <div className="container admin-container">
       <div className="card">
         {/* Header */}
         <header className="profile-header">

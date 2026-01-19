@@ -194,7 +194,7 @@ export default function Committee() {
 
   if (loading) {
     return (
-      <div className="profile-container">
+      <div className="container admin-container">
         <div className="profile-loading">
           <div className="loading-spinner"></div>
           <p>Loading committee...</p>
@@ -204,7 +204,7 @@ export default function Committee() {
   }
 
   return (
-    <div className="profile-container">
+    <div className="container admin-container">
       <div className="card">
         {/* Header */}
         <header className="profile-header">
