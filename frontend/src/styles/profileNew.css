@@ -44,7 +44,7 @@
 }
 
 .profile-header-content {
-  max-width: 1200px;
+  max-width: 900px;
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
@@ -139,7 +139,7 @@
 
 /* Main Content */
 .profile-main {
-  max-width: 1200px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 32px 24px;
 }
