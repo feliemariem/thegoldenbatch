@@ -6,7 +6,16 @@
 /* Container - transparent to show body background image */
 .profile-container {
   min-height: 100vh;
+  max-width: 950px;
+  margin: 0 auto;
+  padding: 32px 24px;
   /* No background - body background with HS building image shows through */
+}
+
+/* Card within profile container - remove default padding since header/main have their own */
+.profile-container > .card {
+  padding: 0;
+  overflow: hidden;
 }
 
 .profile-loading {
@@ -44,8 +53,6 @@
 }
 
 .profile-header-content {
-  max-width: 900px;
-  margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -139,8 +146,6 @@
 
 /* Main Content */
 .profile-main {
-  max-width: 900px;
-  margin: 0 auto;
   padding: 32px 24px;
 }
 
@@ -956,19 +961,23 @@
 }
 
 @media (max-width: 480px) {
+  .profile-container {
+    padding: 16px 12px;
+  }
+
   .profile-logo-section {
     flex-direction: column;
     text-align: center;
   }
-  
+
   .profile-title h1 {
     font-size: 1rem;
   }
-  
+
   .form-actions {
     flex-direction: column;
   }
-  
+
   .btn-save,
   .btn-cancel {
     width: 100%;
