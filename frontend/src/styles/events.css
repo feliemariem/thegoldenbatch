@@ -306,10 +306,14 @@
 
 /* Event Form */
 .event-form-card {
-  background: linear-gradient(165deg, rgba(30, 40, 35, 0.95) 0%, rgba(20, 28, 24, 0.98) 100%);
-  border: 1px solid rgba(207, 181, 59, 0.2);
+  background: var(--color-bg-card);
+  border: 1px solid rgba(184, 150, 12, 0.15);
   border-radius: 16px;
   padding: 24px;
+}
+
+[data-theme="light"] .event-form-card {
+  border: 1px solid rgba(0, 102, 51, 0.15);
 }
 
 .event-form-card h3 {
@@ -484,8 +488,8 @@
 
 /* Event Card */
 .event-card {
-  background: linear-gradient(165deg, rgba(30, 40, 35, 0.95) 0%, rgba(20, 28, 24, 0.98) 100%);
-  border: 1px solid rgba(207, 181, 59, 0.12);
+  background: var(--color-bg-card);
+  border: 1px solid rgba(184, 150, 12, 0.15);
   border-radius: 16px;
   overflow: hidden;
   transition: all 0.3s ease;
@@ -847,8 +851,8 @@
 }
 
 [data-theme="light"] .event-card {
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(0, 102, 51, 0.12);
+  background: var(--color-bg-card);
+  border: 1px solid rgba(0, 102, 51, 0.15);
 }
 
 [data-theme="light"] .event-card:hover {
@@ -900,8 +904,8 @@
 }
 
 [data-theme="light"] .event-form-card {
-  background: rgba(255, 255, 255, 0.95);
-  border-color: rgba(0, 102, 51, 0.2);
+  background: var(--color-bg-card);
+  border: 1px solid rgba(0, 102, 51, 0.15);
 }
 
 [data-theme="light"] .event-form-card input,
@@ -1079,12 +1083,16 @@
    ======================================== */
 
 .event-detail-card {
-  background: linear-gradient(165deg, rgba(30, 40, 35, 0.95) 0%, rgba(20, 28, 24, 0.98) 100%);
-  border: 1px solid rgba(207, 181, 59, 0.15);
+  background: var(--color-bg-card);
+  border: 1px solid rgba(184, 150, 12, 0.15);
   border-radius: 20px;
   overflow: hidden;
   max-width: 700px;
   margin: 0 auto;
+}
+
+[data-theme="light"] .event-detail-card {
+  border: 1px solid rgba(0, 102, 51, 0.15);
 }
 
 .event-detail-card.virtual {
@@ -1309,8 +1317,8 @@
 
 /* Light Mode for Event Detail */
 [data-theme="light"] .event-detail-card {
-  background: rgba(255, 255, 255, 0.98);
-  border-color: rgba(0, 102, 51, 0.15);
+  background: var(--color-bg-card);
+  border: 1px solid rgba(0, 102, 51, 0.15);
 }
 
 [data-theme="light"] .event-detail-header {

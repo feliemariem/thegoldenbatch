@@ -65,31 +65,30 @@ body[data-theme="light"] .login-page {
     url('../images/hs_bldg.jpg') center center / cover no-repeat fixed !important;
 }
 
-/* Cards - Glassmorphism light edition with green undertone */
+/* Cards - Clean white with subtle green border */
 body[data-theme="light"] .card {
-  background: linear-gradient(165deg,
-      rgba(240, 248, 243, 0.92) 0%,
-      rgba(235, 245, 238, 0.95) 100%) !important;
+  background: var(--color-bg-card) !important;
   border: 1px solid rgba(0, 102, 51, 0.15) !important;
-  box-shadow:
-    0 4px 24px rgba(0, 50, 30, 0.12),
-    0 1px 0 rgba(255, 255, 255, 0.6) inset !important;
-  backdrop-filter: blur(10px) !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08) !important;
 }
 
 
 
-/* Typography - Strong contrast */
+/* Typography - Strong contrast with green titles */
 body[data-theme="light"] h1 {
-  color: #004d26 !important;
+  color: #006633 !important;
 }
 
 body[data-theme="light"] h2 {
-  color: #1a1a1a !important;
+  color: #006633 !important;
 }
 
 body[data-theme="light"] h3 {
-  color: #004d26 !important;
+  color: #006633 !important;
+}
+
+body[data-theme="light"] h4 {
+  color: #006633 !important;
 }
 
 body[data-theme="light"] p {
@@ -112,13 +111,11 @@ body[data-theme="light"] .help-text-small {
   color: var(--color-text-secondary) !important;
 }
 
-/* Stat Cards - Subtle depth with green undertone */
+/* Stat Cards - Use card background, no minty tint */
 body[data-theme="light"] .stat-card {
-  background: linear-gradient(165deg,
-      rgba(238, 247, 241, 0.85) 0%,
-      rgba(232, 243, 236, 0.9) 100%) !important;
-  border: 1px solid rgba(0, 102, 51, 0.12) !important;
-  box-shadow: 0 2px 8px rgba(0, 50, 30, 0.06) !important;
+  background: var(--color-bg-card) !important;
+  border: 1px solid rgba(0, 102, 51, 0.15) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
 }
 
 body[data-theme="light"] .stat-card.going {
@@ -187,22 +184,20 @@ body[data-theme="light"] .percentage-item.not-going {
   background: rgba(220, 38, 38, 0.12) !important;
 }
 
-/* Tabs - Premium feel with green undertone */
+/* Tabs - Clean styling with proper contrast */
 body[data-theme="light"] .tabs {
-  background: linear-gradient(165deg,
-      rgba(235, 245, 238, 0.85) 0%,
-      rgba(228, 240, 232, 0.9) 100%) !important;
-  border: 1px solid rgba(0, 102, 51, 0.12) !important;
+  background: var(--color-bg-card) !important;
+  border: 1px solid rgba(0, 102, 51, 0.15) !important;
 }
 
 body[data-theme="light"] .tab {
-  color: #555 !important;
+  color: #555555 !important;
   background: transparent !important;
 }
 
 body[data-theme="light"] .tab:hover {
-  color: #004d26 !important;
-  background: rgba(0, 77, 38, 0.06) !important;
+  color: #006633 !important;
+  background: rgba(0, 102, 51, 0.06) !important;
 }
 
 body[data-theme="light"] .tab.active {
@@ -390,12 +385,7 @@ body[data-theme="light"] .filter-row select {
 /* Section Header */
 body[data-theme="light"] .section-header h3,
 body[data-theme="light"] .section-header h4 {
-  color: #004d26 !important;
-}
-
-/* All h4 headings - ensure visibility */
-body[data-theme="light"] h4 {
-  color: #004d26 !important;
+  color: #006633 !important;
 }
 
 /* Form labels */
@@ -533,16 +523,14 @@ body[data-theme="light"] .no-data {
 
 /* Header Row */
 body[data-theme="light"] .header-row h1 {
-  color: #004d26 !important;
+  color: #006633 !important;
 }
 
 /* Confirm Modal */
 body[data-theme="light"] .modal-content {
-  background: linear-gradient(165deg,
-      rgba(240, 248, 243, 0.97) 0%,
-      rgba(235, 245, 238, 0.98) 100%) !important;
+  background: var(--color-bg-card) !important;
   border: 1px solid rgba(0, 102, 51, 0.15) !important;
-  box-shadow: 0 8px 32px rgba(0, 50, 30, 0.2) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15) !important;
 }
 
 body[data-theme="light"] .modal-content p {
@@ -677,9 +665,7 @@ body[data-theme="light"] .modal-overlay {
 }
 
 body[data-theme="light"] .modal-content.modal-large {
-  background: linear-gradient(165deg,
-      rgba(240, 248, 243, 0.97) 0%,
-      rgba(235, 245, 238, 0.98) 100%) !important;
+  background: var(--color-bg-card) !important;
   border: 1px solid rgba(0, 102, 51, 0.15) !important;
 }
 
@@ -1633,4 +1619,46 @@ body[data-theme="light"] .meeting-assignee-link:hover {
     height: 24px;
     font-size: 16px;
   }
+}
+
+/* =========================================
+   MEDIA PAGE - Light Mode
+   ========================================= */
+body[data-theme="light"] .media-card-green {
+  background: var(--color-bg-card) !important;
+  border: 1px solid rgba(0, 102, 51, 0.15) !important;
+}
+
+body[data-theme="light"] .media-card-heading {
+  color: #006633 !important;
+}
+
+body[data-theme="light"] .album-card {
+  background: var(--color-bg-card) !important;
+  border: 1px solid rgba(0, 102, 51, 0.15) !important;
+}
+
+body[data-theme="light"] .album-card h4 {
+  color: #006633 !important;
+}
+
+/* =========================================
+   INBOX/MESSAGES - Light Mode JS inline fixes
+   ========================================= */
+body[data-theme="light"] .inbox-header-bar button {
+  color: #555555 !important;
+}
+
+body[data-theme="light"] .inbox-header-bar button:hover,
+body[data-theme="light"] .inbox-header-bar button[style*="border-bottom: 2px solid"] {
+  color: #006633 !important;
+}
+
+body[data-theme="light"] .admin-messages h3 {
+  color: #006633 !important;
+}
+
+body[data-theme="light"] .preview-inbox h3,
+body[data-theme="light"] .preview-inbox h4 {
+  color: #006633 !important;
 }

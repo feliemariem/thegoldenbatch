@@ -18,15 +18,14 @@
   color: var(--text-secondary);
 }
 
-/* Header */
+/* Header - sits directly on page background */
 .inbox-header {
-  background: rgba(0, 0, 0, 0.4);
-  border-bottom: 1px solid rgba(207, 181, 59, 0.15);
-  padding: 16px 24px;
+  background: transparent;
+  border-bottom: 1px solid rgba(184, 150, 12, 0.2);
+  padding: 20px 28px;
   position: sticky;
   top: 0;
   z-index: 100;
-  backdrop-filter: blur(10px);
 }
 
 .inbox-header-content {
@@ -461,13 +460,13 @@
    LIGHT MODE (INBOX) - define variables locally
    ========================= */
 [data-theme="light"] .inbox-container {
-  --bg-primary: linear-gradient(165deg, #f5f5f0 0%, #e8e8e0 50%, #f0f0e8 100%);
-  --header-bg: rgba(245, 245, 240, 0.92);
-  --card-bg: rgba(255, 255, 255, 0.95);
-  --border-color: rgba(0, 102, 51, 0.18);
+  --bg-primary: transparent;
+  --header-bg: transparent;
+  --card-bg: var(--color-bg-card);
+  --border-color: rgba(0, 102, 51, 0.15);
 
   --text-primary: #1a1a1a;
-  --text-secondary: #334;
+  --text-secondary: #555555;
   --text-muted: #666;
 }
 
@@ -492,8 +491,8 @@
 }
 
 [data-theme="light"] .inbox-header {
-  background: rgba(255, 255, 255, 0.9);
-  border-bottom: 1px solid rgba(0, 102, 51, 0.15);
+  background: transparent;
+  border-bottom: 1px solid rgba(0, 102, 51, 0.2);
 }
 
 /* Light mode: Tab text and empty state readability */
