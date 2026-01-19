@@ -313,9 +313,9 @@
 }
 
 .profile-message.success {
-  background: rgba(40, 167, 69, 0.15);
-  border: 1px solid rgba(40, 167, 69, 0.3);
-  color: #28a745;
+  background: var(--color-status-positive-bg);
+  border: 1px solid var(--color-status-positive);
+  color: var(--color-status-positive);
 }
 
 /* Profile Grid */
@@ -479,18 +479,18 @@
 }
 
 .payment-badge.full {
-  background: rgba(40, 167, 69, 0.2);
-  color: #28a745;
+  background: var(--color-status-positive-bg);
+  color: var(--color-status-positive);
 }
 
 .payment-badge.partial {
-  background: rgba(207, 181, 59, 0.2);
-  color: var(--color-hover);
+  background: var(--color-status-warning-bg);
+  color: var(--color-status-warning);
 }
 
 .payment-badge.unpaid {
-  background: rgba(220, 53, 69, 0.2);
-  color: #dc3545;
+  background: var(--color-status-negative-bg);
+  color: var(--color-status-negative);
 }
 
 .payment-progress {
@@ -507,7 +507,7 @@
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #006633 0%, #28a745 100%);
+  background: linear-gradient(90deg, var(--color-title) 0%, var(--color-status-positive) 100%);
   border-radius: 6px;
   transition: width 0.5s ease;
 }
@@ -565,8 +565,8 @@
 .payment-complete .checkmark {
   width: 32px;
   height: 32px;
-  background: rgba(40, 167, 69, 0.2);
-  color: #28a745;
+  background: var(--color-status-positive-bg);
+  color: var(--color-status-positive);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -576,7 +576,7 @@
 }
 
 .payment-complete p {
-  color: #28a745;
+  color: var(--color-status-positive);
   margin: 0;
   font-size: 0.95rem;
 }
@@ -592,7 +592,7 @@
 .btn-donate {
   display: inline-block;
   padding: 12px 24px;
-  background: linear-gradient(135deg, #006633 0%, #004d26 100%);
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-title) 100%);
   color: white;
   text-decoration: none;
   border-radius: 8px;
@@ -602,7 +602,7 @@
 }
 
 .btn-donate:hover {
-  background: linear-gradient(135deg, #007a3d 0%, #006633 100%);
+  background: linear-gradient(135deg, var(--color-hover) 0%, var(--color-accent) 100%);
   transform: translateY(-1px);
 }
 
@@ -693,8 +693,8 @@
 .btn-photo-remove {
   padding: 8px 16px;
   background: transparent;
-  border: 1px solid rgba(220, 53, 69, 0.3);
-  color: #dc3545;
+  border: 1px solid var(--color-status-negative);
+  color: var(--color-status-negative);
   border-radius: 8px;
   font-size: 0.8rem;
   font-weight: 500;
@@ -703,8 +703,8 @@
 }
 
 .btn-photo-remove:hover {
-  background: rgba(220, 53, 69, 0.1);
-  border-color: #dc3545;
+  background: var(--color-status-negative-bg);
+  border-color: var(--color-status-negative);
 }
 
 .info-display .info-grid {
@@ -784,7 +784,7 @@
 
 .btn-save {
   padding: 12px 24px;
-  background: linear-gradient(135deg, #CFB53B 0%, #b8a235 100%);
+  background: linear-gradient(135deg, var(--color-hover) 0%, var(--color-accent) 100%);
   color: #1a1a2e;
   border: none;
   border-radius: 8px;
@@ -1136,7 +1136,7 @@
 }
 
 [data-theme="light"] .profile-nav .nav-badge {
-  background: #CFB53B;
+  background: var(--color-accent);
   color: #0f2a1d;
 }
 

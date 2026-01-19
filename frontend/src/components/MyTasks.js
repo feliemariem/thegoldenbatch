@@ -77,9 +77,9 @@ export default function MyTasks({ token }) {
 
   const getStatusBadge = (status) => {
     const styles = {
-      not_started: { bg: 'rgba(128, 128, 128, 0.2)', color: '#888', text: 'Not Started', className: 'status-not-started' },
-      in_progress: { bg: 'rgba(255, 193, 7, 0.2)', color: '#ffc107', text: 'In Progress', className: 'status-in-progress' },
-      done: { bg: 'rgba(40, 167, 69, 0.2)', color: '#28a745', text: 'Done', className: 'status-done' }
+      not_started: { bg: 'var(--color-status-neutral-bg)', color: 'var(--color-status-neutral)', text: 'Not Started', className: 'status-not-started' },
+      in_progress: { bg: 'var(--color-status-info-bg)', color: 'var(--color-status-info)', text: 'In Progress', className: 'status-in-progress' },
+      done: { bg: 'var(--color-status-positive-bg)', color: 'var(--color-status-positive)', text: 'Done', className: 'status-done' }
     };
     const style = styles[status] || styles.not_started;
     return (
@@ -98,10 +98,10 @@ export default function MyTasks({ token }) {
 
   const getPriorityBadge = (priority) => {
     const styles = {
-      critical: { bg: 'rgba(220, 53, 69, 0.2)', color: '#dc3545', text: 'Critical', className: 'priority-critical' },
-      high: { bg: 'rgba(255, 140, 0, 0.2)', color: '#ff8c00', text: 'High', className: 'priority-high' },
-      medium: { bg: 'rgba(255, 193, 7, 0.2)', color: '#ffc107', text: 'Medium', className: 'priority-medium' },
-      low: { bg: 'rgba(128, 128, 128, 0.2)', color: '#888', text: 'Low', className: 'priority-low' }
+      critical: { bg: 'var(--color-priority-critical-bg)', color: 'var(--color-priority-critical)', text: 'Critical', className: 'priority-critical' },
+      high: { bg: 'var(--color-priority-high-bg)', color: 'var(--color-priority-high)', text: 'High', className: 'priority-high' },
+      medium: { bg: 'var(--color-status-warning-bg)', color: 'var(--color-status-warning)', text: 'Medium', className: 'priority-medium' },
+      low: { bg: 'var(--color-status-neutral-bg)', color: 'var(--color-status-neutral)', text: 'Low', className: 'priority-low' }
     };
     const style = styles[priority] || styles.medium;
     return (
@@ -128,10 +128,10 @@ export default function MyTasks({ token }) {
 
     const diffDays = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
 
-    let color = '#888';
-    if (diffDays < 0) color = '#dc3545'; // Overdue
-    else if (diffDays === 0) color = '#ff8c00'; // Today
-    else if (diffDays <= 3) color = '#ffc107'; // Soon
+    let color = 'var(--color-status-neutral)';
+    if (diffDays < 0) color = 'var(--color-status-negative)'; // Overdue
+    else if (diffDays === 0) color = 'var(--color-priority-high)'; // Today
+    else if (diffDays <= 3) color = 'var(--color-status-warning)'; // Soon
 
     return (
       <span style={{ color, fontSize: '0.8rem' }}>
@@ -191,12 +191,12 @@ export default function MyTasks({ token }) {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <h3 className="my-tasks-heading" style={{ margin: 0, color: '#CFB53B', fontSize: '1rem' }}>
+          <h3 className="my-tasks-heading" style={{ margin: 0, color: 'var(--color-hover)', fontSize: '1rem' }}>
             My Tasks
           </h3>
           <span className={summary.completed === summary.total ? 'my-tasks-badge completed' : 'my-tasks-badge pending'} style={{
             fontSize: '0.75rem',
-            color: summary.completed === summary.total ? '#28a745' : '#CFB53B',
+            color: summary.completed === summary.total ? 'var(--color-status-positive)' : 'var(--color-hover)',
             background: summary.completed === summary.total
               ? 'rgba(40, 167, 69, 0.15)'
               : 'rgba(207, 181, 59, 0.15)',
@@ -208,7 +208,7 @@ export default function MyTasks({ token }) {
           {summary.overdue > 0 && (
             <span style={{
               fontSize: '0.75rem',
-              color: '#dc3545',
+              color: 'var(--color-status-negative)',
               background: 'rgba(220, 53, 69, 0.15)',
               padding: '2px 8px',
               borderRadius: '10px'
@@ -249,7 +249,7 @@ export default function MyTasks({ token }) {
                   style={{
                     background: 'none',
                     border: 'none',
-                    color: '#CFB53B',
+                    color: 'var(--color-hover)',
                     cursor: 'pointer',
                     padding: 0,
                     fontSize: '0.8rem',

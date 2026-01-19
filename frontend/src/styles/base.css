@@ -18,6 +18,24 @@
   --color-hover: #B8960C;
   --color-bg-primary: #0d1a14;
   --color-bg-card: #1a2520;
+
+  /* Status Colors - Dark Mode (default) */
+  --color-status-positive: #4a9d6d;
+  --color-status-positive-bg: rgba(34, 87, 60, 0.3);
+  --color-status-warning: #c9a227;
+  --color-status-warning-bg: rgba(139, 105, 20, 0.25);
+  --color-status-negative: #b56464;
+  --color-status-negative-bg: rgba(120, 50, 50, 0.25);
+  --color-status-neutral: #888888;
+  --color-status-neutral-bg: rgba(80, 80, 80, 0.25);
+  --color-status-info: #7ba3b8;
+  --color-status-info-bg: rgba(70, 100, 120, 0.25);
+  --color-status-memorial: #9a8aab;
+  --color-status-memorial-bg: rgba(60, 50, 70, 0.3);
+  --color-priority-critical: #c75050;
+  --color-priority-critical-bg: rgba(140, 45, 45, 0.3);
+  --color-priority-high: #d4944a;
+  --color-priority-high-bg: rgba(150, 90, 40, 0.3);
 }
 
 body[data-theme="light"] {
@@ -29,6 +47,24 @@ body[data-theme="light"] {
   --color-hover: #006633;
   --color-bg-primary: #f8f8f6;
   --color-bg-card: #ffffff;
+
+  /* Status Colors - Light Mode */
+  --color-status-positive: #2d6a4f;
+  --color-status-positive-bg: rgba(34, 87, 60, 0.12);
+  --color-status-warning: #936b1a;
+  --color-status-warning-bg: rgba(139, 105, 20, 0.12);
+  --color-status-negative: #8b4444;
+  --color-status-negative-bg: rgba(120, 50, 50, 0.1);
+  --color-status-neutral: #666666;
+  --color-status-neutral-bg: rgba(100, 100, 100, 0.1);
+  --color-status-info: #3d6a80;
+  --color-status-info-bg: rgba(55, 90, 110, 0.12);
+  --color-status-memorial: #5f4a75;
+  --color-status-memorial-bg: rgba(80, 60, 100, 0.1);
+  --color-priority-critical: #943838;
+  --color-priority-critical-bg: rgba(140, 45, 45, 0.12);
+  --color-priority-high: #9a5c28;
+  --color-priority-high-bg: rgba(150, 90, 40, 0.12);
 }
 
 * {

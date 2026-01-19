@@ -49,18 +49,7 @@ export default function ForgotPassword() {
       <div className="container">
         <div className="card card-narrow">
           <img src={logo} alt="USLS Logo" className="logo" />
-          <h1 style={{
-            background: 'linear-gradient(135deg, #8B6914 0%, #CFB53B 50%, #8B6914 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-            textAlign: 'center',
-            fontSize: '1.1rem',
-            fontWeight: '700',
-            letterSpacing: '0.15em',
-            textTransform: 'uppercase',
-            margin: 0
-          }}>
+          <h1 className="page-title-gold">
             University of St. La Salle<br />IS 2003
           </h1>
           <h2 style={{ textAlign: 'center', marginTop: '20px' }}>Forgot Password</h2>
