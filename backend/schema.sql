@@ -6,7 +6,6 @@ DROP TABLE IF EXISTS action_items;
 DROP TABLE IF EXISTS event_rsvps;
 DROP TABLE IF EXISTS events;
 DROP TABLE IF EXISTS announcement_reads;
-DROP TABLE IF EXISTS action_items;
 DROP TABLE IF EXISTS meeting_attachments;
 DROP TABLE IF EXISTS meeting_minutes;
 DROP TABLE IF EXISTS permissions;
@@ -19,6 +18,7 @@ DROP TABLE IF EXISTS invites;
 DROP TABLE IF EXISTS master_list;
 DROP TABLE IF EXISTS admins;
 DROP TABLE IF EXISTS volunteer_interests;
+DROP TABLE IF EXISTS messages;
 
 -- Admins table
 CREATE TABLE admins (
@@ -188,8 +188,6 @@ CREATE TABLE action_items (
     due_date DATE,
     status VARCHAR(20) DEFAULT 'Not Started',
     priority VARCHAR(10) DEFAULT 'Medium',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -243,6 +241,25 @@ CREATE TABLE volunteer_interests (
     UNIQUE(user_id, role)                       -- One interest per role per user
 );
 
+-- Messages table (internal messaging between users and admins)
+CREATE TABLE messages (
+    id SERIAL PRIMARY KEY,
+    from_user_id INT REFERENCES users(id) ON DELETE CASCADE,      -- User who sent it (NULL if from admin)
+    from_admin_id INT REFERENCES admins(id) ON DELETE SET NULL,   -- Admin who sent it (NULL if from user)
+    to_user_id INT REFERENCES users(id) ON DELETE CASCADE,        -- NULL = goes to shared admin inbox
+    subject VARCHAR(255),
+    message TEXT NOT NULL,
+    is_read BOOLEAN DEFAULT FALSE,
+    parent_id INT REFERENCES messages(id) ON DELETE SET NULL,     -- For reply threading
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+
+-- Indexes for messages
+CREATE INDEX idx_messages_to_user ON messages(to_user_id);
+CREATE INDEX idx_messages_from_user ON messages(from_user_id);
+CREATE INDEX idx_messages_from_admin ON messages(from_admin_id);
+CREATE INDEX idx_messages_parent ON messages(parent_id);
 
 
 -- Indexes for performance
@@ -259,8 +276,6 @@ CREATE INDEX idx_meeting_minutes_date ON meeting_minutes(meeting_date DESC);
 CREATE INDEX idx_meeting_attachments_meeting ON meeting_attachments(meeting_id);
 CREATE INDEX idx_action_items_meeting ON action_items(meeting_id);
 CREATE INDEX idx_action_items_assignee ON action_items(assignee_id);
-CREATE INDEX idx_action_items_status ON action_items(status);
-CREATE INDEX idx_action_items_due_date ON action_items(due_date);
 CREATE INDEX idx_password_resets_token ON password_resets(token);
 CREATE INDEX idx_password_resets_email ON password_resets(email);
 CREATE INDEX idx_announcement_reads_user ON announcement_reads(user_id);
@@ -270,6 +285,8 @@ CREATE INDEX idx_events_published ON events(is_published);
 CREATE INDEX idx_event_rsvps_event ON event_rsvps(event_id);
 CREATE INDEX idx_event_rsvps_user ON event_rsvps(user_id);
 CREATE INDEX idx_volunteer_interests_user ON volunteer_interests(user_id);
+
+
 
 -- ============================================================
 -- INITIAL DATA: Create System Super Admin
@@ -282,21 +299,6 @@ CREATE INDEX idx_volunteer_interests_user ON volunteer_interests(user_id);
 -- ============================================================
 -- CLEAN SLATE FOR TESTING (before public release)
 -- ============================================================
--- Clear All Tables Except Master List & Super Admin:
---   DELETE FROM event_rsvps;
---   DELETE FROM events;
---   DELETE FROM announcement_reads;
---   DELETE FROM action_items;
---   DELETE FROM meeting_attachments;
---   DELETE FROM meeting_minutes;
---   DELETE FROM permissions;
---   DELETE FROM password_resets;
---   DELETE FROM announcements;
---   DELETE FROM ledger;
---   DELETE FROM rsvps;
---   DELETE FROM users;
---   DELETE FROM invites;
---   DELETE FROM admins WHERE is_super_admin = false;
 -- Run this to wipe all test data while keeping master_list names, ledger, and Super Admin (id=1):
 --
 -- psql "YOUR_EXTERNAL_URL" -c "
@@ -304,6 +306,8 @@ CREATE INDEX idx_volunteer_interests_user ON volunteer_interests(user_id);
 -- DELETE FROM announcement_reads;
 -- DELETE FROM meeting_attachments;
 -- DELETE FROM meeting_minutes;
+-- DELETE FROM messages;
+-- DELETE FROM volunteer_interests;
 -- DELETE FROM permissions WHERE admin_id != 1;
 -- DELETE FROM password_resets;
 -- DELETE FROM announcements;
@@ -313,8 +317,14 @@ CREATE INDEX idx_volunteer_interests_user ON volunteer_interests(user_id);
 -- DELETE FROM users;
 -- DELETE FROM invites;
 -- DELETE FROM admins WHERE id != 1;
--- UPDATE master_list SET email = NULL, is_admin = FALSE, current_name = NULL, status = 'Not Invited';
--- UPDATE admins SET last_name = '' WHERE id = 1;
+-- Reset Master List only (keep names, clear linked data):
+--   UPDATE master_list SET
+--     email = NULL,
+--     current_name = NULL,
+--     status = 'Not Invited',
+--     is_admin = FALSE,
+--     is_unreachable = FALSE
+--   WHERE id > 0;
 -- "
 
 -- ============================================================
