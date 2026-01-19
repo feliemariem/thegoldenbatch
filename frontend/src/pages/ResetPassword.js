@@ -73,109 +73,117 @@ export default function ResetPassword() {
 
   if (validating) {
     return (
-      <div className="container">
-        <div className="card card-narrow">
-          <p style={{textAlign: 'center'}}>Validating reset link...</p>
+      <div className="login-page">
+        <div className="container">
+          <div className="card card-narrow">
+            <p style={{textAlign: 'center'}}>Validating reset link...</p>
+          </div>
+          <Footer />
         </div>
-        <Footer />
       </div>
     );
   }
 
   if (!valid && !success) {
     return (
-      <div className="container">
-        <div className="card card-narrow">
-          <img src={logo} alt="USLS Logo" className="logo" />
-          <h1><center>Invalid Link</center></h1>
-          <p className="error" style={{textAlign: 'center'}}>{error}</p>
-          <p style={{textAlign: 'center', marginTop: '16px'}}>
-            The reset link may have expired or already been used.
-          </p>
-          <p style={{textAlign: 'center', marginTop: '24px'}}>
-            <Link to="/forgot-password" className="btn-link">Request a new reset link</Link>
-          </p>
+      <div className="login-page">
+        <div className="container">
+          <div className="card card-narrow">
+            <img src={logo} alt="USLS Logo" className="logo" />
+            <h1><center>Invalid Link</center></h1>
+            <p className="error" style={{textAlign: 'center'}}>{error}</p>
+            <p style={{textAlign: 'center', marginTop: '16px'}}>
+              The reset link may have expired or already been used.
+            </p>
+            <p style={{textAlign: 'center', marginTop: '24px'}}>
+              <Link to="/forgot-password" className="btn-link">Request a new reset link</Link>
+            </p>
+          </div>
+          <Footer />
         </div>
-        <Footer />
       </div>
     );
   }
 
   if (success) {
     return (
-      <div className="container">
-        <div className="card card-narrow">
-          <img src={logo} alt="USLS Logo" className="logo" />
-          <h1><center>Password Reset!</center></h1>
-          <div className="success" style={{textAlign: 'center'}}>
-            <p>✓ Your password has been reset successfully.</p>
+      <div className="login-page">
+        <div className="container">
+          <div className="card card-narrow">
+            <img src={logo} alt="USLS Logo" className="logo" />
+            <h1><center>Password Reset!</center></h1>
+            <div className="success" style={{textAlign: 'center'}}>
+              <p>✓ Your password has been reset successfully.</p>
+            </div>
+            <p style={{textAlign: 'center', marginTop: '24px'}}>
+              <Link to="/login" className="btn-primary" style={{display: 'inline-block', textDecoration: 'none'}}>
+                Go to Login
+              </Link>
+            </p>
           </div>
-          <p style={{textAlign: 'center', marginTop: '24px'}}>
-            <Link to="/login" className="btn-primary" style={{display: 'inline-block', textDecoration: 'none'}}>
-              Go to Login
-            </Link>
-          </p>
+          <Footer />
         </div>
-        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="container">
-      <div className="card card-narrow">
-        <img src={logo} alt="USLS Logo" className="logo" />
-        <h1><center>Reset Password</center></h1>
-        <p className="subtitle" style={{textAlign: 'center'}}>
-          Enter your new password for <strong>{email}</strong>
-        </p>
+    <div className="login-page">
+      <div className="container">
+        <div className="card card-narrow">
+          <img src={logo} alt="USLS Logo" className="logo" />
+          <h1><center>Reset Password</center></h1>
+          <p className="subtitle" style={{textAlign: 'center'}}>
+            Enter your new password for <strong>{email}</strong>
+          </p>
 
-        {error && <p className="error">{error}</p>}
+          {error && <p className="error">{error}</p>}
 
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>New Password</label>
-            <div className="password-wrapper">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Minimum 6 characters"
-                required
-              />
-              <button 
-                type="button" 
-                className="toggle-password"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? 'Hide' : 'Show'}
-              </button>
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label>New Password</label>
+              <div className="password-wrapper">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Minimum 6 characters"
+                  required
+                />
+                <button
+                  type="button"
+                  className="toggle-password"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? 'Hide' : 'Show'}
+                </button>
+              </div>
             </div>
-          </div>
 
-          <div className="form-group">
-            <label>Confirm New Password</label>
-            <div className="password-wrapper">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Re-enter password"
-                required
-              />
+            <div className="form-group">
+              <label>Confirm New Password</label>
+              <div className="password-wrapper">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Re-enter password"
+                  required
+                />
+              </div>
             </div>
-          </div>
 
-          <button type="submit" className="btn-primary" disabled={submitting}>
-            {submitting ? 'Resetting...' : 'Reset Password'}
-          </button>
-        </form>
+            <button type="submit" className="btn-primary" disabled={submitting}>
+              {submitting ? 'Resetting...' : 'Reset Password'}
+            </button>
+          </form>
 
-        <p style={{textAlign: 'center', marginTop: '24px'}}>
-          <Link to="/login" className="btn-link">Back to Login</Link>
-        </p>
+          <p style={{textAlign: 'center', marginTop: '24px'}}>
+            <Link to="/login" className="btn-link">Back to Login</Link>
+          </p>
+        </div>
+        <Footer />
       </div>
-      <Footer />
     </div>
   );
 }

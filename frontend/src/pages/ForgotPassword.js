@@ -36,54 +36,56 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="container">
-      <div className="card card-narrow">
-        <img src={logo} alt="USLS Logo" className="logo" />
-        <h1><center>Forgot Password</center></h1>
-        
-        {submitted ? (
-          <>
-            <div className="success" style={{textAlign: 'center'}}>
-              <p>✓ Reset link sent!</p>
-              <p style={{fontSize: '0.9rem', marginTop: '8px'}}>
-                Check your email for instructions to reset your password.
-              </p>
-            </div>
-            <p style={{textAlign: 'center', marginTop: '24px'}}>
-              <Link to="/login" className="btn-link">Back to Login</Link>
-            </p>
-          </>
-        ) : (
-          <>
-            <p className="subtitle" style={{textAlign: 'center'}}>
-              Enter your email and we'll send you a link to reset your password.
-            </p>
+    <div className="login-page">
+      <div className="container">
+        <div className="card card-narrow">
+          <img src={logo} alt="USLS Logo" className="logo" />
+          <h1><center>Forgot Password</center></h1>
 
-            {error && <p className="error">{error}</p>}
-
-            <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label>Email</label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
+          {submitted ? (
+            <>
+              <div className="success" style={{textAlign: 'center'}}>
+                <p>✓ Reset link sent!</p>
+                <p style={{fontSize: '0.9rem', marginTop: '8px'}}>
+                  Check your email for instructions to reset your password.
+                </p>
               </div>
+              <p style={{textAlign: 'center', marginTop: '24px'}}>
+                <Link to="/login" className="btn-link">Back to Login</Link>
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="subtitle" style={{textAlign: 'center'}}>
+                Enter your email and we'll send you a link to reset your password.
+              </p>
 
-              <button type="submit" className="btn-primary" disabled={submitting}>
-                {submitting ? 'Sending...' : 'Send Reset Link'}
-              </button>
-            </form>
+              {error && <p className="error">{error}</p>}
 
-            <p style={{textAlign: 'center', marginTop: '24px'}}>
-              <Link to="/login" className="btn-link">Back to Login</Link>
-            </p>
-          </>
-        )}
+              <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                  <label>Email</label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <button type="submit" className="btn-primary" disabled={submitting}>
+                  {submitting ? 'Sending...' : 'Send Reset Link'}
+                </button>
+              </form>
+
+              <p style={{textAlign: 'center', marginTop: '24px'}}>
+                <Link to="/login" className="btn-link">Back to Login</Link>
+              </p>
+            </>
+          )}
+        </div>
+        <Footer />
       </div>
-      <Footer />
     </div>
   );
 }

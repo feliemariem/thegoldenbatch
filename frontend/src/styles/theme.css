@@ -55,6 +55,16 @@ body[data-theme="light"] .landing-page {
     url('../images/hs_bldg.jpg') center center / cover no-repeat fixed !important;
 }
 
+/* Auth pages (Login, Register, Forgot Password, Reset Password) - HS building background for light theme */
+body[data-theme="light"] .login-page {
+  background:
+    linear-gradient(145deg,
+      rgba(250, 248, 244, 0.85) 0%,
+      rgba(245, 243, 238, 0.85) 50%,
+      rgba(248, 246, 241, 0.88) 100%),
+    url('../images/hs_bldg.jpg') center center / cover no-repeat fixed !important;
+}
+
 /* Cards - Glassmorphism light edition with green undertone */
 body[data-theme="light"] .card {
   background: linear-gradient(165deg,
