@@ -481,17 +481,6 @@ export default function Directory() {
     return `${firstName?.[0] || ''}${lastName?.[0] || ''}`.toUpperCase();
   };
 
-  // Handle "Say Hi" click - navigate to inbox with compose
-  const handleSayHi = (person) => {
-    navigate('/inbox', {
-      state: {
-        composeMessage: true,
-        recipient: person.currentName,
-        recipientEmail: person.email
-      }
-    });
-  };
-
   const countries = getUniqueCountries(MOCK_BATCHMATES);
   const industries = getUniqueIndustries(MOCK_BATCHMATES);
 
@@ -651,12 +640,6 @@ export default function Directory() {
                     )}
                   </div>
                 )}
-                <button
-                  className="directory-say-hi-btn"
-                  onClick={() => handleSayHi(person)}
-                >
-                  Say Hi
-                </button>
               </div>
             </div>
           ))}
