@@ -6,6 +6,8 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
   const [balance, setBalance] = useState(0);
   const [totalDeposits, setTotalDeposits] = useState(0);
   const [totalWithdrawals, setTotalWithdrawals] = useState(0);
+  const [pendingDeposits, setPendingDeposits] = useState(0);
+  const [pendingWithdrawals, setPendingWithdrawals] = useState(0);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showForm, setShowForm] = useState(false);
@@ -55,6 +57,8 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
       setBalance(data.balance || 0);
       setTotalDeposits(data.totalDeposits || 0);
       setTotalWithdrawals(data.totalWithdrawals || 0);
+      setPendingDeposits(data.pendingDeposits || 0);
+      setPendingWithdrawals(data.pendingWithdrawals || 0);
     } catch (err) {
       console.error('Failed to fetch transactions');
     } finally {
@@ -359,21 +363,49 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
       <h3>Accounting Dashboard</h3>
       <p style={{ color: '#999', marginBottom: '24px' }}>Track funds for the reunion.</p>
 
-      {/* Summary Cards */}
+      {/* Summary Cards - Only verified (OK) transactions are counted */}
       <div className="ledger-summary">
         <div className="ledger-summary-card deposits">
           <p className="ledger-summary-label">Total Deposits</p>
           <p className="ledger-summary-value">{formatCurrency(totalDeposits)}</p>
+          {pendingDeposits > 0 && (
+            <p style={{ fontSize: '0.75rem', color: '#f59e0b', marginTop: '4px' }}>
+              +{formatCurrency(pendingDeposits)} pending
+            </p>
+          )}
         </div>
         <div className="ledger-summary-card withdrawals">
           <p className="ledger-summary-label">Total Withdrawals</p>
           <p className="ledger-summary-value">{formatCurrency(totalWithdrawals)}</p>
+          {pendingWithdrawals > 0 && (
+            <p style={{ fontSize: '0.75rem', color: '#f59e0b', marginTop: '4px' }}>
+              +{formatCurrency(pendingWithdrawals)} pending
+            </p>
+          )}
         </div>
         <div className="ledger-summary-card balance">
           <p className="ledger-summary-label">Current Balance</p>
           <p className="ledger-summary-value">{formatCurrency(balance)}</p>
+          <p style={{ fontSize: '0.7rem', color: '#888', marginTop: '4px' }}>
+            Verified only
+          </p>
         </div>
       </div>
+
+      {/* Info banner about pending transactions */}
+      {(pendingDeposits > 0 || pendingWithdrawals > 0) && (
+        <div style={{
+          background: 'rgba(245, 158, 11, 0.1)',
+          border: '1px solid rgba(245, 158, 11, 0.3)',
+          borderRadius: '8px',
+          padding: '12px 16px',
+          marginBottom: '16px',
+          fontSize: '0.85rem',
+          color: '#f59e0b'
+        }}>
+          Pending transactions are shown in the table but excluded from totals until verified (OK).
+        </div>
+      )}
 
       {/* Add Transaction Button / Form */}
       {!showForm ? (

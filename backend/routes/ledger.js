@@ -5,12 +5,14 @@ const { authenticateAdmin } = require('../middleware/auth');
 const { upload, uploadToCloudinary, deleteFromCloudinary } = require('../utils/cloudinary');
 
 // Get all transactions with running balance
+// NOTE: Only verified (status = 'OK') transactions count toward balances and totals.
+// Pending transactions are displayed in tables but excluded from all calculations.
 router.get('/', authenticateAdmin, async (req, res) => {
   try {
     // Get transactions ordered by date ASC to calculate running balance
     const result = await db.query(
-      `SELECT l.*, 
-              m.first_name as ml_first_name, 
+      `SELECT l.*,
+              m.first_name as ml_first_name,
               m.last_name as ml_last_name,
               m.section as ml_section
        FROM ledger l
@@ -18,28 +20,46 @@ router.get('/', authenticateAdmin, async (req, res) => {
        ORDER BY l.transaction_date ASC, l.created_at ASC`
     );
 
-    // Calculate running balance
+    // Calculate running balance - ONLY from verified transactions (status = 'OK')
     let balance = 0;
     const transactions = result.rows.map(row => {
       const deposit = parseFloat(row.deposit) || 0;
       const withdrawal = parseFloat(row.withdrawal) || 0;
-      balance += deposit - withdrawal;
+      const isVerified = row.verified === 'OK';
+
+      // Only verified transactions affect the running balance
+      if (isVerified) {
+        balance += deposit - withdrawal;
+      }
+
       return {
         ...row,
         deposit: deposit || null,
         withdrawal: withdrawal || null,
-        balance: balance
+        balance: balance // Running balance (only verified count)
       };
     });
 
     // Reverse for display (newest first) but keep balance calculated correctly
     const displayTransactions = [...transactions].reverse();
 
+    // Calculate totals - ONLY from verified transactions
+    const verifiedTransactions = transactions.filter(t => t.verified === 'OK');
+    const totalDeposits = verifiedTransactions.reduce((sum, t) => sum + (parseFloat(t.deposit) || 0), 0);
+    const totalWithdrawals = verifiedTransactions.reduce((sum, t) => sum + (parseFloat(t.withdrawal) || 0), 0);
+
+    // Also calculate pending amounts for transparency
+    const pendingTransactions = transactions.filter(t => t.verified !== 'OK');
+    const pendingDeposits = pendingTransactions.reduce((sum, t) => sum + (parseFloat(t.deposit) || 0), 0);
+    const pendingWithdrawals = pendingTransactions.reduce((sum, t) => sum + (parseFloat(t.withdrawal) || 0), 0);
+
     res.json({
       transactions: displayTransactions,
       balance: balance,
-      totalDeposits: transactions.reduce((sum, t) => sum + (parseFloat(t.deposit) || 0), 0),
-      totalWithdrawals: transactions.reduce((sum, t) => sum + (parseFloat(t.withdrawal) || 0), 0)
+      totalDeposits: totalDeposits,
+      totalWithdrawals: totalWithdrawals,
+      pendingDeposits: pendingDeposits,
+      pendingWithdrawals: pendingWithdrawals
     });
   } catch (err) {
     console.error(err);
@@ -273,13 +293,16 @@ router.delete('/:id', authenticateAdmin, async (req, res) => {
 });
 
 // Public route - get balance only (for public funds page)
+// NOTE: Only verified (status = 'OK') transactions count toward balances and totals.
+// Pending transactions are excluded until a financial controller marks them OK.
 router.get('/balance', async (req, res) => {
   try {
+    // Only sum verified transactions (status = 'OK')
     const depositResult = await db.query(
-      `SELECT COALESCE(SUM(deposit), 0) as total FROM ledger`
+      `SELECT COALESCE(SUM(deposit), 0) as total FROM ledger WHERE verified = 'OK'`
     );
     const withdrawalResult = await db.query(
-      `SELECT COALESCE(SUM(withdrawal), 0) as total FROM ledger`
+      `SELECT COALESCE(SUM(withdrawal), 0) as total FROM ledger WHERE verified = 'OK'`
     );
 
     const totalDeposits = parseFloat(depositResult.rows[0].total);
@@ -299,11 +322,13 @@ router.get('/balance', async (req, res) => {
 });
 
 // Public route - get unique donor names (for thank you credits)
+// NOTE: Only verified (status = 'OK') donations are shown in donor credits.
 router.get('/donors', async (req, res) => {
   try {
+    // Only show donors with verified deposits (status = 'OK')
     const result = await db.query(
-      `SELECT DISTINCT name FROM ledger 
-       WHERE deposit > 0 AND name IS NOT NULL AND name != ''
+      `SELECT DISTINCT name FROM ledger
+       WHERE deposit > 0 AND name IS NOT NULL AND name != '' AND verified = 'OK'
        ORDER BY name ASC`
     );
 
