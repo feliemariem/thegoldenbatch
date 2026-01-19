@@ -38,6 +38,12 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
   const [linkingTransaction, setLinkingTransaction] = useState(null);
   const [linkSearch, setLinkSearch] = useState('');
 
+  // Passbook screenshots states
+  const [passbookUploads, setPassbookUploads] = useState([]);
+  const [passbookExpanded, setPassbookExpanded] = useState(false);
+  const [viewingPassbook, setViewingPassbook] = useState(null);
+  const [uploadingPassbook, setUploadingPassbook] = useState(false);
+
   // Autocomplete names from existing ledger entries
   const [existingNames, setExistingNames] = useState([]);
 
@@ -45,6 +51,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
     fetchTransactions();
     fetchMasterListOptions();
     fetchExistingNames();
+    fetchPassbookUploads();
   }, [token]);
 
   const fetchTransactions = async () => {
@@ -85,6 +92,68 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
       setExistingNames(data.donors || []);
     } catch (err) {
       console.error('Failed to fetch existing names');
+    }
+  };
+
+  const fetchPassbookUploads = async () => {
+    try {
+      const res = await fetch('https://the-golden-batch-api.onrender.com/api/passbook', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      setPassbookUploads(data || []);
+    } catch (err) {
+      console.error('Failed to fetch passbook uploads');
+    }
+  };
+
+  const handlePassbookUpload = async (file) => {
+    if (!file || !file.type.startsWith('image/')) {
+      alert('Please upload an image file');
+      return;
+    }
+
+    setUploadingPassbook(true);
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      const res = await fetch('https://the-golden-batch-api.onrender.com/api/passbook', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData
+      });
+
+      if (res.ok) {
+        fetchPassbookUploads();
+      } else {
+        const data = await res.json();
+        alert(data.error || 'Failed to upload passbook screenshot');
+      }
+    } catch (err) {
+      console.error('Upload failed:', err);
+      alert('Failed to upload passbook screenshot');
+    } finally {
+      setUploadingPassbook(false);
+    }
+  };
+
+  const handleDeletePassbook = async (id) => {
+    if (!window.confirm('Delete this passbook screenshot?')) return;
+
+    try {
+      const res = await fetch(`https://the-golden-batch-api.onrender.com/api/passbook/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (res.ok) {
+        setViewingPassbook(null);
+        fetchPassbookUploads();
+      }
+    } catch (err) {
+      console.error('Failed to delete passbook screenshot');
     }
   };
 
@@ -406,6 +475,160 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
           Pending transactions are shown in the table but excluded from totals until verified (OK).
         </div>
       )}
+
+      {/* Bank Balance Proof Section */}
+      <div className="passbook-section" style={{ marginBottom: '24px' }}>
+        <div
+          className="passbook-header"
+          onClick={() => setPassbookExpanded(!passbookExpanded)}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            padding: '16px',
+            background: 'rgba(255, 255, 255, 0.03)',
+            borderRadius: passbookExpanded ? '12px 12px 0 0' : '12px',
+            cursor: 'pointer',
+            transition: 'background 0.2s'
+          }}
+        >
+          <span style={{ fontSize: '1.25rem' }}>📒</span>
+          <h4 style={{ margin: 0, flex: 1 }}>Bank Balance Proof</h4>
+          <span style={{
+            fontSize: '0.7rem',
+            padding: '4px 8px',
+            background: 'rgba(207, 181, 59, 0.15)',
+            color: '#CFB53B',
+            borderRadius: '4px',
+            fontWeight: '600',
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px'
+          }}>
+            Treasurer Only
+          </span>
+          <span style={{
+            transform: passbookExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+            transition: 'transform 0.2s',
+            color: '#888'
+          }}>
+            ▼
+          </span>
+        </div>
+
+        {passbookExpanded && (
+          <div style={{
+            padding: '20px',
+            background: 'rgba(255, 255, 255, 0.02)',
+            borderRadius: '0 0 12px 12px',
+            border: '1px solid rgba(255, 255, 255, 0.05)',
+            borderTop: 'none'
+          }}>
+            {/* Upload button - only visible to admins with accounting edit permission */}
+            {canEdit && (
+              <div style={{ marginBottom: '20px' }}>
+                <label className="passbook-upload-btn" style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '10px 20px',
+                  background: 'rgba(207, 181, 59, 0.15)',
+                  border: '1px solid rgba(207, 181, 59, 0.3)',
+                  borderRadius: '8px',
+                  color: '#CFB53B',
+                  cursor: uploadingPassbook ? 'not-allowed' : 'pointer',
+                  fontWeight: '500',
+                  transition: 'all 0.2s',
+                  opacity: uploadingPassbook ? 0.6 : 1
+                }}>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      if (e.target.files[0]) {
+                        handlePassbookUpload(e.target.files[0]);
+                        e.target.value = '';
+                      }
+                    }}
+                    style={{ display: 'none' }}
+                    disabled={uploadingPassbook}
+                  />
+                  {uploadingPassbook ? 'Uploading...' : '+ Upload Screenshot'}
+                </label>
+              </div>
+            )}
+
+            {/* Grid of thumbnails */}
+            {passbookUploads.length > 0 ? (
+              <div className="passbook-grid" style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
+                gap: '16px'
+              }}>
+                {passbookUploads.map((upload) => (
+                  <div
+                    key={upload.id}
+                    className="passbook-thumbnail"
+                    onClick={() => setViewingPassbook(upload)}
+                    style={{
+                      aspectRatio: '3 / 4',
+                      borderRadius: '8px',
+                      overflow: 'hidden',
+                      cursor: 'pointer',
+                      position: 'relative',
+                      background: 'rgba(0, 0, 0, 0.3)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      transition: 'transform 0.2s, border-color 0.2s'
+                    }}
+                  >
+                    <img
+                      src={upload.image_url}
+                      alt="Passbook screenshot"
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover'
+                      }}
+                    />
+                    <div style={{
+                      position: 'absolute',
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      padding: '8px',
+                      background: 'linear-gradient(transparent, rgba(0,0,0,0.8))',
+                      fontSize: '0.7rem',
+                      color: '#ccc'
+                    }}>
+                      <div>{upload.uploader_name || 'Unknown'}</div>
+                      <div style={{ color: '#888' }}>
+                        {new Date(upload.uploaded_at).toLocaleDateString('en-PH', {
+                          month: 'short',
+                          day: 'numeric',
+                          year: '2-digit'
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div style={{
+                textAlign: 'center',
+                padding: '40px 20px',
+                color: '#666'
+              }}>
+                <div style={{ fontSize: '2rem', marginBottom: '12px', opacity: 0.5 }}>📒</div>
+                <p style={{ margin: 0 }}>No passbook screenshots uploaded yet</p>
+                {canEdit && (
+                  <p style={{ margin: '8px 0 0 0', fontSize: '0.85rem', color: '#555' }}>
+                    Upload screenshots to verify bank balance
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
 
       {/* Add Transaction Button / Form */}
       {!showForm ? (
@@ -825,21 +1048,64 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
               <img src={viewingReceipt.receipt_url} alt="Receipt" />
             </div>
             <div className="receipt-modal-actions">
-              <a 
-                href={viewingReceipt.receipt_url} 
-                target="_blank" 
+              <a
+                href={viewingReceipt.receipt_url}
+                target="_blank"
                 rel="noopener noreferrer"
                 className="btn-secondary"
               >
                 Open Full Size
               </a>
               {canEdit && (
-                <button 
+                <button
                   onClick={() => handleDeleteReceipt(viewingReceipt.id)}
                   className="btn-link"
                   style={{ color: '#dc3545' }}
                 >
                   Delete Receipt
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Passbook Viewing Modal */}
+      {viewingPassbook && (
+        <div className="receipt-modal-overlay" onClick={() => setViewingPassbook(null)}>
+          <div className="receipt-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="receipt-modal-header">
+              <h4>📒 Bank Balance Proof</h4>
+              <button onClick={() => setViewingPassbook(null)} className="receipt-modal-close">x</button>
+            </div>
+            <div className="receipt-modal-image">
+              <img src={viewingPassbook.image_url} alt="Passbook screenshot" />
+            </div>
+            <div style={{ padding: '12px 24px', borderTop: '1px solid rgba(255,255,255,0.1)', fontSize: '0.85rem', color: '#888' }}>
+              Uploaded by {viewingPassbook.uploader_name || 'Unknown'} on {new Date(viewingPassbook.uploaded_at).toLocaleDateString('en-PH', {
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit'
+              })}
+            </div>
+            <div className="receipt-modal-actions">
+              <a
+                href={viewingPassbook.image_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-secondary"
+              >
+                Open Full Size
+              </a>
+              {canEdit && (
+                <button
+                  onClick={() => handleDeletePassbook(viewingPassbook.id)}
+                  className="btn-link"
+                  style={{ color: '#dc3545' }}
+                >
+                  Delete
                 </button>
               )}
             </div>
