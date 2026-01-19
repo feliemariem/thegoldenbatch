@@ -32,9 +32,9 @@
   to { transform: rotate(360deg); }
 }
 
-/* Header - sits directly on page background */
+/* Header - solid background to prevent scroll bleed */
 .profile-header {
-  background: transparent;
+  background: #0d1a14;
   border-bottom: 1px solid rgba(184, 150, 12, 0.2);
   padding: 20px 28px;
   position: sticky;
@@ -42,8 +42,9 @@
   z-index: 100;
 }
 
-/* Light mode header border */
+/* Light mode header - solid background to prevent scroll bleed */
 [data-theme="light"] .profile-header {
+  background: #f5f5f3;
   border-bottom: 1px solid rgba(0, 102, 51, 0.2);
 }
 
@@ -1351,6 +1352,41 @@
 .funds-content {
   max-width: 650px;
   margin: 0 auto;
+}
+
+/* Funds page card - clean background, standard border */
+.funds-card {
+  background: var(--color-bg-card);
+  border: 1px solid rgba(207, 181, 59, 0.2);
+}
+
+[data-theme="light"] .funds-card {
+  background: var(--color-bg-card);
+  border: 1px solid rgba(0, 102, 51, 0.2);
+}
+
+/* Funds page title - gold gradient in dark, green in light */
+.funds-page-title {
+  text-align: center;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, #CFB53B 0%, #B8960C 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+[data-theme="light"] .funds-page-title {
+  background: linear-gradient(135deg, #006633 0%, #004d26 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Funds page subtitle */
+.funds-page-subtitle {
+  text-align: center;
+  color: var(--color-text-secondary);
+  margin-bottom: 20px;
 }
 
 /* ========================================

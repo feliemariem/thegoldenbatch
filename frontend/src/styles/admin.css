@@ -677,3 +677,95 @@ tr:last-child td {
 [data-theme="light"] .admin-guide-tip {
   color: #444;
 }
+
+/* ========================================
+   ANNOUNCEMENT DROPDOWN - Themed
+   ======================================== */
+
+.announce-dropdown-trigger {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(0,0,0,0.2);
+  color: var(--color-text-primary);
+  font-size: 1rem;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.announce-dropdown-trigger.admin-selected {
+  color: #FF6B6B;
+  font-weight: bold;
+}
+
+[data-theme="light"] .announce-dropdown-trigger {
+  background: rgba(0, 102, 51, 0.04);
+  border: 1px solid rgba(0, 102, 51, 0.15);
+  color: #1a1a1a;
+}
+
+[data-theme="light"] .announce-dropdown-trigger.admin-selected {
+  color: #FF6B6B;
+}
+
+.announce-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  background: #1e1e1e;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  z-index: 100;
+  overflow: hidden;
+}
+
+[data-theme="light"] .announce-dropdown-menu {
+  background: #ffffff;
+  border: 1px solid rgba(0, 102, 51, 0.15);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.announce-dropdown-item {
+  padding: 12px 16px;
+  cursor: pointer;
+  color: var(--color-text-primary);
+  transition: background 0.15s ease;
+}
+
+.announce-dropdown-item:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+.announce-dropdown-item.selected {
+  background: rgba(207, 181, 59, 0.15);
+}
+
+.announce-dropdown-item.admin-option {
+  color: #FF6B6B;
+  font-weight: bold;
+  background: rgba(255, 107, 107, 0.08);
+  border-left: 3px solid #FF6B6B;
+}
+
+.announce-dropdown-item.admin-option:hover {
+  background: rgba(255, 107, 107, 0.15);
+}
+
+[data-theme="light"] .announce-dropdown-item {
+  color: #1a1a1a;
+}
+
+[data-theme="light"] .announce-dropdown-item:hover {
+  background: rgba(0, 102, 51, 0.06);
+}
+
+[data-theme="light"] .announce-dropdown-item.selected {
+  background: rgba(0, 102, 51, 0.12);
+}
