@@ -211,9 +211,9 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
 
   const getStatusBadge = (status) => {
     const styles = {
-      not_started: { bg: 'rgba(128, 128, 128, 0.2)', color: '#888', text: 'Not Started', className: 'status-not-started' },
-      in_progress: { bg: 'rgba(255, 193, 7, 0.2)', color: '#ffc107', text: 'In Progress', className: 'status-in-progress' },
-      done: { bg: 'rgba(40, 167, 69, 0.2)', color: '#28a745', text: 'Done', className: 'status-done' }
+      not_started: { bg: 'var(--color-status-neutral-bg)', color: 'var(--color-status-neutral)', text: 'Not Started', className: 'status-not-started' },
+      in_progress: { bg: 'var(--color-status-info-bg)', color: 'var(--color-status-info)', text: 'In Progress', className: 'status-in-progress' },
+      done: { bg: 'var(--color-status-positive-bg)', color: 'var(--color-status-positive)', text: 'Done', className: 'status-done' }
     };
     const style = styles[status] || styles.not_started;
     return (
@@ -232,10 +232,10 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
 
   const getPriorityBadge = (priority) => {
     const styles = {
-      critical: { bg: 'rgba(220, 53, 69, 0.2)', color: '#dc3545', text: 'Critical', className: 'priority-critical' },
-      high: { bg: 'rgba(255, 140, 0, 0.2)', color: '#ff8c00', text: 'High', className: 'priority-high' },
-      medium: { bg: 'rgba(255, 193, 7, 0.2)', color: '#ffc107', text: 'Medium', className: 'priority-medium' },
-      low: { bg: 'rgba(128, 128, 128, 0.2)', color: '#888', text: 'Low', className: 'priority-low' }
+      critical: { bg: 'var(--color-priority-critical-bg)', color: 'var(--color-priority-critical)', text: 'Critical', className: 'priority-critical' },
+      high: { bg: 'var(--color-priority-high-bg)', color: 'var(--color-priority-high)', text: 'High', className: 'priority-high' },
+      medium: { bg: 'var(--color-status-warning-bg)', color: 'var(--color-status-warning)', text: 'Medium', className: 'priority-medium' },
+      low: { bg: 'var(--color-status-neutral-bg)', color: 'var(--color-status-neutral)', text: 'Low', className: 'priority-low' }
     };
     const style = styles[priority] || styles.medium;
     return (
@@ -451,7 +451,7 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
               style={{ 
                 background: 'none', 
                 border: 'none', 
-                color: '#CFB53B', 
+                color: 'var(--color-hover)', 
                 cursor: 'pointer',
                 fontSize: '0.95rem',
                 padding: 0
@@ -503,7 +503,7 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
                     cursor: 'pointer'
                   }}
                 >
-                  <div className="meeting-date" style={{ fontSize: '0.7rem', color: '#CFB53B', marginBottom: '4px' }}>
+                  <div className="meeting-date" style={{ fontSize: '0.7rem', color: 'var(--color-hover)', marginBottom: '4px' }}>
                     {formatDate(meeting.meeting_date)}
                   </div>
                   <div style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '4px' }}>
@@ -539,7 +539,7 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
           }}>
             {/* Header */}
             <div style={{ padding: '16px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-              <div className="meeting-date" style={{ color: '#CFB53B', fontSize: '0.8rem', marginBottom: '6px' }}>
+              <div className="meeting-date" style={{ color: 'var(--color-hover)', fontSize: '0.8rem', marginBottom: '6px' }}>
                 {formatDate(selectedMeeting.meeting_date)}
               </div>
               <h3 style={{ margin: '0 0 8px 0', color: 'var(--text-primary)', fontSize: '1.1rem' }}>
@@ -567,7 +567,7 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
                 <button
                   onClick={() => setConfirmDelete(selectedMeeting.id)}
                   className="btn-secondary"
-                  style={{ padding: '8px 14px', fontSize: '0.8rem', color: '#dc3545', borderColor: 'rgba(220,53,69,0.3)' }}
+                  style={{ padding: '8px 14px', fontSize: '0.8rem', color: 'var(--color-status-negative)', borderColor: 'var(--color-status-negative)' }}
                 >
                   Delete
                 </button>
@@ -625,7 +625,7 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
                   {actionItems.length > 0 && (
                     <span style={{
                       fontSize: '0.7rem',
-                      color: getActionItemSummary().completed === getActionItemSummary().total ? '#28a745' : '#CFB53B',
+                      color: getActionItemSummary().completed === getActionItemSummary().total ? 'var(--color-status-positive)' : 'var(--color-hover)',
                       background: getActionItemSummary().completed === getActionItemSummary().total
                         ? 'rgba(40, 167, 69, 0.15)'
                         : 'rgba(207, 181, 59, 0.15)',
@@ -677,7 +677,7 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
                             <button
                               className="meeting-assignee-link"
                               style={{
-                                color: '#CFB53B',
+                                color: 'var(--color-hover)',
                                 textDecoration: 'none',
                                 background: 'none',
                                 border: 'none',
@@ -698,13 +698,13 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
                             <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
                               <button
                                 onClick={() => handleEditActionItem(item)}
-                                style={{ background: 'none', border: 'none', color: '#CFB53B', cursor: 'pointer', fontSize: '0.75rem' }}
+                                style={{ background: 'none', border: 'none', color: 'var(--color-hover)', cursor: 'pointer', fontSize: '0.75rem' }}
                               >
                                 Edit
                               </button>
                               <button
                                 onClick={() => setConfirmDeleteActionItem(item.id)}
-                                style={{ background: 'none', border: 'none', color: '#dc3545', cursor: 'pointer', fontSize: '0.75rem' }}
+                                style={{ background: 'none', border: 'none', color: 'var(--color-status-negative)', cursor: 'pointer', fontSize: '0.75rem' }}
                               >
                                 Delete
                               </button>
@@ -785,7 +785,7 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
                         rel="noopener noreferrer"
                         style={{
                           flex: 1,
-                          color: '#CFB53B',
+                          color: 'var(--color-hover)',
                           textDecoration: 'none',
                           fontSize: '0.85rem',
                           overflow: 'hidden',
@@ -845,7 +845,7 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
               maxWidth: '500px'
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                <h2 style={{ margin: 0, color: '#CFB53B', fontSize: '1.1rem' }}>
+                <h2 style={{ margin: 0, color: 'var(--color-hover)', fontSize: '1.1rem' }}>
                   {editMode ? 'Edit Meeting' : 'New Meeting'}
                 </h2>
                 <button
@@ -966,7 +966,7 @@ Tip: Use ## for headers, - for bullet points"
                 <button
                   onClick={() => handleDelete(confirmDelete)}
                   className="btn-primary"
-                  style={{ flex: 1, marginTop: 0, background: '#dc3545' }}
+                  style={{ flex: 1, marginTop: 0, background: 'var(--color-status-negative)' }}
                 >
                   Delete
                 </button>
@@ -1032,7 +1032,7 @@ Tip: Use ## for headers, - for bullet points"
               >
                 <div className="meeting-date" style={{
                   fontSize: '0.75rem',
-                  color: '#CFB53B',
+                  color: 'var(--color-hover)',
                   marginBottom: '6px'
                 }}>
                   {formatDate(meeting.meeting_date)}
@@ -1085,7 +1085,7 @@ Tip: Use ## for headers, - for bullet points"
                 alignItems: 'flex-start'
               }}>
                 <div>
-                  <div className="meeting-date" style={{ color: '#CFB53B', fontSize: '0.85rem', marginBottom: '6px' }}>
+                  <div className="meeting-date" style={{ color: 'var(--color-hover)', fontSize: '0.85rem', marginBottom: '6px' }}>
                     {formatDate(selectedMeeting.meeting_date)}
                   </div>
                   <h3 style={{ margin: 0, color: 'var(--text-primary)', fontSize: '1.2rem' }}>
@@ -1114,7 +1114,7 @@ Tip: Use ## for headers, - for bullet points"
                   <button
                     onClick={() => setConfirmDelete(selectedMeeting.id)}
                     className="btn-secondary"
-                    style={{ padding: '8px 16px', color: '#dc3545', borderColor: 'rgba(220,53,69,0.3)' }}
+                    style={{ padding: '8px 16px', color: 'var(--color-status-negative)', borderColor: 'var(--color-status-negative)' }}
                   >
                     Delete
                   </button>
@@ -1172,7 +1172,7 @@ Tip: Use ## for headers, - for bullet points"
                     {actionItems.length > 0 && (
                       <span style={{
                         fontSize: '0.75rem',
-                        color: getActionItemSummary().completed === getActionItemSummary().total ? '#28a745' : '#CFB53B',
+                        color: getActionItemSummary().completed === getActionItemSummary().total ? 'var(--color-status-positive)' : 'var(--color-hover)',
                         background: getActionItemSummary().completed === getActionItemSummary().total
                           ? 'rgba(40, 167, 69, 0.15)'
                           : 'rgba(207, 181, 59, 0.15)',
@@ -1226,7 +1226,7 @@ Tip: Use ## for headers, - for bullet points"
                                 <button
                                   className="meeting-assignee-link"
                                   style={{
-                                    color: '#CFB53B',
+                                    color: 'var(--color-hover)',
                                     textDecoration: 'none',
                                     background: 'none',
                                     border: 'none',
@@ -1248,13 +1248,13 @@ Tip: Use ## for headers, - for bullet points"
                               <div style={{ marginLeft: 'auto', display: 'flex', gap: '12px' }}>
                                 <button
                                   onClick={() => handleEditActionItem(item)}
-                                  style={{ background: 'none', border: 'none', color: '#CFB53B', cursor: 'pointer', fontSize: '0.8rem' }}
+                                  style={{ background: 'none', border: 'none', color: 'var(--color-hover)', cursor: 'pointer', fontSize: '0.8rem' }}
                                 >
                                   Edit
                                 </button>
                                 <button
                                   onClick={() => setConfirmDeleteActionItem(item.id)}
-                                  style={{ background: 'none', border: 'none', color: '#dc3545', cursor: 'pointer', fontSize: '0.8rem' }}
+                                  style={{ background: 'none', border: 'none', color: 'var(--color-status-negative)', cursor: 'pointer', fontSize: '0.8rem' }}
                                 >
                                   Delete
                                 </button>
@@ -1335,7 +1335,7 @@ Tip: Use ## for headers, - for bullet points"
                           rel="noopener noreferrer"
                           style={{
                             flex: 1,
-                            color: '#CFB53B',
+                            color: 'var(--color-hover)',
                             textDecoration: 'none',
                             fontSize: '0.9rem',
                             overflow: 'hidden',
@@ -1410,7 +1410,7 @@ Tip: Use ## for headers, - for bullet points"
             overflow: 'auto'
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-              <h2 style={{ margin: 0, color: '#CFB53B', fontSize: '1.2rem' }}>
+              <h2 style={{ margin: 0, color: 'var(--color-hover)', fontSize: '1.2rem' }}>
                 {editMode ? 'Edit Meeting' : 'New Meeting'}
               </h2>
               <button
@@ -1529,7 +1529,7 @@ Tip: Use ## for headers, - for bullet points"
               <button
                 onClick={() => handleDelete(confirmDelete)}
                 className="btn-primary"
-                style={{ padding: '10px 20px', width: 'auto', marginTop: 0, background: '#dc3545' }}
+                style={{ padding: '10px 20px', width: 'auto', marginTop: 0, background: 'var(--color-status-negative)' }}
               >
                 Delete
               </button>
@@ -1563,7 +1563,7 @@ Tip: Use ## for headers, - for bullet points"
             maxWidth: '450px'
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h2 style={{ margin: 0, color: '#CFB53B', fontSize: '1.1rem' }}>
+              <h2 style={{ margin: 0, color: 'var(--color-hover)', fontSize: '1.1rem' }}>
                 {editingActionItem ? 'Edit Action Item' : 'New Action Item'}
               </h2>
               <button
@@ -1737,7 +1737,7 @@ Tip: Use ## for headers, - for bullet points"
               <button
                 onClick={() => handleDeleteActionItem(confirmDeleteActionItem)}
                 className="btn-primary"
-                style={{ padding: '10px 20px', width: 'auto', marginTop: 0, background: '#dc3545' }}
+                style={{ padding: '10px 20px', width: 'auto', marginTop: 0, background: 'var(--color-status-negative)' }}
               >
                 Delete
               </button>

@@ -641,17 +641,7 @@ export default function AdminDashboard() {
       <div className="card">
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
           <img src={logo} alt="La Salle" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
-          <h2 style={{
-            background: 'linear-gradient(135deg, #8B6914 0%, #CFB53B 50%, #8B6914 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-            fontSize: '1.1rem',
-            fontWeight: '700',
-            letterSpacing: '0.15em',
-            textTransform: 'uppercase',
-            margin: 0
-          }}>The Golden Batch</h2>
+          <h2 className="page-title-gold">The Golden Batch</h2>
         </div>
         <p style={{ color: '#666', marginBottom: '4px', fontSize: '0.9rem' }}>Welcome, {user?.first_name || 'Admin'}!</p>
         <div className="header-row">
@@ -1216,7 +1206,7 @@ export default function AdminDashboard() {
                                           <button
                                             onClick={() => handleDeleteInvite(invite.id)}
                                             className="btn-link"
-                                            style={{ color: '#dc3545' }}
+                                            className="btn-delete"
                                           >
                                             Delete
                                           </button>
@@ -1364,9 +1354,9 @@ export default function AdminDashboard() {
                     }}>
                       <div style={{ color: '#006633', marginBottom: '8px', fontSize: '0.7rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Payment Status (Graduates)</div>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
-                        <span><strong style={{ color: '#28a745' }}>{parseInt(masterListStats.full_paid) || 0}</strong> Full ({parseInt(masterListStats.total_graduates) ? Math.round((parseInt(masterListStats.full_paid) / parseInt(masterListStats.total_graduates)) * 100) : 0}%)</span>
-                        <span><strong style={{ color: '#CFB53B' }}>{parseInt(masterListStats.partial_paid) || 0}</strong> Partial ({parseInt(masterListStats.total_graduates) ? Math.round((parseInt(masterListStats.partial_paid) / parseInt(masterListStats.total_graduates)) * 100) : 0}%)</span>
-                        <span><strong style={{ color: '#dc3545' }}>{parseInt(masterListStats.unpaid) || 0}</strong> Unpaid ({parseInt(masterListStats.total_graduates) ? Math.round((parseInt(masterListStats.unpaid) / parseInt(masterListStats.total_graduates)) * 100) : 0}%)</span>
+                        <span><strong style={{ color: 'var(--color-status-positive)' }}>{parseInt(masterListStats.full_paid) || 0}</strong> Full ({parseInt(masterListStats.total_graduates) ? Math.round((parseInt(masterListStats.full_paid) / parseInt(masterListStats.total_graduates)) * 100) : 0}%)</span>
+                        <span><strong style={{ color: 'var(--color-status-warning)' }}>{parseInt(masterListStats.partial_paid) || 0}</strong> Partial ({parseInt(masterListStats.total_graduates) ? Math.round((parseInt(masterListStats.partial_paid) / parseInt(masterListStats.total_graduates)) * 100) : 0}%)</span>
+                        <span><strong style={{ color: 'var(--color-status-negative)' }}>{parseInt(masterListStats.unpaid) || 0}</strong> Unpaid ({parseInt(masterListStats.total_graduates) ? Math.round((parseInt(masterListStats.unpaid) / parseInt(masterListStats.total_graduates)) * 100) : 0}%)</span>
                         <span>/ {parseInt(masterListStats.total_graduates) || 0} total</span>
                       </div>
                     </div>
@@ -1631,18 +1621,7 @@ export default function AdminDashboard() {
                                   {entry.in_memoriam || entry.section === 'Non-Graduate' ? (
                                     <span style={{ color: '#666' }}>-</span>
                                   ) : (
-                                    <span style={{
-                                      padding: '4px 10px',
-                                      borderRadius: '12px',
-                                      fontSize: '0.8rem',
-                                      fontWeight: '600',
-                                      background: entry.payment_status === 'Full' ? 'rgba(40, 167, 69, 0.15)' :
-                                        entry.payment_status === 'Partial' ? 'rgba(207, 181, 59, 0.15)' :
-                                          'rgba(220, 53, 69, 0.15)',
-                                      color: entry.payment_status === 'Full' ? '#28a745' :
-                                        entry.payment_status === 'Partial' ? '#CFB53B' :
-                                          '#dc3545'
-                                    }}>
+                                    <span className={`payment-badge ${entry.payment_status === 'Full' ? 'full' : entry.payment_status === 'Partial' ? 'partial' : 'unpaid'}`}>
                                       {entry.payment_status || 'Unpaid'}
                                     </span>
                                   )}
@@ -1651,7 +1630,7 @@ export default function AdminDashboard() {
                                   {entry.in_memoriam || entry.section === 'Non-Graduate' ? (
                                     <span style={{ color: '#666' }}>-</span>
                                   ) : entry.payment_status === 'Full' ? (
-                                    <span style={{ color: '#28a745', fontWeight: '600' }}>Paid</span>
+                                    <span style={{ color: 'var(--color-status-positive)', fontWeight: '600' }}>Paid</span>
                                   ) : (
                                     <span style={{ color: 'var(--text-primary)' }}>P{parseFloat(entry.balance || 25000).toLocaleString()}</span>
                                   )}
@@ -1729,27 +1708,9 @@ export default function AdminDashboard() {
       {/* Confirm Modal */}
       {
         confirmModal.show && (
-          <div style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0,0,0,0.6)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000
-          }}>
-            <div style={{
-              background: 'linear-gradient(165deg, rgba(30, 40, 35, 0.98) 0%, rgba(20, 28, 24, 0.99) 100%)',
-              border: '1px solid rgba(207, 181, 59, 0.2)',
-              borderRadius: '16px',
-              padding: '24px 32px',
-              maxWidth: '320px',
-              boxShadow: '0 8px 32px rgba(0,0,0,0.5)'
-            }}>
-              <p style={{ color: '#e0e0e0', marginBottom: '20px', fontSize: '0.95rem' }}>{confirmModal.message}</p>
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <p>{confirmModal.message}</p>
               <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
                 <button
                   onClick={() => setConfirmModal({ show: false, message: '', onConfirm: null })}

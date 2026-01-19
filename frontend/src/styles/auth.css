@@ -3,6 +3,29 @@
    Login, Register, Forgot Password
    ======================================== */
 
+/* Page Title - Gold gradient in dark mode, solid green in light mode */
+.page-title-gold {
+  background: linear-gradient(135deg, var(--color-title-gradient-start) 0%, var(--color-hover) 50%, var(--color-title-gradient-end) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* Light mode: solid green instead of gradient */
+body[data-theme="light"] .page-title-gold {
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: var(--color-title);
+  background-clip: unset;
+  color: var(--color-title);
+}
+
 .email-display {
   background: rgba(207, 181, 59, 0.1);
   border: 1px solid rgba(207, 181, 59, 0.2);

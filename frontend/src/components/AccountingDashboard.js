@@ -369,7 +369,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
           <p className="ledger-summary-label">Total Deposits</p>
           <p className="ledger-summary-value">{formatCurrency(totalDeposits)}</p>
           {pendingDeposits > 0 && (
-            <p style={{ fontSize: '0.75rem', color: '#f59e0b', marginTop: '4px' }}>
+            <p style={{ fontSize: '0.75rem', color: 'var(--color-status-warning)', marginTop: '4px' }}>
               +{formatCurrency(pendingDeposits)} pending
             </p>
           )}
@@ -378,7 +378,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
           <p className="ledger-summary-label">Total Withdrawals</p>
           <p className="ledger-summary-value">{formatCurrency(totalWithdrawals)}</p>
           {pendingWithdrawals > 0 && (
-            <p style={{ fontSize: '0.75rem', color: '#f59e0b', marginTop: '4px' }}>
+            <p style={{ fontSize: '0.75rem', color: 'var(--color-status-warning)', marginTop: '4px' }}>
               +{formatCurrency(pendingWithdrawals)} pending
             </p>
           )}
@@ -401,7 +401,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
           padding: '12px 16px',
           marginBottom: '16px',
           fontSize: '0.85rem',
-          color: '#f59e0b'
+          color: 'var(--color-status-warning)'
         }}>
           Pending transactions are shown in the table but excluded from totals until verified (OK).
         </div>
@@ -433,8 +433,8 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
                   border: 'none',
                   cursor: 'pointer',
                   fontWeight: '600',
-                  background: transactionType === 'deposit' ? 'rgba(40, 167, 69, 0.2)' : 'rgba(255,255,255,0.05)',
-                  color: transactionType === 'deposit' ? '#28a745' : '#888'
+                  background: transactionType === 'deposit' ? 'var(--color-status-positive-bg)' : 'rgba(255,255,255,0.05)',
+                  color: transactionType === 'deposit' ? 'var(--color-status-positive)' : '#888'
                 }}
               >
                 + Deposit
@@ -448,8 +448,8 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
                   border: 'none',
                   cursor: 'pointer',
                   fontWeight: '600',
-                  background: transactionType === 'withdrawal' ? 'rgba(220, 53, 69, 0.2)' : 'rgba(255,255,255,0.05)',
-                  color: transactionType === 'withdrawal' ? '#dc3545' : '#888'
+                  background: transactionType === 'withdrawal' ? 'var(--color-status-negative-bg)' : 'rgba(255,255,255,0.05)',
+                  color: transactionType === 'withdrawal' ? 'var(--color-status-negative)' : '#888'
                 }}
               >
                 - Withdrawal
@@ -645,7 +645,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
                       {t.master_list_id && (
                         <span 
                           title={t.ml_first_name ? `Linked to: ${t.ml_first_name} ${t.ml_last_name} (${t.ml_section})` : 'Linked to Master List'}
-                          style={{ marginLeft: '6px', cursor: 'help', color: '#CFB53B' }}
+                          style={{ marginLeft: '6px', cursor: 'help', color: 'var(--color-hover)' }}
                         >
                           [L]
                         </span>
@@ -719,7 +719,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
                             <button 
                               onClick={() => setLinkingTransaction(t)} 
                               className="btn-link"
-                              style={{ color: '#CFB53B' }}
+                              style={{ color: 'var(--color-hover)' }}
                             >
                               Link
                             </button>
@@ -736,7 +736,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
                           <button 
                             onClick={() => handleDelete(t.id)} 
                             className="btn-link" 
-                            style={{ color: '#dc3545' }}
+                            style={{ color: 'var(--color-status-negative)' }}
                           >
                             Delete
                           </button>
@@ -837,7 +837,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
                 <button
                   onClick={() => handleDeleteReceipt(viewingReceipt.id)}
                   className="btn-link"
-                  style={{ color: '#dc3545' }}
+                  style={{ color: 'var(--color-status-negative)' }}
                 >
                   Delete Receipt
                 </button>
