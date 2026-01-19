@@ -10,7 +10,7 @@
   border-radius: 12px;
   margin-bottom: 28px;
   font-size: 0.9rem;
-  color: #CFB53B;
+  color: var(--color-hover);
 }
 
 /* Disclaimer Step (Registration) */
@@ -27,20 +27,20 @@
 }
 
 .disclaimer-box h3 {
-  color: #ffffff;
+  color: var(--color-text-primary);
   margin-bottom: 16px;
   font-size: 1.1rem;
 }
 
 .disclaimer-box p {
-  color: #a0a0a0;
+  color: var(--color-text-secondary);
   line-height: 1.7;
   margin-bottom: 12px;
 }
 
 .disclaimer-box ul {
   margin: 16px 0 20px 24px;
-  color: #a0a0a0;
+  color: var(--color-text-secondary);
   line-height: 1.9;
 }
 
@@ -119,7 +119,7 @@
   display: flex;
   align-items: center;
   cursor: pointer;
-  color: #a0a0a0;
+  color: var(--color-text-secondary);
   font-size: 0.9rem;
   user-select: none;
 }
@@ -129,7 +129,7 @@
   height: 18px;
   margin-right: 10px;
   cursor: pointer;
-  accent-color: #CFB53B;
+  accent-color: var(--color-hover);
 }
 
 .remember-me-label span {
@@ -137,5 +137,5 @@
 }
 
 .remember-me-label:hover span {
-  color: #CFB53B;
+  color: var(--color-hover);
 }

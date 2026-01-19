@@ -42,14 +42,14 @@
 
 .landing-logo span {
   font-weight: 600;
-  color: #CFB53B;
+  color: var(--color-hover);
   font-size: 1.1rem;
 }
 
 .btn-login {
   padding: 10px 24px;
-  background: linear-gradient(135deg, #CFB53B 0%, #a89030 100%);
-  color: #0a0f0d;
+  background: linear-gradient(135deg, var(--color-title-gradient-start) 0%, var(--color-title-gradient-end) 100%);
+  color: var(--color-bg-primary);
   text-decoration: none;
   border-radius: 8px;
   font-weight: 600;
@@ -105,15 +105,18 @@
 .hero-section h1 {
   font-size: 3.5rem;
   font-weight: 700;
-  color: #CFB53B;
+  background: linear-gradient(135deg, var(--color-title-gradient-start), var(--color-title-gradient-end));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   margin-bottom: 16px;
   letter-spacing: -0.02em;
-  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+  text-shadow: none;
 }
 
 .tagline {
   font-size: 1.4rem;
-  color: #e0e0e0;
+  color: var(--color-text-primary);
   margin-bottom: 24px;
   font-style: italic;
 }
@@ -123,14 +126,14 @@
   gap: 32px;
   margin-bottom: 40px;
   font-size: 1.1rem;
-  color: #9ca3af;
+  color: var(--color-text-secondary);
 }
 
 .btn-hero {
   display: inline-block;
   padding: 18px 48px;
-  background: linear-gradient(135deg, #CFB53B 0%, #a89030 100%);
-  color: #0a0f0d;
+  background: linear-gradient(135deg, var(--color-title-gradient-start) 0%, var(--color-title-gradient-end) 100%);
+  color: var(--color-bg-primary);
   text-decoration: none;
   border-radius: 12px;
   font-weight: 600;
@@ -152,7 +155,7 @@
 
 .countdown-section h2 {
   font-size: 1.8rem;
-  color: #CFB53B;
+  color: var(--color-hover);
   margin-bottom: 40px;
 }
 
@@ -175,14 +178,14 @@
   display: block;
   font-size: 3rem;
   font-weight: 700;
-  color: #CFB53B;
+  color: var(--color-hover);
   line-height: 1;
 }
 
 .countdown-label {
   display: block;
   font-size: 0.85rem;
-  color: #9ca3af;
+  color: var(--color-text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin-top: 8px;
@@ -198,13 +201,13 @@
 
 .about-section h2 {
   font-size: 1.8rem;
-  color: #CFB53B;
+  color: var(--color-hover);
   margin-bottom: 24px;
 }
 
 .about-section p {
   font-size: 1.15rem;
-  color: #c0c0c0;
+  color: var(--color-text-primary);
   line-height: 1.8;
 }
 
@@ -217,12 +220,12 @@
 
 .pledge-section h2 {
   font-size: 2.2rem;
-  color: #CFB53B;
+  color: var(--color-hover);
   margin-bottom: 16px;
 }
 
 .pledge-section > p {
-  color: #9ca3af;
+  color: var(--color-text-secondary);
   margin-bottom: 40px;
   max-width: 600px;
   margin-left: auto;
@@ -250,7 +253,7 @@
 
 .pledge-card h3 {
   font-size: 1.2rem;
-  color: #CFB53B;
+  color: var(--color-hover);
   margin-bottom: 16px;
   text-align: center;
 }
@@ -260,31 +263,31 @@
 }
 
 .bank-details p {
-  color: #c0c0c0;
+  color: var(--color-text-primary);
   margin-bottom: 8px;
   font-size: 0.95rem;
 }
 
 .bank-details strong {
-  color: #e0e0e0;
+  color: var(--color-text-primary);
 }
 
 .bank-label {
   font-size: 0.7rem;
-  color: #666;
+  color: var(--color-text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin-bottom: 4px;
 }
 
 .bank-value {
-  color: #e0e0e0;
+  color: var(--color-text-primary);
   font-size: 0.95rem;
   margin-bottom: 4px;
 }
 
 .bank-branch {
-  color: #aaa;
+  color: var(--color-text-secondary);
   font-size: 0.85rem;
   margin-bottom: 0;
 }
@@ -303,7 +306,7 @@
 
 .intl-transfers-card h3 {
   font-size: 0.8rem;
-  color: #CFB53B;
+  color: var(--color-hover);
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin-bottom: 16px;
@@ -386,7 +389,7 @@
 }
 
 .receipt-note a {
-  color: #CFB53B;
+  color: var(--color-hover);
   text-decoration: none;
 }
 
@@ -409,14 +412,14 @@
 
 .gcash-number {
   font-size: 1.1rem;
-  color: #CFB53B;
+  color: var(--color-hover);
   font-weight: 600;
   margin-bottom: 4px;
 }
 
 .gcash-name {
   font-size: 0.9rem;
-  color: #9ca3af;
+  color: var(--color-text-secondary);
 }
 
 /* Footer */
@@ -428,13 +431,13 @@
 }
 
 .landing-footer p {
-  color: #707070;
+  color: var(--color-text-secondary);
   font-size: 0.9rem;
   margin-bottom: 8px;
 }
 
 .landing-footer a {
-  color: #CFB53B;
+  color: var(--color-hover);
   text-decoration: none;
 }
 
@@ -506,7 +509,7 @@
 }
 
 .form-disclaimer p {
-  color: #c0c0c0;
+  color: var(--color-text-primary);
   font-size: 0.95rem;
   line-height: 1.6;
   margin-bottom: 12px;
@@ -518,7 +521,7 @@
 }
 
 .form-disclaimer li {
-  color: #a0a0a0;
+  color: var(--color-text-secondary);
   font-size: 0.9rem;
   line-height: 1.8;
   margin-bottom: 4px;
@@ -526,7 +529,7 @@
 
 .form-disclaimer .privacy-note {
   font-size: 0.85rem;
-  color: #808080;
+  color: var(--color-text-secondary);
   font-style: italic;
   margin-bottom: 0;
   padding-top: 12px;

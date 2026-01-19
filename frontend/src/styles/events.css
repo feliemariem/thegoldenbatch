@@ -10,7 +10,7 @@
 }
 
 .events-header h2 {
-  color: #CFB53B;
+  color: var(--color-hover);
   font-size: 2rem;
   margin: 0 0 8px 0;
   font-weight: 600;
@@ -31,7 +31,7 @@
   background: rgba(207, 181, 59, 0.1);
   border: 1px solid rgba(207, 181, 59, 0.3);
   border-radius: 20px;
-  color: #CFB53B;
+  color: var(--color-hover);
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
@@ -40,13 +40,13 @@
 
 .btn-show-past:hover {
   background: rgba(207, 181, 59, 0.2);
-  border-color: #CFB53B;
+  border-color: var(--color-hover);
 }
 
 .btn-show-past.active {
-  background: linear-gradient(135deg, #CFB53B 0%, #b8a235 100%);
-  border-color: #CFB53B;
-  color: #1a1a2e;
+  background: linear-gradient(135deg, var(--color-title-gradient-start) 0%, var(--color-title-gradient-end) 100%);
+  border-color: var(--color-hover);
+  color: var(--color-bg-primary);
 }
 
 [data-theme="light"] .btn-show-past {
@@ -117,7 +117,7 @@
 .event-day {
   font-size: 2.2rem;
   font-weight: 700;
-  color: #CFB53B;
+  color: var(--color-hover);
   line-height: 1;
 }
 
@@ -181,7 +181,7 @@
 }
 
 .stat-item.interested {
-  color: #CFB53B;
+  color: var(--color-hover);
 }
 
 /* Main Event RSVP Stats */
@@ -221,7 +221,7 @@
 }
 
 .rsvp-note a {
-  color: #CFB53B;
+  color: var(--color-hover);
   text-decoration: none;
   font-weight: 500;
 }
@@ -268,18 +268,18 @@
 .btn-event-rsvp.interested {
   background: rgba(207, 181, 59, 0.1);
   border-color: rgba(207, 181, 59, 0.3);
-  color: #CFB53B;
+  color: var(--color-hover);
 }
 
 .btn-event-rsvp.interested:hover {
   background: rgba(207, 181, 59, 0.2);
-  border-color: #CFB53B;
+  border-color: var(--color-hover);
 }
 
 .btn-event-rsvp.interested.active {
-  background: linear-gradient(135deg, #CFB53B 0%, #b8a235 100%);
-  border-color: #CFB53B;
-  color: #1a1a2e;
+  background: linear-gradient(135deg, var(--color-title-gradient-start) 0%, var(--color-title-gradient-end) 100%);
+  border-color: var(--color-hover);
+  color: var(--color-bg-primary);
 }
 
 /* Admin Events Section */
@@ -289,8 +289,8 @@
 
 .btn-create-event {
   padding: 14px 28px;
-  background: linear-gradient(135deg, #CFB53B 0%, #b8a235 100%);
-  color: #1a1a2e;
+  background: linear-gradient(135deg, var(--color-title-gradient-start) 0%, var(--color-title-gradient-end) 100%);
+  color: var(--color-bg-primary);
   border: none;
   border-radius: 10px;
   font-size: 1rem;
@@ -313,7 +313,7 @@
 }
 
 .event-form-card h3 {
-  color: #CFB53B;
+  color: var(--color-hover);
   margin: 0 0 20px 0;
   font-size: 1.2rem;
 }
@@ -390,8 +390,8 @@
 
 .event-form-card .btn-save {
   padding: 12px 24px;
-  background: linear-gradient(135deg, #CFB53B 0%, #b8a235 100%);
-  color: #1a1a2e;
+  background: linear-gradient(135deg, var(--color-title-gradient-start) 0%, var(--color-title-gradient-end) 100%);
+  color: var(--color-bg-primary);
   border: none;
   border-radius: 8px;
   font-weight: 600;
@@ -445,7 +445,7 @@
   background: rgba(207, 181, 59, 0.1);
   border: 1px solid rgba(207, 181, 59, 0.3);
   border-radius: 20px;
-  color: #CFB53B;
+  color: var(--color-hover);
   font-size: 0.85rem;
   font-weight: 500;
   cursor: pointer;
@@ -455,12 +455,12 @@
 
 .btn-toggle-past:hover {
   background: rgba(207, 181, 59, 0.2);
-  border-color: #CFB53B;
+  border-color: var(--color-hover);
 }
 
 .btn-toggle-past.active {
   background: rgba(207, 181, 59, 0.2);
-  border-color: #CFB53B;
+  border-color: var(--color-hover);
 }
 
 [data-theme="light"] .btn-toggle-past {
@@ -659,7 +659,7 @@
 
 .attendee-name {
   background: rgba(207, 181, 59, 0.1);
-  color: #CFB53B;
+  color: var(--color-hover);
   padding: 4px 10px;
   border-radius: 12px;
   font-size: 0.8rem;
@@ -762,7 +762,7 @@
 }
 
 .events-note strong {
-  color: #CFB53B;
+  color: var(--color-hover);
 }
 
 /* Back Link */
@@ -772,7 +772,7 @@
 }
 
 .events-back .btn-link {
-  color: #CFB53B;
+  color: var(--color-hover);
   text-decoration: none;
   font-weight: 500;
 }
@@ -783,7 +783,7 @@
 
 /* Active nav link */
 .nav-link.active {
-  color: #CFB53B;
+  color: var(--color-hover);
   background: rgba(207, 181, 59, 0.1);
 }
 

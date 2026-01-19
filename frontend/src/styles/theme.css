@@ -42,7 +42,7 @@ body[data-theme="dark"] .theme-toggle {
 /* Overscroll background color for light theme */
 html[data-theme="light"],
 body[data-theme="light"] {
-  background-color: #faf8f4 !important;
+  background-color: var(--color-bg-primary) !important;
 }
 
 /* Landing page - HS building background for light theme */
@@ -101,15 +101,15 @@ body[data-theme="light"] .subtitle {
 }
 
 body[data-theme="light"] .help-text {
-  color: #666 !important;
+  color: var(--color-text-secondary) !important;
 }
 
 body[data-theme="light"] .help-text a {
-  color: #B8960C !important;
+  color: var(--color-hover) !important;
 }
 
 body[data-theme="light"] .help-text-small {
-  color: #777 !important;
+  color: var(--color-text-secondary) !important;
 }
 
 /* Stat Cards - Subtle depth with green undertone */
@@ -352,11 +352,11 @@ body[data-theme="light"] .btn-primary:hover:not(:disabled) {
 }
 
 body[data-theme="light"] .btn-link {
-  color: #006633 !important;
+  color: var(--color-accent) !important;
 }
 
 body[data-theme="light"] .btn-link:hover {
-  color: #004d26 !important;
+  color: var(--color-hover) !important;
 }
 
 body[data-theme="light"] .btn-secondary {

@@ -3,6 +3,34 @@
    Reset, Body, Typography, Containers
    ======================================== */
 
+/* ========================================
+   CENTRALIZED COLOR PALETTE
+   All colors should reference these variables
+   ======================================== */
+
+:root {
+  /* Dark Mode Colors (default) */
+  --color-title-gradient-start: #B8960C;
+  --color-title-gradient-end: #8b6914;
+  --color-text-primary: #e8e8e8;
+  --color-text-secondary: #a0a0a0;
+  --color-accent: #8b6914;
+  --color-hover: #B8960C;
+  --color-bg-primary: #0d1a14;
+  --color-bg-card: #1a2520;
+}
+
+body[data-theme="light"] {
+  /* Light Mode Colors */
+  --color-title: #006633;
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #666666;
+  --color-accent: #006633;
+  --color-hover: #006633;
+  --color-bg-primary: #f8f8f6;
+  --color-bg-card: #ffffff;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -10,16 +38,16 @@
 }
 
 html {
-  background-color: #0a0f0d;
+  background-color: var(--color-bg-primary);
 }
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background-color: #0a0f0d;
+  background-color: var(--color-bg-primary);
   background: linear-gradient(145deg, rgba(10, 15, 13, 0.85) 0%, rgba(26, 42, 31, 0.85) 50%, rgba(13, 21, 16, 0.9) 100%),
               url('../images/hs_bldg.jpg') center center / cover no-repeat fixed;
   min-height: 100vh;
-  color: #e8e8e8;
+  color: var(--color-text-primary);
 }
 
 .container {
@@ -53,7 +81,7 @@ body {
 h1 {
   font-size: 1.6rem;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--color-text-primary);
   margin-bottom: 8px;
   letter-spacing: -0.02em;
 }
@@ -61,19 +89,19 @@ h1 {
 h2 {
   font-size: 1.2rem;
   font-weight: 500;
-  color: #e0e0e0;
+  color: var(--color-text-primary);
   margin-bottom: 24px;
 }
 
 h3 {
   font-size: 1rem;
   font-weight: 600;
-  color: #d0d0d0;
+  color: var(--color-text-primary);
   margin-bottom: 16px;
 }
 
 .subtitle {
-  color: #9ca3af;
+  color: var(--color-text-secondary);
   margin-bottom: 28px;
   font-size: 0.95rem;
 }
@@ -110,23 +138,23 @@ h3 {
 
 .help-text {
   text-align: center;
-  color: #707070;
+  color: var(--color-text-secondary);
   font-size: 0.85rem;
   margin-top: 28px;
 }
 
 .help-text a {
-  color: #CFB53B;
+  color: var(--color-hover);
 }
 
 .help-text-small {
   font-size: 0.85rem;
-  color: #606060;
+  color: var(--color-text-secondary);
   margin-bottom: 12px;
 }
 
 .no-data {
-  color: #606060;
+  color: var(--color-text-secondary);
   text-align: center;
   padding: 40px;
   font-style: italic;
@@ -326,31 +354,31 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 /* Funds display */
 .funds-label {
-  color: #999;
+  color: var(--color-text-secondary);
   font-size: 1rem;
   margin-bottom: 12px;
 }
 
 .funds-total-loading {
-  color: #CFB53B;
+  color: var(--color-hover);
   font-size: 2rem;
 }
 
 .funds-total-amount {
-  color: #CFB53B;
+  color: var(--color-hover);
   font-size: clamp(1.8rem, 7vw, 3.5rem);
   font-weight: 700;
   text-shadow: 0 2px 10px rgba(207, 181, 59, 0.3);
 }
 
 .funds-progress-text {
-  color: #999;
+  color: var(--color-text-secondary);
   font-size: 0.85rem;
   margin-top: 8px;
 }
 
 .funds-date {
-  color: #666;
+  color: var(--color-text-secondary);
   font-size: 0.9rem;
   margin-top: 12px;
 }
@@ -382,7 +410,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .thank-you-title {
-  color: #CFB53B;
+  color: var(--color-hover);
   font-size: 1.4rem;
   margin-bottom: 16px;
   font-weight: 600;
@@ -423,7 +451,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .donor-name {
-  color: #e0e0e0;
+  color: var(--color-text-primary);
   font-size: 1.1rem;
   padding: 12px 0;
   margin: 0;
@@ -457,7 +485,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .donate-bank-name {
-  color: #e0e0e0;
+  color: var(--color-text-primary);
   font-weight: 600;
   font-size: 0.95rem;
   margin-bottom: 12px;
@@ -465,20 +493,20 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .donate-label {
   font-size: 0.7rem;
-  color: #666;
+  color: var(--color-text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin-bottom: 4px;
 }
 
 .donate-value {
-  color: #e0e0e0;
+  color: var(--color-text-primary);
   font-size: 0.95rem;
   margin-bottom: 2px;
 }
 
 .donate-value-sub {
-  color: #aaa;
+  color: var(--color-text-secondary);
   font-size: 0.85rem;
   margin-bottom: 0;
 }
@@ -494,7 +522,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .intl-transfers-header {
   font-size: 0.75rem;
-  color: #CFB53B;
+  color: var(--color-hover);
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin-bottom: 16px;
@@ -516,21 +544,21 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .intl-branch-name {
-  color: #e0e0e0;
+  color: var(--color-text-primary);
   font-weight: 600;
   font-size: 0.85rem;
   margin-bottom: 6px;
 }
 
 .intl-branch-address {
-  color: #888;
+  color: var(--color-text-secondary);
   font-size: 0.8rem;
   line-height: 1.5;
   margin-bottom: 6px;
 }
 
 .intl-branch-tel {
-  color: #777;
+  color: var(--color-text-secondary);
   font-size: 0.75rem;
 }
 
@@ -547,11 +575,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .intl-label {
-  color: #666;
+  color: var(--color-text-secondary);
 }
 
 .intl-value {
-  color: #e0e0e0;
+  color: var(--color-text-primary);
   font-family: monospace;
 }
 
@@ -576,7 +604,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .receipt-note a {
-  color: #CFB53B;
+  color: var(--color-hover);
   text-decoration: none;
 }
 
@@ -607,7 +635,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .budget-target {
   text-align: center;
-  color: #CFB53B;
+  color: var(--color-hover);
   font-size: 1.1rem;
   font-weight: 600;
   margin-bottom: 12px;
@@ -615,7 +643,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .budget-description {
   text-align: center;
-  color: #aaa;
+  color: var(--color-text-secondary);
   font-size: 0.85rem;
   margin-bottom: 20px;
   line-height: 1.5;
@@ -663,12 +691,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .budget-label {
-  color: #e0e0e0;
+  color: var(--color-text-primary);
   font-size: 0.9rem;
 }
 
 .budget-amount {
-  color: #CFB53B;
+  color: var(--color-hover);
   font-weight: 600;
   font-size: 0.9rem;
 }
@@ -693,7 +721,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .budget-total-amount {
-  color: #CFB53B;
+  color: var(--color-hover);
   font-weight: 700;
   font-size: 1rem;
 }
@@ -739,7 +767,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .perm-super-admin-label {
-  color: #CFB53B;
+  color: var(--color-hover);
   font-weight: 600;
   font-size: 1rem;
 }
@@ -756,7 +784,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .perm-check-all-label {
-  color: #e0e0e0;
+  color: var(--color-text-primary);
   font-weight: 600;
 }
 
@@ -767,7 +795,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .perm-label {
-  color: #e0e0e0;
+  color: var(--color-text-primary);
   font-size: 0.9rem;
 }
 
@@ -816,7 +844,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   display: block;
   font-size: 1.5rem;
   font-weight: 700;
-  color: #CFB53B;
+  color: var(--color-hover);
   word-break: break-word;
   overflow-wrap: break-word;
 }
@@ -833,7 +861,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   display: block;
   font-size: 1.5rem;
   font-weight: 700;
-  color: #CFB53B;
+  color: var(--color-hover);
 }
 
 .ledger-summary-amount.deposit {
@@ -899,7 +927,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .ledger-table .balance-cell {
-  color: #CFB53B;
+  color: var(--color-hover);
   font-weight: 600;
 }
 
@@ -1078,12 +1106,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .receipt-modal-header h3 {
-  color: #CFB53B;
+  color: var(--color-hover);
   margin-bottom: 8px;
 }
 
 .receipt-modal-header p {
-  color: #c0c0c0;
+  color: var(--color-text-secondary);
   margin: 0;
 }
 

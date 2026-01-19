@@ -29,12 +29,12 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
-  color: #b0b0b0;
+  color: var(--color-text-secondary);
 }
 
 .btn-rsvp:hover:not(:disabled) {
   border-color: rgba(207, 181, 59, 0.5);
-  color: #e0e0e0;
+  color: var(--color-text-primary);
 }
 
 .btn-rsvp.active.going {
@@ -64,11 +64,11 @@
 .profile-display p {
   padding: 12px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  color: #c0c0c0;
+  color: var(--color-text-primary);
 }
 
 .profile-display p strong {
-  color: #909090;
+  color: var(--color-text-secondary);
   font-weight: 500;
 }
 
@@ -87,18 +87,18 @@
 }
 
 .welcome-section h2 {
-  color: #CFB53B;
+  color: var(--color-hover);
   margin-bottom: 12px;
 }
 
 .welcome-section p {
-  color: #a0a0a0;
+  color: var(--color-text-secondary);
   margin-bottom: 12px;
   line-height: 1.6;
 }
 
 .welcome-section a {
-  color: #CFB53B;
+  color: var(--color-hover);
   font-weight: 500;
 }
 

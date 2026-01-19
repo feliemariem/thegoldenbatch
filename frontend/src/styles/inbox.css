@@ -54,7 +54,7 @@
 
 .inbox-title h1 {
   font-size: 1.2rem;
-  color: #CFB53B;
+  color: var(--color-hover);
   margin: 0;
   font-weight: 600;
   letter-spacing: 3px;
@@ -88,12 +88,12 @@
 }
 
 .inbox-nav .nav-link:hover {
-  color: #CFB53B;
+  color: var(--color-hover);
   background: rgba(207, 181, 59, 0.1);
 }
 
 .inbox-nav .logout-btn {
-  color: #CFB53B;
+  color: var(--color-accent);
 }
 
 .inbox-nav .logout-btn:hover {
@@ -122,8 +122,8 @@
 }
 
 .unread-badge {
-  background: #CFB53B;
-  color: #1a1a2e;
+  background: var(--color-hover);
+  color: var(--color-bg-primary);
   font-size: 0.75rem;
   font-weight: 700;
   padding: 4px 10px;
@@ -196,7 +196,7 @@
 }
 
 .message-item.unread .message-indicator {
-  background: #CFB53B;
+  background: var(--color-hover);
 }
 
 .message-preview {
@@ -223,11 +223,11 @@
 
 .message-item.unread .message-subject {
   font-weight: 700;
-  color: #CFB53B;
+  color: var(--color-hover);
 }
 
 .message-date {
-  color: #CFB53B;
+  color: var(--color-hover);
   font-size: 0.8rem;
   flex-shrink: 0;
   font-weight: 500;
