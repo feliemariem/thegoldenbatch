@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import Footer from '../components/Footer';
 import logo from '../images/lasalle.jpg';
 
@@ -9,6 +10,7 @@ const REMEMBERED_EMAIL_KEY = 'rememberedEmail';
 export default function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { theme, toggleTheme } = useTheme();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -68,6 +70,13 @@ export default function Login() {
 
 return (
   <div className="login-page">
+    <button
+      onClick={toggleTheme}
+      className="theme-toggle"
+      aria-label="Toggle theme"
+    >
+      {theme === 'dark' ? '☀️' : '🌙'}
+    </button>
     <div className="container">
       <div className="card card-narrow">
         <img src={logo} alt="USLS Logo" className="logo" />
@@ -83,7 +92,7 @@ return (
             textTransform: 'uppercase',
             margin: 0
           }}>
-          University of St. La Salle<br />HS 2003
+          University of St. La Salle<br />IS 2003
         </h1>
         <p className="subtitle" style={{ textAlign: 'center' }}>
           Welcome back, Batchmate!
