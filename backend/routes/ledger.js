@@ -4,6 +4,11 @@ const db = require('../db');
 const { authenticateAdmin } = require('../middleware/auth');
 const { upload, uploadToCloudinary, deleteFromCloudinary } = require('../utils/cloudinary');
 
+// =============================================================================
+// IMPORTANT: Route order matters in Express! Specific routes MUST come before
+// dynamic /:id routes, otherwise Express will match /balance as /:id with id="balance"
+// =============================================================================
+
 // Get all transactions with running balance
 // NOTE: Only verified (status = 'OK') transactions count toward balances and totals.
 // Pending transactions are displayed in tables but excluded from all calculations.
@@ -67,16 +72,89 @@ router.get('/', authenticateAdmin, async (req, res) => {
   }
 });
 
+// =============================================================================
+// PUBLIC ROUTES - Must be defined BEFORE /:id routes
+// =============================================================================
+
+// Public route - get balance only (for public funds page)
+// NOTE: Only verified (status = 'OK') transactions count toward balances and totals.
+// Pending transactions are excluded until a financial controller marks them OK.
+router.get('/balance', async (req, res) => {
+  try {
+    // Only sum verified transactions (status = 'OK')
+    const depositResult = await db.query(
+      `SELECT COALESCE(SUM(deposit), 0) as total FROM ledger WHERE verified = 'OK'`
+    );
+    const withdrawalResult = await db.query(
+      `SELECT COALESCE(SUM(withdrawal), 0) as total FROM ledger WHERE verified = 'OK'`
+    );
+
+    const totalDeposits = parseFloat(depositResult.rows[0].total);
+    const totalWithdrawals = parseFloat(withdrawalResult.rows[0].total);
+    const balance = totalDeposits - totalWithdrawals;
+
+    res.json({
+      balance: balance,
+      totalDeposits: totalDeposits,
+      totalWithdrawals: totalWithdrawals,
+      updated_at: new Date().toISOString()
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Public route - get unique donor names (for thank you credits)
+// NOTE: Only verified (status = 'OK') donations are shown in donor credits.
+router.get('/donors', async (req, res) => {
+  try {
+    // Only show donors with verified deposits (status = 'OK')
+    const result = await db.query(
+      `SELECT DISTINCT name FROM ledger
+       WHERE deposit > 0 AND name IS NOT NULL AND name != '' AND verified = 'OK'
+       ORDER BY name ASC`
+    );
+
+    res.json({
+      donors: result.rows.map(r => r.name)
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Get master list entries for linking dropdown - Must be before /:id
+router.get('/master-list-options', authenticateAdmin, async (req, res) => {
+  try {
+    const result = await db.query(
+      `SELECT id, first_name, last_name, section
+       FROM master_list
+       WHERE in_memoriam IS NOT TRUE
+       ORDER BY last_name, first_name`
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// =============================================================================
+// ADMIN ROUTES - POST, PUT, DELETE operations
+// =============================================================================
+
 // Add a transaction
 router.post('/', authenticateAdmin, async (req, res) => {
   try {
-    const { 
-      transaction_date, 
-      name, 
-      description, 
-      deposit, 
-      withdrawal, 
-      reference_no, 
+    const {
+      transaction_date,
+      name,
+      description,
+      deposit,
+      withdrawal,
+      reference_no,
       verified,
       payment_type,
       master_list_id
@@ -128,17 +206,21 @@ router.post('/', authenticateAdmin, async (req, res) => {
   }
 });
 
+// =============================================================================
+// DYNAMIC /:id ROUTES - Must be AFTER all specific routes
+// =============================================================================
+
 // Update a transaction
 router.put('/:id', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params;
-    const { 
-      transaction_date, 
-      name, 
-      description, 
-      deposit, 
-      withdrawal, 
-      reference_no, 
+    const {
+      transaction_date,
+      name,
+      description,
+      deposit,
+      withdrawal,
+      reference_no,
       verified,
       payment_type,
       master_list_id
@@ -211,10 +293,10 @@ router.post('/:id/receipt', authenticateAdmin, upload.single('receipt'), async (
 
     // Update database
     const result = await db.query(
-      `UPDATE ledger SET 
-        receipt_url = $1, 
-        receipt_public_id = $2 
-       WHERE id = $3 
+      `UPDATE ledger SET
+        receipt_url = $1,
+        receipt_public_id = $2
+       WHERE id = $3
        RETURNING *`,
       [uploadResult.secure_url, uploadResult.public_id, id]
     );
@@ -266,7 +348,7 @@ router.delete('/:id', authenticateAdmin, async (req, res) => {
 
     // Get receipt info to delete from Cloudinary
     const existing = await db.query('SELECT receipt_public_id FROM ledger WHERE id = $1', [id]);
-    
+
     if (existing.rows.length === 0) {
       return res.status(404).json({ error: 'Transaction not found' });
     }
@@ -286,71 +368,6 @@ router.delete('/:id', authenticateAdmin, async (req, res) => {
     );
 
     res.json({ message: 'Transaction deleted' });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Server error' });
-  }
-});
-
-// Public route - get balance only (for public funds page)
-// NOTE: Only verified (status = 'OK') transactions count toward balances and totals.
-// Pending transactions are excluded until a financial controller marks them OK.
-router.get('/balance', async (req, res) => {
-  try {
-    // Only sum verified transactions (status = 'OK')
-    const depositResult = await db.query(
-      `SELECT COALESCE(SUM(deposit), 0) as total FROM ledger WHERE verified = 'OK'`
-    );
-    const withdrawalResult = await db.query(
-      `SELECT COALESCE(SUM(withdrawal), 0) as total FROM ledger WHERE verified = 'OK'`
-    );
-
-    const totalDeposits = parseFloat(depositResult.rows[0].total);
-    const totalWithdrawals = parseFloat(withdrawalResult.rows[0].total);
-    const balance = totalDeposits - totalWithdrawals;
-
-    res.json({
-      balance: balance,
-      totalDeposits: totalDeposits,
-      totalWithdrawals: totalWithdrawals,
-      updated_at: new Date().toISOString()
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Server error' });
-  }
-});
-
-// Public route - get unique donor names (for thank you credits)
-// NOTE: Only verified (status = 'OK') donations are shown in donor credits.
-router.get('/donors', async (req, res) => {
-  try {
-    // Only show donors with verified deposits (status = 'OK')
-    const result = await db.query(
-      `SELECT DISTINCT name FROM ledger
-       WHERE deposit > 0 AND name IS NOT NULL AND name != '' AND verified = 'OK'
-       ORDER BY name ASC`
-    );
-
-    res.json({
-      donors: result.rows.map(r => r.name)
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Server error' });
-  }
-});
-
-// Get master list entries for linking dropdown
-router.get('/master-list-options', authenticateAdmin, async (req, res) => {
-  try {
-    const result = await db.query(
-      `SELECT id, first_name, last_name, section 
-       FROM master_list 
-       WHERE in_memoriam IS NOT TRUE
-       ORDER BY last_name, first_name`
-    );
-    res.json(result.rows);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
