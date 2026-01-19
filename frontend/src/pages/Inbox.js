@@ -256,7 +256,7 @@ export default function Inbox() {
 
   if (loading) {
     return (
-      <div className="profile-container">
+      <div className="container admin-container">
         <div className="profile-loading">
           <div className="loading-spinner"></div>
           <p>Loading messages...</p>
@@ -266,7 +266,7 @@ export default function Inbox() {
   }
 
   return (
-    <div className="profile-container">
+    <div className="container admin-container">
       <div className="card">
         {/* Header */}
         <header className="profile-header">
