@@ -276,10 +276,10 @@ router.delete('/:id', authenticateAdmin, async (req, res) => {
 router.get('/balance', async (req, res) => {
   try {
     const depositResult = await db.query(
-      `SELECT COALESCE(SUM(deposit), 0) as total FROM ledger`
+      `SELECT COALESCE(SUM(deposit), 0) as total FROM ledger WHERE verified = 'OK'`
     );
     const withdrawalResult = await db.query(
-      `SELECT COALESCE(SUM(withdrawal), 0) as total FROM ledger`
+      `SELECT COALESCE(SUM(withdrawal), 0) as total FROM ledger WHERE verified = 'OK'`
     );
 
     const totalDeposits = parseFloat(depositResult.rows[0].total);
@@ -302,8 +302,8 @@ router.get('/balance', async (req, res) => {
 router.get('/donors', async (req, res) => {
   try {
     const result = await db.query(
-      `SELECT DISTINCT name FROM ledger 
-       WHERE deposit > 0 AND name IS NOT NULL AND name != ''
+      `SELECT DISTINCT name FROM ledger
+       WHERE deposit > 0 AND name IS NOT NULL AND name != '' AND verified = 'OK'
        ORDER BY name ASC`
     );
 
