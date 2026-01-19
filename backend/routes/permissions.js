@@ -154,7 +154,7 @@ router.get('/me', authenticateToken, async (req, res) => {
       // Super admin has all permissions
       const permissions = {};
       ALL_PERMISSIONS.forEach(p => permissions[p] = true);
-      return res.json({ is_super_admin: true, permissions });
+      return res.json({ is_super_admin: true, admin_id: superAdminCheck.rows[0].id, permissions });
     }
 
     // Check if user is admin via master_list
