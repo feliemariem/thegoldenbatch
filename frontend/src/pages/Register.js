@@ -117,32 +117,37 @@ export default function Register() {
 
   if (validating) {
     return (
-      <div className="container">
-        <div className="card">
-          <p>Validating your invite...</p>
+      <div className="login-page">
+        <div className="container">
+          <div className="card">
+            <p>Validating your invite...</p>
+          </div>
+          <Footer />
         </div>
-        <Footer />
       </div>
     );
   }
 
   if (error && !email) {
     return (
-      <div className="container">
-        <div className="card">
-          <h1>Invalid Invite</h1>
-          <p className="error">{error}</p>
-          <p>Please contact the organizer for a valid invite link.</p>
+      <div className="login-page">
+        <div className="container">
+          <div className="card">
+            <h1>Invalid Invite</h1>
+            <p className="error">{error}</p>
+            <p>Please contact the organizer for a valid invite link.</p>
+          </div>
+          <Footer />
         </div>
-        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="container">
-      <div className="card">
-        <img src={logo} alt="USLS Logo" className="logo" />
+    <div className="login-page">
+      <div className="container">
+        <div className="card">
+          <img src={logo} alt="USLS Logo" className="logo" />
         <h1 style={{textAlign: 'center'}}>University of St. La Salle<br/>HS 2003</h1>
         <p className="subtitle" style={{textAlign: 'center'}}>25th Alumni Homecoming</p>
         <p className="email-display">Hi Batchmate! Please register using: <strong>{email}</strong></p>
@@ -497,9 +502,10 @@ export default function Register() {
               </button>
             </div>
           </form>
-        )}
+          )}
+        </div>
+        <Footer />
       </div>
-      <Footer />
     </div>
   );
 }
