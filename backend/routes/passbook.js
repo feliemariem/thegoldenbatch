@@ -23,21 +23,27 @@ router.get('/', authenticateAdmin, async (req, res) => {
 // Upload a passbook screenshot (restricted to admins with accounting edit permission)
 router.post('/', authenticateAdmin, upload.single('image'), async (req, res) => {
   try {
-    // Check if user has accounting_edit permission
-    const permResult = await db.query(
-      `SELECT p.permissions, a.is_super_admin
-       FROM admins a
-       LEFT JOIN permissions p ON a.id = p.admin_id
-       WHERE LOWER(a.email) = $1`,
+    // Check if user is super admin
+    const adminResult = await db.query(
+      'SELECT id, is_super_admin FROM admins WHERE LOWER(email) = $1',
       [req.user.email.toLowerCase()]
     );
 
-    if (permResult.rows.length === 0) {
+    if (adminResult.rows.length === 0) {
       return res.status(403).json({ error: 'Admin not found' });
     }
 
-    const { permissions, is_super_admin } = permResult.rows[0];
-    const hasPermission = is_super_admin || (permissions && permissions.accounting_edit);
+    const { id: adminId, is_super_admin } = adminResult.rows[0];
+
+    // Check for accounting_edit permission if not super admin
+    let hasPermission = is_super_admin;
+    if (!hasPermission) {
+      const permResult = await db.query(
+        'SELECT enabled FROM permissions WHERE admin_id = $1 AND permission = $2',
+        [adminId, 'accounting_edit']
+      );
+      hasPermission = permResult.rows.length > 0 && permResult.rows[0].enabled;
+    }
 
     if (!hasPermission) {
       return res.status(403).json({ error: 'Accounting edit permission required' });
@@ -46,13 +52,6 @@ router.post('/', authenticateAdmin, upload.single('image'), async (req, res) => 
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });
     }
-
-    // Get admin ID for recording
-    const adminResult = await db.query(
-      'SELECT id FROM admins WHERE LOWER(email) = $1',
-      [req.user.email.toLowerCase()]
-    );
-    const adminId = adminResult.rows.length > 0 ? adminResult.rows[0].id : null;
 
     // Upload to Cloudinary in passbook folder
     const uploadResult = await uploadToCloudinary(req.file.buffer, 'passbook');
@@ -86,21 +85,27 @@ router.post('/', authenticateAdmin, upload.single('image'), async (req, res) => 
 // Delete a passbook screenshot
 router.delete('/:id', authenticateAdmin, async (req, res) => {
   try {
-    // Check if user has accounting_edit permission
-    const permResult = await db.query(
-      `SELECT p.permissions, a.is_super_admin
-       FROM admins a
-       LEFT JOIN permissions p ON a.id = p.admin_id
-       WHERE LOWER(a.email) = $1`,
+    // Check if user is super admin
+    const adminResult = await db.query(
+      'SELECT id, is_super_admin FROM admins WHERE LOWER(email) = $1',
       [req.user.email.toLowerCase()]
     );
 
-    if (permResult.rows.length === 0) {
+    if (adminResult.rows.length === 0) {
       return res.status(403).json({ error: 'Admin not found' });
     }
 
-    const { permissions, is_super_admin } = permResult.rows[0];
-    const hasPermission = is_super_admin || (permissions && permissions.accounting_edit);
+    const { id: adminId, is_super_admin } = adminResult.rows[0];
+
+    // Check for accounting_edit permission if not super admin
+    let hasPermission = is_super_admin;
+    if (!hasPermission) {
+      const permResult = await db.query(
+        'SELECT enabled FROM permissions WHERE admin_id = $1 AND permission = $2',
+        [adminId, 'accounting_edit']
+      );
+      hasPermission = permResult.rows.length > 0 && permResult.rows[0].enabled;
+    }
 
     if (!hasPermission) {
       return res.status(403).json({ error: 'Accounting edit permission required' });
