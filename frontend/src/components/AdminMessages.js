@@ -184,7 +184,7 @@ export default function AdminMessages({ token }) {
 
       <div style={{ marginBottom: '24px' }}>
         <h3 className="section-title-accent" style={{ marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-          Shared Inbox
+          Shared Inbox (Admins Only)
           {unreadCount > 0 && (
             <span style={{
               background: '#dc3545',
