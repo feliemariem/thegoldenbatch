@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useInbox } from '../context/InboxContext';
 import { useTheme } from '../context/ThemeContext';
-import logo from '../images/lasalle.jpg';
+import logo from '../images/logo.png';
 import '../styles/navbar.css';
 
 export default function Navbar() {
