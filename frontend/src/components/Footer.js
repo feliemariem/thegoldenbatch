@@ -12,9 +12,9 @@ export default function Footer() {
       <p className="site-footer-credits">
         Concept: <Link to="/committee" className="site-footer-link">Organizing Committee</Link>
         <span className="site-footer-separator"> | </span>
-        Design: <Link to="/directory?search=William%20Kramer" className="site-footer-link">William Kramer</Link>
+        Design: <Link to="/directory?search=Felie%20Magbanua" className="site-footer-link">Felie Magbanua</Link>
         {' & '}
-        <Link to="/directory?search=Felie%20Magbanua" className="site-footer-link">Felie Magbanua</Link>
+        <Link to="/directory?search=William%20Kramer" className="site-footer-link">William Kramer</Link>
         <span className="site-footer-separator"> | </span>
         Development: <Link to="/directory?search=Felie%20Magbanua" className="site-footer-link">Felie Magbanua</Link>
       </p>

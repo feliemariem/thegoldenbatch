@@ -1191,8 +1191,7 @@ export default function AdminDashboard() {
                                           </button>
                                           <button
                                             onClick={() => handleDeleteInvite(invite.id)}
-                                            className="btn-link"
-                                            className="btn-delete"
+                                            className="btn-link btn-delete"
                                           >
                                             Delete
                                           </button>
