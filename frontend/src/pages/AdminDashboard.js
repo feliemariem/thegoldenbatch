@@ -49,6 +49,7 @@ export default function AdminDashboard() {
   const [registeredRsvpFilter, setRegisteredRsvpFilter] = useState('all');
   const [copiedId, setCopiedId] = useState(null);
   const [showAdminRoleError, setShowAdminRoleError] = useState(false);
+  const [adminUnreadCount, setAdminUnreadCount] = useState(0);
 
 
   // Copies the registration link and shows inline "Copied ✓" on the button
@@ -110,7 +111,22 @@ export default function AdminDashboard() {
     fetchDashboard();
     fetchInvites();
     fetchMasterList();
+    fetchAdminUnreadCount();
   }, [token]);
+
+  const fetchAdminUnreadCount = async () => {
+    try {
+      const res = await fetch('https://the-golden-batch-api.onrender.com/api/messages/admin-inbox/unread-count', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setAdminUnreadCount(data.unreadCount || 0);
+      }
+    } catch (err) {
+      console.error('Failed to fetch admin unread count:', err);
+    }
+  };
 
   // Handle URL parameter changes for deep linking (e.g., /admin?tab=meetings&meetingId=5)
   useEffect(() => {
@@ -806,10 +822,38 @@ export default function AdminDashboard() {
                 fontSize: '0.75rem',
                 background: dashboardMode === 'messages' ? '#CFB53B' : 'transparent',
                 color: dashboardMode === 'messages' ? '#1a1a2e' : '#999',
-                whiteSpace: 'nowrap'
+                whiteSpace: 'nowrap',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px'
               }}
             >
               Messages
+              {adminUnreadCount > 0 && (
+                <span
+                  className={dashboardMode === 'messages' ? '' : 'unread-badge'}
+                  style={dashboardMode === 'messages' ? {
+                    background: '#1a1a2e',
+                    color: '#CFB53B',
+                    fontSize: '0.65rem',
+                    fontWeight: '700',
+                    padding: '2px 6px',
+                    borderRadius: '10px',
+                    minWidth: '16px',
+                    textAlign: 'center'
+                  } : {
+                    fontSize: '0.65rem',
+                    fontWeight: '700',
+                    padding: '2px 6px',
+                    borderRadius: '10px',
+                    minWidth: '16px',
+                    textAlign: 'center'
+                  }}
+                >
+                  {adminUnreadCount}
+                </span>
+              )}
             </button>
           )}
           {isSuperAdmin && (
@@ -1662,7 +1706,7 @@ export default function AdminDashboard() {
 
         {/* MESSAGES MODE */}
         {dashboardMode === 'messages' && (
-          <AdminMessages token={token} />
+          <AdminMessages token={token} onUnreadCountChange={fetchAdminUnreadCount} />
         )}
 
         {/* PERMISSIONS MODE - Super Admin Only */}

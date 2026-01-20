@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-export default function AdminMessages({ token }) {
+export default function AdminMessages({ token, onUnreadCountChange }) {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedMessage, setSelectedMessage] = useState(null);
@@ -36,6 +36,10 @@ export default function AdminMessages({ token }) {
         headers: { Authorization: `Bearer ${token}` }
       });
       setMessages(prev => prev.map(m => m.id === id ? { ...m, is_read: true } : m));
+      // Notify parent to refresh unread count
+      if (onUnreadCountChange) {
+        onUnreadCountChange();
+      }
     } catch (err) {
       console.error('Failed to mark as read:', err);
     }

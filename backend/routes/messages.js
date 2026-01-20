@@ -37,6 +37,22 @@ router.get('/admin-inbox', authenticateAdmin, async (req, res) => {
   }
 });
 
+// Get admin inbox unread count
+router.get('/admin-inbox/unread-count', authenticateAdmin, async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT COUNT(*) as count
+      FROM messages
+      WHERE to_user_id IS NULL AND parent_id IS NULL AND is_read = FALSE
+    `);
+
+    res.json({ unreadCount: parseInt(result.rows[0].count) || 0 });
+  } catch (err) {
+    console.error('Failed to fetch admin unread count:', err);
+    res.status(500).json({ error: 'Failed to fetch unread count' });
+  }
+});
+
 // Get user's messages (both sent and received)
 router.get('/user-inbox', authenticateToken, async (req, res) => {
   try {
@@ -173,6 +189,30 @@ router.post('/to-committee', authenticateToken, async (req, res) => {
       VALUES ($1, NULL, $2, $3, $4)
       RETURNING id
     `, [req.user.id, subject || null, message.trim(), parent_id || null]);
+
+    // If this is a reply to an existing thread, mark the root message as unread
+    // so admins know there's a new user reply
+    if (parent_id) {
+      // Find the root message of this thread
+      const rootResult = await db.query(`
+        WITH RECURSIVE thread AS (
+          SELECT id, parent_id
+          FROM messages
+          WHERE id = $1
+          UNION ALL
+          SELECT m.id, m.parent_id
+          FROM messages m
+          JOIN thread t ON m.id = t.parent_id
+        )
+        SELECT id FROM thread WHERE parent_id IS NULL
+      `, [parent_id]);
+
+      if (rootResult.rows.length > 0) {
+        const rootId = rootResult.rows[0].id;
+        // Mark the root message as unread for admins to see the new reply
+        await db.query('UPDATE messages SET is_read = FALSE WHERE id = $1', [rootId]);
+      }
+    }
 
     res.status(201).json({
       success: true,
