@@ -10,6 +10,8 @@
   position: sticky;
   top: 0;
   z-index: 100;
+  /* Safe area padding for PWA mode (notched devices) */
+  padding-top: env(safe-area-inset-top);
 }
 
 [data-theme="light"] .navbar {
