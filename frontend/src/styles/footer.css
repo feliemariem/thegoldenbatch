@@ -9,9 +9,9 @@
 }
 
 .site-footer-copyright {
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--color-text-secondary);
   margin: 0 0 6px 0;
   letter-spacing: 0.02em;
 }
@@ -45,7 +45,7 @@
 
 /* Light mode styles */
 body[data-theme="light"] .site-footer-copyright {
-  color: rgba(0, 77, 38, 0.6);
+  color: var(--color-text-secondary);
 }
 
 body[data-theme="light"] .site-footer-credits {
@@ -69,7 +69,7 @@ body[data-theme="light"] .site-footer-link:hover {
   }
 
   .site-footer-copyright {
-    font-size: 0.8125rem;
+    font-size: 0.6875rem;
   }
 
   .site-footer-credits {
