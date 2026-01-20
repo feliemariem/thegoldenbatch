@@ -67,21 +67,7 @@ export default function PermissionsManager({ token }) {
       const adminList = Array.isArray(data) ? data : (Array.isArray(data?.admins) ? data.admins : []);
       setAdmins(adminList);
 
-      if (adminList.length > 0) {
-        setSelectedAdminId(adminList[0].id.toString());
-
-        const normalizedPermissions = Array.isArray(adminList[0].permissions)
-          ? adminList[0].permissions.reduce((acc, perm) => ({ ...acc, [perm]: true }), {})
-          : (adminList[0].permissions || {});
-
-        setPermissions(normalizedPermissions);
-        setIsSuperAdmin(adminList[0].is_super_admin);
-
-        // Set committee fields
-        setRoleTitle(adminList[0].role_title || '');
-        setSubCommittees(adminList[0].sub_committees || '');
-        setIsCoreLeader(adminList[0].is_core_leader || false);
-      }
+      // Don't auto-select first admin - let user choose from dropdown
 
     } catch (err) {
       console.error('Failed to fetch admins');
@@ -209,6 +195,7 @@ export default function PermissionsManager({ token }) {
             fontSize: '1rem'
           }}
         >
+          <option value="" disabled>Select Admin...</option>
           {admins.map(admin => (
             <option key={admin.id} value={admin.id}>
               {admin.current_name || `${admin.first_name} ${admin.last_name}`.trim()} {admin.is_super_admin ? '(Super Admin)' : ''}
