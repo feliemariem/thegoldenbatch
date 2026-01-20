@@ -95,15 +95,20 @@ export default function AdminMessages({ token }) {
       });
 
       if (res.ok) {
-        setToast({ message: 'Reply sent successfully!', type: 'success' });
+        // Close reply modal and clear form
         setShowReplyModal(false);
         setReplyForm({ subject: '', message: '' });
-        // Refresh messages to update has_reply status and refetch thread
-        fetchMessages();
+
+        // Update local state immediately to show "Replied" badge
+        setSelectedMessage(prev => prev ? { ...prev, has_reply: true } : null);
+        setMessages(prev => prev.map(m =>
+          m.id === selectedMessage.id ? { ...m, has_reply: true } : m
+        ));
+
+        // Refresh thread to show the new reply
         if (selectedMessage) {
           fetchThread(selectedMessage.id);
         }
-        setTimeout(() => setToast(null), 3000);
       } else {
         const data = await res.json();
         setToast({ message: data.error || 'Failed to send reply', type: 'error' });
