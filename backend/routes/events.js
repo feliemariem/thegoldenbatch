@@ -349,47 +349,76 @@ router.post('/', authenticateAdmin, async (req, res) => {
 
           const emailPromises = users.map(user => {
             const htmlContent = `
-              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
-                <!-- Header with golden batch centered -->
-                <div style="background: #1a2520; padding: 25px 30px; text-align: center;">
-                  <span style="color: #CFB53B; font-size: 20px; font-weight: 600; letter-spacing: 3px;">THE GOLDEN BATCH</span>
-                </div>
-                
-                <!-- Green band -->
-                <div style="background: #006633; color: white; padding: 25px 30px; text-align: center;">
-                  <h1 style="margin: 0; font-size: 22px; font-weight: 700;">USLS-IS Batch 2003</h1>
-                  <p style="margin: 8px 0 0 0; opacity: 0.9; font-size: 14px;">25th Alumni Homecoming</p>
-                </div>
-                
-                <!-- Main content -->
-                <div style="padding: 40px 30px; background: #f9f9f9;">
-                  <p style="color: #333; font-size: 16px; margin: 0 0 25px 0;">Hi ${user.first_name || 'Batchmate'},</p>
-                  
-                  <div style="background: white; padding: 25px; border-radius: 8px; margin: 0 0 25px 0; border-left: 4px solid #CFB53B; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                    <h2 style="color: #006633; margin: 0 0 15px 0; font-size: 18px;">🎉 New Event: ${title}</h2>
-                    <p style="color: #333; margin: 0 0 10px 0; font-size: 15px;"><strong>${title}</strong></p>
-                    <p style="color: #666; margin: 0 0 8px 0; font-size: 14px;">📅 ${eventDateFormatted}${event_time ? ` • ${event_time}` : ''}</p>
-                    ${location ? `<p style="color: #666; margin: 0 0 8px 0; font-size: 14px;">📍 ${location}</p>` : ''}
-                    ${description ? `<p style="color: #666; margin: 15px 0 0 0; font-size: 14px;">${description}</p>` : ''}
+              <div style="margin: 0; padding: 0; background: #ffffff;">
+                <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif; color: #1a1a1a;">
+
+                  <!-- Header -->
+                  <div style="background: #0d1a14; padding: 24px; text-align: center;">
+                    <div style="color: #B8960C; letter-spacing: 3px; font-weight: 700; font-size: 14px; font-family: Georgia, serif;">
+                      THE GOLDEN BATCH
+                    </div>
                   </div>
-                  
-                  <p style="color: #CFB53B; font-size: 14px; margin: 0 0 25px 0; font-style: italic;">
-                    Check it out and let us know if you're going!
-                  </p>
-                  
-                  <div style="text-align: center; margin: 30px 0;">
-                    <a href="${siteUrl}/events/${event.id}" style="display: inline-block; background: #006633; color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px;">View Event</a>
+
+                  <!-- Green Banner -->
+                  <div style="background: #006633; padding: 28px; text-align: center; color: #ffffff;">
+                    <h1 style="margin: 0; font-size: 24px; font-weight: 700; font-family: Georgia, serif;">
+                      UNIVERSITY OF ST. LA SALLE - IS 2003
+                    </h1>
+                    <p style="margin: 8px 0 0; font-size: 16px; font-family: Arial, sans-serif;">
+                      25th Alumni Homecoming
+                    </p>
                   </div>
-                  
-                  <p style="color: #666; font-size: 14px; margin: 30px 0 0 0;">
-                    - The Organizing Committee
-                  </p>
-                </div>
-                
-                <!-- Footer -->
-                <div style="background: #333; color: #999; padding: 25px 20px; text-align: center; font-size: 12px;">
-                  <p style="margin: 0; color: #ccc;">USLS-IS High School Batch 2003</p>
-                  <p style="margin: 8px 0 0 0;">Questions? Email us at <a href="mailto:uslsis.batch2003@gmail.com" style="color: #CFB53B;">uslsis.batch2003@gmail.com</a></p>
+
+                  <!-- Body -->
+                  <div style="padding: 32px 28px; background: #ffffff;">
+                    <p style="font-size: 18px; margin: 0 0 20px; font-family: Arial, sans-serif; color: #1a1a1a;">
+                      Hi ${user.first_name || 'Batchmate'},
+                    </p>
+
+                    <div style="background: #fafafa; padding: 25px; border-radius: 8px; margin: 0 0 25px 0; border-left: 4px solid #B8960C;">
+                      <h2 style="color: #006633; margin: 0 0 15px 0; font-size: 18px; font-family: Georgia, serif;">New Event: ${title}</h2>
+                      <p style="color: #1a1a1a; margin: 0 0 10px 0; font-size: 15px; font-family: Arial, sans-serif;"><strong>${title}</strong></p>
+                      <p style="color: #666666; margin: 0 0 8px 0; font-size: 14px; font-family: Arial, sans-serif;">${eventDateFormatted}${event_time ? ` | ${event_time}` : ''}</p>
+                      ${location ? `<p style="color: #666666; margin: 0 0 8px 0; font-size: 14px; font-family: Arial, sans-serif;">${location}</p>` : ''}
+                      ${description ? `<p style="color: #666666; margin: 15px 0 0 0; font-size: 14px; font-family: Arial, sans-serif;">${description}</p>` : ''}
+                    </div>
+
+                    <p style="color: #B8960C; font-size: 14px; margin: 0 0 25px 0; font-style: italic; font-family: Arial, sans-serif;">
+                      Check it out and let us know if you're going!
+                    </p>
+
+                    <!-- Button -->
+                    <div style="text-align: center; margin: 32px 0;">
+                      <a href="${siteUrl}/events/${event.id}"
+                         style="
+                           background: #006633;
+                           color: #ffffff;
+                           padding: 16px 42px;
+                           font-size: 18px;
+                           font-weight: 700;
+                           text-decoration: none;
+                           border-radius: 8px;
+                           display: inline-block;
+                           font-family: Arial, sans-serif;
+                         ">
+                        View Event
+                      </a>
+                    </div>
+
+                    <p style="font-size: 14px; color: #666666; margin: 30px 0 0 0; font-family: Arial, sans-serif;">
+                      — USLS-IS 2003 Organizing Committee
+                    </p>
+                  </div>
+
+                  <!-- Footer -->
+                  <div style="background: #0d1a14; padding: 20px; text-align: center; font-size: 14px; font-family: Arial, sans-serif;">
+                    <span style="color: #B8960C;">USLS-IS 2003</span><br/>
+                    <span style="color: #cccccc;">Questions? Email us at</span>
+                    <a href="mailto:uslsis.batch2003@gmail.com" style="color: #B8960C; text-decoration: none;">
+                      uslsis.batch2003@gmail.com
+                    </a>
+                  </div>
+
                 </div>
               </div>
             `;
