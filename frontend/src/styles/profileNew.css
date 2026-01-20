@@ -235,7 +235,11 @@
 
 .guide-title {
   font-family: var(--font-heading);
-  color: #006633;
+  /* Dark mode: gold gradient */
+  background: linear-gradient(135deg, #CFB53B 0%, #B8960C 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   font-size: 1.3rem;
   margin: 0 0 20px 0;
   font-weight: 700;
@@ -1062,7 +1066,11 @@
 }
 
 [data-theme="light"] .guide-title {
-  color: #006633;
+  /* Light mode: green gradient */
+  background: linear-gradient(135deg, #006633 0%, #004d26 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 [data-theme="light"] .guide-item {
@@ -1602,5 +1610,134 @@
 }
 
 [data-theme="light"] .quick-link:hover span:last-child {
+  color: #006633;
+}
+
+/* ========================================
+   MEDIA PAGE - Light Mode Color Overrides
+   Following the rule: Light mode accents = GREEN (#006633)
+   ======================================== */
+
+/* Media Hub page title */
+.media-page-title {
+  color: #CFB53B;
+}
+
+[data-theme="light"] .media-page-title {
+  color: #006633;
+}
+
+/* Album card titles in gallery */
+.album-card-title {
+  color: #CFB53B;
+  margin-bottom: 4px;
+  font-size: 0.9rem;
+}
+
+[data-theme="light"] .album-card-title {
+  color: #006633;
+}
+
+/* Album detail header */
+.album-detail-title {
+  color: #CFB53B;
+  margin-bottom: 6px;
+  font-size: 1.1rem;
+}
+
+[data-theme="light"] .album-detail-title {
+  color: #006633;
+}
+
+/* Back to Albums link */
+.back-to-albums {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: #CFB53B;
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 16px;
+}
+
+[data-theme="light"] .back-to-albums {
+  color: #006633;
+}
+
+/* News item labels (FUNDRAISING, UPDATE, ANNOUNCEMENT) */
+.news-item-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.news-item-label.gold {
+  color: #CFB53B;
+}
+
+.news-item-label.green {
+  color: #006633;
+}
+
+[data-theme="light"] .news-item-label.gold {
+  color: #006633;
+}
+
+/* News item titles */
+.news-item-title {
+  color: #e0e0e0;
+  font-size: 0.95rem;
+  margin: 6px 0;
+  font-weight: 500;
+}
+
+[data-theme="light"] .media-card-green .news-item-title {
+  color: #e8e8e0;
+}
+
+/* Media card heading - Dark mode: gold, Light mode: green */
+.media-card-heading {
+  color: #CFB53B;
+}
+
+[data-theme="light"] .media-card-heading {
+  color: #006633 !important;
+}
+
+/* Podcast and spotlight titles within cards */
+.media-podcast-title,
+.media-spotlight-title {
+  color: #e0e0e0;
+  font-size: 0.95rem;
+  margin: 0 0 4px 0;
+}
+
+[data-theme="light"] .media-card-green .media-podcast-title,
+[data-theme="light"] .media-card-green .media-spotlight-title {
+  color: #e8e8e0;
+}
+
+/* Media submission email link */
+.media-email-link {
+  color: #CFB53B;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+[data-theme="light"] .media-email-link {
+  color: #006633;
+}
+
+/* Media gallery tab - active state */
+.media-tab-active {
+  color: #CFB53B;
+}
+
+[data-theme="light"] .media-tab-active {
   color: #006633;
 }
