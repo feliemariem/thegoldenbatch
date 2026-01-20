@@ -100,12 +100,9 @@
 /* Navigation Section Wrapper */
 .nav-section {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-
-.nav-logout-row {
-  margin-bottom: 4px;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
 }
 
 /* Navigation */
@@ -932,12 +929,17 @@
     flex-direction: column;
     gap: 16px;
   }
-  
+
+  .nav-section {
+    flex-direction: column;
+    gap: 12px;
+  }
+
   .profile-nav {
     flex-wrap: wrap;
     justify-content: center;
   }
-  
+
   .nav-link {
     padding: 8px 12px;
     font-size: 0.85rem;
