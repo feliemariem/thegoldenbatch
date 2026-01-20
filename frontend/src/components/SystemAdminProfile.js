@@ -31,23 +31,19 @@ export default function SystemAdminProfile() {
                 <span className="profile-subtitle">25th Alumni Homecoming</span>
               </div>
             </div>
-            <div className="nav-section">
-              <div className="nav-logout-row">
-                <button onClick={handleLogout} className="nav-link logout-btn">Logout</button>
-              </div>
-              <nav className="profile-nav">
-                <Link to="/events" className={`nav-link ${location.pathname === '/events' ? 'active' : ''}`}>Events</Link>
-                <Link to="/committee" className="nav-link">Committee</Link>
-                <Link to="/directory" className="nav-link">Directory</Link>
-                <Link to="/funds" className="nav-link">Funds</Link>
-                <Link to="/inbox" className="nav-link nav-link-badge">
-                  Inbox
-                  {unreadCount > 0 && <span className="nav-badge">{unreadCount}</span>}
-                </Link>
-                <Link to="/profile-preview" className="nav-link active">Profile</Link>
-                <Link to="/admin" className="nav-link">Admin</Link>
-              </nav>
-            </div>
+            <nav className="nav-section">
+              <Link to="/events" className={`nav-link ${location.pathname === '/events' ? 'active' : ''}`}>Events</Link>
+              <Link to="/committee" className="nav-link">Committee</Link>
+              <Link to="/directory" className="nav-link">Directory</Link>
+              <Link to="/funds" className="nav-link">Funds</Link>
+              <Link to="/inbox" className="nav-link nav-link-badge">
+                Inbox
+                {unreadCount > 0 && <span className="nav-badge">{unreadCount}</span>}
+              </Link>
+              <Link to="/profile-preview" className="nav-link active">Profile</Link>
+              <Link to="/admin" className="nav-link">Admin</Link>
+              <button onClick={handleLogout} className="nav-link logout-btn">Logout</button>
+            </nav>
           </div>
         </header>
 

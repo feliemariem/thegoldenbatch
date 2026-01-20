@@ -281,31 +281,27 @@ export default function Inbox() {
                 <span className="profile-subtitle">25th Alumni Homecoming</span>
               </div>
             </div>
-            <div className="nav-section">
-              <div className="nav-logout-row">
-                <button onClick={() => { logout(); window.location.href = '/login'; }} className="nav-link logout-btn">Logout</button>
-              </div>
-              <nav className="profile-nav">
-                <div className={`nav-dropdown ${eventsDropdownOpen ? 'open' : ''}`} ref={eventsDropdownRef}>
-                  <button
-                    className={`nav-dropdown-trigger ${location.pathname === '/events' || location.pathname === '/media' ? 'active' : ''} ${eventsDropdownOpen ? 'open' : ''}`}
-                    onClick={() => setEventsDropdownOpen(!eventsDropdownOpen)}
-                  >
-                    Events <span className="dropdown-arrow">▼</span>
-                  </button>
-                  <div className="nav-dropdown-menu">
-                    <Link to="/events" className={`nav-dropdown-item ${location.pathname === '/events' ? 'active' : ''}`} onClick={() => setEventsDropdownOpen(false)}>Upcoming</Link>
-                    <Link to="/media" className={`nav-dropdown-item ${location.pathname === '/media' ? 'active' : ''}`} onClick={() => setEventsDropdownOpen(false)}>Media</Link>
-                  </div>
+            <nav className="nav-section">
+              <div className={`nav-dropdown ${eventsDropdownOpen ? 'open' : ''}`} ref={eventsDropdownRef}>
+                <button
+                  className={`nav-dropdown-trigger ${location.pathname === '/events' || location.pathname === '/media' ? 'active' : ''} ${eventsDropdownOpen ? 'open' : ''}`}
+                  onClick={() => setEventsDropdownOpen(!eventsDropdownOpen)}
+                >
+                  Events <span className="dropdown-arrow">▼</span>
+                </button>
+                <div className="nav-dropdown-menu">
+                  <Link to="/events" className={`nav-dropdown-item ${location.pathname === '/events' ? 'active' : ''}`} onClick={() => setEventsDropdownOpen(false)}>Upcoming</Link>
+                  <Link to="/media" className={`nav-dropdown-item ${location.pathname === '/media' ? 'active' : ''}`} onClick={() => setEventsDropdownOpen(false)}>Media</Link>
                 </div>
-                {user?.isAdmin && <Link to="/committee" className="nav-link">Committee</Link>}
-                {user?.isAdmin && <Link to="/directory" className="nav-link">Directory</Link>}
-                <Link to="/funds" className="nav-link">Funds</Link>
-                <Link to="/inbox" className="nav-link active">Inbox{unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}</Link>
-                <Link to={user?.isAdmin ? "/profile-preview" : "/profile"} className="nav-link">Profile</Link>
-                {user?.isAdmin && <Link to="/admin" className="nav-link">Admin</Link>}
-              </nav>
-            </div>
+              </div>
+              {user?.isAdmin && <Link to="/committee" className="nav-link">Committee</Link>}
+              {user?.isAdmin && <Link to="/directory" className="nav-link">Directory</Link>}
+              <Link to="/funds" className="nav-link">Funds</Link>
+              <Link to="/inbox" className="nav-link active">Inbox{unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}</Link>
+              <Link to={user?.isAdmin ? "/profile-preview" : "/profile"} className="nav-link">Profile</Link>
+              {user?.isAdmin && <Link to="/admin" className="nav-link">Admin</Link>}
+              <button onClick={() => { logout(); window.location.href = '/login'; }} className="nav-link logout-btn">Logout</button>
+            </nav>
         </div>
       </header>
 
