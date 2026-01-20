@@ -24,7 +24,6 @@ export default function Register() {
     confirmPassword: '',
     first_name: '',
     last_name: '',
-    birthday: '',
     mobile: '',
     address: '',
     city: '',
@@ -286,26 +285,15 @@ export default function Register() {
               </div>
             </div>
 
-            <div className="form-row">
-              <div className="form-group">
-                <label>Birthday</label>
-                <input
-                  type="date"
-                  name="birthday"
-                  value={form.birthday}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="form-group">
-                <label>Mobile</label>
-                <input
-                  type="tel"
-                  name="mobile"
-                  value={form.mobile}
-                  onChange={handleChange}
-                  placeholder="+63 917 123 4567"
-                />
-              </div>
+            <div className="form-group">
+              <label>Mobile</label>
+              <input
+                type="tel"
+                name="mobile"
+                value={form.mobile}
+                onChange={handleChange}
+                placeholder="+63 917 123 4567"
+              />
             </div>
 
             <div className="form-group">

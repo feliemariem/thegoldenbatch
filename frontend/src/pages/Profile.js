@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import Footer from '../components/Footer';
 import logo from '../images/lasalle.jpg';
 
 export default function Profile() {
   const { user, token, logout, setUser } = useAuth();
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
 
   const [profile, setProfile] = useState(null);
   const [editing, setEditing] = useState(false);
@@ -128,26 +130,43 @@ export default function Profile() {
 
   if (!profile) {
     return (
-      <div className="container">
-        <div className="card">
-          <p>Loading...</p>
+      <div className="login-page">
+        <button
+          onClick={toggleTheme}
+          className="theme-toggle"
+          aria-label="Toggle theme"
+        >
+          {theme === 'dark' ? '☀️' : '🌙'}
+        </button>
+        <div className="container">
+          <div className="card">
+            <p>Loading...</p>
+          </div>
+          <Footer />
         </div>
-        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="container">
-      <div className="card">
-        <img src={logo} alt="USLS Logo" className="logo" />
-        <h2 className="page-title-gold" style={{ marginBottom: '8px' }}>The Golden Batch</h2>
-        <div className="header-row">
-          <h4 style={{ margin: 0 }}>USLS-IS 2003</h4>
-          <button onClick={handleLogout} className="btn-link">
-            Logout
-          </button>
-        </div>
+    <div className="login-page">
+      <button
+        onClick={toggleTheme}
+        className="theme-toggle"
+        aria-label="Toggle theme"
+      >
+        {theme === 'dark' ? '☀️' : '🌙'}
+      </button>
+      <div className="container">
+        <div className="card">
+          <img src={logo} alt="USLS Logo" className="logo" />
+          <h2 className="page-title-gold" style={{ marginBottom: '8px' }}>The Golden Batch</h2>
+          <div className="header-row">
+            <h4 style={{ margin: 0 }}>USLS-IS 2003</h4>
+            <button onClick={handleLogout} className="btn-link">
+              Logout
+            </button>
+          </div>
 
         {/* Welcome Section */}
         <div className="welcome-section">
@@ -322,8 +341,9 @@ export default function Profile() {
             </div>
           )}
         </div>
+        </div>
+        <Footer />
       </div>
-      <Footer />
     </div>
   );
 }
