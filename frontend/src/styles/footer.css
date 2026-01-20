@@ -19,9 +19,28 @@
 .site-footer-credits {
   font-size: 0.75rem;
   font-weight: 400;
-  color: rgba(255, 255, 255, 0.45);
+  color: var(--color-text-secondary);
+  font-family: var(--font-body);
   margin: 0;
   letter-spacing: 0.01em;
+}
+
+/* Footer separator */
+.site-footer-separator {
+  color: var(--color-text-secondary);
+}
+
+/* Footer links - gold in dark mode */
+.site-footer-link {
+  color: var(--color-hover);
+  text-decoration: none;
+  transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+.site-footer-link:hover {
+  color: var(--color-hover);
+  opacity: 0.8;
+  text-decoration: underline;
 }
 
 /* Light mode styles */
@@ -30,7 +49,16 @@ body[data-theme="light"] .site-footer-copyright {
 }
 
 body[data-theme="light"] .site-footer-credits {
-  color: rgba(0, 77, 38, 0.45);
+  color: var(--color-text-secondary);
+}
+
+/* Light mode links - green */
+body[data-theme="light"] .site-footer-link {
+  color: var(--color-accent);
+}
+
+body[data-theme="light"] .site-footer-link:hover {
+  color: var(--color-hover);
 }
 
 /* Mobile adjustments */

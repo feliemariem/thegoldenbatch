@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -9,7 +10,13 @@ export default function Footer() {
         &copy; {currentYear} USLS-IS Golden Batch 2003
       </p>
       <p className="site-footer-credits">
-        Concept: Organizing Committee | Design: William Kramer &amp; Felie Magbanua | Development: Felie Magbanua
+        <Link to="/committee" className="site-footer-link">Organizing Committee</Link>
+        <span className="site-footer-separator"> | </span>
+        Design: <Link to="/directory?search=William%20Kramer" className="site-footer-link">William Kramer</Link>
+        {' & '}
+        <Link to="/directory?search=Felie%20Magbanua" className="site-footer-link">Felie Magbanua</Link>
+        <span className="site-footer-separator"> | </span>
+        Development: <Link to="/directory?search=Felie%20Magbanua" className="site-footer-link">Felie Magbanua</Link>
       </p>
     </footer>
   );
