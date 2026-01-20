@@ -41,6 +41,8 @@ router.get('/admin-inbox', authenticateAdmin, async (req, res) => {
 router.get('/user-inbox', authenticateToken, async (req, res) => {
   try {
     // Get messages sent TO this user (from admins/committee)
+    // Only show root messages (admin-initiated conversations), not replies to user's messages
+    // Replies to user's messages will show up in the thread view of sent messages
     const result = await db.query(`
       SELECT
         m.id,
@@ -52,10 +54,13 @@ router.get('/user-inbox', authenticateToken, async (req, res) => {
         m.from_admin_id,
         a.first_name as sender_first_name,
         a.last_name as sender_last_name,
-        'Committee' as sender_display
+        'Committee' as sender_display,
+        CASE WHEN EXISTS (
+          SELECT 1 FROM messages r WHERE r.parent_id = m.id
+        ) THEN true ELSE false END as has_reply
       FROM messages m
       LEFT JOIN admins a ON m.from_admin_id = a.id
-      WHERE m.to_user_id = $1
+      WHERE m.to_user_id = $1 AND m.parent_id IS NULL
       ORDER BY m.created_at DESC
     `, [req.user.id]);
 
@@ -99,17 +104,18 @@ router.get('/thread/:id', authenticateToken, async (req, res) => {
     const { id } = req.params;
 
     // First get the root message (either the message itself or find its root)
+    // Traverse up the parent chain to find the message with parent_id IS NULL
     const rootResult = await db.query(`
       WITH RECURSIVE thread AS (
-        SELECT id, parent_id, id as root_id
+        SELECT id, parent_id
         FROM messages
         WHERE id = $1
         UNION ALL
-        SELECT m.id, m.parent_id, t.root_id
+        SELECT m.id, m.parent_id
         FROM messages m
         JOIN thread t ON m.id = t.parent_id
       )
-      SELECT root_id FROM thread WHERE parent_id IS NULL
+      SELECT id as root_id FROM thread WHERE parent_id IS NULL
     `, [id]);
 
     const rootId = rootResult.rows[0]?.root_id || id;

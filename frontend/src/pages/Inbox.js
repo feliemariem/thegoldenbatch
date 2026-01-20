@@ -24,6 +24,7 @@ export default function Inbox() {
   const [thread, setThread] = useState([]);
   const [loadingThread, setLoadingThread] = useState(false);
   const [activeTab, setActiveTab] = useState('inbox'); // 'inbox' or 'sent'
+  const [replyToMessageId, setReplyToMessageId] = useState(null); // Track message being replied to
 
   useEffect(() => {
     fetchInbox();
@@ -154,13 +155,15 @@ export default function Inbox() {
         },
         body: JSON.stringify({
           subject: composeForm.subject,
-          message: composeForm.message
+          message: composeForm.message,
+          parent_id: replyToMessageId || null // Link to original message if replying
         })
       });
 
       if (res.ok) {
         setShowComposeModal(false);
         setComposeForm({ subject: '', message: '' });
+        setReplyToMessageId(null); // Clear reply context
         fetchSentMessages(); // Refresh sent messages
         // Show success state on button
         setJustSent(true);
@@ -179,7 +182,8 @@ export default function Inbox() {
     }
   };
 
-  const handleReplyToCommittee = (subject) => {
+  const handleReplyToCommittee = (messageId, subject) => {
+    setReplyToMessageId(messageId); // Store the message ID to link the reply
     setComposeForm({
       subject: subject ? `Re: ${subject.replace(/^Re:\s*/i, '')}` : '',
       message: ''
@@ -283,7 +287,7 @@ export default function Inbox() {
         </div>
         <div style={{ marginTop: '16px', marginBottom: '20px' }}>
           <button
-            onClick={() => !justSent && setShowComposeModal(true)}
+            onClick={() => { if (!justSent) { setReplyToMessageId(null); setComposeForm({ subject: '', message: '' }); setShowComposeModal(true); } }}
             className={`btn-reply ${justSent ? 'btn-success-state' : ''}`}
             disabled={justSent}
           >
@@ -566,7 +570,7 @@ export default function Inbox() {
               </span>
               {selectedType !== 'sent' && (
                 <button
-                  onClick={() => handleReplyToCommittee(selectedItem.subject)}
+                  onClick={() => handleReplyToCommittee(selectedItem.id, selectedItem.subject)}
                   className="btn-reply"
                 >
                   Reply to Committee
@@ -579,11 +583,11 @@ export default function Inbox() {
 
       {/* Compose Message Modal */}
       {showComposeModal && (
-        <div className="modal-overlay" onClick={() => setShowComposeModal(false)}>
+        <div className="modal-overlay" onClick={() => { setShowComposeModal(false); setReplyToMessageId(null); }}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close" onClick={() => setShowComposeModal(false)}>&times;</button>
+            <button className="modal-close" onClick={() => { setShowComposeModal(false); setReplyToMessageId(null); }}>&times;</button>
             <div className="detail-header">
-              <h3>Message to Committee</h3>
+              <h3>{replyToMessageId ? 'Reply to Committee' : 'Message to Committee'}</h3>
             </div>
             <form onSubmit={handleSendMessage} style={{ padding: '20px' }}>
               <div style={{ marginBottom: '16px' }}>
@@ -637,7 +641,7 @@ export default function Inbox() {
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
                 <button
                   type="button"
-                  onClick={() => setShowComposeModal(false)}
+                  onClick={() => { setShowComposeModal(false); setReplyToMessageId(null); }}
                   style={{
                     padding: '10px 20px',
                     background: 'transparent',
