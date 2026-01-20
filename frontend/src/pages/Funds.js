@@ -1,23 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useInbox } from '../context/InboxContext';
+import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import logo from '../images/lasalle.jpg';
 import '../styles/profileNew.css';
 
 export default function Funds() {
-  const { user, logout } = useAuth();
-  const { unreadCount } = useInbox();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [eventsDropdownOpen, setEventsDropdownOpen] = useState(false);
-  const eventsDropdownRef = useRef(null);
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
+  const { user } = useAuth();
   const [balance, setBalance] = useState(0);
   const [totalDeposits, setTotalDeposits] = useState(0);
   const [totalWithdrawals, setTotalWithdrawals] = useState(0);
@@ -62,17 +50,6 @@ export default function Funds() {
     return () => clearInterval(interval);
   }, []);
 
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (eventsDropdownRef.current && !eventsDropdownRef.current.contains(event.target)) {
-        setEventsDropdownOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
   const formatPeso = (amount, decimals = 2) => {
     return PESO + amount.toLocaleString('en-PH', { 
       minimumFractionDigits: decimals, 
@@ -82,41 +59,8 @@ export default function Funds() {
 
   return (
     <div className="container admin-container">
+      <Navbar />
       <div className="card">
-        {/* Header */}
-        <header className="profile-header">
-          <div className="profile-header-content">
-            <div className="profile-logo-section">
-              <img src={logo} alt="USLS Logo" className="profile-logo" />
-              <div className="profile-title">
-                <h1>THE GOLDEN BATCH</h1>
-                <span className="profile-subtitle">25th Alumni Homecoming</span>
-              </div>
-            </div>
-            <nav className="nav-section">
-              <div className={`nav-dropdown ${eventsDropdownOpen ? 'open' : ''}`} ref={eventsDropdownRef}>
-                <button
-                  className={`nav-dropdown-trigger ${location.pathname === '/events' || location.pathname === '/media' ? 'active' : ''} ${eventsDropdownOpen ? 'open' : ''}`}
-                  onClick={() => setEventsDropdownOpen(!eventsDropdownOpen)}
-                >
-                  Events <span className="dropdown-arrow">▼</span>
-                </button>
-                <div className="nav-dropdown-menu">
-                  <Link to="/events" className={`nav-dropdown-item ${location.pathname === '/events' ? 'active' : ''}`} onClick={() => setEventsDropdownOpen(false)}>Upcoming</Link>
-                  <Link to="/media" className={`nav-dropdown-item ${location.pathname === '/media' ? 'active' : ''}`} onClick={() => setEventsDropdownOpen(false)}>Media</Link>
-                </div>
-              </div>
-              {user?.isAdmin && <Link to="/committee" className="nav-link">Committee</Link>}
-              {user?.isAdmin && <Link to="/directory" className="nav-link">Directory</Link>}
-              <Link to="/funds" className="nav-link active">Funds</Link>
-              <Link to="/inbox" className="nav-link">Inbox{unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}</Link>
-              <Link to={user?.isAdmin ? "/profile-preview" : "/profile"} className="nav-link">Profile</Link>
-              {user?.isAdmin && <Link to="/admin" className="nav-link">Admin</Link>}
-              <button onClick={handleLogout} className="nav-link logout-btn">Logout</button>
-            </nav>
-        </div>
-      </header>
-
       <main className="profile-main">
         <div className="card funds-content funds-card">
           <h2 className="funds-page-title">USLS-IS 2003</h2>

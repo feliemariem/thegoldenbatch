@@ -1,16 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useInbox } from '../context/InboxContext';
 import MyTasks from '../components/MyTasks';
+import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import SystemAdminProfile from '../components/SystemAdminProfile';
-import logo from '../images/lasalle.jpg';
 import '../styles/profileNew.css';
 
 export default function ProfileNew() {
-  const { user, token, logout } = useAuth();
-  const { unreadCount } = useInbox();
+  const { user, token } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -23,10 +21,8 @@ export default function ProfileNew() {
   const [message, setMessage] = useState('');
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [myEvents, setMyEvents] = useState([]);
-  const [eventsDropdownOpen, setEventsDropdownOpen] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
   const fileInputRef = useRef(null);
-  const eventsDropdownRef = useRef(null);
 
   const [form, setForm] = useState({
     first_name: '',
@@ -95,17 +91,6 @@ export default function ProfileNew() {
       setCheckingAdmin(false);
     }
   };
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (eventsDropdownRef.current && !eventsDropdownRef.current.contains(event.target)) {
-        setEventsDropdownOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   // Scroll to My Tasks section when navigated with scrollToMyTasks state
   useEffect(() => {
@@ -296,11 +281,6 @@ export default function ProfileNew() {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
-
   if (!profile || checkingAdmin) {
     return (
       <div className="container admin-container">
@@ -329,44 +309,8 @@ export default function ProfileNew() {
 
   return (
     <div className="container admin-container">
+      <Navbar />
       <div className="card">
-        {/* Header */}
-        <header className="profile-header">
-        <div className="profile-header-content">
-          <div className="profile-logo-section">
-            <img src={logo} alt="USLS Logo" className="profile-logo" />
-            <div className="profile-title">
-              <h1>THE GOLDEN BATCH</h1>
-              <span className="profile-subtitle">25th Alumni Homecoming</span>
-            </div>
-          </div>
-          <nav className="nav-section">
-            <div className={`nav-dropdown ${eventsDropdownOpen ? 'open' : ''}`} ref={eventsDropdownRef}>
-              <button
-                className={`nav-dropdown-trigger ${location.pathname === '/events' || location.pathname === '/media' ? 'active' : ''} ${eventsDropdownOpen ? 'open' : ''}`}
-                onClick={() => setEventsDropdownOpen(!eventsDropdownOpen)}
-              >
-                Events <span className="dropdown-arrow">▼</span>
-              </button>
-              <div className="nav-dropdown-menu">
-                <Link to="/events" className={`nav-dropdown-item ${location.pathname === '/events' ? 'active' : ''}`} onClick={() => setEventsDropdownOpen(false)}>Upcoming</Link>
-                <Link to="/media" className={`nav-dropdown-item ${location.pathname === '/media' ? 'active' : ''}`} onClick={() => setEventsDropdownOpen(false)}>Media</Link>
-              </div>
-            </div>
-            {user?.isAdmin && <Link to="/committee" className="nav-link">Committee</Link>}
-            {user?.isAdmin && <Link to="/directory" className="nav-link">Directory</Link>}
-            <Link to="/funds" className="nav-link">Funds</Link>
-            <Link to="/inbox" className="nav-link nav-link-badge">
-              Inbox
-              {unreadCount > 0 && <span className="nav-badge">{unreadCount}</span>}
-            </Link>
-            <Link to={user?.isAdmin ? "/profile-preview" : "/profile"} className="nav-link">Profile</Link>
-            {user?.isAdmin && <Link to="/admin" className="nav-link">Admin</Link>}
-            <button onClick={handleLogout} className="nav-link logout-btn">Logout</button>
-          </nav>
-        </div>
-      </header>
-
       <main className="profile-main">
         {/* Welcome Banner */}
         <section className="profile-welcome">
