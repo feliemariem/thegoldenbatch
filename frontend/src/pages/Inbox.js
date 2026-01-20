@@ -8,7 +8,7 @@ import '../styles/inbox.css';
 
 export default function Inbox() {
   const { user, token } = useAuth();
-  const { decrementUnreadCount } = useInbox();
+  const { decrementUnreadCount, refreshUnreadCount } = useInbox();
   const [announcements, setAnnouncements] = useState([]);
   const [messages, setMessages] = useState([]);
   const [sentMessages, setSentMessages] = useState([]);
@@ -121,6 +121,24 @@ export default function Inbox() {
     }
   };
 
+  const markSentThreadAsRead = async (id) => {
+    try {
+      await fetch(`https://the-golden-batch-api.onrender.com/api/messages/${id}/read-thread`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      // Update local state to reflect that replies have been read
+      setSentMessages(prev =>
+        prev.map(m => m.id === id ? { ...m, has_unread_reply: false } : m)
+      );
+      // Refresh global unread count (since it includes unread admin replies)
+      refreshUnreadCount();
+    } catch (err) {
+      console.error('Failed to mark thread as read');
+    }
+  };
+
   const handleSelect = async (item, type) => {
     setSelectedId(item.id);
     setSelectedType(type);
@@ -131,6 +149,10 @@ export default function Inbox() {
       } else if (type === 'message') {
         markMessageAsRead(item.id);
       }
+    }
+    // Mark sent message thread as read if it has unread admin replies
+    if (type === 'sent' && item.has_unread_reply) {
+      markSentThreadAsRead(item.id);
     }
     // Fetch thread for messages and sent messages
     if (type === 'message' || type === 'sent') {
@@ -245,6 +267,7 @@ export default function Inbox() {
     : announcements.find(a => a.id === selectedId);
   const unreadCount = allItems.filter(item => !item.is_read).length;
   const sentWithReplies = sentMessages.filter(m => m.has_reply).length;
+  const sentWithUnreadReplies = sentMessages.filter(m => m.has_unread_reply).length;
 
   if (loading) {
     return (
@@ -277,7 +300,11 @@ export default function Inbox() {
               className={`inbox-tab ${activeTab === 'sent' ? 'active' : ''}`}
             >
               Sent Messages
-              {sentMessages.length > 0 && (
+              {sentWithUnreadReplies > 0 ? (
+                <span className="unread-badge">
+                  {sentWithUnreadReplies}
+                </span>
+              ) : sentMessages.length > 0 && (
                 <span className="sent-count-badge">
                   {sentMessages.length}
                 </span>
@@ -363,15 +390,28 @@ export default function Inbox() {
               {sentMessages.map((item) => (
                 <div
                   key={`sent-${item.id}`}
-                  className={`message-item ${selectedId === item.id && selectedType === 'sent' ? 'selected' : ''}`}
+                  className={`message-item ${selectedId === item.id && selectedType === 'sent' ? 'selected' : ''} ${item.has_unread_reply ? 'unread' : ''}`}
                   onClick={() => handleSelect(item, 'sent')}
                 >
-                  <div className="message-indicator" style={{ background: item.has_reply ? '#28a745' : 'transparent' }}></div>
+                  <div className="message-indicator" style={{ background: item.has_unread_reply ? '#D4AF37' : item.has_reply ? '#28a745' : 'transparent' }}></div>
                   <div className="message-preview">
                     <div className="message-header">
                       <span className="message-subject">
                         {item.subject || '(No Subject)'}
-                        {item.has_reply && (
+                        {item.has_unread_reply ? (
+                          <span style={{
+                            marginLeft: '8px',
+                            padding: '2px 6px',
+                            borderRadius: '4px',
+                            fontSize: '0.65rem',
+                            fontWeight: '600',
+                            background: 'rgba(212, 175, 55, 0.2)',
+                            color: '#D4AF37',
+                            verticalAlign: 'middle'
+                          }}>
+                            New Reply
+                          </span>
+                        ) : item.has_reply && (
                           <span style={{
                             marginLeft: '8px',
                             padding: '2px 6px',

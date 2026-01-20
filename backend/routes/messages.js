@@ -101,7 +101,13 @@ router.get('/user-sent', authenticateToken, async (req, res) => {
         m.from_user_id,
         CASE WHEN EXISTS (
           SELECT 1 FROM messages r WHERE r.parent_id = m.id
-        ) THEN true ELSE false END as has_reply
+        ) THEN true ELSE false END as has_reply,
+        CASE WHEN EXISTS (
+          SELECT 1 FROM messages r
+          WHERE r.parent_id = m.id
+          AND r.from_admin_id IS NOT NULL
+          AND r.is_read = FALSE
+        ) THEN true ELSE false END as has_unread_reply
       FROM messages m
       WHERE m.from_user_id = $1 AND m.to_user_id IS NULL AND m.parent_id IS NULL
       ORDER BY m.created_at DESC
@@ -111,6 +117,30 @@ router.get('/user-sent', authenticateToken, async (req, res) => {
   } catch (err) {
     console.error('Failed to fetch user sent messages:', err);
     res.status(500).json({ error: 'Failed to fetch messages' });
+  }
+});
+
+// Get count of user's sent threads that have unread admin replies
+router.get('/user-sent/unread-count', authenticateToken, async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT COUNT(DISTINCT m.id) as count
+      FROM messages m
+      WHERE m.from_user_id = $1
+        AND m.to_user_id IS NULL
+        AND m.parent_id IS NULL
+        AND EXISTS (
+          SELECT 1 FROM messages r
+          WHERE r.parent_id = m.id
+          AND r.from_admin_id IS NOT NULL
+          AND r.is_read = FALSE
+        )
+    `, [req.user.id]);
+
+    res.json({ unreadCount: parseInt(result.rows[0].count) || 0 });
+  } catch (err) {
+    console.error('Failed to fetch user sent unread count:', err);
+    res.status(500).json({ error: 'Failed to fetch unread count' });
   }
 });
 
@@ -292,6 +322,34 @@ router.post('/:id/read', authenticateToken, async (req, res) => {
   } catch (err) {
     console.error('Failed to mark message as read:', err);
     res.status(500).json({ error: 'Failed to mark as read' });
+  }
+});
+
+// Mark all admin replies in a thread as read (for when user views their sent message thread)
+router.post('/:id/read-thread', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Mark all admin replies to this message as read
+    // This handles direct replies (parent_id = id) and nested replies
+    const result = await db.query(`
+      WITH RECURSIVE thread AS (
+        SELECT id FROM messages WHERE id = $1
+        UNION ALL
+        SELECT m.id FROM messages m JOIN thread t ON m.parent_id = t.id
+      )
+      UPDATE messages
+      SET is_read = TRUE
+      WHERE id IN (SELECT id FROM thread)
+        AND from_admin_id IS NOT NULL
+        AND is_read = FALSE
+      RETURNING id
+    `, [id]);
+
+    res.json({ success: true, updated: result.rowCount });
+  } catch (err) {
+    console.error('Failed to mark thread as read:', err);
+    res.status(500).json({ error: 'Failed to mark thread as read' });
   }
 });
 

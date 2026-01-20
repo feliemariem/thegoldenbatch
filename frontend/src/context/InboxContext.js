@@ -14,12 +14,15 @@ export function InboxProvider({ children }) {
     }
 
     try {
-      // Fetch both announcements and messages in parallel
-      const [announcementsRes, messagesRes] = await Promise.all([
+      // Fetch announcements, messages, and unread admin replies count in parallel
+      const [announcementsRes, messagesRes, unreadRepliesRes] = await Promise.all([
         fetch('https://the-golden-batch-api.onrender.com/api/announcements/inbox', {
           headers: { Authorization: `Bearer ${token}` },
         }),
         fetch('https://the-golden-batch-api.onrender.com/api/messages/user-inbox', {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        fetch('https://the-golden-batch-api.onrender.com/api/messages/user-sent/unread-count', {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);
@@ -36,6 +39,12 @@ export function InboxProvider({ children }) {
         const messagesData = await messagesRes.json();
         const messages = messagesData.messages || [];
         count += messages.filter(m => !m.is_read).length;
+      }
+
+      // Add count of sent threads with unread admin replies
+      if (unreadRepliesRes.ok) {
+        const unreadRepliesData = await unreadRepliesRes.json();
+        count += unreadRepliesData.unreadCount || 0;
       }
 
       setUnreadCount(count);
