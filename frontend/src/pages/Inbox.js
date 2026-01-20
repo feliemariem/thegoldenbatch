@@ -258,7 +258,7 @@ export default function Inbox() {
       <Navbar />
       <div className="card">
       <main className="inbox-main">
-        <h2 className="inbox-title">Shared Inbox</h2>
+        <h2 className="inbox-title">My Inbox</h2>
         <div className="inbox-header-bar">
           <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
             <button
