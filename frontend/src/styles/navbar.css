@@ -129,6 +129,27 @@
   background: rgba(207, 181, 59, 0.14);
 }
 
+/* Theme Toggle Button */
+.nav-link.theme-toggle-btn {
+  color: var(--color-accent);
+  font-size: 1rem;
+  padding: 8px 12px;
+}
+
+.nav-link.theme-toggle-btn:hover {
+  color: var(--color-hover);
+  background: rgba(207, 181, 59, 0.1);
+}
+
+[data-theme="light"] .nav-link.theme-toggle-btn {
+  color: #006633;
+}
+
+[data-theme="light"] .nav-link.theme-toggle-btn:hover {
+  color: #004d26;
+  background: rgba(0, 102, 51, 0.08);
+}
+
 /* Unread Badge */
 .unread-badge {
   background: var(--color-hover);
@@ -367,6 +388,24 @@
 
 [data-theme="light"] .mobile-nav-link.logout-btn {
   color: #8B6914;
+}
+
+/* Mobile Theme Toggle Button */
+.mobile-nav-link.theme-toggle-btn {
+  color: var(--color-accent);
+  gap: 10px;
+}
+
+.mobile-nav-link.theme-toggle-btn:hover {
+  color: var(--color-hover);
+}
+
+[data-theme="light"] .mobile-nav-link.theme-toggle-btn {
+  color: #006633;
+}
+
+[data-theme="light"] .mobile-nav-link.theme-toggle-btn:hover {
+  color: #004d26;
 }
 
 /* Mobile Nav Group (for Events with submenu) */

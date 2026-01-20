@@ -2,12 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useInbox } from '../context/InboxContext';
+import { useTheme } from '../context/ThemeContext';
 import logo from '../images/lasalle.jpg';
 import '../styles/navbar.css';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
   const { unreadCount } = useInbox();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -134,6 +136,14 @@ export default function Navbar() {
           </Link>
           <Link to={user?.isAdmin ? "/profile-preview" : "/profile"} className={`nav-link ${location.pathname === '/profile' || location.pathname === '/profile-preview' ? 'active' : ''}`}>Profile</Link>
           {user?.isAdmin && <Link to="/admin" className={`nav-link ${location.pathname === '/admin' ? 'active' : ''}`}>Admin</Link>}
+          <button
+            onClick={toggleTheme}
+            className="nav-link theme-toggle-btn"
+            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {theme === 'dark' ? '☀️' : '🌙'}
+          </button>
           <button onClick={handleLogout} className="nav-link logout-btn">Logout</button>
         </nav>
 
@@ -196,6 +206,13 @@ export default function Navbar() {
             Admin
           </Link>
         )}
+        <button
+          onClick={toggleTheme}
+          className="mobile-nav-link theme-toggle-btn"
+          aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+        >
+          {theme === 'dark' ? '☀️' : '🌙'} {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+        </button>
         <button onClick={handleLogout} className="mobile-nav-link logout-btn">
           Logout
         </button>
