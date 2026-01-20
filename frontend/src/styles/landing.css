@@ -4,88 +4,42 @@
    ======================================== */
 
 .landing-page {
+  /* Full viewport height with dvh for mobile support */
   min-height: 100vh;
-  /* HS Building background - public landing page */
-  background: 
-    linear-gradient(145deg, rgba(10, 15, 13, 0.85) 0%, rgba(26, 42, 31, 0.85) 50%, rgba(13, 21, 16, 0.9) 100%),
-    url('../images/hs_bldg.jpg') center center / cover no-repeat fixed;
-}
-
-/* Header */
-.landing-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 40px;
-  background: rgba(10, 15, 13, 0.9);
-  backdrop-filter: blur(10px);
-  z-index: 100;
-  border-bottom: 1px solid rgba(207, 181, 59, 0.1);
-}
-
-.landing-logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.landing-logo img {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  object-fit: cover;
-}
-
-.landing-logo span {
-  font-family: var(--font-heading);
-  font-weight: 600;
-  color: var(--color-hover);
-  font-size: 1.1rem;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
-
-.btn-login {
-  padding: 10px 24px;
-  background: linear-gradient(135deg, var(--color-title-gradient-start) 0%, var(--color-title-gradient-end) 100%);
-  color: var(--color-bg-primary);
-  text-decoration: none;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
-}
-
-.btn-login:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(207, 181, 59, 0.3);
-}
-
-/* Header Actions - Login button with Theme Toggle below */
-.landing-header-actions {
+  min-height: 100dvh;
+  /* Flexbox centering */
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  /* Safe area padding to avoid status bar overlap */
+  padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom) 20px;
+  /* HS Building background - public landing page */
+  background:
+    linear-gradient(145deg, rgba(10, 15, 13, 0.85) 0%, rgba(26, 42, 31, 0.85) 50%, rgba(13, 21, 16, 0.9) 100%),
+    url('../images/hs_bldg.jpg') center center / cover no-repeat fixed;
+  position: relative;
+  box-sizing: border-box;
 }
 
+/* Theme toggle - positioned in top-right corner */
 .landing-theme-toggle {
-  width: 28px;
-  height: 28px;
+  position: fixed;
+  top: calc(16px + env(safe-area-inset-top));
+  right: 16px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   border: 1px solid rgba(207, 181, 59, 0.25);
   background: rgba(255, 255, 255, 0.08);
   cursor: pointer;
-  font-size: 0.75rem;
+  font-size: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
   opacity: 0.7;
+  z-index: 100;
 }
 
 .landing-theme-toggle:hover {
@@ -94,537 +48,130 @@
   opacity: 1;
 }
 
-/* Hero Section */
-.hero-section {
-  min-height: 100vh;
+/* Centered content container */
+.landing-content {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 120px 20px 80px;
+  gap: 16px;
+  max-width: 500px;
+  width: 100%;
 }
 
-.hero-section h1 {
+/* La Salle portrait */
+.landing-portrait {
+  width: 120px;
+  height: 120px;
+  border-radius: 16px;
+  object-fit: cover;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  border: 2px solid rgba(207, 181, 59, 0.3);
+}
+
+/* Title - UNIVERSITY OF ST. LA SALLE - IS 2003 */
+.landing-title {
   font-family: var(--font-heading);
-  font-size: 3.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-hover);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin: 8px 0 0 0;
+  line-height: 1.4;
+}
+
+/* The Golden Batch */
+.landing-golden-batch {
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
   font-weight: 700;
   background: linear-gradient(135deg, var(--color-title-gradient-start), var(--color-title-gradient-end));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  margin-bottom: 16px;
-  letter-spacing: -0.02em;
-  text-shadow: none;
+  margin: 8px 0;
+  letter-spacing: 0.05em;
 }
 
-.tagline {
-  font-size: 1.4rem;
+/* Subtitle - 25th Alumni Homecoming */
+.landing-subtitle {
+  font-size: 1.2rem;
   color: var(--color-text-primary);
-  margin-bottom: 24px;
   font-style: italic;
+  margin: 0 0 16px 0;
 }
 
-.event-details {
-  display: flex;
-  gap: 32px;
-  margin-bottom: 40px;
-  font-size: 1.1rem;
-  color: var(--color-text-secondary);
-}
-
-.btn-hero {
+/* Login button */
+.landing-page .btn-login {
   display: inline-block;
-  padding: 18px 48px;
+  padding: 14px 48px;
   background: linear-gradient(135deg, var(--color-title-gradient-start) 0%, var(--color-title-gradient-end) 100%);
   color: var(--color-bg-primary);
   text-decoration: none;
-  border-radius: 12px;
+  border-radius: 10px;
   font-weight: 600;
-  font-size: 1.1rem;
+  font-size: 1rem;
   transition: all 0.2s ease;
-}
-
-.btn-hero:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(207, 181, 59, 0.3);
-}
-
-/* Countdown Section */
-.countdown-section {
-  padding: 80px 20px;
-  background: rgba(0, 0, 0, 0.3);
-  text-align: center;
-}
-
-.countdown-section h2 {
-  font-family: var(--font-heading);
-  font-size: 1.8rem;
-  color: var(--color-hover);
-  margin-bottom: 40px;
-}
-
-.countdown-grid {
-  display: flex;
-  justify-content: center;
-  gap: 24px;
-  flex-wrap: wrap;
-}
-
-.countdown-item {
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(207, 181, 59, 0.2);
-  border-radius: 16px;
-  padding: 24px 32px;
-  min-width: 100px;
-}
-
-.countdown-number {
-  display: block;
-  font-size: 3rem;
-  font-weight: 700;
-  color: var(--color-hover);
-  line-height: 1;
-}
-
-.countdown-label {
-  display: block;
-  font-size: 0.85rem;
-  color: var(--color-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
   margin-top: 8px;
 }
 
-/* About Section */
-.about-section {
-  padding: 80px 20px;
-  text-align: center;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.about-section h2 {
-  font-family: var(--font-heading);
-  font-size: 1.8rem;
-  color: var(--color-hover);
-  margin-bottom: 24px;
-}
-
-.about-section p {
-  font-size: 1.15rem;
-  color: var(--color-text-primary);
-  line-height: 1.8;
-}
-
-/* Pledge Section */
-.pledge-section {
-  padding: 80px 20px;
-  background: rgba(0, 0, 0, 0.3);
-  text-align: center;
-}
-
-.pledge-section h2 {
-  font-family: var(--font-heading);
-  font-size: 2.2rem;
-  color: var(--color-hover);
-  margin-bottom: 16px;
-}
-
-.pledge-section > p {
-  color: var(--color-text-secondary);
-  margin-bottom: 40px;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.pledge-options {
-  display: flex;
-  justify-content: center;
-  gap: 24px;
-  flex-wrap: wrap;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.pledge-card {
-  background: rgba(30, 40, 35, 0.8);
-  border: 1px solid rgba(207, 181, 59, 0.15);
-  border-radius: 20px;
-  padding: 24px;
-  min-width: 280px;
-  flex: 1;
-  max-width: 400px;
-}
-
-.pledge-card h3 {
-  font-family: var(--font-heading);
-  font-size: 1.2rem;
-  color: var(--color-hover);
-  margin-bottom: 16px;
-  text-align: center;
-}
-
-.bank-details {
-  text-align: center;
-}
-
-.bank-details p {
-  color: var(--color-text-primary);
-  margin-bottom: 8px;
-  font-size: 0.95rem;
-}
-
-.bank-details strong {
-  color: var(--color-text-primary);
-}
-
-.bank-label {
-  font-size: 0.7rem;
-  color: var(--color-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 4px;
-}
-
-.bank-value {
-  color: var(--color-text-primary);
-  font-size: 0.95rem;
-  margin-bottom: 4px;
-}
-
-.bank-branch {
-  color: var(--color-text-secondary);
-  font-size: 0.85rem;
-  margin-bottom: 0;
-}
-
-/* International Transfers Card - Separate Section */
-.intl-transfers-card {
-  background: rgba(30, 40, 35, 0.6);
-  border: 1px solid rgba(207, 181, 59, 0.1);
-  border-radius: 16px;
-  padding: 20px 28px;
-  margin-top: 16px;
-  max-width: 650px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.intl-transfers-card h3 {
-  font-size: 0.8rem;
-  color: var(--color-hover);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-bottom: 16px;
-  text-align: center;
-  font-weight: 600;
-}
-
-.intl-transfers-content {
-  display: flex;
-  gap: 32px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.intl-branch-info {
-  text-align: center;
-  flex: 1;
-  min-width: 200px;
-}
-
-.intl-branch-name {
-  color: #e0e0e0;
-  font-weight: 600;
-  font-size: 0.9rem;
-  margin-bottom: 8px;
-}
-
-.intl-branch-address {
-  color: #999;
-  font-size: 0.85rem;
-  line-height: 1.5;
-  margin-bottom: 8px;
-}
-
-.intl-branch-tel {
-  color: #888;
-  font-size: 0.8rem;
-}
-
-.intl-codes {
-  flex: 1;
-  min-width: 200px;
-}
-
-.intl-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 6px;
-  font-size: 0.85rem;
-}
-
-.intl-label {
-  color: #666;
-}
-
-.intl-value {
-  color: #e0e0e0;
-  font-family: monospace;
-}
-
-.intl-email {
-  font-family: inherit;
-  font-size: 0.8rem;
-}
-
-.intl-note {
-  font-size: 0.75rem;
-  color: #666;
-  margin-top: 16px;
-  font-style: italic;
-  text-align: center;
-}
-
-.receipt-note {
-  margin-top: 24px;
-  margin-bottom: 0;
-  font-size: 0.85rem;
-  color: #b0b0b0 !important;
-  text-align: center;
-}
-
-.receipt-note a {
-  color: var(--color-hover);
-  text-decoration: none;
-}
-
-.receipt-note a:hover {
-  text-decoration: underline;
-}
-
-.qr-placeholder {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.qr-code {
-  background: #fff;
-  padding: 12px;
-  border-radius: 12px;
-  margin-bottom: 16px;
-}
-
-.gcash-number {
-  font-size: 1.1rem;
-  color: var(--color-hover);
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-
-.gcash-name {
-  font-size: 0.9rem;
-  color: var(--color-text-secondary);
-}
-
-/* Footer */
-.landing-footer {
-  padding: 40px 20px;
-  text-align: center;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  background: rgba(0, 0, 0, 0.3);
-}
-
-.landing-footer p {
-  color: var(--color-text-secondary);
-  font-size: 0.9rem;
-  margin-bottom: 8px;
-}
-
-.landing-footer a {
-  color: var(--color-hover);
-  text-decoration: none;
-}
-
-.landing-footer a:hover {
-  text-decoration: underline;
-}
-
-/* Modal Styles */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 20px;
-}
-
-.modal-content {
-  background: linear-gradient(165deg, rgba(30, 40, 35, 0.98) 0%, rgba(20, 28, 24, 0.99) 100%);
-  border-radius: 20px;
-  padding: 32px;
-  position: relative;
-  border: 1px solid rgba(207, 181, 59, 0.2);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.modal-large {
-  width: 100%;
-  max-width: 700px;
-}
-
-.modal-close {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  color: #fff;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  font-size: 1.2rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-close:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-/* Form Disclaimer Styles */
-.form-disclaimer {
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(207, 181, 59, 0.15);
-  border-radius: 12px;
-  padding: 20px 24px;
-  margin-bottom: 20px;
-  text-align: left;
-}
-
-.form-disclaimer p {
-  color: var(--color-text-primary);
-  font-size: 0.95rem;
-  line-height: 1.6;
-  margin-bottom: 12px;
-}
-
-.form-disclaimer ul {
-  margin: 0 0 16px 20px;
-  padding: 0;
-}
-
-.form-disclaimer li {
-  color: var(--color-text-secondary);
-  font-size: 0.9rem;
-  line-height: 1.8;
-  margin-bottom: 4px;
-}
-
-.form-disclaimer .privacy-note {
-  font-size: 0.85rem;
-  color: var(--color-text-secondary);
-  font-style: italic;
-  margin-bottom: 0;
-  padding-top: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.form-embed-container {
-  background: #fff;
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-.form-embed-container iframe {
-  display: block;
+.landing-page .btn-login:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(207, 181, 59, 0.35);
 }
 
 /* Mobile Responsive - Landing */
 @media (max-width: 768px) {
-  .landing-header {
-    padding: 16px 20px;
+  .landing-page {
+    padding: calc(env(safe-area-inset-top) + 10px) 16px calc(env(safe-area-inset-bottom) + 10px) 16px;
   }
 
-.landing-logo span {
-    font-size: 0.85rem;
+  .landing-portrait {
+    width: 100px;
+    height: 100px;
   }
 
-  .hero-section h1 {
-    font-size: 2.2rem;
+  .landing-title {
+    font-size: 0.9rem;
+    letter-spacing: 1px;
   }
 
-  .tagline {
-    font-size: 1.1rem;
-  }
-
-  .event-details {
-    flex-direction: column;
-    gap: 12px;
-    font-size: 1rem;
-  }
-
-  .btn-hero {
-    padding: 16px 36px;
-    font-size: 1rem;
-  }
-
-  .countdown-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-    max-width: 300px;
-    margin: 0 auto;
-  }
-
-  .countdown-item {
-    padding: 20px 16px;
-    min-width: auto;
-  }
-
-  .countdown-number {
+  .landing-golden-batch {
     font-size: 2rem;
   }
 
-  .countdown-section h2,
-  .about-section h2,
-  .pledge-section h2 {
-    font-size: 1.5rem;
+  .landing-subtitle {
+    font-size: 1rem;
   }
 
-  .pledge-options {
-    flex-direction: column;
-    align-items: center;
+  .landing-page .btn-login {
+    padding: 12px 40px;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .landing-portrait {
+    width: 90px;
+    height: 90px;
   }
 
-  .pledge-card {
-    width: 100%;
-    max-width: 320px;
+  .landing-title {
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
   }
 
-  .form-disclaimer {
-    padding: 16px 18px;
+  .landing-golden-batch {
+    font-size: 1.6rem;
   }
 
-  .form-disclaimer p {
+  .landing-subtitle {
     font-size: 0.9rem;
   }
 
-  .form-disclaimer li {
-    font-size: 0.85rem;
+  .landing-page .btn-login {
+    padding: 12px 32px;
   }
 }
