@@ -141,6 +141,84 @@
   margin-top: 2px;
 }
 
+/* Main Event Date Section - contains date block and countdown */
+.main-event-date-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Compact Countdown for Main Event Card */
+.countdown-compact {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.countdown-compact-item {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(207, 181, 59, 0.2);
+  border-radius: 8px;
+  padding: 8px 6px;
+  text-align: center;
+  min-width: 42px;
+}
+
+.countdown-compact-number {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #CFB53B;
+  line-height: 1;
+}
+
+.countdown-compact-label {
+  display: block;
+  font-size: 0.55rem;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 4px;
+}
+
+/* Light mode compact countdown */
+[data-theme="light"] .countdown-compact-item {
+  background: linear-gradient(165deg,
+    rgba(240, 248, 243, 0.9) 0%,
+    rgba(235, 245, 238, 0.93) 100%);
+  border: 1px solid rgba(0, 102, 51, 0.12);
+  box-shadow: 0 1px 4px rgba(0, 50, 30, 0.06);
+}
+
+[data-theme="light"] .countdown-compact-number {
+  color: #B8960C;
+}
+
+[data-theme="light"] .countdown-compact-label {
+  color: #555;
+}
+
+/* Mobile responsive for compact countdown */
+@media (max-width: 480px) {
+  .countdown-compact {
+    gap: 4px;
+  }
+
+  .countdown-compact-item {
+    padding: 6px 4px;
+    min-width: 36px;
+  }
+
+  .countdown-compact-number {
+    font-size: 0.95rem;
+  }
+
+  .countdown-compact-label {
+    font-size: 0.5rem;
+  }
+}
+
 .main-event-info h3 {
   font-family: var(--font-heading);
   color: var(--text-primary);
