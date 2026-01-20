@@ -558,16 +558,51 @@ body[data-theme="light"] .landing-header {
 }
 
 body[data-theme="light"] .landing-logo span {
-  color: #004d26 !important;
+  color: #006633 !important;
 }
 
 body[data-theme="light"] .hero-section h1 {
-  color: #B8960C !important;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  background: linear-gradient(135deg, #006633, #004d26) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  text-shadow: none !important;
 }
 
 body[data-theme="light"] .tagline {
-  color: #444 !important;
+  color: #006633 !important;
+}
+
+/* Login button - green in light mode */
+body[data-theme="light"] .btn-login {
+  background: linear-gradient(135deg, #006633 0%, #004d26 100%) !important;
+  color: white !important;
+}
+
+body[data-theme="light"] .btn-login:hover {
+  box-shadow: 0 4px 12px rgba(0, 102, 51, 0.3) !important;
+}
+
+/* Register Now button - green in light mode */
+body[data-theme="light"] .btn-hero {
+  background: linear-gradient(135deg, #006633 0%, #004d26 100%) !important;
+  color: white !important;
+}
+
+body[data-theme="light"] .btn-hero:hover {
+  box-shadow: 0 8px 24px rgba(0, 102, 51, 0.3) !important;
+}
+
+/* Landing page theme toggle - green in light mode */
+body[data-theme="light"] .landing-theme-toggle {
+  border: 1px solid rgba(0, 102, 51, 0.35) !important;
+  background: rgba(255, 255, 255, 0.8) !important;
+  color: #006633 !important;
+}
+
+body[data-theme="light"] .landing-theme-toggle:hover {
+  background: rgba(0, 102, 51, 0.1) !important;
+  border-color: rgba(0, 102, 51, 0.5) !important;
 }
 
 body[data-theme="light"] .event-details span {
