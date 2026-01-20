@@ -7,7 +7,7 @@
   min-height: 100vh;
   padding-top: env(safe-area-inset-top);
   /* HS Building background - public landing page */
-  background: 
+  background:
     linear-gradient(145deg, rgba(10, 15, 13, 0.85) 0%, rgba(26, 42, 31, 0.85) 50%, rgba(13, 21, 16, 0.9) 100%),
     url('../images/hs_bldg.jpg') center center / cover no-repeat fixed;
 }
@@ -15,7 +15,7 @@
 /* Header */
 .landing-header {
   position: fixed;
-  top: 0;
+  top: env(safe-area-inset-top);
   left: 0;
   right: 0;
   display: flex;
@@ -232,7 +232,7 @@
   margin-bottom: 16px;
 }
 
-.pledge-section > p {
+.pledge-section>p {
   color: var(--color-text-secondary);
   margin-bottom: 40px;
   max-width: 600px;
@@ -561,7 +561,7 @@
     padding: 16px 20px;
   }
 
-.landing-logo span {
+  .landing-logo span {
     font-size: 0.85rem;
   }
 
