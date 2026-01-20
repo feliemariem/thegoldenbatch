@@ -57,15 +57,22 @@ function AdminOnly({ children }) {
   return children;
 }
 
-// Conditional ThemeToggle - hidden on landing page
+// Conditional ThemeToggle - only shown on public pages (not landing, not logged-in)
 function ConditionalThemeToggle() {
   const location = useLocation();
+  const { token } = useAuth();
 
-  // Landing page is now at "/" instead of "/preview"
+  // Hide on landing page (has its own toggle)
   if (location.pathname === '/') {
     return null;
   }
 
+  // Hide when logged in (Navbar has its own toggle)
+  if (token) {
+    return null;
+  }
+
+  // Show on public pages: Login, Forgot Password, Reset Password, Register
   return <ThemeToggle />;
 }
 
