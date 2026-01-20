@@ -136,25 +136,27 @@ export default function Navbar() {
           </Link>
           <Link to={user?.isAdmin ? "/profile-preview" : "/profile"} className={`nav-link ${location.pathname === '/profile' || location.pathname === '/profile-preview' ? 'active' : ''}`}>Profile</Link>
           {user?.isAdmin && <Link to="/admin" className={`nav-link ${location.pathname === '/admin' ? 'active' : ''}`}>Admin</Link>}
+          <button onClick={handleLogout} className="nav-link logout-btn">Logout</button>
+        </nav>
+
+        {/* Top-right controls: Theme Toggle + Hamburger */}
+        <div className="navbar-controls">
           <button
             onClick={toggleTheme}
-            className="nav-link theme-toggle-btn"
+            className="navbar-theme-toggle"
             aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
             title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
           >
             {theme === 'dark' ? '☀️' : '🌙'}
           </button>
-          <button onClick={handleLogout} className="nav-link logout-btn">Logout</button>
-        </nav>
-
-        {/* Hamburger Menu Toggle */}
-        <button
-          className={`hamburger-toggle ${mobileMenuOpen ? 'open' : ''}`}
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
-        >
-          <span className="hamburger-icon">{mobileMenuOpen ? '✕' : '☰'}</span>
-        </button>
+          <button
+            className={`hamburger-toggle ${mobileMenuOpen ? 'open' : ''}`}
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+          >
+            <span className="hamburger-icon">{mobileMenuOpen ? '✕' : '☰'}</span>
+          </button>
+        </div>
       </div>
 
       {/* Mobile Navigation */}
@@ -206,13 +208,6 @@ export default function Navbar() {
             Admin
           </Link>
         )}
-        <button
-          onClick={toggleTheme}
-          className="mobile-nav-link theme-toggle-btn"
-          aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-        >
-          {theme === 'dark' ? '☀️' : '🌙'} {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
-        </button>
         <button onClick={handleLogout} className="mobile-nav-link logout-btn">
           Logout
         </button>

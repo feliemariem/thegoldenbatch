@@ -281,6 +281,40 @@
 }
 
 /* ========================================
+   NAVBAR CONTROLS (Theme Toggle + Hamburger)
+   ======================================== */
+
+.navbar-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Standalone Theme Toggle Button (top-right) */
+.navbar-theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  border-radius: 8px;
+  font-size: 1.25rem;
+  transition: background 0.2s ease;
+}
+
+.navbar-theme-toggle:hover {
+  background: rgba(207, 181, 59, 0.1);
+}
+
+[data-theme="light"] .navbar-theme-toggle:hover {
+  background: rgba(0, 102, 51, 0.08);
+}
+
+/* ========================================
    HAMBURGER MENU TOGGLE
    ======================================== */
 
