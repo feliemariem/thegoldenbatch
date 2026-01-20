@@ -138,7 +138,7 @@ export default function Media() {
           </div>
           <div style={{ padding: '12px' }}>
             <h4 className="album-card-title">{album.title}</h4>
-            <p style={{ color: '#888', fontSize: '0.75rem', margin: 0 }}>{album.description}</p>
+            <p className="album-card-desc">{album.description}</p>
           </div>
         </div>
       ))}
@@ -156,7 +156,7 @@ export default function Media() {
       </button>
 
       <h3 className="album-detail-title">{selectedAlbum.title}</h3>
-      <p style={{ color: '#888', margin: '0 0 16px 0', fontSize: '0.85rem' }}>{selectedAlbum.description}</p>
+      <p className="album-detail-desc">{selectedAlbum.description}</p>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '12px' }}>
         {selectedAlbum.items.map((item, index) => (
@@ -365,8 +365,7 @@ export default function Media() {
             }}>
               {/* Header with film emoji */}
               <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-                <h3 className="media-card-heading" style={{
-                  color: '#CFB53B',
+                <h3 className="media-card-heading media-hype-title" style={{
                   fontSize: '1.4rem',
                   fontWeight: '600',
                   margin: '0 0 8px 0',
@@ -379,13 +378,7 @@ export default function Media() {
                   <span role="img" aria-label="film">🎬</span>
                   Coming Soon: The Golden Batch Hype Video
                 </h3>
-                <div style={{
-                  width: '60px',
-                  height: '3px',
-                  background: 'linear-gradient(90deg, transparent, #CFB53B, transparent)',
-                  margin: '0 auto',
-                  borderRadius: '2px',
-                }}></div>
+                <div className="media-gold-divider"></div>
               </div>
 
               {/* Responsive 16:9 Video Container */}
@@ -438,37 +431,22 @@ export default function Media() {
               <h3 className="media-card-heading" style={{ marginBottom: '16px', fontSize: '1.1rem' }}>Latest News</h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {/* News Item 1 */}
-                <div style={{
-                  background: 'rgba(0, 0, 0, 0.2)',
-                  borderRadius: '12px',
-                  padding: '16px',
-                  borderLeft: '3px solid #CFB53B',
-                }}>
+                <div className="news-item-card news-item-border-gold">
                   <span className="news-item-label gold">Fundraising</span>
                   <h4 className="news-item-title">Fundraising Drive Reaches 50% of Goal</h4>
-                  <p style={{ color: '#888', fontSize: '0.8rem', margin: 0, lineHeight: '1.5' }}>Thanks to generous contributions, we're halfway to our target for the 25th reunion venue and catering.</p>
+                  <p className="news-item-desc">Thanks to generous contributions, we're halfway to our target for the 25th reunion venue and catering.</p>
                 </div>
                 {/* News Item 2 */}
-                <div style={{
-                  background: 'rgba(0, 0, 0, 0.2)',
-                  borderRadius: '12px',
-                  padding: '16px',
-                  borderLeft: '3px solid #006633',
-                }}>
+                <div className="news-item-card news-item-border-green">
                   <span className="news-item-label green">Announcement</span>
                   <h4 className="news-item-title">Venue Confirmed: USLS Campus</h4>
-                  <p style={{ color: '#888', fontSize: '0.8rem', margin: 0, lineHeight: '1.5' }}>We're excited to announce our reunion will be held at our alma mater's main grounds!</p>
+                  <p className="news-item-desc">We're excited to announce our reunion will be held at our alma mater's main grounds!</p>
                 </div>
                 {/* News Item 3 */}
-                <div style={{
-                  background: 'rgba(0, 0, 0, 0.2)',
-                  borderRadius: '12px',
-                  padding: '16px',
-                  borderLeft: '3px solid #CFB53B',
-                }}>
+                <div className="news-item-card news-item-border-gold">
                   <span className="news-item-label gold">Update</span>
                   <h4 className="news-item-title">Registration Now Open</h4>
-                  <p style={{ color: '#888', fontSize: '0.8rem', margin: 0, lineHeight: '1.5' }}>All batchmates can now register and update their profiles on the platform.</p>
+                  <p className="news-item-desc">All batchmates can now register and update their profiles on the platform.</p>
                 </div>
               </div>
             </div>
@@ -505,17 +483,8 @@ export default function Media() {
                 </div>
                 <div style={{ flex: 1 }}>
                   <h4 className="media-podcast-title">The Golden Batch Podcast</h4>
-                  <p style={{ color: '#888', fontSize: '0.8rem', margin: '0 0 12px 0' }}>Catching up with batchmates, sharing stories</p>
-                  <div style={{
-                    height: '40px',
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    borderRadius: '8px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#666',
-                    fontSize: '0.75rem',
-                  }}>
+                  <p className="media-podcast-desc">Catching up with batchmates, sharing stories</p>
+                  <div className="media-player-placeholder">
                     Episode player coming soon
                   </div>
                 </div>
@@ -538,23 +507,13 @@ export default function Media() {
                 gap: '16px',
                 alignItems: 'flex-start',
               }}>
-                <div style={{
-                  width: '70px',
-                  height: '70px',
-                  background: 'linear-gradient(135deg, rgba(0, 102, 51, 0.3) 0%, rgba(0, 102, 51, 0.1) 100%)',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                  border: '2px solid rgba(207, 181, 59, 0.2)',
-                }}>
-                  <span style={{ color: '#CFB53B', fontSize: '1.5rem' }}>?</span>
+                <div className="media-spotlight-avatar">
+                  <span className="media-spotlight-icon">?</span>
                 </div>
                 <div style={{ flex: 1 }}>
                   <span className="news-item-label green">Featured Interview</span>
-                  <h4 className="media-spotlight-title" style={{ fontSize: '1rem', margin: '6px 0 8px 0' }}>Coming Soon: Batchmate Interviews</h4>
-                  <p style={{ color: '#888', fontSize: '0.85rem', margin: 0, lineHeight: '1.6' }}>
+                  <h4 className="media-spotlight-title">Coming Soon: Batchmate Interviews</h4>
+                  <p className="media-spotlight-desc">
                     We'll be featuring interviews with batchmates sharing their journeys since graduation. Stay tuned for inspiring stories!
                   </p>
                 </div>
@@ -574,15 +533,8 @@ export default function Media() {
             </div>
 
             {/* Submission CTA */}
-            <div style={{
-              background: 'linear-gradient(135deg, rgba(207, 181, 59, 0.1) 0%, rgba(207, 181, 59, 0.03) 100%)',
-              border: '1px solid rgba(207, 181, 59, 0.2)',
-              borderRadius: '10px',
-              padding: '14px',
-              marginBottom: '20px',
-              textAlign: 'center',
-            }}>
-              <p style={{ color: '#b0b0b0', marginBottom: '6px', fontSize: '0.85rem' }}>
+            <div className="media-submission-cta">
+              <p className="media-submission-text">
                 Have photos or videos to share?
               </p>
               <a
@@ -600,17 +552,7 @@ export default function Media() {
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    style={{
-                      padding: '8px 16px',
-                      background: activeTab === tab ? 'rgba(207, 181, 59, 0.15)' : 'rgba(0, 0, 0, 0.2)',
-                      border: activeTab === tab ? '1px solid rgba(207, 181, 59, 0.3)' : '1px solid rgba(255, 255, 255, 0.08)',
-                      borderRadius: '8px',
-                      color: activeTab === tab ? '#CFB53B' : '#888',
-                      fontSize: '0.8rem',
-                      fontWeight: '500',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                    }}
+                    className={`media-tab ${activeTab === tab ? 'active' : ''}`}
                   >
                     {tab === 'all' ? 'All' : tab === 'photos' ? 'Photos' : 'Videos'}
                   </button>
