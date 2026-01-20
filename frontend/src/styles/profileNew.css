@@ -29,7 +29,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Header - solid background to prevent scroll bleed */
@@ -199,7 +201,7 @@
   text-align: left;
 }
 
-.welcome-header-row > div {
+.welcome-header-row>div {
   flex: 1;
 }
 
@@ -307,7 +309,7 @@
     text-align: center;
   }
 
-  .welcome-header-row > div {
+  .welcome-header-row>div {
     text-align: center;
   }
 
@@ -433,6 +435,57 @@
 
 .rsvp-section {
   text-align: center;
+}
+
+/* Countdown Box */
+.countdown-box {
+  background: linear-gradient(135deg, rgba(207, 181, 59, 0.15) 0%, rgba(207, 181, 59, 0.05) 100%);
+  border: 1px solid rgba(207, 181, 59, 0.25);
+  border-radius: 10px;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 20px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.countdown-days {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--color-hover);
+  line-height: 1;
+}
+
+.countdown-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #e0e0e0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 6px;
+}
+
+.countdown-label.countdown-today {
+  color: var(--color-hover);
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.countdown-label.countdown-passed {
+  color: #a0a0a0;
+  font-style: italic;
+}
+
+/* Light mode */
+[data-theme="light"] .countdown-box {
+  background: linear-gradient(135deg, rgba(0, 102, 51, 0.1) 0%, rgba(0, 102, 51, 0.05) 100%);
+  border-color: rgba(0, 102, 51, 0.2);
+}
+
+[data-theme="light"] .countdown-label {
+  color: #555;
 }
 
 .rsvp-label {
@@ -917,7 +970,7 @@
   .profile-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .profile-left,
   .profile-right {
     order: unset;
@@ -944,48 +997,48 @@
     padding: 8px 12px;
     font-size: 0.85rem;
   }
-  
+
   .profile-main {
     padding: 20px 16px;
   }
-  
+
   .profile-welcome {
     padding: 24px 20px;
   }
-  
+
   .welcome-content h2 {
     font-size: 1.4rem;
   }
-  
+
   .profile-card {
     padding: 20px;
   }
-  
+
   .event-details {
     flex-direction: column;
     text-align: center;
   }
-  
+
   .rsvp-buttons {
     flex-direction: column;
   }
-  
+
   .btn-rsvp {
     width: 100%;
   }
-  
+
   .info-display .info-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .edit-form .form-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .edit-form .form-group.full-width {
     grid-column: 1;
   }
-  
+
   .quick-links {
     flex-direction: column;
   }
@@ -996,15 +1049,15 @@
     flex-direction: column;
     text-align: center;
   }
-  
+
   .profile-title h1 {
     font-size: 1rem;
   }
-  
+
   .form-actions {
     flex-direction: column;
   }
-  
+
   .btn-save,
   .btn-cancel {
     width: 100%;
@@ -1151,7 +1204,8 @@
    ========================= */
 
 [data-theme="light"] .profile-nav .nav-link {
-  color: #0f2a1d;          /* dark green for contrast */
+  color: #0f2a1d;
+  /* dark green for contrast */
   font-weight: 600;
 }
 
@@ -1161,7 +1215,8 @@
 }
 
 [data-theme="light"] .profile-nav .logout-btn {
-  color: #8B6914;          /* deeper gold */
+  color: #8B6914;
+  /* deeper gold */
 }
 
 [data-theme="light"] .profile-nav .logout-btn:hover {
