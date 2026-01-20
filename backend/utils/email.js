@@ -11,20 +11,16 @@ const sendInviteEmail = async (to, firstName, registrationUrl) => {
         <div style="max-width:600px; margin:0 auto; font-family: Arial, sans-serif; color:#1a1a1a;">
 
           <!-- Header -->
-          <div style="background:#0d1a14; padding:24px; text-align:center;">
-            <div style="color:#B8960C; letter-spacing:3px; font-weight:700; font-size:14px; font-family: Georgia, serif;">
+          <div style="background:#0d1a14; padding:28px; text-align:center;">
+            <div style="color:#B8960C; letter-spacing:3px; font-weight:700; font-size:28px; font-family: Georgia, serif; margin-bottom:8px;">
               THE GOLDEN BATCH
             </div>
-          </div>
-
-          <!-- Green Banner -->
-          <div style="background:#006633; padding:28px; text-align:center; color:#ffffff;">
-            <h1 style="margin:0; font-size:24px; font-weight:700; font-family: Georgia, serif;">
-              UNIVERSITY OF ST. LA SALLE - IS 2003
-            </h1>
-            <p style="margin:8px 0 0; font-size:16px; font-family: Arial, sans-serif;">
+            <div style="color:#ffffff; font-size:16px; font-family: Arial, sans-serif; margin-bottom:6px;">
+              UNIVERSITY OF ST. LA SALLE - IS
+            </div>
+            <div style="color:#B8960C; font-size:14px; font-family: Arial, sans-serif;">
               25th Alumni Homecoming
-            </p>
+            </div>
           </div>
 
           <!-- Body -->
@@ -111,20 +107,16 @@ const sendPasswordResetEmail = async (to, firstName, resetUrl) => {
         <div style="max-width:600px; margin:0 auto; font-family: Arial, sans-serif; color:#1a1a1a;">
 
           <!-- Header -->
-          <div style="background:#0d1a14; padding:24px; text-align:center;">
-            <div style="color:#B8960C; letter-spacing:3px; font-weight:700; font-size:14px; font-family: Georgia, serif;">
+          <div style="background:#0d1a14; padding:28px; text-align:center;">
+            <div style="color:#B8960C; letter-spacing:3px; font-weight:700; font-size:28px; font-family: Georgia, serif; margin-bottom:8px;">
               THE GOLDEN BATCH
             </div>
-          </div>
-
-          <!-- Green Banner -->
-          <div style="background:#006633; padding:28px; text-align:center; color:#ffffff;">
-            <h1 style="margin:0; font-size:24px; font-weight:700; font-family: Georgia, serif;">
-              UNIVERSITY OF ST. LA SALLE - IS 2003
-            </h1>
-            <p style="margin:8px 0 0; font-size:16px; font-family: Arial, sans-serif;">
+            <div style="color:#ffffff; font-size:16px; font-family: Arial, sans-serif; margin-bottom:6px;">
+              UNIVERSITY OF ST. LA SALLE - IS
+            </div>
+            <div style="color:#B8960C; font-size:14px; font-family: Arial, sans-serif;">
               25th Alumni Homecoming
-            </p>
+            </div>
           </div>
 
           <!-- Body -->
