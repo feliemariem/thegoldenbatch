@@ -83,6 +83,7 @@ body[data-theme="light"] {
 }
 
 html {
+  padding-top: env(safe-area-inset-top);
   background-color: var(--color-bg-primary);
 }
 
