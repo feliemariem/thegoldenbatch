@@ -15,6 +15,7 @@ export default function Events() {
   const [loading, setLoading] = useState(true);
   const [mainEventStats, setMainEventStats] = useState({ going: 0, maybe: 0, not_going: 0 });
   const [showPastEvents, setShowPastEvents] = useState(false);
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
   // Admin form state
   const [showForm, setShowForm] = useState(false);
@@ -38,6 +39,29 @@ export default function Events() {
   useEffect(() => {
     fetchEvents();
   }, [token, showPastEvents]);
+
+  // Countdown timer for main event
+  useEffect(() => {
+    const reunionDate = new Date('2028-12-16T00:00:00');
+
+    const updateCountdown = () => {
+      const now = new Date();
+      const diff = reunionDate - now;
+
+      if (diff > 0) {
+        setTimeLeft({
+          days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+          minutes: Math.floor((diff / (1000 * 60)) % 60),
+          seconds: Math.floor((diff / 1000) % 60),
+        });
+      }
+    };
+
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   const fetchEvents = async () => {
     try {
@@ -255,10 +279,30 @@ export default function Events() {
         <div className="main-event-card">
           <div className="main-event-badge">Main Event</div>
           <div className="main-event-content">
-            <div className="event-date-block main">
-              <span className="event-day">16</span>
-              <span className="event-month">DEC</span>
-              <span className="event-year">2028</span>
+            <div className="main-event-date-section">
+              <div className="event-date-block main">
+                <span className="event-day">16</span>
+                <span className="event-month">DEC</span>
+                <span className="event-year">2028</span>
+              </div>
+              <div className="countdown-compact">
+                <div className="countdown-compact-item">
+                  <span className="countdown-compact-number">{timeLeft.days}</span>
+                  <span className="countdown-compact-label">DAYS</span>
+                </div>
+                <div className="countdown-compact-item">
+                  <span className="countdown-compact-number">{timeLeft.hours}</span>
+                  <span className="countdown-compact-label">HRS</span>
+                </div>
+                <div className="countdown-compact-item">
+                  <span className="countdown-compact-number">{timeLeft.minutes}</span>
+                  <span className="countdown-compact-label">MIN</span>
+                </div>
+                <div className="countdown-compact-item">
+                  <span className="countdown-compact-number">{timeLeft.seconds}</span>
+                  <span className="countdown-compact-label">SEC</span>
+                </div>
+              </div>
             </div>
             <div className="main-event-info">
               <h3>25th Alumni Homecoming</h3>
