@@ -781,3 +781,122 @@ tr:last-child td {
   background: rgba(0, 102, 51, 0.06) !important;
   border: 1px solid rgba(0, 102, 51, 0.2) !important;
 }
+
+/* ========================================
+   ANNOUNCEMENT HISTORY - Themed Colors
+   ======================================== */
+
+/* Announcement title in history */
+.announcement-history-title {
+  color: #CFB53B;
+  margin: 0;
+}
+
+[data-theme="light"] .announcement-history-title {
+  color: #006633;
+}
+
+/* View link in announcement history */
+.announcement-view-link {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: #CFB53B;
+  cursor: pointer;
+  font-size: 0.8rem;
+  text-decoration: underline;
+}
+
+[data-theme="light"] .announcement-view-link {
+  color: #006633;
+}
+
+/* ========================================
+   MEETING NOTES - Section Headers
+   Dark mode: gold (#B8960C), Light mode: green (#006633)
+   ======================================== */
+
+.meeting-notes-heading {
+  color: #B8960C;
+  margin-top: 16px;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+[data-theme="light"] .meeting-notes-heading {
+  color: #006633;
+}
+
+/* Desktop version with slightly different sizing */
+.meeting-notes-heading-lg {
+  color: #B8960C;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+
+[data-theme="light"] .meeting-notes-heading-lg {
+  color: #006633;
+}
+
+/* ========================================
+   INBOX - Themed Colors
+   ======================================== */
+
+/* Reply badge */
+.inbox-reply-badge {
+  margin-left: 8px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  background: rgba(207, 181, 59, 0.15);
+  color: #CFB53B;
+  vertical-align: middle;
+}
+
+[data-theme="light"] .inbox-reply-badge {
+  background: rgba(0, 102, 51, 0.15);
+  color: #006633;
+}
+
+/* Committee prefix in messages */
+.inbox-committee-prefix {
+  color: #CFB53B;
+  font-weight: 500;
+}
+
+[data-theme="light"] .inbox-committee-prefix {
+  color: #006633;
+}
+
+/* Detail view reply badge */
+.inbox-detail-reply-badge {
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: rgba(207, 181, 59, 0.15);
+  color: #CFB53B;
+  vertical-align: middle;
+}
+
+[data-theme="light"] .inbox-detail-reply-badge {
+  background: rgba(0, 102, 51, 0.15);
+  color: #006633;
+}
+
+/* Thread count badge */
+.inbox-thread-count {
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  background: rgba(207, 181, 59, 0.15);
+  color: #CFB53B;
+}
+
+[data-theme="light"] .inbox-thread-count {
+  background: rgba(0, 102, 51, 0.15);
+  color: #006633;
+}

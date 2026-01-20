@@ -369,16 +369,7 @@ export default function Inbox() {
                       <span className="message-subject">
                         {item.subject || '(No Subject)'}
                         {item.type === 'message' && (
-                          <span style={{
-                            marginLeft: '8px',
-                            padding: '2px 6px',
-                            borderRadius: '4px',
-                            fontSize: '0.65rem',
-                            fontWeight: '600',
-                            background: 'rgba(207, 181, 59, 0.15)',
-                            color: '#CFB53B',
-                            verticalAlign: 'middle'
-                          }}>
+                          <span className="inbox-reply-badge">
                             Reply
                           </span>
                         )}
@@ -400,7 +391,7 @@ export default function Inbox() {
                       <span className="message-date">{formatDate(item.created_at)}</span>
                     </div>
                     <p className="message-snippet">
-                      {item.type === 'message' && <span style={{ color: '#CFB53B', fontWeight: '500' }}>Committee: </span>}
+                      {item.type === 'message' && <span className="inbox-committee-prefix">Committee: </span>}
                       {item.message.substring(0, 100)}{item.message.length > 100 ? '...' : ''}
                     </p>
                   </div>
@@ -482,15 +473,7 @@ export default function Inbox() {
                   </span>
                 )}
                 {selectedType === 'message' && (
-                  <span style={{
-                    padding: '3px 8px',
-                    borderRadius: '4px',
-                    fontSize: '0.7rem',
-                    fontWeight: '600',
-                    background: 'rgba(207, 181, 59, 0.15)',
-                    color: '#CFB53B',
-                    verticalAlign: 'middle'
-                  }}>
+                  <span className="inbox-detail-reply-badge">
                     Reply
                   </span>
                 )}
@@ -508,14 +491,7 @@ export default function Inbox() {
                   </span>
                 )}
                 {(selectedType === 'message' || selectedType === 'sent') && thread.length > 1 && (
-                  <span style={{
-                    padding: '3px 10px',
-                    borderRadius: '12px',
-                    fontSize: '0.7rem',
-                    fontWeight: '500',
-                    background: 'rgba(207, 181, 59, 0.15)',
-                    color: '#CFB53B'
-                  }}>
+                  <span className="inbox-thread-count">
                     {thread.length} messages
                   </span>
                 )}

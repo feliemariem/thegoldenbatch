@@ -335,7 +335,7 @@ export default function AnnouncementComposer({ token, registeredCount = 0, going
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                    <h5 style={{ margin: 0, color: '#CFB53B' }}>{ann.subject}</h5>
+                    <h5 className="announcement-history-title">{ann.subject}</h5>
                     <span style={{ color: '#666', fontSize: '0.8rem' }}>{formatDate(ann.created_at)}</span>
                   </div>
 
@@ -351,15 +351,7 @@ export default function AnnouncementComposer({ token, registeredCount = 0, going
                     )}
                     <button
                       onClick={() => setViewAnnouncement(ann)}
-                      style={{
-                        marginLeft: 'auto',
-                        background: 'none',
-                        border: 'none',
-                        color: '#CFB53B',
-                        cursor: 'pointer',
-                        fontSize: '0.8rem',
-                        textDecoration: 'underline'
-                      }}
+                      className="announcement-view-link"
                     >
                       View
                     </button>

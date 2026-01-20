@@ -586,7 +586,7 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
                 }}>
                   {selectedMeeting.notes.split('\n').map((line, i) => {
                     if (line.startsWith('## ')) {
-                      return <h4 key={i} style={{ color: '#006633', marginTop: '16px', marginBottom: '8px', fontSize: '0.95rem' }}>{line.replace('## ', '')}</h4>;
+                      return <h4 key={i} className="meeting-notes-heading">{line.replace('## ', '')}</h4>;
                     }
                     if (line.startsWith('- ')) {
                       return <div key={i} style={{ paddingLeft: '12px', marginBottom: '4px' }}>• {line.replace('- ', '')}</div>;
@@ -1133,7 +1133,7 @@ Tip: Use ## for headers, - for bullet points"
                   }}>
                     {selectedMeeting.notes.split('\n').map((line, i) => {
                       if (line.startsWith('## ')) {
-                        return <h4 key={i} style={{ color: '#006633', marginTop: '20px', marginBottom: '10px', fontSize: '1rem' }}>{line.replace('## ', '')}</h4>;
+                        return <h4 key={i} className="meeting-notes-heading-lg">{line.replace('## ', '')}</h4>;
                       }
                       if (line.startsWith('- ')) {
                         return <div key={i} style={{ paddingLeft: '16px', marginBottom: '4px' }}>• {line.replace('- ', '')}</div>;

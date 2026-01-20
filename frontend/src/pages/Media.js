@@ -159,7 +159,7 @@ export default function Media() {
             </div>
           </div>
           <div style={{ padding: '12px' }}>
-            <h4 style={{ color: '#CFB53B', marginBottom: '4px', fontSize: '0.9rem' }}>{album.title}</h4>
+            <h4 className="album-card-title">{album.title}</h4>
             <p style={{ color: '#888', fontSize: '0.75rem', margin: 0 }}>{album.description}</p>
           </div>
         </div>
@@ -172,23 +172,12 @@ export default function Media() {
     <div>
       <button
         onClick={() => setSelectedAlbum(null)}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          background: 'transparent',
-          border: 'none',
-          color: '#CFB53B',
-          fontSize: '0.85rem',
-          cursor: 'pointer',
-          padding: '0',
-          marginBottom: '16px',
-        }}
+        className="back-to-albums"
       >
         Back to Albums
       </button>
 
-      <h3 style={{ color: '#CFB53B', marginBottom: '6px', fontSize: '1.1rem' }}>{selectedAlbum.title}</h3>
+      <h3 className="album-detail-title">{selectedAlbum.title}</h3>
       <p style={{ color: '#888', margin: '0 0 16px 0', fontSize: '0.85rem' }}>{selectedAlbum.description}</p>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '12px' }}>
@@ -413,7 +402,7 @@ export default function Media() {
       <main className="profile-main">
         {/* Page Header */}
         <div style={{ marginBottom: '32px', textAlign: 'center' }}>
-          <h2 style={{ color: '#CFB53B', marginBottom: '8px', fontSize: '1.8rem' }}>Media Hub</h2>
+          <h2 className="media-page-title" style={{ marginBottom: '8px', fontSize: '1.8rem' }}>Media Hub</h2>
           <p style={{ color: '#888', fontSize: '1rem' }}>Videos, news, and memories from Batch 2003</p>
         </div>
 
@@ -505,7 +494,7 @@ export default function Media() {
               borderRadius: '16px',
               padding: '20px',
             }}>
-              <h3 className="media-card-heading" style={{ color: '#CFB53B', marginBottom: '16px', fontSize: '1.1rem' }}>Latest News</h3>
+              <h3 className="media-card-heading" style={{ marginBottom: '16px', fontSize: '1.1rem' }}>Latest News</h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {/* News Item 1 */}
                 <div style={{
@@ -514,8 +503,8 @@ export default function Media() {
                   padding: '16px',
                   borderLeft: '3px solid #CFB53B',
                 }}>
-                  <span style={{ color: '#CFB53B', fontSize: '0.7rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Fundraising</span>
-                  <h4 style={{ color: '#e0e0e0', fontSize: '0.95rem', margin: '6px 0', fontWeight: '500' }}>Fundraising Drive Reaches 50% of Goal</h4>
+                  <span className="news-item-label gold">Fundraising</span>
+                  <h4 className="news-item-title">Fundraising Drive Reaches 50% of Goal</h4>
                   <p style={{ color: '#888', fontSize: '0.8rem', margin: 0, lineHeight: '1.5' }}>Thanks to generous contributions, we're halfway to our target for the 25th reunion venue and catering.</p>
                 </div>
                 {/* News Item 2 */}
@@ -525,8 +514,8 @@ export default function Media() {
                   padding: '16px',
                   borderLeft: '3px solid #006633',
                 }}>
-                  <span style={{ color: '#006633', fontSize: '0.7rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Announcement</span>
-                  <h4 style={{ color: '#e0e0e0', fontSize: '0.95rem', margin: '6px 0', fontWeight: '500' }}>Venue Confirmed: USLS Campus</h4>
+                  <span className="news-item-label green">Announcement</span>
+                  <h4 className="news-item-title">Venue Confirmed: USLS Campus</h4>
                   <p style={{ color: '#888', fontSize: '0.8rem', margin: 0, lineHeight: '1.5' }}>We're excited to announce our reunion will be held at our alma mater's main grounds!</p>
                 </div>
                 {/* News Item 3 */}
@@ -536,8 +525,8 @@ export default function Media() {
                   padding: '16px',
                   borderLeft: '3px solid #CFB53B',
                 }}>
-                  <span style={{ color: '#CFB53B', fontSize: '0.7rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Update</span>
-                  <h4 style={{ color: '#e0e0e0', fontSize: '0.95rem', margin: '6px 0', fontWeight: '500' }}>Registration Now Open</h4>
+                  <span className="news-item-label gold">Update</span>
+                  <h4 className="news-item-title">Registration Now Open</h4>
                   <p style={{ color: '#888', fontSize: '0.8rem', margin: 0, lineHeight: '1.5' }}>All batchmates can now register and update their profiles on the platform.</p>
                 </div>
               </div>
@@ -550,7 +539,7 @@ export default function Media() {
               borderRadius: '16px',
               padding: '20px',
             }}>
-              <h3 className="media-card-heading" style={{ color: '#CFB53B', marginBottom: '16px', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <h3 className="media-card-heading" style={{ marginBottom: '16px', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 Batch Podcast
               </h3>
               <div style={{
@@ -574,7 +563,7 @@ export default function Media() {
                   <span style={{ fontSize: '2rem' }}>&#127911;</span>
                 </div>
                 <div style={{ flex: 1 }}>
-                  <h4 style={{ color: '#e0e0e0', fontSize: '0.95rem', margin: '0 0 4px 0' }}>The Golden Batch Podcast</h4>
+                  <h4 className="media-podcast-title">The Golden Batch Podcast</h4>
                   <p style={{ color: '#888', fontSize: '0.8rem', margin: '0 0 12px 0' }}>Catching up with batchmates, sharing stories</p>
                   <div style={{
                     height: '40px',
@@ -599,7 +588,7 @@ export default function Media() {
               borderRadius: '16px',
               padding: '20px',
             }}>
-              <h3 className="media-card-heading" style={{ color: '#CFB53B', marginBottom: '16px', fontSize: '1.1rem' }}>Batchmate Spotlight</h3>
+              <h3 className="media-card-heading" style={{ marginBottom: '16px', fontSize: '1.1rem' }}>Batchmate Spotlight</h3>
               <div style={{
                 background: 'rgba(0, 0, 0, 0.2)',
                 borderRadius: '12px',
@@ -622,8 +611,8 @@ export default function Media() {
                   <span style={{ color: '#CFB53B', fontSize: '1.5rem' }}>?</span>
                 </div>
                 <div style={{ flex: 1 }}>
-                  <span style={{ color: '#006633', fontSize: '0.7rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Featured Interview</span>
-                  <h4 style={{ color: '#e0e0e0', fontSize: '1rem', margin: '6px 0 8px 0' }}>Coming Soon: Batchmate Interviews</h4>
+                  <span className="news-item-label green">Featured Interview</span>
+                  <h4 className="media-spotlight-title" style={{ fontSize: '1rem', margin: '6px 0 8px 0' }}>Coming Soon: Batchmate Interviews</h4>
                   <p style={{ color: '#888', fontSize: '0.85rem', margin: 0, lineHeight: '1.6' }}>
                     We'll be featuring interviews with batchmates sharing their journeys since graduation. Stay tuned for inspiring stories!
                   </p>
@@ -640,7 +629,7 @@ export default function Media() {
             padding: '20px',
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 className="media-card-heading" style={{ color: '#CFB53B', margin: 0, fontSize: '1.1rem' }}>Photo & Video Gallery</h3>
+              <h3 className="media-card-heading" style={{ margin: 0, fontSize: '1.1rem' }}>Photo & Video Gallery</h3>
             </div>
 
             {/* Submission CTA */}
@@ -657,7 +646,7 @@ export default function Media() {
               </p>
               <a
                 href="mailto:uslsis.batch2003@gmail.com?subject=Media%20Submission%20-%20Batch%202003"
-                style={{ color: '#CFB53B', fontWeight: '600', fontSize: '0.85rem', textDecoration: 'none' }}
+                className="media-email-link"
               >
                 uslsis.batch2003@gmail.com
               </a>
