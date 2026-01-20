@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useInbox } from '../context/InboxContext';
+import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import logo from '../images/lasalle.jpg';
 import '../styles/profileNew.css';
 import '../styles/directory.css';
 
@@ -425,34 +424,14 @@ const getUniqueIndustries = (batchmates) => {
 };
 
 export default function Directory() {
-  const { user, token, logout } = useAuth();
-  const { unreadCount } = useInbox();
+  const { user } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
   const isAdmin = user?.isAdmin;
 
   const [searchTerm, setSearchTerm] = useState('');
   const [countryFilter, setCountryFilter] = useState('');
   const [industryFilter, setIndustryFilter] = useState('');
   const [sortBy, setSortBy] = useState('lastName');
-  const [eventsDropdownOpen, setEventsDropdownOpen] = useState(false);
-  const eventsDropdownRef = useRef(null);
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (eventsDropdownRef.current && !eventsDropdownRef.current.contains(event.target)) {
-        setEventsDropdownOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
 
   // Filter and sort batchmates
   const filteredBatchmates = MOCK_BATCHMATES
@@ -486,41 +465,8 @@ export default function Directory() {
 
   return (
     <div className="container admin-container">
+      <Navbar />
       <div className="card">
-        {/* Header */}
-        <header className="profile-header">
-          <div className="profile-header-content">
-            <div className="profile-logo-section">
-              <img src={logo} alt="USLS Logo" className="profile-logo" />
-              <div className="profile-title">
-                <h1>THE GOLDEN BATCH</h1>
-                <span className="profile-subtitle">25th Alumni Homecoming</span>
-              </div>
-            </div>
-            <nav className="nav-section">
-              <div className={`nav-dropdown ${eventsDropdownOpen ? 'open' : ''}`} ref={eventsDropdownRef}>
-                <button
-                  className={`nav-dropdown-trigger ${location.pathname === '/events' || location.pathname === '/media' ? 'active' : ''} ${eventsDropdownOpen ? 'open' : ''}`}
-                  onClick={() => setEventsDropdownOpen(!eventsDropdownOpen)}
-                >
-                  Events <span className="dropdown-arrow">&#9660;</span>
-                </button>
-                <div className="nav-dropdown-menu">
-                  <Link to="/events" className={`nav-dropdown-item ${location.pathname === '/events' ? 'active' : ''}`} onClick={() => setEventsDropdownOpen(false)}>Upcoming</Link>
-                  <Link to="/media" className={`nav-dropdown-item ${location.pathname === '/media' ? 'active' : ''}`} onClick={() => setEventsDropdownOpen(false)}>Media</Link>
-                </div>
-              </div>
-              <Link to="/committee" className="nav-link">Committee</Link>
-              {isAdmin && <Link to="/directory" className="nav-link active">Directory</Link>}
-              <Link to="/funds" className="nav-link">Funds</Link>
-              <Link to="/inbox" className="nav-link">Inbox{unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}</Link>
-              <Link to={isAdmin ? "/profile-preview" : "/profile"} className="nav-link">Profile</Link>
-              {isAdmin && <Link to="/admin" className="nav-link">Admin</Link>}
-              <button onClick={handleLogout} className="nav-link logout-btn">Logout</button>
-            </nav>
-        </div>
-      </header>
-
       <main className="profile-main directory-main">
         {/* Page Header */}
         <section className="directory-header">

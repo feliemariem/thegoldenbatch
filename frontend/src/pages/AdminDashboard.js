@@ -6,7 +6,7 @@ import AccountingDashboard from '../components/AccountingDashboard';
 import PermissionsManager from '../components/PermissionsManager';
 import SystemTest from '../components/SystemTest';
 import ScrollableTable from '../components/ScrollableTable.js';
-import logo from '../images/lasalle.jpg';
+import Navbar from '../components/Navbar';
 import MeetingMinutes from '../components/MeetingMinutes';
 import AdminRoleErrorToast from "../components/AdminRoleErrorToast";
 import AdminMessages from '../components/AdminMessages';
@@ -639,11 +639,8 @@ export default function AdminDashboard() {
 
   return (
     <div className="container admin-container" style={{ position: 'relative' }}>
+      <Navbar />
       <div className="card">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
-          <img src={logo} alt="La Salle" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
-          <h2 className="page-title-gold">The Golden Batch</h2>
-        </div>
         <p style={{ color: '#666', marginBottom: '4px', fontSize: '0.9rem' }}>Welcome, {user?.first_name || 'Admin'}!</p>
         <div className="header-row">
           <h1>Admin Dashboard</h1>
@@ -653,12 +650,6 @@ export default function AdminDashboard() {
               className="btn-guide"
             >
               {showGuide ? 'Hide' : '📖 Guide'}
-            </button>
-            <Link to="/profile-preview" className="btn-link" style={{ marginRight: '8px' }}>
-              My Profile
-            </Link>
-            <button onClick={handleLogout} className="btn-link">
-              Logout
             </button>
           </div>
         </div>
