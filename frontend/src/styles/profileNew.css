@@ -1138,6 +1138,10 @@
   color: #555;
 }
 
+[data-theme="light"] .btn-save {
+  color: white;
+}
+
 [data-theme="light"] .profile-footer p {
   color: #666;
 }
