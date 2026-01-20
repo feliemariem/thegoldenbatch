@@ -491,7 +491,7 @@ export default function Register() {
             </div>
 
 <div className="form-group">
-              <label>Are you attending? *</label>
+              <label>Are you attending our homecoming on 12/16/28? *</label>
               <div className="rsvp-buttons-register">
                 <button
                   type="button"
