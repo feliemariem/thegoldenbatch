@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { FaFacebook, FaLinkedin, FaInstagram } from 'react-icons/fa';
 import MyTasks from '../components/MyTasks';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -34,6 +35,9 @@ export default function ProfileNew() {
     country: '',
     occupation: '',
     company: '',
+    facebook_url: '',
+    linkedin_url: '',
+    instagram_url: '',
   });
 
   // Feature flag for new pages (Events, Directory, etc.)
@@ -145,6 +149,9 @@ export default function ProfileNew() {
         country: data.country || '',
         occupation: data.occupation || '',
         company: data.company || '',
+        facebook_url: data.facebook_url || '',
+        linkedin_url: data.linkedin_url || '',
+        instagram_url: data.instagram_url || '',
       });
     } catch (err) {
       console.error('Failed to fetch profile');
@@ -663,6 +670,41 @@ export default function ProfileNew() {
                         onChange={handleChange}
                       />
                     </div>
+                    <div className="form-group full-width social-media-section">
+                      <label className="social-media-label">Social Media</label>
+                      <div className="social-media-inputs">
+                        <div className="social-input-group">
+                          <label>Facebook username</label>
+                          <input
+                            type="text"
+                            name="facebook_url"
+                            value={form.facebook_url}
+                            onChange={handleChange}
+                            placeholder="yourname"
+                          />
+                        </div>
+                        <div className="social-input-group">
+                          <label>LinkedIn username</label>
+                          <input
+                            type="text"
+                            name="linkedin_url"
+                            value={form.linkedin_url}
+                            onChange={handleChange}
+                            placeholder="yourname"
+                          />
+                        </div>
+                        <div className="social-input-group">
+                          <label>Instagram handle</label>
+                          <input
+                            type="text"
+                            name="instagram_url"
+                            value={form.instagram_url}
+                            onChange={handleChange}
+                            placeholder="yourname"
+                          />
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   <div className="form-actions">
                     <button type="submit" className="btn-save" disabled={saving}>
@@ -729,6 +771,43 @@ export default function ProfileNew() {
                       </div>
                     )}
                   </div>
+                  {(profile.facebook_url || profile.linkedin_url || profile.instagram_url) && (
+                    <div className="social-icons-row">
+                      {profile.facebook_url && (
+                        <a
+                          href={`https://facebook.com/${profile.facebook_url}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="social-icon-link facebook"
+                          title="Facebook"
+                        >
+                          <FaFacebook />
+                        </a>
+                      )}
+                      {profile.linkedin_url && (
+                        <a
+                          href={`https://linkedin.com/in/${profile.linkedin_url}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="social-icon-link linkedin"
+                          title="LinkedIn"
+                        >
+                          <FaLinkedin />
+                        </a>
+                      )}
+                      {profile.instagram_url && (
+                        <a
+                          href={`https://instagram.com/${profile.instagram_url}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="social-icon-link instagram"
+                          title="Instagram"
+                        >
+                          <FaInstagram />
+                        </a>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
