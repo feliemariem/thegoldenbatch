@@ -435,6 +435,64 @@
   text-align: center;
 }
 
+/* Countdown Box */
+.countdown-box {
+  background: linear-gradient(135deg, rgba(207, 181, 59, 0.15) 0%, rgba(207, 181, 59, 0.05) 100%);
+  border: 1px solid rgba(207, 181, 59, 0.25);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.countdown-text {
+  margin: 0;
+  font-size: 1rem;
+  color: #e0e0e0;
+  font-weight: 500;
+}
+
+.countdown-days {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--color-hover);
+  display: inline-block;
+  margin-right: 4px;
+}
+
+.countdown-text.countdown-today {
+  color: var(--color-hover);
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.countdown-text.countdown-passed {
+  color: #a0a0a0;
+  font-style: italic;
+}
+
+/* Light mode countdown */
+[data-theme="light"] .countdown-box {
+  background: linear-gradient(135deg, rgba(0, 102, 51, 0.1) 0%, rgba(0, 102, 51, 0.03) 100%);
+  border-color: rgba(0, 102, 51, 0.25);
+}
+
+[data-theme="light"] .countdown-text {
+  color: #333;
+}
+
+[data-theme="light"] .countdown-days {
+  color: #006633;
+}
+
+[data-theme="light"] .countdown-text.countdown-today {
+  color: #006633;
+}
+
+[data-theme="light"] .countdown-text.countdown-passed {
+  color: #666;
+}
+
 .rsvp-label {
   color: #a0a0a0;
   font-size: 0.9rem;

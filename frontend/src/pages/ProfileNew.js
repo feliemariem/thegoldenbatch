@@ -70,6 +70,16 @@ export default function ProfileNew() {
     return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
   };
 
+  // Helper function to calculate days until the main event (December 16, 2028)
+  const getDaysUntilReunion = () => {
+    const eventDate = new Date('2028-12-16T00:00:00');
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const diffTime = eventDate.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+  };
+
   useEffect(() => {
     fetchProfile();
     fetchMyEvents();
@@ -447,6 +457,17 @@ export default function ProfileNew() {
                   <p className="event-name">25th Alumni Homecoming</p>
                   <p className="event-location">USLS School Grounds, Bacolod City</p>
                 </div>
+              </div>
+              <div className="countdown-box">
+                {getDaysUntilReunion() > 0 ? (
+                  <p className="countdown-text">
+                    <span className="countdown-days">{getDaysUntilReunion()}</span> days until the reunion!
+                  </p>
+                ) : getDaysUntilReunion() === 0 ? (
+                  <p className="countdown-text countdown-today">Today is the day!</p>
+                ) : (
+                  <p className="countdown-text countdown-passed">The reunion has happened!</p>
+                )}
               </div>
               <div className="rsvp-section">
                 <p className="rsvp-label">Are you attending?</p>
