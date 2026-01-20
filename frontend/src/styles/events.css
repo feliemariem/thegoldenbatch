@@ -183,20 +183,20 @@
 }
 
 /* Light mode compact countdown */
-[data-theme="light"] .countdown-compact-item {
+body[data-theme="light"] .countdown-compact-item {
   background: linear-gradient(165deg,
     rgba(240, 248, 243, 0.9) 0%,
-    rgba(235, 245, 238, 0.93) 100%);
-  border: 1px solid rgba(0, 102, 51, 0.12);
-  box-shadow: 0 1px 4px rgba(0, 50, 30, 0.06);
+    rgba(235, 245, 238, 0.93) 100%) !important;
+  border: 1px solid rgba(0, 102, 51, 0.12) !important;
+  box-shadow: 0 1px 4px rgba(0, 50, 30, 0.06) !important;
 }
 
-[data-theme="light"] .countdown-compact-number {
-  color: #B8960C;
+body[data-theme="light"] .countdown-compact-number {
+  color: var(--color-hover) !important;
 }
 
-[data-theme="light"] .countdown-compact-label {
-  color: #555;
+body[data-theme="light"] .countdown-compact-label {
+  color: var(--color-text-secondary) !important;
 }
 
 /* Mobile responsive for compact countdown */
