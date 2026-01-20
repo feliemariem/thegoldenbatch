@@ -62,6 +62,11 @@ export default function Landing() {
 
       {/* Hero Section */}
       <section className="hero-section">
+        <img
+          src={require('../images/logo.png')}
+          alt="25th Anniversary Logo"
+          className="hero-logo"
+        />
         <h1>25th Alumni Homecoming</h1>
         <p className="tagline">The Golden Batch 2003</p>
         <div className="event-details">
@@ -100,9 +105,9 @@ export default function Landing() {
       <section className="about-section">
         <h2>About the Reunion</h2>
         <p>
-          It's been 25 years since we walked the halls of USLS-IS together. 
-          Join us as we celebrate a quarter century of friendship, memories, 
-          and the bonds that have lasted a lifetime. Let's reconnect, reminisce, 
+          It's been 25 years since we walked the halls of USLS-IS together.
+          Join us as we celebrate a quarter century of friendship, memories,
+          and the bonds that have lasted a lifetime. Let's reconnect, reminisce,
           and create new memories together!
         </p>
       </section>
@@ -121,7 +126,7 @@ export default function Landing() {
             <h2 style={{ textAlign: 'center', marginBottom: '20px', color: '#CFB53B' }}>
               Register for the Reunion
             </h2>
-            
+
             {/* Disclaimer Section */}
             <div className="form-disclaimer">
               <p>
@@ -134,18 +139,18 @@ export default function Landing() {
                 <li>Receive event updates, announcements, and reminders</li>
               </ul>
               <p className="privacy-note">
-                Your information will only be shared with fellow batchmates and the organizing committee. 
+                Your information will only be shared with fellow batchmates and the organizing committee.
                 We will not share your data with third parties or use it for any commercial purposes.
               </p>
             </div>
 
             <div className="form-embed-container">
-              <iframe 
-                src="https://docs.google.com/forms/d/e/1FAIpQLSfJrWdJavnAvJPf0FWmgBs6BWqLM6290CButysWtWRvEwCpIA/viewform?embedded=true" 
-                width="100%" 
-                height="600" 
-                frameBorder="0" 
-                marginHeight="0" 
+              <iframe
+                src="https://docs.google.com/forms/d/e/1FAIpQLSfJrWdJavnAvJPf0FWmgBs6BWqLM6290CButysWtWRvEwCpIA/viewform?embedded=true"
+                width="100%"
+                height="600"
+                frameBorder="0"
+                marginHeight="0"
                 marginWidth="0"
                 title="Registration Form"
               >
