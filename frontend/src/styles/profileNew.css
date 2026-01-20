@@ -1543,8 +1543,9 @@
 }
 
 /* ========================================
-   MEDIA PAGE - Dark Green Cards (Light Mode)
-   Keep dark green styling in light mode for visual consistency
+   MEDIA PAGE - Theme-Aware Cards
+   Dark mode: dark green background (#1a2a1f) with gold accents
+   Light mode: white background (--color-bg-card) with green accents
    ======================================== */
 
 .media-card-green {
@@ -1555,22 +1556,22 @@
   color: #CFB53B !important;
 }
 
-/* Light mode: keep media cards dark green for contrast */
+/* Light mode: white cards with green accents */
 [data-theme="light"] .media-card-green {
-  background: #1a2a1f !important;
-  border-color: rgba(207, 181, 59, 0.2) !important;
+  background: var(--color-bg-card) !important;
+  border-color: rgba(0, 102, 51, 0.15) !important;
 }
 
 [data-theme="light"] .media-card-green .media-card-heading {
-  color: #CFB53B !important;
+  color: #006633 !important;
 }
 
 [data-theme="light"] .media-card-green h4 {
-  color: #e8e8e0 !important;
+  color: #1a1a1a !important;
 }
 
 [data-theme="light"] .media-card-green p {
-  color: #b0b0a8 !important;
+  color: #555 !important;
 }
 
 [data-theme="light"] .media-card-green span {
@@ -1579,11 +1580,65 @@
 
 /* News item text in light mode */
 [data-theme="light"] .media-card-green .news-item-title {
-  color: #e8e8e0 !important;
+  color: #006633 !important;
 }
 
 [data-theme="light"] .media-card-green .news-item-desc {
-  color: #9a9a92 !important;
+  color: #555 !important;
+}
+
+/* Media hype video title - remove text shadow in light mode */
+[data-theme="light"] .media-hype-title {
+  text-shadow: none !important;
+}
+
+/* Gold gradient divider - dark mode: gold, light mode: green */
+.media-gold-divider {
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #CFB53B, transparent);
+  margin: 0 auto;
+  border-radius: 2px;
+}
+
+[data-theme="light"] .media-gold-divider {
+  background: linear-gradient(90deg, transparent, #006633, transparent);
+}
+
+/* News item card - theme aware */
+.news-item-card {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+[data-theme="light"] .news-item-card {
+  background: rgba(0, 102, 51, 0.05);
+}
+
+/* News item borders - theme aware */
+.news-item-border-gold {
+  border-left: 3px solid #CFB53B;
+}
+
+.news-item-border-green {
+  border-left: 3px solid #006633;
+}
+
+[data-theme="light"] .news-item-border-gold {
+  border-left-color: #006633;
+}
+
+/* News item description text */
+.news-item-desc {
+  color: #888;
+  font-size: 0.8rem;
+  margin: 0;
+  line-height: 1.5;
+}
+
+[data-theme="light"] .news-item-desc {
+  color: #555;
 }
 
 /* ========================================
@@ -1651,6 +1706,28 @@
   color: #006633;
 }
 
+/* Album card description */
+.album-card-desc {
+  color: #888;
+  font-size: 0.75rem;
+  margin: 0;
+}
+
+[data-theme="light"] .album-card-desc {
+  color: #555;
+}
+
+/* Album detail description */
+.album-detail-desc {
+  color: #888;
+  margin: 0 0 16px 0;
+  font-size: 0.85rem;
+}
+
+[data-theme="light"] .album-detail-desc {
+  color: #555;
+}
+
 /* Back to Albums link */
 .back-to-albums {
   display: flex;
@@ -1713,14 +1790,138 @@
 /* Podcast and spotlight titles within cards */
 .media-podcast-title,
 .media-spotlight-title {
-  color: #e0e0e0;
+  color: #CFB53B;
   font-size: 0.95rem;
   margin: 0 0 4px 0;
 }
 
-[data-theme="light"] .media-card-green .media-podcast-title,
-[data-theme="light"] .media-card-green .media-spotlight-title {
-  color: #e8e8e0;
+[data-theme="light"] .media-podcast-title,
+[data-theme="light"] .media-spotlight-title {
+  color: #006633;
+}
+
+/* Podcast description */
+.media-podcast-desc {
+  color: #888;
+  font-size: 0.8rem;
+  margin: 0 0 12px 0;
+}
+
+[data-theme="light"] .media-podcast-desc {
+  color: #555;
+}
+
+/* Spotlight description */
+.media-spotlight-desc {
+  color: #888;
+  font-size: 0.85rem;
+  margin: 0;
+  line-height: 1.6;
+}
+
+[data-theme="light"] .media-spotlight-desc {
+  color: #555;
+}
+
+/* Spotlight avatar container */
+.media-spotlight-avatar {
+  width: 70px;
+  height: 70px;
+  background: linear-gradient(135deg, rgba(0, 102, 51, 0.3) 0%, rgba(0, 102, 51, 0.1) 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 2px solid rgba(207, 181, 59, 0.2);
+}
+
+[data-theme="light"] .media-spotlight-avatar {
+  border-color: rgba(0, 102, 51, 0.2);
+}
+
+/* Spotlight question mark icon */
+.media-spotlight-icon {
+  color: #CFB53B;
+  font-size: 1.5rem;
+}
+
+[data-theme="light"] .media-spotlight-icon {
+  color: #006633;
+}
+
+/* Media submission CTA box */
+.media-submission-cta {
+  background: linear-gradient(135deg, rgba(207, 181, 59, 0.1) 0%, rgba(207, 181, 59, 0.03) 100%);
+  border: 1px solid rgba(207, 181, 59, 0.2);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+[data-theme="light"] .media-submission-cta {
+  background: linear-gradient(135deg, rgba(0, 102, 51, 0.08) 0%, rgba(0, 102, 51, 0.03) 100%);
+  border-color: rgba(0, 102, 51, 0.2);
+}
+
+/* Media submission text */
+.media-submission-text {
+  color: #b0b0b0;
+  margin-bottom: 6px;
+  font-size: 0.85rem;
+}
+
+[data-theme="light"] .media-submission-text {
+  color: #555;
+}
+
+/* Media gallery tabs */
+.media-tab {
+  padding: 8px 16px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  color: #888;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.media-tab.active {
+  background: rgba(207, 181, 59, 0.15);
+  border-color: rgba(207, 181, 59, 0.3);
+  color: #CFB53B;
+}
+
+[data-theme="light"] .media-tab {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 102, 51, 0.15);
+  color: #666;
+}
+
+[data-theme="light"] .media-tab.active {
+  background: rgba(0, 102, 51, 0.12);
+  border-color: rgba(0, 102, 51, 0.3);
+  color: #006633;
+}
+
+/* Episode player placeholder */
+.media-player-placeholder {
+  height: 40px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  font-size: 0.75rem;
+}
+
+[data-theme="light"] .media-player-placeholder {
+  background: rgba(0, 102, 51, 0.05);
+  color: #888;
 }
 
 /* Media submission email link */
