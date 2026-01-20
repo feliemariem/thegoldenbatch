@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import Footer from '../components/Footer';
 import logo from '../images/lasalle.jpg';
 
 export default function Profile() {
   const { user, token, logout, setUser } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   const [profile, setProfile] = useState(null);
@@ -129,6 +131,13 @@ export default function Profile() {
   if (!profile) {
     return (
       <div className="container">
+        <button
+          onClick={toggleTheme}
+          className="theme-toggle"
+          aria-label="Toggle theme"
+        >
+          {theme === 'dark' ? '☀️' : '🌙'}
+        </button>
         <div className="card">
           <p>Loading...</p>
         </div>
@@ -139,6 +148,13 @@ export default function Profile() {
 
   return (
     <div className="container">
+      <button
+        onClick={toggleTheme}
+        className="theme-toggle"
+        aria-label="Toggle theme"
+      >
+        {theme === 'dark' ? '☀️' : '🌙'}
+      </button>
       <div className="card">
         <img src={logo} alt="USLS Logo" className="logo" />
         <h2 className="page-title-gold" style={{ marginBottom: '8px' }}>The Golden Batch</h2>
