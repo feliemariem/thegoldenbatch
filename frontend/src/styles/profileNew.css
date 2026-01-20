@@ -72,6 +72,7 @@
 }
 
 .profile-title h1 {
+  font-family: var(--font-heading);
   font-size: 1.2rem;
   background: linear-gradient(135deg, var(--color-title-gradient-end) 0%, var(--color-title-gradient-start) 50%, var(--color-title-gradient-end) 100%);
   -webkit-background-clip: text;
@@ -118,6 +119,7 @@
   padding: 8px 16px;
   color: var(--color-text-secondary);
   text-decoration: none;
+  font-family: var(--font-body);
   font-size: 0.9rem;
   font-weight: 500;
   border-radius: 6px;
@@ -179,6 +181,7 @@
 }
 
 .welcome-content h2 {
+  font-family: var(--font-heading);
   color: var(--color-hover);
   font-size: 1.8rem;
   margin: 0 0 8px 0;
@@ -231,6 +234,7 @@
 }
 
 .guide-title {
+  font-family: var(--font-heading);
   color: #006633;
   font-size: 1.3rem;
   margin: 0 0 20px 0;
@@ -361,6 +365,7 @@
 }
 
 .card-header h3 {
+  font-family: var(--font-heading);
   color: #e0e0e0;
   font-size: 1.1rem;
   margin: 0;
@@ -836,6 +841,7 @@
 
 /* Quick Links */
 .quick-links-card h3 {
+  font-family: var(--font-heading);
   color: #e0e0e0;
   font-size: 1.1rem;
   margin: 0 0 16px 0;
@@ -1376,6 +1382,7 @@
 
 /* Funds page title - gold gradient in dark, green in light */
 .funds-page-title {
+  font-family: var(--font-heading);
   text-align: center;
   margin-bottom: 8px;
   background: linear-gradient(135deg, #CFB53B 0%, #B8960C 100%);

@@ -10,6 +10,7 @@
 }
 
 .events-header h2 {
+  font-family: var(--font-heading);
   color: var(--color-hover);
   font-size: 2rem;
   margin: 0 0 8px 0;
@@ -141,6 +142,7 @@
 }
 
 .main-event-info h3 {
+  font-family: var(--font-heading);
   color: var(--text-primary);
   font-size: 1.5rem;
   margin: 0 0 12px 0;
@@ -317,6 +319,7 @@
 }
 
 .event-form-card h3 {
+  font-family: var(--font-heading);
   color: var(--color-hover);
   margin: 0 0 20px 0;
   font-size: 1.2rem;
@@ -431,6 +434,7 @@
 }
 
 .section-title {
+  font-family: var(--font-heading);
   color: var(--text-primary);
   font-size: 1.3rem;
   margin: 0 0 8px 0;
@@ -617,6 +621,7 @@
 }
 
 .event-title {
+  font-family: var(--font-heading);
   color: var(--text-primary);
   font-size: 1.1rem;
   margin: 0 0 12px 0;
@@ -1127,6 +1132,7 @@
 }
 
 .event-detail-title {
+  font-family: var(--font-heading);
   color: var(--text-primary);
   font-size: 1.8rem;
   margin: 8px 0 12px 0;
