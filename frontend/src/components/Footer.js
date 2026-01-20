@@ -9,7 +9,7 @@ export default function Footer() {
       <p className="site-footer-copyright">
         &copy; {currentYear} USLS-IS Golden Batch 2003
       </p>
-      <p className="site-footer-credits"> Concept:
+      <p className="site-footer-credits"> Concept: 
         <Link to="/committee" className="site-footer-link">Organizing Committee</Link>
         <span className="site-footer-separator"> | </span>
         Design: <Link to="/directory?search=William%20Kramer" className="site-footer-link">William Kramer</Link>
