@@ -5,6 +5,7 @@
 
 /* Page Title - Gold gradient in dark mode, solid green in light mode */
 .page-title-gold {
+  font-family: var(--font-heading);
   background: linear-gradient(135deg, var(--color-title-gradient-start) 0%, var(--color-hover) 50%, var(--color-title-gradient-end) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

@@ -52,6 +52,7 @@
 }
 
 .stat-number {
+  font-family: var(--font-heading);
   font-size: 2.25rem;
   font-weight: 700;
   color: var(--color-text-primary);
@@ -626,6 +627,7 @@ tr:last-child td {
 }
 
 .admin-guide-title {
+  font-family: var(--font-heading);
   color: var(--color-accent);
   margin-bottom: 16px;
   font-size: 1rem;
