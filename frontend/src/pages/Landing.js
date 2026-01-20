@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import Footer from '../components/Footer';
-import logo from '../images/logo.png';
+import logo from '../images/lasalle.jpg';
 
 export default function Landing() {
   const { theme, toggleTheme } = useTheme();
