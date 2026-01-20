@@ -17,7 +17,7 @@ router.get('/', authenticateToken, async (req, res) => {
     const userResult = await db.query(
       `SELECT u.id, u.email, u.first_name, u.last_name, u.birthday,
               u.mobile, u.address, u.city, u.country, u.occupation, u.company,
-              u.profile_photo,
+              u.profile_photo, u.facebook_url, u.linkedin_url, u.instagram_url,
               r.status as rsvp_status,
               m.id as master_list_id,
               m.section,
@@ -73,6 +73,9 @@ router.put('/', authenticateToken, async (req, res) => {
       country,
       occupation,
       company,
+      facebook_url,
+      linkedin_url,
+      instagram_url,
       rsvp_status,
     } = req.body;
 
@@ -87,9 +90,12 @@ router.put('/', authenticateToken, async (req, res) => {
         country = COALESCE($7, country),
         occupation = COALESCE($8, occupation),
         company = COALESCE($9, company),
+        facebook_url = COALESCE($10, facebook_url),
+        linkedin_url = COALESCE($11, linkedin_url),
+        instagram_url = COALESCE($12, instagram_url),
         updated_at = CURRENT_TIMESTAMP
-       WHERE id = $10
-       RETURNING id, email, first_name, last_name, birthday, mobile, address, city, country, occupation, company`,
+       WHERE id = $13
+       RETURNING id, email, first_name, last_name, birthday, mobile, address, city, country, occupation, company, facebook_url, linkedin_url, instagram_url`,
       [
         toTitleCase(first_name),
         toTitleCase(last_name),
@@ -100,6 +106,9 @@ router.put('/', authenticateToken, async (req, res) => {
         toTitleCase(country),
         toTitleCase(occupation),
         toTitleCase(company),
+        facebook_url,
+        linkedin_url,
+        instagram_url,
         req.user.id
       ]
     );
