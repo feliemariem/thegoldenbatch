@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import '../styles/profileNew.css';
 import '../styles/events.css';
+import { API_URL } from '../config';
 
 export default function EventDetail() {
   const { id } = useParams();
@@ -22,7 +23,7 @@ export default function EventDetail() {
 
   const fetchEvent = async () => {
     try {
-      const res = await fetch(`https://the-golden-batch-api.onrender.com/api/events/${id}`, {
+      const res = await fetch(`${API_URL}/api/events/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -44,12 +45,12 @@ export default function EventDetail() {
   const handleRsvp = async (status) => {
     try {
       if (event.user_rsvp === status) {
-        await fetch(`https://the-golden-batch-api.onrender.com/api/events/${id}/rsvp`, {
+        await fetch(`${API_URL}/api/events/${id}/rsvp`, {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${token}` }
         });
       } else {
-        await fetch(`https://the-golden-batch-api.onrender.com/api/events/${id}/rsvp`, {
+        await fetch(`${API_URL}/api/events/${id}/rsvp`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -68,7 +69,7 @@ export default function EventDetail() {
     if (!window.confirm('Delete this event? All RSVPs will be lost.')) return;
 
     try {
-      await fetch(`https://the-golden-batch-api.onrender.com/api/events/${id}`, {
+      await fetch(`${API_URL}/api/events/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });

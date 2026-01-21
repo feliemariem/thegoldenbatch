@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useAuth } from './AuthContext';
+import { API_URL } from '../config';
 
 const InboxContext = createContext(null);
 
@@ -16,10 +17,10 @@ export function InboxProvider({ children }) {
     try {
       // Fetch both announcements and messages in parallel
       const [announcementsRes, messagesRes] = await Promise.all([
-        fetch('https://the-golden-batch-api.onrender.com/api/announcements/inbox', {
+        fetch(`${API_URL}/api/announcements/inbox`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        fetch('https://the-golden-batch-api.onrender.com/api/messages/user-inbox', {
+        fetch(`${API_URL}/api/messages/user-inbox`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);

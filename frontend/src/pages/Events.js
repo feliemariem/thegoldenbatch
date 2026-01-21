@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import '../styles/profileNew.css';
 import '../styles/events.css';
+import { API_URL } from '../config';
 
 export default function Events() {
   const { user, token } = useAuth();
@@ -66,8 +67,8 @@ export default function Events() {
   const fetchEvents = async () => {
     try {
       const url = showPastEvents
-        ? 'https://the-golden-batch-api.onrender.com/api/events?includePast=true'
-        : 'https://the-golden-batch-api.onrender.com/api/events';
+        ? `${API_URL}/api/events?includePast=true'
+        : `${API_URL}/api/events';
       const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -94,7 +95,7 @@ export default function Events() {
 
   const fetchMainEventStats = async () => {
     try {
-      const res = await fetch('https://the-golden-batch-api.onrender.com/api/admin/dashboard', {
+      const res = await fetch(`${API_URL}/api/admin/dashboard', {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -117,12 +118,12 @@ export default function Events() {
 
       // If clicking the same status, remove RSVP
       if (event.user_rsvp === status) {
-        await fetch(`https://the-golden-batch-api.onrender.com/api/events/${eventId}/rsvp`, {
+        await fetch(`${API_URL}/api/events/${eventId}/rsvp`, {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${token}` }
         });
       } else {
-        await fetch(`https://the-golden-batch-api.onrender.com/api/events/${eventId}/rsvp`, {
+        await fetch(`${API_URL}/api/events/${eventId}/rsvp`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -174,8 +175,8 @@ export default function Events() {
 
     try {
       const url = editingEvent
-        ? `https://the-golden-batch-api.onrender.com/api/events/${editingEvent.id}`
-        : 'https://the-golden-batch-api.onrender.com/api/events';
+        ? `${API_URL}/api/events/${editingEvent.id}`
+        : `${API_URL}/api/events';
 
       const res = await fetch(url, {
         method: editingEvent ? 'PUT' : 'POST',
@@ -207,7 +208,7 @@ export default function Events() {
     if (!window.confirm('Delete this event? All RSVPs will be lost.')) return;
 
     try {
-      await fetch(`https://the-golden-batch-api.onrender.com/api/events/${eventId}`, {
+      await fetch(`${API_URL}/api/events/${eventId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });

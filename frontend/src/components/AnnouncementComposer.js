@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../config';
 
 export default function AnnouncementComposer({ token, registeredCount = 0, goingCount = 0, maybeCount = 0, notGoingCount = 0, adminsCount = 0 }) {
   const [audience, setAudience] = useState('all');
@@ -48,7 +49,7 @@ export default function AnnouncementComposer({ token, registeredCount = 0, going
 
   const fetchHistory = async () => {
     try {
-      const res = await fetch('https://the-golden-batch-api.onrender.com/api/announcements/history', {
+      const res = await fetch(`${API_URL}/api/announcements/history', {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -84,7 +85,7 @@ export default function AnnouncementComposer({ token, registeredCount = 0, going
     console.log('Sending announcement with audience:', currentAudience);
 
     try {
-      const res = await fetch('https://the-golden-batch-api.onrender.com/api/announcements', {
+      const res = await fetch(`${API_URL}/api/announcements', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

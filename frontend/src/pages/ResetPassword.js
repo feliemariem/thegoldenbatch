@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import Footer from '../components/Footer';
 import logo from '../images/lasalle.jpg';
+import { API_URL } from '../config';
 
 export default function ResetPassword() {
   const { token } = useParams();
@@ -20,7 +21,7 @@ export default function ResetPassword() {
 
   useEffect(() => {
     // Validate token on page load
-    fetch(`https://the-golden-batch-api.onrender.com/api/auth/reset-password/${token}`)
+    fetch(`${API_URL}/api/auth/reset-password/${token}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.valid) {
@@ -51,7 +52,7 @@ export default function ResetPassword() {
     setSubmitting(true);
 
     try {
-      const res = await fetch('https://the-golden-batch-api.onrender.com/api/auth/reset-password', {
+      const res = await fetch(`${API_URL}/api/auth/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token, password }),

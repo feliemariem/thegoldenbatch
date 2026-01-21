@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useActionItems } from '../context/ActionItemsContext';
+import { API_URL } from '../config';
 
 export default function MeetingMinutes({ token, canEdit = false, initialMeetingId = null, onMeetingSelected = null }) {
   const { user } = useAuth();
@@ -75,7 +76,7 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
 
   const fetchMeetings = async () => {
     try {
-      const res = await fetch('https://the-golden-batch-api.onrender.com/api/meetings', {
+      const res = await fetch(`${API_URL}/api/meetings', {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -112,7 +113,7 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
 
   const fetchAdmins = async () => {
     try {
-      const res = await fetch('https://the-golden-batch-api.onrender.com/api/meetings/admins/list', {
+      const res = await fetch(`${API_URL}/api/meetings/admins/list', {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -124,7 +125,7 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
 
   const fetchActionItems = async (meetingId) => {
     try {
-      const res = await fetch(`https://the-golden-batch-api.onrender.com/api/meetings/${meetingId}/action-items`, {
+      const res = await fetch(`${API_URL}/api/meetings/${meetingId}/action-items`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -163,8 +164,8 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
     setSavingActionItem(true);
     try {
       const url = editingActionItem
-        ? `https://the-golden-batch-api.onrender.com/api/meetings/${selectedMeeting.id}/action-items/${editingActionItem.id}`
-        : `https://the-golden-batch-api.onrender.com/api/meetings/${selectedMeeting.id}/action-items`;
+        ? `${API_URL}/api/meetings/${selectedMeeting.id}/action-items/${editingActionItem.id}`
+        : `${API_URL}/api/meetings/${selectedMeeting.id}/action-items`;
 
       const res = await fetch(url, {
         method: editingActionItem ? 'PUT' : 'POST',
@@ -193,7 +194,7 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
   const handleDeleteActionItem = async (actionItemId) => {
     try {
       const res = await fetch(
-        `https://the-golden-batch-api.onrender.com/api/meetings/${selectedMeeting.id}/action-items/${actionItemId}`,
+        `${API_URL}/api/meetings/${selectedMeeting.id}/action-items/${actionItemId}`,
         {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${token}` }
@@ -304,8 +305,8 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
     setSaving(true);
     try {
       const url = editMode 
-        ? `https://the-golden-batch-api.onrender.com/api/meetings/${selectedMeeting.id}`
-        : 'https://the-golden-batch-api.onrender.com/api/meetings';
+        ? `${API_URL}/api/meetings/${selectedMeeting.id}`
+        : `${API_URL}/api/meetings';
       
       const res = await fetch(url, {
         method: editMode ? 'PUT' : 'POST',
@@ -333,7 +334,7 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
 
   const handleDelete = async (id) => {
     try {
-      const res = await fetch(`https://the-golden-batch-api.onrender.com/api/meetings/${id}`, {
+      const res = await fetch(`${API_URL}/api/meetings/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -367,7 +368,7 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
     formData.append('file', file);
 
     try {
-      const res = await fetch(`https://the-golden-batch-api.onrender.com/api/meetings/${selectedMeeting.id}/attachments`, {
+      const res = await fetch(`${API_URL}/api/meetings/${selectedMeeting.id}/attachments`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData
@@ -397,7 +398,7 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
   const handleDeleteAttachment = async (attachmentId) => {
     try {
       const res = await fetch(
-        `https://the-golden-batch-api.onrender.com/api/meetings/${selectedMeeting.id}/attachments/${attachmentId}`,
+        `${API_URL}/api/meetings/${selectedMeeting.id}/attachments/${attachmentId}`,
         {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${token}` }

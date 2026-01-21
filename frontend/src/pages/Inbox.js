@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import '../styles/profileNew.css';
 import '../styles/inbox.css';
+import { API_URL } from '../config';
 
 export default function Inbox() {
   const { user, token } = useAuth();
@@ -34,7 +35,7 @@ export default function Inbox() {
 
   const fetchInbox = async () => {
     try {
-      const res = await fetch('https://the-golden-batch-api.onrender.com/api/announcements/inbox', {
+      const res = await fetch(`${API_URL}/api/announcements/inbox', {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -48,7 +49,7 @@ export default function Inbox() {
 
   const fetchMessages = async () => {
     try {
-      const res = await fetch('https://the-golden-batch-api.onrender.com/api/messages/user-inbox', {
+      const res = await fetch(`${API_URL}/api/messages/user-inbox', {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -60,7 +61,7 @@ export default function Inbox() {
 
   const fetchSentMessages = async () => {
     try {
-      const res = await fetch('https://the-golden-batch-api.onrender.com/api/messages/user-sent', {
+      const res = await fetch(`${API_URL}/api/messages/user-sent', {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -73,7 +74,7 @@ export default function Inbox() {
   const fetchThread = async (id) => {
     setLoadingThread(true);
     try {
-      const res = await fetch(`https://the-golden-batch-api.onrender.com/api/messages/thread/${id}`, {
+      const res = await fetch(`${API_URL}/api/messages/thread/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -88,7 +89,7 @@ export default function Inbox() {
 
   const markAsRead = async (id) => {
     try {
-      await fetch(`https://the-golden-batch-api.onrender.com/api/announcements/${id}/read`, {
+      await fetch(`${API_URL}/api/announcements/${id}/read`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -106,7 +107,7 @@ export default function Inbox() {
 
   const markMessageAsRead = async (id) => {
     try {
-      await fetch(`https://the-golden-batch-api.onrender.com/api/messages/${id}/read`, {
+      await fetch(`${API_URL}/api/messages/${id}/read`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -147,7 +148,7 @@ export default function Inbox() {
     setSending(true);
     setSendError(null);
     try {
-      const res = await fetch('https://the-golden-batch-api.onrender.com/api/messages/to-committee', {
+      const res = await fetch(`${API_URL}/api/messages/to-committee', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
