@@ -1706,6 +1706,7 @@ export default function AdminDashboard() {
             token={token}
             canEdit={isSuperAdmin || permissions?.accounting_edit}
             canExport={isSuperAdmin || permissions?.accounting_export}
+            onPaymentLinked={fetchMasterList}
           />
         )}
 
