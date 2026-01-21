@@ -649,7 +649,7 @@ tr:last-child td {
 }
 
 .admin-guide-item h4 {
-  color: #CFB53B; /* Gold in dark mode */
+  color: var(--color-hover);
   font-size: 0.95rem;
   margin: 0 0 10px 0;
   font-weight: 600;
@@ -690,15 +690,20 @@ tr:last-child td {
 
 .admin-guide-tip .tip-icon {
   font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.admin-guide-tip .tip-text {
+  display: inline;
 }
 
 .admin-guide-tip strong {
   color: var(--color-hover);
 }
 
-/* Heart emoji - gold in dark mode */
+/* Heart emoji - inline with text */
 .admin-guide-tip .heart-emoji {
-  color: #CFB53B;
+  color: var(--color-hover);
 }
 
 /* Mobile responsive for admin guide */
@@ -732,7 +737,7 @@ tr:last-child td {
 }
 
 [data-theme="light"] .admin-guide-item h4 {
-  color: #006633;
+  color: var(--color-hover);
 }
 
 [data-theme="light"] .admin-guide-item ul {
@@ -753,9 +758,9 @@ tr:last-child td {
   color: #B8960C;
 }
 
-/* Heart emoji - green in light mode */
+/* Heart emoji - uses theme color in light mode */
 [data-theme="light"] .admin-guide-tip .heart-emoji {
-  color: #006633;
+  color: var(--color-hover);
 }
 
 /* ========================================

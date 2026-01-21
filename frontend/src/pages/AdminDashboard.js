@@ -744,7 +744,7 @@ export default function AdminDashboard() {
 
               <div className="admin-guide-tip">
                 <span className="tip-icon">💡</span>
-                <strong>Tip:</strong> Use the filters and search in each tab to quickly find what you need. If you have further questions or feedback, please contact Felie <span className="heart-emoji">♥</span>
+                <span className="tip-text"><strong>Tip:</strong> Use the filters and search in each tab to quickly find what you need. If you have further questions or feedback, please contact Felie <span className="heart-emoji">♥</span></span>
               </div>
             </div>
           </div>
