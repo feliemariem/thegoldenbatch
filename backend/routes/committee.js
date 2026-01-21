@@ -8,23 +8,25 @@ const { createVolunteerInterestMessage } = require('./messages');
 router.get('/', authenticateAdmin, async (req, res) => {
   try {
     // Get admins with role_title set, joined with users for profile_photo
-    const result = await db.query(`
-      SELECT
-        a.id,
-        a.email,
-        a.first_name,
-        a.last_name,
-        a.role_title,
-        a.sub_committees,
-        a.is_core_leader,
-        m.current_name,
-        u.profile_photo
-      FROM admins a
-      LEFT JOIN master_list m ON LOWER(a.email) = LOWER(m.email)
-      LEFT JOIN users u ON LOWER(a.email) = LOWER(u.email)
-      WHERE a.role_title IS NOT NULL AND a.role_title != ''
-      ORDER BY a.is_core_leader DESC, a.role_title
-    `);
+const result = await db.query(`
+  SELECT
+    a.id,
+    a.email,
+    a.first_name,
+    a.last_name,
+    a.role_title,
+    a.sub_committees,
+    a.is_core_leader,
+    m.current_name,
+    u.profile_photo,
+    p.display_order
+  FROM admins a
+  LEFT JOIN master_list m ON LOWER(a.email) = LOWER(m.email)
+  LEFT JOIN users u ON LOWER(a.email) = LOWER(u.email)
+  LEFT JOIN permissions p ON p.admin_id = a.id
+  WHERE a.role_title IS NOT NULL AND a.role_title != ''
+  ORDER BY p.display_order ASC
+`);
 
     res.json(result.rows);
   } catch (err) {

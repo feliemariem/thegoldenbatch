@@ -326,6 +326,16 @@ CREATE INDEX idx_volunteer_interests_user ON volunteer_interests(user_id);
 --     is_unreachable = FALSE
 --   WHERE id > 0;
 -- "
+--
+-- ============================================================
+-- CLEANUP DUPLICATE PERMISSIONS
+-- ============================================================
+-- If you have duplicate rows in permissions table, run this:
+--
+-- DELETE FROM permissions a USING permissions b
+-- WHERE a.id < b.id AND a.admin_id = b.admin_id;
+--
+-- Verify with: SELECT admin_id, COUNT(*) FROM permissions GROUP BY admin_id;
 
 -- ============================================================
 -- USEFUL COMMANDS
