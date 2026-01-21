@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import ScrollableTable from './ScrollableTable';
 import { API_URL } from '../config';
 
-export default function AccountingDashboard({ token, canEdit = true, canExport = true }) {
+export default function AccountingDashboard({ token, canEdit = true, canExport = true, onPaymentLinked }) {
   const [transactions, setTransactions] = useState([]);
   const [balance, setBalance] = useState(0);
   const [totalDeposits, setTotalDeposits] = useState(0);
@@ -207,6 +207,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
         fetchTransactions();
         setLinkingTransaction(null);
         setLinkSearch('');
+        onPaymentLinked?.();
       }
     } catch (err) {
       console.error('Failed to link');
@@ -222,6 +223,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
 
       if (res.ok) {
         fetchTransactions();
+        onPaymentLinked?.();
       }
     } catch (err) {
       console.error('Failed to unlink');
