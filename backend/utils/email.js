@@ -12,12 +12,12 @@ const sendInviteEmail = async (to, firstName, registrationUrl) => {
         <div style="max-width:600px; margin:0 auto; font-family: Arial, sans-serif; color:#1a1a1a;">
 
           <!-- Header -->
-          <div style="background:#006633; padding:28px; text-align:center;">
-            <img src="${siteUrl}/images/logo.png" alt="The Golden Batch Logo" style="width: 60px; height: 60px; margin-bottom: 10px;" />
-            <div style="color:#CFB53B; letter-spacing:3px; font-weight:700; font-size:28px; font-family: Georgia, serif; margin-bottom:8px;">
+          <div style="background:#0d1a14; padding:28px; text-align:center;">
+            <img src="${siteUrl}/images/logo.png" alt="The Golden Batch Logo" style="width: 80px; height: 80px; margin-bottom: 12px;" />
+            <div style="color:#CFB53B; letter-spacing:3px; font-weight:700; font-size:28px; font-family: Georgia, 'Times New Roman', serif; margin-bottom:8px;">
               THE GOLDEN BATCH
             </div>
-            <div style="color:#ffffff; font-size:16px; font-family: Arial, sans-serif; margin-bottom:6px;">
+            <div style="color:#ffffff; font-size:16px; font-family: Georgia, 'Times New Roman', serif; letter-spacing:2px; margin-bottom:6px;">
               UNIVERSITY OF ST. LA SALLE - IS
             </div>
             <div style="color:#CFB53B; font-size:14px; font-family: Arial, sans-serif;">
@@ -77,7 +77,7 @@ const sendInviteEmail = async (to, firstName, registrationUrl) => {
           </div>
 
           <!-- Footer -->
-          <div style="background:#006633; padding:20px; text-align:center; font-size:14px; font-family: Arial, sans-serif;">
+          <div style="background:#0d1a14; padding:20px; text-align:center; font-size:14px; font-family: Arial, sans-serif;">
             <span style="color:#CFB53B;">USLS-IS 2003</span><br/>
             <span style="color:#ffffff;">Questions? Email us at</span>
             <a href="mailto:uslsis.batch2003@gmail.com" style="color:#CFB53B; text-decoration:none;">
@@ -110,12 +110,12 @@ const sendPasswordResetEmail = async (to, firstName, resetUrl) => {
         <div style="max-width:600px; margin:0 auto; font-family: Arial, sans-serif; color:#1a1a1a;">
 
           <!-- Header -->
-          <div style="background:#006633; padding:28px; text-align:center;">
-            <img src="${siteUrl}/images/logo.png" alt="The Golden Batch Logo" style="width: 60px; height: 60px; margin-bottom: 10px;" />
-            <div style="color:#CFB53B; letter-spacing:3px; font-weight:700; font-size:28px; font-family: Georgia, serif; margin-bottom:8px;">
+          <div style="background:#0d1a14; padding:28px; text-align:center;">
+            <img src="${siteUrl}/images/logo.png" alt="The Golden Batch Logo" style="width: 80px; height: 80px; margin-bottom: 12px;" />
+            <div style="color:#CFB53B; letter-spacing:3px; font-weight:700; font-size:28px; font-family: Georgia, 'Times New Roman', serif; margin-bottom:8px;">
               THE GOLDEN BATCH
             </div>
-            <div style="color:#ffffff; font-size:16px; font-family: Arial, sans-serif; margin-bottom:6px;">
+            <div style="color:#ffffff; font-size:16px; font-family: Georgia, 'Times New Roman', serif; letter-spacing:2px; margin-bottom:6px;">
               UNIVERSITY OF ST. LA SALLE - IS
             </div>
             <div style="color:#CFB53B; font-size:14px; font-family: Arial, sans-serif;">
@@ -179,7 +179,7 @@ const sendPasswordResetEmail = async (to, firstName, resetUrl) => {
           </div>
 
           <!-- Footer -->
-          <div style="background:#006633; padding:20px; text-align:center; font-size:14px; font-family: Arial, sans-serif;">
+          <div style="background:#0d1a14; padding:20px; text-align:center; font-size:14px; font-family: Arial, sans-serif;">
             <span style="color:#CFB53B;">USLS-IS 2003</span><br/>
             <span style="color:#ffffff;">Questions? Email us at</span>
             <a href="mailto:uslsis.batch2003@gmail.com" style="color:#CFB53B; text-decoration:none;">
