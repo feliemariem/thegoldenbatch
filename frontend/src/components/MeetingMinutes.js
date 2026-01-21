@@ -425,7 +425,8 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
     return new Date(dateStr).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
+      timeZone: 'UTC'
     });
   };
 
@@ -703,7 +704,7 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
                             </button>
                           )}
                           {item.due_date && (
-                            <span>Due: {new Date(item.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                            <span>Due: {new Date(item.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' })}</span>
                           )}
                           {canEdit && (
                             <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
@@ -1263,7 +1264,7 @@ Tip: Use ## for headers, - for bullet points"
                               </span>
                             )}
                             {item.due_date && (
-                              <span>Due: {new Date(item.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                              <span>Due: {new Date(item.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })}</span>
                             )}
                             {canEdit && (
                               <div style={{ marginLeft: 'auto', display: 'flex', gap: '12px' }}>
