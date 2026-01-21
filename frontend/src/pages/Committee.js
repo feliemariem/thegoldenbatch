@@ -146,16 +146,16 @@ export default function Committee() {
 
       if (res.ok) {
         setUserInterests([...userInterests, role]);
-        setToast({ message: "Thanks! The committee will reach out to you.", type: 'success' });
+        setToast({ message: "Thanks! The committee will reach out to you.", type: 'success', forRole: role });
         setTimeout(() => setToast(null), 4000);
       } else {
         const data = await res.json();
-        setToast({ message: data.error || 'Failed to save interest', type: 'error' });
+        setToast({ message: data.error || 'Failed to save interest', type: 'error', forRole: role });
         setTimeout(() => setToast(null), 4000);
       }
     } catch (err) {
       console.error('Failed to express interest:', err);
-      setToast({ message: 'Failed to save interest', type: 'error' });
+      setToast({ message: 'Failed to save interest', type: 'error', forRole: role });
       setTimeout(() => setToast(null), 4000);
     } finally {
       setSavingInterest(null);
@@ -199,10 +199,12 @@ export default function Committee() {
           <p>Meet the dedicated batchmates working to make our 25th reunion unforgettable</p>
         </section>
 
-        {/* Toast Notification */}
-        {toast && (
-          <div className={`committee-toast ${toast.type}`}>
-            {toast.message}
+        {/* Global Toast Notification (for non-button related toasts) */}
+        {toast && !toast.forRole && (
+          <div className="committee-toast-global">
+            <div className={`committee-toast ${toast.type}`}>
+              {toast.message}
+            </div>
           </div>
         )}
 
@@ -308,6 +310,12 @@ export default function Committee() {
                   >
                     {isSaving ? 'Saving...' : hasInterest ? "You've expressed interest" : "I'm Interested"}
                   </button>
+                  {/* Toast shown inside the card when this role was clicked */}
+                  {toast && toast.forRole === role.name && (
+                    <div className={`committee-toast ${toast.type}`}>
+                      {toast.message}
+                    </div>
+                  )}
                 </div>
               );
             })}
