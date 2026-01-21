@@ -49,7 +49,7 @@ export default function AnnouncementComposer({ token, registeredCount = 0, going
 
   const fetchHistory = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/announcements/history', {
+      const res = await fetch(`${API_URL}/api/announcements/history`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -85,7 +85,7 @@ export default function AnnouncementComposer({ token, registeredCount = 0, going
     console.log('Sending announcement with audience:', currentAudience);
 
     try {
-      const res = await fetch(`${API_URL}/api/announcements', {
+      const res = await fetch(`${API_URL}/api/announcements`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -76,7 +76,7 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
 
   const fetchMeetings = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/meetings', {
+      const res = await fetch(`${API_URL}/api/meetings`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -113,7 +113,7 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
 
   const fetchAdmins = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/meetings/admins/list', {
+      const res = await fetch(`${API_URL}/api/meetings/admins/list`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -306,7 +306,7 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
     try {
       const url = editMode 
         ? `${API_URL}/api/meetings/${selectedMeeting.id}`
-        : `${API_URL}/api/meetings';
+        : `${API_URL}/api/meetings`;
       
       const res = await fetch(url, {
         method: editMode ? 'PUT' : 'POST',

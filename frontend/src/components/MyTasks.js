@@ -31,7 +31,7 @@ export default function MyTasks({ token }) {
 
   const fetchMyTasks = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/action-items/my-tasks', {
+      const res = await fetch(`${API_URL}/api/action-items/my-tasks`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {

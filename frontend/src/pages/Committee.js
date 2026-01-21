@@ -101,10 +101,10 @@ export default function Committee() {
     try {
       // Fetch committee members and user interests in parallel
       const [membersRes, interestsRes] = await Promise.all([
-        fetch(`${API_URL}/api/committee', {
+        fetch(`${API_URL}/api/committee`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
-        fetch(`${API_URL}/api/committee/interests', {
+        fetch(`${API_URL}/api/committee/interests`, {
           headers: { Authorization: `Bearer ${token}` }
         })
       ]);
@@ -135,7 +135,7 @@ export default function Committee() {
 
     setSavingInterest(role);
     try {
-      const res = await fetch(`${API_URL}/api/committee/interests', {
+      const res = await fetch(`${API_URL}/api/committee/interests`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

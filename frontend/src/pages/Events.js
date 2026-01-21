@@ -67,8 +67,8 @@ export default function Events() {
   const fetchEvents = async () => {
     try {
       const url = showPastEvents
-        ? `${API_URL}/api/events?includePast=true'
-        : `${API_URL}/api/events';
+        ? `${API_URL}/api/events?includePast=true`
+        : `${API_URL}/api/events`;
       const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -95,7 +95,7 @@ export default function Events() {
 
   const fetchMainEventStats = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/admin/dashboard', {
+      const res = await fetch(`${API_URL}/api/admin/dashboard`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -176,7 +176,7 @@ export default function Events() {
     try {
       const url = editingEvent
         ? `${API_URL}/api/events/${editingEvent.id}`
-        : `${API_URL}/api/events';
+        : `${API_URL}/api/events`;
 
       const res = await fetch(url, {
         method: editingEvent ? 'PUT' : 'POST',

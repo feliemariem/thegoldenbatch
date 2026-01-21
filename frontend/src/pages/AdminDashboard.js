@@ -117,7 +117,7 @@ export default function AdminDashboard() {
 
   const fetchAdminUnreadCount = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/messages/admin-inbox/unread-count', {
+      const res = await fetch(`${API_URL}/api/messages/admin-inbox/unread-count`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -145,7 +145,7 @@ export default function AdminDashboard() {
 
   const fetchPermissions = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/permissions/me', {
+      const res = await fetch(`${API_URL}/api/permissions/me`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -167,7 +167,7 @@ export default function AdminDashboard() {
 
   const fetchDashboard = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/admin/dashboard', {
+      const res = await fetch(`${API_URL}/api/admin/dashboard`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -188,7 +188,7 @@ export default function AdminDashboard() {
   const fetchMasterList = async (section = 'all') => {
     try {
       const url = section === 'all'
-        ? `${API_URL}/api/master-list'
+        ? `${API_URL}/api/master-list`
         : `${API_URL}/api/master-list?section=${section}`;
       const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },
@@ -204,7 +204,7 @@ export default function AdminDashboard() {
 
   const fetchInvites = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/invites', {
+      const res = await fetch(`${API_URL}/api/invites`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -220,7 +220,7 @@ export default function AdminDashboard() {
     setInviteResult(null);
 
     try {
-      const res = await fetch(`${API_URL}/api/invites', {
+      const res = await fetch(`${API_URL}/api/invites`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -319,7 +319,7 @@ export default function AdminDashboard() {
         }
       }
 
-      const res = await fetch(`${API_URL}/api/invites/bulk', {
+      const res = await fetch(`${API_URL}/api/invites/bulk`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -380,7 +380,7 @@ export default function AdminDashboard() {
         }
       }
 
-      const res = await fetch(`${API_URL}/api/master-list/bulk', {
+      const res = await fetch(`${API_URL}/api/master-list/bulk`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -440,7 +440,7 @@ export default function AdminDashboard() {
       message: 'Are you sure you want to clear the entire master list?',
       onConfirm: async () => {
         try {
-          await fetch(`${API_URL}/api/master-list', {
+          await fetch(`${API_URL}/api/master-list`, {
             method: 'DELETE',
             headers: { Authorization: `Bearer ${token}` },
           });
