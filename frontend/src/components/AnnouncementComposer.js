@@ -374,7 +374,7 @@ export default function AnnouncementComposer({ token, registeredCount = 0, going
             left: 0,
             right: 0,
             bottom: 0,
-            background: 'rgba(0,0,0,0.8)',
+            background: 'rgba(0,0,0,0.7)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -385,17 +385,96 @@ export default function AnnouncementComposer({ token, registeredCount = 0, going
         >
           <div
             style={{
-              background: '#1e1e1e',
-              border: '1px solid rgba(207, 181, 59, 0.3)',
-              borderRadius: '12px',
-              maxWidth: '600px',
+              background: 'linear-gradient(165deg, rgba(30, 40, 35, 0.98) 0%, rgba(20, 28, 24, 0.99) 100%)',
+              border: '1px solid rgba(207, 181, 59, 0.2)',
+              borderRadius: '16px',
+              maxWidth: '650px',
               width: '100%',
-              maxHeight: '80vh',
-              overflow: 'auto'
+              maxHeight: '85vh',
+              overflow: 'auto',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.5)'
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* ... keep your existing modal inner content unchanged ... */}
+            {/* Header */}
+            <div style={{ padding: '24px 28px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div>
+                  <h3 style={{ margin: '0 0 8px 0', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    {viewAnnouncement.subject}
+                  </h3>
+                  <p style={{ margin: 0, color: '#888', fontSize: '0.9rem' }}>
+                    Sent to <strong style={{ color: '#CFB53B' }}>{getAudienceLabel(viewAnnouncement.audience)}</strong>
+                    {viewAnnouncement.sent_by && (
+                      <span> by {viewAnnouncement.sent_by}</span>
+                    )}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setViewAnnouncement(null)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    fontSize: '24px',
+                    color: '#888',
+                    cursor: 'pointer',
+                    padding: '0 8px'
+                  }}
+                >
+                  &times;
+                </button>
+              </div>
+            </div>
+
+            {/* Body */}
+            <div style={{ padding: '20px 28px' }}>
+              <div style={{
+                padding: '16px',
+                background: 'rgba(0, 102, 51, 0.1)',
+                borderRadius: '12px',
+                borderLeft: '3px solid #006633'
+              }}>
+                {viewAnnouncement.message.split('\n').map((line, i) => (
+                  <p key={i} style={{ color: '#e0e0e0', lineHeight: '1.6', margin: i === 0 ? 0 : '8px 0 0 0', fontSize: '0.95rem' }}>
+                    {line || '\u00A0'}
+                  </p>
+                ))}
+              </div>
+
+              {/* Meta info */}
+              <div style={{ marginTop: '16px', display: 'flex', flexWrap: 'wrap', gap: '16px', fontSize: '0.85rem', color: '#888' }}>
+                <span>
+                  <strong style={{ color: '#999' }}>Date:</strong> {formatDate(viewAnnouncement.created_at)}
+                </span>
+                <span>
+                  <strong style={{ color: '#999' }}>Recipients:</strong> {viewAnnouncement.recipients_count}
+                </span>
+                <span>
+                  <strong style={{ color: '#28a745' }}>Sent:</strong> {viewAnnouncement.emails_sent}
+                </span>
+                {viewAnnouncement.emails_failed > 0 && (
+                  <span style={{ color: '#dc3545' }}>
+                    <strong>Failed:</strong> {viewAnnouncement.emails_failed}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div style={{
+              padding: '16px 28px',
+              borderTop: '1px solid rgba(255,255,255,0.1)',
+              display: 'flex',
+              justifyContent: 'flex-end'
+            }}>
+              <button
+                onClick={() => setViewAnnouncement(null)}
+                className="btn-secondary"
+                style={{ padding: '10px 20px' }}
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}
