@@ -689,61 +689,64 @@ export default function AdminDashboard() {
           <div className="admin-guide">
             <h3 className="admin-guide-title">Admin Guide</h3>
 
-            <div className="admin-guide-item">
-              <strong className="admin-guide-heading">Registry Mode:</strong>
-              <ul>
-                <li><strong className="admin-guide-heading">Invites</strong> — Add batchmates and send them registration links via email</li>
-                <li><strong className="admin-guide-heading">Registered</strong> — View who has signed up and their RSVP status</li>
-                <li><strong className="admin-guide-heading">Master List</strong> — Track all batchmates and their payment progress</li>
-              </ul>
-            </div>
+            <div className="admin-guide-content">
+              <div className="admin-guide-item">
+                <h4>Registry Mode</h4>
+                <ul>
+                  <li><strong>Invites</strong> — Add batchmates and send them registration links via email</li>
+                  <li><strong>Registered</strong> — View who has signed up and their RSVP status</li>
+                  <li><strong>Master List</strong> — Track all batchmates and their payment progress</li>
+                </ul>
+              </div>
 
-            <div className="admin-guide-item">
-              <strong className="admin-guide-heading">Accounting Mode:</strong>
-              <ul>
-                <li>Record deposits (contributions) and withdrawals (expenses)</li>
-                <li>Link payments to batchmates — this updates their Payment status in Master List</li>
-                <li>Upload receipts for each transaction</li>
-              </ul>
-            </div>
+              <div className="admin-guide-item">
+                <h4>Accounting Mode</h4>
+                <ul>
+                  <li>Record deposits (contributions) and withdrawals (expenses)</li>
+                  <li>Link payments to batchmates — this updates their Payment status in Master List</li>
+                  <li>Upload receipts for each transaction</li>
+                </ul>
+              </div>
 
-            <div className="admin-guide-item">
-              <strong className="admin-guide-heading">Announce Mode:</strong>
-              <ul>
-                <li>Send email announcements to registered batchmates (filter by RSVP status)</li>
-                <li>Batchmates also receive announcements in their Inbox on the site</li>
-                <li>View announcement history and export to CSV</li>
-              </ul>
-            </div>
+              <div className="admin-guide-item">
+                <h4>Announce Mode</h4>
+                <ul>
+                  <li>Send email announcements to registered batchmates (filter by RSVP status)</li>
+                  <li>Batchmates also receive announcements in their Inbox on the site</li>
+                  <li>View announcement history and export to CSV</li>
+                </ul>
+              </div>
 
-            <div className="admin-guide-item">
-              <strong className="admin-guide-heading">Meetings Mode:</strong>
-              <ul>
-                <li>Upload and manage meeting minutes (PDF)</li>
-                <li>Keep a record of committee decisions and discussions</li>
-              </ul>
-            </div>
+              <div className="admin-guide-item">
+                <h4>Meetings Mode</h4>
+                <ul>
+                  <li>Upload and manage meeting minutes (PDF)</li>
+                  <li>Keep a record of committee decisions and discussions</li>
+                </ul>
+              </div>
 
-            <div className="admin-guide-item">
-              <strong className="admin-guide-heading">Messages Mode:</strong>
-              <ul>
-                <li>Shared inbox for all admin committee members</li>
-                <li>View and respond to messages from batchmates</li>
-                <li>When users click "Reply to Committee" — it shows up here</li>
-                <li>All admins can see the same messages</li>
-              </ul>
-            </div>
+              <div className="admin-guide-item">
+                <h4>Messages Mode</h4>
+                <ul>
+                  <li>Shared inbox for all admin committee members</li>
+                  <li>View and respond to messages from batchmates</li>
+                  <li>When users click "Reply to Committee" — it shows up here</li>
+                  <li>All admins can see the same messages</li>
+                </ul>
+              </div>
 
-            <div className="admin-guide-item">
-              <strong className="admin-guide-heading">Permissions Mode:</strong>
-              <ul>
-                <li>Control what each admin can view/edit (Super Admins only)</li>
-              </ul>
-            </div>
+              <div className="admin-guide-item">
+                <h4>Permissions Mode</h4>
+                <ul>
+                  <li>Control what each admin can view/edit (Super Admins only)</li>
+                </ul>
+              </div>
 
-            <p className="admin-guide-tip">
-              💡 <strong>Tip:</strong> Use the filters and search in each tab to quickly find what you need.
-            </p>
+              <div className="admin-guide-tip">
+                <span className="tip-icon">💡</span>
+                <strong>Tip:</strong> Use the filters and search in each tab to quickly find what you need. If you have further questions or feedback, please contact Felie <span className="heart-emoji">❤️</span>
+              </div>
+            </div>
           </div>
         )}
 
