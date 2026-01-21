@@ -649,7 +649,7 @@ tr:last-child td {
 }
 
 .admin-guide-item h4 {
-  color: #006633;
+  color: #CFB53B; /* Gold in dark mode */
   font-size: 0.95rem;
   margin: 0 0 10px 0;
   font-weight: 600;
