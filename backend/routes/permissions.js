@@ -3,12 +3,13 @@ const router = express.Router();
 const db = require('../db');
 const { authenticateAdmin, authenticateToken } = require('../middleware/auth');
 
-// List of all permissions
+// List of all permissions - must match frontend allPermissions array
 const ALL_PERMISSIONS = [
   'invites_add',
   'invites_link',
   'invites_upload',
   'invites_export',
+  'registered_export',
   'masterlist_edit',
   'masterlist_upload',
   'masterlist_export',
@@ -119,19 +120,21 @@ router.put('/admins/:id', authenticateAdmin, requireSuperAdmin, async (req, res)
       );
     }
 
-    // Update permissions
-    if (permissions) {
-      for (const [permission, enabled] of Object.entries(permissions)) {
-        if (ALL_PERMISSIONS.includes(permission)) {
-          await db.query(
-            `INSERT INTO permissions (admin_id, permission, enabled)
-             VALUES ($1, $2, $3)
-             ON CONFLICT (admin_id, permission)
-             DO UPDATE SET enabled = $3`,
-            [id, permission, enabled]
-          );
-        }
-      }
+    // Update permissions - ensure ALL permissions exist for this admin
+    // This prevents missing permission rows and ensures consistency
+    for (const permission of ALL_PERMISSIONS) {
+      // Use the value from request body if provided, otherwise default to false
+      const enabled = permissions && typeof permissions[permission] === 'boolean'
+        ? permissions[permission]
+        : false;
+
+      await db.query(
+        `INSERT INTO permissions (admin_id, permission, enabled)
+         VALUES ($1, $2, $3)
+         ON CONFLICT (admin_id, permission)
+         DO UPDATE SET enabled = $3`,
+        [id, permission, enabled]
+      );
     }
 
     res.json({ message: 'Permissions updated' });
