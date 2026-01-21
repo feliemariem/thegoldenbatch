@@ -178,8 +178,8 @@ router.post('/', authenticateToken, async (req, res) => {
       return res.status(403).json({ error: 'You do not have permission to create meetings' });
     }
 
-    const { title, meeting_date, attendees, notes } = req.body;
-    
+    const { title, meeting_date, location, attendees, notes } = req.body;
+
     // Get admin ID from email
     const adminResult = await db.query(
       'SELECT id FROM admins WHERE LOWER(email) = $1',
@@ -188,10 +188,10 @@ router.post('/', authenticateToken, async (req, res) => {
     const adminId = adminResult.rows.length > 0 ? adminResult.rows[0].id : null;
 
     const result = await db.query(`
-      INSERT INTO meeting_minutes (title, meeting_date, attendees, notes, created_by)
-      VALUES ($1, $2, $3, $4, $5)
+      INSERT INTO meeting_minutes (title, meeting_date, location, attendees, notes, created_by)
+      VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING *
-    `, [title, meeting_date, attendees, notes, adminId]);
+    `, [title, meeting_date, location, attendees, notes, adminId]);
 
     res.status(201).json(result.rows[0]);
   } catch (err) {
@@ -209,14 +209,14 @@ router.put('/:id', authenticateToken, async (req, res) => {
     }
 
     const { id } = req.params;
-    const { title, meeting_date, attendees, notes } = req.body;
+    const { title, meeting_date, location, attendees, notes } = req.body;
 
     const result = await db.query(`
-      UPDATE meeting_minutes 
-      SET title = $1, meeting_date = $2, attendees = $3, notes = $4, updated_at = CURRENT_TIMESTAMP
-      WHERE id = $5
+      UPDATE meeting_minutes
+      SET title = $1, meeting_date = $2, location = $3, attendees = $4, notes = $5, updated_at = CURRENT_TIMESTAMP
+      WHERE id = $6
       RETURNING *
-    `, [title, meeting_date, attendees, notes, id]);
+    `, [title, meeting_date, location, attendees, notes, id]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Meeting not found' });
