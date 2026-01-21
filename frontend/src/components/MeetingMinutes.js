@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
 import { useAuth } from '../context/AuthContext';
 import { useActionItems } from '../context/ActionItemsContext';
 import { API_URL } from '../config';
@@ -579,24 +580,34 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
             {/* Notes */}
             <div style={{ padding: '16px' }}>
               {selectedMeeting.notes ? (
-                <div style={{
-                  whiteSpace: 'pre-wrap',
-                  lineHeight: '1.6',
-                  fontSize: '0.9rem',
-                  color: 'var(--text-secondary)'
-                }}>
-                  {selectedMeeting.notes.split('\n').map((line, i) => {
-                    if (line.startsWith('## ')) {
-                      return <h4 key={i} className="meeting-notes-heading">{line.replace('## ', '')}</h4>;
-                    }
-                    if (line.startsWith('- ')) {
-                      return <div key={i} style={{ paddingLeft: '12px', marginBottom: '4px' }}>• {line.replace('- ', '')}</div>;
-                    }
-                    if (line.match(/^\d+\. /)) {
-                      return <div key={i} style={{ paddingLeft: '12px', marginBottom: '4px' }}>{line}</div>;
-                    }
-                    return <div key={i}>{line}</div>;
-                  })}
+                <div className="meeting-notes-markdown meeting-notes-markdown-mobile">
+                  <ReactMarkdown
+                    components={{
+                      h1: ({node, ...props}) => <h1 style={{ color: 'var(--color-hover)', fontSize: '1.1rem', fontWeight: '600', margin: '16px 0 8px 0', borderBottom: '1px solid rgba(0, 102, 51, 0.3)', paddingBottom: '6px' }} {...props} />,
+                      h2: ({node, ...props}) => <h2 style={{ color: 'var(--color-hover)', fontSize: '1rem', fontWeight: '600', margin: '14px 0 8px 0' }} {...props} />,
+                      h3: ({node, ...props}) => <h3 style={{ color: 'var(--color-hover)', fontSize: '0.95rem', fontWeight: '600', margin: '12px 0 6px 0' }} {...props} />,
+                      h4: ({node, ...props}) => <h4 style={{ color: 'var(--color-hover)', fontSize: '0.9rem', fontWeight: '600', margin: '10px 0 6px 0' }} {...props} />,
+                      p: ({node, ...props}) => <p style={{ color: 'var(--text-secondary)', lineHeight: '1.6', margin: '0 0 8px 0', fontSize: '0.9rem' }} {...props} />,
+                      ul: ({node, ...props}) => <ul style={{ margin: '8px 0', paddingLeft: '20px', color: 'var(--text-secondary)' }} {...props} />,
+                      ol: ({node, ...props}) => <ol style={{ margin: '8px 0', paddingLeft: '20px', color: 'var(--text-secondary)' }} {...props} />,
+                      li: ({node, ...props}) => <li style={{ marginBottom: '4px', lineHeight: '1.5', fontSize: '0.9rem' }} {...props} />,
+                      strong: ({node, ...props}) => <strong style={{ color: 'var(--text-primary)', fontWeight: '600' }} {...props} />,
+                      em: ({node, ...props}) => <em style={{ color: 'var(--text-secondary)' }} {...props} />,
+                      table: ({node, ...props}) => <div style={{ overflowX: 'auto', margin: '12px 0' }}><table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }} {...props} /></div>,
+                      thead: ({node, ...props}) => <thead style={{ background: 'rgba(0, 102, 51, 0.2)' }} {...props} />,
+                      th: ({node, ...props}) => <th style={{ padding: '8px 10px', textAlign: 'left', borderBottom: '1px solid rgba(0, 102, 51, 0.3)', color: 'var(--color-hover)', fontWeight: '600' }} {...props} />,
+                      td: ({node, ...props}) => <td style={{ padding: '8px 10px', borderBottom: '1px solid rgba(255,255,255,0.08)', color: 'var(--text-secondary)' }} {...props} />,
+                      blockquote: ({node, ...props}) => <blockquote style={{ margin: '12px 0', paddingLeft: '12px', borderLeft: '3px solid var(--color-hover)', color: '#888', fontStyle: 'italic' }} {...props} />,
+                      code: ({node, inline, ...props}) => inline
+                        ? <code style={{ background: 'rgba(0,0,0,0.3)', padding: '2px 6px', borderRadius: '4px', fontSize: '0.85em', color: 'var(--color-hover)' }} {...props} />
+                        : <code style={{ display: 'block', background: 'rgba(0,0,0,0.3)', padding: '12px', borderRadius: '8px', fontSize: '0.85em', overflowX: 'auto', color: 'var(--text-secondary)' }} {...props} />,
+                      pre: ({node, ...props}) => <pre style={{ margin: '12px 0', background: 'rgba(0,0,0,0.3)', padding: '12px', borderRadius: '8px', overflowX: 'auto' }} {...props} />,
+                      a: ({node, ...props}) => <a style={{ color: 'var(--color-hover)', textDecoration: 'underline' }} {...props} />,
+                      hr: ({node, ...props}) => <hr style={{ border: 'none', borderTop: '1px solid rgba(255,255,255,0.1)', margin: '16px 0' }} {...props} />
+                    }}
+                  >
+                    {selectedMeeting.notes}
+                  </ReactMarkdown>
                 </div>
               ) : (
                 <p style={{ color: '#666', fontStyle: 'italic' }}>No notes recorded</p>
@@ -1126,24 +1137,34 @@ Tip: Use ## for headers, - for bullet points"
               {/* Notes */}
               <div style={{ padding: '24px' }}>
                 {selectedMeeting.notes ? (
-                  <div style={{
-                    whiteSpace: 'pre-wrap',
-                    lineHeight: '1.7',
-                    fontSize: '0.95rem',
-                    color: 'var(--text-secondary)'
-                  }}>
-                    {selectedMeeting.notes.split('\n').map((line, i) => {
-                      if (line.startsWith('## ')) {
-                        return <h4 key={i} className="meeting-notes-heading-lg">{line.replace('## ', '')}</h4>;
-                      }
-                      if (line.startsWith('- ')) {
-                        return <div key={i} style={{ paddingLeft: '16px', marginBottom: '4px' }}>• {line.replace('- ', '')}</div>;
-                      }
-                      if (line.match(/^\d+\. /)) {
-                        return <div key={i} style={{ paddingLeft: '16px', marginBottom: '4px' }}>{line}</div>;
-                      }
-                      return <div key={i}>{line}</div>;
-                    })}
+                  <div className="meeting-notes-markdown meeting-notes-markdown-desktop">
+                    <ReactMarkdown
+                      components={{
+                        h1: ({node, ...props}) => <h1 style={{ color: 'var(--color-hover)', fontSize: '1.25rem', fontWeight: '600', margin: '20px 0 10px 0', borderBottom: '1px solid rgba(0, 102, 51, 0.3)', paddingBottom: '8px' }} {...props} />,
+                        h2: ({node, ...props}) => <h2 style={{ color: 'var(--color-hover)', fontSize: '1.1rem', fontWeight: '600', margin: '18px 0 10px 0' }} {...props} />,
+                        h3: ({node, ...props}) => <h3 style={{ color: 'var(--color-hover)', fontSize: '1rem', fontWeight: '600', margin: '14px 0 8px 0' }} {...props} />,
+                        h4: ({node, ...props}) => <h4 style={{ color: 'var(--color-hover)', fontSize: '0.95rem', fontWeight: '600', margin: '12px 0 6px 0' }} {...props} />,
+                        p: ({node, ...props}) => <p style={{ color: 'var(--text-secondary)', lineHeight: '1.7', margin: '0 0 10px 0', fontSize: '0.95rem' }} {...props} />,
+                        ul: ({node, ...props}) => <ul style={{ margin: '10px 0', paddingLeft: '24px', color: 'var(--text-secondary)' }} {...props} />,
+                        ol: ({node, ...props}) => <ol style={{ margin: '10px 0', paddingLeft: '24px', color: 'var(--text-secondary)' }} {...props} />,
+                        li: ({node, ...props}) => <li style={{ marginBottom: '6px', lineHeight: '1.6', fontSize: '0.95rem' }} {...props} />,
+                        strong: ({node, ...props}) => <strong style={{ color: 'var(--text-primary)', fontWeight: '600' }} {...props} />,
+                        em: ({node, ...props}) => <em style={{ color: 'var(--text-secondary)' }} {...props} />,
+                        table: ({node, ...props}) => <div style={{ overflowX: 'auto', margin: '16px 0' }}><table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }} {...props} /></div>,
+                        thead: ({node, ...props}) => <thead style={{ background: 'rgba(0, 102, 51, 0.2)' }} {...props} />,
+                        th: ({node, ...props}) => <th style={{ padding: '10px 14px', textAlign: 'left', borderBottom: '1px solid rgba(0, 102, 51, 0.3)', color: 'var(--color-hover)', fontWeight: '600' }} {...props} />,
+                        td: ({node, ...props}) => <td style={{ padding: '10px 14px', borderBottom: '1px solid rgba(255,255,255,0.08)', color: 'var(--text-secondary)' }} {...props} />,
+                        blockquote: ({node, ...props}) => <blockquote style={{ margin: '16px 0', paddingLeft: '16px', borderLeft: '3px solid var(--color-hover)', color: '#888', fontStyle: 'italic' }} {...props} />,
+                        code: ({node, inline, ...props}) => inline
+                          ? <code style={{ background: 'rgba(0,0,0,0.3)', padding: '2px 6px', borderRadius: '4px', fontSize: '0.85em', color: 'var(--color-hover)' }} {...props} />
+                          : <code style={{ display: 'block', background: 'rgba(0,0,0,0.3)', padding: '14px', borderRadius: '8px', fontSize: '0.85em', overflowX: 'auto', color: 'var(--text-secondary)' }} {...props} />,
+                        pre: ({node, ...props}) => <pre style={{ margin: '16px 0', background: 'rgba(0,0,0,0.3)', padding: '14px', borderRadius: '8px', overflowX: 'auto' }} {...props} />,
+                        a: ({node, ...props}) => <a style={{ color: 'var(--color-hover)', textDecoration: 'underline' }} {...props} />,
+                        hr: ({node, ...props}) => <hr style={{ border: 'none', borderTop: '1px solid rgba(255,255,255,0.1)', margin: '20px 0' }} {...props} />
+                      }}
+                    >
+                      {selectedMeeting.notes}
+                    </ReactMarkdown>
                   </div>
                 ) : (
                   <p style={{ color: '#666', fontStyle: 'italic' }}>No notes recorded</p>
