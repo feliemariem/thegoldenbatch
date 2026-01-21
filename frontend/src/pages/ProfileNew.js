@@ -7,6 +7,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import SystemAdminProfile from '../components/SystemAdminProfile';
 import '../styles/profileNew.css';
+import { API_URL } from '../config';
 
 export default function ProfileNew() {
   const { user, token } = useAuth();
@@ -88,7 +89,7 @@ export default function ProfileNew() {
   // Check if current user is System Admin (admin id=1)
   const checkSystemAdmin = async () => {
     try {
-      const res = await fetch('https://the-golden-batch-api.onrender.com/api/permissions/me', {
+      const res = await fetch(`${API_URL}/api/permissions/me', {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
@@ -129,7 +130,7 @@ export default function ProfileNew() {
 
   const fetchMyEvents = async () => {
     try {
-      const res = await fetch('https://the-golden-batch-api.onrender.com/api/events/my-rsvps', {
+      const res = await fetch(`${API_URL}/api/events/my-rsvps', {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
@@ -143,7 +144,7 @@ export default function ProfileNew() {
 
   const fetchProfile = async () => {
     try {
-      const res = await fetch('https://the-golden-batch-api.onrender.com/api/me', {
+      const res = await fetch(`${API_URL}/api/me', {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -177,7 +178,7 @@ export default function ProfileNew() {
     setMessage('');
 
     try {
-      const res = await fetch('https://the-golden-batch-api.onrender.com/api/me', {
+      const res = await fetch(`${API_URL}/api/me', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -205,7 +206,7 @@ export default function ProfileNew() {
     setMessage('');
 
     try {
-      const res = await fetch('https://the-golden-batch-api.onrender.com/api/me/rsvp', {
+      const res = await fetch(`${API_URL}/api/me/rsvp', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -249,7 +250,7 @@ export default function ProfileNew() {
     formData.append('photo', file);
 
     try {
-      const res = await fetch('https://the-golden-batch-api.onrender.com/api/me/photo', {
+      const res = await fetch(`${API_URL}/api/me/photo', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -279,7 +280,7 @@ export default function ProfileNew() {
 
   const handleRemovePhoto = async () => {
     try {
-      const res = await fetch('https://the-golden-batch-api.onrender.com/api/me/photo', {
+      const res = await fetch(`${API_URL}/api/me/photo', {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,

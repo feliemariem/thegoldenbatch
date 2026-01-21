@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import '../styles/profileNew.css';
 import '../styles/committee.css';
+import { API_URL } from '../config';
 
 // Role descriptions for additional volunteer positions
 const VOLUNTEER_ROLES = [
@@ -100,10 +101,10 @@ export default function Committee() {
     try {
       // Fetch committee members and user interests in parallel
       const [membersRes, interestsRes] = await Promise.all([
-        fetch('https://the-golden-batch-api.onrender.com/api/committee', {
+        fetch(`${API_URL}/api/committee', {
           headers: { Authorization: `Bearer ${token}` }
         }),
-        fetch('https://the-golden-batch-api.onrender.com/api/committee/interests', {
+        fetch(`${API_URL}/api/committee/interests', {
           headers: { Authorization: `Bearer ${token}` }
         })
       ]);
@@ -134,7 +135,7 @@ export default function Committee() {
 
     setSavingInterest(role);
     try {
-      const res = await fetch('https://the-golden-batch-api.onrender.com/api/committee/interests', {
+      const res = await fetch(`${API_URL}/api/committee/interests', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

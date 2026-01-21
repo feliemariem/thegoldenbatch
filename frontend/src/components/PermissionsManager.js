@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../config';
 
 export default function PermissionsManager({ token }) {
   const [admins, setAdmins] = useState([]);
@@ -58,7 +59,7 @@ export default function PermissionsManager({ token }) {
 
   const fetchAdmins = async () => {
     try {
-      const res = await fetch('https://the-golden-batch-api.onrender.com/api/permissions/admins', {
+      const res = await fetch(`${API_URL}/api/permissions/admins', {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -130,7 +131,7 @@ export default function PermissionsManager({ token }) {
     setResult(null);
 
     try {
-      const res = await fetch(`https://the-golden-batch-api.onrender.com/api/permissions/admins/${selectedAdminId}`, {
+      const res = await fetch(`${API_URL}/api/permissions/admins/${selectedAdminId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

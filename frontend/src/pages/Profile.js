@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import Footer from '../components/Footer';
 import logo from '../images/lasalle.jpg';
+import { API_URL } from '../config';
 
 export default function Profile() {
   const { user, token, logout, setUser } = useAuth();
@@ -35,7 +36,7 @@ export default function Profile() {
 
   const fetchProfile = async () => {
     try {
-      const res = await fetch('https://the-golden-batch-api.onrender.com/api/me', {
+      const res = await fetch(`${API_URL}/api/me', {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -67,7 +68,7 @@ export default function Profile() {
     setMessage('');
 
     try {
-      const res = await fetch('https://the-golden-batch-api.onrender.com/api/me', {
+      const res = await fetch(`${API_URL}/api/me', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -94,7 +95,7 @@ export default function Profile() {
     setMessage('');
 
     try {
-      const res = await fetch('https://the-golden-batch-api.onrender.com/api/me/rsvp', {
+      const res = await fetch(`${API_URL}/api/me/rsvp', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

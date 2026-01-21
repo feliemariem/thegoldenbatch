@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import Footer from '../components/Footer';
 import logo from '../images/lasalle.jpg';
+import { API_URL } from '../config';
 
 const REMEMBERED_EMAIL_KEY = 'rememberedEmail';
 
@@ -34,7 +35,7 @@ export default function Login() {
     setSubmitting(true);
 
     try {
-      const res = await fetch('https://the-golden-batch-api.onrender.com/api/auth/login', {
+      const res = await fetch(`${API_URL}/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, rememberMe }),

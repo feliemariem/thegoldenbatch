@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useActionItems } from '../context/ActionItemsContext';
+import { API_URL } from '../config';
 
 export default function MyTasks({ token }) {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ export default function MyTasks({ token }) {
 
   const fetchMyTasks = async () => {
     try {
-      const res = await fetch('https://the-golden-batch-api.onrender.com/api/action-items/my-tasks', {
+      const res = await fetch(`${API_URL}/api/action-items/my-tasks', {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -47,7 +48,7 @@ export default function MyTasks({ token }) {
   const handleStatusChange = async (taskId, newStatus) => {
     setUpdatingId(taskId);
     try {
-      const res = await fetch(`https://the-golden-batch-api.onrender.com/api/action-items/${taskId}`, {
+      const res = await fetch(`${API_URL}/api/action-items/${taskId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

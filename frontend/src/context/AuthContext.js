@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { API_URL } from '../config';
 
 const AuthContext = createContext(null);
 
@@ -46,7 +47,7 @@ export function AuthProvider({ children }) {
           setLoading(false);
         } else {
           // Regular user - fetch profile
-          fetch('https://the-golden-batch-api.onrender.com/api/me', {
+          fetch(`${API_URL}/api/me`, {
             headers: { Authorization: `Bearer ${token}` },
           })
             .then((res) => {

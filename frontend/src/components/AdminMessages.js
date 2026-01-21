@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../config';
 
 export default function AdminMessages({ token, onUnreadCountChange }) {
   const [messages, setMessages] = useState([]);
@@ -17,7 +18,7 @@ export default function AdminMessages({ token, onUnreadCountChange }) {
 
   const fetchMessages = async () => {
     try {
-      const res = await fetch('https://the-golden-batch-api.onrender.com/api/messages/admin-inbox', {
+      const res = await fetch(`${API_URL}/api/messages/admin-inbox', {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -31,7 +32,7 @@ export default function AdminMessages({ token, onUnreadCountChange }) {
 
   const markAsRead = async (id) => {
     try {
-      await fetch(`https://the-golden-batch-api.onrender.com/api/messages/${id}/read`, {
+      await fetch(`${API_URL}/api/messages/${id}/read`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -48,7 +49,7 @@ export default function AdminMessages({ token, onUnreadCountChange }) {
   const fetchThread = async (id) => {
     setLoadingThread(true);
     try {
-      const res = await fetch(`https://the-golden-batch-api.onrender.com/api/messages/thread/${id}`, {
+      const res = await fetch(`${API_URL}/api/messages/thread/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -84,7 +85,7 @@ export default function AdminMessages({ token, onUnreadCountChange }) {
 
     setSending(true);
     try {
-      const res = await fetch('https://the-golden-batch-api.onrender.com/api/messages/reply', {
+      const res = await fetch(`${API_URL}/api/messages/reply', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

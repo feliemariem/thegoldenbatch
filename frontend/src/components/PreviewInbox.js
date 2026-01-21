@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_URL } from '../config';
 
 export default function PreviewInbox({ token, users }) {
   const [selectedUserId, setSelectedUserId] = useState('');
@@ -28,7 +29,7 @@ export default function PreviewInbox({ token, users }) {
     setSelectedMessage(null);
 
     try {
-      const res = await fetch(`https://the-golden-batch-api.onrender.com/api/announcements/preview-inbox/${userId}`, {
+      const res = await fetch(`${API_URL}/api/announcements/preview-inbox/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
