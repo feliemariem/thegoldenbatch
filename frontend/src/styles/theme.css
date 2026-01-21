@@ -795,6 +795,10 @@ body[data-theme="light"] .donate-heading {
   color: #006633 !important;
 }
 
+body[data-theme="dark"] .donate-heading {
+  color: #CFB53B !important;
+}
+
 body[data-theme="light"] .donate-card {
   background: rgba(0, 102, 51, 0.06) !important;
   border-color: rgba(0, 102, 51, 0.15) !important;
@@ -802,6 +806,10 @@ body[data-theme="light"] .donate-card {
 
 body[data-theme="light"] .donate-card-title {
   color: #006633 !important;
+}
+
+body[data-theme="dark"] .donate-card-title {
+  color: #CFB53B !important;
 }
 
 body[data-theme="light"] .donate-bank-name {
