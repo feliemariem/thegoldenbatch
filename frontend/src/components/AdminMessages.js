@@ -360,7 +360,7 @@ export default function AdminMessages({ token, onUnreadCountChange }) {
                     )}
                   </h3>
                   <p style={{ margin: 0, color: '#888', fontSize: '0.9rem' }}>
-                    Conversation with <strong style={{ color: '#CFB53B' }}>{getSenderName(selectedMessage)}</strong>
+                    Conversation with <strong style={{ color: 'var(--color-hover)' }}>{getSenderName(selectedMessage)}</strong>
                   </p>
                 </div>
                 <button
@@ -393,7 +393,7 @@ export default function AdminMessages({ token, onUnreadCountChange }) {
                   borderLeft: '3px solid #006633'
                 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                    <span style={{ color: '#CFB53B', fontWeight: '600', fontSize: '0.9rem' }}>
+                    <span style={{ color: 'var(--color-hover)', fontWeight: '600', fontSize: '0.9rem' }}>
                       {getSenderName(selectedMessage)}
                     </span>
                     <span style={{ color: '#666', fontSize: '0.8rem' }}>
@@ -424,7 +424,7 @@ export default function AdminMessages({ token, onUnreadCountChange }) {
                         }}
                       >
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
-                          <span style={{ color: isFromUser ? '#CFB53B' : '#28a745', fontWeight: '600', fontSize: '0.9rem' }}>
+                          <span style={{ color: isFromUser ? 'var(--color-hover)' : '#28a745', fontWeight: '600', fontSize: '0.9rem' }}>
                             {senderName}
                             {!isFromUser && (
                               <span style={{
