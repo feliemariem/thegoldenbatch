@@ -322,9 +322,8 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
         const data = await res.json();
         setShowModal(false);
         fetchMeetings();
-        if (!editMode) {
-          setSelectedMeeting(data);
-        }
+        // Update selectedMeeting for both new meetings and edits
+        setSelectedMeeting(data);
       }
     } catch (err) {
       console.error('Failed to save meeting:', err);
