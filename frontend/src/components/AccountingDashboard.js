@@ -751,11 +751,11 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
         <div className="receipt-modal-overlay" onClick={() => { setLinkingTransaction(null); setLinkSearch(''); }}>
           <div className="receipt-modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '500px' }}>
             <div className="receipt-modal-header">
-              <h4>Link to Master List</h4>
+              <h4 className="link-modal-title">Link to Master List</h4>
               <button onClick={() => { setLinkingTransaction(null); setLinkSearch(''); }} className="receipt-modal-close">x</button>
             </div>
             <div style={{ padding: '16px' }}>
-              <p style={{ color: '#999', marginBottom: '16px', fontSize: '0.9rem' }}>
+              <p className="link-modal-description">
                 Link "<strong>{linkingTransaction.name}</strong>" ({formatCurrency(linkingTransaction.deposit)}) to a batchmate:
               </p>
               <input
@@ -763,40 +763,23 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
                 placeholder="Search by name..."
                 value={linkSearch}
                 onChange={(e) => setLinkSearch(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  borderRadius: '8px',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  background: 'rgba(0,0,0,0.3)',
-                  color: '#fff',
-                  marginBottom: '12px'
-                }}
+                className="link-modal-search"
                 autoFocus
               />
-              <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+              <div className="link-modal-list">
                 {filteredMasterListOptions.length > 0 ? (
                   filteredMasterListOptions.map(m => (
                     <div
                       key={m.id}
                       onClick={() => handleLink(linkingTransaction.id, m.id)}
-                      style={{
-                        padding: '12px',
-                        borderRadius: '8px',
-                        cursor: 'pointer',
-                        background: 'rgba(255,255,255,0.03)',
-                        marginBottom: '4px',
-                        transition: 'background 0.2s'
-                      }}
-                      onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(207, 181, 59, 0.1)'}
-                      onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.03)'}
+                      className="link-modal-item"
                     >
-                      <span style={{ color: '#e0e0e0' }}>{m.first_name} {m.last_name}</span>
-                      <span style={{ color: '#666', marginLeft: '8px', fontSize: '0.85rem' }}>({m.section})</span>
+                      <span className="link-modal-name">{m.first_name} {m.last_name}</span>
+                      <span className="link-modal-section">({m.section})</span>
                     </div>
                   ))
                 ) : (
-                  <p style={{ color: '#666', textAlign: 'center', padding: '20px' }}>
+                  <p className="link-modal-empty">
                     {linkSearch ? 'No matching batchmates' : 'Type to search...'}
                   </p>
                 )}
