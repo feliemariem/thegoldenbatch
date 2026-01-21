@@ -1697,3 +1697,161 @@ body[data-theme="light"] .preview-inbox h3,
 body[data-theme="light"] .preview-inbox h4 {
   color: #006633 !important;
 }
+
+/* =========================================
+   LINK TO MASTER LIST MODAL - Themed
+   ========================================= */
+
+/* Modal title - green in light mode */
+.link-modal-title {
+  color: #006633;
+  margin-bottom: 4px;
+}
+
+body[data-theme="light"] .link-modal-title {
+  color: #006633 !important;
+}
+
+/* Modal description text */
+.link-modal-description {
+  color: #999;
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+}
+
+body[data-theme="light"] .link-modal-description {
+  color: #555 !important;
+}
+
+/* Search input in the modal */
+.link-modal-search {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  margin-bottom: 12px;
+  font-size: 1rem;
+}
+
+.link-modal-search::placeholder {
+  color: #888;
+}
+
+.link-modal-search:focus {
+  outline: none;
+  border-color: rgba(207, 181, 59, 0.5);
+  box-shadow: 0 0 0 3px rgba(207, 181, 59, 0.1);
+}
+
+body[data-theme="light"] .link-modal-search {
+  background: rgba(235, 245, 238, 0.9) !important;
+  border: 1px solid rgba(0, 102, 51, 0.2) !important;
+  color: #1a1a1a !important;
+}
+
+body[data-theme="light"] .link-modal-search::placeholder {
+  color: #888 !important;
+}
+
+body[data-theme="light"] .link-modal-search:focus {
+  border-color: rgba(0, 102, 51, 0.4) !important;
+  box-shadow: 0 0 0 3px rgba(0, 102, 51, 0.12) !important;
+  background: rgba(240, 250, 243, 0.95) !important;
+}
+
+/* List container */
+.link-modal-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+/* List items */
+.link-modal-item {
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.03);
+  margin-bottom: 4px;
+  transition: background 0.2s;
+}
+
+.link-modal-item:hover {
+  background: rgba(207, 181, 59, 0.1);
+}
+
+body[data-theme="light"] .link-modal-item {
+  background: rgba(0, 102, 51, 0.04) !important;
+}
+
+body[data-theme="light"] .link-modal-item:hover {
+  background: rgba(0, 102, 51, 0.1) !important;
+}
+
+/* Name text in list items */
+.link-modal-name {
+  color: #e0e0e0;
+}
+
+body[data-theme="light"] .link-modal-name {
+  color: #1a1a1a !important;
+}
+
+/* Section label in list items */
+.link-modal-section {
+  color: #666;
+  margin-left: 8px;
+  font-size: 0.85rem;
+}
+
+body[data-theme="light"] .link-modal-section {
+  color: #555 !important;
+}
+
+/* Empty state message */
+.link-modal-empty {
+  color: #666;
+  text-align: center;
+  padding: 20px;
+}
+
+body[data-theme="light"] .link-modal-empty {
+  color: #555 !important;
+}
+
+/* Receipt modal in light mode */
+body[data-theme="light"] .receipt-modal {
+  background: linear-gradient(165deg, rgba(250, 252, 251, 0.98) 0%, rgba(245, 250, 247, 0.99) 100%) !important;
+  border: 1px solid rgba(0, 102, 51, 0.2) !important;
+}
+
+body[data-theme="light"] .receipt-modal-header {
+  border-bottom: 1px solid rgba(0, 102, 51, 0.12) !important;
+}
+
+body[data-theme="light"] .receipt-modal-header h3,
+body[data-theme="light"] .receipt-modal-header h4 {
+  color: #006633 !important;
+}
+
+body[data-theme="light"] .receipt-modal-header p {
+  color: #555 !important;
+}
+
+body[data-theme="light"] .receipt-modal-close {
+  background: rgba(0, 77, 38, 0.08) !important;
+  color: #333 !important;
+}
+
+body[data-theme="light"] .receipt-modal-close:hover {
+  background: rgba(0, 77, 38, 0.15) !important;
+}
+
+body[data-theme="light"] .receipt-modal-image {
+  background: rgba(0, 77, 38, 0.04) !important;
+}
+
+body[data-theme="light"] .receipt-modal-actions {
+  border-top: 1px solid rgba(0, 102, 51, 0.12) !important;
+}
