@@ -617,67 +617,145 @@ tr:last-child td {
 
 .admin-guide {
   background: var(--color-bg-card);
-  border: 1px solid rgba(207, 181, 59, 0.3);
-  border-radius: 12px;
-  padding: 20px;
+  border: 1px solid rgba(184, 150, 12, 0.15);
+  border-radius: 16px;
+  padding: 24px;
   margin-bottom: 24px;
-  font-size: 0.9rem;
-  line-height: 1.6;
-  color: var(--color-text-primary);
 }
 
 .admin-guide-title {
   font-family: var(--font-heading);
-  color: var(--color-accent);
-  margin-bottom: 16px;
-  font-size: 1rem;
+  /* Dark mode: gold gradient */
+  background: linear-gradient(135deg, #CFB53B 0%, #B8960C 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 1.3rem;
+  margin: 0 0 20px 0;
+  font-weight: 700;
+  text-align: center;
+}
+
+.admin-guide-content {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
 }
 
 .admin-guide-item {
-  margin-bottom: 16px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  padding: 16px;
 }
 
-.admin-guide-heading {
-  color: var(--color-accent);
+.admin-guide-item h4 {
+  color: #006633;
+  font-size: 0.95rem;
+  margin: 0 0 10px 0;
+  font-weight: 600;
 }
 
 .admin-guide-item ul {
-  margin: 8px 0 0 20px;
-  padding: 0;
-  color: var(--color-text-primary);
+  margin: 0;
+  padding-left: 18px;
+  color: #d0d0d0;
+  font-size: 0.85rem;
+  line-height: 1.6;
 }
 
 .admin-guide-item li {
   margin-bottom: 4px;
 }
 
-.admin-guide-tip {
-  margin-top: 16px;
-  font-size: 0.85rem;
-  color: var(--color-text-secondary);
+.admin-guide-item li:last-child {
+  margin-bottom: 0;
 }
 
-/* Light Mode - Admin Guide - clean white background */
+.admin-guide-item li strong {
+  color: var(--color-hover);
+}
+
+.admin-guide-tip {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  background: linear-gradient(135deg, rgba(0, 102, 51, 0.2) 0%, rgba(0, 102, 51, 0.1) 100%);
+  border: 1px solid rgba(0, 102, 51, 0.3);
+  border-radius: 12px;
+  color: #d0d0d0;
+  font-size: 0.9rem;
+}
+
+.admin-guide-tip .tip-icon {
+  font-size: 1.2rem;
+}
+
+.admin-guide-tip strong {
+  color: var(--color-hover);
+}
+
+/* Heart emoji - gold in dark mode */
+.admin-guide-tip .heart-emoji {
+  color: #CFB53B;
+}
+
+/* Mobile responsive for admin guide */
+@media (max-width: 768px) {
+  .admin-guide-content {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-guide-tip {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+/* Light Mode - Admin Guide */
 [data-theme="light"] .admin-guide {
   background: var(--color-bg-card);
   border: 1px solid rgba(0, 102, 51, 0.15);
-  color: #333;
 }
 
 [data-theme="light"] .admin-guide-title {
-  color: #006633;
+  /* Light mode: green gradient */
+  background: linear-gradient(135deg, #006633 0%, #004d26 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-[data-theme="light"] .admin-guide-heading {
+[data-theme="light"] .admin-guide-item {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+[data-theme="light"] .admin-guide-item h4 {
   color: #006633;
 }
 
 [data-theme="light"] .admin-guide-item ul {
-  color: #333;
+  color: #555;
+}
+
+[data-theme="light"] .admin-guide-item li strong {
+  color: #B8960C;
 }
 
 [data-theme="light"] .admin-guide-tip {
-  color: #444;
+  background: linear-gradient(135deg, rgba(0, 102, 51, 0.1) 0%, rgba(0, 102, 51, 0.05) 100%);
+  border-color: rgba(0, 102, 51, 0.2);
+  color: #333;
+}
+
+[data-theme="light"] .admin-guide-tip strong {
+  color: #B8960C;
+}
+
+/* Heart emoji - green in light mode */
+[data-theme="light"] .admin-guide-tip .heart-emoji {
+  color: #006633;
 }
 
 /* ========================================
