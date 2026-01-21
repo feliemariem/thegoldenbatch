@@ -568,7 +568,7 @@ export default function Inbox() {
                   ? 'To: Committee'
                   : `From: ${selectedType === 'message' ? 'Committee' : 'The Organizing Committee'}`}
               </span>
-              {selectedType !== 'sent' && (
+              {selectedType === 'message' && (
                 <button
                   onClick={() => handleReplyToCommittee(selectedItem.id, selectedItem.subject)}
                   className="btn-reply"

@@ -171,7 +171,7 @@ router.get('/thread/:id', authenticateToken, async (req, res) => {
       LEFT JOIN users u ON m.from_user_id = u.id
       LEFT JOIN master_list ml ON LOWER(u.email) = LOWER(ml.email)
       LEFT JOIN admins a ON m.from_admin_id = a.id
-      ORDER BY m.created_at ASC
+      ORDER BY m.created_at DESC
     `, [rootId]);
 
     res.json({ thread: result.rows, rootId });
