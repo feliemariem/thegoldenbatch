@@ -618,7 +618,7 @@ export default function AdminDashboard() {
   const pendingCount = invites.filter(i => !i.used).length;
   const registeredCount = invites.filter(i => i.used).length;
 
-  // Filter invites based on search
+  // Filter invites based on search, then sort by last_name A-Z
   const filteredInvites = invites.filter(invite => {
     if (!inviteSearch.trim()) return true;
     const search = inviteSearch.toLowerCase();
@@ -629,9 +629,16 @@ export default function AdminDashboard() {
       invite.email.toLowerCase().includes(search) ||
       status.includes(search)
     );
+  }).sort((a, b) => {
+    // Sort by last_name A-Z, null/empty values go to the end
+    const lastNameA = (a.last_name || '').toLowerCase();
+    const lastNameB = (b.last_name || '').toLowerCase();
+    if (!lastNameA && lastNameB) return 1;
+    if (lastNameA && !lastNameB) return -1;
+    return lastNameA.localeCompare(lastNameB);
   });
 
-  // Filter registered users based on search and RSVP
+  // Filter registered users based on search and RSVP, then sort by last_name A-Z
   const filteredUsers = (data?.users || []).filter(user => {
     const rsvp = user.rsvp_status || '';
 
@@ -652,6 +659,13 @@ export default function AdminDashboard() {
       (user.occupation || '').toLowerCase().includes(search) ||
       (user.company || '').toLowerCase().includes(search)
     );
+  }).sort((a, b) => {
+    // Sort by last_name A-Z, null/empty values go to the end
+    const lastNameA = (a.last_name || '').toLowerCase();
+    const lastNameB = (b.last_name || '').toLowerCase();
+    if (!lastNameA && lastNameB) return 1;
+    if (lastNameA && !lastNameB) return -1;
+    return lastNameA.localeCompare(lastNameB);
   });
 
   return (
