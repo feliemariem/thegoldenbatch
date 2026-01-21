@@ -36,7 +36,7 @@ export default function Profile() {
 
   const fetchProfile = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/me', {
+      const res = await fetch(`${API_URL}/api/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -68,7 +68,7 @@ export default function Profile() {
     setMessage('');
 
     try {
-      const res = await fetch(`${API_URL}/api/me', {
+      const res = await fetch(`${API_URL}/api/me`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -95,7 +95,7 @@ export default function Profile() {
     setMessage('');
 
     try {
-      const res = await fetch(`${API_URL}/api/me/rsvp', {
+      const res = await fetch(`${API_URL}/api/me/rsvp`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

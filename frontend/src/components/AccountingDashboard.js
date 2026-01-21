@@ -50,7 +50,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
 
   const fetchTransactions = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/ledger', {
+      const res = await fetch(`${API_URL}/api/ledger`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -69,7 +69,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
 
   const fetchMasterListOptions = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/ledger/master-list-options', {
+      const res = await fetch(`${API_URL}/api/ledger/master-list-options`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -81,7 +81,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
 
   const fetchExistingNames = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/ledger/donors');
+      const res = await fetch(`${API_URL}/api/ledger/donors`);
       const data = await res.json();
       setExistingNames(data.donors || []);
     } catch (err) {
@@ -125,7 +125,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
     try {
       const url = editingId 
         ? `${API_URL}/api/ledger/${editingId}`
-        : `${API_URL}/api/ledger';
+        : `${API_URL}/api/ledger`;
       
       const res = await fetch(url, {
         method: editingId ? 'PUT' : 'POST',

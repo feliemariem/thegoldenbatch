@@ -35,7 +35,7 @@ export default function Inbox() {
 
   const fetchInbox = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/announcements/inbox', {
+      const res = await fetch(`${API_URL}/api/announcements/inbox`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -49,7 +49,7 @@ export default function Inbox() {
 
   const fetchMessages = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/messages/user-inbox', {
+      const res = await fetch(`${API_URL}/api/messages/user-inbox`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -61,7 +61,7 @@ export default function Inbox() {
 
   const fetchSentMessages = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/messages/user-sent', {
+      const res = await fetch(`${API_URL}/api/messages/user-sent`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -148,7 +148,7 @@ export default function Inbox() {
     setSending(true);
     setSendError(null);
     try {
-      const res = await fetch(`${API_URL}/api/messages/to-committee', {
+      const res = await fetch(`${API_URL}/api/messages/to-committee`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

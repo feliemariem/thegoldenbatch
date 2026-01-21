@@ -18,7 +18,7 @@ export default function AdminMessages({ token, onUnreadCountChange }) {
 
   const fetchMessages = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/messages/admin-inbox', {
+      const res = await fetch(`${API_URL}/api/messages/admin-inbox`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -85,7 +85,7 @@ export default function AdminMessages({ token, onUnreadCountChange }) {
 
     setSending(true);
     try {
-      const res = await fetch(`${API_URL}/api/messages/reply', {
+      const res = await fetch(`${API_URL}/api/messages/reply`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
