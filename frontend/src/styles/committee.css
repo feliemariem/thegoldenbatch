@@ -27,22 +27,22 @@
 
 /* Toast Notification */
 .committee-toast {
-  position: fixed;
-  top: 100px;
-  left: 50%;
-  transform: translateX(-50%);
+  position: absolute;
   padding: 14px 28px;
   border-radius: 8px;
   font-weight: 500;
   z-index: 1000;
-  animation: slideDown 0.3s ease;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  animation: toastFadeIn 0.3s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  white-space: nowrap;
+  pointer-events: none;
 }
 
+/* Dark mode (default): Gold gradient, light text */
 .committee-toast.success {
-  background: linear-gradient(135deg, #1a472a 0%, #2d5a3c 100%);
-  color: #fff;
-  border: 1px solid #3d7a4f;
+  background: linear-gradient(135deg, #CFB53B 0%, #B8960C 100%);
+  color: #1a1a1a;
+  border: 1px solid #d4c066;
 }
 
 .committee-toast.error {
@@ -51,14 +51,33 @@
   border: 1px solid #c24050;
 }
 
-@keyframes slideDown {
+.committee-toast.info {
+  background: linear-gradient(135deg, #CFB53B 0%, #B8960C 100%);
+  color: #1a1a1a;
+  border: 1px solid #d4c066;
+}
+
+/* Light mode: Green background, dark text */
+body[data-theme="light"] .committee-toast.success {
+  background: linear-gradient(135deg, #006633 0%, #008844 100%);
+  color: #fff;
+  border: 1px solid #00994d;
+}
+
+body[data-theme="light"] .committee-toast.info {
+  background: linear-gradient(135deg, #006633 0%, #008844 100%);
+  color: #fff;
+  border: 1px solid #00994d;
+}
+
+@keyframes toastFadeIn {
   from {
     opacity: 0;
-    transform: translateX(-50%) translateY(-20px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
-    transform: translateX(-50%) translateY(0);
+    transform: translateY(0);
   }
 }
 
@@ -309,6 +328,7 @@
   display: flex;
   flex-direction: column;
   transition: box-shadow 0.2s ease;
+  position: relative;
 }
 
 .volunteer-card:hover {
@@ -356,6 +376,27 @@
   background: var(--success-bg, #e8f5e9);
   border-color: var(--success-color, #4caf50);
   color: var(--success-color, #4caf50);
+}
+
+/* Toast inside volunteer card - positioned below the button */
+.volunteer-card .committee-toast {
+  position: relative;
+  margin-top: 12px;
+  text-align: center;
+  white-space: normal;
+}
+
+/* Global toast container (for non-role-specific toasts) */
+.committee-toast-global {
+  position: fixed;
+  top: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+}
+
+.committee-toast-global .committee-toast {
+  position: relative;
 }
 
 /* Back Link */
