@@ -56,9 +56,12 @@ router.get('/admin-inbox/unread-count', authenticateAdmin, async (req, res) => {
 // Get user's messages (both sent and received)
 router.get('/user-inbox', authenticateToken, async (req, res) => {
   try {
-    // Get messages sent TO this user (from admins/committee)
-    // Only show root messages (admin-initiated conversations), not replies to user's messages
-    // Replies to user's messages will show up in the thread view of sent messages
+    // Debug: Log user ID to help diagnose inbox issues
+    console.log('[user-inbox] Fetching inbox for user ID:', req.user.id, 'email:', req.user.email);
+
+    // Get messages sent TO this user from admins/committee
+    // This includes both admin-initiated messages AND admin replies to user's messages
+    // Both should appear in the user's inbox as unread items
     const result = await db.query(`
       SELECT
         m.id,
@@ -68,6 +71,7 @@ router.get('/user-inbox', authenticateToken, async (req, res) => {
         m.created_at,
         m.parent_id,
         m.from_admin_id,
+        m.to_user_id,
         a.first_name as sender_first_name,
         a.last_name as sender_last_name,
         'Committee' as sender_display,
@@ -76,9 +80,12 @@ router.get('/user-inbox', authenticateToken, async (req, res) => {
         ) THEN true ELSE false END as has_reply
       FROM messages m
       LEFT JOIN admins a ON m.from_admin_id = a.id
-      WHERE m.to_user_id = $1 AND m.parent_id IS NULL
+      WHERE m.to_user_id = $1 AND m.from_admin_id IS NOT NULL
       ORDER BY m.created_at DESC
     `, [req.user.id]);
+
+    // Debug: Log number of messages found
+    console.log('[user-inbox] Found', result.rows.length, 'messages for user', req.user.id);
 
     res.json({ messages: result.rows });
   } catch (err) {
@@ -230,6 +237,14 @@ router.post('/reply', authenticateAdmin, async (req, res) => {
   try {
     const { to_user_id, subject, message, parent_id } = req.body;
 
+    // Debug: Log incoming request data
+    console.log('[reply] Admin reply request:', {
+      to_user_id,
+      parent_id,
+      adminEmail: req.user.email,
+      subject: subject || '(no subject)'
+    });
+
     if (!to_user_id) {
       return res.status(400).json({ error: 'Recipient user ID is required' });
     }
@@ -245,6 +260,7 @@ router.post('/reply', authenticateAdmin, async (req, res) => {
     );
 
     if (adminResult.rows.length === 0) {
+      console.log('[reply] Admin not found in admins table for email:', req.user.email);
       return res.status(403).json({ error: 'Admin not found' });
     }
 
@@ -257,8 +273,16 @@ router.post('/reply', authenticateAdmin, async (req, res) => {
     );
 
     if (userResult.rows.length === 0) {
+      console.log('[reply] User not found for ID:', to_user_id);
       return res.status(404).json({ error: 'User not found' });
     }
+
+    // Debug: Log the values being inserted
+    console.log('[reply] Inserting message with:', {
+      from_admin_id: adminId,
+      to_user_id: to_user_id,
+      parent_id: parent_id || null
+    });
 
     // Insert reply message
     const result = await db.query(`
@@ -266,6 +290,9 @@ router.post('/reply', authenticateAdmin, async (req, res) => {
       VALUES ($1, $2, $3, $4, $5)
       RETURNING id
     `, [adminId, to_user_id, subject || null, message.trim(), parent_id || null]);
+
+    // Debug: Log successful insert
+    console.log('[reply] Reply saved with ID:', result.rows[0].id, 'to user:', to_user_id);
 
     res.status(201).json({
       success: true,
@@ -366,6 +393,53 @@ const createVolunteerInterestMessage = async (userId, role) => {
     return { success: false, error: err.message };
   }
 };
+
+// DEBUG ENDPOINT - Temporary endpoint to diagnose inbox issues
+// This shows all admin messages and what the user should see
+router.get('/debug-inbox', authenticateToken, async (req, res) => {
+  try {
+    // Get all messages from admins (from_admin_id IS NOT NULL)
+    const adminMessages = await db.query(`
+      SELECT
+        m.id,
+        m.subject,
+        m.from_admin_id,
+        m.to_user_id,
+        m.parent_id,
+        m.is_read,
+        m.created_at
+      FROM messages m
+      WHERE m.from_admin_id IS NOT NULL
+      ORDER BY m.created_at DESC
+      LIMIT 10
+    `);
+
+    // Get the current user's info
+    const userInfo = {
+      jwt_user_id: req.user.id,
+      jwt_email: req.user.email,
+      jwt_isAdmin: req.user.isAdmin
+    };
+
+    // Check what the user-inbox query would return
+    const userInbox = await db.query(`
+      SELECT m.id, m.subject, m.to_user_id, m.from_admin_id, m.parent_id
+      FROM messages m
+      WHERE m.to_user_id = $1 AND m.from_admin_id IS NOT NULL
+    `, [req.user.id]);
+
+    res.json({
+      debug: 'TEMPORARY DEBUG ENDPOINT - REMOVE AFTER FIXING',
+      userInfo,
+      adminMessagesInDb: adminMessages.rows,
+      messagesMatchingUserInbox: userInbox.rows,
+      explanation: 'If adminMessagesInDb has entries but messagesMatchingUserInbox is empty, check if to_user_id in admin messages matches jwt_user_id'
+    });
+  } catch (err) {
+    console.error('Debug endpoint error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 module.exports = router;
 module.exports.createVolunteerInterestMessage = createVolunteerInterestMessage;
