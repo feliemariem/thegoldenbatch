@@ -13,7 +13,7 @@ const sendInviteEmail = async (to, firstName, registrationUrl) => {
 
           <!-- Header -->
           <div style="background:#006633; padding:28px; text-align:center;">
-            <img src="${siteUrl}/images/logo.png" alt="Logo" style="width:60px; height:60px; margin-bottom:12px;" />
+            <img src="${siteUrl}/images/logo.png" alt="The Golden Batch Logo" style="width: 60px; height: 60px; margin-bottom: 10px;" />
             <div style="color:#CFB53B; letter-spacing:3px; font-weight:700; font-size:28px; font-family: Georgia, serif; margin-bottom:8px;">
               THE GOLDEN BATCH
             </div>
@@ -111,7 +111,7 @@ const sendPasswordResetEmail = async (to, firstName, resetUrl) => {
 
           <!-- Header -->
           <div style="background:#006633; padding:28px; text-align:center;">
-            <img src="${siteUrl}/images/logo.png" alt="Logo" style="width:60px; height:60px; margin-bottom:12px;" />
+            <img src="${siteUrl}/images/logo.png" alt="The Golden Batch Logo" style="width: 60px; height: 60px; margin-bottom: 10px;" />
             <div style="color:#CFB53B; letter-spacing:3px; font-weight:700; font-size:28px; font-family: Georgia, serif; margin-bottom:8px;">
               THE GOLDEN BATCH
             </div>

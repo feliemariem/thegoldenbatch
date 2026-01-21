@@ -103,7 +103,7 @@ router.post('/', authenticateToken, async (req, res) => {
 
     if (sendEmail) {
       // Send emails via SendGrid
-      const siteUrl = process.env.SITE_URL || 'http://localhost:3000';
+      const siteUrl = process.env.SITE_URL || 'https://the-golden-batch.onrender.com';
       
       for (const recipient of recipients) {
         try {
@@ -117,7 +117,7 @@ router.post('/', authenticateToken, async (req, res) => {
 
                   <!-- Header -->
                   <div style="background: #006633; padding: 28px; text-align: center;">
-                    <img src="${siteUrl}/images/logo.png" alt="Logo" style="width: 60px; height: 60px; margin-bottom: 12px;" />
+                    <img src="${siteUrl}/images/logo.png" alt="The Golden Batch Logo" style="width: 60px; height: 60px; margin-bottom: 10px;" />
                     <div style="color: #CFB53B; letter-spacing: 3px; font-weight: 700; font-size: 28px; font-family: Georgia, serif; margin-bottom: 8px;">
                       THE GOLDEN BATCH
                     </div>
