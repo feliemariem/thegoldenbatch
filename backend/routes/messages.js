@@ -56,9 +56,9 @@ router.get('/admin-inbox/unread-count', authenticateAdmin, async (req, res) => {
 // Get user's messages (both sent and received)
 router.get('/user-inbox', authenticateToken, async (req, res) => {
   try {
-    // Get messages sent TO this user (from admins/committee)
-    // Only show root messages (admin-initiated conversations), not replies to user's messages
-    // Replies to user's messages will show up in the thread view of sent messages
+    // Get messages sent TO this user from admins/committee
+    // This includes both admin-initiated messages AND admin replies to user's messages
+    // Both should appear in the user's inbox as unread items
     const result = await db.query(`
       SELECT
         m.id,
@@ -76,7 +76,7 @@ router.get('/user-inbox', authenticateToken, async (req, res) => {
         ) THEN true ELSE false END as has_reply
       FROM messages m
       LEFT JOIN admins a ON m.from_admin_id = a.id
-      WHERE m.to_user_id = $1 AND m.parent_id IS NULL
+      WHERE m.to_user_id = $1 AND m.from_admin_id IS NOT NULL
       ORDER BY m.created_at DESC
     `, [req.user.id]);
 
