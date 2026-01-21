@@ -59,7 +59,7 @@ export default function PermissionsManager({ token }) {
 
   const fetchAdmins = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/permissions/admins', {
+      const res = await fetch(`${API_URL}/api/permissions/admins`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
