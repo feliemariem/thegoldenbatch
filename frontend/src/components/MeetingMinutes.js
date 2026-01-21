@@ -23,6 +23,7 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
   const [form, setForm] = useState({
     title: '',
     meeting_date: '',
+    location: '',
     attendees: '',
     notes: ''
   });
@@ -283,6 +284,7 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
     setForm({
       title: '',
       meeting_date: new Date().toISOString().split('T')[0],
+      location: '',
       attendees: '',
       notes: ''
     });
@@ -294,6 +296,7 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
     setForm({
       title: meeting.title,
       meeting_date: meeting.meeting_date.split('T')[0],
+      location: meeting.location || '',
       attendees: meeting.attendees || '',
       notes: meeting.notes || ''
     });
@@ -544,6 +547,11 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
               <div className="meeting-date" style={{ color: 'var(--color-hover)', fontSize: '0.8rem', marginBottom: '6px' }}>
                 {formatDate(selectedMeeting.meeting_date)}
               </div>
+              {selectedMeeting.location && (
+                <div style={{ color: '#888', fontSize: '0.8rem', marginBottom: '6px' }}>
+                  {selectedMeeting.location}
+                </div>
+              )}
               <h3 style={{ margin: '0 0 8px 0', color: 'var(--text-primary)', fontSize: '1.1rem' }}>
                 {selectedMeeting.title}
               </h3>
@@ -888,6 +896,16 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
               </div>
 
               <div className="form-group">
+                <label>Location</label>
+                <input
+                  type="text"
+                  value={form.location}
+                  onChange={(e) => setForm({ ...form, location: e.target.value })}
+                  placeholder="e.g., Akashya, Zoom, Google Meet"
+                />
+              </div>
+
+              <div className="form-group">
                 <label>Attendees (comma separated)</label>
                 <input
                   type="text"
@@ -1100,6 +1118,11 @@ Tip: Use ## for headers, - for bullet points"
                   <div className="meeting-date" style={{ color: 'var(--color-hover)', fontSize: '0.85rem', marginBottom: '6px' }}>
                     {formatDate(selectedMeeting.meeting_date)}
                   </div>
+                  {selectedMeeting.location && (
+                    <div style={{ color: '#888', fontSize: '0.85rem', marginBottom: '6px' }}>
+                      {selectedMeeting.location}
+                    </div>
+                  )}
                   <h3 style={{ margin: 0, color: 'var(--text-primary)', fontSize: '1.2rem' }}>
                     {selectedMeeting.title}
                   </h3>
@@ -1459,6 +1482,16 @@ Tip: Use ## for headers, - for bullet points"
                 type="date"
                 value={form.meeting_date}
                 onChange={(e) => setForm({ ...form, meeting_date: e.target.value })}
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Location</label>
+              <input
+                type="text"
+                value={form.location}
+                onChange={(e) => setForm({ ...form, location: e.target.value })}
+                placeholder="e.g., Akashya, Zoom, Google Meet"
               />
             </div>
 
