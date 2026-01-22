@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 const { authenticateToken } = require('../middleware/auth');
+const { AMOUNT_DUE } = require('../config/constants');
 
 console.log('[ROUTES] users.js loaded - registering /api/me routes');
 
@@ -51,7 +52,7 @@ router.get('/', authenticateToken, async (req, res) => {
     res.json({
       ...user,
       total_paid: totalPaid,
-      amount_due: 25000,
+      amount_due: AMOUNT_DUE,
       is_graduate: user.section && user.section !== 'Non-Graduate'
     });
   } catch (err) {

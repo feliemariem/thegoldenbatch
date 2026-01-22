@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 const { authenticateAdmin } = require('../middleware/auth');
+const { AMOUNT_DUE } = require('../config/constants');
 
 // Helper function for text normalization
 const toTitleCase = (str) => {
@@ -54,11 +55,11 @@ router.get('/', authenticateAdmin, async (req, res) => {
         END as total_paid,
         CASE
           WHEN m.section = 'Non-Graduate' OR m.in_memoriam = true THEN NULL
-          ELSE 25000 - COALESCE(ledger_totals.total_paid, 0)
+          ELSE ${AMOUNT_DUE} - COALESCE(ledger_totals.total_paid, 0)
         END as balance,
         CASE
           WHEN m.section = 'Non-Graduate' OR m.in_memoriam = true THEN NULL
-          WHEN COALESCE(ledger_totals.total_paid, 0) >= 25000 THEN 'Full'
+          WHEN COALESCE(ledger_totals.total_paid, 0) >= ${AMOUNT_DUE} THEN 'Full'
           WHEN COALESCE(ledger_totals.total_paid, 0) > 0 THEN 'Partial'
           ELSE 'Unpaid'
         END as payment_status
@@ -169,10 +170,10 @@ router.get('/', authenticateAdmin, async (req, res) => {
 
     // Get payment stats (graduates only, excluding in memoriam)
     const paymentStatsResult = await db.query(`
-      SELECT 
+      SELECT
         COUNT(*) as total_graduates,
-        COUNT(CASE WHEN COALESCE(ledger_totals.total_paid, 0) >= 25000 THEN 1 END) as full_paid,
-        COUNT(CASE WHEN COALESCE(ledger_totals.total_paid, 0) > 0 AND COALESCE(ledger_totals.total_paid, 0) < 25000 THEN 1 END) as partial_paid,
+        COUNT(CASE WHEN COALESCE(ledger_totals.total_paid, 0) >= ${AMOUNT_DUE} THEN 1 END) as full_paid,
+        COUNT(CASE WHEN COALESCE(ledger_totals.total_paid, 0) > 0 AND COALESCE(ledger_totals.total_paid, 0) < ${AMOUNT_DUE} THEN 1 END) as partial_paid,
         COUNT(CASE WHEN COALESCE(ledger_totals.total_paid, 0) = 0 THEN 1 END) as unpaid
       FROM master_list m
       LEFT JOIN (

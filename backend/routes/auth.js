@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const db = require('../db');
 const { sendPasswordResetEmail } = require('../utils/email');
+const { JWT_EXPIRY_DEFAULT, JWT_EXPIRY_REMEMBER, JWT_EXPIRY_SHORT } = require('../config/constants');
 
 // Helper functions for text normalization
 const toTitleCase = (str) => {
@@ -132,7 +133,7 @@ router.post('/register', async (req, res) => {
     const token = jwt.sign(
       { id: user.id, email: user.email, isAdmin: false },
       process.env.JWT_SECRET,
-      { expiresIn: '7d' }
+      { expiresIn: JWT_EXPIRY_DEFAULT }
     );
 
     res.status(201).json({
@@ -161,7 +162,7 @@ router.post('/login', async (req, res) => {
     }
 
     // Set JWT expiry based on rememberMe: 30 days if checked, 1 day otherwise
-    const tokenExpiry = rememberMe ? '30d' : '1d';
+    const tokenExpiry = rememberMe ? JWT_EXPIRY_REMEMBER : JWT_EXPIRY_SHORT;
 
     // Check users table first
     const userResult = await db.query(

@@ -156,7 +156,6 @@ CREATE TABLE permissions (
 );
 
 -- Meeting Minutes table
--- Meeting Minutes table
 CREATE TABLE meeting_minutes (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
@@ -218,20 +217,6 @@ CREATE TABLE event_rsvps (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(event_id, user_id)
-);
-
--- Admins table
-CREATE TABLE admins (
-    id SERIAL PRIMARY KEY,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    first_name VARCHAR(100),
-    last_name VARCHAR(100),
-    is_super_admin BOOLEAN DEFAULT FALSE,
-    role_title VARCHAR(100),                    -- Committee role (e.g., "Treasurer")
-    sub_committees TEXT,                        -- Sub-committees (e.g., "Financial Controller, Fundraising")
-    is_core_leader BOOLEAN DEFAULT FALSE,       -- If true, shows in top row on committee page
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Volunteer interests table (tracks who wants to help with which role)
