@@ -17,6 +17,10 @@ const messageRoutes = require('./routes/messages');
 
 const app = express();
 
+// Trust proxy - required for rate limiting behind reverse proxy (nginx, Heroku, etc.)
+// This ensures req.ip returns the client's real IP, not the proxy's IP
+app.set('trust proxy', 1);
+
 // Middleware
 app.use(cors());
 app.use(express.json());
