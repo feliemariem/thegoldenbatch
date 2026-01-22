@@ -467,6 +467,7 @@ export default function InvitesTab({
         </div>
 
         {invites.length > 0 ? (
+          <>
           <ScrollableTable stickyHeader={true}>
             <table>
               <thead>
@@ -655,6 +656,7 @@ export default function InvitesTab({
               </button>
             </div>
           )}
+          </>
         ) : (
           <p className="no-data">{inviteSearch || statusFilter !== 'all' ? 'No matching invites' : 'No invites yet'}</p>
         )}
