@@ -55,10 +55,42 @@ export default function AdminDashboard() {
   // Callback ref for refreshing master list from AccountingDashboard
   const [masterListRefresh, setMasterListRefresh] = useState(null);
 
+  // Fetch all dashboard stats on mount (independent of tab selection)
+  const fetchDashboardStats = async () => {
+    try {
+      // Fetch invite stats and registered stats in parallel
+      const [invitesRes, usersRes] = await Promise.all([
+        fetch(`${API_URL}/api/invites?page=1&limit=1`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        fetch(`${API_URL}/api/admin/users?page=1&limit=1`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+      ]);
+
+      if (invitesRes.ok) {
+        const invitesData = await invitesRes.json();
+        if (invitesData.stats) {
+          setInviteStats(invitesData.stats);
+        }
+      }
+
+      if (usersRes.ok) {
+        const usersData = await usersRes.json();
+        if (usersData.stats) {
+          setRegisteredStats(usersData.stats);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to fetch dashboard stats:', err);
+    }
+  };
+
   useEffect(() => {
     fetchPermissions();
     fetchDashboard();
     fetchAdminUnreadCount();
+    fetchDashboardStats();
   }, [token]);
 
   const fetchAdminUnreadCount = async () => {
