@@ -1,51 +1,18 @@
 import React from 'react';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useInbox } from '../context/InboxContext';
+import Navbar from './Navbar';
 import Footer from './Footer';
-import logo from '../images/lasalle.jpg';
 import '../styles/profileNew.css';
 import '../styles/systemAdmin.css';
 
 export default function SystemAdminProfile() {
-  const { user, logout } = useAuth();
-  const { unreadCount } = useInbox();
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
+  const { user } = useAuth();
 
   return (
     <div className="container admin-container">
+      <Navbar />
       <div className="card">
-        {/* Header */}
-        <header className="profile-header">
-          <div className="profile-header-content">
-            <div className="profile-logo-section">
-              <img src={logo} alt="USLS Logo" className="profile-logo" />
-              <div className="profile-title">
-                <h1>THE GOLDEN BATCH</h1>
-                <span className="profile-subtitle">25th Alumni Homecoming</span>
-              </div>
-            </div>
-            <nav className="nav-section">
-              <Link to="/events" className={`nav-link ${location.pathname === '/events' ? 'active' : ''}`}>Events</Link>
-              <Link to="/committee" className="nav-link">Committee</Link>
-              <Link to="/directory" className="nav-link">Directory</Link>
-              <Link to="/funds" className="nav-link">Funds</Link>
-              <Link to="/inbox" className="nav-link nav-link-badge">
-                Inbox
-                {unreadCount > 0 && <span className="nav-badge">{unreadCount}</span>}
-              </Link>
-              <Link to="/profile-preview" className="nav-link active">Profile</Link>
-              <Link to="/admin" className="nav-link">Admin</Link>
-              <button onClick={handleLogout} className="nav-link logout-btn">Logout</button>
-            </nav>
-          </div>
-        </header>
 
         <main className="profile-main">
           {/* System Admin Content */}
