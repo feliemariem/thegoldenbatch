@@ -1549,6 +1549,7 @@ export default function AdminDashboard() {
 
                 {/* Table */}
                 {masterList.length > 0 ? (
+                  <>
                   <ScrollableTable stickyHeader={true}>
                     <table>
                       <thead>
@@ -1839,6 +1840,7 @@ export default function AdminDashboard() {
                       </span>
                     </div>
                   )}
+                  </>
                 ) : (
                   <p className="no-data">{masterListSearch ? 'No matching entries' : 'No master list entries.'}</p>
                 )}
