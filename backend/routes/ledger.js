@@ -9,12 +9,77 @@ const { upload, uploadToCloudinary, deleteFromCloudinary } = require('../utils/c
 // dynamic /:id routes, otherwise Express will match /balance as /:id with id="balance"
 // =============================================================================
 
-// Get all transactions with running balance
+// Get transactions with running balance and pagination
 // NOTE: Only verified (status = 'OK') transactions count toward balances and totals.
 // Pending transactions are displayed in tables but excluded from all calculations.
 router.get('/', authenticateAdmin, async (req, res) => {
   try {
-    // Get transactions ordered by date ASC to calculate running balance
+    const { page = 1, limit = 45, search, type, start_date, end_date } = req.query;
+
+    const pageNum = parseInt(page) || 1;
+    const limitNum = parseInt(limit) || 45;
+    const offset = (pageNum - 1) * limitNum;
+
+    // Build WHERE conditions for filtering
+    const conditions = [];
+    const params = [];
+    let paramIndex = 1;
+
+    // Search filter (by name, description, or master_list name)
+    if (search && search.trim()) {
+      const searchTerm = `%${search.trim().toLowerCase()}%`;
+      conditions.push(`(
+        LOWER(COALESCE(l.name, '')) LIKE $${paramIndex}
+        OR LOWER(COALESCE(l.description, '')) LIKE $${paramIndex}
+        OR LOWER(COALESCE(m.first_name || ' ' || m.last_name, '')) LIKE $${paramIndex}
+      )`);
+      params.push(searchTerm);
+      paramIndex++;
+    }
+
+    // Type filter (deposit or withdrawal)
+    if (type && type !== 'all') {
+      if (type === 'deposit') {
+        conditions.push(`l.deposit IS NOT NULL AND l.deposit > 0`);
+      } else if (type === 'withdrawal') {
+        conditions.push(`l.withdrawal IS NOT NULL AND l.withdrawal > 0`);
+      }
+    }
+
+    // Date range filters
+    if (start_date) {
+      conditions.push(`l.transaction_date >= $${paramIndex}`);
+      params.push(start_date);
+      paramIndex++;
+    }
+    if (end_date) {
+      conditions.push(`l.transaction_date <= $${paramIndex}`);
+      params.push(end_date);
+      paramIndex++;
+    }
+
+    const whereClause = conditions.length > 0 ? ` WHERE ${conditions.join(' AND ')}` : '';
+
+    // First, get ALL transactions (unfiltered) to calculate running balance correctly
+    const allTransactionsResult = await db.query(
+      `SELECT l.id, l.deposit, l.withdrawal, l.verified
+       FROM ledger l
+       ORDER BY l.transaction_date ASC, l.created_at ASC`
+    );
+
+    // Calculate running balance for all transactions
+    let runningBalance = 0;
+    const balanceMap = new Map();
+    allTransactionsResult.rows.forEach(row => {
+      const deposit = parseFloat(row.deposit) || 0;
+      const withdrawal = parseFloat(row.withdrawal) || 0;
+      if (row.verified === 'OK') {
+        runningBalance += deposit - withdrawal;
+      }
+      balanceMap.set(row.id, runningBalance);
+    });
+
+    // Get paginated, filtered transactions
     const result = await db.query(
       `SELECT l.*,
               m.first_name as ml_first_name,
@@ -22,49 +87,66 @@ router.get('/', authenticateAdmin, async (req, res) => {
               m.section as ml_section
        FROM ledger l
        LEFT JOIN master_list m ON l.master_list_id = m.id
-       ORDER BY l.transaction_date ASC, l.created_at ASC`
+       ${whereClause}
+       ORDER BY l.transaction_date DESC, l.created_at DESC
+       LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`,
+      [...params, limitNum, offset]
     );
 
-    // Calculate running balance - ONLY from verified transactions (status = 'OK')
-    let balance = 0;
-    const transactions = result.rows.map(row => {
-      const deposit = parseFloat(row.deposit) || 0;
-      const withdrawal = parseFloat(row.withdrawal) || 0;
-      const isVerified = row.verified === 'OK';
+    // Attach running balance to each transaction
+    const transactions = result.rows.map(row => ({
+      ...row,
+      deposit: parseFloat(row.deposit) || null,
+      withdrawal: parseFloat(row.withdrawal) || null,
+      balance: balanceMap.get(row.id) || 0
+    }));
 
-      // Only verified transactions affect the running balance
-      if (isVerified) {
-        balance += deposit - withdrawal;
-      }
+    // Get total count for pagination
+    const countResult = await db.query(
+      `SELECT COUNT(*) FROM ledger l
+       LEFT JOIN master_list m ON l.master_list_id = m.id
+       ${whereClause}`,
+      params
+    );
+    const totalCount = parseInt(countResult.rows[0].count);
+    const totalPages = Math.ceil(totalCount / limitNum);
 
-      return {
-        ...row,
-        deposit: deposit || null,
-        withdrawal: withdrawal || null,
-        balance: balance // Running balance (only verified count)
-      };
-    });
+    // Calculate summary stats (from ALL verified transactions, not filtered)
+    const statsResult = await db.query(`
+      SELECT
+        COALESCE(SUM(CASE WHEN verified = 'OK' THEN deposit ELSE 0 END), 0) as total_deposits,
+        COALESCE(SUM(CASE WHEN verified = 'OK' THEN withdrawal ELSE 0 END), 0) as total_withdrawals,
+        COALESCE(SUM(CASE WHEN verified != 'OK' OR verified IS NULL THEN deposit ELSE 0 END), 0) as pending_deposits,
+        COALESCE(SUM(CASE WHEN verified != 'OK' OR verified IS NULL THEN withdrawal ELSE 0 END), 0) as pending_withdrawals,
+        COUNT(*) as transaction_count,
+        COUNT(CASE WHEN deposit > 0 THEN 1 END) as deposit_count,
+        COUNT(CASE WHEN withdrawal > 0 THEN 1 END) as withdrawal_count
+      FROM ledger
+    `);
 
-    // Reverse for display (newest first) but keep balance calculated correctly
-    const displayTransactions = [...transactions].reverse();
-
-    // Calculate totals - ONLY from verified transactions
-    const verifiedTransactions = transactions.filter(t => t.verified === 'OK');
-    const totalDeposits = verifiedTransactions.reduce((sum, t) => sum + (parseFloat(t.deposit) || 0), 0);
-    const totalWithdrawals = verifiedTransactions.reduce((sum, t) => sum + (parseFloat(t.withdrawal) || 0), 0);
-
-    // Also calculate pending amounts for transparency
-    const pendingTransactions = transactions.filter(t => t.verified !== 'OK');
-    const pendingDeposits = pendingTransactions.reduce((sum, t) => sum + (parseFloat(t.deposit) || 0), 0);
-    const pendingWithdrawals = pendingTransactions.reduce((sum, t) => sum + (parseFloat(t.withdrawal) || 0), 0);
+    const stats = statsResult.rows[0];
+    const totalDeposits = parseFloat(stats.total_deposits);
+    const totalWithdrawals = parseFloat(stats.total_withdrawals);
+    const balance = totalDeposits - totalWithdrawals;
 
     res.json({
-      transactions: displayTransactions,
-      balance: balance,
-      totalDeposits: totalDeposits,
-      totalWithdrawals: totalWithdrawals,
-      pendingDeposits: pendingDeposits,
-      pendingWithdrawals: pendingWithdrawals
+      transactions,
+      balance,
+      totalDeposits,
+      totalWithdrawals,
+      pendingDeposits: parseFloat(stats.pending_deposits),
+      pendingWithdrawals: parseFloat(stats.pending_withdrawals),
+      stats: {
+        transactionCount: parseInt(stats.transaction_count),
+        depositCount: parseInt(stats.deposit_count),
+        withdrawalCount: parseInt(stats.withdrawal_count)
+      },
+      pagination: {
+        currentPage: pageNum,
+        totalPages,
+        totalCount,
+        limit: limitNum
+      }
     });
   } catch (err) {
     console.error(err);

@@ -56,9 +56,6 @@ router.get('/admin-inbox/unread-count', authenticateAdmin, async (req, res) => {
 // Get user's messages (both sent and received)
 router.get('/user-inbox', authenticateToken, async (req, res) => {
   try {
-    // Debug: Log user ID to help diagnose inbox issues
-    console.log('[user-inbox] Fetching inbox for user ID:', req.user.id, 'email:', req.user.email);
-
     // Get messages sent TO this user from admins/committee
     // This includes both admin-initiated messages AND admin replies to user's messages
     // Both should appear in the user's inbox as unread items
@@ -83,9 +80,6 @@ router.get('/user-inbox', authenticateToken, async (req, res) => {
       WHERE m.to_user_id = $1 AND m.from_admin_id IS NOT NULL
       ORDER BY m.created_at DESC
     `, [req.user.id]);
-
-    // Debug: Log number of messages found
-    console.log('[user-inbox] Found', result.rows.length, 'messages for user', req.user.id);
 
     res.json({ messages: result.rows });
   } catch (err) {
@@ -237,14 +231,6 @@ router.post('/reply', authenticateAdmin, async (req, res) => {
   try {
     const { to_user_id, subject, message, parent_id } = req.body;
 
-    // Debug: Log incoming request data
-    console.log('[reply] Admin reply request:', {
-      to_user_id,
-      parent_id,
-      adminEmail: req.user.email,
-      subject: subject || '(no subject)'
-    });
-
     if (!to_user_id) {
       return res.status(400).json({ error: 'Recipient user ID is required' });
     }
@@ -260,7 +246,6 @@ router.post('/reply', authenticateAdmin, async (req, res) => {
     );
 
     if (adminResult.rows.length === 0) {
-      console.log('[reply] Admin not found in admins table for email:', req.user.email);
       return res.status(403).json({ error: 'Admin not found' });
     }
 
@@ -273,16 +258,8 @@ router.post('/reply', authenticateAdmin, async (req, res) => {
     );
 
     if (userResult.rows.length === 0) {
-      console.log('[reply] User not found for ID:', to_user_id);
       return res.status(404).json({ error: 'User not found' });
     }
-
-    // Debug: Log the values being inserted
-    console.log('[reply] Inserting message with:', {
-      from_admin_id: adminId,
-      to_user_id: to_user_id,
-      parent_id: parent_id || null
-    });
 
     // Insert reply message
     const result = await db.query(`
@@ -290,9 +267,6 @@ router.post('/reply', authenticateAdmin, async (req, res) => {
       VALUES ($1, $2, $3, $4, $5)
       RETURNING id
     `, [adminId, to_user_id, subject || null, message.trim(), parent_id || null]);
-
-    // Debug: Log successful insert
-    console.log('[reply] Reply saved with ID:', result.rows[0].id, 'to user:', to_user_id);
 
     res.status(201).json({
       success: true,

@@ -136,18 +136,80 @@ router.get('/:token/validate', async (req, res) => {
   }
 });
 
-// Get all invites (admin only)
+// Get all invites (admin only) - with pagination
 router.get('/', authenticateAdmin, async (req, res) => {
   try {
+    const { page = 1, limit = 45, search, status } = req.query;
+
+    const pageNum = parseInt(page) || 1;
+    const limitNum = parseInt(limit) || 45;
+    const offset = (pageNum - 1) * limitNum;
+
+    // Build WHERE conditions
+    const conditions = [];
+    const params = [];
+    let paramIndex = 1;
+
+    // Search filter (by name or email)
+    if (search && search.trim()) {
+      const searchTerm = `%${search.trim().toLowerCase()}%`;
+      conditions.push(`(
+        LOWER(i.first_name || ' ' || i.last_name) LIKE $${paramIndex}
+        OR LOWER(i.email) LIKE $${paramIndex}
+      )`);
+      params.push(searchTerm);
+      paramIndex++;
+    }
+
+    // Status filter
+    if (status && status !== 'all') {
+      if (status === 'registered') {
+        conditions.push(`i.used = true`);
+      } else if (status === 'pending') {
+        conditions.push(`i.used = false`);
+      }
+    }
+
+    const whereClause = conditions.length > 0 ? ` WHERE ${conditions.join(' AND ')}` : '';
+
+    // Get paginated results
     const result = await db.query(`
-      SELECT 
+      SELECT
         i.id, i.email, i.first_name, i.last_name, i.invite_token, i.used, i.email_sent, i.created_at, i.master_list_id,
         m.first_name as ml_first_name, m.last_name as ml_last_name
       FROM invites i
       LEFT JOIN master_list m ON i.master_list_id = m.id
-      ORDER BY i.created_at DESC
+      ${whereClause}
+      ORDER BY i.last_name ASC NULLS LAST, i.first_name ASC
+      LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
+    `, [...params, limitNum, offset]);
+
+    // Get total count for pagination
+    const countResult = await db.query(`
+      SELECT COUNT(*) FROM invites i ${whereClause}
+    `, params);
+    const totalCount = parseInt(countResult.rows[0].count);
+    const totalPages = Math.ceil(totalCount / limitNum);
+
+    // Get stats
+    const statsResult = await db.query(`
+      SELECT
+        COUNT(*) as total,
+        COUNT(CASE WHEN used = true THEN 1 END) as registered,
+        COUNT(CASE WHEN used = false THEN 1 END) as pending
+      FROM invites
     `);
-    res.json(result.rows);
+
+    res.json({
+      invites: result.rows,
+      stats: statsResult.rows[0],
+      pagination: {
+        currentPage: pageNum,
+        totalPages,
+        totalCount,
+        limit: limitNum
+      }
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });

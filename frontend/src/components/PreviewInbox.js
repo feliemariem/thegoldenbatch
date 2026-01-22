@@ -1,19 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { API_URL } from '../config';
 
-export default function PreviewInbox({ token, users }) {
+export default function PreviewInbox({ token }) {
+  const [users, setUsers] = useState([]);
   const [selectedUserId, setSelectedUserId] = useState('');
   const [previewData, setPreviewData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedMessage, setSelectedMessage] = useState(null);
 
-  // Sort users by last name, then first name
-  const sortedUsers = [...(users || [])].sort((a, b) => {
-    const lastNameCompare = (a.last_name || '').localeCompare(b.last_name || '');
-    if (lastNameCompare !== 0) return lastNameCompare;
-    return (a.first_name || '').localeCompare(b.first_name || '');
-  });
+  // Fetch users for dropdown
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/admin/users?limit=1000`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        // Sort by last name, then first name
+        const sorted = (data.users || []).sort((a, b) => {
+          const lastNameCompare = (a.last_name || '').localeCompare(b.last_name || '');
+          if (lastNameCompare !== 0) return lastNameCompare;
+          return (a.first_name || '').localeCompare(b.first_name || '');
+        });
+        setUsers(sorted);
+      } catch (err) {
+        console.error('Failed to fetch users for preview');
+      }
+    };
+    fetchUsers();
+  }, [token]);
 
   useEffect(() => {
     if (selectedUserId) {
@@ -122,7 +138,7 @@ export default function PreviewInbox({ token, users }) {
             }}
           >
             <option value="">-- Select a user to preview --</option>
-            {sortedUsers.map((user) => (
+            {users.map((user) => (
               <option key={user.id} value={user.id}>
                 {user.last_name}, {user.first_name} ({user.email})
                 {user.rsvp_status ? ` - ${user.rsvp_status.replace('_', ' ')}` : ''}

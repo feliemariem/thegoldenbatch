@@ -4,8 +4,6 @@ const db = require('../db');
 const { authenticateToken } = require('../middleware/auth');
 const { AMOUNT_DUE } = require('../config/constants');
 
-console.log('[ROUTES] users.js loaded - registering /api/me routes');
-
 // Helper function for text normalization
 const toTitleCase = (str) => {
   if (!str) return str;

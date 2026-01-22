@@ -1,26 +1,87 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import ScrollableTable from './ScrollableTable';
 import { API_URL } from '../config';
 
 export default function InvitesTab({
-  invites,
   token,
   isSuperAdmin,
   permissions,
   onRefresh,
   onConfirm,
+  onStatsUpdate,
 }) {
+  const [invites, setInvites] = useState([]);
+  const [stats, setStats] = useState({ total: 0, registered: 0, pending: 0 });
   const [inviteForm, setInviteForm] = useState({ first_name: '', last_name: '', email: '' });
   const [inviteResult, setInviteResult] = useState(null);
   const [creating, setCreating] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadResult, setUploadResult] = useState(null);
   const [inviteSearch, setInviteSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
   const [copiedId, setCopiedId] = useState(null);
   const [editingInvite, setEditingInvite] = useState(null);
   const [masterList, setMasterList] = useState([]);
 
+  // Pagination state
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+
   const invitesTableRef = useRef(null);
+  const searchTimeoutRef = useRef(null);
+
+  // Fetch invites with pagination
+  const fetchInvites = useCallback(async (pageNum = 1, search = '', status = 'all') => {
+    try {
+      const params = new URLSearchParams({
+        page: pageNum.toString(),
+        limit: '45',
+      });
+      if (search.trim()) params.append('search', search.trim());
+      if (status !== 'all') params.append('status', status);
+
+      const res = await fetch(`${API_URL}/api/invites?${params}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+
+      setInvites(data.invites || []);
+      setStats(data.stats || { total: 0, registered: 0, pending: 0 });
+      setPage(data.pagination?.currentPage || 1);
+      setTotalPages(data.pagination?.totalPages || 1);
+      setTotalCount(data.pagination?.totalCount || 0);
+
+      // Notify parent of stats update
+      if (onStatsUpdate && data.stats) {
+        onStatsUpdate(data.stats);
+      }
+    } catch (err) {
+      console.error('Failed to fetch invites');
+    }
+  }, [token, onStatsUpdate]);
+
+  // Initial fetch
+  useEffect(() => {
+    fetchInvites(1, inviteSearch, statusFilter);
+  }, [token]);
+
+  // Debounced search
+  useEffect(() => {
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+    searchTimeoutRef.current = setTimeout(() => {
+      setPage(1);
+      fetchInvites(1, inviteSearch, statusFilter);
+    }, 300);
+
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, [inviteSearch, statusFilter]);
 
   // Fetch master list for linking dropdown
   const fetchMasterList = async () => {
@@ -38,6 +99,19 @@ export default function InvitesTab({
   useEffect(() => {
     fetchMasterList();
   }, [token]);
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+      fetchInvites(newPage, inviteSearch, statusFilter);
+      scrollToTop();
+    }
+  };
+
+  const refreshInvites = () => {
+    fetchInvites(page, inviteSearch, statusFilter);
+    if (onRefresh) onRefresh();
+  };
 
   const scrollToTop = () => {
     if (invitesTableRef.current) {
@@ -78,7 +152,7 @@ export default function InvitesTab({
       if (res.ok) {
         setInviteResult({ success: true, url: data.registrationUrl });
         setInviteForm({ first_name: '', last_name: '', email: '' });
-        onRefresh();
+        refreshInvites();
       } else {
         setInviteResult({ success: false, error: data.error });
       }
@@ -101,7 +175,7 @@ export default function InvitesTab({
       });
 
       if (res.ok) {
-        onRefresh();
+        refreshInvites();
         setEditingInvite(null);
       }
     } catch (err) {
@@ -118,7 +192,7 @@ export default function InvitesTab({
             method: 'DELETE',
             headers: { Authorization: `Bearer ${token}` },
           });
-          onRefresh();
+          refreshInvites();
         } catch (err) {
           console.error('Failed to delete invite');
         }
@@ -170,7 +244,7 @@ export default function InvitesTab({
 
       const data = await res.json();
       setUploadResult(data);
-      onRefresh();
+      refreshInvites();
     } catch (err) {
       setUploadResult({ error: 'Failed to process CSV' });
     } finally {
@@ -193,7 +267,7 @@ export default function InvitesTab({
       });
 
       if (res.ok) {
-        onRefresh();
+        refreshInvites();
         fetchMasterList();
       }
     } catch (err) {
@@ -215,7 +289,7 @@ export default function InvitesTab({
           });
 
           if (res.ok) {
-            onRefresh();
+            refreshInvites();
             fetchMasterList();
           }
         } catch (err) {
@@ -225,46 +299,37 @@ export default function InvitesTab({
     });
   };
 
-  const exportInvitesCSV = () => {
-    if (!invites?.length) return;
+  const exportInvitesCSV = async () => {
+    try {
+      // Fetch all invites for export (no pagination)
+      const res = await fetch(`${API_URL}/api/invites?limit=10000`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      const allInvites = data.invites || [];
 
-    const headers = ['First Name', 'Last Name', 'Email', 'Status', 'Registration Link'];
-    const rows = invites.map(i => [
-      i.first_name || '',
-      i.last_name || '',
-      i.email,
-      i.used ? 'Registered' : 'Pending',
-      `${window.location.origin}/register/${i.invite_token}`
-    ]);
+      if (!allInvites.length) return;
 
-    const csv = [headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'usls-batch-2003-invites.csv';
-    a.click();
+      const headers = ['First Name', 'Last Name', 'Email', 'Status', 'Registration Link'];
+      const rows = allInvites.map(i => [
+        i.first_name || '',
+        i.last_name || '',
+        i.email,
+        i.used ? 'Registered' : 'Pending',
+        `${window.location.origin}/register/${i.invite_token}`
+      ]);
+
+      const csv = [headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'usls-batch-2003-invites.csv';
+      a.click();
+    } catch (err) {
+      console.error('Failed to export invites');
+    }
   };
-
-  // Filter invites based on search, then sort by last_name A-Z
-  const filteredInvites = invites.filter(invite => {
-    if (!inviteSearch.trim()) return true;
-    const search = inviteSearch.toLowerCase();
-    const name = `${invite.first_name || ''} ${invite.last_name || ''}`.toLowerCase();
-    const status = invite.used ? 'registered' : 'pending';
-    return (
-      name.includes(search) ||
-      invite.email.toLowerCase().includes(search) ||
-      status.includes(search)
-    );
-  }).sort((a, b) => {
-    // Sort by last_name A-Z, null/empty values go to the end
-    const lastNameA = (a.last_name || '').toLowerCase();
-    const lastNameB = (b.last_name || '').toLowerCase();
-    if (!lastNameA && lastNameB) return 1;
-    if (lastNameA && !lastNameB) return -1;
-    return lastNameA.localeCompare(lastNameB);
-  });
 
   return (
     <>
@@ -362,9 +427,9 @@ export default function InvitesTab({
       {/* Invites Table */}
       <div className="users-section" ref={invitesTableRef}>
         <div className="section-header">
-          <h3>All Invites ({invites.length})</h3>
+          <h3>All Invites ({stats.total})</h3>
           <div style={{ display: 'flex', gap: '8px' }}>
-            {filteredInvites.length > 10 && (
+            {invites.length > 10 && (
               <button onClick={scrollToTop} className="btn-secondary" title="Scroll to top">
                 ^ Top
               </button>
@@ -377,21 +442,31 @@ export default function InvitesTab({
           </div>
         </div>
 
-        <div className="search-bar">
+        <div className="search-bar" style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
           <input
             type="text"
-            placeholder="Search by name, email, or status..."
+            placeholder="Search by name or email..."
             value={inviteSearch}
             onChange={(e) => setInviteSearch(e.target.value)}
+            style={{ flex: 1, minWidth: '200px' }}
           />
-          {inviteSearch && (
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            style={{ padding: '8px 12px', borderRadius: '4px', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}
+          >
+            <option value="all">All Status</option>
+            <option value="pending">Pending ({stats.pending})</option>
+            <option value="registered">Registered ({stats.registered})</option>
+          </select>
+          {(inviteSearch || statusFilter !== 'all') && (
             <span className="search-count">
-              {filteredInvites.length} of {invites.length}
+              {totalCount} result{totalCount !== 1 ? 's' : ''}
             </span>
           )}
         </div>
 
-        {filteredInvites.length > 0 ? (
+        {invites.length > 0 ? (
           <ScrollableTable stickyHeader={true}>
             <table>
               <thead>
@@ -405,7 +480,7 @@ export default function InvitesTab({
                 </tr>
               </thead>
               <tbody>
-                {filteredInvites.map((invite) => (
+                {invites.map((invite) => (
                   <tr key={invite.id}>
                     {editingInvite === invite.id ? (
                       <>
@@ -547,8 +622,41 @@ export default function InvitesTab({
               </tbody>
             </table>
           </ScrollableTable>
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="pagination-controls" style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: '16px',
+              marginTop: '20px',
+              padding: '16px',
+              borderTop: '1px solid rgba(255,255,255,0.1)'
+            }}>
+              <button
+                onClick={() => handlePageChange(page - 1)}
+                disabled={page === 1}
+                className="btn-secondary"
+                style={{ padding: '8px 16px' }}
+              >
+                ← Prev
+              </button>
+              <span style={{ color: '#888' }}>
+                Page {page} of {totalPages} ({totalCount} total)
+              </span>
+              <button
+                onClick={() => handlePageChange(page + 1)}
+                disabled={page === totalPages}
+                className="btn-secondary"
+                style={{ padding: '8px 16px' }}
+              >
+                Next →
+              </button>
+            </div>
+          )}
         ) : (
-          <p className="no-data">{inviteSearch ? 'No matching invites' : 'No invites yet'}</p>
+          <p className="no-data">{inviteSearch || statusFilter !== 'all' ? 'No matching invites' : 'No invites yet'}</p>
         )}
       </div>
     </>

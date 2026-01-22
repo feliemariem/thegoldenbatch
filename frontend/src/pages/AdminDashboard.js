@@ -40,7 +40,8 @@ export default function AdminDashboard() {
   const [permissions, setPermissions] = useState(null);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [data, setData] = useState(null);
-  const [invites, setInvites] = useState([]);
+  const [inviteStats, setInviteStats] = useState({ total: 0, registered: 0, pending: 0 });
+  const [registeredStats, setRegisteredStats] = useState({ total: 0, going: 0, maybe: 0, not_going: 0, no_response: 0 });
   const [loading, setLoading] = useState(true);
   const [showAdminRoleError, setShowAdminRoleError] = useState(false);
   const [adminUnreadCount, setAdminUnreadCount] = useState(0);
@@ -57,7 +58,6 @@ export default function AdminDashboard() {
   useEffect(() => {
     fetchPermissions();
     fetchDashboard();
-    fetchInvites();
     fetchAdminUnreadCount();
   }, [token]);
 
@@ -131,17 +131,6 @@ export default function AdminDashboard() {
     }
   };
 
-  const fetchInvites = async () => {
-    try {
-      const res = await fetch(`${API_URL}/api/invites`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      setInvites(data);
-    } catch (err) {
-      console.error('Failed to fetch invites');
-    }
-  };
 
   if (loading) {
     return (
@@ -154,8 +143,8 @@ export default function AdminDashboard() {
     );
   }
 
-  const pendingCount = invites.filter(i => !i.used).length;
-  const registeredCount = invites.filter(i => i.used).length;
+  const pendingCount = inviteStats.pending;
+  const registeredCount = inviteStats.registered;
 
   return (
     <div className="container admin-container" style={{ position: 'relative' }}>
@@ -409,7 +398,7 @@ export default function AdminDashboard() {
             {/* Stats */}
             <div className="stats-grid">
               <div className="stat-card">
-                <div className="stat-number">{invites.length}</div>
+                <div className="stat-number">{inviteStats.total}</div>
                 <div className="stat-label">Total Invited</div>
               </div>
               <div className="stat-card">
@@ -421,15 +410,15 @@ export default function AdminDashboard() {
                 <div className="stat-label">Pending</div>
               </div>
               <div className="stat-card going">
-                <div className="stat-number">{data?.stats?.going || 0}</div>
+                <div className="stat-number">{registeredStats.going || 0}</div>
                 <div className="stat-label">Going</div>
               </div>
               <div className="stat-card maybe">
-                <div className="stat-number">{data?.stats?.maybe || 0}</div>
+                <div className="stat-number">{registeredStats.maybe || 0}</div>
                 <div className="stat-label">Maybe</div>
               </div>
               <div className="stat-card not-going">
-                <div className="stat-number">{data?.stats?.not_going || 0}</div>
+                <div className="stat-number">{registeredStats.not_going || 0}</div>
                 <div className="stat-label">Not Going</div>
               </div>
             </div>
@@ -439,16 +428,16 @@ export default function AdminDashboard() {
               <div className="percentage-box">
                 <span className="percentage-label">Invited:</span>
                 <div className="percentage-grid">
-                  <span className="percentage-item">{invites.length ? Math.round((registeredCount / invites.length) * 100) : 0}% Registered</span>
-                  <span className="percentage-item">{invites.length ? Math.round((pendingCount / invites.length) * 100) : 0}% Pending</span>
+                  <span className="percentage-item">{inviteStats.total ? Math.round((registeredCount / inviteStats.total) * 100) : 0}% Registered</span>
+                  <span className="percentage-item">{inviteStats.total ? Math.round((pendingCount / inviteStats.total) * 100) : 0}% Pending</span>
                 </div>
               </div>
               <div className="percentage-box">
                 <span className="percentage-label">Registered:</span>
                 <div className="percentage-grid">
-                  <span className="percentage-item going">{registeredCount ? Math.round(((data?.stats?.going || 0) / registeredCount) * 100) : 0}% Going</span>
-                  <span className="percentage-item maybe">{registeredCount ? Math.round(((data?.stats?.maybe || 0) / registeredCount) * 100) : 0}% Maybe</span>
-                  <span className="percentage-item not-going full-width">{registeredCount ? Math.round(((data?.stats?.not_going || 0) / registeredCount) * 100) : 0}% Not Going</span>
+                  <span className="percentage-item going">{registeredCount ? Math.round(((registeredStats.going || 0) / registeredCount) * 100) : 0}% Going</span>
+                  <span className="percentage-item maybe">{registeredCount ? Math.round(((registeredStats.maybe || 0) / registeredCount) * 100) : 0}% Maybe</span>
+                  <span className="percentage-item not-going full-width">{registeredCount ? Math.round(((registeredStats.not_going || 0) / registeredCount) * 100) : 0}% Not Going</span>
                 </div>
               </div>
             </div>
@@ -459,13 +448,13 @@ export default function AdminDashboard() {
                 className={`tab ${activeTab === 'invites' ? 'active' : ''}`}
                 onClick={() => setActiveTab('invites')}
               >
-                Invites ({invites.length})
+                Invites ({inviteStats.total})
               </button>
               <button
                 className={`tab ${activeTab === 'registered' ? 'active' : ''}`}
                 onClick={() => setActiveTab('registered')}
               >
-                Registered ({data?.users?.length || 0})
+                Registered ({registeredStats.total || 0})
               </button>
               <button
                 className={`tab ${activeTab === 'masterlist' ? 'active' : ''}`}
@@ -478,14 +467,11 @@ export default function AdminDashboard() {
             {/* Invites Tab */}
             {activeTab === 'invites' && (
               <InvitesTab
-                invites={invites}
                 token={token}
                 isSuperAdmin={isSuperAdmin}
                 permissions={permissions}
-                onRefresh={() => {
-                  fetchInvites();
-                  fetchDashboard();
-                }}
+                onRefresh={fetchDashboard}
+                onStatsUpdate={setInviteStats}
                 onConfirm={({ message, onConfirm }) => {
                   setConfirmModal({
                     show: true,
@@ -502,9 +488,10 @@ export default function AdminDashboard() {
             {/* Registered Tab */}
             {activeTab === 'registered' && (
               <RegisteredTab
-                users={data?.users || []}
+                token={token}
                 isSuperAdmin={isSuperAdmin}
                 permissions={permissions}
+                onStatsUpdate={setRegisteredStats}
               />
             )}
 
@@ -525,10 +512,10 @@ export default function AdminDashboard() {
         {dashboardMode === 'announcements' && (
           <AnnouncementComposer
             token={token}
-            registeredCount={data?.users?.length || 0}
-            goingCount={data?.stats?.going || 0}
-            maybeCount={data?.stats?.maybe || 0}
-            notGoingCount={data?.stats?.not_going || 0}
+            registeredCount={registeredStats.total || 0}
+            goingCount={registeredStats.going || 0}
+            maybeCount={registeredStats.maybe || 0}
+            notGoingCount={registeredStats.not_going || 0}
             adminsCount={data?.stats?.admins_count || 0}
             canSend={isSuperAdmin || permissions?.announcements_send}
           />
@@ -566,7 +553,7 @@ export default function AdminDashboard() {
 
         {/* SYSTEM TEST MODE - Super Admin (uslsis.batch2003@gmail.com) Only */}
         {dashboardMode === 'systemTest' && user?.email?.toLowerCase() === 'uslsis.batch2003@gmail.com' && (
-          <SystemTest token={token} users={data?.users || []} />
+          <SystemTest token={token} />
         )}
       </div>
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import ScrollableTable from './ScrollableTable';
 import { API_URL } from '../config';
 
@@ -9,6 +9,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
   const [totalWithdrawals, setTotalWithdrawals] = useState(0);
   const [pendingDeposits, setPendingDeposits] = useState(0);
   const [pendingWithdrawals, setPendingWithdrawals] = useState(0);
+  const [stats, setStats] = useState({ transactionCount: 0, depositCount: 0, withdrawalCount: 0 });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showForm, setShowForm] = useState(false);
@@ -25,10 +26,21 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
     master_list_id: null
   });
   const [result, setResult] = useState(null);
-  
+
+  // Pagination state
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+
+  // Filter state
+  const [searchFilter, setSearchFilter] = useState('');
+  const [typeFilter, setTypeFilter] = useState('all');
+
   // Form ref for scrolling
   const formRef = useRef(null);
-  
+  const tableRef = useRef(null);
+  const searchTimeoutRef = useRef(null);
+
   // Receipt states
   const [uploadingReceipt, setUploadingReceipt] = useState(null);
   const [viewingReceipt, setViewingReceipt] = useState(null);
@@ -42,15 +54,17 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
   // Autocomplete names from existing ledger entries
   const [existingNames, setExistingNames] = useState([]);
 
-  useEffect(() => {
-    fetchTransactions();
-    fetchMasterListOptions();
-    fetchExistingNames();
-  }, [token]);
-
-  const fetchTransactions = async () => {
+  // Fetch transactions with pagination
+  const fetchTransactions = useCallback(async (pageNum = 1, search = '', type = 'all') => {
     try {
-      const res = await fetch(`${API_URL}/api/ledger`, {
+      const params = new URLSearchParams({
+        page: pageNum.toString(),
+        limit: '45',
+      });
+      if (search.trim()) params.append('search', search.trim());
+      if (type !== 'all') params.append('type', type);
+
+      const res = await fetch(`${API_URL}/api/ledger?${params}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -60,11 +74,56 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
       setTotalWithdrawals(data.totalWithdrawals || 0);
       setPendingDeposits(data.pendingDeposits || 0);
       setPendingWithdrawals(data.pendingWithdrawals || 0);
+      setStats(data.stats || { transactionCount: 0, depositCount: 0, withdrawalCount: 0 });
+      setPage(data.pagination?.currentPage || 1);
+      setTotalPages(data.pagination?.totalPages || 1);
+      setTotalCount(data.pagination?.totalCount || 0);
     } catch (err) {
       console.error('Failed to fetch transactions');
     } finally {
       setLoading(false);
     }
+  }, [token]);
+
+  useEffect(() => {
+    fetchTransactions(1, searchFilter, typeFilter);
+    fetchMasterListOptions();
+    fetchExistingNames();
+  }, [token]);
+
+  // Debounced search
+  useEffect(() => {
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+    searchTimeoutRef.current = setTimeout(() => {
+      setPage(1);
+      fetchTransactions(1, searchFilter, typeFilter);
+    }, 300);
+
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, [searchFilter, typeFilter]);
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+      fetchTransactions(newPage, searchFilter, typeFilter);
+      scrollToTable();
+    }
+  };
+
+  const scrollToTable = () => {
+    if (tableRef.current) {
+      tableRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const refreshTransactions = () => {
+    fetchTransactions(page, searchFilter, typeFilter);
   };
 
   const fetchMasterListOptions = async () => {
@@ -78,6 +137,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
       console.error('Failed to fetch master list options');
     }
   };
+
 
   const fetchExistingNames = async () => {
     try {
@@ -139,7 +199,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
       if (res.ok) {
         setResult({ success: true, message: editingId ? 'Transaction updated!' : 'Transaction added!' });
         resetForm();
-        fetchTransactions();
+        refreshTransactions();
         fetchExistingNames(); // Refresh autocomplete list
       } else {
         const data = await res.json();
@@ -184,7 +244,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
       });
 
       if (res.ok) {
-        fetchTransactions();
+        refreshTransactions();
       }
     } catch (err) {
       console.error('Failed to delete');
@@ -204,7 +264,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
       });
 
       if (res.ok) {
-        fetchTransactions();
+        refreshTransactions();
         setLinkingTransaction(null);
         setLinkSearch('');
         onPaymentLinked?.();
@@ -222,7 +282,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
       });
 
       if (res.ok) {
-        fetchTransactions();
+        refreshTransactions();
         onPaymentLinked?.();
       }
     } catch (err) {
@@ -250,7 +310,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
       });
 
       if (res.ok) {
-        fetchTransactions();
+        refreshTransactions();
       } else {
         const data = await res.json();
         alert(data.error || 'Failed to upload receipt');
@@ -275,7 +335,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
 
       if (res.ok) {
         setViewingReceipt(null);
-        fetchTransactions();
+        refreshTransactions();
       }
     } catch (err) {
       console.error('Failed to delete receipt');
@@ -309,46 +369,57 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
     return 'P' + parseFloat(amount).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
 
-  const exportToCSV = () => {
-    if (!transactions.length) return;
+  const exportToCSV = async () => {
+    try {
+      // Fetch all transactions for export (no pagination)
+      const res = await fetch(`${API_URL}/api/ledger?limit=10000`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      const allTransactions = data.transactions || [];
 
-    // Title and timestamp
-    const now = new Date();
-    const timestamp = now.toLocaleString('en-US', { 
-      month: 'long', 
-      day: 'numeric', 
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
-    });
-    
-    const title = ['USLS-IS Batch 2003 - Golden Batch Ledger'];
-    const exportDate = [`Exported: ${timestamp}`];
-    const blankRow = [''];
+      if (!allTransactions.length) return;
 
-    const headers = ['Date', 'Name', 'Description', 'Deposit', 'Withdrawal', 'Balance', 'Reference No.', 'Verified', 'Payment Type', 'Recorded By', 'Receipt URL'];
-    const rows = transactions.map(t => [
-      t.transaction_date ? new Date(t.transaction_date.split('T')[0] + 'T00:00:00').toLocaleDateString() : '',
-      t.name || '',
-      t.description || '',
-      t.deposit || '',
-      t.withdrawal || '',
-      t.balance || 0,
-      t.reference_no || '',
-      t.verified || '',
-      t.payment_type || '',
-      t.recorded_by || '',
-      t.receipt_url || ''
-    ]);
+      // Title and timestamp
+      const now = new Date();
+      const timestamp = now.toLocaleString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      });
 
-    const csv = [title, exportDate, blankRow, headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'usls-batch-2003-ledger.csv';
-    a.click();
+      const title = ['USLS-IS Batch 2003 - Golden Batch Ledger'];
+      const exportDate = [`Exported: ${timestamp}`];
+      const blankRow = [''];
+
+      const headers = ['Date', 'Name', 'Description', 'Deposit', 'Withdrawal', 'Balance', 'Reference No.', 'Verified', 'Payment Type', 'Recorded By', 'Receipt URL'];
+      const rows = allTransactions.map(t => [
+        t.transaction_date ? new Date(t.transaction_date.split('T')[0] + 'T00:00:00').toLocaleDateString() : '',
+        t.name || '',
+        t.description || '',
+        t.deposit || '',
+        t.withdrawal || '',
+        t.balance || 0,
+        t.reference_no || '',
+        t.verified || '',
+        t.payment_type || '',
+        t.recorded_by || '',
+        t.receipt_url || ''
+      ]);
+
+      const csv = [title, exportDate, blankRow, headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'usls-batch-2003-ledger.csv';
+      a.click();
+    } catch (err) {
+      console.error('Failed to export ledger');
+    }
   };
 
   // Filter master list options for linking
@@ -560,7 +631,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
                       name="payment_type"
                       value=""
                       checked={form.payment_type === ''}
-                      onChange={(e) => setForm({ ...form, payment_type: '' })}
+                      onChange={() => setForm({ ...form, payment_type: '' })}
                       style={{ width: '18px', height: '18px' }}
                     />
                     <span style={{ color: '#888' }}>None</span>
@@ -600,17 +671,43 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
       </div>
 
       {/* Transactions Table */}
-      <div className="users-section">
+      <div className="users-section" ref={tableRef}>
         <div className="section-header">
-          <h4>Transaction History ({transactions.length})</h4>
-          {transactions.length > 0 && canExport && (
+          <h4>Transaction History ({stats.transactionCount})</h4>
+          {stats.transactionCount > 0 && canExport && (
             <button onClick={exportToCSV} className="btn-secondary">
               Export CSV
             </button>
           )}
         </div>
 
+        {/* Filters */}
+        <div className="filter-row" style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap', marginBottom: '16px' }}>
+          <select
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+            style={{ padding: '8px 12px', borderRadius: '4px', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', minWidth: '150px' }}
+          >
+            <option value="all">All Types ({stats.transactionCount})</option>
+            <option value="deposit">Deposits ({stats.depositCount})</option>
+            <option value="withdrawal">Withdrawals ({stats.withdrawalCount})</option>
+          </select>
+          <input
+            type="text"
+            placeholder="Search by name or description..."
+            value={searchFilter}
+            onChange={(e) => setSearchFilter(e.target.value)}
+            style={{ flex: 1, minWidth: '200px', padding: '8px 12px', borderRadius: '4px', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}
+          />
+          {(searchFilter || typeFilter !== 'all') && (
+            <span style={{ color: '#888', fontSize: '0.85rem' }}>
+              {totalCount} result{totalCount !== 1 ? 's' : ''}
+            </span>
+          )}
+        </div>
+
         {transactions.length > 0 ? (
+          <>
           <ScrollableTable height="500px" stickyHeader={true}>
             <table className="ledger-table">
               <thead>
@@ -743,8 +840,42 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
               </tbody>
             </table>
           </ScrollableTable>
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="pagination-controls" style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: '16px',
+              marginTop: '20px',
+              padding: '16px',
+              borderTop: '1px solid rgba(255,255,255,0.1)'
+            }}>
+              <button
+                onClick={() => handlePageChange(page - 1)}
+                disabled={page === 1}
+                className="btn-secondary"
+                style={{ padding: '8px 16px' }}
+              >
+                ← Prev
+              </button>
+              <span style={{ color: '#888' }}>
+                Page {page} of {totalPages} ({totalCount} total)
+              </span>
+              <button
+                onClick={() => handlePageChange(page + 1)}
+                disabled={page === totalPages}
+                className="btn-secondary"
+                style={{ padding: '8px 16px' }}
+              >
+                Next →
+              </button>
+            </div>
+          )}
+          </>
         ) : (
-          <p className="no-data">No transactions recorded yet</p>
+          <p className="no-data">{searchFilter || typeFilter !== 'all' ? 'No matching transactions' : 'No transactions recorded yet'}</p>
         )}
       </div>
 

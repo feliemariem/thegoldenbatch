@@ -9,7 +9,7 @@ import PreviewInbox from './PreviewInbox';
  * - User Inbox Preview: See what announcements any user would see
  * - (More features can be added here in the future)
  */
-export default function SystemTest({ token, users }) {
+export default function SystemTest({ token }) {
   const [activeFeature, setActiveFeature] = useState('inbox-preview');
 
   const features = [
@@ -83,7 +83,7 @@ export default function SystemTest({ token, users }) {
 
       {/* Feature Content */}
       {activeFeature === 'inbox-preview' && (
-        <PreviewInbox token={token} users={users} />
+        <PreviewInbox token={token} />
       )}
 
       {/* Placeholder for future features */}
