@@ -156,10 +156,12 @@ CREATE TABLE permissions (
 );
 
 -- Meeting Minutes table
+-- Meeting Minutes table
 CREATE TABLE meeting_minutes (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     meeting_date DATE NOT NULL,
+    location VARCHAR(255),
     attendees TEXT,
     notes TEXT,
     created_by INTEGER REFERENCES admins(id),
