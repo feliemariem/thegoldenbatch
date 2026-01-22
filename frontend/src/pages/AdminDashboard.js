@@ -435,9 +435,9 @@ export default function AdminDashboard() {
               <div className="percentage-box">
                 <span className="percentage-label">Registered:</span>
                 <div className="percentage-grid">
-                  <span className="percentage-item going">{registeredCount ? Math.round(((registeredStats.going || 0) / registeredCount) * 100) : 0}% Going</span>
-                  <span className="percentage-item maybe">{registeredCount ? Math.round(((registeredStats.maybe || 0) / registeredCount) * 100) : 0}% Maybe</span>
-                  <span className="percentage-item not-going full-width">{registeredCount ? Math.round(((registeredStats.not_going || 0) / registeredCount) * 100) : 0}% Not Going</span>
+                  <span className="percentage-item going">{registeredStats.total ? Math.round(((registeredStats.going || 0) / registeredStats.total) * 100) : 0}% Going</span>
+                  <span className="percentage-item maybe">{registeredStats.total ? Math.round(((registeredStats.maybe || 0) / registeredStats.total) * 100) : 0}% Maybe</span>
+                  <span className="percentage-item not-going full-width">{registeredStats.total ? Math.round(((registeredStats.not_going || 0) / registeredStats.total) * 100) : 0}% Not Going</span>
                 </div>
               </div>
             </div>
