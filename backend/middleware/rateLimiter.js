@@ -33,6 +33,7 @@ const authLimiter = rateLimit({
   skipFailedRequests: false,
   // Handler MUST send response and NOT call next() to block the request
   handler: (req, res) => {
+    console.log('[RATE LIMIT HANDLER] Blocking request, returning 429');
     return res.status(429).json({ error: 'Too many login attempts, please try again after 15 minutes' });
   },
 });

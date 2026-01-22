@@ -135,6 +135,7 @@ router.post('/register', registerLimiter, async (req, res) => {
 
 // Login
 router.post('/login', authLimiter, async (req, res) => {
+  console.log('[LOGIN HANDLER] This should NOT print if rate limited');
   try {
     const { email, password, rememberMe } = req.body;
 
