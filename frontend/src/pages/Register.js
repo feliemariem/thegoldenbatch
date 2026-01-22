@@ -225,8 +225,7 @@ export default function Register() {
           {step === 2 && (
             <div className="disclaimer-step">
               <div className="disclaimer-box">
-                <h3>Why We're Collecting Your Information</h3>
-                <h4>How We Use Your Information</h4>
+                <h3>How We Use Your Information</h3>
                 <p>
                   Your information will be used solely for organizing our alumni homecoming, including:
                 </p>
