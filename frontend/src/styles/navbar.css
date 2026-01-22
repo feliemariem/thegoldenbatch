@@ -112,6 +112,42 @@
   background: rgba(0, 102, 51, 0.08);
 }
 
+/* Admin Link - Outlined Style */
+.nav-link.admin-link {
+  border: 2px solid #CFB53B;
+  color: #CFB53B;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  background: transparent;
+}
+
+.nav-link.admin-link:hover {
+  background: #CFB53B;
+  color: #000000;
+}
+
+.nav-link.admin-link.active {
+  background: #CFB53B;
+  color: #000000;
+}
+
+[data-theme="light"] .nav-link.admin-link {
+  border-color: #006633;
+  color: #006633;
+  background: transparent;
+}
+
+[data-theme="light"] .nav-link.admin-link:hover {
+  background: #006633;
+  color: #ffffff;
+}
+
+[data-theme="light"] .nav-link.admin-link.active {
+  background: #006633;
+  color: #ffffff;
+}
+
 /* Logout Button */
 .nav-link.logout-btn {
   color: var(--color-accent);
@@ -412,6 +448,46 @@
 [data-theme="light"] .mobile-nav-link.active {
   color: #006633;
   background: rgba(0, 102, 51, 0.06);
+}
+
+/* Mobile Admin Link - Outlined Style */
+.mobile-nav-link.admin-link {
+  border: 2px solid #CFB53B;
+  color: #CFB53B;
+  padding: 12px 22px;
+  margin: 8px 24px;
+  border-radius: 6px;
+  font-weight: 600;
+  background: transparent;
+  width: auto;
+  text-align: center;
+  justify-content: center;
+}
+
+.mobile-nav-link.admin-link:hover {
+  background: #CFB53B;
+  color: #000000;
+}
+
+.mobile-nav-link.admin-link.active {
+  background: #CFB53B;
+  color: #000000;
+}
+
+[data-theme="light"] .mobile-nav-link.admin-link {
+  border-color: #006633;
+  color: #006633;
+  background: transparent;
+}
+
+[data-theme="light"] .mobile-nav-link.admin-link:hover {
+  background: #006633;
+  color: #ffffff;
+}
+
+[data-theme="light"] .mobile-nav-link.admin-link.active {
+  background: #006633;
+  color: #ffffff;
 }
 
 .mobile-nav-link.logout-btn {

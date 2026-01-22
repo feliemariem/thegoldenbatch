@@ -135,7 +135,7 @@ export default function Navbar() {
             Inbox{unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}
           </Link>
           <Link to={user?.isAdmin ? "/profile-preview" : "/profile"} className={`nav-link ${location.pathname === '/profile' || location.pathname === '/profile-preview' ? 'active' : ''}`}>Profile</Link>
-          {user?.isAdmin && <Link to="/admin" className={`nav-link ${location.pathname === '/admin' ? 'active' : ''}`}>Admin</Link>}
+          {user?.isAdmin && <Link to="/admin" className={`nav-link admin-link ${location.pathname === '/admin' ? 'active' : ''}`}>Admin</Link>}
           <button onClick={handleLogout} className="nav-link logout-btn">Logout</button>
         </nav>
 
@@ -204,7 +204,7 @@ export default function Navbar() {
           Profile
         </Link>
         {user?.isAdmin && (
-          <Link to="/admin" className={`mobile-nav-link ${location.pathname === '/admin' ? 'active' : ''}`}>
+          <Link to="/admin" className={`mobile-nav-link admin-link ${location.pathname === '/admin' ? 'active' : ''}`}>
             Admin
           </Link>
         )}
