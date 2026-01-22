@@ -131,32 +131,7 @@ Currently, AdminDashboard.js handles everything for Registry mode inline, while 
 - `PermissionsManager.js` — Permissions mode
 - `SystemTest.js` — System Test mode
 
-**Still embedded in AdminDashboard.js (needs extraction):**
-- [ ] Create `AdminDashboard/` folder structure:
-  ```
-  AdminDashboard/
-  ├── index.js              (mode switching, ~200 lines)
-  ├── RegistryMode/
-  │   ├── index.js          (tab switching, stats display)
-  │   ├── InvitesTab.js     (invite CRUD, CSV upload, table)
-  │   ├── RegisteredTab.js  (registered users table, filters)
-  │   └── MasterListTab.js  (master list table, filters, stats)
-  ```
-- [ ] Move all Registry-related state to RegistryMode/index.js
-- [ ] Move invite handlers (create, update, delete, CSV upload, link/unlink) to InvitesTab.js
-- [ ] Move registered user filtering and display to RegisteredTab.js
-- [ ] Move master list handlers and filtering to MasterListTab.js
-- [ ] Keep shared state (permissions, user, token) in main index.js and pass as props
-
-**Why:** 
-- AdminDashboard.js is currently ~1,600 lines — hard to navigate and debug
-- Registry mode alone has ~1,000 lines of JSX and handlers
-- Splitting matches the pattern already used for other modes
-
-**Effort:** 4-6 hours
-
-**Result:** AdminDashboard/index.js drops to ~200 lines, each tab file is ~200-400 lines
-
+2
 ### MP-2: Implement Structured Logging
 - [ ] Install Winston or Pino: `npm install winston`
 - [ ] Replace `console.log` with logger
