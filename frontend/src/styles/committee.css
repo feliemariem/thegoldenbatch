@@ -455,6 +455,232 @@ body[data-theme="dark"] .volunteer-interest-btn.interested {
   background: rgba(76, 175, 80, 0.15);
 }
 
+/* Header Title Row with Mission Button */
+.committee-header-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* Our Mission Button */
+.mission-btn {
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid var(--color-hover);
+  background: transparent;
+  color: var(--color-hover);
+}
+
+.mission-btn:hover {
+  background: var(--color-hover);
+  color: #fff;
+}
+
+body[data-theme="light"] .mission-btn:hover {
+  color: #fff;
+}
+
+/* Mission Modal Overlay */
+.mission-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Mission Modal */
+.mission-modal {
+  background: var(--color-bg-card);
+  border: 1px solid rgba(207, 181, 59, 0.2);
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 560px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Modal Close Button */
+.mission-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: transparent;
+  border: none;
+  font-size: 1.8rem;
+  color: var(--color-text-secondary, #888);
+  cursor: pointer;
+  line-height: 1;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.mission-modal-close:hover {
+  color: var(--color-hover);
+  background: rgba(207, 181, 59, 0.1);
+}
+
+/* Modal Title - Gold gradient in dark mode */
+.mission-modal-title {
+  font-family: var(--font-heading);
+  background: linear-gradient(135deg, #CFB53B 0%, #B8960C 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 1.6rem;
+  margin: 0 0 20px 0;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* Modal Intro Text */
+.mission-modal-intro {
+  color: var(--color-text-primary, #d0d0d0);
+  font-size: 1rem;
+  line-height: 1.6;
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+/* Section Title */
+.mission-modal-section-title {
+  color: var(--color-hover);
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 0 0 20px 0;
+  text-align: center;
+}
+
+/* Mission Goals */
+.mission-goals {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.mission-goal {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.mission-goal-emoji {
+  font-size: 1.6rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.mission-goal-content {
+  flex: 1;
+}
+
+.mission-goal-content strong {
+  display: block;
+  color: var(--color-hover);
+  font-size: 1rem;
+  margin-bottom: 6px;
+}
+
+.mission-goal-content p {
+  color: var(--color-text-secondary, #aaa);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Modal Footer */
+.mission-modal-footer {
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-hover);
+  margin: 0;
+  border-top: 1px solid rgba(207, 181, 59, 0.15);
+  padding-top: 20px;
+}
+
+/* Light Mode Styles for Mission Modal */
+body[data-theme="light"] .mission-modal {
+  background: var(--color-bg-card);
+  border: 1px solid rgba(0, 102, 51, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 50, 30, 0.2);
+}
+
+body[data-theme="light"] .mission-modal-close:hover {
+  color: #006633;
+  background: rgba(0, 102, 51, 0.1);
+}
+
+body[data-theme="light"] .mission-modal-title {
+  background: linear-gradient(135deg, #006633 0%, #004d26 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+body[data-theme="light"] .mission-modal-intro {
+  color: #333;
+}
+
+body[data-theme="light"] .mission-modal-section-title {
+  color: #B8960C;
+}
+
+body[data-theme="light"] .mission-goal {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+body[data-theme="light"] .mission-goal-content strong {
+  color: #B8960C;
+}
+
+body[data-theme="light"] .mission-goal-content p {
+  color: #555;
+}
+
+body[data-theme="light"] .mission-modal-footer {
+  color: #006633;
+  border-top-color: rgba(0, 102, 51, 0.15);
+}
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
   .committee-header h2 {
@@ -488,5 +714,31 @@ body[data-theme="dark"] .volunteer-interest-btn.interested {
   .volunteer-section {
     padding: 32px 16px;
     margin: 32px 0;
+  }
+
+  .committee-header-title-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .mission-modal {
+    padding: 24px;
+    max-height: 85vh;
+  }
+
+  .mission-modal-title {
+    font-size: 1.4rem;
+  }
+
+  .mission-modal-intro {
+    font-size: 0.95rem;
+  }
+
+  .mission-goal {
+    padding: 14px;
+  }
+
+  .mission-goal-emoji {
+    font-size: 1.4rem;
   }
 }

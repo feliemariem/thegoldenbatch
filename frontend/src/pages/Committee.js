@@ -57,6 +57,7 @@ export default function Committee() {
   const [loading, setLoading] = useState(true);
   const [savingInterest, setSavingInterest] = useState(null);
   const [toast, setToast] = useState(null);
+  const [showMissionModal, setShowMissionModal] = useState(false);
 
   useEffect(() => {
     if (token) {
@@ -195,7 +196,15 @@ export default function Committee() {
       <main className="profile-main committee-main">
         {/* Page Header */}
         <section className="committee-header">
-          <h2>The Committee</h2>
+          <div className="committee-header-title-row">
+            <h2>The Committee</h2>
+            <button
+              className="mission-btn"
+              onClick={() => setShowMissionModal(true)}
+            >
+              Our Mission
+            </button>
+          </div>
           <p>Meet the dedicated batchmates working to make our 25th reunion unforgettable</p>
         </section>
 
@@ -326,6 +335,58 @@ export default function Committee() {
         <div className="committee-back">
           <Link to={isAdmin ? "/profile-preview" : "/profile"} className="btn-link">&larr; Back to Profile</Link>
         </div>
+
+        {/* Mission Modal */}
+        {showMissionModal && (
+          <div className="mission-modal-overlay" onClick={() => setShowMissionModal(false)}>
+            <div className="mission-modal" onClick={e => e.stopPropagation()}>
+              <button
+                className="mission-modal-close"
+                onClick={() => setShowMissionModal(false)}
+                aria-label="Close"
+              >
+                &times;
+              </button>
+              <h2 className="mission-modal-title">Our Mission</h2>
+              <p className="mission-modal-intro">
+                We're bringing Batch 2003 back home. After 25 years, it's time to reconnect,
+                celebrate how far we've come, and give back to the school that shaped us.
+              </p>
+              <h3 className="mission-modal-section-title">What We're Here For</h3>
+              <div className="mission-goals">
+                <div className="mission-goal">
+                  <span className="mission-goal-emoji">🤝</span>
+                  <div className="mission-goal-content">
+                    <strong>Reconnect</strong>
+                    <p>Catch up with old friends, classmates, and teachers. Revive those friendships, share stories, and remember why school felt like our second home.</p>
+                  </div>
+                </div>
+                <div className="mission-goal">
+                  <span className="mission-goal-emoji">🎉</span>
+                  <div className="mission-goal-content">
+                    <strong>Celebrate</strong>
+                    <p>25 years is a milestone! Let's honor our achievements – individually and as a batch – and cheer each other on.</p>
+                  </div>
+                </div>
+                <div className="mission-goal">
+                  <span className="mission-goal-emoji">🌐</span>
+                  <div className="mission-goal-content">
+                    <strong>Network</strong>
+                    <p>We've all grown in different directions. This is a chance to learn from each other, explore opportunities, and maybe even start something new together.</p>
+                  </div>
+                </div>
+                <div className="mission-goal">
+                  <span className="mission-goal-emoji">🏫</span>
+                  <div className="mission-goal-content">
+                    <strong>Give Back</strong>
+                    <p>Time to pay it forward. Whether it's supporting school initiatives, charities, or just showing up – we're building a bridge for the next generation of Lasallians.</p>
+                  </div>
+                </div>
+              </div>
+              <p className="mission-modal-footer">See you in December 2028!</p>
+            </div>
+          </div>
+        )}
       </main>
       </div>
       <Footer />
