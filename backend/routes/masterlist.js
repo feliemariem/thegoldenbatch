@@ -14,12 +14,24 @@ const toLowerEmail = (email) => {
   return email.trim().toLowerCase();
 };
 
-// Get all master list entries with status
+// Get all master list entries with status (supports pagination and filtering)
 router.get('/', authenticateAdmin, async (req, res) => {
   try {
-    const { section } = req.query;
+    const {
+      section,
+      page = 1,
+      limit = 45,
+      status: statusFilter,
+      paymentStatus: paymentStatusFilter,
+      search
+    } = req.query;
 
-    let query = `
+    const pageNum = parseInt(page) || 1;
+    const limitNum = parseInt(limit) || 45;
+    const offset = (pageNum - 1) * limitNum;
+
+    // Base query with computed columns
+    const baseSelect = `
       SELECT
         m.id,
         m.section,
@@ -36,11 +48,11 @@ router.get('/', authenticateAdmin, async (req, res) => {
           WHEN m.is_unreachable = true THEN 'Unreachable'
           ELSE COALESCE(m.status, 'Not Invited')
         END as status,
-        CASE 
+        CASE
           WHEN m.section = 'Non-Graduate' OR m.in_memoriam = true THEN NULL
           ELSE COALESCE(ledger_totals.total_paid, 0)
         END as total_paid,
-        CASE 
+        CASE
           WHEN m.section = 'Non-Graduate' OR m.in_memoriam = true THEN NULL
           ELSE 25000 - COALESCE(ledger_totals.total_paid, 0)
         END as balance,
@@ -59,25 +71,89 @@ router.get('/', authenticateAdmin, async (req, res) => {
       ) ledger_totals ON m.id = ledger_totals.master_list_id
     `;
 
+    // Build WHERE conditions
+    const conditions = [];
     const params = [];
+    let paramIndex = 1;
 
+    // Section filter
     if (section && section !== 'all') {
       if (section === 'graduates') {
-        query += ` WHERE m.section != 'Non-Graduate'`;
+        conditions.push(`m.section != 'Non-Graduate'`);
       } else {
-        query += ` WHERE m.section = $1`;
+        conditions.push(`m.section = $${paramIndex}`);
         params.push(section);
+        paramIndex++;
       }
     }
 
-    // Sort by last name only for 'all', otherwise by section then last name
-    if (section && section !== 'all') {
-      query += ` ORDER BY m.last_name, m.first_name`;
-    } else {
-      query += ` ORDER BY m.last_name, m.first_name`;
+    // Status filter (server-side)
+    if (statusFilter && statusFilter !== 'all') {
+      const statusLower = statusFilter.toLowerCase();
+      if (statusLower === 'in memoriam') {
+        conditions.push(`m.in_memoriam = true`);
+      } else if (statusLower === 'unreachable') {
+        conditions.push(`m.is_unreachable = true AND (m.in_memoriam IS NULL OR m.in_memoriam = false)`);
+      } else if (statusLower === 'registered') {
+        conditions.push(`m.status = 'Registered' AND (m.in_memoriam IS NULL OR m.in_memoriam = false) AND (m.is_unreachable IS NULL OR m.is_unreachable = false)`);
+      } else if (statusLower === 'pending') {
+        conditions.push(`m.status = 'Pending' AND (m.in_memoriam IS NULL OR m.in_memoriam = false) AND (m.is_unreachable IS NULL OR m.is_unreachable = false)`);
+      } else if (statusLower === 'not invited') {
+        conditions.push(`(m.status = 'Not Invited' OR m.status IS NULL) AND (m.in_memoriam IS NULL OR m.in_memoriam = false) AND (m.is_unreachable IS NULL OR m.is_unreachable = false)`);
+      }
     }
 
-    const result = await db.query(query, params);
+    // Search filter (by name)
+    if (search && search.trim()) {
+      const searchTerm = `%${search.trim().toLowerCase()}%`;
+      conditions.push(`(LOWER(m.last_name || ' ' || m.first_name) LIKE $${paramIndex} OR LOWER(COALESCE(m.current_name, '')) LIKE $${paramIndex})`);
+      params.push(searchTerm);
+      paramIndex++;
+    }
+
+    // Build WHERE clause
+    const whereClause = conditions.length > 0 ? ` WHERE ${conditions.join(' AND ')}` : '';
+
+    // For payment filter, we need to wrap in a subquery since it's a computed column
+    let query;
+    let countQuery;
+    let queryParams;
+    let countParams;
+
+    if (paymentStatusFilter && paymentStatusFilter !== 'all') {
+      // Use subquery to filter by computed payment_status
+      // Capitalize first letter for payment status match
+      const paymentValue = paymentStatusFilter.charAt(0).toUpperCase() + paymentStatusFilter.slice(1).toLowerCase();
+
+      query = `
+        SELECT * FROM (${baseSelect}${whereClause}) as subq
+        WHERE payment_status = $${paramIndex}
+        ORDER BY last_name, first_name
+        LIMIT $${paramIndex + 1} OFFSET $${paramIndex + 2}
+      `;
+      countQuery = `
+        SELECT COUNT(*) FROM (${baseSelect}${whereClause}) as subq
+        WHERE payment_status = $${paramIndex}
+      `;
+
+      queryParams = [...params, paymentValue, limitNum, offset];
+      countParams = [...params, paymentValue];
+    } else {
+      query = `${baseSelect}${whereClause} ORDER BY m.last_name, m.first_name LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`;
+      // For count query without payment filter, we can use a simpler query
+      countQuery = `SELECT COUNT(*) FROM (${baseSelect}${whereClause}) as subq`;
+
+      queryParams = [...params, limitNum, offset];
+      countParams = [...params];
+    }
+
+    // Execute paginated query
+    const result = await db.query(query, queryParams);
+
+    // Get total count for pagination
+    const countResult = await db.query(countQuery, countParams);
+    const totalCount = parseInt(countResult.rows[0].count);
+    const totalPages = Math.ceil(totalCount / limitNum);
 
     // Get stats (using stored status column)
     const statsResult = await db.query(`
@@ -119,7 +195,13 @@ router.get('/', authenticateAdmin, async (req, res) => {
         ...statsResult.rows[0],
         ...paymentStatsResult.rows[0]
       },
-      sections: sectionsResult.rows.map(r => r.section)
+      sections: sectionsResult.rows.map(r => r.section),
+      pagination: {
+        currentPage: pageNum,
+        totalPages,
+        totalCount,
+        limit: limitNum
+      }
     });
   } catch (err) {
     console.error(err);

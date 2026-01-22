@@ -95,6 +95,11 @@ export default function AdminDashboard() {
   const [masterListUploadResult, setMasterListUploadResult] = useState(null);
   const [editingEntry, setEditingEntry] = useState(null);
   const [showGuide, setShowGuide] = useState(false);
+  // Pagination state
+  const [masterListPage, setMasterListPage] = useState(1);
+  const [masterListTotalPages, setMasterListTotalPages] = useState(1);
+  const [masterListTotalCount, setMasterListTotalCount] = useState(0);
+  const MASTER_LIST_PAGE_SIZE = 45;
 
   // Scroll refs
   const invitesTableRef = useRef(null);
@@ -185,11 +190,25 @@ export default function AdminDashboard() {
     }
   };
 
-  const fetchMasterList = async (section = 'all') => {
+  const fetchMasterList = async (options = {}) => {
     try {
-      const url = section === 'all'
-        ? `${API_URL}/api/master-list`
-        : `${API_URL}/api/master-list?section=${section}`;
+      const {
+        section = masterListFilter,
+        page = masterListPage,
+        status = masterListStatusFilter,
+        paymentStatus = masterListPaymentFilter,
+        search = masterListSearch
+      } = options;
+
+      const params = new URLSearchParams();
+      if (section && section !== 'all') params.append('section', section);
+      params.append('page', page);
+      params.append('limit', MASTER_LIST_PAGE_SIZE);
+      if (status && status !== 'all') params.append('status', status);
+      if (paymentStatus && paymentStatus !== 'all') params.append('paymentStatus', paymentStatus);
+      if (search && search.trim()) params.append('search', search.trim());
+
+      const url = `${API_URL}/api/master-list?${params.toString()}`;
       const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -197,6 +216,11 @@ export default function AdminDashboard() {
       setMasterList(data.entries || []);
       setMasterListStats(data.stats);
       setMasterListSections(data.sections || []);
+      if (data.pagination) {
+        setMasterListPage(data.pagination.currentPage);
+        setMasterListTotalPages(data.pagination.totalPages);
+        setMasterListTotalCount(data.pagination.totalCount);
+      }
     } catch (err) {
       console.error('Failed to fetch master list');
     }
@@ -391,7 +415,8 @@ export default function AdminDashboard() {
 
       const data = await res.json();
       setMasterListUploadResult(data);
-      fetchMasterList();
+      setMasterListPage(1);
+      fetchMasterList({ page: 1 });
     } catch (err) {
       setMasterListUploadResult({ error: 'Failed to process CSV' });
     } finally {
@@ -403,7 +428,45 @@ export default function AdminDashboard() {
   const handleMasterListFilterChange = (e) => {
     const section = e.target.value;
     setMasterListFilter(section);
-    fetchMasterList(section);
+    setMasterListPage(1);
+    fetchMasterList({ section, page: 1 });
+  };
+
+  const handleMasterListStatusFilterChange = (e) => {
+    const status = e.target.value;
+    setMasterListStatusFilter(status);
+    setMasterListPage(1);
+    fetchMasterList({ status, page: 1 });
+  };
+
+  const handleMasterListPaymentFilterChange = (e) => {
+    const paymentStatus = e.target.value;
+    setMasterListPaymentFilter(paymentStatus);
+    setMasterListPage(1);
+    fetchMasterList({ paymentStatus, page: 1 });
+  };
+
+  const handleMasterListSearchChange = (e) => {
+    const search = e.target.value;
+    setMasterListSearch(search);
+  };
+
+  // Debounced search - trigger after user stops typing
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (activeTab === 'masterlist') {
+        setMasterListPage(1);
+        fetchMasterList({ search: masterListSearch, page: 1 });
+      }
+    }, 300);
+    return () => clearTimeout(timeoutId);
+  }, [masterListSearch]);
+
+  const handleMasterListPageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= masterListTotalPages) {
+      setMasterListPage(newPage);
+      fetchMasterList({ page: newPage });
+    }
   };
 
   const handleUpdateEntry = async (id, updates) => {
@@ -418,7 +481,7 @@ export default function AdminDashboard() {
       });
 
       if (res.ok) {
-        fetchMasterList(masterListFilter);
+        fetchMasterList({ page: masterListPage });
         setEditingEntry(null);
       } else {
         const data = await res.json();
@@ -444,7 +507,8 @@ export default function AdminDashboard() {
             method: 'DELETE',
             headers: { Authorization: `Bearer ${token}` },
           });
-          fetchMasterList();
+          setMasterListPage(1);
+          fetchMasterList({ page: 1 });
         } catch (err) {
           console.error('Failed to clear master list');
         }
@@ -468,7 +532,7 @@ export default function AdminDashboard() {
 
       if (res.ok) {
         fetchInvites();
-        fetchMasterList();
+        fetchMasterList({ page: masterListPage });
       }
     } catch (err) {
       console.error('Failed to link to master list');
@@ -491,7 +555,7 @@ export default function AdminDashboard() {
 
           if (res.ok) {
             fetchInvites();
-            fetchMasterList();
+            fetchMasterList({ page: masterListPage });
           }
         } catch (err) {
           console.error('Failed to unlink from master list');
@@ -523,37 +587,8 @@ export default function AdminDashboard() {
     a.click();
   };
 
-  // Filter master list based on search and status
-  const filteredMasterList = masterList.filter(entry => {
-    const status = (entry.status || '').toLowerCase();
-
-    // Status filter
-    if (masterListStatusFilter !== 'all' && status !== masterListStatusFilter) {
-      return false;
-    }
-
-    // Payment filter (only applies to graduates, not Non-Graduate or In Memoriam)
-    if (masterListPaymentFilter !== 'all') {
-      // Skip non-graduates and in memoriam for payment filter
-      if (entry.section === 'Non-Graduate' || entry.in_memoriam) {
-        return false;
-      }
-      const paymentStatus = (entry.payment_status || 'Unpaid').toLowerCase();
-      if (paymentStatus !== masterListPaymentFilter.toLowerCase()) {
-        return false;
-      }
-    }
-
-    // Name search
-    if (!masterListSearch.trim()) return true;
-    const search = masterListSearch.toLowerCase().trim();
-    const name = `${entry.last_name || ''} ${entry.first_name || ''}`.toLowerCase();
-
-    return (
-      name.includes(search) ||
-      (entry.current_name || '').toLowerCase().includes(search)
-    );
-  });
+  // Master list now uses server-side filtering and pagination
+  // The masterList state already contains the filtered/paginated results from the API
 
   const exportToCSV = () => {
     if (!data?.users?.length) return;
@@ -1434,9 +1469,9 @@ export default function AdminDashboard() {
 
                 {/* Filter and Search */}
                 <div className="section-header">
-                  <h3>Batch Directory ({filteredMasterList.length})</h3>
+                  <h3>Batch Directory ({masterListTotalCount})</h3>
                   <div style={{ display: 'flex', gap: '8px' }}>
-                    {filteredMasterList.length > 10 && (
+                    {masterList.length > 10 && (
                       <button onClick={() => scrollToTop(masterListTableRef)} className="btn-secondary" title="Scroll to top">
                         ^ Top
                       </button>
@@ -1459,7 +1494,7 @@ export default function AdminDashboard() {
                   </select>
                   <select
                     value={masterListStatusFilter}
-                    onChange={(e) => setMasterListStatusFilter(e.target.value)}
+                    onChange={handleMasterListStatusFilterChange}
                     style={{ width: '150px' }}
                   >
                     <option value="all">All Status</option>
@@ -1471,7 +1506,7 @@ export default function AdminDashboard() {
                   </select>
                   <select
                     value={masterListPaymentFilter}
-                    onChange={(e) => setMasterListPaymentFilter(e.target.value)}
+                    onChange={handleMasterListPaymentFilterChange}
                     style={{ width: '150px' }}
                   >
                     <option value="all">All Payment</option>
@@ -1483,7 +1518,7 @@ export default function AdminDashboard() {
                     type="text"
                     placeholder="Search by name..."
                     value={masterListSearch}
-                    onChange={(e) => setMasterListSearch(e.target.value)}
+                    onChange={handleMasterListSearchChange}
                     className="search-input"
                   />
                   {(masterListFilter !== 'all' || masterListStatusFilter !== 'all' || masterListPaymentFilter !== 'all' || masterListSearch) && (
@@ -1493,7 +1528,8 @@ export default function AdminDashboard() {
                         setMasterListStatusFilter('all');
                         setMasterListPaymentFilter('all');
                         setMasterListSearch('');
-                        fetchMasterList('all');
+                        setMasterListPage(1);
+                        fetchMasterList({ section: 'all', status: 'all', paymentStatus: 'all', search: '', page: 1 });
                       }}
                       style={{
                         background: 'rgba(220, 53, 69, 0.1)',
@@ -1512,7 +1548,7 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Table */}
-                {filteredMasterList.length > 0 ? (
+                {masterList.length > 0 ? (
                   <ScrollableTable stickyHeader={true}>
                     <table>
                       <thead>
@@ -1528,7 +1564,7 @@ export default function AdminDashboard() {
                         </tr>
                       </thead>
                       <tbody>
-                        {filteredMasterList.map((entry) => (
+                        {masterList.map((entry) => (
                           <tr key={entry.id}>
                             {editingEntry === entry.id ? (
                               <>
@@ -1682,6 +1718,127 @@ export default function AdminDashboard() {
                       </tbody>
                     </table>
                   </ScrollableTable>
+
+                  {/* Pagination Controls */}
+                  {masterListTotalPages > 1 && (
+                    <div className="pagination-controls" style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      marginTop: '20px',
+                      flexWrap: 'wrap'
+                    }}>
+                      <button
+                        onClick={() => handleMasterListPageChange(masterListPage - 1)}
+                        disabled={masterListPage === 1}
+                        className="btn-secondary"
+                        style={{
+                          padding: '8px 12px',
+                          opacity: masterListPage === 1 ? 0.5 : 1,
+                          cursor: masterListPage === 1 ? 'not-allowed' : 'pointer'
+                        }}
+                      >
+                        Previous
+                      </button>
+
+                      {/* Page numbers */}
+                      <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+                        {(() => {
+                          const pages = [];
+                          const maxVisiblePages = 5;
+                          let startPage = Math.max(1, masterListPage - Math.floor(maxVisiblePages / 2));
+                          let endPage = Math.min(masterListTotalPages, startPage + maxVisiblePages - 1);
+
+                          // Adjust start if we're near the end
+                          if (endPage - startPage < maxVisiblePages - 1) {
+                            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+                          }
+
+                          // First page
+                          if (startPage > 1) {
+                            pages.push(
+                              <button
+                                key={1}
+                                onClick={() => handleMasterListPageChange(1)}
+                                className="btn-secondary"
+                                style={{
+                                  padding: '8px 12px',
+                                  minWidth: '40px',
+                                  background: 'transparent'
+                                }}
+                              >
+                                1
+                              </button>
+                            );
+                            if (startPage > 2) {
+                              pages.push(<span key="start-ellipsis" style={{ color: '#666', padding: '0 4px' }}>...</span>);
+                            }
+                          }
+
+                          // Page numbers
+                          for (let i = startPage; i <= endPage; i++) {
+                            pages.push(
+                              <button
+                                key={i}
+                                onClick={() => handleMasterListPageChange(i)}
+                                className="btn-secondary"
+                                style={{
+                                  padding: '8px 12px',
+                                  minWidth: '40px',
+                                  background: i === masterListPage ? '#CFB53B' : 'transparent',
+                                  color: i === masterListPage ? '#1a1a2e' : 'inherit',
+                                  fontWeight: i === masterListPage ? '600' : 'normal'
+                                }}
+                              >
+                                {i}
+                              </button>
+                            );
+                          }
+
+                          // Last page
+                          if (endPage < masterListTotalPages) {
+                            if (endPage < masterListTotalPages - 1) {
+                              pages.push(<span key="end-ellipsis" style={{ color: '#666', padding: '0 4px' }}>...</span>);
+                            }
+                            pages.push(
+                              <button
+                                key={masterListTotalPages}
+                                onClick={() => handleMasterListPageChange(masterListTotalPages)}
+                                className="btn-secondary"
+                                style={{
+                                  padding: '8px 12px',
+                                  minWidth: '40px',
+                                  background: 'transparent'
+                                }}
+                              >
+                                {masterListTotalPages}
+                              </button>
+                            );
+                          }
+
+                          return pages;
+                        })()}
+                      </div>
+
+                      <button
+                        onClick={() => handleMasterListPageChange(masterListPage + 1)}
+                        disabled={masterListPage === masterListTotalPages}
+                        className="btn-secondary"
+                        style={{
+                          padding: '8px 12px',
+                          opacity: masterListPage === masterListTotalPages ? 0.5 : 1,
+                          cursor: masterListPage === masterListTotalPages ? 'not-allowed' : 'pointer'
+                        }}
+                      >
+                        Next
+                      </button>
+
+                      <span style={{ marginLeft: '12px', color: '#888', fontSize: '0.85rem' }}>
+                        Page {masterListPage} of {masterListTotalPages}
+                      </span>
+                    </div>
+                  )}
                 ) : (
                   <p className="no-data">{masterListSearch ? 'No matching entries' : 'No master list entries.'}</p>
                 )}
