@@ -242,10 +242,12 @@ export default function Register() {
 
                 <h4>Data Privacy Consent</h4>
                 <p>
-                  By registering, I consent to the collection, use, and sharing of my personal
-                  information by USLS-IS Batch 2003 in accordance with the Data Privacy Act of 2012
-                  (R.A. 10173). I understand my information may be retained as needed and release
-                  USLS-IS Batch 2003 from liability to the extent permitted by law.
+                  By registering, I voluntarily give my consent to the collection, use, processing, and
+                  retention of my personal information by USLS-IS Batch 2003 in accordance with the Data Privacy Act of 2012
+                  (R.A. 10173) and its implementing rules. I understand that my information shall be used solely for 
+                  legitimate purposes related to USLS-IS Batch 2003 activities, protected by reasonable security 
+                  measures, and retained only as long as necessary or as required by law. I acknowledge my rights as a data
+                  subject under the law.
                 </p>
               </div>
 
