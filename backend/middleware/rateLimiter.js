@@ -18,50 +18,59 @@ const getClientIp = (req) => {
 };
 
 // Rate limiter for login attempts: 5 attempts per 15 minutes per IP
+// IMPORTANT: skipSuccessfulRequests MUST be false to prevent brute force attacks
+// Even correct passwords must be blocked during the ban period
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 5,
+  statusCode: 429,
   message: { error: 'Too many login attempts, please try again after 15 minutes' },
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req) => {
-    const ip = getClientIp(req);
-    console.log('[RATE LIMIT] authLimiter key:', ip, '| Path:', req.path);
-    return ip;
+  keyGenerator: (req) => getClientIp(req),
+  // Count ALL requests - both successful and failed logins
+  skipSuccessfulRequests: false,
+  skipFailedRequests: false,
+  // Handler MUST send response and NOT call next() to block the request
+  handler: (req, res) => {
+    return res.status(429).json({ error: 'Too many login attempts, please try again after 15 minutes' });
   },
-  skipSuccessfulRequests: false, // Count ALL requests, successful or not
 });
 
 // Rate limiter for registration: 3 attempts per 15 minutes per IP
 const registerLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 3,
+  statusCode: 429,
   message: { error: 'Too many registration attempts, please try again after 15 minutes' },
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req) => {
-    const ip = getClientIp(req);
-    console.log('[RATE LIMIT] registerLimiter key:', ip, '| Path:', req.path);
-    return ip;
+  keyGenerator: (req) => getClientIp(req),
+  // For registration, skip successful requests (user registered successfully)
+  skipSuccessfulRequests: true,
+  skipFailedRequests: false,
+  handler: (req, res) => {
+    return res.status(429).json({ error: 'Too many registration attempts, please try again after 15 minutes' });
   },
-  skipSuccessfulRequests: true, // Don't count successful registrations
 });
 
 // Rate limiter for password reset: 3 attempts per hour per email
 const passwordResetLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
   max: 3,
+  statusCode: 429,
   message: { error: 'Too many password reset attempts, please try again after an hour' },
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: (req) => {
-    // Use email if provided (for password reset), otherwise fall back to IP
     const email = req.body?.email?.toLowerCase();
-    const key = email || getClientIp(req);
-    console.log('[RATE LIMIT] passwordResetLimiter key:', key, '| Path:', req.path);
-    return key;
+    return email || getClientIp(req);
   },
-  skipSuccessfulRequests: false, // Always count password reset requests
+  skipSuccessfulRequests: false,
+  skipFailedRequests: false,
+  handler: (req, res) => {
+    return res.status(429).json({ error: 'Too many password reset attempts, please try again after an hour' });
+  },
 });
 
 module.exports = {
