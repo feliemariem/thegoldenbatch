@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { apiGet, apiPost } from '../api';
 
-export default function AnnouncementComposer({ token, registeredCount = 0, goingCount = 0, maybeCount = 0, notGoingCount = 0, adminsCount = 0 }) {
+export default function AnnouncementComposer({ registeredCount = 0, goingCount = 0, maybeCount = 0, notGoingCount = 0, adminsCount = 0 }) {
   const [audience, setAudience] = useState('all');
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');

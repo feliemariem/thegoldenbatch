@@ -48,7 +48,7 @@ const VOLUNTEER_ROLES = [
 ];
 
 export default function Committee() {
-  const { user, token } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const isAdmin = user?.isAdmin;
 
@@ -60,10 +60,10 @@ export default function Committee() {
   const [showMissionModal, setShowMissionModal] = useState(false);
 
   useEffect(() => {
-    if (token) {
+    if (user) {
       fetchCommitteeData();
     }
-  }, [token]);
+  }, [user]);
 
   // Scroll to and highlight a specific member when navigated with highlightEmail state
   useEffect(() => {

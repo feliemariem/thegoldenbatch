@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import ScrollableTable from './ScrollableTable';
 import { api, apiGet, apiPost, apiPut, apiDelete, apiUpload } from '../api';
 
-export default function AccountingDashboard({ token, canEdit = true, canExport = true, onPaymentLinked }) {
+export default function AccountingDashboard({ canEdit = true, canExport = true, onPaymentLinked }) {
   const [transactions, setTransactions] = useState([]);
   const [balance, setBalance] = useState(0);
   const [totalDeposits, setTotalDeposits] = useState(0);
@@ -81,13 +81,13 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
     } finally {
       setLoading(false);
     }
-  }, [token]);
+  }, []);
 
   useEffect(() => {
     fetchTransactions(1, searchFilter, typeFilter);
     fetchMasterListOptions();
     fetchExistingNames();
-  }, [token]);
+  }, []);
 
   // Debounced search
   useEffect(() => {

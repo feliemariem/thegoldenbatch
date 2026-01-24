@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { useActionItems } from '../context/ActionItemsContext';
 import { apiGet, apiPost, apiPut, apiDelete, apiUpload } from '../api';
 
-export default function MeetingMinutes({ token, canEdit = false, initialMeetingId = null, onMeetingSelected = null }) {
+export default function MeetingMinutes({ canEdit = false, initialMeetingId = null, onMeetingSelected = null }) {
   const { user } = useAuth();
   const { updateVersion, lastUpdatedItem, notifyActionItemUpdate } = useActionItems();
   const navigate = useNavigate();
@@ -51,7 +51,7 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [token]);
+  }, []);
 
   // Fetch action items when a meeting is selected
   useEffect(() => {

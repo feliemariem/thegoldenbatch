@@ -16,7 +16,7 @@ import Footer from '../components/Footer';
 import { apiGet } from '../api';
 
 export default function AdminDashboard() {
-  const { token, user } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -87,7 +87,7 @@ export default function AdminDashboard() {
     fetchDashboard();
     fetchAdminUnreadCount();
     fetchDashboardStats();
-  }, [token]);
+  }, [user]);
 
   const fetchAdminUnreadCount = async () => {
     try {
@@ -489,8 +489,7 @@ export default function AdminDashboard() {
             {/* Invites Tab */}
             {activeTab === 'invites' && (
               <InvitesTab
-                token={token}
-                isSuperAdmin={isSuperAdmin}
+                                isSuperAdmin={isSuperAdmin}
                 permissions={permissions}
                 onRefresh={fetchDashboard}
                 onStatsUpdate={setInviteStats}
@@ -510,8 +509,7 @@ export default function AdminDashboard() {
             {/* Registered Tab */}
             {activeTab === 'registered' && (
               <RegisteredTab
-                token={token}
-                isSuperAdmin={isSuperAdmin}
+                                isSuperAdmin={isSuperAdmin}
                 permissions={permissions}
                 onStatsUpdate={setRegisteredStats}
               />
@@ -520,8 +518,7 @@ export default function AdminDashboard() {
             {/* Master List Tab */}
             {activeTab === 'masterlist' && (
               <MasterListTab
-                token={token}
-                isSuperAdmin={isSuperAdmin}
+                                isSuperAdmin={isSuperAdmin}
                 permissions={permissions}
                 onShowAdminRoleError={() => setShowAdminRoleError(true)}
                 onRefreshReady={setMasterListRefresh}
@@ -533,8 +530,7 @@ export default function AdminDashboard() {
         {/* ANNOUNCEMENTS MODE */}
         {dashboardMode === 'announcements' && (
           <AnnouncementComposer
-            token={token}
-            registeredCount={registeredStats.total || 0}
+                        registeredCount={registeredStats.total || 0}
             goingCount={registeredStats.going || 0}
             maybeCount={registeredStats.maybe || 0}
             notGoingCount={registeredStats.not_going || 0}
@@ -546,8 +542,7 @@ export default function AdminDashboard() {
         {/* ACCOUNTING MODE */}
         {dashboardMode === 'accounting' && (
           <AccountingDashboard
-            token={token}
-            canEdit={isSuperAdmin || permissions?.accounting_edit}
+                        canEdit={isSuperAdmin || permissions?.accounting_edit}
             canExport={isSuperAdmin || permissions?.accounting_export}
             onPaymentLinked={() => masterListRefresh?.()}
           />
@@ -556,8 +551,7 @@ export default function AdminDashboard() {
         {/* MINUTES MODE */}
         {dashboardMode === 'minutes' && (
           <MeetingMinutes
-            token={token}
-            canEdit={isSuperAdmin || permissions?.minutes_edit}
+                        canEdit={isSuperAdmin || permissions?.minutes_edit}
             initialMeetingId={selectedMeetingIdFromUrl}
             onMeetingSelected={() => setSelectedMeetingIdFromUrl(null)}
           />
@@ -565,17 +559,17 @@ export default function AdminDashboard() {
 
         {/* MESSAGES MODE */}
         {dashboardMode === 'messages' && (
-          <AdminMessages token={token} onUnreadCountChange={fetchAdminUnreadCount} />
+          <AdminMessages onUnreadCountChange={fetchAdminUnreadCount} />
         )}
 
         {/* PERMISSIONS MODE - Super Admin Only */}
         {dashboardMode === 'permissions' && isSuperAdmin && (
-          <PermissionsManager token={token} />
+          <PermissionsManager />
         )}
 
         {/* SYSTEM TEST MODE - Super Admin (uslsis.batch2003@gmail.com) Only */}
         {dashboardMode === 'systemTest' && user?.email?.toLowerCase() === 'uslsis.batch2003@gmail.com' && (
-          <SystemTest token={token} />
+          <SystemTest />
         )}
       </div>
 

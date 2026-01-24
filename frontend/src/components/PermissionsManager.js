@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { apiGet, apiPut } from '../api';
 
-export default function PermissionsManager({ token }) {
+export default function PermissionsManager() {
   const [admins, setAdmins] = useState([]);
   const [selectedAdminId, setSelectedAdminId] = useState('');
   const [permissions, setPermissions] = useState({});
@@ -55,7 +55,7 @@ export default function PermissionsManager({ token }) {
 
   useEffect(() => {
     fetchAdmins();
-  }, [token]);
+  }, []);
 
   const fetchAdmins = async () => {
     try {

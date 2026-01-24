@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { apiGet } from '../api';
 
-export default function PreviewInbox({ token }) {
+export default function PreviewInbox() {
   const [users, setUsers] = useState([]);
   const [selectedUserId, setSelectedUserId] = useState('');
   const [previewData, setPreviewData] = useState(null);
@@ -27,7 +27,7 @@ export default function PreviewInbox({ token }) {
       }
     };
     fetchUsers();
-  }, [token]);
+  }, []);
 
   useEffect(() => {
     if (selectedUserId) {

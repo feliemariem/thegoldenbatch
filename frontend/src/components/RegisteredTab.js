@@ -3,7 +3,6 @@ import ScrollableTable from './ScrollableTable';
 import { apiGet } from '../api';
 
 export default function RegisteredTab({
-  token,
   isSuperAdmin,
   permissions,
   onStatsUpdate,
@@ -47,12 +46,12 @@ export default function RegisteredTab({
     } catch (err) {
       console.error('Failed to fetch users');
     }
-  }, [token, onStatsUpdate]);
+  }, [onStatsUpdate]);
 
   // Initial fetch
   useEffect(() => {
     fetchUsers(1, registeredSearch, registeredRsvpFilter);
-  }, [token]);
+  }, []);
 
   // Debounced search
   useEffect(() => {

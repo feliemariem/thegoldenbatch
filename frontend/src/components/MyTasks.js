@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useActionItems } from '../context/ActionItemsContext';
 import { apiGet, apiPut } from '../api';
 
-export default function MyTasks({ token }) {
+export default function MyTasks() {
   const navigate = useNavigate();
   const { notifyActionItemUpdate, updateVersion, lastUpdatedItem } = useActionItems();
   const [tasks, setTasks] = useState([]);
@@ -13,7 +13,7 @@ export default function MyTasks({ token }) {
 
   useEffect(() => {
     fetchMyTasks();
-  }, [token]);
+  }, []);
 
   // Listen for action item updates from other components (e.g., MeetingMinutes)
   useEffect(() => {

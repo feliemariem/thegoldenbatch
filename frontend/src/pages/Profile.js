@@ -7,7 +7,7 @@ import logo from '../images/lasalle.jpg';
 import { apiGet, apiPut } from '../api';
 
 export default function Profile() {
-  const { user, token, logout, setUser } = useAuth();
+  const { user, logout, setUser } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
@@ -32,7 +32,7 @@ export default function Profile() {
 
   useEffect(() => {
     fetchProfile();
-  }, [token]);
+  }, [user]);
 
   const fetchProfile = async () => {
     try {

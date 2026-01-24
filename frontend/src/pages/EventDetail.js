@@ -9,7 +9,7 @@ import { apiGet, apiPost, apiDelete } from '../api';
 
 export default function EventDetail() {
   const { id } = useParams();
-  const { user, token } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const isAdmin = user?.isAdmin;
 
@@ -19,7 +19,7 @@ export default function EventDetail() {
 
   useEffect(() => {
     fetchEvent();
-  }, [id, token]);
+  }, [id, user]);
 
   const fetchEvent = async () => {
     try {

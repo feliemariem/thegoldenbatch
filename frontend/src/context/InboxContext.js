@@ -5,11 +5,11 @@ import { apiGet } from '../api';
 const InboxContext = createContext(null);
 
 export function InboxProvider({ children }) {
-  const { token } = useAuth();
+  const { user } = useAuth();
   const [unreadCount, setUnreadCount] = useState(0);
 
   const fetchUnreadCount = useCallback(async () => {
-    if (!token) {
+    if (!user) {
       setUnreadCount(0);
       return;
     }
@@ -39,7 +39,7 @@ export function InboxProvider({ children }) {
     } catch (err) {
       console.error('Failed to fetch unread count');
     }
-  }, [token]);
+  }, [user]);
 
   // Fetch unread count on mount and when token changes
   useEffect(() => {

@@ -6,7 +6,6 @@ import { apiGet, apiPut } from '../api';
 const MASTER_LIST_PAGE_SIZE = 45;
 
 export default function MasterListTab({
-  token,
   isSuperAdmin,
   permissions,
   onShowAdminRoleError,
@@ -63,7 +62,7 @@ export default function MasterListTab({
     } catch (err) {
       console.error('Failed to fetch master list');
     }
-  }, [token, masterListFilter, masterListPage, masterListStatusFilter, masterListPaymentFilter, masterListSearch]);
+  }, [masterListFilter, masterListPage, masterListStatusFilter, masterListPaymentFilter, masterListSearch]);
 
   // Initial fetch
   useEffect(() => {

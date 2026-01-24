@@ -10,7 +10,7 @@ import '../styles/profileNew.css';
 import { apiGet, apiPut, apiUpload, apiDelete } from '../api';
 
 export default function ProfileNew() {
-  const { user, token } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -75,7 +75,7 @@ export default function ProfileNew() {
     fetchProfile();
     fetchMyEvents();
     checkSystemAdmin();
-  }, [token]);
+  }, [user]);
 
   // Calculate days remaining until the reunion (Dec 16, 2028)
   const getDaysUntilReunion = () => {
@@ -406,7 +406,7 @@ export default function ProfileNew() {
           )}
 
           {/* My Tasks Section - Only shows for admins */}
-          {user?.isAdmin && <MyTasks token={token} />}
+          {user?.isAdmin && <MyTasks />}
 
           <div className="profile-grid">
             {/* Left Column */}

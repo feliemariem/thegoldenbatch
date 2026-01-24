@@ -8,7 +8,7 @@ import '../styles/inbox.css';
 import { apiGet, apiPost } from '../api';
 
 export default function Inbox() {
-  const { user, token } = useAuth();
+  const { user } = useAuth();
   const { decrementUnreadCount } = useInbox();
   const [announcements, setAnnouncements] = useState([]);
   const [messages, setMessages] = useState([]);
@@ -31,7 +31,7 @@ export default function Inbox() {
     fetchInbox();
     fetchMessages();
     fetchSentMessages();
-  }, [token]);
+  }, [user]);
 
   const fetchInbox = async () => {
     try {

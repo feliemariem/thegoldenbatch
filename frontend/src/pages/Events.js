@@ -8,7 +8,7 @@ import '../styles/events.css';
 import { apiGet, apiPost, apiPut, apiDelete } from '../api';
 
 export default function Events() {
-  const { user, token } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const isAdmin = user?.isAdmin;
 
@@ -35,11 +35,11 @@ export default function Events() {
 
   useEffect(() => {
     fetchMainEventStats();
-  }, [token]);
+  }, [user]);
 
   useEffect(() => {
     fetchEvents();
-  }, [token, showPastEvents]);
+  }, [user, showPastEvents]);
 
   // Countdown timer for main event
   useEffect(() => {

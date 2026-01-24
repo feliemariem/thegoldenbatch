@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { apiGet, apiPost } from '../api';
 
-export default function AdminMessages({ token, onUnreadCountChange }) {
+export default function AdminMessages({ onUnreadCountChange }) {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedMessage, setSelectedMessage] = useState(null);
@@ -14,7 +14,7 @@ export default function AdminMessages({ token, onUnreadCountChange }) {
 
   useEffect(() => {
     fetchMessages();
-  }, [token]);
+  }, []);
 
   const fetchMessages = async () => {
     try {

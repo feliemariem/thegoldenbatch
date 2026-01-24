@@ -4,7 +4,7 @@ import { useTheme } from '../context/ThemeContext';
 import { apiGet } from '../api';
 
 export default function BirthdayWidget() {
-  const { token, user } = useAuth();
+  const { user } = useAuth();
   const { theme } = useTheme();
   const [birthdays, setBirthdays] = useState([]);
   const [isHidden, setIsHidden] = useState(false);
@@ -29,7 +29,7 @@ export default function BirthdayWidget() {
 
   // Fetch today's birthdays
   useEffect(() => {
-    if (!token) {
+    if (!user) {
       setLoading(false);
       return;
     }
@@ -49,7 +49,7 @@ export default function BirthdayWidget() {
     };
 
     fetchBirthdays();
-  }, [token]);
+  }, [user]);
 
   const handleHide = () => {
     const todayKey = getTodayKey();

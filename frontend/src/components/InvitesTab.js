@@ -3,7 +3,6 @@ import ScrollableTable from './ScrollableTable';
 import { apiGet, apiPost, apiPut, apiDelete } from '../api';
 
 export default function InvitesTab({
-  token,
   isSuperAdmin,
   permissions,
   onRefresh,
@@ -57,12 +56,12 @@ export default function InvitesTab({
     } catch (err) {
       console.error('Failed to fetch invites');
     }
-  }, [token, onStatsUpdate]);
+  }, [onStatsUpdate]);
 
   // Initial fetch
   useEffect(() => {
     fetchInvites(1, inviteSearch, statusFilter);
-  }, [token]);
+  }, []);
 
   // Debounced search
   useEffect(() => {
@@ -94,7 +93,7 @@ export default function InvitesTab({
 
   useEffect(() => {
     fetchMasterList();
-  }, [token]);
+  }, []);
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {

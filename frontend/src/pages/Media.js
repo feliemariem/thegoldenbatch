@@ -6,7 +6,7 @@ import Footer from '../components/Footer';
 import '../styles/profileNew.css';
 
 export default function Media() {
-  const { user, token } = useAuth();
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('all');
   const [albums, setAlbums] = useState([]);
   const [selectedAlbum, setSelectedAlbum] = useState(null);
