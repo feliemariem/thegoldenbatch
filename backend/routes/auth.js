@@ -12,7 +12,7 @@ const { authLimiter, registerLimiter, passwordResetLimiter } = require('../middl
 const getCookieOptions = (rememberMe = false) => ({
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production',
-  sameSite: 'lax',
+  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' for cross-domain in production
   maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : undefined // 30 days or session
 });
 
@@ -236,7 +236,7 @@ router.post('/logout', (req, res) => {
   res.clearCookie('token', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax'
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
   });
   res.json({ message: 'Logged out' });
 });
