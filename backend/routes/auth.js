@@ -8,6 +8,14 @@ const { sendPasswordResetEmail } = require('../utils/email');
 const { JWT_EXPIRY_DEFAULT, JWT_EXPIRY_REMEMBER, JWT_EXPIRY_SHORT } = require('../config/constants');
 const { authLimiter, registerLimiter, passwordResetLimiter } = require('../middleware/rateLimiter');
 
+// Cookie configuration helper
+const getCookieOptions = (rememberMe = false) => ({
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'lax',
+  maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : undefined // 30 days or session
+});
+
 // Helper functions for text normalization
 const toTitleCase = (str) => {
   if (!str) return str;
@@ -117,9 +125,9 @@ router.post('/register', registerLimiter, async (req, res) => {
       { expiresIn: JWT_EXPIRY_DEFAULT }
     );
 
+    res.cookie('token', token, getCookieOptions(false));
     res.status(201).json({
       message: 'Registration successful',
-      token,
       user: {
         id: user.id,
         email: user.email,
@@ -173,8 +181,8 @@ router.post('/login', authLimiter, async (req, res) => {
         { expiresIn: tokenExpiry }
       );
 
+      res.cookie('token', token, getCookieOptions(rememberMe));
       return res.json({
-        token,
         user: {
           id: user.id,
           email: user.email,
@@ -205,8 +213,8 @@ router.post('/login', authLimiter, async (req, res) => {
         { expiresIn: tokenExpiry }
       );
 
+      res.cookie('token', token, getCookieOptions(rememberMe));
       return res.json({
-        token,
         user: {
           id: admin.id,
           email: admin.email,
@@ -221,6 +229,16 @@ router.post('/login', authLimiter, async (req, res) => {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
   }
+});
+
+// Logout - Clear auth cookie
+router.post('/logout', (req, res) => {
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax'
+  });
+  res.json({ message: 'Logged out' });
 });
 
 // Forgot Password - Request reset link

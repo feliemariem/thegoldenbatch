@@ -7,7 +7,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import SystemAdminProfile from '../components/SystemAdminProfile';
 import '../styles/profileNew.css';
-import { API_URL } from '../config';
+import { apiGet, apiPut, apiUpload, apiDelete } from '../api';
 
 export default function ProfileNew() {
   const { user, token } = useAuth();
@@ -89,9 +89,7 @@ export default function ProfileNew() {
   // Check if current user is System Admin (admin id=1)
   const checkSystemAdmin = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/permissions/me`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await apiGet('/api/permissions/me');
       if (res.ok) {
         const data = await res.json();
         // System admin is admin id=1
@@ -130,9 +128,7 @@ export default function ProfileNew() {
 
   const fetchMyEvents = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/events/my-rsvps`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await apiGet('/api/events/my-rsvps');
       if (res.ok) {
         const data = await res.json();
         setMyEvents(data);
@@ -144,9 +140,7 @@ export default function ProfileNew() {
 
   const fetchProfile = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/me`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await apiGet('/api/me');
       const data = await res.json();
       setProfile(data);
       setForm({
@@ -178,14 +172,7 @@ export default function ProfileNew() {
     setMessage('');
 
     try {
-      const res = await fetch(`${API_URL}/api/me`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(form),
-      });
+      const res = await apiPut('/api/me', form);
 
       if (res.ok) {
         const data = await res.json();
@@ -206,14 +193,7 @@ export default function ProfileNew() {
     setMessage('');
 
     try {
-      const res = await fetch(`${API_URL}/api/me/rsvp`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ status }),
-      });
+      const res = await apiPut('/api/me/rsvp', { status });
 
       if (res.ok) {
         setProfile({ ...profile, rsvp_status: status });
@@ -250,13 +230,7 @@ export default function ProfileNew() {
     formData.append('photo', file);
 
     try {
-      const res = await fetch(`${API_URL}/api/me/photo`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
+      const res = await apiUpload('/api/me/photo', formData);
 
       if (res.ok) {
         const data = await res.json();
@@ -280,12 +254,7 @@ export default function ProfileNew() {
 
   const handleRemovePhoto = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/me/photo`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await apiDelete('/api/me/photo');
 
       if (res.ok) {
         setProfile({ ...profile, profile_photo: null });

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { API_URL } from '../config';
+import { apiGet, apiPost } from '../api';
 
 export default function AnnouncementComposer({ token, registeredCount = 0, goingCount = 0, maybeCount = 0, notGoingCount = 0, adminsCount = 0 }) {
   const [audience, setAudience] = useState('all');
@@ -49,9 +49,7 @@ export default function AnnouncementComposer({ token, registeredCount = 0, going
 
   const fetchHistory = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/announcements/history`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await apiGet('/api/announcements/history');
       const data = await res.json();
       setHistory(data.announcements || []);
     } catch (err) {
@@ -81,14 +79,7 @@ export default function AnnouncementComposer({ token, registeredCount = 0, going
     setResult(null);
 
     try {
-      const res = await fetch(`${API_URL}/api/announcements`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ audience, subject, message, sendEmail }),
-      });
+      const res = await apiPost('/api/announcements', { audience, subject, message, sendEmail });
 
       const data = await res.json();
 

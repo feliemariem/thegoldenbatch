@@ -13,6 +13,7 @@ const toTitleCase = (str) => {
 // Get current user's profile with RSVP, section, and payment status
 router.get('/', authenticateToken, async (req, res) => {
   try {
+    // First try users table
     const userResult = await db.query(
       `SELECT u.id, u.email, u.first_name, u.last_name, u.birthday,
               u.mobile, u.address, u.city, u.country, u.occupation, u.company,
@@ -29,30 +30,52 @@ router.get('/', authenticateToken, async (req, res) => {
       [req.user.id]
     );
 
-    if (userResult.rows.length === 0) {
-      return res.status(404).json({ error: 'User not found' });
+    if (userResult.rows.length > 0) {
+      const user = userResult.rows[0];
+
+      // Get payment total if user is linked to master_list
+      let totalPaid = 0;
+      if (user.master_list_id) {
+        const paymentResult = await db.query(
+          `SELECT COALESCE(SUM(deposit), 0) as total_paid
+           FROM ledger
+           WHERE master_list_id = $1`,
+          [user.master_list_id]
+        );
+        totalPaid = parseFloat(paymentResult.rows[0].total_paid) || 0;
+      }
+
+      return res.json({
+        ...user,
+        total_paid: totalPaid,
+        amount_due: AMOUNT_DUE,
+        is_graduate: user.section && user.section !== 'Non-Graduate',
+        isAdmin: req.user.isAdmin || false
+      });
     }
 
-    const user = userResult.rows[0];
+    // If not found in users table, check admins table
+    const adminResult = await db.query(
+      `SELECT id, email, first_name, last_name, role_title, is_super_admin
+       FROM admins
+       WHERE id = $1`,
+      [req.user.id]
+    );
 
-    // Get payment total if user is linked to master_list
-    let totalPaid = 0;
-    if (user.master_list_id) {
-      const paymentResult = await db.query(
-        `SELECT COALESCE(SUM(deposit), 0) as total_paid
-         FROM ledger
-         WHERE master_list_id = $1`,
-        [user.master_list_id]
-      );
-      totalPaid = parseFloat(paymentResult.rows[0].total_paid) || 0;
+    if (adminResult.rows.length > 0) {
+      const admin = adminResult.rows[0];
+      return res.json({
+        id: admin.id,
+        email: admin.email,
+        first_name: admin.first_name,
+        last_name: admin.last_name,
+        role_title: admin.role_title,
+        is_super_admin: admin.is_super_admin,
+        isAdmin: true
+      });
     }
 
-    res.json({
-      ...user,
-      total_paid: totalPaid,
-      amount_due: AMOUNT_DUE,
-      is_graduate: user.section && user.section !== 'Non-Graduate'
-    });
+    return res.status(404).json({ error: 'User not found' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });

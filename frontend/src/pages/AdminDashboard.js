@@ -13,7 +13,7 @@ import MeetingMinutes from '../components/MeetingMinutes';
 import AdminRoleErrorToast from "../components/AdminRoleErrorToast";
 import AdminMessages from '../components/AdminMessages';
 import Footer from '../components/Footer';
-import { API_URL } from '../config';
+import { apiGet } from '../api';
 
 export default function AdminDashboard() {
   const { token, user } = useAuth();
@@ -60,12 +60,8 @@ export default function AdminDashboard() {
     try {
       // Fetch invite stats and registered stats in parallel
       const [invitesRes, usersRes] = await Promise.all([
-        fetch(`${API_URL}/api/invites?page=1&limit=1`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        fetch(`${API_URL}/api/admin/users?page=1&limit=1`, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
+        apiGet('/api/invites?page=1&limit=1'),
+        apiGet('/api/admin/users?page=1&limit=1')
       ]);
 
       if (invitesRes.ok) {
@@ -95,9 +91,7 @@ export default function AdminDashboard() {
 
   const fetchAdminUnreadCount = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/messages/admin-inbox/unread-count`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await apiGet('/api/messages/admin-inbox/unread-count');
       if (res.ok) {
         const data = await res.json();
         setAdminUnreadCount(data.unreadCount || 0);
@@ -123,9 +117,7 @@ export default function AdminDashboard() {
 
   const fetchPermissions = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/permissions/me`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await apiGet('/api/permissions/me');
 
       if (res.ok) {
         const data = await res.json();
@@ -145,9 +137,7 @@ export default function AdminDashboard() {
 
   const fetchDashboard = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/admin/dashboard`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await apiGet('/api/admin/dashboard');
 
       if (res.status === 403) {
         navigate('/login');

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { API_URL } from '../config';
+import { apiGet, apiPost } from '../api';
 
 export default function AdminMessages({ token, onUnreadCountChange }) {
   const [messages, setMessages] = useState([]);
@@ -18,9 +18,7 @@ export default function AdminMessages({ token, onUnreadCountChange }) {
 
   const fetchMessages = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/messages/admin-inbox`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await apiGet('/api/messages/admin-inbox');
       const data = await res.json();
       setMessages(data.messages || []);
     } catch (err) {
@@ -32,10 +30,7 @@ export default function AdminMessages({ token, onUnreadCountChange }) {
 
   const markAsRead = async (id) => {
     try {
-      await fetch(`${API_URL}/api/messages/${id}/read`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await apiPost(`/api/messages/${id}/read`, {});
       setMessages(prev => prev.map(m => m.id === id ? { ...m, is_read: true } : m));
       // Notify parent to refresh unread count
       if (onUnreadCountChange) {
@@ -49,9 +44,7 @@ export default function AdminMessages({ token, onUnreadCountChange }) {
   const fetchThread = async (id) => {
     setLoadingThread(true);
     try {
-      const res = await fetch(`${API_URL}/api/messages/thread/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await apiGet(`/api/messages/thread/${id}`);
       const data = await res.json();
       setThread(data.thread || []);
     } catch (err) {
@@ -85,18 +78,11 @@ export default function AdminMessages({ token, onUnreadCountChange }) {
 
     setSending(true);
     try {
-      const res = await fetch(`${API_URL}/api/messages/reply`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          to_user_id: selectedMessage.from_user_id,
-          subject: replyForm.subject,
-          message: replyForm.message,
-          parent_id: selectedMessage.id
-        })
+      const res = await apiPost('/api/messages/reply', {
+        to_user_id: selectedMessage.from_user_id,
+        subject: replyForm.subject,
+        message: replyForm.message,
+        parent_id: selectedMessage.id
       });
 
       if (res.ok) {

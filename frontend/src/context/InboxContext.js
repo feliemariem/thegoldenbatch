@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useAuth } from './AuthContext';
-import { API_URL } from '../config';
+import { apiGet } from '../api';
 
 const InboxContext = createContext(null);
 
@@ -17,12 +17,8 @@ export function InboxProvider({ children }) {
     try {
       // Fetch both announcements and messages in parallel
       const [announcementsRes, messagesRes] = await Promise.all([
-        fetch(`${API_URL}/api/announcements/inbox`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        fetch(`${API_URL}/api/messages/user-inbox`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
+        apiGet('/api/announcements/inbox'),
+        apiGet('/api/messages/user-inbox'),
       ]);
 
       let count = 0;

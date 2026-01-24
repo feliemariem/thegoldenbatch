@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import { useAuth } from '../context/AuthContext';
 import { useActionItems } from '../context/ActionItemsContext';
-import { API_URL } from '../config';
+import { apiGet, apiPost, apiPut, apiDelete, apiUpload } from '../api';
 
 export default function MeetingMinutes({ token, canEdit = false, initialMeetingId = null, onMeetingSelected = null }) {
   const { user } = useAuth();
@@ -78,9 +78,7 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
 
   const fetchMeetings = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/meetings`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await apiGet('/api/meetings');
       const data = await res.json();
       const meetingsList = data.meetings || [];
       setMeetings(meetingsList);
@@ -115,9 +113,7 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
 
   const fetchAdmins = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/meetings/admins/list`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await apiGet('/api/meetings/admins/list');
       const data = await res.json();
       setAdmins(data.admins || []);
     } catch (err) {
@@ -127,9 +123,7 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
 
   const fetchActionItems = async (meetingId) => {
     try {
-      const res = await fetch(`${API_URL}/api/meetings/${meetingId}/action-items`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await apiGet(`/api/meetings/${meetingId}/action-items`);
       const data = await res.json();
       setActionItems(data.actionItems || []);
     } catch (err) {
@@ -165,18 +159,9 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
   const handleSaveActionItem = async () => {
     setSavingActionItem(true);
     try {
-      const url = editingActionItem
-        ? `${API_URL}/api/meetings/${selectedMeeting.id}/action-items/${editingActionItem.id}`
-        : `${API_URL}/api/meetings/${selectedMeeting.id}/action-items`;
-
-      const res = await fetch(url, {
-        method: editingActionItem ? 'PUT' : 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(actionItemForm)
-      });
+      const res = editingActionItem
+        ? await apiPut(`/api/meetings/${selectedMeeting.id}/action-items/${editingActionItem.id}`, actionItemForm)
+        : await apiPost(`/api/meetings/${selectedMeeting.id}/action-items`, actionItemForm);
 
       if (res.ok) {
         setShowActionItemModal(false);
@@ -195,13 +180,7 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
 
   const handleDeleteActionItem = async (actionItemId) => {
     try {
-      const res = await fetch(
-        `${API_URL}/api/meetings/${selectedMeeting.id}/action-items/${actionItemId}`,
-        {
-          method: 'DELETE',
-          headers: { Authorization: `Bearer ${token}` }
-        }
-      );
+      const res = await apiDelete(`/api/meetings/${selectedMeeting.id}/action-items/${actionItemId}`);
 
       if (res.ok) {
         setActionItems(actionItems.filter(ai => ai.id !== actionItemId));
@@ -308,18 +287,9 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
   const handleSave = async () => {
     setSaving(true);
     try {
-      const url = editMode 
-        ? `${API_URL}/api/meetings/${selectedMeeting.id}`
-        : `${API_URL}/api/meetings`;
-      
-      const res = await fetch(url, {
-        method: editMode ? 'PUT' : 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(form)
-      });
+      const res = editMode
+        ? await apiPut(`/api/meetings/${selectedMeeting.id}`, form)
+        : await apiPost('/api/meetings', form);
 
       if (res.ok) {
         const data = await res.json();
@@ -337,10 +307,7 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
 
   const handleDelete = async (id) => {
     try {
-      const res = await fetch(`${API_URL}/api/meetings/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await apiDelete(`/api/meetings/${id}`);
 
       if (res.ok) {
         setMeetings(meetings.filter(m => m.id !== id));
@@ -371,11 +338,7 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
     formData.append('file', file);
 
     try {
-      const res = await fetch(`${API_URL}/api/meetings/${selectedMeeting.id}/attachments`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData
-      });
+      const res = await apiUpload(`/api/meetings/${selectedMeeting.id}/attachments`, formData);
 
       if (res.ok) {
         fetchMeetings();
@@ -400,13 +363,7 @@ export default function MeetingMinutes({ token, canEdit = false, initialMeetingI
 
   const handleDeleteAttachment = async (attachmentId) => {
     try {
-      const res = await fetch(
-        `${API_URL}/api/meetings/${selectedMeeting.id}/attachments/${attachmentId}`,
-        {
-          method: 'DELETE',
-          headers: { Authorization: `Bearer ${token}` }
-        }
-      );
+      const res = await apiDelete(`/api/meetings/${selectedMeeting.id}/attachments/${attachmentId}`);
 
       if (res.ok) {
         setSelectedMeeting(prev => ({

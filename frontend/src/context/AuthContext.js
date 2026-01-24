@@ -1,98 +1,77 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { API_URL, SESSION_TIMEOUT_MS } from '../config';
+import { SESSION_TIMEOUT_MS } from '../config';
+import { apiGet, apiPostPublic } from '../api';
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
 
-  // Check session timeout on load
+  // Check session timeout and verify auth on load
   useEffect(() => {
     const lastActivity = localStorage.getItem('lastActivity');
-    if (lastActivity && token) {
+    if (lastActivity) {
       const elapsed = Date.now() - parseInt(lastActivity, 10);
       if (elapsed > SESSION_TIMEOUT_MS) {
-        // Session expired - clear everything
-        localStorage.removeItem('token');
+        // Session expired - clear local data and logout
         localStorage.removeItem('user');
         localStorage.removeItem('lastActivity');
-        setToken(null);
+        // Also clear the cookie by calling logout
+        apiPostPublic('/api/auth/logout', {}).catch(() => {});
         setLoading(false);
         return;
       }
     }
-    // Update activity timestamp
-    if (token) {
-      localStorage.setItem('lastActivity', Date.now().toString());
-    }
+
+    // Verify authentication status by calling /api/me
+    checkAuth();
   }, []);
 
-  useEffect(() => {
-    if (token) {
-      // Decode token to check if admin
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        if (payload.isAdmin) {
-          // Admin user - get stored user data or use token data
-          const storedUser = localStorage.getItem('user');
-          if (storedUser) {
-            setUser(JSON.parse(storedUser));
-          } else {
-            setUser({ id: payload.id, email: payload.email, isAdmin: true });
-          }
-          setLoading(false);
-        } else {
-          // Regular user - fetch profile
-          fetch(`${API_URL}/api/me`, {
-            headers: { Authorization: `Bearer ${token}` },
-          })
-            .then((res) => {
-              if (res.ok) return res.json();
-              throw new Error('Invalid token');
-            })
-            .then((data) => {
-              setUser(data);
-            })
-            .catch(() => {
-              localStorage.removeItem('token');
-              localStorage.removeItem('user');
-              localStorage.removeItem('lastActivity');
-              setToken(null);
-            })
-            .finally(() => setLoading(false));
-        }
-      } catch {
-        localStorage.removeItem('token');
+  const checkAuth = async () => {
+    try {
+      const res = await apiGet('/api/me');
+      if (res.ok) {
+        const data = await res.json();
+        setUser(data);
+        localStorage.setItem('user', JSON.stringify(data));
+        localStorage.setItem('lastActivity', Date.now().toString());
+      } else {
+        // Not authenticated or token expired
+        setUser(null);
         localStorage.removeItem('user');
         localStorage.removeItem('lastActivity');
-        setToken(null);
-        setLoading(false);
       }
-    } else {
+    } catch {
+      // Network error or other issue
+      setUser(null);
+      localStorage.removeItem('user');
+      localStorage.removeItem('lastActivity');
+    } finally {
       setLoading(false);
     }
-  }, [token]);
+  };
 
-  const login = (newToken, userData) => {
-    localStorage.setItem('token', newToken);
+  const login = (userData) => {
+    // Cookie is set by the server, we just store user data locally
     localStorage.setItem('user', JSON.stringify(userData));
     localStorage.setItem('lastActivity', Date.now().toString());
-    setToken(newToken);
     setUser(userData);
   };
 
-  const logout = () => {
-    localStorage.removeItem('token');
+  const logout = async () => {
+    try {
+      await apiPostPublic('/api/auth/logout', {});
+    } catch {
+      // Ignore errors, clear local state anyway
+    }
     localStorage.removeItem('user');
     localStorage.removeItem('lastActivity');
-    setToken(null);
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, logout, setUser }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, setUser, checkAuth }}>
       {children}
     </AuthContext.Provider>
   );

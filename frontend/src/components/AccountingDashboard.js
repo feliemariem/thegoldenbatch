@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import ScrollableTable from './ScrollableTable';
-import { API_URL } from '../config';
+import { api, apiGet, apiPost, apiPut, apiDelete, apiUpload } from '../api';
 
 export default function AccountingDashboard({ token, canEdit = true, canExport = true, onPaymentLinked }) {
   const [transactions, setTransactions] = useState([]);
@@ -64,9 +64,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
       if (search.trim()) params.append('search', search.trim());
       if (type !== 'all') params.append('type', type);
 
-      const res = await fetch(`${API_URL}/api/ledger?${params}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await apiGet(`/api/ledger?${params}`);
       const data = await res.json();
       setTransactions(data.transactions || []);
       setBalance(data.balance || 0);
@@ -128,9 +126,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
 
   const fetchMasterListOptions = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/ledger/master-list-options`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await apiGet('/api/ledger/master-list-options');
       const data = await res.json();
       setMasterListOptions(data || []);
     } catch (err) {
@@ -141,7 +137,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
 
   const fetchExistingNames = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/ledger/donors`);
+      const res = await api('/api/ledger/donors');
       const data = await res.json();
       setExistingNames(data.donors || []);
     } catch (err) {
@@ -183,18 +179,9 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
     };
 
     try {
-      const url = editingId 
-        ? `${API_URL}/api/ledger/${editingId}`
-        : `${API_URL}/api/ledger`;
-      
-      const res = await fetch(url, {
-        method: editingId ? 'PUT' : 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(payload)
-      });
+      const res = editingId
+        ? await apiPut(`/api/ledger/${editingId}`, payload)
+        : await apiPost('/api/ledger', payload);
 
       if (res.ok) {
         setResult({ success: true, message: editingId ? 'Transaction updated!' : 'Transaction added!' });
@@ -238,10 +225,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
     if (!window.confirm('Delete this transaction?')) return;
 
     try {
-      const res = await fetch(`${API_URL}/api/ledger/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await apiDelete(`/api/ledger/${id}`);
 
       if (res.ok) {
         refreshTransactions();
@@ -254,14 +238,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
   // Link/Unlink handlers
   const handleLink = async (transactionId, masterListId) => {
     try {
-      const res = await fetch(`${API_URL}/api/ledger/${transactionId}/link`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({ master_list_id: masterListId })
-      });
+      const res = await apiPut(`/api/ledger/${transactionId}/link`, { master_list_id: masterListId });
 
       if (res.ok) {
         refreshTransactions();
@@ -276,10 +253,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
 
   const handleUnlink = async (transactionId) => {
     try {
-      const res = await fetch(`${API_URL}/api/ledger/${transactionId}/unlink`, {
-        method: 'PUT',
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await apiPut(`/api/ledger/${transactionId}/unlink`, {});
 
       if (res.ok) {
         refreshTransactions();
@@ -303,11 +277,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
     formData.append('receipt', file);
 
     try {
-      const res = await fetch(`${API_URL}/api/ledger/${transactionId}/receipt`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData
-      });
+      const res = await apiUpload(`/api/ledger/${transactionId}/receipt`, formData);
 
       if (res.ok) {
         refreshTransactions();
@@ -328,10 +298,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
     if (!window.confirm('Delete this receipt?')) return;
 
     try {
-      const res = await fetch(`${API_URL}/api/ledger/${transactionId}/receipt`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await apiDelete(`/api/ledger/${transactionId}/receipt`);
 
       if (res.ok) {
         setViewingReceipt(null);
@@ -372,9 +339,7 @@ export default function AccountingDashboard({ token, canEdit = true, canExport =
   const exportToCSV = async () => {
     try {
       // Fetch all transactions for export (no pagination)
-      const res = await fetch(`${API_URL}/api/ledger?limit=10000`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await apiGet('/api/ledger?limit=10000');
       const data = await res.json();
       const allTransactions = data.transactions || [];
 

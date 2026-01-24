@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import Footer from '../components/Footer';
 import logo from '../images/lasalle.jpg';
-import { API_URL } from '../config';
+import { apiGet, apiPut } from '../api';
 
 export default function Profile() {
   const { user, token, logout, setUser } = useAuth();
@@ -36,9 +36,7 @@ export default function Profile() {
 
   const fetchProfile = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/me`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await apiGet('/api/me');
       const data = await res.json();
       setProfile(data);
       setForm({
@@ -68,14 +66,7 @@ export default function Profile() {
     setMessage('');
 
     try {
-      const res = await fetch(`${API_URL}/api/me`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(form),
-      });
+      const res = await apiPut('/api/me', form);
 
       if (res.ok) {
         const data = await res.json();
@@ -95,14 +86,7 @@ export default function Profile() {
     setMessage('');
 
     try {
-      const res = await fetch(`${API_URL}/api/me/rsvp`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ status }),
-      });
+      const res = await apiPut('/api/me/rsvp', { status });
 
       if (res.ok) {
         setProfile({ ...profile, rsvp_status: status });

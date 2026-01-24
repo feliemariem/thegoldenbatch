@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { API_URL } from '../config';
+import { apiGet } from '../api';
 
 export default function PreviewInbox({ token }) {
   const [users, setUsers] = useState([]);
@@ -13,9 +13,7 @@ export default function PreviewInbox({ token }) {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await fetch(`${API_URL}/api/admin/users?limit=1000`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await apiGet('/api/admin/users?limit=1000');
         const data = await res.json();
         // Sort by last name, then first name
         const sorted = (data.users || []).sort((a, b) => {
@@ -45,9 +43,7 @@ export default function PreviewInbox({ token }) {
     setSelectedMessage(null);
 
     try {
-      const res = await fetch(`${API_URL}/api/announcements/preview-inbox/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await apiGet(`/api/announcements/preview-inbox/${userId}`);
 
       if (!res.ok) {
         throw new Error('Failed to fetch preview');

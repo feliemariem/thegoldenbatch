@@ -5,7 +5,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import '../styles/profileNew.css';
 import '../styles/events.css';
-import { API_URL } from '../config';
+import { apiGet, apiPost, apiDelete } from '../api';
 
 export default function EventDetail() {
   const { id } = useParams();
@@ -23,9 +23,7 @@ export default function EventDetail() {
 
   const fetchEvent = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/events/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await apiGet(`/api/events/${id}`);
       if (res.ok) {
         const data = await res.json();
         setEvent(data);
@@ -45,19 +43,9 @@ export default function EventDetail() {
   const handleRsvp = async (status) => {
     try {
       if (event.user_rsvp === status) {
-        await fetch(`${API_URL}/api/events/${id}/rsvp`, {
-          method: 'DELETE',
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        await apiDelete(`/api/events/${id}/rsvp`);
       } else {
-        await fetch(`${API_URL}/api/events/${id}/rsvp`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
-          },
-          body: JSON.stringify({ status })
-        });
+        await apiPost(`/api/events/${id}/rsvp`, { status });
       }
       fetchEvent();
     } catch (err) {
@@ -69,10 +57,7 @@ export default function EventDetail() {
     if (!window.confirm('Delete this event? All RSVPs will be lost.')) return;
 
     try {
-      await fetch(`${API_URL}/api/events/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await apiDelete(`/api/events/${id}`);
       navigate('/events');
     } catch (err) {
       console.error('Failed to delete event');

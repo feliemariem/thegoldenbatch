@@ -33,13 +33,13 @@ import './styles/footer.css';
 
 // Protected route wrapper
 function ProtectedRoute({ children }) {
-  const { token, loading } = useAuth();
+  const { user, loading } = useAuth();
 
   if (loading) {
     return <div className="container"><div className="card"><p>Loading...</p></div></div>;
   }
 
-  if (!token) {
+  if (!user) {
     return <Navigate to="/login" replace />;
   }
 
@@ -60,7 +60,7 @@ function AdminOnly({ children }) {
 // Conditional ThemeToggle - only shown on public pages (not landing, not logged-in)
 function ConditionalThemeToggle() {
   const location = useLocation();
-  const { token } = useAuth();
+  const { user } = useAuth();
 
   // Hide on landing page (has its own toggle)
   if (location.pathname === '/') {
@@ -68,7 +68,7 @@ function ConditionalThemeToggle() {
   }
 
   // Hide when logged in (Navbar has its own toggle)
-  if (token) {
+  if (user) {
     return null;
   }
 
@@ -79,10 +79,10 @@ function ConditionalThemeToggle() {
 // Conditional BirthdayWidget - hidden on landing page and public routes
 function ConditionalBirthdayWidget() {
   const location = useLocation();
-  const { token } = useAuth();
+  const { user } = useAuth();
 
   // Hide on landing page and when not logged in
-  if (location.pathname === '/' || !token) {
+  if (location.pathname === '/' || !user) {
     return null;
   }
 
@@ -90,13 +90,13 @@ function ConditionalBirthdayWidget() {
 }
 
 function AppRoutes() {
-  const { token } = useAuth();
+  const { user } = useAuth();
 
   return (
     <Routes>
       <Route path="/" element={<Landing />} />
       <Route path="/register/:token" element={<Register />} />
-      <Route path="/login" element={token ? <Navigate to="/profile" replace /> : <Login />} />
+      <Route path="/login" element={user ? <Navigate to="/profile" replace /> : <Login />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password/:token" element={<ResetPassword />} />
       <Route

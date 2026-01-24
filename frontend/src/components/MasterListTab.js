@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import ScrollableTable from './ScrollableTable';
-import { API_URL, AMOUNT_DUE } from '../config';
+import { AMOUNT_DUE } from '../config';
+import { apiGet, apiPut } from '../api';
 
 const MASTER_LIST_PAGE_SIZE = 45;
 
@@ -49,10 +50,7 @@ export default function MasterListTab({
       if (paymentStatus && paymentStatus !== 'all') params.append('paymentStatus', paymentStatus);
       if (search && search.trim()) params.append('search', search.trim());
 
-      const url = `${API_URL}/api/master-list?${params.toString()}`;
-      const res = await fetch(url, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await apiGet(`/api/master-list?${params.toString()}`);
       const data = await res.json();
       setMasterList(data.entries || []);
       setMasterListStats(data.stats);
@@ -122,14 +120,7 @@ export default function MasterListTab({
 
   const handleUpdateEntry = async (id, updates) => {
     try {
-      const res = await fetch(`${API_URL}/api/master-list/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(updates),
-      });
+      const res = await apiPut(`/api/master-list/${id}`, updates);
 
       if (res.ok) {
         fetchMasterList({ page: masterListPage });

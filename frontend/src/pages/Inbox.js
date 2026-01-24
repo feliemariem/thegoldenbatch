@@ -5,7 +5,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import '../styles/profileNew.css';
 import '../styles/inbox.css';
-import { API_URL } from '../config';
+import { apiGet, apiPost } from '../api';
 
 export default function Inbox() {
   const { user, token } = useAuth();
@@ -35,9 +35,7 @@ export default function Inbox() {
 
   const fetchInbox = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/announcements/inbox`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await apiGet('/api/announcements/inbox');
       const data = await res.json();
       setAnnouncements(data.announcements || []);
     } catch (err) {
@@ -49,9 +47,7 @@ export default function Inbox() {
 
   const fetchMessages = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/messages/user-inbox`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await apiGet('/api/messages/user-inbox');
       const data = await res.json();
       setMessages(data.messages || []);
     } catch (err) {
@@ -61,9 +57,7 @@ export default function Inbox() {
 
   const fetchSentMessages = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/messages/user-sent`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await apiGet('/api/messages/user-sent');
       const data = await res.json();
       setSentMessages(data.messages || []);
     } catch (err) {
@@ -74,9 +68,7 @@ export default function Inbox() {
   const fetchThread = async (id) => {
     setLoadingThread(true);
     try {
-      const res = await fetch(`${API_URL}/api/messages/thread/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await apiGet(`/api/messages/thread/${id}`);
       const data = await res.json();
       setThread(data.thread || []);
     } catch (err) {
@@ -89,10 +81,7 @@ export default function Inbox() {
 
   const markAsRead = async (id) => {
     try {
-      await fetch(`${API_URL}/api/announcements/${id}/read`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await apiPost(`/api/announcements/${id}/read`, {});
 
       // Update local state
       setAnnouncements(prev =>
@@ -107,10 +96,7 @@ export default function Inbox() {
 
   const markMessageAsRead = async (id) => {
     try {
-      await fetch(`${API_URL}/api/messages/${id}/read`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await apiPost(`/api/messages/${id}/read`, {});
 
       setMessages(prev =>
         prev.map(m => m.id === id ? { ...m, is_read: true } : m)
@@ -148,17 +134,10 @@ export default function Inbox() {
     setSending(true);
     setSendError(null);
     try {
-      const res = await fetch(`${API_URL}/api/messages/to-committee`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          subject: composeForm.subject,
-          message: composeForm.message,
-          parent_id: replyToMessageId || null // Link to original message if replying
-        })
+      const res = await apiPost('/api/messages/to-committee', {
+        subject: composeForm.subject,
+        message: composeForm.message,
+        parent_id: replyToMessageId || null // Link to original message if replying
       });
 
       if (res.ok) {

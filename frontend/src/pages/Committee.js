@@ -5,7 +5,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import '../styles/profileNew.css';
 import '../styles/committee.css';
-import { API_URL } from '../config';
+import { apiGet, apiPost } from '../api';
 
 // Role descriptions for additional volunteer positions
 const VOLUNTEER_ROLES = [
@@ -102,12 +102,8 @@ export default function Committee() {
     try {
       // Fetch committee members and user interests in parallel
       const [membersRes, interestsRes] = await Promise.all([
-        fetch(`${API_URL}/api/committee`, {
-          headers: { Authorization: `Bearer ${token}` }
-        }),
-        fetch(`${API_URL}/api/committee/interests`, {
-          headers: { Authorization: `Bearer ${token}` }
-        })
+        apiGet('/api/committee'),
+        apiGet('/api/committee/interests')
       ]);
 
       if (membersRes.ok) {
@@ -136,14 +132,7 @@ export default function Committee() {
 
     setSavingInterest(role);
     try {
-      const res = await fetch(`${API_URL}/api/committee/interests`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({ role })
-      });
+      const res = await apiPost('/api/committee/interests', { role });
 
       if (res.ok) {
         setUserInterests([...userInterests, role]);

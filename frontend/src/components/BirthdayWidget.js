@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import { API_URL } from '../config';
+import { apiGet } from '../api';
 
 export default function BirthdayWidget() {
   const { token, user } = useAuth();
@@ -36,11 +36,7 @@ export default function BirthdayWidget() {
 
     const fetchBirthdays = async () => {
       try {
-        const response = await fetch(`${API_URL}/api/me/birthdays/today`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await apiGet('/api/me/birthdays/today');
         if (response.ok) {
           const data = await response.json();
           setBirthdays(data);

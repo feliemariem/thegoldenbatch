@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import Footer from '../components/Footer';
 import logo from '../images/lasalle.jpg';
-import { API_URL } from '../config';
+import { apiPostPublic } from '../api';
 
 export default function ForgotPassword() {
   const { theme, toggleTheme } = useTheme();
@@ -18,11 +18,7 @@ export default function ForgotPassword() {
     setSubmitting(true);
     
     try {
-      const res = await fetch(`${API_URL}/api/auth/forgot-password`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
+      const res = await apiPostPublic('/api/auth/forgot-password', { email });
 
       const data = await res.json();
 

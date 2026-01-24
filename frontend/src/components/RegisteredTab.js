@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import ScrollableTable from './ScrollableTable';
-import { API_URL } from '../config';
+import { apiGet } from '../api';
 
 export default function RegisteredTab({
   token,
@@ -31,9 +31,7 @@ export default function RegisteredTab({
       if (search.trim()) params.append('search', search.trim());
       if (rsvp !== 'all') params.append('rsvp', rsvp);
 
-      const res = await fetch(`${API_URL}/api/admin/users?${params}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await apiGet(`/api/admin/users?${params}`);
       const data = await res.json();
 
       setUsers(data.users || []);
@@ -99,9 +97,7 @@ export default function RegisteredTab({
   const exportToCSV = async () => {
     try {
       // Fetch all users for export (no pagination)
-      const res = await fetch(`${API_URL}/api/admin/users?limit=10000`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await apiGet('/api/admin/users?limit=10000');
       const data = await res.json();
       const allUsers = data.users || [];
 

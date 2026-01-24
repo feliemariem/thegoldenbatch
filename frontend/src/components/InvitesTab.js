@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import ScrollableTable from './ScrollableTable';
-import { API_URL } from '../config';
+import { apiGet, apiPost, apiPut, apiDelete } from '../api';
 
 export default function InvitesTab({
   token,
@@ -41,9 +41,7 @@ export default function InvitesTab({
       if (search.trim()) params.append('search', search.trim());
       if (status !== 'all') params.append('status', status);
 
-      const res = await fetch(`${API_URL}/api/invites?${params}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await apiGet(`/api/invites?${params}`);
       const data = await res.json();
 
       setInvites(data.invites || []);
@@ -86,9 +84,7 @@ export default function InvitesTab({
   // Fetch master list for linking dropdown
   const fetchMasterList = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/master-list?limit=500`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await apiGet('/api/master-list?limit=500');
       const data = await res.json();
       setMasterList(data.entries || []);
     } catch (err) {
@@ -138,14 +134,7 @@ export default function InvitesTab({
     setInviteResult(null);
 
     try {
-      const res = await fetch(`${API_URL}/api/invites`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(inviteForm),
-      });
+      const res = await apiPost('/api/invites', inviteForm);
 
       const data = await res.json();
 
@@ -165,14 +154,7 @@ export default function InvitesTab({
 
   const handleUpdateInvite = async (id, updates) => {
     try {
-      const res = await fetch(`${API_URL}/api/invites/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(updates),
-      });
+      const res = await apiPut(`/api/invites/${id}`, updates);
 
       if (res.ok) {
         refreshInvites();
@@ -188,10 +170,7 @@ export default function InvitesTab({
       message: 'Delete this invite? This cannot be undone.',
       onConfirm: async () => {
         try {
-          await fetch(`${API_URL}/api/invites/${id}`, {
-            method: 'DELETE',
-            headers: { Authorization: `Bearer ${token}` },
-          });
+          await apiDelete(`/api/invites/${id}`);
           refreshInvites();
         } catch (err) {
           console.error('Failed to delete invite');
@@ -233,14 +212,7 @@ export default function InvitesTab({
         }
       }
 
-      const res = await fetch(`${API_URL}/api/invites/bulk`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ invites: invitesToUpload }),
-      });
+      const res = await apiPost('/api/invites/bulk', { invites: invitesToUpload });
 
       const data = await res.json();
       setUploadResult(data);
@@ -257,14 +229,7 @@ export default function InvitesTab({
     if (!masterListId) return;
 
     try {
-      const res = await fetch(`${API_URL}/api/invites/${inviteId}/link`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ master_list_id: masterListId }),
-      });
+      const res = await apiPut(`/api/invites/${inviteId}/link`, { master_list_id: masterListId });
 
       if (res.ok) {
         refreshInvites();
@@ -280,13 +245,7 @@ export default function InvitesTab({
       message: 'Unlink from master list?',
       onConfirm: async () => {
         try {
-          const res = await fetch(`${API_URL}/api/invites/${inviteId}/unlink`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-          });
+          const res = await apiPut(`/api/invites/${inviteId}/unlink`, {});
 
           if (res.ok) {
             refreshInvites();
@@ -302,9 +261,7 @@ export default function InvitesTab({
   const exportInvitesCSV = async () => {
     try {
       // Fetch all invites for export (no pagination)
-      const res = await fetch(`${API_URL}/api/invites?limit=10000`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await apiGet('/api/invites?limit=10000');
       const data = await res.json();
       const allInvites = data.invites || [];
 

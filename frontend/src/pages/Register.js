@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import Footer from '../components/Footer';
 import logo from '../images/lasalle.jpg';
-import { API_URL } from '../config';
+import { api, apiPostPublic } from '../api';
 
 export default function Register() {
   const { token: inviteToken } = useParams();
@@ -37,7 +37,7 @@ export default function Register() {
 
   useEffect(() => {
     // Validate invite token
-    fetch(`${API_URL}/api/invites/${inviteToken}/validate`)
+    api(`/api/invites/${inviteToken}/validate`)
       .then((res) => res.json())
       .then((data) => {
         if (data.valid) {
@@ -95,13 +95,9 @@ export default function Register() {
     setSubmitting(true);
 
     try {
-      const res = await fetch(`${API_URL}/api/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          invite_token: inviteToken,
-          ...form,
-        }),
+      const res = await apiPostPublic('/api/auth/register', {
+        invite_token: inviteToken,
+        ...form,
       });
 
       const data = await res.json();
@@ -109,7 +105,7 @@ export default function Register() {
       if (!res.ok) {
         throw new Error(data.error || 'Registration failed');
       }
-      login(data.token, data.user);
+      login(data.user);
       navigate('/profile');
     } catch (err) {
       setError(err.message);

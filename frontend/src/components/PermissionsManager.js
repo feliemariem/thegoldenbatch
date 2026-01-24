@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { API_URL } from '../config';
+import { apiGet, apiPut } from '../api';
 
 export default function PermissionsManager({ token }) {
   const [admins, setAdmins] = useState([]);
@@ -59,9 +59,7 @@ export default function PermissionsManager({ token }) {
 
   const fetchAdmins = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/permissions/admins`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await apiGet('/api/permissions/admins');
       const data = await res.json();
 
       // Ensure adminList is always an array
@@ -131,19 +129,12 @@ export default function PermissionsManager({ token }) {
     setResult(null);
 
     try {
-      const res = await fetch(`${API_URL}/api/permissions/admins/${selectedAdminId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          permissions,
-          is_super_admin: isSuperAdmin,
-          role_title: roleTitle,
-          sub_committees: subCommittees,
-          is_core_leader: isCoreLeader
-        })
+      const res = await apiPut(`/api/permissions/admins/${selectedAdminId}`, {
+        permissions,
+        is_super_admin: isSuperAdmin,
+        role_title: roleTitle,
+        sub_committees: subCommittees,
+        is_core_leader: isCoreLeader
       });
 
       if (res.ok) {

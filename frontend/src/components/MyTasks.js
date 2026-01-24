@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useActionItems } from '../context/ActionItemsContext';
-import { API_URL } from '../config';
+import { apiGet, apiPut } from '../api';
 
 export default function MyTasks({ token }) {
   const navigate = useNavigate();
@@ -31,9 +31,7 @@ export default function MyTasks({ token }) {
 
   const fetchMyTasks = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/action-items/my-tasks`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await apiGet('/api/action-items/my-tasks');
       if (res.ok) {
         const data = await res.json();
         setTasks(data.tasks || []);
@@ -48,14 +46,7 @@ export default function MyTasks({ token }) {
   const handleStatusChange = async (taskId, newStatus) => {
     setUpdatingId(taskId);
     try {
-      const res = await fetch(`${API_URL}/api/action-items/${taskId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({ status: newStatus })
-      });
+      const res = await apiPut(`/api/action-items/${taskId}`, { status: newStatus });
 
       if (res.ok) {
         setTasks(tasks.map(task =>

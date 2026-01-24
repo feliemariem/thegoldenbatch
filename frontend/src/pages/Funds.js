@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import '../styles/profileNew.css';
-import { API_URL } from '../config';
+import { api } from '../api';
 
 export default function Funds() {
   const { user } = useAuth();
@@ -18,7 +18,7 @@ export default function Funds() {
 
   const fetchBalance = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/ledger/balance`);
+      const res = await api('/api/ledger/balance');
       const data = await res.json();
       setBalance(data.balance || 0);
       setTotalDeposits(data.totalDeposits || 0);
@@ -33,7 +33,7 @@ export default function Funds() {
 
   const fetchDonors = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/ledger/donors`);
+      const res = await api('/api/ledger/donors');
       const data = await res.json();
       setDonors(data.donors || []);
     } catch (err) {
