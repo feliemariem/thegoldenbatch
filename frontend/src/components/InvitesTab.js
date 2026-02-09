@@ -369,9 +369,13 @@ export default function InvitesTab({
                 <p>{uploadResult.error}</p>
               ) : (
                 <>
-                  <p>{uploadResult.success?.length || 0} invites created</p>
+                  <p>
+                    {uploadResult.success?.length || 0} invite{uploadResult.success?.length === 1 ? '' : 's'} created
+                  </p>
                   {uploadResult.duplicates?.length > 0 && (
-                    <p>{uploadResult.duplicates.length} duplicates skipped</p>
+                    <p>
+                      {uploadResult.duplicates.length} duplicate{uploadResult.duplicates.length === 1 ? '' : 's'} skipped
+                    </p>
                   )}
                 </>
               )}
@@ -424,194 +428,194 @@ export default function InvitesTab({
 
         {invites.length > 0 ? (
           <>
-          <ScrollableTable stickyHeader={true}>
-            <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Status</th>
-                  {(isSuperAdmin || permissions?.invites_link) && <th>Link to Master List</th>}
-                  <th>Registration Link</th>
-                  {(isSuperAdmin || permissions?.invites_add) && <th>Actions</th>}
-                </tr>
-              </thead>
-              <tbody>
-                {invites.map((invite) => (
-                  <tr key={invite.id}>
-                    {editingInvite === invite.id ? (
-                      <>
-                        <td>
-                          <div style={{ display: 'flex', gap: '4px' }}>
-                            <input
-                              type="text"
-                              defaultValue={invite.first_name}
-                              id={`edit-invite-firstname-${invite.id}`}
-                              style={{ width: '80px', padding: '4px 8px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px', color: '#fff' }}
-                              placeholder="First"
-                            />
-                            <input
-                              type="text"
-                              defaultValue={invite.last_name}
-                              id={`edit-invite-lastname-${invite.id}`}
-                              style={{ width: '80px', padding: '4px 8px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px', color: '#fff' }}
-                              placeholder="Last"
-                            />
-                          </div>
-                        </td>
-                        <td>
-                          <input
-                            type="email"
-                            defaultValue={invite.email}
-                            id={`edit-invite-email-${invite.id}`}
-                            style={{ width: '100%', padding: '4px 8px', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '4px', color: '#666', cursor: 'not-allowed' }}
-                            readOnly
-                            title="Email cannot be changed after invite is created"
-                          />
-                        </td>
-                        <td>
-                          <span className={`rsvp-badge ${invite.used ? 'going' : 'pending'}`}>
-                            {invite.used ? 'Registered"' : 'Pending'}
-                          </span>
-                        </td>
-                        {(isSuperAdmin || permissions?.invites_link) && <td>-</td>}
-                        <td>-</td>
-                        <td>
-                          <div style={{ display: 'flex', gap: '8px' }}>
-                            <button
-                              onClick={() => {
-                                handleUpdateInvite(invite.id, {
-                                  first_name: document.getElementById(`edit-invite-firstname-${invite.id}`).value,
-                                  last_name: document.getElementById(`edit-invite-lastname-${invite.id}`).value,
-                                  email: document.getElementById(`edit-invite-email-${invite.id}`).value,
-                                });
-                              }}
-                              className="btn-link"
-                            >
-                              Save
-                            </button>
-                            <button onClick={() => setEditingInvite(null)} className="btn-link">
-                              Cancel
-                            </button>
-                          </div>
-                        </td>
-                      </>
-                    ) : (
-                      <>
-                        <td style={{ whiteSpace: 'nowrap' }}>{invite.first_name} {invite.last_name}</td>
-                        <td>{invite.email}</td>
-                        <td>
-                          <span style={{ display: 'flex', alignItems: 'center', gap: '8px', whiteSpace: 'nowrap' }}>
-                            <span className={`rsvp-badge ${invite.used ? 'going' : 'pending'}`} style={{ minWidth: '120px', textAlign: 'center' }}>
-                              {invite.used ? 'Registered' : 'Pending'}
-                            </span>
-                            {invite.email_sent && <span>✉️</span>}
-                          </span>
-                        </td>
-                        {(isSuperAdmin || permissions?.invites_link) && (
-                          <td style={{ minWidth: '200px' }}>
-                            {invite.master_list_id ? (
-                              <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <span className="linked-name">
-                                  {invite.ml_last_name}, {invite.ml_first_name}
-                                </span>
-                                <button
-                                  onClick={() => handleUnlinkFromMasterList(invite.id)}
-                                  className="btn-link"
-                                  style={{ fontSize: '0.75rem', color: '#666' }}
-                                  title="Unlink"
-                                >
-                                  undo
-                                </button>
-                              </span>
-                            ) : (
-                              <select
-                                onChange={(e) => handleLinkToMasterList(invite.id, e.target.value)}
-                                defaultValue=""
-                                style={{ fontSize: '0.85rem', padding: '4px 8px' }}
-                              >
-                                <option value="">-- Select --</option>
-                                {masterList
-                                  .filter(m => !m.email && !m.in_memoriam)
-                                  .sort((a, b) => a.last_name.localeCompare(b.last_name))
-                                  .map(m => (
-                                    <option key={m.id} value={m.id}>
-                                      {m.last_name}, {m.first_name}
-                                    </option>
-                                  ))
-                                }
-                              </select>
-                            )}
+            <ScrollableTable stickyHeader={true}>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    {(isSuperAdmin || permissions?.invites_link) && <th>Link to Master List</th>}
+                    <th>Registration Link</th>
+                    {(isSuperAdmin || permissions?.invites_add) && <th>Actions</th>}
+                  </tr>
+                </thead>
+                <tbody>
+                  {invites.map((invite) => (
+                    <tr key={invite.id}>
+                      {editingInvite === invite.id ? (
+                        <>
+                          <td>
+                            <div style={{ display: 'flex', gap: '4px' }}>
+                              <input
+                                type="text"
+                                defaultValue={invite.first_name}
+                                id={`edit-invite-firstname-${invite.id}`}
+                                style={{ width: '80px', padding: '4px 8px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px', color: '#fff' }}
+                                placeholder="First"
+                              />
+                              <input
+                                type="text"
+                                defaultValue={invite.last_name}
+                                id={`edit-invite-lastname-${invite.id}`}
+                                style={{ width: '80px', padding: '4px 8px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px', color: '#fff' }}
+                                placeholder="Last"
+                              />
+                            </div>
                           </td>
-                        )}
-                        <td>
-                          {!invite.used && (
-                            <button
-                              className={`btn-link ${copiedId === invite.invite_token ? 'btn-copied-link' : ''}`}
-                              onClick={() => copyLink(invite.invite_token)}
-                              disabled={copiedId === invite.invite_token}
-                            >
-                              {copiedId === invite.invite_token ? 'Copied ✓' : 'Copy link'}
-                            </button>
+                          <td>
+                            <input
+                              type="email"
+                              defaultValue={invite.email}
+                              id={`edit-invite-email-${invite.id}`}
+                              style={{ width: '100%', padding: '4px 8px', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '4px', color: '#666', cursor: 'not-allowed' }}
+                              readOnly
+                              title="Email cannot be changed after invite is created"
+                            />
+                          </td>
+                          <td>
+                            <span className={`rsvp-badge ${invite.used ? 'going' : 'pending'}`}>
+                              {invite.used ? 'Registered"' : 'Pending'}
+                            </span>
+                          </td>
+                          {(isSuperAdmin || permissions?.invites_link) && <td>-</td>}
+                          <td>-</td>
+                          <td>
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                              <button
+                                onClick={() => {
+                                  handleUpdateInvite(invite.id, {
+                                    first_name: document.getElementById(`edit-invite-firstname-${invite.id}`).value,
+                                    last_name: document.getElementById(`edit-invite-lastname-${invite.id}`).value,
+                                    email: document.getElementById(`edit-invite-email-${invite.id}`).value,
+                                  });
+                                }}
+                                className="btn-link"
+                              >
+                                Save
+                              </button>
+                              <button onClick={() => setEditingInvite(null)} className="btn-link">
+                                Cancel
+                              </button>
+                            </div>
+                          </td>
+                        </>
+                      ) : (
+                        <>
+                          <td style={{ whiteSpace: 'nowrap' }}>{invite.first_name} {invite.last_name}</td>
+                          <td>{invite.email}</td>
+                          <td>
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '8px', whiteSpace: 'nowrap' }}>
+                              <span className={`rsvp-badge ${invite.used ? 'going' : 'pending'}`} style={{ minWidth: '120px', textAlign: 'center' }}>
+                                {invite.used ? 'Registered' : 'Pending'}
+                              </span>
+                              {invite.email_sent && <span>✉️</span>}
+                            </span>
+                          </td>
+                          {(isSuperAdmin || permissions?.invites_link) && (
+                            <td style={{ minWidth: '200px' }}>
+                              {invite.master_list_id ? (
+                                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                  <span className="linked-name">
+                                    {invite.ml_last_name}, {invite.ml_first_name}
+                                  </span>
+                                  <button
+                                    onClick={() => handleUnlinkFromMasterList(invite.id)}
+                                    className="btn-link"
+                                    style={{ fontSize: '0.75rem', color: '#666' }}
+                                    title="Unlink"
+                                  >
+                                    undo
+                                  </button>
+                                </span>
+                              ) : (
+                                <select
+                                  onChange={(e) => handleLinkToMasterList(invite.id, e.target.value)}
+                                  defaultValue=""
+                                  style={{ fontSize: '0.85rem', padding: '4px 8px' }}
+                                >
+                                  <option value="">-- Select --</option>
+                                  {masterList
+                                    .filter(m => !m.email && !m.in_memoriam)
+                                    .sort((a, b) => a.last_name.localeCompare(b.last_name))
+                                    .map(m => (
+                                      <option key={m.id} value={m.id}>
+                                        {m.last_name}, {m.first_name}
+                                      </option>
+                                    ))
+                                  }
+                                </select>
+                              )}
+                            </td>
                           )}
-                        </td>
-                        {(isSuperAdmin || permissions?.invites_add) && (
                           <td>
                             {!invite.used && (
-                              <div style={{ display: 'flex', gap: '8px' }}>
-                                <button onClick={() => setEditingInvite(invite.id)} className="btn-link">
-                                  Edit
-                                </button>
-                                <button
-                                  onClick={() => handleDeleteInvite(invite.id)}
-                                  className="btn-link btn-delete"
-                                >
-                                  Delete
-                                </button>
-                              </div>
+                              <button
+                                className={`btn-link ${copiedId === invite.invite_token ? 'btn-copied-link' : ''}`}
+                                onClick={() => copyLink(invite.invite_token)}
+                                disabled={copiedId === invite.invite_token}
+                              >
+                                {copiedId === invite.invite_token ? 'Copied ✓' : 'Copy link'}
+                              </button>
                             )}
                           </td>
-                        )}
-                      </>
-                    )}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </ScrollableTable>
+                          {(isSuperAdmin || permissions?.invites_add) && (
+                            <td>
+                              {!invite.used && (
+                                <div style={{ display: 'flex', gap: '8px' }}>
+                                  <button onClick={() => setEditingInvite(invite.id)} className="btn-link">
+                                    Edit
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteInvite(invite.id)}
+                                    className="btn-link btn-delete"
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
+                              )}
+                            </td>
+                          )}
+                        </>
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </ScrollableTable>
 
-          {/* Pagination Controls */}
-          {totalPages > 1 && (
-            <div className="pagination-controls" style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              gap: '16px',
-              marginTop: '20px',
-              padding: '16px',
-              borderTop: '1px solid rgba(255,255,255,0.1)'
-            }}>
-              <button
-                onClick={() => handlePageChange(page - 1)}
-                disabled={page === 1}
-                className="btn-secondary"
-                style={{ padding: '8px 16px' }}
-              >
-                ← Prev
-              </button>
-              <span style={{ color: '#888' }}>
-                Page {page} of {totalPages} ({totalCount} total)
-              </span>
-              <button
-                onClick={() => handlePageChange(page + 1)}
-                disabled={page === totalPages}
-                className="btn-secondary"
-                style={{ padding: '8px 16px' }}
-              >
-                Next →
-              </button>
-            </div>
-          )}
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="pagination-controls" style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: '16px',
+                marginTop: '20px',
+                padding: '16px',
+                borderTop: '1px solid rgba(255,255,255,0.1)'
+              }}>
+                <button
+                  onClick={() => handlePageChange(page - 1)}
+                  disabled={page === 1}
+                  className="btn-secondary"
+                  style={{ padding: '8px 16px' }}
+                >
+                  ← Prev
+                </button>
+                <span style={{ color: '#888' }}>
+                  Page {page} of {totalPages} ({totalCount} total)
+                </span>
+                <button
+                  onClick={() => handlePageChange(page + 1)}
+                  disabled={page === totalPages}
+                  className="btn-secondary"
+                  style={{ padding: '8px 16px' }}
+                >
+                  Next →
+                </button>
+              </div>
+            )}
           </>
         ) : (
           <p className="no-data">{inviteSearch || statusFilter !== 'all' ? 'No matching invites' : 'No invites yet'}</p>

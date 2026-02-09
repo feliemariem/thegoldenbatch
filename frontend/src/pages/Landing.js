@@ -8,6 +8,7 @@ export default function Landing() {
   const { theme, toggleTheme } = useTheme();
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [showFormModal, setShowFormModal] = useState(false);
+  const [consentGiven, setConsentGiven] = useState(false);
 
   useEffect(() => {
     const reunionDate = new Date('2028-12-16T00:00:00');
@@ -130,21 +131,43 @@ export default function Landing() {
             {/* Disclaimer Section */}
             <div className="form-disclaimer">
               <p>
-                We're collecting your email to send you an official invite link where you can register and:
+                We're collecting your email to send you a personalized invite link to our official reunion registration system.
+              </p>
+              <p>
+                Once you receive your invite, you'll be able to:
               </p>
               <ul>
-                <li>Confirm your attendance (RSVP)</li>
-                <li>Update your contact information</li>
-                <li>Be included in our batch directory so classmates can reconnect with you</li>
-                <li>Receive event updates, announcements, and reminders</li>
+                <li>Register for the reunion and confirm your attendance (RSVP)</li>
+                <li>Access event updates, announcements, and reminders</li>
+                <li>Track reunion details and activities</li>
               </ul>
               <p className="privacy-note">
-                Your information will only be shared with fellow batchmates and the organizing committee.
-                We will not share your data with third parties or use it for any commercial purposes.
+                By providing your email, you consent to the collection and use of your personal information
+                by USLS-IS Batch 2003 in accordance with the Data Privacy Act of 2012 (R.A. 10173).
+                Your information will only be used for reunion-related purposes and will not be shared
+                with third parties or used for commercial purposes.
               </p>
+
+              {/* Consent Checkbox */}
+              <label className="consent-checkbox">
+                <input
+                  type="checkbox"
+                  checked={consentGiven}
+                  onChange={(e) => setConsentGiven(e.target.checked)}
+                />
+                <span>
+                  I understand and agree to the data collection and privacy terms stated above.
+                </span>
+              </label>
             </div>
 
-            <div className="form-embed-container">
+            <div
+              className="form-embed-container"
+              style={{
+                opacity: consentGiven ? 1 : 0.5,
+                pointerEvents: consentGiven ? 'auto' : 'none'
+              }}
+            >
               <iframe
                 src="https://docs.google.com/forms/d/e/1FAIpQLSfJrWdJavnAvJPf0FWmgBs6BWqLM6290CButysWtWRvEwCpIA/viewform?embedded=true"
                 width="100%"
@@ -154,7 +177,7 @@ export default function Landing() {
                 marginWidth="0"
                 title="Registration Form"
               >
-                Loadingâ€¦
+                Loading…
               </iframe>
             </div>
           </div>

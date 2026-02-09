@@ -1867,3 +1867,49 @@ body[data-theme="light"] .receipt-modal-image {
 body[data-theme="light"] .receipt-modal-actions {
   border-top: 1px solid rgba(0, 102, 51, 0.12) !important;
 }
+
+/* =========================================
+   CONSENT CHECKBOX - Light & Dark Mode
+   ========================================= */
+
+.consent-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+body[data-theme="dark"] .consent-checkbox {
+  background: rgba(0, 77, 38, 0.2);
+  border: 1px solid rgba(207, 181, 59, 0.3);
+}
+
+body[data-theme="light"] .consent-checkbox {
+  background: rgba(0, 102, 51, 0.08);
+  border: 1px solid rgba(0, 102, 51, 0.2);
+}
+
+.consent-checkbox input[type="checkbox"] {
+  margin-top: 2px;
+  cursor: pointer;
+}
+
+.consent-checkbox span {
+  flex: 1;
+  font-size: 0.9rem;
+}
+
+body[data-theme="dark"] .consent-checkbox span {
+  color: #e0e0e0;
+}
+
+body[data-theme="light"] .consent-checkbox span {
+  color: #333;
+}
+
+.consent-checkbox:hover {
+  opacity: 0.9;
+}
