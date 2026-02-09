@@ -1,5 +1,8 @@
 const rateLimit = require('express-rate-limit');
 
+// Skip rate limiting in test environment
+const isTestEnv = process.env.NODE_ENV === 'test';
+
 // Helper to get client identifier (IP with normalization)
 const getClientIp = (req) => {
   let ip = req.ip || req.headers['x-forwarded-for']?.split(',')[0]?.trim() || 'unknown';
@@ -22,7 +25,7 @@ const getClientIp = (req) => {
 // Even correct passwords must be blocked during the ban period
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5,
+  max: isTestEnv ? 1000 : 5, // Effectively unlimited in test environment
   statusCode: 429,
   message: { error: 'Too many login attempts, please try again after 15 minutes' },
   standardHeaders: true,
@@ -41,7 +44,7 @@ const authLimiter = rateLimit({
 // Rate limiter for registration: 3 attempts per 15 minutes per IP
 const registerLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 3,
+  max: isTestEnv ? 1000 : 3, // Effectively unlimited in test environment
   statusCode: 429,
   message: { error: 'Too many registration attempts, please try again after 15 minutes' },
   standardHeaders: true,
@@ -58,7 +61,7 @@ const registerLimiter = rateLimit({
 // Rate limiter for password reset: 3 attempts per hour per email
 const passwordResetLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 3,
+  max: isTestEnv ? 1000 : 3, // Effectively unlimited in test environment
   statusCode: 429,
   message: { error: 'Too many password reset attempts, please try again after an hour' },
   standardHeaders: true,

@@ -108,7 +108,13 @@ router.post('/bulk', authenticateAdmin, async (req, res) => {
 router.get('/:token/validate', async (req, res) => {
   try {
     const { token } = req.params;
-    
+
+    // Validate UUID format before querying (prevents PostgreSQL errors on invalid UUIDs)
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(token)) {
+      return res.status(404).json({ valid: false, error: 'Invalid invite token' });
+    }
+
     const result = await db.query(
       'SELECT id, email, first_name, last_name, used FROM invites WHERE invite_token = $1',
       [token]
@@ -119,13 +125,13 @@ router.get('/:token/validate', async (req, res) => {
     }
 
     const invite = result.rows[0];
-    
+
     if (invite.used) {
       return res.status(400).json({ valid: false, error: 'Invite already used' });
     }
 
-    res.json({ 
-      valid: true, 
+    res.json({
+      valid: true,
       email: invite.email,
       first_name: invite.first_name,
       last_name: invite.last_name

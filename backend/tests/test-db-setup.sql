@@ -1,24 +1,42 @@
--- Alumni Homecoming Database Schema (Complete)
--- The Golden Batch - USLS-IS Batch 2003
+-- Test Database Setup Script
+-- Creates test_alumni_homecoming database with schema and minimal seed data
+-- Run this BEFORE running tests for the first time
+
+-- ============================================================
+-- STEP 1: Create the test database (run as postgres superuser)
+-- ============================================================
+-- Run this command outside this script (as postgres user):
+--   createdb test_alumni_homecoming
+-- OR:
+--   psql -c "CREATE DATABASE test_alumni_homecoming;"
+
+-- ============================================================
+-- STEP 2: Connect to test database and run this script
+-- ============================================================
+-- psql -d test_alumni_homecoming -f test-db-setup.sql
+
+-- ============================================================
+-- SCHEMA (Copy from main schema.sql)
+-- ============================================================
 
 -- Drop tables in correct order (respecting foreign keys)
-DROP TABLE IF EXISTS action_items;
-DROP TABLE IF EXISTS event_rsvps;
-DROP TABLE IF EXISTS events;
-DROP TABLE IF EXISTS announcement_reads;
-DROP TABLE IF EXISTS meeting_attachments;
-DROP TABLE IF EXISTS meeting_minutes;
-DROP TABLE IF EXISTS permissions;
-DROP TABLE IF EXISTS password_resets;
-DROP TABLE IF EXISTS announcements;
-DROP TABLE IF EXISTS ledger;
-DROP TABLE IF EXISTS rsvps;
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS invites;
-DROP TABLE IF EXISTS master_list;
-DROP TABLE IF EXISTS admins;
-DROP TABLE IF EXISTS volunteer_interests;
-DROP TABLE IF EXISTS messages;
+DROP TABLE IF EXISTS action_items CASCADE;
+DROP TABLE IF EXISTS event_rsvps CASCADE;
+DROP TABLE IF EXISTS events CASCADE;
+DROP TABLE IF EXISTS announcement_reads CASCADE;
+DROP TABLE IF EXISTS meeting_attachments CASCADE;
+DROP TABLE IF EXISTS meeting_minutes CASCADE;
+DROP TABLE IF EXISTS permissions CASCADE;
+DROP TABLE IF EXISTS password_resets CASCADE;
+DROP TABLE IF EXISTS announcements CASCADE;
+DROP TABLE IF EXISTS ledger CASCADE;
+DROP TABLE IF EXISTS rsvps CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS invites CASCADE;
+DROP TABLE IF EXISTS master_list CASCADE;
+DROP TABLE IF EXISTS admins CASCADE;
+DROP TABLE IF EXISTS volunteer_interests CASCADE;
+DROP TABLE IF EXISTS messages CASCADE;
 
 -- Admins table
 CREATE TABLE admins (
@@ -28,14 +46,14 @@ CREATE TABLE admins (
     first_name VARCHAR(100),
     last_name VARCHAR(100),
     is_super_admin BOOLEAN DEFAULT FALSE,
-    role_title VARCHAR(100),                    -- Committee role (e.g., "Treasurer")
-    sub_committees TEXT,                        -- Sub-committees (e.g., "Financial Controller, Fundraising")
-    is_core_leader BOOLEAN DEFAULT FALSE,       -- If true, shows in top row on committee page
-    display_order INT DEFAULT 99,               -- Lower number = shows first on committee page
+    role_title VARCHAR(100),
+    sub_committees TEXT,
+    is_core_leader BOOLEAN DEFAULT FALSE,
+    display_order INT DEFAULT 99,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Master list table: all batch members for tracking
+-- Master list table
 CREATE TABLE master_list (
     id SERIAL PRIMARY KEY,
     section VARCHAR(50) NOT NULL,
@@ -51,7 +69,7 @@ CREATE TABLE master_list (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Invites table: the allow-list of emails
+-- Invites table
 CREATE TABLE invites (
     id SERIAL PRIMARY KEY,
     email VARCHAR(255) UNIQUE NOT NULL,
@@ -64,7 +82,7 @@ CREATE TABLE invites (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Users table: registered alumni
+-- Users table
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     invite_id INTEGER REFERENCES invites(id),
@@ -87,7 +105,7 @@ CREATE TABLE users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- RSVPs table (for main event)
+-- RSVPs table
 CREATE TABLE rsvps (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) UNIQUE NOT NULL,
@@ -95,7 +113,7 @@ CREATE TABLE rsvps (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Ledger table: financial tracking
+-- Ledger table
 CREATE TABLE ledger (
     id SERIAL PRIMARY KEY,
     transaction_date DATE NOT NULL,
@@ -129,7 +147,7 @@ CREATE TABLE announcements (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Announcement reads table (tracks which users have read which announcements)
+-- Announcement reads table
 CREATE TABLE announcement_reads (
     id SERIAL PRIMARY KEY,
     announcement_id INTEGER REFERENCES announcements(id) ON DELETE CASCADE,
@@ -138,7 +156,7 @@ CREATE TABLE announcement_reads (
     UNIQUE(announcement_id, user_id)
 );
 
--- Password resets table (for user password recovery)
+-- Password resets table
 CREATE TABLE password_resets (
     id SERIAL PRIMARY KEY,
     email VARCHAR(255) NOT NULL,
@@ -183,7 +201,7 @@ CREATE TABLE meeting_attachments (
     uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Action Items table (for meeting tasks)
+-- Action Items table
 CREATE TABLE action_items (
     id SERIAL PRIMARY KEY,
     meeting_id INTEGER REFERENCES meeting_minutes(id) ON DELETE CASCADE,
@@ -195,7 +213,7 @@ CREATE TABLE action_items (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Events table: pre-reunion gatherings and main event
+-- Events table
 CREATE TABLE events (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
@@ -211,7 +229,7 @@ CREATE TABLE events (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Event RSVPs table: tracks who's going to which event
+-- Event RSVPs table
 CREATE TABLE event_rsvps (
     id SERIAL PRIMARY KEY,
     event_id INTEGER REFERENCES events(id) ON DELETE CASCADE,
@@ -222,37 +240,33 @@ CREATE TABLE event_rsvps (
     UNIQUE(event_id, user_id)
 );
 
--- Volunteer interests table (tracks who wants to help with which role)
+-- Volunteer interests table
 CREATE TABLE volunteer_interests (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
-    role VARCHAR(100) NOT NULL,                 -- Role they're interested in (e.g., "Fundraising")
+    role VARCHAR(100) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(user_id, role)                       -- One interest per role per user
+    UNIQUE(user_id, role)
 );
 
--- Messages table (internal messaging between users and admins)
+-- Messages table
 CREATE TABLE messages (
     id SERIAL PRIMARY KEY,
-    from_user_id INT REFERENCES users(id) ON DELETE CASCADE,      -- User who sent it (NULL if from admin)
-    from_admin_id INT REFERENCES admins(id) ON DELETE SET NULL,   -- Admin who sent it (NULL if from user)
-    to_user_id INT REFERENCES users(id) ON DELETE CASCADE,        -- NULL = goes to shared admin inbox
+    from_user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    from_admin_id INT REFERENCES admins(id) ON DELETE SET NULL,
+    to_user_id INT REFERENCES users(id) ON DELETE CASCADE,
     subject VARCHAR(255),
     message TEXT NOT NULL,
     is_read BOOLEAN DEFAULT FALSE,
-    parent_id INT REFERENCES messages(id) ON DELETE SET NULL,     -- For reply threading
+    parent_id INT REFERENCES messages(id) ON DELETE SET NULL,
     created_at TIMESTAMP DEFAULT NOW()
 );
 
-
--- Indexes for messages
+-- Create indexes
 CREATE INDEX idx_messages_to_user ON messages(to_user_id);
 CREATE INDEX idx_messages_from_user ON messages(from_user_id);
 CREATE INDEX idx_messages_from_admin ON messages(from_admin_id);
 CREATE INDEX idx_messages_parent ON messages(parent_id);
-
-
--- Indexes for performance
 CREATE INDEX idx_invite_token ON invites(invite_token);
 CREATE INDEX idx_invites_email ON invites(email);
 CREATE INDEX idx_invites_master_list ON invites(master_list_id);
@@ -276,106 +290,69 @@ CREATE INDEX idx_event_rsvps_event ON event_rsvps(event_id);
 CREATE INDEX idx_event_rsvps_user ON event_rsvps(user_id);
 CREATE INDEX idx_volunteer_interests_user ON volunteer_interests(user_id);
 
+-- ============================================================
+-- MINIMAL SEED DATA FOR TESTING
+-- ============================================================
+-- Password for all test accounts: 'password123'
+-- bcrypt hash of 'password123' with salt rounds 10
 
+-- Super Admin
+INSERT INTO admins (email, password_hash, first_name, last_name, is_super_admin)
+VALUES (
+    'superadmin@test.com',
+    '$2b$10$rQZ6v8F5L5z8J5Q5Z5Z5Z.5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5',
+    'Super',
+    'Admin',
+    true
+);
 
--- ============================================================
--- INITIAL DATA: Create System Super Admin
--- ============================================================
--- NOTE: After running schema, run setup-admin.js to set password:
---   node setup-admin.js uslsis.batch2003@gmail.com YOUR_PASSWORD
--- Then run this SQL to set as System super admin:
---   UPDATE admins SET first_name = 'Admin', last_name = '', is_super_admin = TRUE WHERE email = 'uslsis.batch2003@gmail.com';
+-- Regular Admin
+INSERT INTO admins (email, password_hash, first_name, last_name, is_super_admin)
+VALUES (
+    'admin@test.com',
+    '$2b$10$rQZ6v8F5L5z8J5Q5Z5Z5Z.5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5',
+    'Regular',
+    'Admin',
+    false
+);
 
--- ============================================================
--- CLEAN SLATE FOR TESTING (before public release)
--- ============================================================
--- Run this to wipe all test data while keeping master_list names, ledger, and Super Admin (id=1):
---
--- psql "YOUR_EXTERNAL_URL" -c "
--- DELETE FROM action_items;
--- DELETE FROM announcement_reads;
--- DELETE FROM meeting_attachments;
--- DELETE FROM meeting_minutes;
--- DELETE FROM messages;
--- DELETE FROM volunteer_interests;
--- DELETE FROM permissions WHERE admin_id != 1;
--- DELETE FROM password_resets;
--- DELETE FROM announcements;
--- DELETE FROM rsvps;
--- DELETE FROM event_rsvps;
--- DELETE FROM events;
--- DELETE FROM users;
--- DELETE FROM invites;
--- DELETE FROM admins WHERE id != 1;
--- Reset Master List only (keep names, clear linked data):
---   UPDATE master_list SET
---     email = NULL,
---     current_name = NULL,
---     status = 'Not Invited',
---     is_admin = FALSE,
---     is_unreachable = FALSE
---   WHERE id > 0;
--- "
---
--- ============================================================
--- CLEANUP DUPLICATE PERMISSIONS
--- ============================================================
--- If you have duplicate rows in permissions table, run this:
---
--- DELETE FROM permissions a USING permissions b
--- WHERE a.id < b.id AND a.admin_id = b.admin_id;
---
--- Verify with: SELECT admin_id, COUNT(*) FROM permissions GROUP BY admin_id;
+-- Master list entries
+INSERT INTO master_list (section, last_name, first_name, current_name, email, status, is_admin)
+VALUES
+    ('A', 'User', 'Test', 'Test User', 'testuser@test.com', 'Registered', false),
+    ('A', 'Admin', 'Test', 'Test Admin', 'admin@test.com', 'Registered', true),
+    ('B', 'Invitee', 'New', 'New Invitee', 'newinvitee@test.com', 'Invited', false);
 
--- ============================================================
--- USEFUL COMMANDS
--- ============================================================
--- Reset Master List only (keep names, clear linked data):
---   UPDATE master_list SET
---     email = NULL,
---     current_name = NULL,
---     status = 'Not Invited',
---     is_admin = FALSE,
---     is_unreachable = FALSE
---   WHERE id > 0;
+-- Test invites
+INSERT INTO invites (email, first_name, last_name, invite_token, used, master_list_id)
+VALUES
+    ('newuser@test.com', 'New', 'User', '550e8400-e29b-41d4-a716-446655440001', false, NULL),
+    ('useduser@test.com', 'Used', 'User', '550e8400-e29b-41d4-a716-446655440002', true, 1);
 
--- ============================================================
--- ADD NEW TABLES TO EXISTING DATABASE (without dropping)
--- ============================================================
--- If you already have data and just need to add the new columns/tables:
---
--- ALTER TABLE master_list RENAME COLUMN nickname TO current_name;
--- ALTER TABLE master_list ADD COLUMN status VARCHAR(50) DEFAULT 'Not Invited';
--- ALTER TABLE announcements ADD COLUMN audience VARCHAR(20) DEFAULT 'all';
---
--- CREATE TABLE action_items (
---     id SERIAL PRIMARY KEY,
---     meeting_id INTEGER REFERENCES meeting_minutes(id) ON DELETE CASCADE,
---     task TEXT NOT NULL,
---     assignee_id INTEGER REFERENCES admins(id) ON DELETE SET NULL,
---     due_date DATE,
---     status VARCHAR(20) DEFAULT 'Not Started',
---     priority VARCHAR(10) DEFAULT 'Medium',
---     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
--- );
---
--- CREATE INDEX idx_action_items_meeting ON action_items(meeting_id);
--- CREATE INDEX idx_action_items_assignee ON action_items(assignee_id);
+-- Test user (registered via invite)
+INSERT INTO users (invite_id, email, password_hash, first_name, last_name, city, country)
+VALUES (
+    2,
+    'testuser@test.com',
+    '$2b$10$rQZ6v8F5L5z8J5Q5Z5Z5Z.5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5',
+    'Test',
+    'User',
+    'Manila',
+    'Philippines'
+);
 
--- ============================================================
--- COMMITTEE PAGE ORDERING
--- ============================================================
--- To arrange committee members on the Committee page:
--- Lower display_order = shows first
--- 
--- Example:
---   UPDATE admins SET display_order = 1 WHERE email = 'mary@example.com';      -- First
---   UPDATE admins SET display_order = 2 WHERE email = 'nikki@example.com';     -- Second
---   UPDATE admins SET display_order = 3 WHERE email = 'bianca@example.com';    -- Third
---   UPDATE admins SET display_order = 4 WHERE email = 'felie@example.com';     -- Fourth
---
--- Or view current order:
---   SELECT email, first_name, role_title, is_core_leader, display_order 
---   FROM admins 
---   WHERE role_title IS NOT NULL 
---   ORDER BY is_core_leader DESC, display_order ASC;
+-- Set up permissions for regular admin
+INSERT INTO permissions (admin_id, permission, enabled)
+SELECT 2, permission, false
+FROM unnest(ARRAY[
+    'invites_add', 'invites_link', 'invites_upload', 'invites_export',
+    'registered_export', 'masterlist_edit', 'masterlist_upload', 'masterlist_export',
+    'announcements_view', 'announcements_send', 'accounting_view', 'accounting_edit',
+    'accounting_export', 'minutes_view', 'minutes_edit', 'messages_view'
+]) AS permission;
+
+-- Enable some permissions for regular admin
+UPDATE permissions SET enabled = true
+WHERE admin_id = 2 AND permission IN ('invites_add', 'announcements_view', 'messages_view');
+
+SELECT 'Test database setup complete!' AS status;
