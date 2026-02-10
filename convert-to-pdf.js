@@ -74,14 +74,15 @@ async function convertToPdf() {
       await page.pdf({
         path: outputPath,
         format: 'Letter',
+        printBackground: true,
         margin: {
           top: '0.5in',
           right: '0.5in',
           bottom: '0.5in',
           left: '0.5in'
         },
-        printBackground: true,
-        preferCSSPageSize: false
+        preferCSSPageSize: false,
+        displayHeaderFooter: false
       });
 
       await page.close();
