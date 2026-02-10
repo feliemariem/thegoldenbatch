@@ -46,7 +46,7 @@
   padding: 20px 40px;
   backdrop-filter: blur(10px);
   z-index: 100;
-  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.6s cubic-bezier(0.4, 0, 0.2, 1), backdrop-filter 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   /* Default to dark theme */
   background: rgba(10, 15, 13, 0.6);
   border-bottom: 1px solid rgba(207, 181, 59, 0.05);
@@ -93,7 +93,7 @@
   border-radius: 8px;
   font-weight: 600;
   font-size: 0.9rem;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   border: 2px solid transparent;
   /* Default to dark theme */
   background: linear-gradient(135deg, #CFB53B 0%, #B8960C 100%);
@@ -109,7 +109,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   opacity: 0.7;
   /* Default to dark theme */
   border: 1px solid rgba(184, 150, 12, 0.35);
@@ -175,7 +175,7 @@
   object-fit: contain;
   opacity: 0;
   transform: scale(0.9);
-  transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s cubic-bezier(0.4, 0, 0.2, 1), filter 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .hero-section.animate .hero-logo {
@@ -197,7 +197,7 @@
   display: inline-block;
   opacity: 0;
   transform: translateY(20px);
-  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   /* Default to dark theme */
   background: linear-gradient(135deg, #CFB53B 0%, #B8960C 100%);
   -webkit-background-clip: text;
@@ -230,7 +230,7 @@
   margin-bottom: 28px;
   opacity: 0;
   transform: translateY(10px);
-  transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
   /* Default to dark theme */
   background: linear-gradient(90deg, #CFB53B 0%, #E8D48A 50%, #CFB53B 100%);
   background-size: 200% auto;
@@ -276,7 +276,7 @@
   gap: 8px;
   opacity: 0;
   transform: translateY(10px);
-  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   background: none;
   border: none;
   padding: 0;
@@ -288,7 +288,7 @@
   /* Ensure emojis are visible and not affected by text gradients */
   -webkit-text-fill-color: initial;
   background: none;
-  display: inline-block;
+  display: inline;
 }
 
 .hero-section.animate .event-date {
@@ -309,7 +309,7 @@
   margin-bottom: 36px;
   opacity: 0;
   transform: translateY(10px);
-  transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1), opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: 'Georgia', serif;
   letter-spacing: 0.02em;
   /* Default to dark theme */
@@ -337,7 +337,7 @@
   overflow: hidden;
   opacity: 0;
   transform: translateY(10px);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   /* Default to dark theme */
   background: linear-gradient(135deg, #CFB53B 0%, #B8960C 100%);
   color: #0a0f0d;
@@ -387,7 +387,7 @@
   margin-bottom: 50px;
   opacity: 0;
   transform: translateY(20px);
-  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   /* Default to dark theme */
   color: #CFB53B;
 }
@@ -410,7 +410,7 @@
   min-width: 120px;
   opacity: 0;
   transform: scale(0.9) translateY(20px);
-  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   transition-delay: calc(var(--delay, 0) * 0.15s);
   /* Default to dark theme */
   background: rgba(0, 0, 0, 0.5);
@@ -459,7 +459,7 @@
   margin-bottom: 28px;
   opacity: 0;
   transform: translateY(20px);
-  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   /* Default to dark theme */
   color: #CFB53B;
 }
@@ -474,7 +474,7 @@
   line-height: 1.9;
   opacity: 0;
   transform: translateY(20px);
-  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   transition-delay: 0.2s;
   /* Default to dark theme */
   color: rgba(255, 255, 255, 0.85);
@@ -549,7 +549,7 @@
   border-radius: 50%;
   font-size: 1.2rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
