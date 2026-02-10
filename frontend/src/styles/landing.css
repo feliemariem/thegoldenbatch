@@ -16,7 +16,7 @@
 }
 
 /* ========================================
-   BASE STYLES (Layout Only - No Colors)
+   BASE STYLES (with dark theme defaults)
    ======================================== */
 
 .landing-page {
@@ -25,6 +25,8 @@
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Default to dark theme colors */
+  background: #0a0f0d;
 }
 
 /* ========================================
@@ -43,6 +45,14 @@
   backdrop-filter: blur(10px);
   z-index: 100;
   transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Default to dark theme */
+  background: rgba(10, 15, 13, 0.6);
+  border-bottom: 1px solid rgba(207, 181, 59, 0.05);
+}
+
+.landing-header.solid {
+  background: rgba(10, 15, 13, 0.95);
+  border-bottom: 1px solid rgba(207, 181, 59, 0.15);
 }
 
 .landing-logo {
@@ -64,6 +74,8 @@
   font-size: 1.1rem;
   text-transform: uppercase;
   letter-spacing: 2px;
+  /* Default to dark theme */
+  color: #B8960C;
 }
 
 .landing-header-actions {
@@ -81,6 +93,9 @@
   font-size: 0.9rem;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   border: 2px solid transparent;
+  /* Default to dark theme */
+  background: linear-gradient(135deg, #CFB53B 0%, #B8960C 100%);
+  color: #0a0f0d;
 }
 
 .landing-theme-toggle {
@@ -94,6 +109,10 @@
   justify-content: center;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   opacity: 0.7;
+  /* Default to dark theme */
+  border: 1px solid rgba(184, 150, 12, 0.35);
+  background: rgba(255, 255, 255, 0.08);
+  color: #B8960C;
 }
 
 .landing-theme-toggle:hover {
@@ -130,6 +149,10 @@
   opacity: 0;
   transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1), transform 8s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: -1;
+  /* Default to dark theme */
+  background:
+    linear-gradient(145deg, rgba(10, 15, 13, 0.88) 0%, rgba(26, 42, 31, 0.85) 50%, rgba(13, 21, 16, 0.92) 100%),
+    url('../images/hs_bldg.jpg') center center / cover no-repeat;
 }
 
 .hero-section.animate .hero-background {
@@ -179,6 +202,8 @@
   opacity: 0;
   transform: translateY(20px);
   transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Default to dark theme */
+  background: linear-gradient(135deg, #CFB53B 0%, #B8960C 100%);
 }
 
 .hero-section.animate .hero-title .word-1 {
@@ -210,6 +235,8 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  /* Default to dark theme */
+  background: linear-gradient(90deg, #CFB53B 0%, #E8D48A 50%, #CFB53B 100%);
 }
 
 .hero-section.animate .tagline {
@@ -238,6 +265,8 @@
   font-size: 1.05rem;
   font-weight: 500;
   letter-spacing: 0.01em;
+  /* Default to dark theme */
+  color: #CFB53B;
 }
 
 .event-details span {
@@ -278,6 +307,8 @@
   transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
   font-family: 'Georgia', serif;
   letter-spacing: 0.02em;
+  /* Default to dark theme */
+  color: #CFB53B;
 }
 
 .hero-section.animate .hero-quote {
@@ -302,12 +333,16 @@
   opacity: 0;
   transform: translateY(10px);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Default to dark theme */
+  background: linear-gradient(135deg, #CFB53B 0%, #B8960C 100%);
+  color: #0a0f0d;
 }
 
 .hero-section.animate .btn-hero {
   opacity: 1;
   transform: translateY(0);
   transition-delay: 7.5s;
+  animation: breathingGlowDark 2s ease-in-out infinite;
   animation-delay: 8s;
 }
 
@@ -337,6 +372,8 @@
 .countdown-section {
   padding: 100px 20px;
   text-align: center;
+  /* Default to dark theme */
+  background: rgba(0, 0, 0, 0.4);
 }
 
 .countdown-section h2 {
@@ -346,6 +383,8 @@
   opacity: 0;
   transform: translateY(20px);
   transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Default to dark theme */
+  color: #CFB53B;
 }
 
 .countdown-section.visible h2 {
@@ -368,6 +407,9 @@
   transform: scale(0.9) translateY(20px);
   transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   transition-delay: calc(var(--delay, 0) * 0.15s);
+  /* Default to dark theme */
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(207, 181, 59, 0.2);
 }
 
 .countdown-section.visible .countdown-item {
@@ -381,6 +423,8 @@
   font-weight: 700;
   line-height: 1;
   font-variant-numeric: tabular-nums;
+  /* Default to dark theme */
+  color: #CFB53B;
 }
 
 .countdown-label {
@@ -389,6 +433,8 @@
   text-transform: uppercase;
   letter-spacing: 0.12em;
   margin-top: 10px;
+  /* Default to dark theme */
+  color: rgba(255, 255, 255, 0.6);
 }
 
 /* ========================================
@@ -409,6 +455,8 @@
   opacity: 0;
   transform: translateY(20px);
   transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Default to dark theme */
+  color: #CFB53B;
 }
 
 .about-section.visible h2 {
@@ -423,6 +471,8 @@
   transform: translateY(20px);
   transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   transition-delay: 0.2s;
+  /* Default to dark theme */
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .about-section.visible p {
@@ -446,6 +496,8 @@
   z-index: 1000;
   padding: 20px;
   animation: modalFadeIn 0.3s ease;
+  /* Default to dark theme */
+  background: rgba(0, 0, 0, 0.85);
 }
 
 @keyframes modalFadeIn {
@@ -460,6 +512,10 @@
   max-height: 90vh;
   overflow-y: auto;
   animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Default to dark theme */
+  background: linear-gradient(165deg, rgba(30, 40, 35, 0.98) 0%, rgba(20, 28, 24, 0.99) 100%);
+  border: 1px solid rgba(207, 181, 59, 0.2);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
 }
 
 @keyframes modalSlideIn {
@@ -492,6 +548,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  /* Default to dark theme */
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
 }
 
 .modal-close:hover {
@@ -503,12 +562,17 @@
   padding: 20px 24px;
   margin-bottom: 20px;
   text-align: left;
+  /* Default to dark theme */
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(207, 181, 59, 0.15);
 }
 
 .form-disclaimer p {
   font-size: 0.95rem;
   line-height: 1.6;
   margin-bottom: 12px;
+  /* Default to dark theme */
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .form-disclaimer ul {
@@ -520,6 +584,8 @@
   font-size: 0.9rem;
   line-height: 1.8;
   margin-bottom: 4px;
+  /* Default to dark theme */
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .form-disclaimer .privacy-note {
@@ -527,6 +593,9 @@
   font-style: italic;
   margin-bottom: 0;
   padding-top: 12px;
+  /* Default to dark theme */
+  color: rgba(255, 255, 255, 0.6);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .consent-checkbox {
@@ -547,6 +616,8 @@
 .consent-checkbox span {
   font-size: 0.9rem;
   line-height: 1.5;
+  /* Default to dark theme */
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .form-embed-container {
