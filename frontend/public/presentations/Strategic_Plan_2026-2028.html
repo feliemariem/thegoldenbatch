@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Golden Batch — Silver Homecoming Strategic Plan 2026-2028</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #CFB53B;
+    --gold-light: #E8D48B;
+    --gold-dark: #9A7F2E;
+    --green: #006633;
+    --green-dark: #004D2C;
+    --green-light: #008C52;
+    --cream: #FDF8EE;
+    --dark: #1A1A1A;
+    --text: #2C2C2C;
+    --text-light: #666;
+    --white: #FFFFFF;
+    --danger: #C0392B;
+    --success: #27AE60;
+    --warning: #F39C12;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, var(--green-dark) 0%, var(--green) 50%, var(--green-dark) 100%);
+    color: var(--white);
+    text-align: center;
+    padding: 80px 24px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 60px,
+      rgba(207,181,59,0.03) 60px,
+      rgba(207,181,59,0.03) 120px
+    );
+  }
+
+  .hero-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--green-dark);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 8px 24px;
+    border-radius: 24px;
+    margin-bottom: 24px;
+    position: relative;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 6vw, 56px);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 12px;
+    position: relative;
+  }
+
+  .hero h1 .gold { color: var(--gold-light); }
+
+  .hero .subtitle {
+    font-size: 18px;
+    font-weight: 300;
+    opacity: 0.9;
+    margin-bottom: 32px;
+    position: relative;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-mission {
+    background: rgba(207,181,59,0.15);
+    border: 2px solid rgba(207,181,59,0.4);
+    border-radius: 16px;
+    padding: 32px;
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .hero-mission h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    color: var(--gold-light);
+    margin-bottom: 16px;
+  }
+
+  .hero-mission p {
+    font-size: 16px;
+    line-height: 1.8;
+    opacity: 0.95;
+  }
+
+  /* CONTAINER */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* SECTION */
+  .section {
+    padding: 60px 0;
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold-dark);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 700;
+    color: var(--green-dark);
+    margin-bottom: 12px;
+  }
+
+  .section-intro {
+    font-size: 16px;
+    color: var(--text-light);
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  /* CHALLENGE GRID */
+  .challenge-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+  }
+
+  .challenge-card {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 32px;
+    border: 2px solid #E8E0D0;
+    position: relative;
+  }
+
+  .challenge-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--gold);
+    border-radius: 16px 0 0 16px;
+  }
+
+  .challenge-icon {
+    font-size: 32px;
+    margin-bottom: 16px;
+  }
+
+  .challenge-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--green-dark);
+    margin-bottom: 8px;
+  }
+
+  .challenge-desc {
+    font-size: 14px;
+    color: var(--text-light);
+    line-height: 1.6;
+  }
+
+  .challenge-number {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--gold);
+    margin-top: 12px;
+  }
+
+  /* PRECEDENTS */
+  .precedent-card {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 20px;
+    border: 2px solid #E8E0D0;
+  }
+
+  .precedent-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .precedent-batch {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--green-dark);
+  }
+
+  .precedent-year {
+    background: var(--gold);
+    color: var(--green-dark);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+  }
+
+  .precedent-items {
+    display: grid;
+    gap: 8px;
+  }
+
+  .precedent-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .precedent-item::before {
+    content: '✓';
+    color: var(--green);
+    font-weight: 700;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .precedent-highlight {
+    background: rgba(207,181,59,0.1);
+    border-left: 3px solid var(--gold);
+    padding: 16px 20px;
+    margin-top: 12px;
+    border-radius: 0 8px 8px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gold-dark);
+  }
+
+  /* PATTERN BOX */
+  .pattern-box {
+    background: linear-gradient(135deg, var(--green-dark), var(--green));
+    color: var(--white);
+    border-radius: 16px;
+    padding: 40px;
+    margin: 40px 0;
+  }
+
+  .pattern-box h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    color: var(--gold-light);
+    margin-bottom: 24px;
+  }
+
+  .pattern-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+  }
+
+  .pattern-item {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .pattern-item strong {
+    display: block;
+    color: var(--gold-light);
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+
+  .pattern-item p {
+    font-size: 14px;
+    opacity: 0.9;
+  }
+
+  /* BUDGET BREAKDOWN */
+  .budget-section {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 40px;
+    border: 2px solid #E8E0D0;
+    margin-bottom: 32px;
+  }
+
+  .budget-header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .budget-total {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    font-weight: 800;
+    color: var(--green-dark);
+    margin-bottom: 8px;
+  }
+
+  .budget-label {
+    font-size: 14px;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  .budget-split {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+
+  .budget-bucket {
+    background: linear-gradient(180deg, #FFFDF5 0%, var(--white) 100%);
+    border: 2px solid var(--gold);
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+  }
+
+  .bucket-amount {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--gold-dark);
+    margin-bottom: 8px;
+  }
+
+  .bucket-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+
+  .bucket-desc {
+    font-size: 12px;
+    color: var(--text-light);
+    line-height: 1.5;
+  }
+
+  .budget-breakdown {
+    background: #F9F7F0;
+    border-radius: 12px;
+    padding: 24px;
+  }
+
+  .breakdown-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #E8E0D0;
+  }
+
+  .breakdown-item:last-child {
+    border-bottom: none;
+  }
+
+  .breakdown-label {
+    font-size: 14px;
+    color: var(--text);
+  }
+
+  .breakdown-amount {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--green-dark);
+  }
+
+  /* TIMELINE */
+  .timeline {
+    position: relative;
+    padding-left: 40px;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, var(--gold), var(--gold-light));
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 40px;
+  }
+
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -35px;
+    top: 4px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 3px solid var(--cream);
+  }
+
+  .timeline-date {
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--green-dark);
+    margin-bottom: 8px;
+  }
+
+  .timeline-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  .timeline-desc {
+    font-size: 14px;
+    color: var(--text-light);
+    margin-bottom: 12px;
+  }
+
+  .timeline-goals {
+    background: rgba(207,181,59,0.1);
+    border-left: 3px solid var(--gold);
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+  }
+
+  .timeline-goals li {
+    font-size: 13px;
+    margin-bottom: 6px;
+    list-style: none;
+    padding-left: 20px;
+    position: relative;
+  }
+
+  .timeline-goals li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--gold-dark);
+    font-weight: 700;
+  }
+
+  /* STRATEGY CARDS */
+  .strategy-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+  }
+
+  .strategy-card {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 32px;
+    border: 2px solid #E8E0D0;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .strategy-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.1);
+  }
+
+  .strategy-number {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--green-dark);
+    font-weight: 800;
+    font-size: 14px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 36px;
+    margin-bottom: 16px;
+  }
+
+  .strategy-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--green-dark);
+    margin-bottom: 12px;
+  }
+
+  .strategy-desc {
+    font-size: 14px;
+    color: var(--text-light);
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+
+  .strategy-target {
+    background: #F9F7F0;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gold-dark);
+  }
+
+  /* DECISION MATRIX */
+  .decision-section {
+    background: linear-gradient(135deg, #FFF9E6, var(--white));
+    border: 3px solid var(--gold);
+    border-radius: 20px;
+    padding: 48px;
+    margin: 40px 0;
+  }
+
+  .decision-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .decision-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    color: var(--green-dark);
+    margin-bottom: 12px;
+  }
+
+  .decision-header p {
+    font-size: 16px;
+    color: var(--text-light);
+  }
+
+  .decision-item {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+    border: 2px solid #E8E0D0;
+  }
+
+  .decision-question {
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--green-dark);
+    margin-bottom: 16px;
+  }
+
+  .decision-options {
+    display: grid;
+    gap: 12px;
+  }
+
+  .decision-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    background: #F9F7F0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .decision-option:hover {
+    background: rgba(207,181,59,0.1);
+  }
+
+  .decision-radio {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--gold);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .decision-option-text {
+    font-size: 14px;
+    color: var(--text);
+  }
+
+  /* ACTION PLAN */
+  .action-plan {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 40px;
+    border: 2px solid var(--gold);
+  }
+
+  .action-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .action-table th {
+    background: var(--green-dark);
+    color: var(--white);
+    padding: 16px;
+    text-align: left;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .action-table td {
+    padding: 16px;
+    border-bottom: 1px solid #E8E0D0;
+    font-size: 14px;
+  }
+
+  .action-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .action-owner {
+    background: rgba(207,181,59,0.15);
+    color: var(--gold-dark);
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+  }
+
+  /* CTA */
+  .cta-section {
+    background: linear-gradient(135deg, var(--green-dark), var(--green));
+    color: var(--white);
+    text-align: center;
+    padding: 60px 24px;
+    border-radius: 20px;
+    margin: 60px 0;
+  }
+
+  .cta-section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    margin-bottom: 16px;
+  }
+
+  .cta-section .gold {
+    color: var(--gold-light);
+  }
+
+  .cta-section p {
+    font-size: 18px;
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto 32px;
+  }
+
+  .cta-stats {
+    display: flex;
+    justify-content: center;
+    gap: 48px;
+    flex-wrap: wrap;
+  }
+
+  .cta-stat {
+    text-align: center;
+  }
+
+  .cta-stat-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 40px;
+    font-weight: 700;
+    color: var(--gold-light);
+    display: block;
+  }
+
+  .cta-stat-label {
+    font-size: 13px;
+    opacity: 0.8;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+
+  /* DIVIDER */
+  .divider {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 60px 0;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .hero { padding: 60px 16px 40px; }
+    .section { padding: 40px 0; }
+    .challenge-grid { grid-template-columns: 1fr; }
+    .budget-split { grid-template-columns: 1fr; }
+    .strategy-grid { grid-template-columns: 1fr; }
+    .timeline { padding-left: 32px; }
+    .decision-section { padding: 32px 20px; }
+    .action-table { font-size: 12px; }
+    .action-table th, .action-table td { padding: 12px 8px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">USLS-IS Batch 2003</div>
+  <h1>The <span class="gold">Golden</span> Batch<br>Silver Homecoming</h1>
+  <p class="subtitle">Strategic Plan 2026-2028 · Committee Meeting Presentation</p>
+  
+  <div class="hero-mission">
+    <h2>Our Unique Legacy</h2>
+    <p>We are the Golden Batch — we graduated in 2003 during the school's 50th anniversary (Golden Year). In December 2028, as we celebrate our 25th reunion (Silver Homecoming), the school celebrates its 75th anniversary (Platinum Year). This isn't just our reunion — it's a legacy moment we're uniquely positioned to honor.</p>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- THE CHALLENGE -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-label">Part 1: Understanding The Scope</div>
+      <h2 class="section-title">What We're Actually Responsible For</h2>
+      <p class="section-intro">As Silver Jubilarians (25-year batch), we don't just plan our own reunion — we HOST the entire school's 2028 Alumni Homecoming. Here's what that means:</p>
+    </div>
+
+    <div class="challenge-grid">
+      <div class="challenge-card">
+        <div class="challenge-icon">🏫</div>
+        <h3 class="challenge-title">Host General Alumni Homecoming</h3>
+        <p class="challenge-desc">FREE event for all USLS alumni (not just our batch). Expected 250-350+ attendees from multiple graduating years. Held on school grounds before Dec 15/16, 2028.</p>
+        <div class="challenge-number">250-350<span style="font-size: 16px; font-weight: 600;">+ people</span></div>
+      </div>
+
+      <div class="challenge-card">
+        <div class="challenge-icon">🎓</div>
+        <h3 class="challenge-title">Our Batch Silver Jubilee</h3>
+        <p class="challenge-desc">Our own Batch 2003 celebration (Thanksgiving Mass, campus tour, reunion party, teacher tributes). This is separate from but happens alongside the general homecoming.</p>
+        <div class="challenge-number">357<span style="font-size: 16px; font-weight: 600;"> batch members</span></div>
+      </div>
+
+      <div class="challenge-card">
+        <div class="challenge-icon">💚</div>
+        <h3 class="challenge-title">Give Back to School</h3>
+        <p class="challenge-desc">Tradition for all jubilarians: establish a scholarship, donate a facility, or fund a community project — especially meaningful given the school's 75th Platinum Year.</p>
+        <div class="challenge-number">75th<span style="font-size: 16px; font-weight: 600;"> year legacy</span></div>
+      </div>
+
+      <div class="challenge-card">
+        <div class="challenge-icon">🏌️</div>
+        <h3 class="challenge-title">Golf Tournament (Traditional)</h3>
+        <p class="challenge-desc">Per Alumni Office: Silver Jubilarians typically sponsor the One La Salle Golf Tournament (Nov 2028). Requires ₱500-600K to cover welcome dinner, awarding night, prizes.</p>
+        <div class="challenge-number">₱500-600K<span style="font-size: 16px; font-weight: 600;"> sponsorship</span></div>
+      </div>
+    </div>
+
+    <div class="pattern-box">
+      <h3>The Math That Matters</h3>
+      <div class="pattern-grid">
+        <div class="pattern-item">
+          <strong>Only 200 graduates contribute</strong>
+          <p>Out of 357 yearbook members, only the ~200 actual graduates are expected to fund the event.</p>
+        </div>
+        <div class="pattern-item">
+          <strong>But 350+ people attend</strong>
+          <p>Your budget funds food/experience for all alumni from ANY year who show up to the general homecoming.</p>
+        </div>
+        <div class="pattern-item">
+          <strong>80-100 payers needed</strong>
+          <p>Realistically, not all 200 will contribute. You're targeting 80-100 committed payers at various tiers.</p>
+        </div>
+        <div class="pattern-item">
+          <strong>₱1.7M total budget</strong>
+          <p>This must cover: homecoming for 350+, your batch events, giving back, and possibly golf tournament sponsorship.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRECEDENTS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-label">Part 2: Learning From Others</div>
+      <h2 class="section-title">What Other Silver Jubilarians Actually Did</h2>
+      <p class="section-intro">Data from USLS Center for Alumni Relations archives (2022-2025). Your peer group — the batches who did exactly what you're about to do.</p>
+    </div>
+
+    <div class="precedent-card">
+      <div class="precedent-header">
+        <span class="precedent-batch">High School Class of 1997</span>
+        <span class="precedent-year">Silver Jubilee 2022</span>
+      </div>
+      <div class="precedent-items">
+        <div class="precedent-item">HOSTED the General Alumni Homecoming (Dec 27, 2022)</div>
+        <div class="precedent-item">Thanksgiving Mass for all alumni</div>
+        <div class="precedent-item">Alumni Homecoming at Miguel Hall</div>
+        <div class="precedent-item">Recognition ceremony</div>
+        <div class="precedent-item">Multiple batches attended (school-wide event)</div>
+      </div>
+      <div class="precedent-highlight">
+        ✓ As Silver Jubilarians, they hosted the ENTIRE school's homecoming
+      </div>
+    </div>
+
+    <div class="precedent-card">
+      <div class="precedent-header">
+        <span class="precedent-batch">High School Class of 1998</span>
+        <span class="precedent-year">Silver Jubilee 2023</span>
+      </div>
+      <div class="precedent-items">
+        <div class="precedent-item">HOSTED the General Alumni Homecoming (Dec 16, 2023)</div>
+        <div class="precedent-item">Thanksgiving Mass</div>
+        <div class="precedent-item">Recognition ceremony</div>
+        <div class="precedent-item">Variety show honoring former teachers</div>
+        <div class="precedent-item">Fellowship dinner</div>
+        <div class="precedent-item"><strong>ALSO organized Golf Tournament (Nov 18-19, 2023)</strong></div>
+      </div>
+      <div class="precedent-highlight">
+        ✓ Did BOTH: hosted general homecoming AND organized major golf tournament fundraiser
+      </div>
+    </div>
+
+    <div class="pattern-box">
+      <h3>The Silver Jubilarian Pattern</h3>
+      <div class="pattern-grid">
+        <div class="pattern-item">
+          <strong>1. Host General Homecoming</strong>
+          <p>December event, FREE for all alumni, 250-350+ attendees, school-wide celebration</p>
+        </div>
+        <div class="pattern-item">
+          <strong>2. Your Batch Events</strong>
+          <p>Mass, campus tour, reunion party, teacher tributes — your own celebration alongside the general event</p>
+        </div>
+        <div class="pattern-item">
+          <strong>3. Golf Tournament (Optional)</strong>
+          <p>HS 1998 did it, HS 1997 didn't mention it. It's traditional but not mandatory.</p>
+        </div>
+        <div class="pattern-item">
+          <strong>4. Give Back</strong>
+          <p>Scholarships (most common), physical donations (classrooms), or community service projects</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- BUDGET BREAKDOWN -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-label">Part 3: The Money</div>
+      <h2 class="section-title">Budget Breakdown & Critical Questions</h2>
+      <p class="section-intro">You have ₱1.7M budgeted. Here's how it needs to be allocated — and the questions we must answer TODAY.</p>
+    </div>
+
+    <div class="budget-section">
+      <div class="budget-header">
+        <div class="budget-total">₱1,700,000</div>
+        <div class="budget-label">Total Budget Target</div>
+      </div>
+
+      <div class="budget-split">
+        <div class="budget-bucket">
+          <div class="bucket-amount">₱680K</div>
+          <div class="bucket-label">Catering & Food</div>
+          <div class="bucket-desc">For 350+ alumni (ALL batches, not just ours) + spouses/family/faculty</div>
+        </div>
+        <div class="budget-bucket">
+          <div class="bucket-amount">₱365K</div>
+          <div class="bucket-label">Infrastructure & Production</div>
+          <div class="bucket-desc">Sound, lights, power, decorations, setup — professional-grade event</div>
+        </div>
+        <div class="budget-bucket">
+          <div class="bucket-amount">₱360K</div>
+          <div class="bucket-label">Operations & Extras</div>
+          <div class="bucket-desc">Photo/video, tokens, program, volunteers, permits</div>
+        </div>
+        <div class="budget-bucket">
+          <div class="bucket-amount">₱170K</div>
+          <div class="bucket-label">Contingency</div>
+          <div class="bucket-desc">Weather, last-minute needs, buffer for big turnout</div>
+        </div>
+      </div>
+
+      <div style="background: #FFF9E6; border: 2px solid var(--warning); border-radius: 12px; padding: 24px; margin-top: 24px;">
+        <h3 style="font-family: 'Playfair Display', serif; font-size: 20px; color: var(--warning); margin-bottom: 12px;">⚠️ CRITICAL BUDGET QUESTION</h3>
+        <p style="font-size: 15px; color: var(--text); margin-bottom: 16px;">Does this ₱1.7M budget include:</p>
+        <div class="budget-breakdown">
+          <div class="breakdown-item">
+            <span class="breakdown-label">Golf Tournament Sponsorship (₱500-600K)?</span>
+            <span class="breakdown-amount" style="color: var(--danger);">❓ DECIDE TODAY</span>
+          </div>
+          <div class="breakdown-item">
+            <span class="breakdown-label">Giving Back Scholarship/Donation?</span>
+            <span class="breakdown-amount" style="color: var(--danger);">❓ DECIDE TODAY</span>
+          </div>
+          <div class="breakdown-item">
+            <span class="breakdown-label">Teacher Tribute Dinner (separate from homecoming)?</span>
+            <span class="breakdown-amount" style="color: var(--danger);">❓ DECIDE TODAY</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- FUNDING STRATEGY -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-label">Part 4: The Hybrid Funding Model</div>
+      <h2 class="section-title">How We Reach ₱1.7M by December 2028</h2>
+      <p class="section-intro">Two revenue streams working together: graduate contributions + smaller fundraising events building toward the golf tournament sponsorship.</p>
+    </div>
+
+    <div class="strategy-grid">
+      <div class="strategy-card">
+        <div class="strategy-number">1</div>
+        <h3 class="strategy-title">Graduate Contributions (Primary)</h3>
+        <p class="strategy-desc">₱25,000 target per graduate with flexible tiers: Full (₱25K), Strong Support (₱15K), Solid (₱10K), What You Can (₱5K+). Monthly installments available (₱700/mo × 36 months).</p>
+        <div class="strategy-target">Target: 80-100 contributors = ₱1.2M - ₱1.5M</div>
+      </div>
+
+      <div class="strategy-card">
+        <div class="strategy-number">2</div>
+        <h3 class="strategy-title">Small Fundraising Events (Supplemental)</h3>
+        <p class="strategy-desc">2-3 events throughout 2026-2027 to build momentum, engage non-payers, and add funds: Fun Run (₱50-100K), Movie Night (₱30-50K), Mini-Golf or Bazaar (₱40-80K).</p>
+        <div class="strategy-target">Target: ₱150K - ₱250K supplemental</div>
+      </div>
+
+      <div class="strategy-card">
+        <div class="strategy-number">3</div>
+        <h3 class="strategy-title">Golf Tournament Sponsorship (Capstone)</h3>
+        <p class="strategy-desc">November 2028 - Use accumulated funds to SPONSOR the One La Salle Golf Tournament (₱500-600K for welcome dinner, awarding night, prizes). High visibility for school's 75th year.</p>
+        <div class="strategy-target">Funded by: Contributions + Events</div>
+      </div>
+    </div>
+
+    <div class="pattern-box" style="margin-top: 40px;">
+      <h3>Why This Hybrid Model Works</h3>
+      <div class="pattern-grid">
+        <div class="pattern-item">
+          <strong>Contributions are the foundation</strong>
+          <p>₱206K already collected in 1 month. At this pace, contributions alone could hit ₱1.2M+</p>
+        </div>
+        <div class="pattern-item">
+          <strong>Events build momentum</strong>
+          <p>Keep batch engaged, create FOMO for non-payers, generate media/social buzz</p>
+        </div>
+        <div class="pattern-item">
+          <strong>Golf tournament is funded</strong>
+          <p>Don't need NEW fundraising for golf — use accumulated funds to sponsor it</p>
+        </div>
+        <div class="pattern-item">
+          <strong>Multiple touchpoints</strong>
+          <p>Different ways to participate: can't give ₱25K? Attend fun run. Can't run? Donate ₱5K.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- TIMELINE -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-label">Part 5: The Roadmap</div>
+      <h2 class="section-title">2026-2028 Timeline & Milestones</h2>
+      <p class="section-intro">Based on Alumni Office guidance + what other Silver Jubilarians did. Every milestone drives toward December 2028.</p>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-date">Q1 2026 (Now - March)</div>
+        <div class="timeline-title">Foundation Phase: Launch Contribution Framework</div>
+        <div class="timeline-desc">Present ₱25K contribution tiers to full batch. Formalize committee structure. Begin monthly tracking.</div>
+        <div class="timeline-goals">
+          <li>Launch contribution framework to all 200 graduates</li>
+          <li>Set up monthly auto-debit for installment payers</li>
+          <li>First committee progress report</li>
+          <li><strong>Target: ₱400K total by end Q1</strong></li>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-date">Q2-Q3 2026 (April - September)</div>
+        <div class="timeline-title">Engagement Phase: First Fundraising Event</div>
+        <div class="timeline-desc">Organize Fun Run or Movie Night. Build momentum. Personal outreach to non-responders.</div>
+        <div class="timeline-goals">
+          <li>Host first fundraising event (Fun Run target: ₱75K net)</li>
+          <li>Identify and follow up with non-responders</li>
+          <li>Quarterly progress report to batch</li>
+          <li><strong>Target: ₱700K total by end Q3</strong></li>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-date">Q4 2026 (October - December)</div>
+        <div class="timeline-title">Momentum Phase: Year-End Push</div>
+        <div class="timeline-desc">Holiday messaging. Recognition for contributors. Second fundraising event (Bazaar/Mini-Golf).</div>
+        <div class="timeline-goals">
+          <li>Year-end donor recognition event</li>
+          <li>Second fundraising event (target: ₱60K net)</li>
+          <li>Thank-you notes to all contributors</li>
+          <li><strong>Target: ₱1M total by end 2026</strong></li>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-date">2027 (Full Year)</div>
+        <div class="timeline-title">Acceleration Phase: Mid-Point Drive</div>
+        <div class="timeline-desc">18 months to homecoming. Vendor negotiations begin. Finalize venue details with Alumni Office.</div>
+        <div class="timeline-goals">
+          <li>Mid-point celebration (25 months countdown)</li>
+          <li>Begin vendor contracts (catering, AV, photo/video)</li>
+          <li>Quarterly updates to batch</li>
+          <li><strong>Target: ₱1.4M total by end 2027</strong></li>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-date">January - June 2028</div>
+        <div class="timeline-title">Finalization Phase: Last Push</div>
+        <div class="timeline-desc">Final contribution drive. Confirm attendee count. Finalize all contracts.</div>
+        <div class="timeline-goals">
+          <li>Last-chance contribution window</li>
+          <li>Finalize food/beverage counts</li>
+          <li>Announce giving-back project (scholarship/donation)</li>
+          <li><strong>Target: ₱1.6M+ total by June 2028</strong></li>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-date">March 2028</div>
+        <div class="timeline-title">🎓 March with HS Graduates (Silver Jubilarian Tradition)</div>
+        <div class="timeline-desc">As 25-year Silver Jubilarians, we march with the HS graduating class. Barong formal attire.</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-date">November 2028</div>
+        <div class="timeline-title">🏌️ One La Salle Golf Tournament (If Sponsoring)</div>
+        <div class="timeline-desc">Two-day event at Marapara Golf & Country Club. Day 1: Welcome dinner. Day 2: Awarding night.</div>
+        <div class="timeline-goals">
+          <li>Batch sponsors tournament (₱500-600K from accumulated funds)</li>
+          <li>High visibility for school's 75th Platinum Year</li>
+          <li>Golf committee coordinates logistics</li>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-date">December 2028</div>
+        <div class="timeline-title">🎉 THE SILVER HOMECOMING & GENERAL ALUMNI HOMECOMING</div>
+        <div class="timeline-desc">Before Dec 15/16. School grounds. FREE for all alumni. We host 250-350+ attendees.</div>
+        <div class="timeline-goals">
+          <li>5:30pm: Anticipated Mass</li>
+          <li>6:00-6:30pm: Registration</li>
+          <li>7:00pm: Program begins (recognition, entertainment, dinner)</li>
+          <li>Announce Batch 2003 Scholarship for school's 75th</li>
+          <li><strong>Total budget deployed: ₱1.7M</strong></li>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- DECISIONS -->
+  <div class="decision-section">
+    <div class="decision-header">
+      <h2>Critical Decisions for TODAY's Meeting</h2>
+      <p>These cannot be deferred. We need committee consensus to move forward.</p>
+    </div>
+
+    <div class="decision-item">
+      <div class="decision-question">1. What is our funding approach?</div>
+      <div class="decision-options">
+        <div class="decision-option">
+          <div class="decision-radio"></div>
+          <div class="decision-option-text"><strong>Option A:</strong> Contribution-Only (₱25K model, 80-100 payers, no extra events except maybe 1 fun run)</div>
+        </div>
+        <div class="decision-option">
+          <div class="decision-radio"></div>
+          <div class="decision-option-text"><strong>Option B:</strong> Hybrid Model (₱25K contributions + 2-3 small events + golf tournament sponsorship)</div>
+        </div>
+        <div class="decision-option">
+          <div class="decision-radio"></div>
+          <div class="decision-option-text"><strong>Option C:</strong> Event-Heavy (Multiple large fundraisers, lower per-person contribution ask)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="decision-item">
+      <div class="decision-question">2. Is the Golf Tournament sponsorship (₱500-600K) part of our ₱1.7M budget or separate?</div>
+      <div class="decision-options">
+        <div class="decision-option">
+          <div class="decision-radio"></div>
+          <div class="decision-option-text"><strong>Part of ₱1.7M:</strong> Golf sponsorship comes from accumulated funds (contributions + events)</div>
+        </div>
+        <div class="decision-option">
+          <div class="decision-radio"></div>
+          <div class="decision-option-text"><strong>Separate/Additional:</strong> Need to raise ₱2.2-2.3M total (₱1.7M homecoming + ₱500-600K golf)</div>
+        </div>
+        <div class="decision-option">
+          <div class="decision-radio"></div>
+          <div class="decision-option-text"><strong>Skip Golf Tournament:</strong> Not sponsoring it, focus only on homecoming</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="decision-item">
+      <div class="decision-question">3. What is our giving-back commitment for the school's 75th Platinum Year?</div>
+      <div class="decision-options">
+        <div class="decision-option">
+          <div class="decision-radio"></div>
+          <div class="decision-option-text"><strong>Scholarship:</strong> "USLS-IS Batch 2003 Scholarship" for school's 75th (amount TBD, part of budget or separate)</div>
+        </div>
+        <div class="decision-option">
+          <div class="decision-radio"></div>
+          <div class="decision-option-text"><strong>Physical Donation:</strong> Classroom, facility upgrade, memorial bench, etc.</div>
+        </div>
+        <div class="decision-option">
+          <div class="decision-radio"></div>
+          <div class="decision-option-text"><strong>Community Project:</strong> Support Bahay Pag Asa or other school-affiliated charity</div>
+        </div>
+        <div class="decision-option">
+          <div class="decision-radio"></div>
+          <div class="decision-option-text"><strong>Decide Later:</strong> Wait until we see final budget surplus (if any) in 2028</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="decision-item">
+      <div class="decision-question">4. What are our next 3 immediate action items (next 30 days)?</div>
+      <div class="decision-options">
+        <div class="decision-option">
+          <div class="decision-radio"></div>
+          <div class="decision-option-text">Finalize contribution framework messaging & launch to full batch</div>
+        </div>
+        <div class="decision-option">
+          <div class="decision-radio"></div>
+          <div class="decision-option-text">Assign committee roles (funds lead, comms lead, events lead, etc.)</div>
+        </div>
+        <div class="decision-option">
+          <div class="decision-radio"></div>
+          <div class="decision-option-text">Schedule first fundraising event (Fun Run in Q2 2026?)</div>
+        </div>
+        <div class="decision-option">
+          <div class="decision-radio"></div>
+          <div class="decision-option-text">Set up monthly reporting cadence to batch</div>
+        </div>
+        <div class="decision-option">
+          <div class="decision-radio"></div>
+          <div class="decision-option-text">Meet with Alumni Office to confirm homecoming logistics</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- RECOMMENDED PLAN -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-label">Part 6: Recommended Approach</div>
+      <h2 class="section-title">The Action Plan (If Committee Approves)</h2>
+      <p class="section-intro">Based on precedents, current momentum (₱206K in 1 month), and volunteer bandwidth constraints.</p>
+    </div>
+
+    <div class="action-plan">
+      <table class="action-table">
+        <thead>
+          <tr>
+            <th>Action Item</th>
+            <th>Timeline</th>
+            <th>Owner</th>
+            <th>Success Metric</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Finalize Funding Approach</strong><br>Vote on hybrid model: contributions + 2 events + golf sponsorship from accumulated funds</td>
+            <td>TODAY</td>
+            <td><span class="action-owner">Full Committee</span></td>
+            <td>Consensus decision documented</td>
+          </tr>
+          <tr>
+            <td><strong>Launch Contribution Framework</strong><br>Announce ₱25K tiers to all 200 graduates via email + website</td>
+            <td>Next 7 days</td>
+            <td><span class="action-owner">FM (Tech) + Comms Lead</span></td>
+            <td>Email sent, website updated</td>
+          </tr>
+          <tr>
+            <td><strong>Assign Committee Roles</strong><br>Funds lead, events lead, comms lead, Alumni Office liaison, golf coordinator (if doing it)</td>
+            <td>Next 14 days</td>
+            <td><span class="action-owner">Co-Chairs</span></td>
+            <td>Roles assigned, accepted</td>
+          </tr>
+          <tr>
+            <td><strong>Schedule Q2 2026 Fun Run</strong><br>Batch 2000 did it, easy to organize, good first event</td>
+            <td>Plan in March, execute in May</td>
+            <td><span class="action-owner">Events Lead</span></td>
+            <td>Date confirmed, venue booked</td>
+          </tr>
+          <tr>
+            <td><strong>Monthly Progress Reports</strong><br>Update batch on funds collected, upcoming events, homecoming plans</td>
+            <td>Ongoing (last Friday each month)</td>
+            <td><span class="action-owner">Comms Lead</span></td>
+            <td>Report sent by 5pm each month</td>
+          </tr>
+          <tr>
+            <td><strong>Alumni Office Coordination</strong><br>Confirm Dec 2028 date, venue logistics, school support, giving-back options</td>
+            <td>Next 30 days</td>
+            <td><span class="action-owner">Alumni Office Liaison</span></td>
+            <td>Meeting held, notes shared</td>
+          </tr>
+          <tr>
+            <td><strong>Decide on Giving-Back Project</strong><br>Scholarship? Physical donation? Community service? Amount?</td>
+            <td>Before end Q1 2026</td>
+            <td><span class="action-owner">Full Committee</span></td>
+            <td>Decision made, budget allocated</td>
+          </tr>
+          <tr>
+            <td><strong>Golf Tournament Decision</strong><br>Are we sponsoring it? If yes, start coordination with Golf Committee (Norman Jison, Fidel Hinares)</td>
+            <td>TODAY</td>
+            <td><span class="action-owner">Full Committee</span></td>
+            <td>Yes/No vote, next steps clear</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-section">
+    <h2>The <span class="gold">Golden</span> Batch for the <span class="gold">Platinum</span> Year</h2>
+    <p>We graduated during the school's Golden anniversary. We return for its Platinum milestone. This is our moment to show what The Golden Batch can do.</p>
+    
+    <div class="cta-stats">
+      <div class="cta-stat">
+        <span class="cta-stat-number">₱206K</span>
+        <span class="cta-stat-label">Already Collected</span>
+      </div>
+      <div class="cta-stat">
+        <span class="cta-stat-number">35</span>
+        <span class="cta-stat-label">Months to Go</span>
+      </div>
+      <div class="cta-stat">
+        <span class="cta-stat-number">₱1.7M</span>
+        <span class="cta-stat-label">Target Budget</span>
+      </div>
+      <div class="cta-stat">
+        <span class="cta-stat-number">350+</span>
+        <span class="cta-stat-label">Alumni We'll Host</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

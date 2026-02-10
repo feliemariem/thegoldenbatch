@@ -5,12 +5,12 @@ const presentations = [
   {
     id: 'plan',
     label: 'Strategic Plan',
-    url: 'https://docs.google.com/presentation/d/e/2PACX-1vSh0q1ymrO1fFg2QI6X2c8p8MBlVGjhkON4DKGvFvG5EvE0KOlQ8H1i1g5qMFg/embed?start=false&loop=false&delayms=3000'
+    file: '/Users/feliemarie/Developer/Projects/thegoldenbatch/frontend/public/presentations/Funding_Strategy_Visual.html'
   },
   {
     id: 'funding',
     label: 'Funding Plan',
-    url: 'https://docs.google.com/presentation/d/e/2PACX-1vRKN8MKJqH3vJ2XYG2pZyQq8HFz0g2J8v5NvEg3O1G2gBKhVcH5I6Y8bF9aD1/embed?start=false&loop=false&delayms=3000'
+    file: '/Users/feliemarie/Developer/Projects/thegoldenbatch/frontend/public/presentations/Strategic_Plan_2026-2028.html'
   }
 ];
 
