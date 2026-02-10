@@ -75,12 +75,9 @@ async function convertToPdf() {
         path: outputPath,
         format: 'Letter',
         printBackground: true,
-        margin: {
-          top: '0.5in',
-          right: '0.5in',
-          bottom: '0.5in',
-          left: '0.5in'
-        },
+        margin: { top: '0.5in', right: '0.5in', bottom: '0.5in', left: '0.5in' },
+        scale: 0.55, // Scale down to fit on one page
+        pageRanges: '1', // Only output page 1
         preferCSSPageSize: false,
         displayHeaderFooter: false
       });
