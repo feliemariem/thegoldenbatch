@@ -569,9 +569,7 @@ body[data-theme="light"] .hero-section h1 {
   text-shadow: none !important;
 }
 
-body[data-theme="light"] .tagline {
-  color: #006633 !important;
-}
+/* Light mode tagline uses gold gradient - defined in landing.css */
 
 /* Login button - green in light mode */
 body[data-theme="light"] .btn-login {
@@ -605,9 +603,7 @@ body[data-theme="light"] .landing-theme-toggle:hover {
   border-color: rgba(0, 102, 51, 0.5) !important;
 }
 
-body[data-theme="light"] .event-details span {
-  color: #555 !important;
-}
+/* Light mode event-details spans - styled in landing.css with dark green color */
 
 body[data-theme="light"] .countdown-section {
   background: rgba(0, 77, 38, 0.04) !important;
