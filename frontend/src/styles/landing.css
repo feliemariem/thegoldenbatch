@@ -1,6 +1,7 @@
 /* ========================================
    LANDING PAGE STYLES
    Elegant, Classy Animated Landing Page
+   Theme-aware using body[data-theme] selectors
    ======================================== */
 
 /* Respect user's motion preferences */
@@ -15,20 +16,19 @@
 }
 
 /* ========================================
-   BASE STYLES
+   BASE STYLES (Layout Only - No Colors)
    ======================================== */
 
 .landing-page {
   min-height: 100vh;
   padding-top: env(safe-area-inset-top);
-  background: #0a0f0d;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 /* ========================================
-   HEADER
+   HEADER (Layout)
    ======================================== */
 
 .landing-header {
@@ -40,16 +40,9 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px 40px;
-  background: rgba(10, 15, 13, 0.6);
   backdrop-filter: blur(10px);
   z-index: 100;
-  border-bottom: 1px solid rgba(207, 181, 59, 0.05);
   transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.landing-header.solid {
-  background: rgba(10, 15, 13, 0.95);
-  border-bottom: 1px solid rgba(207, 181, 59, 0.15);
 }
 
 .landing-logo {
@@ -68,7 +61,6 @@
 .landing-logo span {
   font-family: var(--font-heading);
   font-weight: 600;
-  color: #B8960C;
   font-size: 1.1rem;
   text-transform: uppercase;
   letter-spacing: 2px;
@@ -83,8 +75,6 @@
 
 .btn-login {
   padding: 10px 24px;
-  background: linear-gradient(135deg, #CFB53B 0%, #B8960C 100%);
-  color: #0a0f0d;
   text-decoration: none;
   border-radius: 8px;
   font-weight: 600;
@@ -93,17 +83,10 @@
   border: 2px solid transparent;
 }
 
-.btn-login:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(207, 181, 59, 0.25);
-}
-
 .landing-theme-toggle {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  border: 1px solid rgba(184, 150, 12, 0.35);
-  background: rgba(255, 255, 255, 0.08);
   cursor: pointer;
   font-size: 0.75rem;
   display: flex;
@@ -111,18 +94,15 @@
   justify-content: center;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   opacity: 0.7;
-  color: #B8960C;
 }
 
 .landing-theme-toggle:hover {
-  background: rgba(184, 150, 12, 0.15);
-  border-color: rgba(184, 150, 12, 0.5);
   transform: scale(1.05);
   opacity: 1;
 }
 
 /* ========================================
-   HERO SECTION
+   HERO SECTION (Layout)
    ======================================== */
 
 .hero-section {
@@ -137,16 +117,15 @@
   overflow: hidden;
 }
 
-/* Parallax Background */
 .hero-background {
   position: absolute;
   top: -10%;
   left: -5%;
   right: -5%;
   bottom: -10%;
-  background:
-    linear-gradient(145deg, rgba(10, 15, 13, 0.88) 0%, rgba(26, 42, 31, 0.85) 50%, rgba(13, 21, 16, 0.92) 100%),
-    url('../images/hs_bldg.jpg') center center / cover no-repeat;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
   transform: scale(1.15);
   opacity: 0;
   transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1), transform 8s cubic-bezier(0.4, 0, 0.2, 1);
@@ -166,7 +145,6 @@
   align-items: center;
 }
 
-/* Hero Logo */
 .hero-logo {
   width: 200px;
   height: 200px;
@@ -175,18 +153,15 @@
   object-fit: contain;
   opacity: 0;
   transform: scale(0.9);
-  filter: drop-shadow(0 0 0 rgba(207, 181, 59, 0));
   transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .hero-section.animate .hero-logo {
   opacity: 1;
   transform: scale(1);
-  filter: drop-shadow(0 0 40px rgba(207, 181, 59, 0.3));
   transition-delay: 1.5s;
 }
 
-/* Hero Title with Staggered Words */
 .hero-title {
   font-family: var(--font-heading);
   font-size: 3.5rem;
@@ -198,7 +173,6 @@
 
 .hero-title .word {
   display: inline-block;
-  background: linear-gradient(135deg, #CFB53B 0%, #B8960C 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -225,7 +199,6 @@
   transition-delay: 3.6s;
 }
 
-/* Tagline - Golden Batch */
 .tagline {
   font-size: 1.5rem;
   font-style: italic;
@@ -233,7 +206,6 @@
   opacity: 0;
   transform: translateY(10px);
   transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
-  background: linear-gradient(90deg, #CFB53B 0%, #E8D48A 50%, #CFB53B 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -257,7 +229,6 @@
   }
 }
 
-/* Event Details - Clean inline text, no boxes */
 .event-details {
   display: flex;
   justify-content: center;
@@ -265,7 +236,6 @@
   gap: 32px;
   margin-bottom: 28px;
   font-size: 1.05rem;
-  color: #CFB53B;
   font-weight: 500;
   letter-spacing: 0.01em;
 }
@@ -277,7 +247,6 @@
   opacity: 0;
   transform: translateY(10px);
   transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-  /* No background, no border, no box - just text */
   background: none;
   border: none;
   padding: 0;
@@ -300,11 +269,9 @@
   transition-delay: 6.3s;
 }
 
-/* Hero Quote - Bia's tagline */
 .hero-quote {
   font-size: 1.15rem;
   font-style: italic;
-  color: #CFB53B;
   margin-bottom: 36px;
   opacity: 0;
   transform: translateY(10px);
@@ -319,14 +286,11 @@
   transition-delay: 7s;
 }
 
-/* Hero Button with Breathing Glow */
 .btn-hero {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 18px 48px;
-  background: linear-gradient(135deg, #CFB53B 0%, #B8960C 100%);
-  color: #0a0f0d;
   text-decoration: none;
   border-radius: 12px;
   font-weight: 600;
@@ -344,22 +308,11 @@
   opacity: 1;
   transform: translateY(0);
   transition-delay: 7.5s;
-  animation: breathingGlow 2s ease-in-out infinite;
   animation-delay: 8s;
-}
-
-@keyframes breathingGlow {
-  0%, 100% {
-    box-shadow: 0 4px 20px rgba(207, 181, 59, 0.25);
-  }
-  50% {
-    box-shadow: 0 8px 40px rgba(207, 181, 59, 0.45);
-  }
 }
 
 .btn-hero:hover {
   transform: translateY(-3px) !important;
-  box-shadow: 0 12px 40px rgba(207, 181, 59, 0.4) !important;
 }
 
 .btn-hero::before {
@@ -378,19 +331,17 @@
 }
 
 /* ========================================
-   COUNTDOWN SECTION
+   COUNTDOWN SECTION (Layout)
    ======================================== */
 
 .countdown-section {
   padding: 100px 20px;
-  background: rgba(0, 0, 0, 0.4);
   text-align: center;
 }
 
 .countdown-section h2 {
   font-family: var(--font-heading);
   font-size: 1.8rem;
-  color: #CFB53B;
   margin-bottom: 50px;
   opacity: 0;
   transform: translateY(20px);
@@ -410,8 +361,6 @@
 }
 
 .countdown-item {
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(207, 181, 59, 0.2);
   border-radius: 16px;
   padding: 28px 36px;
   min-width: 120px;
@@ -430,7 +379,6 @@
   display: block;
   font-size: 3.5rem;
   font-weight: 700;
-  color: #CFB53B;
   line-height: 1;
   font-variant-numeric: tabular-nums;
 }
@@ -438,14 +386,13 @@
 .countdown-label {
   display: block;
   font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.6);
   text-transform: uppercase;
   letter-spacing: 0.12em;
   margin-top: 10px;
 }
 
 /* ========================================
-   ABOUT SECTION
+   ABOUT SECTION (Layout)
    ======================================== */
 
 .about-section {
@@ -458,7 +405,6 @@
 .about-section h2 {
   font-family: var(--font-heading);
   font-size: 1.8rem;
-  color: #CFB53B;
   margin-bottom: 28px;
   opacity: 0;
   transform: translateY(20px);
@@ -472,7 +418,6 @@
 
 .about-section p {
   font-size: 1.2rem;
-  color: rgba(255, 255, 255, 0.85);
   line-height: 1.9;
   opacity: 0;
   transform: translateY(20px);
@@ -486,7 +431,7 @@
 }
 
 /* ========================================
-   MODAL STYLES
+   MODAL STYLES (Layout)
    ======================================== */
 
 .modal-overlay {
@@ -495,7 +440,6 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.85);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -505,21 +449,14 @@
 }
 
 @keyframes modalFadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .modal-content {
-  background: linear-gradient(165deg, rgba(30, 40, 35, 0.98) 0%, rgba(20, 28, 24, 0.99) 100%);
   border-radius: 20px;
   padding: 32px;
   position: relative;
-  border: 1px solid rgba(207, 181, 59, 0.2);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
   max-height: 90vh;
   overflow-y: auto;
   animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -545,9 +482,7 @@
   position: absolute;
   top: 16px;
   right: 16px;
-  background: rgba(255, 255, 255, 0.1);
   border: none;
-  color: #fff;
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -560,14 +495,10 @@
 }
 
 .modal-close:hover {
-  background: rgba(255, 255, 255, 0.2);
   transform: rotate(90deg);
 }
 
-/* Form Disclaimer Styles */
 .form-disclaimer {
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(207, 181, 59, 0.15);
   border-radius: 12px;
   padding: 20px 24px;
   margin-bottom: 20px;
@@ -575,7 +506,6 @@
 }
 
 .form-disclaimer p {
-  color: rgba(255, 255, 255, 0.9);
   font-size: 0.95rem;
   line-height: 1.6;
   margin-bottom: 12px;
@@ -587,7 +517,6 @@
 }
 
 .form-disclaimer li {
-  color: rgba(255, 255, 255, 0.7);
   font-size: 0.9rem;
   line-height: 1.8;
   margin-bottom: 4px;
@@ -595,11 +524,9 @@
 
 .form-disclaimer .privacy-note {
   font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.6);
   font-style: italic;
   margin-bottom: 0;
   padding-top: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .consent-checkbox {
@@ -619,7 +546,6 @@
 
 .consent-checkbox span {
   font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.8);
   line-height: 1.5;
 }
 
@@ -632,6 +558,359 @@
 
 .form-embed-container iframe {
   display: block;
+}
+
+/* ========================================
+   DARK THEME
+   ======================================== */
+
+body[data-theme="dark"] .landing-page {
+  background: #0a0f0d;
+}
+
+/* Header - Dark */
+body[data-theme="dark"] .landing-header {
+  background: rgba(10, 15, 13, 0.6);
+  border-bottom: 1px solid rgba(207, 181, 59, 0.05);
+}
+
+body[data-theme="dark"] .landing-header.solid {
+  background: rgba(10, 15, 13, 0.95);
+  border-bottom: 1px solid rgba(207, 181, 59, 0.15);
+}
+
+body[data-theme="dark"] .landing-logo span {
+  color: #B8960C;
+}
+
+body[data-theme="dark"] .btn-login {
+  background: linear-gradient(135deg, #CFB53B 0%, #B8960C 100%);
+  color: #0a0f0d;
+}
+
+body[data-theme="dark"] .btn-login:hover {
+  box-shadow: 0 8px 24px rgba(207, 181, 59, 0.25);
+}
+
+body[data-theme="dark"] .landing-theme-toggle {
+  border: 1px solid rgba(184, 150, 12, 0.35);
+  background: rgba(255, 255, 255, 0.08);
+  color: #B8960C;
+}
+
+body[data-theme="dark"] .landing-theme-toggle:hover {
+  background: rgba(184, 150, 12, 0.15);
+  border-color: rgba(184, 150, 12, 0.5);
+}
+
+/* Hero - Dark */
+body[data-theme="dark"] .hero-background {
+  background:
+    linear-gradient(145deg, rgba(10, 15, 13, 0.88) 0%, rgba(26, 42, 31, 0.85) 50%, rgba(13, 21, 16, 0.92) 100%),
+    url('../images/hs_bldg.jpg') center center / cover no-repeat;
+}
+
+body[data-theme="dark"] .hero-logo {
+  filter: drop-shadow(0 0 0 rgba(207, 181, 59, 0));
+}
+
+body[data-theme="dark"] .hero-section.animate .hero-logo {
+  filter: drop-shadow(0 0 40px rgba(207, 181, 59, 0.3));
+}
+
+body[data-theme="dark"] .hero-title .word {
+  background: linear-gradient(135deg, #CFB53B 0%, #B8960C 100%);
+}
+
+body[data-theme="dark"] .tagline {
+  background: linear-gradient(90deg, #CFB53B 0%, #E8D48A 50%, #CFB53B 100%);
+}
+
+body[data-theme="dark"] .event-details {
+  color: #CFB53B;
+}
+
+body[data-theme="dark"] .event-details span {
+  color: #CFB53B;
+}
+
+body[data-theme="dark"] .hero-quote {
+  color: #CFB53B;
+}
+
+body[data-theme="dark"] .btn-hero {
+  background: linear-gradient(135deg, #CFB53B 0%, #B8960C 100%);
+  color: #0a0f0d;
+}
+
+body[data-theme="dark"] .hero-section.animate .btn-hero {
+  animation: breathingGlowDark 2s ease-in-out infinite;
+}
+
+@keyframes breathingGlowDark {
+  0%, 100% {
+    box-shadow: 0 4px 20px rgba(207, 181, 59, 0.25);
+  }
+  50% {
+    box-shadow: 0 8px 40px rgba(207, 181, 59, 0.45);
+  }
+}
+
+body[data-theme="dark"] .btn-hero:hover {
+  box-shadow: 0 12px 40px rgba(207, 181, 59, 0.4) !important;
+}
+
+/* Countdown - Dark */
+body[data-theme="dark"] .countdown-section {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+body[data-theme="dark"] .countdown-section h2 {
+  color: #CFB53B;
+}
+
+body[data-theme="dark"] .countdown-item {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(207, 181, 59, 0.2);
+}
+
+body[data-theme="dark"] .countdown-number {
+  color: #CFB53B;
+}
+
+body[data-theme="dark"] .countdown-label {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* About - Dark */
+body[data-theme="dark"] .about-section h2 {
+  color: #CFB53B;
+}
+
+body[data-theme="dark"] .about-section p {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Modal - Dark */
+body[data-theme="dark"] .modal-overlay {
+  background: rgba(0, 0, 0, 0.85);
+}
+
+body[data-theme="dark"] .modal-content {
+  background: linear-gradient(165deg, rgba(30, 40, 35, 0.98) 0%, rgba(20, 28, 24, 0.99) 100%);
+  border: 1px solid rgba(207, 181, 59, 0.2);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+body[data-theme="dark"] .modal-close {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+body[data-theme="dark"] .modal-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+body[data-theme="dark"] .form-disclaimer {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(207, 181, 59, 0.15);
+}
+
+body[data-theme="dark"] .form-disclaimer p {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+body[data-theme="dark"] .form-disclaimer li {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+body[data-theme="dark"] .form-disclaimer .privacy-note {
+  color: rgba(255, 255, 255, 0.6);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+body[data-theme="dark"] .consent-checkbox span {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* ========================================
+   LIGHT THEME
+   ======================================== */
+
+body[data-theme="light"] .landing-page {
+  background: #f8f9f7;
+}
+
+/* Header - Light */
+body[data-theme="light"] .landing-header {
+  background: rgba(255, 255, 255, 0.95);
+  border-bottom: 1px solid rgba(0, 102, 51, 0.15);
+}
+
+body[data-theme="light"] .landing-header.solid {
+  background: rgba(255, 255, 255, 0.98);
+  border-bottom: 1px solid rgba(0, 102, 51, 0.2);
+  box-shadow: 0 2px 20px rgba(0, 51, 25, 0.08);
+}
+
+body[data-theme="light"] .landing-logo span {
+  color: #006633;
+}
+
+body[data-theme="light"] .btn-login {
+  background: linear-gradient(135deg, #006633 0%, #004d26 100%);
+  color: #fff;
+}
+
+body[data-theme="light"] .btn-login:hover {
+  box-shadow: 0 8px 24px rgba(0, 102, 51, 0.3);
+}
+
+body[data-theme="light"] .landing-theme-toggle {
+  border: 1px solid rgba(0, 102, 51, 0.3);
+  background: rgba(0, 102, 51, 0.05);
+  color: #006633;
+}
+
+body[data-theme="light"] .landing-theme-toggle:hover {
+  background: rgba(0, 102, 51, 0.12);
+  border-color: rgba(0, 102, 51, 0.4);
+}
+
+/* Hero - Light */
+body[data-theme="light"] .hero-background {
+  background:
+    linear-gradient(145deg, rgba(248, 250, 248, 0.92) 0%, rgba(245, 248, 245, 0.90) 50%, rgba(248, 250, 248, 0.93) 100%),
+    url('../images/hs_bldg.jpg') center center / cover no-repeat;
+}
+
+body[data-theme="light"] .hero-logo {
+  filter: drop-shadow(0 0 20px rgba(0, 102, 51, 0.15));
+}
+
+body[data-theme="light"] .hero-section.animate .hero-logo {
+  filter: drop-shadow(0 0 30px rgba(0, 102, 51, 0.25));
+}
+
+body[data-theme="light"] .hero-title .word {
+  background: linear-gradient(135deg, #006633 0%, #004d26 100%);
+}
+
+body[data-theme="light"] .tagline {
+  background: linear-gradient(90deg, #B8960C 0%, #CFB53B 50%, #B8960C 100%);
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
+}
+
+body[data-theme="light"] .event-details {
+  color: #004d26;
+}
+
+body[data-theme="light"] .event-details span {
+  color: #004d26;
+}
+
+body[data-theme="light"] .hero-quote {
+  color: #006633;
+}
+
+body[data-theme="light"] .hero-section.animate .hero-quote {
+  opacity: 1;
+}
+
+body[data-theme="light"] .btn-hero {
+  background: linear-gradient(135deg, #006633 0%, #004d26 100%);
+  color: #fff;
+}
+
+body[data-theme="light"] .hero-section.animate .btn-hero {
+  animation: breathingGlowLight 2s ease-in-out infinite;
+}
+
+@keyframes breathingGlowLight {
+  0%, 100% {
+    box-shadow: 0 4px 20px rgba(0, 102, 51, 0.25);
+  }
+  50% {
+    box-shadow: 0 8px 40px rgba(0, 102, 51, 0.4);
+  }
+}
+
+body[data-theme="light"] .btn-hero:hover {
+  box-shadow: 0 12px 40px rgba(0, 102, 51, 0.35) !important;
+}
+
+/* Countdown - Light */
+body[data-theme="light"] .countdown-section {
+  background: rgba(0, 51, 25, 0.06);
+}
+
+body[data-theme="light"] .countdown-section h2 {
+  color: #006633;
+}
+
+body[data-theme="light"] .countdown-item {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 102, 51, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 51, 25, 0.08);
+}
+
+body[data-theme="light"] .countdown-number {
+  color: #006633;
+}
+
+body[data-theme="light"] .countdown-label {
+  color: rgba(0, 51, 25, 0.6);
+}
+
+/* About - Light */
+body[data-theme="light"] .about-section h2 {
+  color: #006633;
+}
+
+body[data-theme="light"] .about-section p {
+  color: rgba(0, 51, 25, 0.85);
+}
+
+/* Modal - Light */
+body[data-theme="light"] .modal-overlay {
+  background: rgba(0, 30, 15, 0.6);
+}
+
+body[data-theme="light"] .modal-content {
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 252, 250, 0.99) 100%);
+  border: 1px solid rgba(0, 102, 51, 0.2);
+  box-shadow: 0 20px 60px rgba(0, 51, 25, 0.15);
+}
+
+body[data-theme="light"] .modal-close {
+  background: rgba(0, 0, 0, 0.08);
+  color: #333;
+}
+
+body[data-theme="light"] .modal-close:hover {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+body[data-theme="light"] .form-disclaimer {
+  background: rgba(0, 102, 51, 0.05);
+  border: 1px solid rgba(0, 102, 51, 0.15);
+}
+
+body[data-theme="light"] .form-disclaimer p {
+  color: rgba(0, 51, 25, 0.9);
+}
+
+body[data-theme="light"] .form-disclaimer li {
+  color: rgba(0, 51, 25, 0.75);
+}
+
+body[data-theme="light"] .form-disclaimer .privacy-note {
+  color: rgba(0, 51, 25, 0.6);
+  border-top: 1px solid rgba(0, 102, 51, 0.1);
+}
+
+body[data-theme="light"] .consent-checkbox span {
+  color: rgba(0, 51, 25, 0.85);
 }
 
 /* ========================================
@@ -788,199 +1067,4 @@
   .countdown-label {
     font-size: 0.75rem;
   }
-}
-
-/* ========================================
-   LIGHT MODE OVERRIDES
-   Clean, crisp light theme matching countdown section
-   Note: data-theme is set on .landing-page element itself
-   ======================================== */
-
-.landing-page[data-theme="light"] {
-  background: #f8f9f7;
-}
-
-/* Hero background - very dark overlay for clean text contrast */
-.landing-page[data-theme="light"] .hero-background {
-  background:
-    linear-gradient(145deg,
-      rgba(248, 250, 248, 0.92) 0%,
-      rgba(245, 248, 245, 0.90) 50%,
-      rgba(248, 250, 248, 0.93) 100%
-    ),
-    url('../images/hs_bldg.jpg') center center / cover no-repeat;
-}
-
-/* Header - clean white with green accents */
-.landing-page[data-theme="light"] .landing-header {
-  background: rgba(255, 255, 255, 0.95);
-  border-bottom-color: rgba(0, 102, 51, 0.15);
-}
-
-.landing-page[data-theme="light"] .landing-header.solid {
-  background: rgba(255, 255, 255, 0.98);
-  border-bottom-color: rgba(0, 102, 51, 0.2);
-  box-shadow: 0 2px 20px rgba(0, 51, 25, 0.08);
-}
-
-.landing-page[data-theme="light"] .landing-logo span {
-  color: #006633;
-}
-
-.landing-page[data-theme="light"] .btn-login {
-  background: linear-gradient(135deg, #006633 0%, #004d26 100%);
-  color: #fff;
-}
-
-.landing-page[data-theme="light"] .btn-login:hover {
-  box-shadow: 0 8px 24px rgba(0, 102, 51, 0.3);
-}
-
-.landing-page[data-theme="light"] .landing-theme-toggle {
-  border-color: rgba(0, 102, 51, 0.3);
-  color: #006633;
-  background: rgba(0, 102, 51, 0.05);
-}
-
-.landing-page[data-theme="light"] .landing-theme-toggle:hover {
-  background: rgba(0, 102, 51, 0.12);
-  border-color: rgba(0, 102, 51, 0.4);
-}
-
-/* Hero Title - Dark green, strong contrast */
-.landing-page[data-theme="light"] .hero-title .word {
-  background: linear-gradient(135deg, #006633 0%, #004d26 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-/* Tagline - Rich gold with dark outline for visibility */
-.landing-page[data-theme="light"] .tagline {
-  background: linear-gradient(90deg, #B8960C 0%, #CFB53B 50%, #B8960C 100%);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
-}
-
-/* Event details - dark green text for clarity */
-.landing-page[data-theme="light"] .event-details {
-  color: #004d26;
-}
-
-.landing-page[data-theme="light"] .event-details span {
-  color: #004d26;
-}
-
-/* Quote - Dark green, italic elegance */
-.landing-page[data-theme="light"] .hero-quote {
-  color: #006633;
-  opacity: 1;
-  text-shadow: none;
-}
-
-/* Hero Button - Strong green like countdown */
-.landing-page[data-theme="light"] .btn-hero {
-  background: linear-gradient(135deg, #006633 0%, #004d26 100%);
-  color: #fff;
-  box-shadow: 0 4px 20px rgba(0, 102, 51, 0.25);
-}
-
-.landing-page[data-theme="light"] .btn-hero:hover {
-  box-shadow: 0 8px 30px rgba(0, 102, 51, 0.35) !important;
-}
-
-/* Breathing glow - green in light mode */
-.landing-page[data-theme="light"] .hero-section.animate .btn-hero {
-  animation: breathingGlowLight 2s ease-in-out infinite;
-  animation-delay: 8s;
-}
-
-@keyframes breathingGlowLight {
-  0%, 100% {
-    box-shadow: 0 4px 20px rgba(0, 102, 51, 0.25);
-  }
-  50% {
-    box-shadow: 0 8px 40px rgba(0, 102, 51, 0.4);
-  }
-}
-
-/* Hero Logo - Subtle green glow */
-.landing-page[data-theme="light"] .hero-logo {
-  filter: drop-shadow(0 0 20px rgba(0, 102, 51, 0.15));
-}
-
-.landing-page[data-theme="light"] .hero-section.animate .hero-logo {
-  filter: drop-shadow(0 0 30px rgba(0, 102, 51, 0.25));
-}
-
-/* Countdown Section - Light background */
-.landing-page[data-theme="light"] .countdown-section {
-  background: rgba(0, 51, 25, 0.06);
-}
-
-.landing-page[data-theme="light"] .countdown-section h2 {
-  color: #006633;
-}
-
-.landing-page[data-theme="light"] .countdown-item {
-  background: rgba(255, 255, 255, 0.95);
-  border-color: rgba(0, 102, 51, 0.2);
-  box-shadow: 0 4px 20px rgba(0, 51, 25, 0.08);
-}
-
-.landing-page[data-theme="light"] .countdown-number {
-  color: #006633;
-}
-
-.landing-page[data-theme="light"] .countdown-label {
-  color: rgba(0, 51, 25, 0.6);
-}
-
-/* About Section */
-.landing-page[data-theme="light"] .about-section h2 {
-  color: #006633;
-}
-
-.landing-page[data-theme="light"] .about-section p {
-  color: rgba(0, 51, 25, 0.85);
-}
-
-/* Modal - Light mode adjustments */
-.landing-page[data-theme="light"] .modal-content {
-  background: linear-gradient(165deg, rgba(248, 249, 247, 0.98) 0%, rgba(240, 242, 238, 0.99) 100%);
-  border-color: rgba(0, 102, 51, 0.2);
-}
-
-.landing-page[data-theme="light"] .modal-close {
-  background: rgba(0, 0, 0, 0.08);
-  color: #333;
-}
-
-.landing-page[data-theme="light"] .modal-close:hover {
-  background: rgba(0, 0, 0, 0.15);
-}
-
-.landing-page[data-theme="light"] .form-disclaimer {
-  background: rgba(0, 102, 51, 0.05);
-  border-color: rgba(0, 102, 51, 0.15);
-}
-
-.landing-page[data-theme="light"] .form-disclaimer p {
-  color: rgba(0, 51, 25, 0.9);
-}
-
-.landing-page[data-theme="light"] .form-disclaimer li {
-  color: rgba(0, 51, 25, 0.75);
-}
-
-.landing-page[data-theme="light"] .form-disclaimer .privacy-note {
-  color: rgba(0, 51, 25, 0.6);
-  border-top-color: rgba(0, 102, 51, 0.1);
-}
-
-.landing-page[data-theme="light"] .consent-checkbox span {
-  color: rgba(0, 51, 25, 0.85);
 }
