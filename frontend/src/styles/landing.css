@@ -284,6 +284,20 @@
   font-size: 0.8rem;
 }
 
+/* Reset any inherited styles from profileNew.css .event-date */
+.landing-page .event-date,
+.landing-page .event-location,
+.landing-page .event-separator,
+.landing-page .event-details span {
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  min-width: auto !important;
+  flex-direction: row !important;
+}
+
 .hero-quote {
   font-size: 1.15rem;
   font-style: italic;
