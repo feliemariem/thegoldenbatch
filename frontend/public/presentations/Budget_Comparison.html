@@ -32,7 +32,7 @@
       color: var(--ink);
       display: flex;
       flex-direction: column;
-      gap: 0.18in;
+      gap: 0.14in;
     }
 
     /* Header */
@@ -78,7 +78,7 @@
     .compare {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 0.18in;
+      gap: 0.12in;
       flex: 1;
       min-height: 0;
     }
@@ -133,11 +133,11 @@
 
     /* Table */
     .table-wrap{
-      padding: 10px 11px 11px;
+      padding: 6px 10px 8px;
       display: flex;
       flex-direction: column;
       min-height: 0;
-      gap: 8px;
+      gap: 4px;
       overflow-y: auto;
     }
     table{
@@ -146,13 +146,13 @@
       font-size: 11px;
     }
     th, td{
-      padding: 6px 6px;
+      padding: 3px 6px;
       border-bottom: 1px solid var(--line);
       vertical-align: middle;
       text-align: left;
     }
     th{
-      font-size: 10px;
+      font-size: 9px;
       color: var(--muted);
       font-weight: 800;
       text-transform: uppercase;
@@ -175,15 +175,15 @@
       background: rgba(0,102,51,0.04);
       border-top: 1px solid var(--line);
       border-bottom: 1px solid var(--line);
-      padding-top: 7px;
-      padding-bottom: 7px;
+      padding-top: 4px;
+      padding-bottom: 4px;
     }
     
     /* Sub-item rows (indented, lighter) */
     tr.subitem td:first-child {
       padding-left: 18px;
       color: var(--muted);
-      font-size: 10.5px;
+      font-size: 9px;
     }
     tr.subitem td.amount {
       color: var(--ink);
@@ -217,26 +217,26 @@
     .bottom {
       display: grid;
       grid-template-columns: 1.2fr 0.8fr;
-      gap: 0.18in;
+      gap: 0.12in;
       align-items: stretch;
     }
     .note {
       border: 1px solid var(--line);
       border-radius: 12px;
-      padding: 10px 12px;
+      padding: 8px 10px;
       background: #fff;
     }
     .note h3{
-      margin: 0 0 5px;
-      font-size: 12px;
+      margin: 0 0 4px;
+      font-size: 11px;
       color: var(--green);
       letter-spacing: 0.2px;
     }
     .note p{
       margin: 0;
-      font-size: 11.5px;
+      font-size: 10.5px;
       color: var(--muted);
-      line-height: 1.3;
+      line-height: 1.25;
     }
     .decision {
       border: 2px solid rgba(207,181,59,0.75);
@@ -268,6 +268,48 @@
         <div><strong>Collected:</strong> ₱206,950 (12.2%)</div>
         <div class="pill">Vote needed before funding strategy</div>
       </div>
+    </div>
+
+    <!-- Projection Summary Box - Detailed Breakdown -->
+    <div style="background: rgba(0,102,51,0.06); border: 1px solid rgba(0,102,51,0.15); border-radius: 10px; padding: 12px 14px; margin-bottom: 0.1in;">
+      <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 10px;">
+        <div>
+          <div style="font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px;">Batch 2003 Graduates</div>
+          <div style="font-size: 15px; font-weight: 800; color: var(--green);">~200</div>
+          <div style="font-size: 7px; color: var(--muted); margin-top: 1px;">Actual degree holders</div>
+        </div>
+        <div>
+          <div style="font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px;">Expected Payers</div>
+          <div style="font-size: 15px; font-weight: 800; color: var(--green);">80-100</div>
+          <div style="font-size: 7px; color: var(--muted); margin-top: 1px;">Contributors @ ₱25K avg</div>
+        </div>
+        <div>
+          <div style="font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px;">Our Batch Attendance</div>
+          <div style="font-size: 15px; font-weight: 800; color: var(--green);">100-120</div>
+          <div style="font-size: 7px; color: var(--muted); margin-top: 1px;">Batch 2003 + families</div>
+        </div>
+        <div>
+          <div style="font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px;">Other Alumni Batches</div>
+          <div style="font-size: 15px; font-weight: 800; color: var(--green);">150-230</div>
+          <div style="font-size: 7px; color: var(--muted); margin-top: 1px;">General homecoming (FREE)</div>
+        </div>
+        <div>
+          <div style="font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px;">Food Budget For</div>
+          <div style="font-size: 15px; font-weight: 800; color: var(--green);">300 pax</div>
+          <div style="font-size: 7px; color: var(--muted); margin-top: 1px;">Safety margin on 250-320</div>
+        </div>
+      </div>
+      <div style="background: rgba(207,181,59,0.12); border-left: 3px solid var(--gold); padding: 8px 12px; border-radius: 0 6px 6px 0; font-size: 8.5px; color: #5b4b12; line-height: 1.4;">
+        <strong>The Math:</strong> Only ~200 graduates fund the event, but we host 250-320 total attendees (our batch + all other alumni). Budget = ₱1,400-1,600/pax for 300 people.
+      </div>
+    </div>
+
+    <!-- NOT Included Note -->
+    <div class="note" style="margin-bottom: 0.1in;">
+      <h3>NOT Included in Baseline (Separate Decisions)</h3>
+      <p>
+        <strong>Golf Tournament:</strong> ₱500K-600K • <strong>Giving Back Project:</strong> TBD • <strong>Teacher Dinner:</strong> TBD — These require separate funding decisions after baseline is approved.
+      </p>
     </div>
 
     <!-- Comparison Cards -->
@@ -651,26 +693,6 @@
           <div style="font-size: 10px; color: var(--light-muted); margin-top: 4px; text-align: right;"><span class="check"></span>+₱100K buffer = ₱1.7M</div>
         </div>
       </section>
-    </div>
-
-    <!-- Bottom Notes -->
-    <div class="bottom">
-      <div class="note">
-        <h3>NOT Included in Baseline (Separate Decisions)</h3>
-        <p>
-          <strong>Golf Tournament:</strong> ₱500K-600K • <strong>Giving Back Project:</strong> TBD • <strong>Teacher Dinner:</strong> TBD<br/>
-          These require separate funding decisions after baseline is approved.
-        </p>
-      </div>
-
-      <div class="note decision">
-        <h3>Committee Vote Required NOW</h3>
-        <p>
-          Choose baseline budget target:<br/>
-          <strong>Option A (₱1.5M)</strong> or <strong>Option B (₱1.7M)</strong><br/>
-          This determines funding strategy.
-        </p>
-      </div>
     </div>
   </div>
 </body>
