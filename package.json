@@ -1,5 +1,14 @@
 {
+  "name": "thegoldenbatch",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "generate-pdfs": "node convert-to-pdf.js"
+  },
   "dependencies": {
     "react-markdown": "^10.1.0"
+  },
+  "devDependencies": {
+    "puppeteer": "^22.0.0"
   }
 }
