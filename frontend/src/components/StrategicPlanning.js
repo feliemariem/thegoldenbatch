@@ -5,14 +5,14 @@ const presentations = [
   {
     id: 'plan',
     label: 'Strategic Plan',
-    file: '/presentations/Funding_Strategy_Visual.html',
-    pdf: '/presentations/pdfs/Funding_Strategy_Visual.pdf'
+    file: '/presentations/Strategic_Plan_2026-2028.html',
+    pdf: '/presentations/pdfs/Strategic_Plan_2026-2028.pdf'
   },
   {
     id: 'funding',
     label: 'Funding Plan',
-    file: '/presentations/Strategic_Plan_2026-2028.html',
-    pdf: '/presentations/pdfs/Strategic_Plan_2026-2028.pdf'
+    file: '/presentations/Funding_Strategy_Visual.html',
+    pdf: '/presentations/pdfs/Funding_Strategy_Visual.pdf'
   },
   {
     id: 'website registration flow',
