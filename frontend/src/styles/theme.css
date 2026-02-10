@@ -603,7 +603,7 @@ body[data-theme="light"] .landing-theme-toggle:hover {
   border-color: rgba(0, 102, 51, 0.5) !important;
 }
 
-/* Light mode event-details spans - styled in landing.css with dark green color */
+/* Light mode hero-event-info spans - styled in landing.css with dark green color */
 
 body[data-theme="light"] .countdown-section {
   background: rgba(0, 77, 38, 0.04) !important;

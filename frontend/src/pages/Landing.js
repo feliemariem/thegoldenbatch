@@ -136,10 +136,10 @@ export default function Landing() {
             <span className="word word-3">Homecoming</span>
           </h1>
           <p className="tagline">The Golden Batch 2003</p>
-          <div className="event-details">
-            <span className="event-date">December 16, 2028</span>
-            <span className="event-separator">•</span>
-            <span className="event-location">USLS School Grounds, Bacolod City</span>
+          <div className="hero-event-info">
+            <span className="hero-date">December 16, 2028</span>
+            <span className="hero-separator">•</span>
+            <span className="hero-location">USLS School Grounds, Bacolod City</span>
           </div>
           <p className="hero-quote">"It's time to come home."</p>
           <button onClick={() => setShowFormModal(true)} className="btn-hero">
