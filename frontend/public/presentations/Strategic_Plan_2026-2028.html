@@ -734,6 +734,93 @@
     .action-table { font-size: 12px; }
     .action-table th, .action-table td { padding: 12px 8px; }
   }
+
+  /* DOWNLOAD BUTTON */
+  .download-btn {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--green);
+    padding: 14px 32px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 16px;
+    margin-top: 24px;
+    transition: all 0.3s ease;
+    border: 2px solid var(--gold);
+  }
+
+  .download-btn:hover {
+    background: var(--gold-light);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(207, 181, 59, 0.3);
+  }
+
+  @media print {
+    .download-btn { display: none; }
+    .page-break { page-break-before: always; }
+    .hero { page-break-after: always; }
+    .section { page-break-after: always; }
+    .decision-section { page-break-after: always; }
+    
+    /* Remove subtle overlays/patterns for cleaner PDF */
+    .hero::before { display: none; }
+    
+    /* Increase contrast for better readability */
+    body { 
+      background: white;
+      font-size: 14px !important;
+    }
+    .container { background: white; }
+    
+    /* Simplify hero for PDF */
+    .hero { 
+      background: var(--green) !important;
+      color: white !important;
+    }
+    
+    /* Increase all font sizes for PDF */
+    .hero h1 { font-size: 48px !important; }
+    .subtitle { font-size: 20px !important; }
+    .hero-mission h2 { font-size: 28px !important; }
+    .hero-mission p { font-size: 18px !important; }
+    .section-title { font-size: 32px !important; }
+    .section-intro { font-size: 18px !important; }
+    .challenge-title, .precedent-title, .strategy-title { font-size: 22px !important; }
+    .challenge-desc, .precedent-desc, .strategy-desc { font-size: 16px !important; }
+    .decision-question { font-size: 22px !important; }
+    .decision-option-text { font-size: 16px !important; }
+    .action-table { font-size: 14px !important; }
+    .action-table th { font-size: 15px !important; }
+    
+    /* Make text darker/clearer */
+    .section-intro, .challenge-desc, .precedent-desc, .strategy-desc {
+      color: #1A1A1A !important;
+      opacity: 1 !important;
+    }
+    
+    /* Cleaner card backgrounds */
+    .challenge-card, .precedent-card, .strategy-card {
+      background: white !important;
+      border: 2px solid var(--gold) !important;
+    }
+    
+    /* Better decision options visibility */
+    .decision-option {
+      background: white !important;
+      border: 2px solid var(--green) !important;
+    }
+    
+    /* Action table clarity */
+    .action-table th {
+      background: var(--green) !important;
+      color: white !important;
+    }
+    
+    .action-table tbody tr:nth-child(even) {
+      background: #f5f5f5 !important;
+    }
+  }
 </style>
 </head>
 <body>
@@ -858,7 +945,7 @@
 
     <div class="precedent-card">
       <div class="precedent-header">
-        <span class="precedent-batch">Integrated School Batch 2000</span>
+        <span class="precedent-batch">High School Batch 2000</span>
         <span class="precedent-year">Silver Jubilee 2025</span>
       </div>
       <div class="precedent-items">
