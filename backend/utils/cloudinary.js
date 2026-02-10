@@ -51,9 +51,28 @@ const deleteFromCloudinary = (publicId) => {
   return cloudinary.uploader.destroy(publicId);
 };
 
+// Upload raw files (PDFs, documents) to Cloudinary
+// Uses resource_type: 'raw' for non-image files
+const uploadRawFileToCloudinary = (buffer, folder = 'meeting-attachments') => {
+  return new Promise((resolve, reject) => {
+    cloudinary.uploader.upload_stream(
+      {
+        folder: `usls-batch-2003/${folder}`,
+        resource_type: 'raw',
+        access_mode: 'public'
+      },
+      (error, result) => {
+        if (error) reject(error);
+        else resolve(result);
+      }
+    ).end(buffer);
+  });
+};
+
 module.exports = {
   upload,
   uploadToCloudinary,
+  uploadRawFileToCloudinary,
   deleteFromCloudinary,
   cloudinary
 };

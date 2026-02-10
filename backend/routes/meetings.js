@@ -4,6 +4,7 @@ const db = require('../db');
 const { authenticateToken, authenticateAdmin } = require('../middleware/auth');
 const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
+const { uploadRawFileToCloudinary } = require('../utils/cloudinary');
 
 // Configure multer for file uploads
 const storage = multer.memoryStorage();
@@ -295,20 +296,8 @@ router.post('/:id/attachments', authenticateToken, upload.single('file'), async 
       return res.status(404).json({ error: 'Meeting not found' });
     }
 
-    // Upload to Cloudinary
-    const result = await new Promise((resolve, reject) => {
-      const uploadStream = cloudinary.uploader.upload_stream(
-        {
-          folder: 'meeting-attachments',
-          resource_type: 'auto'
-        },
-        (error, result) => {
-          if (error) reject(error);
-          else resolve(result);
-        }
-      );
-      uploadStream.end(req.file.buffer);
-    });
+    // Upload to Cloudinary using raw resource type for PDFs/documents
+    const result = await uploadRawFileToCloudinary(req.file.buffer, 'meeting-attachments');
 
     // Save to database
     const attachment = await db.query(`
