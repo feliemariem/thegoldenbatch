@@ -196,14 +196,15 @@
 
 .hero-title .word {
   display: inline-block;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
   opacity: 0;
   transform: translateY(20px);
   transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   /* Default to dark theme */
   background: linear-gradient(135deg, #CFB53B 0%, #B8960C 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
 }
 
 .hero-section.animate .hero-title .word-1 {
@@ -231,12 +232,13 @@
   opacity: 0;
   transform: translateY(10px);
   transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Default to dark theme */
+  background: linear-gradient(90deg, #CFB53B 0%, #E8D48A 50%, #CFB53B 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  /* Default to dark theme */
-  background: linear-gradient(90deg, #CFB53B 0%, #E8D48A 50%, #CFB53B 100%);
+  color: transparent;
 }
 
 .hero-section.animate .tagline {
@@ -691,10 +693,19 @@ body[data-theme="dark"] .hero-section.animate .hero-logo {
 
 body[data-theme="dark"] .hero-title .word {
   background: linear-gradient(135deg, #CFB53B 0%, #B8960C 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
 }
 
 body[data-theme="dark"] .tagline {
   background: linear-gradient(90deg, #CFB53B 0%, #E8D48A 50%, #CFB53B 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
 }
 
 body[data-theme="dark"] .event-details {
@@ -865,10 +876,19 @@ body[data-theme="light"] .hero-section.animate .hero-logo {
 
 body[data-theme="light"] .hero-title .word {
   background: linear-gradient(135deg, #006633 0%, #004d26 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
 }
 
 body[data-theme="light"] .tagline {
   background: linear-gradient(90deg, #B8960C 0%, #CFB53B 50%, #B8960C 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
   filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
 }
 
