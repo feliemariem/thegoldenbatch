@@ -5,12 +5,12 @@ const presentations = [
   {
     id: 'plan',
     label: 'Strategic Plan',
-    file: '/Users/feliemarie/Developer/Projects/thegoldenbatch/frontend/public/presentations/Funding_Strategy_Visual.html'
+    file: '/presentations/Funding_Strategy_Visual.html'
   },
   {
     id: 'funding',
     label: 'Funding Plan',
-    file: '/Users/feliemarie/Developer/Projects/thegoldenbatch/frontend/public/presentations/Strategic_Plan_2026-2028.html'
+    file: '/presentations/Strategic_Plan_2026-2028.html'
   }
 ];
 
@@ -59,7 +59,7 @@ export default function StrategicPlanning() {
       <div className="strategic-planning-viewer">
         {activeItem && (
           <iframe
-            src={activeItem.url}
+            src={activeItem.file}
             title={activeItem.label}
             width="100%"
             height="800"
