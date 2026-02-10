@@ -25,8 +25,10 @@
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* Default to dark theme colors */
-  background: #0a0f0d;
+  /* Default to dark theme with HS building background */
+  background:
+    linear-gradient(145deg, rgba(10, 15, 13, 0.75) 0%, rgba(26, 42, 31, 0.70) 50%, rgba(13, 21, 16, 0.78) 100%),
+    url('../images/hs_bldg.jpg') center center / cover no-repeat fixed;
 }
 
 /* ========================================
@@ -283,6 +285,10 @@
 .event-icon {
   font-size: 1.1rem;
   line-height: 1;
+  /* Ensure emojis are visible and not affected by text gradients */
+  -webkit-text-fill-color: initial;
+  background: none;
+  display: inline-block;
 }
 
 .hero-section.animate .event-date {
@@ -635,7 +641,9 @@
    ======================================== */
 
 body[data-theme="dark"] .landing-page {
-  background: #0a0f0d;
+  background:
+    linear-gradient(145deg, rgba(10, 15, 13, 0.75) 0%, rgba(26, 42, 31, 0.70) 50%, rgba(13, 21, 16, 0.78) 100%),
+    url('../images/hs_bldg.jpg') center center / cover no-repeat fixed;
 }
 
 /* Header - Dark */
