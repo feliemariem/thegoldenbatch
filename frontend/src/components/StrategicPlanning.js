@@ -10,6 +10,11 @@ const presentations = [
     id: 'funding',
     label: 'Funding Plan',
     file: '/presentations/Strategic_Plan_2026-2028.html'
+  },
+  {
+    id: 'website registration flow',
+    label: 'Website Registration Flow',
+    file: '/presentations/Website_Registration_Flow.html'
   }
 ];
 
