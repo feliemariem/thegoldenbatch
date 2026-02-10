@@ -783,105 +783,127 @@
 
 /* ========================================
    LIGHT MODE OVERRIDES
-   Elegant light theme with proper contrast
+   Clean, crisp light theme matching countdown section
    ======================================== */
 
 [data-theme="light"] .landing-page {
   background: #f8f9f7;
 }
 
-/* Hero background - darker overlay for text contrast */
+/* Hero background - very dark overlay for clean text contrast */
 [data-theme="light"] .hero-background {
   background:
     linear-gradient(145deg,
-      rgba(0, 51, 25, 0.75) 0%,
-      rgba(0, 40, 20, 0.70) 50%,
-      rgba(0, 51, 25, 0.78) 100%
+      rgba(248, 250, 248, 0.92) 0%,
+      rgba(245, 248, 245, 0.90) 50%,
+      rgba(248, 250, 248, 0.93) 100%
     ),
     url('../images/hs_bldg.jpg') center center / cover no-repeat;
 }
 
-/* Header */
+/* Header - clean white with green accents */
 [data-theme="light"] .landing-header {
-  background: rgba(0, 51, 25, 0.85);
-  border-bottom-color: rgba(207, 181, 59, 0.2);
+  background: rgba(255, 255, 255, 0.95);
+  border-bottom-color: rgba(0, 102, 51, 0.15);
 }
 
 [data-theme="light"] .landing-header.solid {
-  background: rgba(0, 51, 25, 0.95);
-  border-bottom-color: rgba(207, 181, 59, 0.3);
+  background: rgba(255, 255, 255, 0.98);
+  border-bottom-color: rgba(0, 102, 51, 0.2);
+  box-shadow: 0 2px 20px rgba(0, 51, 25, 0.08);
 }
 
 [data-theme="light"] .landing-logo span {
-  color: #CFB53B;
+  color: #006633;
 }
 
 [data-theme="light"] .btn-login {
-  background: linear-gradient(135deg, #CFB53B 0%, #B8960C 100%);
-  color: #003319;
+  background: linear-gradient(135deg, #006633 0%, #004d26 100%);
+  color: #fff;
 }
 
 [data-theme="light"] .btn-login:hover {
-  box-shadow: 0 8px 24px rgba(207, 181, 59, 0.4);
+  box-shadow: 0 8px 24px rgba(0, 102, 51, 0.3);
 }
 
 [data-theme="light"] .landing-theme-toggle {
-  border-color: rgba(207, 181, 59, 0.4);
-  color: #CFB53B;
+  border-color: rgba(0, 102, 51, 0.3);
+  color: #006633;
+  background: rgba(0, 102, 51, 0.05);
 }
 
 [data-theme="light"] .landing-theme-toggle:hover {
-  background: rgba(207, 181, 59, 0.2);
-  border-color: rgba(207, 181, 59, 0.6);
+  background: rgba(0, 102, 51, 0.12);
+  border-color: rgba(0, 102, 51, 0.4);
 }
 
-/* Hero Title - Gold on dark green background */
+/* Hero Title - Dark green, strong contrast */
 [data-theme="light"] .hero-title .word {
-  background: linear-gradient(135deg, #CFB53B 0%, #E8D48A 50%, #CFB53B 100%);
+  background: linear-gradient(135deg, #006633 0%, #004d26 100%);
   -webkit-background-clip: text;
   background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-/* Tagline - Golden shimmer */
+/* Tagline - Rich gold with dark outline for visibility */
 [data-theme="light"] .tagline {
-  background: linear-gradient(90deg, #CFB53B 0%, #E8D48A 50%, #CFB53B 100%);
+  background: linear-gradient(90deg, #B8960C 0%, #CFB53B 50%, #B8960C 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
 }
 
-/* Event details - light text on dark background */
+/* Event details - dark text for clarity */
 [data-theme="light"] .event-details span {
-  color: rgba(255, 255, 255, 0.85);
+  color: #004d26;
 }
 
 [data-theme="light"] .event-icon {
-  opacity: 0.9;
+  opacity: 1;
 }
 
-/* Quote - Gold accent */
+/* Quote - Dark green, italic elegance */
 [data-theme="light"] .hero-quote {
-  color: #CFB53B;
-  opacity: 0.95;
+  color: #006633;
+  opacity: 1;
+  text-shadow: none;
 }
 
-/* Hero Button - Gold */
+/* Hero Button - Strong green like countdown */
 [data-theme="light"] .btn-hero {
-  background: linear-gradient(135deg, #CFB53B 0%, #B8960C 100%);
-  color: #003319;
+  background: linear-gradient(135deg, #006633 0%, #004d26 100%);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(0, 102, 51, 0.25);
 }
 
 [data-theme="light"] .btn-hero:hover {
-  box-shadow: 0 12px 40px rgba(207, 181, 59, 0.5) !important;
+  box-shadow: 0 8px 30px rgba(0, 102, 51, 0.35) !important;
 }
 
-/* Hero Logo - Gold glow */
+/* Breathing glow - green in light mode */
+[data-theme="light"] .hero-section.animate .btn-hero {
+  animation: breathingGlowLight 2s ease-in-out infinite;
+  animation-delay: 8s;
+}
+
+@keyframes breathingGlowLight {
+  0%, 100% {
+    box-shadow: 0 4px 20px rgba(0, 102, 51, 0.25);
+  }
+  50% {
+    box-shadow: 0 8px 40px rgba(0, 102, 51, 0.4);
+  }
+}
+
+/* Hero Logo - Subtle green glow */
 [data-theme="light"] .hero-logo {
-  filter: drop-shadow(0 0 30px rgba(207, 181, 59, 0.3));
+  filter: drop-shadow(0 0 20px rgba(0, 102, 51, 0.15));
 }
 
 [data-theme="light"] .hero-section.animate .hero-logo {
-  filter: drop-shadow(0 0 50px rgba(207, 181, 59, 0.5));
+  filter: drop-shadow(0 0 30px rgba(0, 102, 51, 0.25));
 }
 
 /* Countdown Section - Light background */
