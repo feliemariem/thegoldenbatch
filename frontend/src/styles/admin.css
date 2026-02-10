@@ -983,3 +983,91 @@ tr:last-child td {
   background: rgba(0, 102, 51, 0.15);
   color: #006633;
 }
+
+/* ========================================
+   STRATEGIC PLANNING - Themed Styles
+   ======================================== */
+
+.strategic-planning {
+  padding: 0;
+}
+
+.strategic-planning-title {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 20px 0;
+  /* Dark mode: gold gradient */
+  background: linear-gradient(135deg, #CFB53B 0%, #B8960C 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+[data-theme="light"] .strategic-planning-title {
+  /* Light mode: green gradient */
+  background: linear-gradient(135deg, #006633 0%, #004d26 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.strategic-planning-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 6px;
+  border-radius: 12px;
+}
+
+[data-theme="light"] .strategic-planning-tabs {
+  background: rgba(0, 102, 51, 0.08);
+  border: 1px solid rgba(0, 102, 51, 0.18);
+}
+
+.strategic-tab {
+  transition: all 0.2s ease;
+}
+
+.strategic-tab:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-text-primary);
+}
+
+[data-theme="light"] .strategic-tab:hover:not(.active) {
+  background: rgba(0, 102, 51, 0.10);
+  color: #0f2a1d;
+}
+
+.strategic-planning-viewer {
+  width: 100%;
+  min-height: 400px;
+}
+
+.strategic-planning-viewer iframe {
+  display: block;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .strategic-planning-viewer iframe {
+  background: rgba(0, 102, 51, 0.03);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .strategic-planning-viewer iframe {
+    height: 500px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .strategic-planning-tabs {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .strategic-planning-viewer iframe {
+    height: 400px !important;
+  }
+}

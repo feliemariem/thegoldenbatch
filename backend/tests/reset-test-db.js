@@ -107,7 +107,7 @@ async function seedTestData() {
     'invites_add', 'invites_link', 'invites_upload', 'invites_export',
     'registered_export', 'masterlist_edit', 'masterlist_upload', 'masterlist_export',
     'announcements_view', 'announcements_send', 'accounting_view', 'accounting_edit',
-    'accounting_export', 'minutes_view', 'minutes_edit', 'messages_view'
+    'accounting_export', 'minutes_view', 'minutes_edit', 'messages_view', 'strategic_view'
   ];
 
   for (const permission of permissions) {

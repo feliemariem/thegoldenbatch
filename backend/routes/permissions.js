@@ -20,7 +20,8 @@ const ALL_PERMISSIONS = [
   'accounting_export',
   'minutes_view',
   'minutes_edit',
-  'messages_view'
+  'messages_view',
+  'strategic_view'
 ];
 
 // Middleware to check if user is super admin

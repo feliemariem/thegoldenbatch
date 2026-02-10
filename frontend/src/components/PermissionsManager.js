@@ -31,7 +31,8 @@ export default function PermissionsManager() {
     'accounting_export',
     'minutes_view',
     'minutes_edit',
-    'messages_view'
+    'messages_view',
+    'strategic_view'
   ];
 
   const permissionLabels = {
@@ -50,7 +51,8 @@ export default function PermissionsManager() {
     accounting_export: 'Export CSV (Donations)',
     minutes_view: 'Show Minutes tab',
     minutes_edit: 'Create/Edit Minutes',
-    messages_view: 'Show Messages tab'
+    messages_view: 'Show Messages tab',
+    strategic_view: 'Show Strategic Planning tab'
   };
 
   useEffect(() => {

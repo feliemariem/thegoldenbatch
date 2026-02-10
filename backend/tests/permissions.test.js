@@ -622,7 +622,8 @@ describe('Permissions API', () => {
         'accounting_export',
         'minutes_view',
         'minutes_edit',
-        'messages_view'
+        'messages_view',
+        'strategic_view'
       ];
 
       const token = createUserToken(1, 'testuser@test.com');

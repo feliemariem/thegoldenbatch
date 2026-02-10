@@ -10,6 +10,7 @@ import RegisteredTab from '../components/RegisteredTab';
 import MasterListTab from '../components/MasterListTab';
 import Navbar from '../components/Navbar';
 import MeetingMinutes from '../components/MeetingMinutes';
+import StrategicPlanning from '../components/StrategicPlanning';
 import AdminRoleErrorToast from "../components/AdminRoleErrorToast";
 import AdminMessages from '../components/AdminMessages';
 import Footer from '../components/Footer';
@@ -374,6 +375,25 @@ export default function AdminDashboard() {
               )}
             </button>
           )}
+          {(isSuperAdmin || permissions?.strategic_view) && (
+            <button
+              onClick={() => setDashboardMode('strategic')}
+              style={{
+                flex: 1,
+                padding: '10px 8px',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontWeight: '600',
+                fontSize: '0.75rem',
+                background: dashboardMode === 'strategic' ? '#CFB53B' : 'transparent',
+                color: dashboardMode === 'strategic' ? '#1a1a2e' : '#999',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              Strategic
+            </button>
+          )}
           {isSuperAdmin && (
             <button
               onClick={() => setDashboardMode('permissions')}
@@ -560,6 +580,11 @@ export default function AdminDashboard() {
         {/* MESSAGES MODE */}
         {dashboardMode === 'messages' && (
           <AdminMessages onUnreadCountChange={fetchAdminUnreadCount} />
+        )}
+
+        {/* STRATEGIC PLANNING MODE */}
+        {dashboardMode === 'strategic' && (
+          <StrategicPlanning />
         )}
 
         {/* PERMISSIONS MODE - Super Admin Only */}
