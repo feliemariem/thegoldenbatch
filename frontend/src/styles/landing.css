@@ -793,14 +793,15 @@
 /* ========================================
    LIGHT MODE OVERRIDES
    Clean, crisp light theme matching countdown section
+   Note: data-theme is set on .landing-page element itself
    ======================================== */
 
-[data-theme="light"] .landing-page {
+.landing-page[data-theme="light"] {
   background: #f8f9f7;
 }
 
 /* Hero background - very dark overlay for clean text contrast */
-[data-theme="light"] .hero-background {
+.landing-page[data-theme="light"] .hero-background {
   background:
     linear-gradient(145deg,
       rgba(248, 250, 248, 0.92) 0%,
@@ -811,43 +812,43 @@
 }
 
 /* Header - clean white with green accents */
-[data-theme="light"] .landing-header {
+.landing-page[data-theme="light"] .landing-header {
   background: rgba(255, 255, 255, 0.95);
   border-bottom-color: rgba(0, 102, 51, 0.15);
 }
 
-[data-theme="light"] .landing-header.solid {
+.landing-page[data-theme="light"] .landing-header.solid {
   background: rgba(255, 255, 255, 0.98);
   border-bottom-color: rgba(0, 102, 51, 0.2);
   box-shadow: 0 2px 20px rgba(0, 51, 25, 0.08);
 }
 
-[data-theme="light"] .landing-logo span {
+.landing-page[data-theme="light"] .landing-logo span {
   color: #006633;
 }
 
-[data-theme="light"] .btn-login {
+.landing-page[data-theme="light"] .btn-login {
   background: linear-gradient(135deg, #006633 0%, #004d26 100%);
   color: #fff;
 }
 
-[data-theme="light"] .btn-login:hover {
+.landing-page[data-theme="light"] .btn-login:hover {
   box-shadow: 0 8px 24px rgba(0, 102, 51, 0.3);
 }
 
-[data-theme="light"] .landing-theme-toggle {
+.landing-page[data-theme="light"] .landing-theme-toggle {
   border-color: rgba(0, 102, 51, 0.3);
   color: #006633;
   background: rgba(0, 102, 51, 0.05);
 }
 
-[data-theme="light"] .landing-theme-toggle:hover {
+.landing-page[data-theme="light"] .landing-theme-toggle:hover {
   background: rgba(0, 102, 51, 0.12);
   border-color: rgba(0, 102, 51, 0.4);
 }
 
 /* Hero Title - Dark green, strong contrast */
-[data-theme="light"] .hero-title .word {
+.landing-page[data-theme="light"] .hero-title .word {
   background: linear-gradient(135deg, #006633 0%, #004d26 100%);
   -webkit-background-clip: text;
   background-clip: text;
@@ -855,7 +856,7 @@
 }
 
 /* Tagline - Rich gold with dark outline for visibility */
-[data-theme="light"] .tagline {
+.landing-page[data-theme="light"] .tagline {
   background: linear-gradient(90deg, #B8960C 0%, #CFB53B 50%, #B8960C 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
@@ -865,34 +866,34 @@
 }
 
 /* Event details - dark green text for clarity */
-[data-theme="light"] .event-details {
+.landing-page[data-theme="light"] .event-details {
   color: #004d26;
 }
 
-[data-theme="light"] .event-details span {
+.landing-page[data-theme="light"] .event-details span {
   color: #004d26;
 }
 
 /* Quote - Dark green, italic elegance */
-[data-theme="light"] .hero-quote {
+.landing-page[data-theme="light"] .hero-quote {
   color: #006633;
   opacity: 1;
   text-shadow: none;
 }
 
 /* Hero Button - Strong green like countdown */
-[data-theme="light"] .btn-hero {
+.landing-page[data-theme="light"] .btn-hero {
   background: linear-gradient(135deg, #006633 0%, #004d26 100%);
   color: #fff;
   box-shadow: 0 4px 20px rgba(0, 102, 51, 0.25);
 }
 
-[data-theme="light"] .btn-hero:hover {
+.landing-page[data-theme="light"] .btn-hero:hover {
   box-shadow: 0 8px 30px rgba(0, 102, 51, 0.35) !important;
 }
 
 /* Breathing glow - green in light mode */
-[data-theme="light"] .hero-section.animate .btn-hero {
+.landing-page[data-theme="light"] .hero-section.animate .btn-hero {
   animation: breathingGlowLight 2s ease-in-out infinite;
   animation-delay: 8s;
 }
@@ -907,79 +908,79 @@
 }
 
 /* Hero Logo - Subtle green glow */
-[data-theme="light"] .hero-logo {
+.landing-page[data-theme="light"] .hero-logo {
   filter: drop-shadow(0 0 20px rgba(0, 102, 51, 0.15));
 }
 
-[data-theme="light"] .hero-section.animate .hero-logo {
+.landing-page[data-theme="light"] .hero-section.animate .hero-logo {
   filter: drop-shadow(0 0 30px rgba(0, 102, 51, 0.25));
 }
 
 /* Countdown Section - Light background */
-[data-theme="light"] .countdown-section {
+.landing-page[data-theme="light"] .countdown-section {
   background: rgba(0, 51, 25, 0.06);
 }
 
-[data-theme="light"] .countdown-section h2 {
+.landing-page[data-theme="light"] .countdown-section h2 {
   color: #006633;
 }
 
-[data-theme="light"] .countdown-item {
+.landing-page[data-theme="light"] .countdown-item {
   background: rgba(255, 255, 255, 0.95);
   border-color: rgba(0, 102, 51, 0.2);
   box-shadow: 0 4px 20px rgba(0, 51, 25, 0.08);
 }
 
-[data-theme="light"] .countdown-number {
+.landing-page[data-theme="light"] .countdown-number {
   color: #006633;
 }
 
-[data-theme="light"] .countdown-label {
+.landing-page[data-theme="light"] .countdown-label {
   color: rgba(0, 51, 25, 0.6);
 }
 
 /* About Section */
-[data-theme="light"] .about-section h2 {
+.landing-page[data-theme="light"] .about-section h2 {
   color: #006633;
 }
 
-[data-theme="light"] .about-section p {
+.landing-page[data-theme="light"] .about-section p {
   color: rgba(0, 51, 25, 0.85);
 }
 
 /* Modal - Light mode adjustments */
-[data-theme="light"] .modal-content {
+.landing-page[data-theme="light"] .modal-content {
   background: linear-gradient(165deg, rgba(248, 249, 247, 0.98) 0%, rgba(240, 242, 238, 0.99) 100%);
   border-color: rgba(0, 102, 51, 0.2);
 }
 
-[data-theme="light"] .modal-close {
+.landing-page[data-theme="light"] .modal-close {
   background: rgba(0, 0, 0, 0.08);
   color: #333;
 }
 
-[data-theme="light"] .modal-close:hover {
+.landing-page[data-theme="light"] .modal-close:hover {
   background: rgba(0, 0, 0, 0.15);
 }
 
-[data-theme="light"] .form-disclaimer {
+.landing-page[data-theme="light"] .form-disclaimer {
   background: rgba(0, 102, 51, 0.05);
   border-color: rgba(0, 102, 51, 0.15);
 }
 
-[data-theme="light"] .form-disclaimer p {
+.landing-page[data-theme="light"] .form-disclaimer p {
   color: rgba(0, 51, 25, 0.9);
 }
 
-[data-theme="light"] .form-disclaimer li {
+.landing-page[data-theme="light"] .form-disclaimer li {
   color: rgba(0, 51, 25, 0.75);
 }
 
-[data-theme="light"] .form-disclaimer .privacy-note {
+.landing-page[data-theme="light"] .form-disclaimer .privacy-note {
   color: rgba(0, 51, 25, 0.6);
   border-top-color: rgba(0, 102, 51, 0.1);
 }
 
-[data-theme="light"] .consent-checkbox span {
+.landing-page[data-theme="light"] .consent-checkbox span {
   color: rgba(0, 51, 25, 0.85);
 }
