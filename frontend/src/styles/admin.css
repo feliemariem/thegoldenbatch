@@ -985,7 +985,7 @@ tr:last-child td {
 }
 
 /* ========================================
-   STRATEGIC PLANNING - Themed Styles
+   STRATEGIC PLANNING - Sidebar Layout
    ======================================== */
 
 .strategic-planning {
@@ -1012,62 +1012,169 @@ tr:last-child td {
   background-clip: text;
 }
 
-.strategic-planning-tabs {
+/* Sidebar + Content Layout */
+.strategic-planning-layout {
   display: flex;
-  gap: 8px;
-  margin-bottom: 20px;
-  background: rgba(0, 0, 0, 0.2);
-  padding: 6px;
+  gap: 0;
+  min-height: 500px;
   border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(207, 181, 59, 0.2);
 }
 
-[data-theme="light"] .strategic-planning-tabs {
-  background: rgba(0, 102, 51, 0.08);
-  border: 1px solid rgba(0, 102, 51, 0.18);
+[data-theme="light"] .strategic-planning-layout {
+  border: 1px solid rgba(0, 102, 51, 0.15);
 }
 
-.strategic-tab {
+/* Sidebar */
+.strategic-sidebar {
+  width: 250px;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.03);
+  border-right: 1px solid rgba(207, 181, 59, 0.2);
+  overflow-y: auto;
+}
+
+[data-theme="light"] .strategic-sidebar {
+  background: rgba(0, 102, 51, 0.04);
+  border-right: 1px solid rgba(0, 102, 51, 0.15);
+}
+
+.strategic-sidebar-list {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+}
+
+/* Sidebar Items */
+.strategic-sidebar-item {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  background: transparent;
+  color: #999;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
   transition: all 0.2s ease;
+  border-left: 3px solid transparent;
 }
 
-.strategic-tab:hover:not(.active) {
+.strategic-sidebar-item:hover:not(.active) {
   background: rgba(255, 255, 255, 0.05);
   color: var(--color-text-primary);
 }
 
-[data-theme="light"] .strategic-tab:hover:not(.active) {
-  background: rgba(0, 102, 51, 0.10);
+[data-theme="light"] .strategic-sidebar-item:hover:not(.active) {
+  background: rgba(0, 102, 51, 0.08);
   color: #0f2a1d;
 }
 
-.strategic-planning-viewer {
-  width: 100%;
-  min-height: 400px;
+.strategic-sidebar-item.active {
+  background: #CFB53B;
+  color: #1a1a2e;
+  font-weight: 600;
+  border-left: 3px solid #B8960C;
 }
 
-.strategic-planning-viewer iframe {
-  display: block;
+[data-theme="light"] .strategic-sidebar-item.active {
+  background: #006633;
+  color: #ffffff;
+  border-left: 3px solid #004d26;
+}
+
+/* Content Area */
+.strategic-content {
+  flex: 1;
+  padding: 20px;
   background: rgba(0, 0, 0, 0.1);
+  min-width: 0; /* Prevent flex overflow */
 }
 
-[data-theme="light"] .strategic-planning-viewer iframe {
-  background: rgba(0, 102, 51, 0.03);
+[data-theme="light"] .strategic-content {
+  background: rgba(0, 102, 51, 0.02);
 }
 
-/* Responsive adjustments */
+/* Iframe Styling */
+.strategic-iframe {
+  display: block;
+  border-radius: 8px;
+  border: 1px solid rgba(207, 181, 59, 0.15);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="light"] .strategic-iframe {
+  border: 1px solid rgba(0, 102, 51, 0.12);
+  background: #ffffff;
+}
+
+/* Responsive - Mobile */
 @media (max-width: 768px) {
-  .strategic-planning-viewer iframe {
+  .strategic-planning-layout {
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .strategic-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid rgba(207, 181, 59, 0.2);
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  [data-theme="light"] .strategic-sidebar {
+    border-right: none;
+    border-bottom: 1px solid rgba(0, 102, 51, 0.15);
+  }
+
+  .strategic-sidebar-list {
+    flex-direction: row;
+    padding: 8px;
+    gap: 4px;
+  }
+
+  .strategic-sidebar-item {
+    white-space: nowrap;
+    padding: 10px 16px;
+    border-radius: 6px;
+    border-left: none;
+    border-bottom: 2px solid transparent;
+  }
+
+  .strategic-sidebar-item.active {
+    border-left: none;
+    border-bottom: 2px solid #B8960C;
+    border-radius: 6px;
+  }
+
+  [data-theme="light"] .strategic-sidebar-item.active {
+    border-left: none;
+    border-bottom: 2px solid #004d26;
+  }
+
+  .strategic-content {
+    padding: 16px;
+  }
+
+  .strategic-iframe {
     height: 500px !important;
   }
 }
 
 @media (max-width: 480px) {
-  .strategic-planning-tabs {
-    flex-direction: column;
-    gap: 4px;
+  .strategic-sidebar-item {
+    padding: 8px 12px;
+    font-size: 0.85rem;
   }
 
-  .strategic-planning-viewer iframe {
+  .strategic-content {
+    padding: 12px;
+  }
+
+  .strategic-iframe {
     height: 400px !important;
   }
 }

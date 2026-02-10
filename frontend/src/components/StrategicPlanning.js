@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useTheme } from '../context/ThemeContext';
 
 const presentations = [
   {
@@ -15,8 +14,6 @@ const presentations = [
 ];
 
 export default function StrategicPlanning() {
-  const { theme } = useTheme();
-  const isDarkMode = theme === 'dark';
   const [activePresentation, setActivePresentation] = useState('plan');
 
   const activeItem = presentations.find(p => p.id === activePresentation);
@@ -25,54 +22,35 @@ export default function StrategicPlanning() {
     <div className="strategic-planning">
       <h2 className="strategic-planning-title">Strategic Planning</h2>
 
-      {/* Presentation Tabs */}
-      <div className="strategic-planning-tabs">
-        {presentations.map(presentation => (
-          <button
-            key={presentation.id}
-            onClick={() => setActivePresentation(presentation.id)}
-            className={`strategic-tab ${activePresentation === presentation.id ? 'active' : ''}`}
-            style={{
-              flex: 1,
-              padding: '12px 16px',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontWeight: '600',
-              fontSize: '0.85rem',
-              background: activePresentation === presentation.id
-                ? (isDarkMode ? '#CFB53B' : '#006633')
-                : 'transparent',
-              color: activePresentation === presentation.id
-                ? (isDarkMode ? '#1a1a2e' : '#ffffff')
-                : '#999',
-              whiteSpace: 'nowrap',
-              transition: 'all 0.2s ease'
-            }}
-          >
-            {presentation.label}
-          </button>
-        ))}
-      </div>
+      <div className="strategic-planning-layout">
+        {/* Sidebar */}
+        <div className="strategic-sidebar">
+          <div className="strategic-sidebar-list">
+            {presentations.map(presentation => (
+              <button
+                key={presentation.id}
+                onClick={() => setActivePresentation(presentation.id)}
+                className={`strategic-sidebar-item ${activePresentation === presentation.id ? 'active' : ''}`}
+              >
+                {presentation.label}
+              </button>
+            ))}
+          </div>
+        </div>
 
-      {/* Presentation Viewer */}
-      <div className="strategic-planning-viewer">
-        {activeItem && (
-          <iframe
-            src={activeItem.file}
-            title={activeItem.label}
-            width="100%"
-            height="800"
-            frameBorder="0"
-            allowFullScreen
-            style={{
-              borderRadius: '12px',
-              border: isDarkMode
-                ? '1px solid rgba(207, 181, 59, 0.2)'
-                : '1px solid rgba(0, 102, 51, 0.15)'
-            }}
-          />
-        )}
+        {/* Content Area */}
+        <div className="strategic-content">
+          {activeItem && (
+            <iframe
+              src={activeItem.file}
+              title={activeItem.label}
+              width="100%"
+              height="800"
+              allow="autoplay"
+              className="strategic-iframe"
+            />
+          )}
+        </div>
       </div>
     </div>
   );
