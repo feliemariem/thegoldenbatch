@@ -19,6 +19,12 @@ const presentations = [
     label: 'Website Registration Flow',
     file: '/presentations/Website_Registration_Flow.html',
     pdf: '/presentations/pdfs/Website_Registration_Flow.pdf'
+  },
+  {
+    id: 'budget',
+    label: 'Budget Comparison (₱1.5M vs ₱1.7M)',
+    file: '/presentations/Budget_Comparison.html',
+    pdf: '/presentations/pdfs/Budget_Comparison.pdf'
   }
 ];
 
@@ -39,6 +45,12 @@ export default function StrategicPlanning() {
   const handleDownloadPdf = () => {
     if (activeItem?.pdf) {
       window.open(activeItem.pdf, '_blank');
+    }
+  };
+
+  const handleOpenNewTab = () => {
+    if (activeItem?.file) {
+      window.open(activeItem.file, '_blank');
     }
   };
 
@@ -102,6 +114,18 @@ export default function StrategicPlanning() {
                     Download PDF
                   </button>
                 )}
+                <button
+                  onClick={handleOpenNewTab}
+                  style={buttonStyle}
+                  title="Open in new tab"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                    <polyline points="15 3 21 3 21 9" />
+                    <line x1="10" y1="14" x2="21" y2="3" />
+                  </svg>
+                  Open in New Tab
+                </button>
                 <button
                   onClick={handlePrint}
                   style={buttonStyle}

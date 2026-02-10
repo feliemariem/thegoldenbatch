@@ -1,0 +1,677 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Slide 4 — Baseline Budget Decision (₱1.5M vs ₱1.7M)</title>
+  <style>
+    /* --- PDF/Print Optimization (Letter, one page) --- */
+    @page { size: letter; margin: 0; }
+    html, body { height: 100%; }
+    body { margin: 0; background: #ffffff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+    /* --- La Salle Branding --- */
+    :root{
+      --green:#006633;
+      --gold:#CFB53B;
+      --ink:#0f172a;
+      --muted:#475569;
+      --light-muted:#94a3b8;
+      --line:#e2e8f0;
+      --panel:#f8fafc;
+      --ok:#16a34a;
+    }
+
+    /* --- Slide Canvas --- */
+    .slide {
+      width: 11in;
+      height: 8.5in;
+      box-sizing: border-box;
+      padding: 0.4in 0.5in 0.35in;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+      color: var(--ink);
+      display: flex;
+      flex-direction: column;
+      gap: 0.18in;
+    }
+
+    /* Header */
+    .topbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: end;
+      gap: 0.2in;
+      padding-bottom: 0.1in;
+      border-bottom: 3px solid var(--green);
+    }
+    .title {
+      line-height: 1.05;
+    }
+    .title h1 {
+      margin: 0;
+      font-size: 24px;
+      letter-spacing: 0.2px;
+    }
+    .title p {
+      margin: 4px 0 0;
+      font-size: 12.5px;
+      color: var(--muted);
+    }
+    .meta {
+      text-align: right;
+      font-size: 11.5px;
+      color: var(--muted);
+    }
+    .pill {
+      display: inline-block;
+      border: 1.5px solid var(--line);
+      padding: 5px 9px;
+      border-radius: 999px;
+      margin-top: 5px;
+      background: #fff;
+      font-weight: 600;
+      color: var(--green);
+      font-size: 11px;
+    }
+
+    /* Main comparison area */
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.18in;
+      flex: 1;
+      min-height: 0;
+    }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+    .card-head {
+      padding: 11px 13px 10px;
+      background: linear-gradient(180deg, rgba(0,102,51,0.08), rgba(0,102,51,0.02));
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+    .card-head h2{
+      margin: 0;
+      font-size: 16px;
+      color: var(--green);
+      letter-spacing: 0.2px;
+    }
+    .budget {
+      font-size: 19px;
+      font-weight: 800;
+      color: var(--ink);
+      white-space: nowrap;
+    }
+    .tag {
+      display: inline-block;
+      font-size: 10.5px;
+      font-weight: 800;
+      padding: 5px 9px;
+      border-radius: 999px;
+      letter-spacing: 0.2px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      background: #fff;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .tag.reco{
+      border-color: rgba(207,181,59,0.65);
+      color: #5b4b12;
+      background: rgba(207,181,59,0.18);
+    }
+
+    /* Table */
+    .table-wrap{
+      padding: 10px 11px 11px;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      gap: 8px;
+      overflow-y: auto;
+    }
+    table{
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+    th, td{
+      padding: 6px 6px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: middle;
+      text-align: left;
+    }
+    th{
+      font-size: 10px;
+      color: var(--muted);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: var(--panel);
+      border-top: 1px solid var(--line);
+    }
+    td.amount{
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      font-weight: 700;
+      white-space: nowrap;
+      padding-right: 8px;
+    }
+    
+    /* Category rows (bold) */
+    tr.category td {
+      font-weight: 800;
+      color: var(--green);
+      background: rgba(0,102,51,0.04);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding-top: 7px;
+      padding-bottom: 7px;
+    }
+    
+    /* Sub-item rows (indented, lighter) */
+    tr.subitem td:first-child {
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: 10.5px;
+    }
+    tr.subitem td.amount {
+      color: var(--ink);
+      font-weight: 600;
+    }
+    
+    tr:last-child td{ border-bottom: none; }
+
+    .total-row{
+      margin-top: auto;
+      border-top: 2px solid var(--green);
+      background: rgba(0,102,51,0.06);
+      border-radius: 8px;
+      padding: 8px 10px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      font-weight: 900;
+      font-size: 13px;
+    }
+    .total-row span:first-child{
+      color: var(--green);
+      letter-spacing: 0.2px;
+    }
+    .total-row span:last-child{
+      font-size: 15px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Bottom notes */
+    .bottom {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 0.18in;
+      align-items: stretch;
+    }
+    .note {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: #fff;
+    }
+    .note h3{
+      margin: 0 0 5px;
+      font-size: 12px;
+      color: var(--green);
+      letter-spacing: 0.2px;
+    }
+    .note p{
+      margin: 0;
+      font-size: 11.5px;
+      color: var(--muted);
+      line-height: 1.3;
+    }
+    .decision {
+      border: 2px solid rgba(207,181,59,0.75);
+      background: rgba(207,181,59,0.14);
+    }
+    .decision h3{ color: #5b4b12; }
+    .decision p{ color: #5b4b12; font-weight: 700; }
+    .check {
+      display: inline-block;
+      width: 16px; height: 16px;
+      border-radius: 5px;
+      background: rgba(22,163,74,0.12);
+      border: 1px solid rgba(22,163,74,0.35);
+      margin-right: 6px;
+      vertical-align: -2px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="slide">
+    <!-- Header -->
+    <div class="topbar">
+      <div class="title">
+        <h1>Baseline Budget Decision: ₱1.5M vs ₱1.7M</h1>
+        <p>USLS-IS Batch 2003 • 25th Silver Jubilee Homecoming (Dec 2028) • A/C venue provided by school</p>
+      </div>
+      <div class="meta">
+        <div><strong>Collected:</strong> ₱206,950 (12.2%)</div>
+        <div class="pill">Vote needed before funding strategy</div>
+      </div>
+    </div>
+
+    <!-- Comparison Cards -->
+    <div class="compare">
+      <!-- Option A -->
+      <section class="card" aria-label="Option A 1.5M">
+        <div class="card-head">
+          <div>
+            <h2>Option A — Conservative</h2>
+          </div>
+          <div class="budget">₱1,500,000</div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Budget Category & Line Items</th>
+                <th style="text-align:right;">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Category 1 -->
+              <tr class="category">
+                <td>1. Food & Catering</td>
+                <td class="amount">₱570,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Buffet meals (300 pax @ ₱1,400/pax)</td>
+                <td class="amount">₱420,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Service staff & coordination</td>
+                <td class="amount">₱80,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Beverage station (non-alcoholic)</td>
+                <td class="amount">₱40,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Tableware & service equipment</td>
+                <td class="amount">₱30,000</td>
+              </tr>
+
+              <!-- Category 2 -->
+              <tr class="category">
+                <td>2. Sound, Lights & Power</td>
+                <td class="amount">₱150,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Sound system (mics, speakers, mixer)</td>
+                <td class="amount">₱70,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Stage lighting & effects</td>
+                <td class="amount">₱50,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Projector & screen</td>
+                <td class="amount">₱20,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Generator backup (if needed)</td>
+                <td class="amount">₱10,000</td>
+              </tr>
+
+              <!-- Category 3 -->
+              <tr class="category">
+                <td>3. Event Infrastructure</td>
+                <td class="amount">₱70,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Additional tables/chairs (supplement)</td>
+                <td class="amount">₱30,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Stage platform & backdrop</td>
+                <td class="amount">₱25,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Registration desk setup</td>
+                <td class="amount">₱10,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Signage & wayfinding</td>
+                <td class="amount">₱5,000</td>
+              </tr>
+
+              <!-- Category 4 -->
+              <tr class="category">
+                <td>4. Decorations & Setup</td>
+                <td class="amount">₱100,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>25th anniversary branding & backdrops</td>
+                <td class="amount">₱40,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Table centerpieces & linens</td>
+                <td class="amount">₱30,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Photo booth area & props</td>
+                <td class="amount">₱15,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Setup/teardown labor</td>
+                <td class="amount">₱15,000</td>
+              </tr>
+
+              <!-- Category 5 -->
+              <tr class="category">
+                <td>5. Photo & Video</td>
+                <td class="amount">₱80,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Videography (2 videographers, 8 hrs)</td>
+                <td class="amount">₱45,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Photography (1 photographer)</td>
+                <td class="amount">₱25,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Drone footage</td>
+                <td class="amount">₱10,000</td>
+              </tr>
+
+              <!-- Category 6 -->
+              <tr class="category">
+                <td>6. Tokens & Giveaways</td>
+                <td class="amount">₱100,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Commemorative items (300 @ ₱280/pc)</td>
+                <td class="amount">₱84,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Raffle prizes</td>
+                <td class="amount">₱12,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>VIP/donor recognition items</td>
+                <td class="amount">₱4,000</td>
+              </tr>
+
+              <!-- Category 7 -->
+              <tr class="category">
+                <td>7. Program & Operations</td>
+                <td class="amount">₱170,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Professional hosts/emcees</td>
+                <td class="amount">₱40,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Live entertainment (band/performers)</td>
+                <td class="amount">₱60,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Event coordination team</td>
+                <td class="amount">₱30,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Marshals, ushers, security, permits</td>
+                <td class="amount">₱35,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Volunteer meals</td>
+                <td class="amount">₱5,000</td>
+              </tr>
+
+              <!-- Category 8 -->
+              <tr class="category">
+                <td>8. Contingency (10%)</td>
+                <td class="amount">₱150,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Weather, attendance variability, price increases</td>
+                <td class="amount">₱150,000</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="total-row">
+            <span>Total Baseline</span>
+            <span>₱1,390,000</span>
+          </div>
+          <div style="font-size: 10px; color: var(--light-muted); margin-top: 4px; text-align: right;">+₱110K buffer = ₱1.5M</div>
+        </div>
+      </section>
+
+      <!-- Option B -->
+      <section class="card" aria-label="Option B 1.7M recommended">
+        <div class="card-head">
+          <div>
+            <h2>Option B — Full Experience <span class="tag reco">RECOMMENDED</span></h2>
+          </div>
+          <div class="budget">₱1,700,000</div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Budget Category & Line Items</th>
+                <th style="text-align:right;">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Category 1 -->
+              <tr class="category">
+                <td>1. Food & Catering</td>
+                <td class="amount">₱660,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Premium buffet (300 pax @ ₱1,600/pax)</td>
+                <td class="amount">₱480,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Welcome drinks & appetizers</td>
+                <td class="amount">₱60,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Service staff & coordination</td>
+                <td class="amount">₱60,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Beverage station (upgraded)</td>
+                <td class="amount">₱40,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Tableware & service equipment</td>
+                <td class="amount">₱20,000</td>
+              </tr>
+
+              <!-- Category 2 -->
+              <tr class="category">
+                <td>2. Sound, Lights & Power</td>
+                <td class="amount">₱185,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Professional sound system (upgraded)</td>
+                <td class="amount">₱85,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Stage lighting with effects</td>
+                <td class="amount">₱60,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>LED wall or large projector</td>
+                <td class="amount">₱30,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Generator backup</td>
+                <td class="amount">₱10,000</td>
+              </tr>
+
+              <!-- Category 3 -->
+              <tr class="category">
+                <td>3. Event Infrastructure</td>
+                <td class="amount">₱80,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Premium tables/chairs rental</td>
+                <td class="amount">₱35,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Elevated stage & professional backdrop</td>
+                <td class="amount">₱30,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Registration desk with branding</td>
+                <td class="amount">₱10,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Professional signage & wayfinding</td>
+                <td class="amount">₱5,000</td>
+              </tr>
+
+              <!-- Category 4 -->
+              <tr class="category">
+                <td>4. Decorations & Setup</td>
+                <td class="amount">₱125,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Premium 25th anniversary theming</td>
+                <td class="amount">₱50,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Elegant table centerpieces & linens</td>
+                <td class="amount">₱35,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Memory wall & photo displays</td>
+                <td class="amount">₱20,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Setup/teardown (professional team)</td>
+                <td class="amount">₱20,000</td>
+              </tr>
+
+              <!-- Category 5 -->
+              <tr class="category">
+                <td>5. Photo & Video</td>
+                <td class="amount">₱95,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Videography (2 videographers, 10 hrs)</td>
+                <td class="amount">₱50,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Photography (2 photographers)</td>
+                <td class="amount">₱30,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Drone footage & aerial shots</td>
+                <td class="amount">₱10,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Same-day edit highlight reel</td>
+                <td class="amount">₱5,000</td>
+              </tr>
+
+              <!-- Category 6 -->
+              <tr class="category">
+                <td>6. Tokens & Giveaways</td>
+                <td class="amount">₱120,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Quality items (300 @ ₱350/pc)</td>
+                <td class="amount">₱105,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Raffle prizes (upgraded)</td>
+                <td class="amount">₱12,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>VIP/donor recognition plaques</td>
+                <td class="amount">₱3,000</td>
+              </tr>
+
+              <!-- Category 7 -->
+              <tr class="category">
+                <td>7. Program & Operations</td>
+                <td class="amount">₱165,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Professional hosts (celebrity tier)</td>
+                <td class="amount">₱50,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Live band/entertainment (full band)</td>
+                <td class="amount">₱70,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Event coordination (full service)</td>
+                <td class="amount">₱25,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Marshals, ushers, security, permits</td>
+                <td class="amount">₱20,000</td>
+              </tr>
+
+              <!-- Category 8 -->
+              <tr class="category">
+                <td>8. Contingency (10%)</td>
+                <td class="amount">₱170,000</td>
+              </tr>
+              <tr class="subitem">
+                <td>Proper buffer for milestone event</td>
+                <td class="amount">₱170,000</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="total-row">
+            <span>Total Baseline</span>
+            <span>₱1,600,000</span>
+          </div>
+          <div style="font-size: 10px; color: var(--light-muted); margin-top: 4px; text-align: right;"><span class="check"></span>+₱100K buffer = ₱1.7M</div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Bottom Notes -->
+    <div class="bottom">
+      <div class="note">
+        <h3>NOT Included in Baseline (Separate Decisions)</h3>
+        <p>
+          <strong>Golf Tournament:</strong> ₱500K-600K • <strong>Giving Back Project:</strong> TBD • <strong>Teacher Dinner:</strong> TBD<br/>
+          These require separate funding decisions after baseline is approved.
+        </p>
+      </div>
+
+      <div class="note decision">
+        <h3>Committee Vote Required NOW</h3>
+        <p>
+          Choose baseline budget target:<br/>
+          <strong>Option A (₱1.5M)</strong> or <strong>Option B (₱1.7M)</strong><br/>
+          This determines funding strategy.
+        </p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
