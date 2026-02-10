@@ -257,26 +257,35 @@
   }
 }
 
-/* Event Details */
+/* Event Details - Clean inline text, no boxes */
 .event-details {
   display: flex;
-  gap: 40px;
-  margin-bottom: 24px;
-  font-size: 1.1rem;
-  color: rgba(255, 255, 255, 0.7);
+  justify-content: center;
+  align-items: center;
+  gap: 32px;
+  margin-bottom: 28px;
+  font-size: 1.05rem;
+  color: #CFB53B;
+  font-weight: 500;
+  letter-spacing: 0.01em;
 }
 
 .event-details span {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 8px;
   opacity: 0;
   transform: translateY(10px);
   transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  /* No background, no border, no box - just text */
+  background: none;
+  border: none;
+  padding: 0;
 }
 
 .event-icon {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
+  line-height: 1;
 }
 
 .hero-section.animate .event-date {
@@ -659,8 +668,8 @@
 
   .event-details {
     flex-direction: column;
-    gap: 12px;
-    font-size: 1rem;
+    gap: 10px;
+    font-size: 0.95rem;
   }
 
   .hero-quote {
@@ -855,13 +864,13 @@
   filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
 }
 
-/* Event details - dark text for clarity */
-[data-theme="light"] .event-details span {
+/* Event details - dark green text for clarity */
+[data-theme="light"] .event-details {
   color: #004d26;
 }
 
-[data-theme="light"] .event-icon {
-  opacity: 1;
+[data-theme="light"] .event-details span {
+  color: #004d26;
 }
 
 /* Quote - Dark green, italic elegance */

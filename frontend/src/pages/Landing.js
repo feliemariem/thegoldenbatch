@@ -102,7 +102,7 @@ export default function Landing() {
   }, []);
 
   return (
-    <div className={`landing-page ${heroAnimated ? 'animated' : ''}`}>
+    <div className={`landing-page ${heroAnimated ? 'animated' : ''}`} data-theme={theme}>
       {/* Header */}
       <header className={`landing-header ${headerSolid ? 'solid' : ''}`}>
         <div className="landing-logo">
