@@ -8,6 +8,12 @@ export function ThemeProvider({ children }) {
     return saved || 'dark';
   });
 
+  // Synchronous theme application to prevent flash of wrong theme
+  if (typeof document !== 'undefined') {
+    document.documentElement.setAttribute('data-theme', theme);
+    document.body.setAttribute('data-theme', theme);
+  }
+
   useEffect(() => {
     localStorage.setItem('theme', theme);
     document.documentElement.setAttribute('data-theme', theme);

@@ -142,16 +142,13 @@
   left: -5%;
   right: -5%;
   bottom: -10%;
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;
   transform: scale(1.15);
   opacity: 0;
   transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1), transform 8s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: -1;
-  /* Default to dark theme */
+  /* Default to dark theme - reduced overlay opacity to show HS building photo */
   background:
-    linear-gradient(145deg, rgba(10, 15, 13, 0.88) 0%, rgba(26, 42, 31, 0.85) 50%, rgba(13, 21, 16, 0.92) 100%),
+    linear-gradient(145deg, rgba(10, 15, 13, 0.70) 0%, rgba(26, 42, 31, 0.65) 50%, rgba(13, 21, 16, 0.75) 100%),
     url('../images/hs_bldg.jpg') center center / cover no-repeat;
 }
 
@@ -676,10 +673,10 @@ body[data-theme="dark"] .landing-theme-toggle:hover {
   border-color: rgba(184, 150, 12, 0.5);
 }
 
-/* Hero - Dark */
+/* Hero - Dark - reduced overlay opacity to show HS building photo */
 body[data-theme="dark"] .hero-background {
   background:
-    linear-gradient(145deg, rgba(10, 15, 13, 0.88) 0%, rgba(26, 42, 31, 0.85) 50%, rgba(13, 21, 16, 0.92) 100%),
+    linear-gradient(145deg, rgba(10, 15, 13, 0.70) 0%, rgba(26, 42, 31, 0.65) 50%, rgba(13, 21, 16, 0.75) 100%),
     url('../images/hs_bldg.jpg') center center / cover no-repeat;
 }
 
