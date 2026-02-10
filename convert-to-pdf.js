@@ -59,7 +59,12 @@ async function convertToPdf() {
       const pdfFileName = htmlFile.replace('.html', '.pdf');
       const outputPath = path.join(outputDir, pdfFileName);
 
-      console.log(`Converting: ${htmlFile}`);
+      // Check if this is the Strategic Plan (multi-page document)
+      const isStrategicPlan = htmlFile.includes('Strategic_Plan') || 
+                             htmlFile.includes('strategic') ||
+                             htmlFile.includes('Golden_Batch');
+
+      console.log(`Converting: ${htmlFile}${isStrategicPlan ? ' (multi-page)' : ' (single-page)'}`);
 
       try {
         const page = await browser.newPage();
@@ -80,17 +85,27 @@ async function convertToPdf() {
         // Wait a bit for any animations/fonts to load
         await new Promise(resolve => setTimeout(resolve, 1000));
 
-        // Generate PDF
-        await page.pdf({
+        // Generate PDF with different settings based on file type
+        const pdfOptions = {
           path: outputPath,
           format: 'Letter',
           printBackground: true,
           margin: { top: '0.5in', right: '0.5in', bottom: '0.5in', left: '0.5in' },
-          scale: 0.55, // Scale down to fit on one page
-          pageRanges: '1', // Only output page 1
           preferCSSPageSize: false,
           displayHeaderFooter: false
-        });
+        };
+
+        // Strategic Plan gets full multi-page treatment
+        if (isStrategicPlan) {
+          pdfOptions.scale = 1.0; // Full scale
+          // Don't set pageRanges - allow all pages
+        } else {
+          // Other presentations stay single-page
+          pdfOptions.scale = 0.55; // Scale down to fit on one page
+          pdfOptions.pageRanges = '1'; // Only output page 1
+        }
+
+        await page.pdf(pdfOptions);
 
         await page.close();
         console.log(`✅ Generated: ${pdfFileName}`);
