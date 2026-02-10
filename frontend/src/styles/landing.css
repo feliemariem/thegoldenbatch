@@ -783,74 +783,120 @@
 
 /* ========================================
    LIGHT MODE OVERRIDES
+   Elegant light theme with proper contrast
    ======================================== */
 
 [data-theme="light"] .landing-page {
-  background: #f5f5f0;
+  background: #f8f9f7;
 }
 
+/* Hero background - darker overlay for text contrast */
 [data-theme="light"] .hero-background {
   background:
-    linear-gradient(145deg, rgba(245, 245, 240, 0.88) 0%, rgba(230, 235, 228, 0.85) 50%, rgba(240, 242, 238, 0.92) 100%),
+    linear-gradient(145deg,
+      rgba(0, 51, 25, 0.75) 0%,
+      rgba(0, 40, 20, 0.70) 50%,
+      rgba(0, 51, 25, 0.78) 100%
+    ),
     url('../images/hs_bldg.jpg') center center / cover no-repeat;
 }
 
+/* Header */
 [data-theme="light"] .landing-header {
-  background: rgba(245, 245, 240, 0.6);
+  background: rgba(0, 51, 25, 0.85);
+  border-bottom-color: rgba(207, 181, 59, 0.2);
 }
 
 [data-theme="light"] .landing-header.solid {
-  background: rgba(245, 245, 240, 0.95);
-  border-bottom-color: rgba(0, 102, 51, 0.15);
+  background: rgba(0, 51, 25, 0.95);
+  border-bottom-color: rgba(207, 181, 59, 0.3);
 }
 
 [data-theme="light"] .landing-logo span {
-  color: #006633;
+  color: #CFB53B;
 }
 
 [data-theme="light"] .btn-login {
-  background: linear-gradient(135deg, #006633 0%, #004d26 100%);
-  color: #fff;
+  background: linear-gradient(135deg, #CFB53B 0%, #B8960C 100%);
+  color: #003319;
 }
 
+[data-theme="light"] .btn-login:hover {
+  box-shadow: 0 8px 24px rgba(207, 181, 59, 0.4);
+}
+
+[data-theme="light"] .landing-theme-toggle {
+  border-color: rgba(207, 181, 59, 0.4);
+  color: #CFB53B;
+}
+
+[data-theme="light"] .landing-theme-toggle:hover {
+  background: rgba(207, 181, 59, 0.2);
+  border-color: rgba(207, 181, 59, 0.6);
+}
+
+/* Hero Title - Gold on dark green background */
 [data-theme="light"] .hero-title .word {
-  background: linear-gradient(135deg, #006633 0%, #004d26 100%);
+  background: linear-gradient(135deg, #CFB53B 0%, #E8D48A 50%, #CFB53B 100%);
   -webkit-background-clip: text;
   background-clip: text;
 }
 
+/* Tagline - Golden shimmer */
 [data-theme="light"] .tagline {
-  background: linear-gradient(90deg, #006633 0%, #00994d 50%, #006633 100%);
+  background: linear-gradient(90deg, #CFB53B 0%, #E8D48A 50%, #CFB53B 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
 }
 
+/* Event details - light text on dark background */
 [data-theme="light"] .event-details span {
-  color: rgba(0, 0, 0, 0.7);
+  color: rgba(255, 255, 255, 0.85);
 }
 
+[data-theme="light"] .event-icon {
+  opacity: 0.9;
+}
+
+/* Quote - Gold accent */
 [data-theme="light"] .hero-quote {
-  color: #006633;
+  color: #CFB53B;
+  opacity: 0.95;
 }
 
+/* Hero Button - Gold */
 [data-theme="light"] .btn-hero {
-  background: linear-gradient(135deg, #006633 0%, #004d26 100%);
-  color: #fff;
+  background: linear-gradient(135deg, #CFB53B 0%, #B8960C 100%);
+  color: #003319;
 }
 
+[data-theme="light"] .btn-hero:hover {
+  box-shadow: 0 12px 40px rgba(207, 181, 59, 0.5) !important;
+}
+
+/* Hero Logo - Gold glow */
+[data-theme="light"] .hero-logo {
+  filter: drop-shadow(0 0 30px rgba(207, 181, 59, 0.3));
+}
+
+[data-theme="light"] .hero-section.animate .hero-logo {
+  filter: drop-shadow(0 0 50px rgba(207, 181, 59, 0.5));
+}
+
+/* Countdown Section - Light background */
 [data-theme="light"] .countdown-section {
-  background: rgba(0, 102, 51, 0.05);
+  background: rgba(0, 51, 25, 0.06);
 }
 
-[data-theme="light"] .countdown-section h2,
-[data-theme="light"] .about-section h2 {
+[data-theme="light"] .countdown-section h2 {
   color: #006633;
 }
 
 [data-theme="light"] .countdown-item {
-  background: rgba(255, 255, 255, 0.8);
-  border-color: rgba(0, 102, 51, 0.15);
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(0, 102, 51, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 51, 25, 0.08);
 }
 
 [data-theme="light"] .countdown-number {
@@ -858,17 +904,51 @@
 }
 
 [data-theme="light"] .countdown-label {
-  color: rgba(0, 0, 0, 0.5);
+  color: rgba(0, 51, 25, 0.6);
+}
+
+/* About Section */
+[data-theme="light"] .about-section h2 {
+  color: #006633;
 }
 
 [data-theme="light"] .about-section p {
-  color: rgba(0, 0, 0, 0.8);
+  color: rgba(0, 51, 25, 0.85);
 }
 
-[data-theme="light"] .hero-logo {
-  filter: drop-shadow(0 0 40px rgba(0, 102, 51, 0.2));
+/* Modal - Light mode adjustments */
+[data-theme="light"] .modal-content {
+  background: linear-gradient(165deg, rgba(248, 249, 247, 0.98) 0%, rgba(240, 242, 238, 0.99) 100%);
+  border-color: rgba(0, 102, 51, 0.2);
 }
 
-[data-theme="light"] .hero-section.animate .hero-logo {
-  filter: drop-shadow(0 0 40px rgba(0, 102, 51, 0.3));
+[data-theme="light"] .modal-close {
+  background: rgba(0, 0, 0, 0.08);
+  color: #333;
+}
+
+[data-theme="light"] .modal-close:hover {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="light"] .form-disclaimer {
+  background: rgba(0, 102, 51, 0.05);
+  border-color: rgba(0, 102, 51, 0.15);
+}
+
+[data-theme="light"] .form-disclaimer p {
+  color: rgba(0, 51, 25, 0.9);
+}
+
+[data-theme="light"] .form-disclaimer li {
+  color: rgba(0, 51, 25, 0.75);
+}
+
+[data-theme="light"] .form-disclaimer .privacy-note {
+  color: rgba(0, 51, 25, 0.6);
+  border-top-color: rgba(0, 102, 51, 0.1);
+}
+
+[data-theme="light"] .consent-checkbox span {
+  color: rgba(0, 51, 25, 0.85);
 }
