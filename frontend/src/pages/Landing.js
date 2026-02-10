@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import Footer from '../components/Footer';
@@ -9,67 +9,13 @@ export default function Landing() {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [showFormModal, setShowFormModal] = useState(false);
   const [consentGiven, setConsentGiven] = useState(false);
+  const [heroLoaded, setHeroLoaded] = useState(false);
 
-  // Animation states
-  const [heroAnimated, setHeroAnimated] = useState(false);
-  const [countdownVisible, setCountdownVisible] = useState(false);
-  const [countdownAnimated, setCountdownAnimated] = useState(false);
-  const [aboutVisible, setAboutVisible] = useState(false);
-  const [headerSolid, setHeaderSolid] = useState(false);
-
-  // Refs for intersection observer
-  const countdownRef = useRef(null);
-  const aboutRef = useRef(null);
-
-  // Trigger hero animation on mount
   useEffect(() => {
-    const timer = setTimeout(() => setHeroAnimated(true), 100);
-    return () => clearTimeout(timer);
+    // Trigger animations after mount
+    setTimeout(() => setHeroLoaded(true), 100);
   }, []);
 
-  // Header scroll effect
-  useEffect(() => {
-    const handleScroll = () => {
-      setHeaderSolid(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Intersection observers for scroll-triggered animations
-  useEffect(() => {
-    const observerOptions = {
-      threshold: 0.2,
-      rootMargin: '0px 0px -50px 0px'
-    };
-
-    const countdownObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting && !countdownAnimated) {
-          setCountdownVisible(true);
-          setCountdownAnimated(true);
-        }
-      });
-    }, observerOptions);
-
-    const aboutObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          setAboutVisible(true);
-        }
-      });
-    }, observerOptions);
-
-    if (countdownRef.current) countdownObserver.observe(countdownRef.current);
-    if (aboutRef.current) aboutObserver.observe(aboutRef.current);
-
-    return () => {
-      countdownObserver.disconnect();
-      aboutObserver.disconnect();
-    };
-  }, [countdownAnimated]);
-
-  // Countdown timer
   useEffect(() => {
     const reunionDate = new Date('2028-12-16T00:00:00');
 
@@ -92,7 +38,6 @@ export default function Landing() {
     return () => clearInterval(interval);
   }, []);
 
-  // Close modal on Escape key
   useEffect(() => {
     const handleEsc = (e) => {
       if (e.key === 'Escape') setShowFormModal(false);
@@ -102,9 +47,9 @@ export default function Landing() {
   }, []);
 
   return (
-    <div className={`landing-page ${heroAnimated ? 'animated' : ''}`} data-theme={theme}>
+    <div className={`landing-page ${heroLoaded ? 'loaded' : ''}`}>
       {/* Header */}
-      <header className={`landing-header ${headerSolid ? 'solid' : ''}`}>
+      <header className="landing-header">
         <div className="landing-logo">
           <img src={logo} alt="USLS Logo" />
           <span>UNIVERSITY OF ST. LA SALLE - IS 2003</span>
@@ -122,57 +67,47 @@ export default function Landing() {
       </header>
 
       {/* Hero Section */}
-      <section className={`hero-section ${heroAnimated ? 'animate' : ''}`}>
-        <div className="hero-background" />
+      <section className="hero-section">
         <div className="hero-content">
           <img
             src={require('../images/logo.png')}
             alt="25th Anniversary Logo"
             className="hero-logo"
           />
-          <h1 className="hero-title">
-            <span className="word word-1">25th</span>{' '}
-            <span className="word word-2">Alumni</span>{' '}
-            <span className="word word-3">Homecoming</span>
-          </h1>
-          <p className="tagline">The Golden Batch 2003</p>
-          <div className="event-details">
-            <span className="event-date">
-              <span className="event-icon">📅</span>
-              December 16, 2028
-            </span>
-            <span className="event-location">
-              <span className="event-icon">📍</span>
-              USLS School Grounds, Bacolod City
-            </span>
+          <h1 className="hero-title">25th Alumni Homecoming</h1>
+          <p className="hero-tagline">The Golden Batch 2003</p>
+          
+          <div className="hero-details">
+            <span className="hero-detail">📅 December 16, 2028</span>
+            <span className="hero-detail-separator">•</span>
+            <span className="hero-detail">📍 USLS School Grounds, Bacolod City</span>
           </div>
-          <p className="hero-quote">"It's time to come home."</p>
+
+          <p className="hero-subtitle">It's time to come home.</p>
+
           <button onClick={() => setShowFormModal(true)} className="btn-hero">
-            <span>Register Now</span>
+            Register Now
           </button>
         </div>
       </section>
 
       {/* Countdown Section */}
-      <section
-        ref={countdownRef}
-        className={`countdown-section ${countdownVisible ? 'visible' : ''}`}
-      >
+      <section className="countdown-section">
         <h2>Countdown to Reunion</h2>
         <div className="countdown-grid">
-          <div className="countdown-item" style={{ '--delay': '0' }}>
+          <div className="countdown-item">
             <span className="countdown-number">{timeLeft.days}</span>
             <span className="countdown-label">Days</span>
           </div>
-          <div className="countdown-item" style={{ '--delay': '1' }}>
+          <div className="countdown-item">
             <span className="countdown-number">{timeLeft.hours}</span>
             <span className="countdown-label">Hours</span>
           </div>
-          <div className="countdown-item" style={{ '--delay': '2' }}>
+          <div className="countdown-item">
             <span className="countdown-number">{timeLeft.minutes}</span>
             <span className="countdown-label">Minutes</span>
           </div>
-          <div className="countdown-item" style={{ '--delay': '3' }}>
+          <div className="countdown-item">
             <span className="countdown-number">{timeLeft.seconds}</span>
             <span className="countdown-label">Seconds</span>
           </div>
@@ -180,10 +115,7 @@ export default function Landing() {
       </section>
 
       {/* About Section */}
-      <section
-        ref={aboutRef}
-        className={`about-section ${aboutVisible ? 'visible' : ''}`}
-      >
+      <section className="about-section">
         <h2>About the Reunion</h2>
         <p>
           It's been 25 years since we walked the halls of USLS-IS together.
@@ -195,25 +127,22 @@ export default function Landing() {
 
       <Footer />
 
-      {/* Google Form Modal */}
+      {/* Registration Modal */}
       {showFormModal && (
         <div className="modal-overlay" onClick={() => setShowFormModal(false)}>
           <div className="modal-content modal-large" onClick={(e) => e.stopPropagation()}>
             <button className="modal-close" onClick={() => setShowFormModal(false)}>
-              &#10005;
+              ✕
             </button>
             <h2 style={{ textAlign: 'center', marginBottom: '20px', color: '#CFB53B' }}>
               Register for the Reunion
             </h2>
 
-            {/* Disclaimer Section */}
             <div className="form-disclaimer">
               <p>
                 We're collecting your email to send you a personalized invite link to our official reunion registration system.
               </p>
-              <p>
-                Once you receive your invite, you'll be able to:
-              </p>
+              <p>Once you receive your invite, you'll be able to:</p>
               <ul>
                 <li>Register for the reunion and confirm your attendance (RSVP)</li>
                 <li>Access event updates, announcements, and reminders</li>
@@ -226,7 +155,6 @@ export default function Landing() {
                 with third parties or used for commercial purposes.
               </p>
 
-              {/* Consent Checkbox */}
               <label className="consent-checkbox">
                 <input
                   type="checkbox"
