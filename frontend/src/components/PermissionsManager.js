@@ -315,6 +315,24 @@ export default function PermissionsManager() {
                   ))}
                 </div>
               </div>
+
+              {/* Strategic Planning Permissions */}
+              <div style={{ marginBottom: '20px' }}>
+                <h4 className="perm-section-title">STRATEGIC PLANNING</h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingLeft: '12px' }}>
+                  {['strategic_view'].map(perm => (
+                    <label key={perm} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+                      <input
+                        type="checkbox"
+                        checked={permissions[perm] || false}
+                        onChange={() => handlePermissionChange(perm)}
+                        style={{ width: '16px', height: '16px' }}
+                      />
+                      <span className="perm-label">{permissionLabels[perm]}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
             </>
           )}
 
