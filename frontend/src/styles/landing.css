@@ -1015,7 +1015,11 @@ body[data-theme="light"] .consent-checkbox span {
     padding: 100px 20px 60px;
   }
 
-    .hero-background {
+  .hero-background {
+    top: -15%;
+    left: -10%;
+    right: -10%;
+    bottom: -15%;
     transform: scale(1.15);
   }
 
