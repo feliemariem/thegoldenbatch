@@ -995,6 +995,11 @@ body[data-theme="light"] .consent-checkbox span {
    ======================================== */
 
 @media (max-width: 768px) {
+
+  .landing-page {
+    background-attachment: scroll;
+  }
+
   .landing-header {
     padding: 16px 20px;
   }
