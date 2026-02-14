@@ -78,7 +78,7 @@ export default function StrategicPlanning() {
 
   return (
     <div className="strategic-planning">
-      <h2 className="strategic-planning-title">Strategic Planning</h2>
+      <h3 className="strategic-planning-title">Strategic Planning</h3>
 
       <div className="strategic-planning-layout">
         {/* Sidebar */}
