@@ -12,8 +12,9 @@ const { authLimiter, registerLimiter, passwordResetLimiter } = require('../middl
 const getCookieOptions = (rememberMe = false) => ({
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production',
-  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' for cross-domain in production
-  maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : undefined // 30 days or session
+  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+  domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : undefined, // Share across subdomains
+  maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : undefined
 });
 
 // Helper functions for text normalization
