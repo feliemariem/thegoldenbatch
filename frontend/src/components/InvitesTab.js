@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import ScrollableTable from './ScrollableTable';
+import { useAuth } from '../context/AuthContext';
 import { apiGet, apiPost, apiPut, apiDelete } from '../api';
 
 export default function InvitesTab({
@@ -9,6 +10,7 @@ export default function InvitesTab({
   onConfirm,
   onStatsUpdate,
 }) {
+  const { user } = useAuth();
   const [invites, setInvites] = useState([]);
   const [stats, setStats] = useState({ total: 0, registered: 0, pending: 0 });
   const [inviteForm, setInviteForm] = useState({ first_name: '', last_name: '', email: '' });
@@ -392,6 +394,14 @@ export default function InvitesTab({
             {invites.length > 10 && (
               <button onClick={scrollToTop} className="btn-secondary" title="Scroll to top">
                 ^ Top
+              </button>
+            )}
+            {user?.email?.toLowerCase() === 'uslsis.batch2003@gmail.com' && (
+              <button
+                onClick={() => window.open('https://docs.google.com/spreadsheets/d/1Z-6dhL9CKeG6H4jFRSDLeqynfyFa-8HS0fZUqe8kAqE/edit?resourcekey=&gid=1685250365#gid=1685250365', '_blank')}
+                className="btn-secondary"
+              >
+                📊 Responses
               </button>
             )}
             {(isSuperAdmin || permissions?.invites_export) && (
