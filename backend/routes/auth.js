@@ -15,7 +15,7 @@ const { authLimiter, registerLimiter, passwordResetLimiter } = require('../middl
 const getCookieOptions = (rememberMe = false) => ({
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production',
-  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+  sameSite: 'lax',
   maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : undefined
 });
 
