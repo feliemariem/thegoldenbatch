@@ -9,11 +9,13 @@ const { JWT_EXPIRY_DEFAULT, JWT_EXPIRY_REMEMBER, JWT_EXPIRY_SHORT } = require('.
 const { authLimiter, registerLimiter, passwordResetLimiter } = require('../middleware/rateLimiter');
 
 // Cookie configuration helper
+// NOTE: Do NOT set domain - '.onrender.com' is a Public Suffix and Safari/ITP blocks it.
+// Without domain, cookie scopes to exact API host and sameSite: 'none' + secure: true
+// still allows cross-origin requests from the frontend.
 const getCookieOptions = (rememberMe = false) => ({
   httpOnly: true,
   secure: process.env.NODE_ENV === 'production',
   sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-  domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : undefined, // Share across subdomains
   maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : undefined
 });
 
@@ -240,10 +242,11 @@ router.post('/login', authLimiter, async (req, res) => {
 
 // Logout - Clear auth cookie
 router.post('/logout', (req, res) => {
+  // Use same options as getCookieOptions to ensure cookie is properly cleared
   res.clearCookie('token', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
   });
   res.json({ message: 'Logged out' });
 });
