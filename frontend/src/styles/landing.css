@@ -1000,9 +1000,11 @@ body[data-theme="light"] .consent-checkbox span {
     background-attachment: scroll;
   }
 
-  .landing-header {
-    padding: 16px 20px;
-  }
+.landing-header {
+  padding: 16px 20px;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
 
   .landing-logo span {
     font-size: 0.75rem;
