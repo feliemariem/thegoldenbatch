@@ -1042,6 +1042,11 @@ body[data-theme="light"] .consent-checkbox span {
     font-size: 1rem;
   }
 
+  .btn-login {
+  padding: 8px 16px;
+  font-size: 0.8rem;
+}
+
   /* Faster animations on mobile (6s total) */
   .hero-section.animate .hero-logo {
     transition-delay: 1s;
