@@ -470,8 +470,8 @@ export default function AdminDashboard() {
               <div className="percentage-box">
                 <span className="percentage-label">Invited:</span>
                 <div className="percentage-grid">
-                  <span className="percentage-item">{inviteStats.total ? Math.round((registeredCount / inviteStats.total) * 100) : 0}% Registered</span>
-                  <span className="percentage-item">{inviteStats.total ? Math.round((pendingCount / inviteStats.total) * 100) : 0}% Pending</span>
+                  <span className="percentage-item">{inviteStats.total ? Math.round(((registeredCount || 0) / inviteStats.total) * 100) : 0}% Registered</span>
+                  <span className="percentage-item">{inviteStats.total ? Math.round(((pendingCount || 0) / inviteStats.total) * 100) : 0}% Pending</span>
                 </div>
               </div>
               <div className="percentage-box">
