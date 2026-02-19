@@ -33,9 +33,19 @@ router.get('/dashboard', authenticateAdmin, async (req, res) => {
       INNER JOIN admins a ON LOWER(u.email) = LOWER(a.email)
     `);
 
+    // Parse stats from strings to integers (PostgreSQL COUNT returns strings)
+    const raw = statsResult.rows[0];
+    const stats = {
+      total_registered: parseInt(raw.total_registered) || 0,
+      going: parseInt(raw.going) || 0,
+      not_going: parseInt(raw.not_going) || 0,
+      maybe: parseInt(raw.maybe) || 0,
+      no_response: parseInt(raw.no_response) || 0,
+    };
+
     res.json({
       stats: {
-        ...statsResult.rows[0],
+        ...stats,
         invites: inviteStats.rows[0],
         admins_count: parseInt(adminsCountResult.rows[0].admin_count) || 0,
       },
@@ -133,9 +143,19 @@ router.get('/users', authenticateAdmin, async (req, res) => {
       LEFT JOIN rsvps r ON u.id = r.user_id
     `);
 
+    // Parse stats from strings to integers (PostgreSQL COUNT returns strings)
+    const rawStats = statsResult.rows[0];
+    const stats = {
+      total: parseInt(rawStats.total) || 0,
+      going: parseInt(rawStats.going) || 0,
+      not_going: parseInt(rawStats.not_going) || 0,
+      maybe: parseInt(rawStats.maybe) || 0,
+      no_response: parseInt(rawStats.no_response) || 0,
+    };
+
     res.json({
       users: result.rows,
-      stats: statsResult.rows[0],
+      stats,
       pagination: {
         currentPage: pageNum,
         totalPages,
