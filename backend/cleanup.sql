@@ -1,5 +1,6 @@
 -- ============================================================
 -- CLEAN SLATE FOR TESTING (before public release)
+-- Command: psql "YOUR_EXTERNAL_DATABASE_URL" -f cleanup.sql
 -- ============================================================
 -- Wipes all test data while keeping:
 -- ✅ master_list names (clears registration/invite data)
