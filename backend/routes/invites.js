@@ -206,9 +206,17 @@ router.get('/', authenticateAdmin, async (req, res) => {
       FROM invites
     `);
 
+    // Parse stats from strings to integers (PostgreSQL COUNT returns strings)
+    const raw = statsResult.rows[0];
+    const stats = {
+      total: parseInt(raw.total) || 0,
+      registered: parseInt(raw.registered) || 0,
+      pending: parseInt(raw.pending) || 0,
+    };
+
     res.json({
       invites: result.rows,
-      stats: statsResult.rows[0],
+      stats,
       pagination: {
         currentPage: pageNum,
         totalPages,
