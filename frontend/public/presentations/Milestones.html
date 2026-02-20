@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Batch 2003 – The Road to 2028</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #006633;
+    --green-dark: #004d26;
+    --green-light: #008844;
+    --gold: #CFB53B;
+    --gold-light: #e8cc5a;
+    --cream: #faf8f2;
+    --text: #1a1a1a;
+    --muted: #555;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cream);
+    font-family: 'Lato', sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--green-dark);
+    color: white;
+    text-align: center;
+    padding: 56px 24px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 40px,
+      rgba(207,181,59,0.04) 40px,
+      rgba(207,181,59,0.04) 80px
+    );
+  }
+
+  .header-eyebrow {
+    font-family: 'Lato', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+
+  header h1 span {
+    color: var(--gold);
+  }
+
+  .header-sub {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 1px;
+  }
+
+  .gold-bar {
+    height: 4px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin-top: 32px;
+  }
+
+  /* INTRO STAT */
+  .stat-banner {
+    background: white;
+    border-bottom: 1px solid #e8e0cc;
+    padding: 28px 24px;
+    text-align: center;
+  }
+
+  .stat-banner p {
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .stat-banner .big {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--green);
+    font-weight: 700;
+  }
+
+  .stat-banner .big span {
+    color: var(--gold);
+  }
+
+  /* TIMELINE */
+  .timeline-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 60px 24px 80px;
+  }
+
+  .section-label {
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 700;
+    margin-bottom: 48px;
+  }
+
+  .timeline {
+    position: relative;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--gold), var(--green), var(--gold));
+    transform: translateX(-50%);
+  }
+
+  .milestone {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 56px;
+    position: relative;
+    align-items: flex-start;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.6s ease forwards;
+  }
+
+  .milestone:nth-child(1) { animation-delay: 0.1s; }
+  .milestone:nth-child(2) { animation-delay: 0.2s; }
+  .milestone:nth-child(3) { animation-delay: 0.3s; }
+  .milestone:nth-child(4) { animation-delay: 0.4s; }
+  .milestone:nth-child(5) { animation-delay: 0.5s; }
+  .milestone:nth-child(6) { animation-delay: 0.6s; }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Alternating layout */
+  .milestone:nth-child(odd) { flex-direction: row; }
+  .milestone:nth-child(even) { flex-direction: row-reverse; }
+
+  .milestone-date {
+    width: calc(50% - 32px);
+    text-align: right;
+    padding-top: 4px;
+    flex-shrink: 0;
+  }
+
+  .milestone:nth-child(even) .milestone-date {
+    text-align: left;
+  }
+
+  .milestone-date .month {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--green);
+    display: block;
+  }
+
+  .milestone-date .year {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .milestone-dot {
+    position: absolute;
+    left: 50%;
+    top: 6px;
+    transform: translateX(-50%);
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 3px solid var(--green-dark);
+    z-index: 1;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 4px rgba(207,181,59,0.2);
+  }
+
+  .milestone-dot.highlight {
+    background: var(--green);
+    border-color: var(--gold);
+    width: 20px;
+    height: 20px;
+    top: 4px;
+  }
+
+  .milestone-content {
+    width: calc(50% - 32px);
+    background: white;
+    border-radius: 8px;
+    padding: 20px 24px;
+    border: 1px solid #e8e0cc;
+    border-left: 4px solid var(--gold);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  }
+
+  .milestone:nth-child(even) .milestone-content {
+    border-left: 1px solid #e8e0cc;
+    border-right: 4px solid var(--green);
+  }
+
+  .milestone-content h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--green-dark);
+    margin-bottom: 10px;
+  }
+
+  .milestone-content ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .milestone-content ul li {
+    font-size: 13px;
+    color: var(--muted);
+    padding: 4px 0;
+    padding-left: 14px;
+    position: relative;
+    line-height: 1.5;
+  }
+
+  .milestone-content ul li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--gold);
+    font-weight: 700;
+  }
+
+  /* Special current milestone */
+  .milestone.current .milestone-content {
+    background: var(--green-dark);
+    color: white;
+    border-color: var(--gold);
+    border-left: 4px solid var(--gold);
+  }
+
+  .milestone.current .milestone-content h3 {
+    color: var(--gold);
+  }
+
+  .milestone.current .milestone-content ul li {
+    color: rgba(255,255,255,0.8);
+  }
+
+  .milestone.current .milestone-content ul li::before {
+    color: var(--gold-light);
+  }
+
+  .badge {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background: var(--gold);
+    color: var(--green-dark);
+    padding: 3px 8px;
+    border-radius: 2px;
+    margin-bottom: 8px;
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--green-dark);
+    color: rgba(255,255,255,0.5);
+    text-align: center;
+    padding: 32px 24px;
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+
+  footer strong {
+    color: var(--gold);
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .timeline::before { left: 20px; }
+
+    .milestone,
+    .milestone:nth-child(even) {
+      flex-direction: column !important;
+      padding-left: 48px;
+    }
+
+    .milestone-date,
+    .milestone:nth-child(even) .milestone-date {
+      width: 100%;
+      text-align: left;
+    }
+
+    .milestone-content,
+    .milestone:nth-child(even) .milestone-content {
+      width: 100%;
+      border-left: 4px solid var(--gold) !important;
+      border-right: 1px solid #e8e0cc !important;
+    }
+
+    .milestone-dot {
+      left: 20px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="header-eyebrow">USLS-IS Batch 2003 · 25th Alumni Homecoming</p>
+  <h1>The Road to <span>2028</span></h1>
+  <p class="header-sub">A look back at how far we've come</p>
+  <div class="gold-bar"></div>
+</header>
+
+<div class="stat-banner">
+  <p>Funds Collected as of February 2026</p>
+  <div class="big">₱<span>206,950</span><small style="font-size:1rem; color:#888;">.14</small></div>
+</div>
+
+<div class="timeline-wrapper">
+  <p class="section-label">Planning Milestones</p>
+
+  <div class="timeline">
+
+    <!-- Dec 2023 -->
+    <div class="milestone">
+      <div class="milestone-date">
+        <span class="month">December</span>
+        <span class="year">2023</span>
+      </div>
+      <div class="milestone-dot"></div>
+      <div class="milestone-content">
+        <h3>The Spark</h3>
+        <ul>
+          <li>Communication about the reunion officially begins</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Jan 2024 -->
+    <div class="milestone">
+      <div class="milestone-date">
+        <span class="month">January</span>
+        <span class="year">2024</span>
+      </div>
+      <div class="milestone-dot"></div>
+      <div class="milestone-content">
+        <h3>Mobilization</h3>
+        <ul>
+          <li>Announcement released to batchmates via Messenger</li>
+          <li>Committees and scopes finalized</li>
+          <li>Org chart finalized and published on Facebook</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Feb 2024 -->
+    <div class="milestone">
+      <div class="milestone-date">
+        <span class="month">February</span>
+        <span class="year">2024</span>
+      </div>
+      <div class="milestone-dot"></div>
+      <div class="milestone-content">
+        <h3>Official Groundwork</h3>
+        <ul>
+          <li>Meeting with CARE (Alumni Office)</li>
+          <li>Covered: leadership, timeline, golf, homecoming, memorabilia, alumni card, giveback, fundraising</li>
+          <li>Mission statement finalized: <em>Reconnect · Celebrate · Network · Contribute</em></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Aug 2024 -->
+    <div class="milestone">
+      <div class="milestone-date">
+        <span class="month">August</span>
+        <span class="year">2024</span>
+      </div>
+      <div class="milestone-dot"></div>
+      <div class="milestone-content">
+        <h3>Core Team Planning</h3>
+        <ul>
+          <li>In-person planning session with core committee</li>
+          <li>Covered: budget, fundraising strategy, giveback, website, and section representatives</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Dec 2025 -->
+    <div class="milestone">
+      <div class="milestone-date">
+        <span class="month">December</span>
+        <span class="year">2025</span>
+      </div>
+      <div class="milestone-dot"></div>
+      <div class="milestone-content">
+        <h3>Reconnaissance</h3>
+        <ul>
+          <li>Batchmates attended the Batch 2000 Alumni Homecoming</li>
+          <li>Gained firsthand insight on homecoming flow and expectations</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Jan 2026 -->
+    <div class="milestone current">
+      <div class="milestone-date">
+        <span class="month">January</span>
+        <span class="year">2026</span>
+      </div>
+      <div class="milestone-dot highlight"></div>
+      <div class="milestone-content">
+        <span class="badge">Where We Are Now</span>
+        <h3>Goals Realignment</h3>
+        <ul>
+          <li>Rebuilding momentum and refocusing the committee</li>
+          <li>Website completed — pending demo, ready to launch</li>
+          <li>Batch bank account opened (c/o Mary Uy & Narciso Javelosa)</li>
+          <li>Fund collection begins — ₱206,950.14 collected as of February 2026</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <strong>The Golden Batch · USLS-IS 2003</strong>
+  December 16, 2028 · 25th Year Homecoming
+</footer>
+
+</body>
+</html>

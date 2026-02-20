@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Batch 2003 – Road to December 2028</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #006633;
+    --green-dark: #004d26;
+    --gold: #B8960C;
+    --gold-light: #d4a80e;
+    --cream: #faf8f2;
+    --white: #ffffff;
+    --text: #1a1a1a;
+    --muted: #666;
+    --border: #e8e0cc;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cream);
+    font-family: 'Lato', sans-serif;
+    color: var(--text);
+  }
+
+  /* HEADER */
+  header {
+    background: var(--green-dark);
+    color: white;
+    text-align: center;
+    padding: 56px 24px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      45deg, transparent, transparent 40px,
+      rgba(207,181,59,0.04) 40px, rgba(207,181,59,0.04) 80px
+    );
+  }
+
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 10px;
+  }
+
+  header h1 span { color: var(--gold); }
+
+  .header-sub {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 1px;
+  }
+
+  .gold-bar {
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin-top: 32px;
+  }
+
+  /* THROUGHLINE BANNER */
+  .throughline {
+    background: var(--gold);
+    color: var(--green-dark);
+    text-align: center;
+    padding: 16px 24px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  /* MAIN */
+  main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 60px 24px 80px;
+  }
+
+  /* PHASE */
+  .phase {
+    margin-bottom: 48px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.5s ease forwards;
+  }
+
+  .phase:nth-child(1) { animation-delay: 0.05s; }
+  .phase:nth-child(2) { animation-delay: 0.15s; }
+  .phase:nth-child(3) { animation-delay: 0.25s; }
+  .phase:nth-child(4) { animation-delay: 0.35s; }
+  .phase:nth-child(5) { animation-delay: 0.45s; }
+  .phase:nth-child(6) { animation-delay: 0.55s; }
+  .phase:nth-child(7) { animation-delay: 0.65s; }
+  .phase:nth-child(8) { animation-delay: 0.75s; }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .phase-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .phase-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--gold);
+    flex-shrink: 0;
+    border: 3px solid var(--green-dark);
+    box-shadow: 0 0 0 3px rgba(207,181,59,0.25);
+  }
+
+  .phase-dot.active {
+    background: var(--green);
+    border-color: var(--gold);
+    width: 18px;
+    height: 18px;
+    box-shadow: 0 0 0 4px rgba(0,102,51,0.2);
+  }
+
+  .phase-dot.milestone {
+    background: var(--gold-light);
+    border-color: var(--green-dark);
+  }
+
+  .phase-meta {
+    flex: 1;
+  }
+
+  .phase-period {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .phase-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--green-dark);
+  }
+
+  .phase-card {
+    background: var(--white);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--gold);
+    padding: 24px 28px;
+    margin-left: 15px;
+  }
+
+  .phase-card.highlight {
+    background: var(--green-dark);
+    border-color: var(--gold);
+    border-left: 4px solid var(--gold);
+  }
+
+  .phase-card.highlight .phase-desc,
+  .phase-card.highlight li {
+    color: rgba(255,255,255,0.8);
+  }
+
+  .phase-desc {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+
+  .phase-items {
+    list-style: none;
+    display: grid;
+    gap: 8px;
+  }
+
+  .phase-items li {
+    font-size: 13px;
+    color: var(--text);
+    padding-left: 18px;
+    position: relative;
+    line-height: 1.5;
+  }
+
+  .phase-items li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--gold);
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 1.2;
+  }
+
+  .phase-target {
+    display: inline-block;
+    margin-top: 16px;
+    background: rgba(207,181,59,0.12);
+    border: 1px solid rgba(207,181,59,0.4);
+    color: #7a5e1a;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 6px 14px;
+    border-radius: 20px;
+  }
+
+  .phase-card.highlight .phase-target {
+    background: rgba(207,181,59,0.2);
+    color: var(--gold-light);
+    border-color: rgba(207,181,59,0.5);
+  }
+
+  /* CONNECTOR */
+  .connector {
+    width: 2px;
+    height: 24px;
+    background: linear-gradient(to bottom, var(--gold), rgba(207,181,59,0.3));
+    margin-left: 6px;
+    margin-bottom: 0;
+  }
+
+  /* BADGE */
+  .badge {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background: var(--gold);
+    color: var(--green-dark);
+    padding: 3px 10px;
+    border-radius: 2px;
+    margin-bottom: 10px;
+  }
+
+  /* COMMS STRIP */
+  .comms-strip {
+    background: linear-gradient(135deg, var(--green), var(--green-dark));
+    border-radius: 10px;
+    padding: 24px 28px;
+    margin: 48px 0;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    color: white;
+  }
+
+  .comms-icon {
+    font-size: 32px;
+    flex-shrink: 0;
+  }
+
+  .comms-text strong {
+    display: block;
+    font-size: 15px;
+    color: var(--gold-light);
+    margin-bottom: 4px;
+    font-family: 'Playfair Display', serif;
+  }
+
+  .comms-text p {
+    font-size: 13px;
+    opacity: 0.85;
+    line-height: 1.5;
+  }
+
+  /* FOOTER STATS */
+  .stats-footer {
+    background: var(--green-dark);
+    color: white;
+    text-align: center;
+    padding: 40px 24px;
+  }
+
+  .stats-row {
+    display: flex;
+    justify-content: center;
+    gap: 48px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+
+  .stat { text-align: center; }
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--gold);
+    display: block;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+  }
+
+  .footer-note {
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 1px;
+    margin-top: 8px;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .phase-card { padding: 18px 20px; }
+    .comms-strip { flex-direction: column; text-align: center; }
+    .stats-row { gap: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="eyebrow">USLS-IS Batch 2003 · 25th Alumni Homecoming</p>
+  <h1>Road to <span>December 2028</span></h1>
+  <p class="header-sub">Planning Timeline · February 2026 – December 2028</p>
+  <div class="gold-bar"></div>
+</header>
+
+<div class="throughline">
+  📣 Throughout all phases: Monthly communication to the entire batch — no exceptions.
+</div>
+
+<main>
+
+  <!-- PHASE 1 -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-dot active"></div>
+      <div class="phase-meta">
+        <span class="phase-period">Q1 – Q2 2026</span>
+        <div class="phase-name">Foundation Phase</div>
+      </div>
+    </div>
+    <div class="phase-card">
+      <span class="badge">Where We Are Now</span>
+      <p class="phase-desc">Building the foundation — website, systems, and getting everyone aligned on the plan before presenting contribution tiers.</p>
+      <ul class="phase-items">
+        <li>Launch thegoldenbatch.com — registration open to all ~357 batch members</li>
+        <li>Website demo to committee (Feb 22 meeting)</li>
+        <li>Confirm December 16, 2028 date with Alumni Office (c/o Bia)</li>
+        <li>Finalize and vote on funding approach and budget target</li>
+        <li>Discuss and align on contribution tiers (Platinum / Gold / Silver / Monthly)</li>
+        <li>Present contribution framework to the batch once ready</li>
+        <li><strong>🌏 Reach overseas batchmates NOW — an estimated 30%+ are abroad. December 2028 means flights, leave applications, and family logistics. They need to plan early. Make noise immediately.</strong></li>
+      </ul>
+      <span class="phase-target">💰 Funds in hand: ₱206,950 and growing</span>
+    </div>
+  </div>
+
+  <div class="connector"></div>
+
+  <!-- PHASE 2 -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-dot"></div>
+      <div class="phase-meta">
+        <span class="phase-period">Q3 2026</span>
+        <div class="phase-name">Engagement Phase</div>
+      </div>
+    </div>
+    <div class="phase-card">
+      <p class="phase-desc">Keep the momentum going. Personal outreach to non-responders. Build FOMO among those who haven't contributed yet.</p>
+      <ul class="phase-items">
+        <li>Follow up with non-registered and non-contributing batch members</li>
+        <li>Quarterly progress report to the batch</li>
+        <li>Section reps lead personal outreach within their groups</li>
+        <li>Finalize Q4 fundraising event type and logistics</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="connector"></div>
+
+  <!-- PHASE 3 -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-dot"></div>
+      <div class="phase-meta">
+        <span class="phase-period">Q4 2026</span>
+        <div class="phase-name">First Fundraising Event</div>
+      </div>
+    </div>
+    <div class="phase-card">
+      <p class="phase-desc">One event — focused, manageable, and designed to engage the batch in person. Funds raised are a bonus; re-engagement is the real goal.</p>
+      <ul class="phase-items">
+        <li>One fundraising event (type TBD — dinner, mini golf, bazaar)</li>
+        <li>Engage batch members who haven't contributed yet</li>
+        <li>Year-end donor recognition</li>
+        <li>Thank-you notes to all contributors</li>
+      </ul>
+      <span class="phase-target">🎯 Event target: TBD by committee</span>
+    </div>
+  </div>
+
+  <div class="connector"></div>
+
+  <!-- PHASE 4 -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-dot"></div>
+      <div class="phase-meta">
+        <span class="phase-period">2027</span>
+        <div class="phase-name">Acceleration Phase</div>
+      </div>
+    </div>
+    <div class="phase-card">
+      <p class="phase-desc">18 months to homecoming. Operational planning begins. Vendor negotiations start. Contributions still rolling in.</p>
+      <ul class="phase-items">
+        <li>Mid-point batch celebration / progress update</li>
+        <li>Begin vendor negotiations (catering, AV, photo/video)</li>
+        <li>Giving-back project finalized (scholarship, physical donation, or community)</li>
+        <li>Golf tournament decision locked in (sponsor or skip)</li>
+        <li>Quarterly progress reports continue</li>
+      </ul>
+      <span class="phase-target">🎯 Cumulative target: ₱1.2M by end 2027</span>
+    </div>
+  </div>
+
+  <div class="connector"></div>
+
+  <!-- PHASE 5 -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-dot"></div>
+      <div class="phase-meta">
+        <span class="phase-period">Q1 2028 (preferred) or Q4 2027</span>
+        <div class="phase-name">USLS-IS Lasallian Run</div>
+      </div>
+    </div>
+    <div class="phase-card">
+      <p class="phase-desc">Following IS Batch 2000's successful February 2025 model. Engages students, alumni, parents, and the broader Lasallian community.</p>
+      <ul class="phase-items">
+        <li>Coordinate with CARe and USLSAA for support</li>
+        <li>Open to students, alumni, parents, and Lasallian community</li>
+        <li>Creates buzz and momentum heading into homecoming year</li>
+      </ul>
+      <span class="phase-target">🎯 Target: ₱75–100K net proceeds</span>
+    </div>
+  </div>
+
+  <div class="connector"></div>
+
+  <!-- PHASE 6 -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-dot"></div>
+      <div class="phase-meta">
+        <span class="phase-period">Early–Mid 2028</span>
+        <div class="phase-name">Finalization Phase</div>
+      </div>
+    </div>
+    <div class="phase-card">
+      <p class="phase-desc">Last push before homecoming. Lock everything in — vendors, headcount, giving-back announcement ready.</p>
+      <ul class="phase-items">
+        <li>Last-chance contribution window for the batch</li>
+        <li>Finalize headcount and food/beverage contracts</li>
+        <li>Confirm giving-back project details</li>
+        <li>Finalize program flow and logistics</li>
+      </ul>
+      <span class="phase-target">🎯 Cumulative target: ₱1.6M+ by June 2028</span>
+    </div>
+  </div>
+
+  <div class="connector"></div>
+
+  <!-- MILESTONE: MARCH -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-dot milestone"></div>
+      <div class="phase-meta">
+        <span class="phase-period">March 2028</span>
+        <div class="phase-name">🎓 March with the Graduates</div>
+      </div>
+    </div>
+    <div class="phase-card">
+      <p class="phase-desc">Silver Jubilarian tradition — Batch 2003 marches alongside the HS graduating class of 2028. Barong formal attire.</p>
+    </div>
+  </div>
+
+  <div class="connector"></div>
+
+  <!-- MILESTONE: GOLF -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-dot milestone"></div>
+      <div class="phase-meta">
+        <span class="phase-period">November 2028 — 3rd week</span>
+        <div class="phase-name">🏌️ One La Salle Golf Tournament (if approved)</div>
+      </div>
+    </div>
+    <div class="phase-card">
+      <p class="phase-desc">Only pursued if ₱1.7M homecoming budget is already secured. The batch invests ₱500–600K to run the tournament — golfer fees and sponsorships can earn that back and potentially more. It's a calculated risk, not a requirement.</p>
+      <ul class="phase-items">
+        <li>Two-day event at Marapara Golf & Country Club (3rd week of November)</li>
+        <li>Day 1: Welcome dinner · Day 2: Awarding night (prizes, trophies, giveaways)</li>
+        <li>Max ~300 attendees — alumni golfers from La Salle schools</li>
+        <li>Event coordinator usually hired; batch focuses on solicitation and sponsorships</li>
+        <li>Contacts: Norman Jison, Fidel T. Hinares (One La Salle Golf Committee)</li>
+      </ul>
+      <span class="phase-target">💰 Investment: ₱500–600K · Prerequisite: ₱1.7M already secured</span>
+    </div>
+  </div>
+
+  <div class="connector"></div>
+
+  <!-- TEACHER DINNER -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-dot milestone"></div>
+      <div class="phase-meta">
+        <span class="phase-period">December 2028 · Before Dec 15/16</span>
+        <div class="phase-name">🍽️ Mini Dinner Tribute for Teachers</div>
+      </div>
+    </div>
+    <div class="phase-card">
+      <p class="phase-desc">A separate, intimate dinner to honor Batch 2003's high school teachers and staff — held before the main homecoming while school staff are still available.</p>
+      <ul class="phase-items">
+        <li>Intimate gathering — batch committee hosts HS teachers and staff</li>
+        <li>Scheduled before Dec 15/16 to ensure teacher availability</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="connector"></div>
+
+  <!-- HOMECOMING -->
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-dot active"></div>
+      <div class="phase-meta">
+        <span class="phase-period">December 16, 2028</span>
+        <div class="phase-name">🎉 The Silver Homecoming</div>
+      </div>
+    </div>
+    <div class="phase-card highlight">
+      <span class="badge">Main Event</span>
+      <p class="phase-desc">General Alumni Homecoming hosted by Batch 2003. FREE for all USLS alumni. Santuario de La Salle, school grounds.</p>
+      <ul class="phase-items">
+        <li>5:30pm — Anticipated Mass</li>
+        <li>6:00–6:30pm — Registration</li>
+        <li>7:00pm — Program: recognition, entertainment, dinner</li>
+        <li>250–300 alumni expected across all graduating years</li>
+      </ul>
+      <span class="phase-target">🏁 Total budget deployed: ₱1.7M</span>
+    </div>
+  </div>
+
+  <!-- COMMS STRIP -->
+  <div class="comms-strip">
+    <div class="comms-icon">📣</div>
+    <div class="comms-text">
+      <strong>Monthly Communication — Every Single Month, 2026 to 2028</strong>
+      <p>Regardless of how much (or little) happened, the batch hears from us every month. Progress updates, fund tracking, upcoming events, reminders. Consistency builds trust over 35 months.</p>
+    </div>
+  </div>
+
+</main>
+
+<div class="stats-footer">
+  <div class="stats-row">
+    <div class="stat">
+      <span class="stat-num">₱206K</span>
+      <span class="stat-label">Collected</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">35</span>
+      <span class="stat-label">Months to Go</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">₱1.7M</span>
+      <span class="stat-label">Target</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">Dec 16</span>
+      <span class="stat-label">The Date</span>
+    </div>
+  </div>
+  <p class="footer-note">The Golden Batch · USLS-IS 2003 · 25th Alumni Homecoming</p>
+</div>
+
+</body>
+</html>

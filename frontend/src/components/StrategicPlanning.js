@@ -31,6 +31,18 @@ const presentations = [
     label: 'Batch Tier Payments',
     file: '/presentations/Batch_Tier_Payments.html',
     pdf: '/presentations/pdfs/Batch_Tier_Payments.pdf'
+  },
+      {
+    id: 'milestones',
+    label: 'Milestones',
+    file: '/presentations/Milestones.html',
+    pdf: '/presentations/pdfs/Milestones.pdf'
+  },
+        {
+    id: 'timeline',
+    label: 'Timeline',
+    file: '/presentations/Timeline.html',
+    pdf: '/presentations/pdfs/Timeline.pdf'
   }
 
 ];
