@@ -6,7 +6,7 @@ const sendInviteEmail = async (to, firstName, registrationUrl) => {
   const msg = {
     to,
     from: process.env.FROM_EMAIL,
-    subject: "You're Invited! UNIVERSITY OF ST. LA SALLE - IS 2003 – 25th Alumni Homecoming",
+    subject: "You're Invited! University of St. La Salle - IS 2003 – 25th Alumni Homecoming",
     html: `
       <div style="margin:0; padding:0; background:#ffffff;">
         <div style="max-width:600px; margin:0 auto; font-family: Arial, sans-serif; color:#1a1a1a;">
@@ -15,7 +15,7 @@ const sendInviteEmail = async (to, firstName, registrationUrl) => {
           <div style="background:#0d1a14; padding:28px; text-align:center;">
             <img src="${siteUrl}/images/logo.png" alt="The Golden Batch Logo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 12px;" />
             <div style="color:#CFB53B; letter-spacing:3px; font-weight:700; font-size:28px; font-family: Georgia, 'Times New Roman', serif; margin-bottom:8px;">
-              THE GOLDEN BATCH
+              THE GOLDEN BATCH 2003
             </div>
             <div style="color:#ffffff; font-size:16px; font-family: Georgia, 'Times New Roman', serif; letter-spacing:2px; margin-bottom:6px;">
               UNIVERSITY OF ST. LA SALLE - IS
@@ -78,7 +78,7 @@ const sendInviteEmail = async (to, firstName, registrationUrl) => {
 
           <!-- Footer -->
           <div style="background:#0d1a14; padding:20px; text-align:center; font-size:14px; font-family: Arial, sans-serif;">
-            <span style="color:#CFB53B;">USLS-IS 2003</span><br/>
+            <span style="color:#CFB53B;">© USLS-IS Golden Batch 2003</span><br/>
             <span style="color:#ffffff;">Questions? Email us at</span>
             <a href="mailto:uslsis.batch2003@gmail.com" style="color:#CFB53B; text-decoration:none;">
               uslsis.batch2003@gmail.com
@@ -104,7 +104,7 @@ const sendPasswordResetEmail = async (to, firstName, resetUrl) => {
   const msg = {
     to,
     from: process.env.FROM_EMAIL,
-    subject: "Password Reset - USLS-IS Batch 2003",
+    subject: "Reset your password",
     html: `
       <div style="margin:0; padding:0; background:#ffffff;">
         <div style="max-width:600px; margin:0 auto; font-family: Arial, sans-serif; color:#1a1a1a;">
@@ -113,7 +113,7 @@ const sendPasswordResetEmail = async (to, firstName, resetUrl) => {
           <div style="background:#0d1a14; padding:28px; text-align:center;">
             <img src="${siteUrl}/images/logo.png" alt="The Golden Batch Logo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 12px;" />
             <div style="color:#CFB53B; letter-spacing:3px; font-weight:700; font-size:28px; font-family: Georgia, 'Times New Roman', serif; margin-bottom:8px;">
-              THE GOLDEN BATCH
+              THE GOLDEN BATCH 2003
             </div>
             <div style="color:#ffffff; font-size:16px; font-family: Georgia, 'Times New Roman', serif; letter-spacing:2px; margin-bottom:6px;">
               UNIVERSITY OF ST. LA SALLE - IS
@@ -130,7 +130,7 @@ const sendPasswordResetEmail = async (to, firstName, resetUrl) => {
             </p>
 
             <p style="font-size:16px; line-height:1.6; margin:0 0 18px; font-family: Arial, sans-serif; color:#1a1a1a;">
-              We received a request to reset your password for the USLS-IS Batch 2003 Alumni Homecoming site.
+              We received a request to reset your password for the The Golden Batch 2003 website. If you made this request, please click the button below to set a new password. If you didn't request a password reset, you can safely ignore this email.
             </p>
 
             <p style="font-size:16px; line-height:1.6; margin:0 0 26px; font-family: Arial, sans-serif; color:#1a1a1a;">
@@ -180,7 +180,7 @@ const sendPasswordResetEmail = async (to, firstName, resetUrl) => {
 
           <!-- Footer -->
           <div style="background:#0d1a14; padding:20px; text-align:center; font-size:14px; font-family: Arial, sans-serif;">
-            <span style="color:#CFB53B;">USLS-IS 2003</span><br/>
+            <span style="color:#CFB53B;">© USLS-IS Golden Batch 2003</span><br/>
             <span style="color:#ffffff;">Questions? Email us at</span>
             <a href="mailto:uslsis.batch2003@gmail.com" style="color:#CFB53B; text-decoration:none;">
               uslsis.batch2003@gmail.com
