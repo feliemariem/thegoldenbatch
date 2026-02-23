@@ -1,476 +1,815 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Funding Strategy — USLS-IS Batch 2003 Silver Homecoming</title>
-<style>
-  :root {
-    --gold: #CFB53B;
-    --green: #006633;
-    --ink: #1a1a2e;
-    --muted: #5a5a6b;
-    --light-muted: #8a8a9b;
-    --panel: #f8f8fa;
-    --line: #e0e0e5;
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Golden Batch — Internal Funding Strategy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green: #006633;
+      --dark-green: #004d26;
+      --gold: #CFB53B;
+      --dark-gold: #5b4b12;
+      --black: #1a1a1a;
+      --gray: #666666;
+      --light-gray: #999999;
+      --panel: #f5f5f0;
+      --gold-panel: #faf6e8;
+      --green-panel: #e8f5e8;
+      --line: #e0e0d8;
+      --white: #ffffff;
+      --red: #cc3333;
+    }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    background: #fff;
-    color: var(--ink);
-    padding: 0.5in;
-    line-height: 1.5;
-  }
+    body {
+      font-family: 'Source Sans 3', sans-serif;
+      color: var(--black);
+      background: var(--white);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
 
-  h1 {
-    font-size: 24px;
-    font-weight: 800;
-    color: var(--green);
-    margin-bottom: 8px;
-  }
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
 
-  .subtitle {
-    font-size: 13px;
-    color: var(--muted);
-    margin-bottom: 32px;
-  }
+    /* Header */
+    header {
+      background: var(--dark-green);
+      padding: 32px 0 28px;
+      border-bottom: 3px solid var(--gold);
+    }
 
-  .section {
-    margin-bottom: 40px;
-  }
+    header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
 
-  .section-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--green);
-    margin-bottom: 16px;
-    padding-bottom: 8px;
-    border-bottom: 2px solid var(--gold);
-  }
+    .header-left { flex: 1; }
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    background: var(--panel);
-    border-radius: 8px;
-    overflow: hidden;
-  }
+    .eyebrow {
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #88bb88;
+      margin-bottom: 8px;
+    }
 
-  th {
-    background: var(--green);
-    color: #fff;
-    padding: 10px 12px;
-    text-align: left;
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
+    .site-title {
+      font-family: 'Source Serif 4', serif;
+      font-weight: 700;
+      font-size: 36px;
+      line-height: 1.15;
+      color: var(--white);
+    }
 
-  td {
-    padding: 10px 12px;
-    border-bottom: 1px solid var(--line);
-    font-size: 12px;
-  }
+    .site-title span { color: var(--gold); }
 
-  tr:last-child td {
-    border-bottom: none;
-  }
+    .header-right {
+      text-align: right;
+      flex-shrink: 0;
+      padding-left: 20px;
+    }
 
-  .highlight {
-    background: rgba(207, 181, 59, 0.15);
-    font-weight: 700;
-  }
+    .header-right .label {
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #cccccc;
+    }
 
-  .note-box {
-    background: rgba(207, 181, 59, 0.12);
-    border-left: 3px solid var(--gold);
-    padding: 16px;
-    border-radius: 0 6px 6px 0;
-    margin-top: 16px;
-    font-size: 11px;
-    line-height: 1.6;
-    color: #5b4b12;
-  }
+    .header-right .highlight {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: var(--gold);
+      margin-top: 2px;
+    }
 
-  .note-box strong {
-    color: #3d3108;
-  }
+    .header-right .sub {
+      font-size: 10px;
+      color: #aaaaaa;
+      margin-top: 2px;
+    }
 
-  .tier-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    margin-bottom: 16px;
-  }
+    .header-right .funding-target {
+      font-family: 'Source Serif 4', serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--gold);
+      margin-top: 4px;
+    }
 
-  .tier-card {
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    padding: 16px;
-    text-align: center;
-  }
+    main { padding: 40px 0 48px; }
 
-  .tier-card.featured {
-    border-color: var(--gold);
-    background: rgba(207, 181, 59, 0.08);
-  }
+    .gold-divider { height: 2px; background: var(--gold); margin: 28px 0; }
 
-  .tier-name {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--green);
-    margin-bottom: 8px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
+    .not-public {
+      display: inline-block;
+      background: var(--red);
+      color: var(--white);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 3px;
+      margin-bottom: 16px;
+    }
 
-  .tier-amount {
-    font-size: 22px;
-    font-weight: 800;
-    color: var(--ink);
-    margin-bottom: 4px;
-  }
+    .nav-pills {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 24px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--green);
+    }
 
-  .tier-monthly {
-    font-size: 9px;
-    color: var(--muted);
-  }
+    .nav-pills span { cursor: default; }
 
-  @media print {
-    body { padding: 0.3in; }
-    .section { page-break-inside: avoid; }
-  }
-</style>
+    /* Letter */
+    .letter {
+      background: var(--panel);
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 24px;
+      font-size: 14px;
+      color: var(--gray);
+      line-height: 1.7;
+    }
+
+    .letter p { margin-bottom: 12px; }
+    .letter p:last-child { margin-bottom: 0; }
+    .letter .sign { text-align: right; font-style: italic; margin-top: 8px; }
+
+    /* Section headings */
+    .section-title {
+      font-family: 'Source Serif 4', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 8px;
+    }
+
+    .section-subtitle {
+      font-size: 14px;
+      color: var(--gray);
+      margin-bottom: 16px;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+
+    th {
+      text-align: left;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+      color: var(--light-gray);
+      padding: 8px 10px;
+      border-bottom: 2px solid var(--line);
+      font-weight: 700;
+    }
+
+    td {
+      padding: 10px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+
+    td.amount {
+      text-align: right;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    td.green { color: var(--green); }
+
+    .table-note {
+      font-size: 12px;
+      color: var(--light-gray);
+      margin-top: -8px;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    /* Tier cards row */
+    .tier-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .tier-card {
+      border-radius: 6px;
+      padding: 14px;
+      text-align: center;
+    }
+
+    .tier-card.platinum { background: var(--dark-green); color: var(--white); }
+    .tier-card.gold { background: #2a2a2a; color: var(--white); }
+    .tier-card.silver { background: #3d3d3d; color: var(--white); }
+    .tier-card.flex { background: var(--panel); color: var(--black); }
+
+    .tier-name {
+      font-weight: 700;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .tier-card.platinum .tier-name { color: var(--gold); }
+    .tier-card.gold .tier-name { color: var(--gold); }
+    .tier-card.silver .tier-name { color: #cccccc; }
+
+    .tier-amount {
+      font-family: 'Source Serif 4', serif;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .tier-monthly {
+      font-size: 11px;
+      color: #aaaaaa;
+      margin-top: 4px;
+    }
+
+    .tier-card.flex .tier-monthly { color: var(--gray); }
+
+    .tier-note {
+      font-size: 11px;
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+
+    .tier-card.platinum .tier-note { color: #aaddaa; }
+    .tier-card.gold .tier-note,
+    .tier-card.silver .tier-note { color: #aaaaaa; }
+    .tier-card.flex .tier-note { color: var(--gray); }
+
+    /* Allocation boxes */
+    .alloc-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .alloc-box {
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .alloc-box.core { background: var(--dark-green); color: var(--white); }
+    .alloc-box.fundraising { background: var(--gold-panel); color: var(--dark-gold); }
+
+    .alloc-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+
+    .alloc-box.core .alloc-label { color: #88bb88; }
+    .alloc-box.fundraising .alloc-label { color: var(--gold); }
+
+    .alloc-amount {
+      font-family: 'Source Serif 4', serif;
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .alloc-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      padding: 3px 0;
+    }
+
+    .alloc-box.core .alloc-item { color: #ccddcc; }
+    .alloc-box.fundraising .alloc-item { color: var(--dark-gold); }
+
+    .alloc-pct { font-weight: 700; }
+
+    /* Callouts */
+    .callout-gold {
+      background: var(--gold-panel);
+      border-radius: 6px;
+      padding: 12px 16px;
+      font-size: 14px;
+      color: var(--dark-gold);
+      line-height: 1.55;
+      margin-bottom: 16px;
+    }
+
+    .callout-gold b { color: var(--dark-gold); }
+
+    .callout-dark {
+      background: #1a1a1a;
+      border-radius: 6px;
+      padding: 16px 20px;
+      color: var(--white);
+      margin-bottom: 16px;
+    }
+
+    .callout-dark .callout-title {
+      font-family: 'Source Serif 4', serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+
+    .callout-dark p {
+      font-size: 13px;
+      color: #cccccc;
+      line-height: 1.5;
+    }
+
+    /* Projection table */
+    .proj-table th { font-size: 10px; }
+    .proj-table td { font-size: 13px; padding: 8px 6px; }
+    .proj-table .scenario { font-weight: 700; }
+
+    .row-highlight { background: rgba(207, 181, 59, 0.1); }
+
+    /* Safe tier mix */
+    .safe-table { margin-bottom: 12px; }
+    .safe-table td.count { font-weight: 700; color: var(--green); }
+
+    /* Key expectations */
+    .expect-row {
+      display: flex;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--line);
+      gap: 16px;
+    }
+
+    .expect-label {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--black);
+      min-width: 160px;
+      flex-shrink: 0;
+    }
+
+    .expect-value {
+      font-size: 14px;
+      color: var(--gray);
+      line-height: 1.5;
+    }
+
+    .body-text {
+      font-size: 14px;
+      color: var(--gray);
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .body-text-dark {
+      font-size: 14px;
+      color: var(--black);
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .committee-note {
+      font-size: 13px;
+      color: var(--light-gray);
+      font-style: italic;
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    footer {
+      border-top: 2px solid var(--green);
+      padding: 12px 0;
+      text-align: center;
+    }
+
+    .footer-text {
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--light-gray);
+    }
+
+    @media (max-width: 600px) {
+      .site-title { font-size: 28px; }
+      header .container { flex-direction: column; align-items: flex-start; }
+      .header-right { text-align: left; padding-left: 0; margin-top: 12px; }
+      .tier-row { grid-template-columns: repeat(2, 1fr); }
+      .alloc-row { grid-template-columns: 1fr; }
+      .expect-row { flex-direction: column; gap: 2px; }
+      .proj-table { font-size: 11px; }
+    }
+  </style>
 </head>
 <body>
 
-<h1>Funding Strategy — Silver Homecoming 2028</h1>
-<p class="subtitle">USLS-IS Batch 2003 • Realistic Projections & Contribution Tiers</p>
-
-<!-- ATTENDANCE PROJECTIONS -->
-<div class="section">
-  <div class="section-title">Who's Coming & Who's Paying</div>
-  
-  <table>
-    <thead>
-      <tr>
-        <th>Category</th>
-        <th>Count</th>
-        <th>Notes</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><strong>Batch 2003 Graduates</strong></td>
-        <td>~200</td>
-        <td>Only graduates expected to contribute</td>
-      </tr>
-      <tr class="highlight">
-        <td><strong>Expected Payers</strong></td>
-        <td>80-100</td>
-        <td>40-50% contribution rate (realistic)</td>
-      </tr>
-      <tr>
-        <td><strong>Our Batch Attendance</strong></td>
-        <td>100-120</td>
-        <td>Batch 2003 alumni (with/without +1s)</td>
-      </tr>
-      <tr>
-        <td><strong>Plus Significant Others</strong></td>
-        <td>+80-100</td>
-        <td>~70% bring spouses/partners</td>
-      </tr>
-      <tr>
-        <td><strong>Other HS Alumni Batches</strong></td>
-        <td>+50-100</td>
-        <td>General homecoming (FREE for all)</td>
-      </tr>
-      <tr>
-        <td><strong>HS Teachers & Faculty</strong></td>
-        <td>+15-25</td>
-        <td>Invited guests</td>
-      </tr>
-      <tr class="highlight">
-        <td><strong>TOTAL ATTENDANCE</strong></td>
-        <td>245-345</td>
-        <td>What ₱1.7M budget must cover</td>
-      </tr>
-      <tr class="highlight">
-        <td><strong>Food Budget Safety</strong></td>
-        <td>300 pax</td>
-        <td>Prevents running short</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div class="note-box">
-    <strong>The Math:</strong> ~200 graduates fund the event. Realistically, 80-100 (40-50%) will contribute. But attendance will be 245-345 people (our batch + families + other alumni + teachers). We budget for 300 pax to avoid running out of food.
-  </div>
-</div>
-
-<!-- CONTRIBUTION TIERS -->
-<div class="section">
-  <div class="section-title">Contribution Tiers — Choose Your Level</div>
-  
-  <div class="tier-grid">
-    <div class="tier-card featured">
-      <div class="tier-name">Platinum</div>
-      <div class="tier-amount">₱25,000</div>
-      <div class="tier-monthly">₱700/mo × 36</div>
+  <header>
+    <div class="container">
+      <div class="header-left">
+        <div class="eyebrow">USLS-IS Batch 2003 · 25th Alumni Homecoming · December 16, 2028</div>
+        <h1 class="site-title">The <span>Golden</span><br>Batch</h1>
+      </div>
+      <div class="header-right">
+        <div class="label">Internal Funding Strategy</div>
+        <div class="highlight">Committee Reference</div>
+        <div class="funding-target">₱2,100,000</div>
+        <div class="sub">Full Batch Vision Target. Achievable<br>through collective commitment and<br>fundraising support.</div>
+      </div>
     </div>
-    
-    <div class="tier-card">
-      <div class="tier-name">Gold</div>
-      <div class="tier-amount">₱15,000</div>
-      <div class="tier-monthly">₱420/mo × 36</div>
-    </div>
-    
-    <div class="tier-card">
-      <div class="tier-name">Silver</div>
-      <div class="tier-amount">₱10,000</div>
-      <div class="tier-monthly">₱280/mo × 36</div>
-    </div>
-    
-    <div class="tier-card">
-      <div class="tier-name">What You Can</div>
-      <div class="tier-amount">₱5,000+</div>
-      <div class="tier-monthly">Flexible</div>
-    </div>
-  </div>
+  </header>
 
-  <div class="note-box">
-    <strong>₱25K is the FULL tier, not the average.</strong> Most people will land in the ₱10K-15K range. That's fine — we need VOLUME across all tiers, not everyone at ₱25K.
-  </div>
-</div>
+  <main>
+    <div class="container">
 
-<!-- REALISTIC SCENARIOS -->
-<div class="section">
-  <div class="section-title">How We Hit ₱1.7M — Realistic Tier Distribution</div>
-  
-  <table>
-    <thead>
-      <tr>
-        <th>Scenario</th>
-        <th>Full (₱25K)</th>
-        <th>Strong (₱15K)</th>
-        <th>Solid (₱10K)</th>
-        <th>What You Can (₱5K avg)</th>
-        <th>Total Raised</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><strong>Conservative</strong></td>
-        <td>10-15 payers<br>₱250K-375K</td>
-        <td>20-30 payers<br>₱300K-450K</td>
-        <td>30-40 payers<br>₱300K-400K</td>
-        <td>20-25 payers<br>₱100K-125K</td>
-        <td class="highlight">₱950K - ₱1.35M<br>(80-110 total)</td>
-      </tr>
-      <tr>
-        <td><strong>Target (Need This)</strong></td>
-        <td>15-20 payers<br>₱375K-500K</td>
-        <td>25-30 payers<br>₱375K-450K</td>
-        <td>30-35 payers<br>₱300K-350K</td>
-        <td>20-25 payers<br>₱100K-125K</td>
-        <td class="highlight">₱1.15M - ₱1.43M<br>(90-110 total)</td>
-      </tr>
-      <tr>
-        <td><strong>Optimistic</strong></td>
-        <td>25-30 payers<br>₱625K-750K</td>
-        <td>30-35 payers<br>₱450K-525K</td>
-        <td>25-30 payers<br>₱250K-300K</td>
-        <td>15-20 payers<br>₱75K-100K</td>
-        <td class="highlight">₱1.4M - ₱1.68M<br>(95-115 total)</td>
-      </tr>
-    </tbody>
-  </table>
+      <div class="not-public">Not for Public Distribution</div>
 
-  <div class="note-box">
-    <strong>Reality Check:</strong> Contributions alone get us to ₱1.2M-1.5M range. We need SUPPLEMENTAL sources (fundraising events, golf tournament sponsorship from accumulated funds, etc.) to bridge the gap to ₱1.7M. Contributions are the FOUNDATION, not the only source.
-  </div>
-</div>
+      <div class="nav-pills">
+        <span class="active">Contributions</span>
+        <span>Fundraising Initiatives</span>
+        <span>Hybrid Model</span>
+        <span>33 Months</span>
+      </div>
 
-<!-- SUPPLEMENTAL FUNDING -->
-<div class="section">
-  <div class="section-title">Supplemental Funding Sources</div>
-  
-  <table>
-    <thead>
-      <tr>
-        <th>Source</th>
-        <th>Target Amount</th>
-        <th>Notes</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><strong>Graduate Contributions</strong></td>
-        <td>₱1.2M - ₱1.5M</td>
-        <td>Primary source (see scenarios above)</td>
-      </tr>
-      <tr>
-        <td><strong>Small Events (2-3)</strong></td>
-        <td>₱150K - ₱250K</td>
-        <td>Fun Run, Movie Night, Bazaar (build momentum)</td>
-      </tr>
-      <tr>
-        <td><strong>Golf Tournament</strong></td>
-        <td>Funded from above</td>
-        <td>Use accumulated funds (₱500-600K)</td>
-      </tr>
-      <tr class="highlight">
-        <td><strong>TOTAL TARGET</strong></td>
-        <td>₱1.7M+</td>
-        <td>Covers homecoming + golf sponsorship</td>
-      </tr>
-    </tbody>
-  </table>
+      <!-- Letter -->
+      <div class="letter">
+        <p><b style="color: var(--green);">Dear Committee,</b></p>
+        <p>This document is our internal planning reference — aligned with the one-pager we are presenting to the batch. It covers our contribution projections, attendance assumptions, funding allocation, and the scenarios we need to plan around.</p>
+        <p>Our ₱2.1M target is achievable through the hybrid model — contributions as the foundation, fundraising initiatives as the multiplier. The projections here are honest. The conservative scenario is a reminder that the flyer alone won't get us there. Personal outreach from each of us is what moves people from awareness to commitment.</p>
+        <p class="sign" style="color: var(--green);">Thank you for being part of this.<br>— Felie</p>
+      </div>
 
-  <div class="note-box">
-    <strong>Hybrid Model:</strong> Contributions are the backbone. Small events keep batch engaged and add ₱150-250K. Golf tournament sponsorship (₱500-600K) comes from the accumulated funds, not as a separate ask. Everything feeds into one goal: ₱1.7M by Dec 2028.
-  </div>
-</div>
+      <div class="gold-divider"></div>
 
-<!-- CURRENT STATUS -->
-<div class="section">
-  <div class="section-title">Where We Are Today (Month 1)</div>
-  
-  <table>
-    <thead>
-      <tr>
-        <th>Metric</th>
-        <th>Current</th>
-        <th>Target</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><strong>Total Collected</strong></td>
-        <td>₱206,950</td>
-        <td>₱1,700,000</td>
-      </tr>
-      <tr>
-        <td><strong>% of Goal</strong></td>
-        <td>12.2%</td>
-        <td>100%</td>
-      </tr>
-      <tr>
-        <td><strong>Months Remaining</strong></td>
-        <td>35 months</td>
-        <td>—</td>
-      </tr>
-      <tr class="highlight">
-        <td><strong>Avg Needed/Month</strong></td>
-        <td>₱42,657/mo</td>
-        <td>To hit ₱1.7M by Dec 2028</td>
-      </tr>
-    </tbody>
-  </table>
+      <!-- Who's Coming & Who's Paying -->
+      <h2 class="section-title">Who's Coming & Who's Paying</h2>
+      <div style="height: 8px;"></div>
 
-  <div class="note-box">
-    <strong>Good Start:</strong> ₱206K in month 1 is strong momentum. If we maintain ₱40-50K/month from contributions + occasional events adding ₱50-100K each, we're on track. The key is CONSISTENT monthly contributions across 80-100 payers.
-  </div>
-</div>
-
-<!-- TIERED CONTRIBUTION MODEL (DECISION VIEW) -->
-<div class="section">
-  <div class="section-title">Proposed Tiered Contribution Model (Committee Decision)</div>
-  
-  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
-    
-    <!-- Left: Tier Breakdown -->
-    <div>
-      <h3 style="font-size: 14px; font-weight: 700; color: var(--green); margin-bottom: 12px;">Contribution Tiers</h3>
       <table>
         <thead>
           <tr>
-            <th>Tier</th>
-            <th>Description</th>
-            <th>Total Share</th>
+            <th>Category</th>
+            <th>Count</th>
+            <th>Notes</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><strong>Platinum</strong></td>
-            <td>Can pay in full early / sponsor-level</td>
-            <td style="text-align: right; font-weight: 700;">₱25,000</td>
+            <td>Batch 2003 Graduates</td>
+            <td>~200</td>
+            <td>Only graduates expected to contribute</td>
           </tr>
           <tr>
-            <td><strong>Gold</strong></td>
-            <td>Comfortable staggered payments</td>
-            <td style="text-align: right; font-weight: 700;">₱15,000</td>
+            <td>Expected Contributors</td>
+            <td>80 – 100</td>
+            <td>40–50% contribution rate (projected)</td>
           </tr>
           <tr>
-            <td><strong>Silver</strong></td>
-            <td>Minimum fair share</td>
-            <td style="text-align: right; font-weight: 700;">₱10,000</td>
+            <td>Batch 2003 Attendance</td>
+            <td>100 – 120</td>
+            <td>Alumni with or without +1s</td>
           </tr>
           <tr>
-            <td><strong>Monthly Plan</strong></td>
-            <td>Accessible option over 34 months</td>
-            <td style="text-align: right; font-weight: 700;">₱400-₱500/mo</td>
+            <td>Significant Others</td>
+            <td>+80 – 100</td>
+            <td>~70% bring spouses/partners</td>
+          </tr>
+          <tr>
+            <td>Other HS Alumni Batches</td>
+            <td>+50 – 100</td>
+            <td>General homecoming (FREE for all)</td>
+          </tr>
+          <tr>
+            <td>HS Teachers & Faculty</td>
+            <td>+15 – 25</td>
+            <td>Invited guests</td>
+          </tr>
+          <tr style="color: var(--green); font-weight: 600;">
+            <td>Total Attendance</td>
+            <td>245 – 345</td>
+            <td>What ₱2.1M budget must cover</td>
+          </tr>
+          <tr style="background: var(--green-panel); font-weight: 700;">
+            <td>Food Budget Safety</td>
+            <td>300 pax</td>
+            <td>Prevents running short on catering</td>
           </tr>
         </tbody>
       </table>
-      <div class="note-box" style="margin-top: 12px;">
-        Several alumni already fall under Platinum, which reduces pressure on Gold, Silver, and Monthly tiers.
+
+      <div style="background: var(--green-panel); border: 1px solid #c8e6c8; border-radius: 8px; padding: 18px 20px; margin-bottom: 16px;">
+        <p style="font-size: 14px; color: var(--black); line-height: 1.7; margin: 0;"><b style="color: var(--green);">The Math:</b> ~200 graduates fund the event. Based on typical alumni engagement, 80–100 (40–50%) are expected to contribute. But attendance will be 245–345 people — our batch + families + other alumni + teachers. We budget for 300 pax to avoid running out of food.</p>
       </div>
-    </div>
-    
-    <!-- Right: Sample Mix -->
-    <div style="background: rgba(207, 181, 59, 0.08); border: 2px solid rgba(207, 181, 59, 0.6); border-radius: 8px; padding: 16px;">
-      <h3 style="font-size: 14px; font-weight: 700; color: var(--green); margin-bottom: 12px;">Sample Mix (Illustrative, Not Fixed)</h3>
+
+      <div class="gold-divider"></div>
+
+      <!-- Contribution Tiers -->
+      <h2 class="section-title">Contribution Tiers</h2>
+      <div style="height: 8px;"></div>
+
       <table>
         <thead>
           <tr>
             <th>Tier</th>
-            <th>Qty</th>
-            <th>Subtotal</th>
+            <th>Total Amount</th>
+            <th>Monthly (33 Months)</th>
+            <th>Notes</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>Platinum (₱25k)</td>
-            <td>20</td>
-            <td style="text-align: right; font-weight: 700;">₱500,000</td>
+            <td><b>Platinum</b></td>
+            <td class="amount">₱25,000+</td>
+            <td>≈ ₱758/mo</td>
+            <td>Full commitment.<br>Every peso counts.</td>
           </tr>
           <tr>
-            <td>Gold (₱15k)</td>
-            <td>30</td>
-            <td style="text-align: right; font-weight: 700;">₱450,000</td>
+            <td><b>Gold</b></td>
+            <td class="amount">₱18,000 – ₱24,000</td>
+            <td>≈ ₱545 – ₱727/mo</td>
+            <td>Strong commitment.<br>Makes reunion happen.</td>
           </tr>
           <tr>
-            <td>Silver (₱10k)</td>
-            <td>30</td>
-            <td style="text-align: right; font-weight: 700;">₱300,000</td>
+            <td><b>Silver</b></td>
+            <td class="amount">₱10,000 – ₱17,000</td>
+            <td>≈ ₱303 – ₱515/mo</td>
+            <td>Solid and meaningful<br>contribution.</td>
           </tr>
           <tr>
-            <td>Monthly contributors</td>
-            <td>20</td>
-            <td style="text-align: right; font-weight: 700;">₱250,000</td>
+            <td><b>Flex</b></td>
+            <td class="amount">Below ₱10,000</td>
+            <td>Any amount</td>
+            <td>Every peso moves<br>us forward.</td>
           </tr>
         </tbody>
       </table>
-      <div class="note-box" style="margin-top: 12px;">
-        This mix already reaches <strong>~₱1.5M+</strong> before general fundraising, sponsors, or late joiners.
+
+      <div style="background: var(--green-panel); border: 1px solid #c8e6c8; border-radius: 8px; padding: 18px 20px; margin-bottom: 16px;">
+        <p style="font-size: 14px; color: var(--black); line-height: 1.7; margin: 0;"><b style="color: var(--green);">Note:</b> ₱25K is the full Platinum tier, not the expected average. Most contributors will land in the ₱10K–₱18K range — that's fine. We need <b style="color: var(--dark-green); text-decoration: underline;">volume across all tiers</b>, not everyone at ₱25K. Timeline: <b style="color: var(--dark-green);">March 2026 – December 2028 (33 months).</b></p>
       </div>
-      
-      <div style="background: rgba(207, 181, 59, 0.2); border: 2px solid rgba(207, 181, 59, 0.8); border-radius: 8px; padding: 14px; margin-top: 16px;">
-        <h4 style="font-size: 13px; font-weight: 700; color: #5b4b12; margin-bottom: 6px;">Committee Decision</h4>
-        <p style="font-size: 12px; font-weight: 700; color: #5b4b12; margin: 0; line-height: 1.5;">
-          Approve tiered contribution model anchored on ₱1.7M baseline, allowing members to self-select tiers without stigma.
-        </p>
+
+      <div class="gold-divider"></div>
+
+      <!-- Contribution Projections -->
+      <h2 class="section-title">Contribution Projections</h2>
+      <div style="height: 8px;"></div>
+
+      <table class="proj-table">
+        <thead>
+          <tr>
+            <th>Scenario</th>
+            <th>Platinum<br>(₱25K+)</th>
+            <th>Gold<br>(₱18K–₱24K)</th>
+            <th>Silver<br>(₱10K–₱17K)</th>
+            <th>Flex<br>(Avg ₱5K)</th>
+            <th>Contributions</th>
+            <th>+ Fundraising</th>
+            <th>Grand Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="scenario">Conservative<br><span style="font-weight: 400; font-size: 12px; color: var(--gray);">Flyer only, minimal outreach</span></td>
+            <td>5–8 payers<br><b>₱125K–₱200K</b></td>
+            <td>10–15 payers<br><b>₱180K–₱360K</b></td>
+            <td>15–20 payers<br><b>₱150K–₱340K</b></td>
+            <td>15–20 payers<br><b>₱75K–₱100K</b></td>
+            <td>₱530K–₱1.0M<br>(45–63 payers)</td>
+            <td>₱300K–₱420K</td>
+            <td>₱830K–₱1.42M</td>
+          </tr>
+          <tr class="row-highlight">
+            <td class="scenario">Target ✓<br><span style="font-weight: 400; font-size: 12px; color: var(--gray);">Flyer + active personal outreach</span></td>
+            <td>10–15 payers<br><b>₱250K–₱375K</b></td>
+            <td>20–25 payers<br><b>₱360K–₱600K</b></td>
+            <td>25–30 payers<br><b>₱250K–₱510K</b></td>
+            <td>20–25 payers<br><b>₱100K–₱125K</b></td>
+            <td><b>₱960K–₱1.61M<br>(75–95 payers)</b></td>
+            <td><b>₱420K</b></td>
+            <td><b>₱1.38M–₱2.03M</b></td>
+          </tr>
+          <tr>
+            <td class="scenario">Optimistic<br><span style="font-weight: 400; font-size: 12px; color: var(--gray);">Strong engagement, everyone personally asked</span></td>
+            <td>15–20 payers<br><b>₱375K–₱500K</b></td>
+            <td>25–30 payers<br><b>₱450K–₱720K</b></td>
+            <td>25–30 payers<br><b>₱250K–₱510K</b></td>
+            <td>15–20 payers<br><b>₱75K–₱100K</b></td>
+            <td>₱1.15M–₱1.83M<br>(80–100 payers)</td>
+            <td>₱420K+</td>
+            <td>₱1.57M–₱2.25M+</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="background: #2a2a2a; border-radius: 8px; padding: 18px 20px; margin-bottom: 16px;">
+        <p style="font-size: 14px; color: #cccccc; line-height: 1.7; margin: 0;"><b style="color: var(--gold);">Reality Check:</b> Contributions alone are projected to reach ₱1.2M–₱1.8M. Fundraising initiatives (Golf, Run, Football Cup) bridge the gap to ₱2.1M. Contributions are the <b style="color: var(--white);">foundation</b> — fundraising is the multiplier. <b style="color: var(--gold);">If fundraising underperforms, additional contribution outreach will be required to protect the Core Celebration budget.</b></p>
       </div>
+
+      <div class="gold-divider"></div>
+
+      <!-- Funding Allocation -->
+      <h2 class="section-title">Funding Allocation — 80/20 Model</h2>
+      <div style="height: 12px;"></div>
+
+      <div class="alloc-row">
+        <div class="alloc-box" style="background: var(--white); border: 2px solid var(--green); border-radius: 8px; padding: 20px;">
+          <div class="alloc-label" style="color: var(--green);">Core Celebration — 80%</div>
+          <div class="alloc-amount" style="color: var(--black);">₱1,680,000</div>
+          <div class="alloc-item" style="color: var(--black);"><span>🎉 Main Event</span><span class="alloc-pct">50%</span></div>
+          <div class="alloc-item" style="color: var(--black);"><span>🌹 Teachers' Dinner</span><span class="alloc-pct">12%</span></div>
+          <div class="alloc-item" style="color: var(--black);"><span>🧊 Merch & Commemorative Items</span><span class="alloc-pct">8%</span></div>
+          <div class="alloc-item" style="color: var(--black);"><span>❤️ Charity / Giving Back</span><span class="alloc-pct">7%</span></div>
+          <div class="alloc-item" style="color: var(--black);"><span>📋 Contingency & Buffer</span><span class="alloc-pct">3%</span></div>
+        </div>
+        <div class="alloc-box" style="background: var(--white); border: 2px solid var(--gold); border-radius: 8px; padding: 20px;">
+          <div class="alloc-label" style="color: var(--gold);">Fundraising Initiatives — 20%</div>
+          <div class="alloc-amount" style="color: var(--gold);">₱420,000</div>
+          <div class="alloc-item" style="color: var(--black);"><span>⛳ La Sallian Golf</span><span class="alloc-pct" style="color: var(--green);">10%</span></div>
+          <div class="alloc-item" style="color: var(--black);"><span>🏃 La Sallian Run</span><span class="alloc-pct" style="color: var(--green);">6%</span></div>
+          <div class="alloc-item" style="color: var(--black);"><span>⚽ In Memoriam Football Cup</span><span class="alloc-pct" style="color: var(--green);">4%</span></div>
+          <div style="height: 12px;"></div>
+          <div style="font-size: 12px; line-height: 1.4; font-style: italic; color: var(--gray);">Upfront operating allocation. Designed to generate sponsorship and entry-fee returns to support the overall fund. Percentages reflect gross allocation, not net cost.</div>
+        </div>
+      </div>
+
+      <div style="background: var(--green-panel); border: 1px solid #c8e6c8; border-radius: 8px; padding: 18px 20px; margin-bottom: 16px;">
+        <p style="font-size: 14px; color: var(--black); line-height: 1.7; margin: 0;"><b style="color: var(--green);">Core Celebration budget is protected.</b> Fundraising initiatives must not compromise event quality. The 80% allocation to Core Celebration is non-negotiable.</p>
+      </div>
+
+      <div style="background: var(--green-panel); border: 1px solid #c8e6c8; border-radius: 8px; padding: 18px 20px; margin-bottom: 16px;">
+        <p style="font-size: 14px; color: var(--black); line-height: 1.7; margin: 0;"><b style="color: var(--red);">Hard Rule:</b> Fundraising initiatives must be sponsor-secured or revenue-backed before major expense commitments. No budget leakage.</p>
+      </div>
+
+      <div class="gold-divider"></div>
+
+      <!-- Pressure Test -->
+      <h2 class="section-title">Pressure Test — Minimum Safe Scenario</h2>
+      <div style="height: 8px;"></div>
+
+      <div style="background: var(--green-panel); border: 1px solid #c8e6c8; border-radius: 8px; padding: 18px 20px; margin-bottom: 20px;">
+        <p style="font-size: 14px; color: var(--black); line-height: 1.7; margin: 0;">The following pressure test ensures our Core Celebration remains protected, even if contributions or fundraising perform below expectations.</p>
+      </div>
+
+      <div class="callout-dark">
+        <div class="callout-title">Core Celebration Protection Target</div>
+        <p style="font-family: 'Source Serif 4', serif; font-size: 28px; font-weight: 700; color: var(--gold);">₱1,680,000</p>
+        <p style="margin-top: 6px;">80% of total batch vision. Must be secured regardless of fundraising performance. The minimum safe contribution scenario assumes fundraising underperforms and covers only operational costs.</p>
+      </div>
+
+      <h3 style="font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--black); margin-bottom: 8px; margin-top: 20px;">If ₱1.68M Must Come Primarily From Contributions</h3>
+
+      <div style="background: var(--gold); border-radius: 6px; padding: 14px 20px; margin-bottom: 16px;">
+        <p style="font-size: 15px; font-weight: 700; color: var(--black); margin: 0;">Core Celebration (₱1.68M) is the non-negotiable floor.</p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Contributors</th>
+            <th>Required Average</th>
+            <th>Implication</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>100 contributors</td>
+            <td class="amount" style="color: var(--green);">₱16,800 avg</td>
+            <td>Achievable with strong Silver/Gold mix</td>
+          </tr>
+          <tr>
+            <td>90 contributors</td>
+            <td class="amount" style="color: var(--gold);">₱18,667 avg</td>
+            <td>Requires heavier Gold/Platinum uptake</td>
+          </tr>
+          <tr>
+            <td>80 contributors</td>
+            <td class="amount" style="color: var(--red);">₱21,000 avg</td>
+            <td>High average — demands strong personal outreach</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 style="font-size: 13px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--green); margin-bottom: 8px; margin-top: 20px;">Minimum Safe Tier Mix</h3>
+
+      <table class="safe-table">
+        <thead>
+          <tr>
+            <th>Tier</th>
+            <th>Count</th>
+            <th style="text-align: right;">Avg Amount</th>
+            <th style="text-align: right;">Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>Platinum</b></td>
+            <td class="count">20</td>
+            <td class="amount">₱25,000</td>
+            <td class="amount" style="color: var(--green);">₱500,000</td>
+          </tr>
+          <tr>
+            <td><b>Gold</b></td>
+            <td class="count">35</td>
+            <td class="amount">₱20,000 avg</td>
+            <td class="amount" style="color: var(--green);">₱700,000</td>
+          </tr>
+          <tr>
+            <td><b>Silver</b></td>
+            <td class="count">25</td>
+            <td class="amount">₱12,000 avg</td>
+            <td class="amount" style="color: var(--green);">₱300,000</td>
+          </tr>
+          <tr>
+            <td><b>Flex</b></td>
+            <td class="count">20</td>
+            <td class="amount">₱5,000 avg</td>
+            <td class="amount" style="color: var(--green);">₱100,000</td>
+          </tr>
+          <tr style="border-top: 2px solid var(--green);">
+            <td><b style="color: var(--green);">Total (100 contributors)</b></td>
+            <td></td>
+            <td></td>
+            <td class="amount" style="color: var(--green);"><b>≈ ₱1,600,000</b></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="background: var(--green-panel); border: 1px solid #c8e6c8; border-radius: 8px; padding: 18px 20px; margin-bottom: 16px;">
+        <p style="font-size: 14px; color: var(--black); line-height: 1.7; margin: 0;"><b style="color: var(--green);">Gap to ₱1.68M Core Target: ~₱80,000</b> — Manageable through fundraising surplus or targeted additional outreach. This is the floor, not the goal.</p>
+      </div>
+
+      <div class="gold-divider"></div>
+
+      <!-- Committee Implication -->
+      <div style="background: var(--dark-green); border-radius: 8px; padding: 24px; margin-bottom: 20px;">
+        <div style="font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 10px;">Committee Implication</div>
+        <p style="font-size: 14px; color: #ccddcc; line-height: 1.7; margin-bottom: 14px;">If contributor count drops below 80, or Platinum/Gold uptake is weak, <span style="color: var(--gold);">additional direct outreach and sponsor engagement will be required</span> to protect event quality.</p>
+        <p style="font-size: 14px; color: #ccddcc; line-height: 1.7; margin: 0;"><b style="color: var(--gold);">If contributor count drops below 80 or Platinum uptake is weak, committee members are expected to increase direct outreach efforts.</b> Responsibility is shared — and explicit.</p>
+      </div>
+
+      <div style="background: var(--gold); border-radius: 8px; padding: 20px 24px; margin-bottom: 16px;">
+        <div style="font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--dark-green); margin-bottom: 6px;">Non-Negotiable Principle</div>
+        <p style="font-size: 15px; font-weight: 700; color: var(--dark-green); line-height: 1.6; margin: 0;">Core Celebration budget is protected. Fundraising initiatives support the plan but must not compromise the event.</p>
+      </div>
+
+      <div class="gold-divider"></div>
+
+      <!-- Committee Alignment -->
+      <h2 class="section-title">Committee Alignment — Key Expectations</h2>
+      <div style="height: 8px;"></div>
+
+      <div class="expect-row">
+        <div class="expect-label">Public Funding Target</div>
+        <div class="expect-value">₱2,100,000 — as presented in the batch flyer</div>
+      </div>
+      <div class="expect-row">
+        <div class="expect-label">Contribution Timeline</div>
+        <div class="expect-value">March 2026 – December 2028 (33 months)</div>
+      </div>
+      <div class="expect-row">
+        <div class="expect-label">Funding Model</div>
+        <div class="expect-value">Hybrid — contributions are the foundation, fundraising events bridge the gap</div>
+      </div>
+      <div class="expect-row">
+        <div class="expect-label">Fundraising Events</div>
+        <div class="expect-value">Not optional — Golf, Run, and Football Cup are essential to reach ₱2.1M</div>
+      </div>
+      <div class="expect-row">
+        <div class="expect-label">Personal Outreach</div>
+        <div class="expect-value">Flyer alone won't move Platinum/Gold tiers — committee must personally reach out</div>
+      </div>
+      <div class="expect-row">
+        <div class="expect-label">Tier Integration</div>
+        <div class="expect-value">Tier selection to be added to each member's profile on thegoldenbatch2003.com once flyer is approved</div>
+      </div>
+
     </div>
-    
-  </div>
-</div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-text">USLS-IS Batch 2003 Organizing Committee</div>
+    </div>
+  </footer>
 
 </body>
 </html>

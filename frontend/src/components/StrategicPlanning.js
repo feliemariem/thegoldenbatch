@@ -43,6 +43,18 @@ const presentations = [
     label: 'Timeline',
     file: '/presentations/Timeline.html',
     pdf: '/presentations/pdfs/Timeline.pdf'
+  },
+          {
+    id: 'rolloutplan',
+    label: 'Rollout Plan',
+    file: '/presentations/RolloutPlan.html',
+    pdf: '/presentations/pdfs/RolloutPlan.pdf'
+  },
+            {
+    id: 'paymentflow',
+    label: 'Payment Flow',
+    file: '/presentations/PaymentFlow.html',
+    pdf: '/presentations/pdfs/PaymentFlow.pdf'
   }
 
 ];

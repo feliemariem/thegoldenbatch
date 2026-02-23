@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Golden Batch — Website Rollout Plan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green: #006633;
+      --dark-green: #004d26;
+      --gold: #CFB53B;
+      --dark-gold: #5b4b12;
+      --black: #1a1a1a;
+      --gray: #666666;
+      --light-gray: #999999;
+      --panel: #f5f5f0;
+      --gold-panel: #faf6e8;
+      --green-panel: #e8f5e8;
+      --line: #e0e0d8;
+      --white: #ffffff;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Source Sans 3', sans-serif;
+      color: var(--black);
+      background: var(--white);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Header */
+    header {
+      background: var(--dark-green);
+      padding: 32px 0 28px;
+      border-bottom: 3px solid var(--gold);
+    }
+
+    header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .header-left { flex: 1; }
+
+    .eyebrow {
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #88bb88;
+      margin-bottom: 8px;
+    }
+
+    .site-title {
+      font-family: 'Source Serif 4', serif;
+      font-weight: 700;
+      font-size: 36px;
+      line-height: 1.15;
+      color: var(--white);
+    }
+
+    .site-title span { color: var(--gold); }
+
+    .header-right {
+      text-align: right;
+      flex-shrink: 0;
+      padding-left: 20px;
+    }
+
+    .header-right .label {
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #cccccc;
+    }
+
+    .header-right .highlight {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: var(--gold);
+      margin-top: 2px;
+    }
+
+    .header-right .sub {
+      font-size: 10px;
+      color: #aaaaaa;
+      margin-top: 2px;
+    }
+
+    /* Main content */
+    main {
+      padding: 40px 0 48px;
+    }
+
+    /* Intro */
+    .intro-bold {
+      font-family: 'Source Serif 4', serif;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--black);
+      margin-bottom: 8px;
+    }
+
+    .intro-body {
+      font-size: 15px;
+      color: var(--gray);
+      margin-bottom: 24px;
+    }
+
+    .gold-divider {
+      height: 2px;
+      background: var(--gold);
+      margin: 24px 0;
+    }
+
+    /* Phase headers */
+    .phase-header {
+      border-radius: 6px;
+      padding: 16px 20px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .phase-header.active { background: var(--green); }
+    .phase-header.upcoming { background: #2a2a2a; }
+
+    .phase-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .phase-title {
+      font-family: 'Source Serif 4', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--white);
+      margin-top: 2px;
+    }
+
+    .phase-date {
+      font-size: 12px;
+      color: #cccccc;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    /* Detail rows */
+    .detail-row {
+      display: flex;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+      gap: 16px;
+    }
+
+    .detail-row:last-child { border-bottom: none; }
+
+    .detail-label {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--black);
+      min-width: 150px;
+      flex-shrink: 0;
+    }
+
+    .detail-value {
+      font-size: 14px;
+      color: var(--gray);
+      line-height: 1.55;
+    }
+
+    .phase-intro {
+      font-size: 15px;
+      color: var(--black);
+      margin-bottom: 16px;
+    }
+
+    .phase-desc {
+      font-size: 14px;
+      color: var(--gray);
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    /* Steps */
+    .step {
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .step:last-child { border-bottom: none; padding-bottom: 0; }
+
+    .step-header {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+
+    .step-num {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--green);
+      flex-shrink: 0;
+    }
+
+    .step-title {
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--black);
+    }
+
+    .step-desc {
+      font-size: 14px;
+      color: var(--gray);
+      line-height: 1.6;
+      margin-left: 56px;
+    }
+
+    /* Section headings */
+    .section-title {
+      font-family: 'Source Serif 4', serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 6px;
+    }
+
+    .section-subtitle {
+      font-size: 14px;
+      color: var(--gray);
+      margin-bottom: 20px;
+    }
+
+    /* Q&A */
+    .qa-block { margin-bottom: 24px; }
+
+    .qa-question {
+      font-family: 'Source Serif 4', serif;
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--black);
+      margin-bottom: 8px;
+    }
+
+    .qa-answer {
+      font-size: 14px;
+      color: var(--gray);
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+
+    .callout-gold {
+      background: var(--gold-panel);
+      border-radius: 6px;
+      padding: 12px 16px;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--dark-gold);
+    }
+
+    .callout-green {
+      background: var(--green-panel);
+      border-radius: 6px;
+      padding: 14px 16px;
+      font-size: 14px;
+      color: var(--gray);
+      line-height: 1.55;
+    }
+
+    .callout-green strong { color: var(--black); }
+
+    /* Flow steps */
+    .flow-step {
+      display: flex;
+      gap: 0;
+      margin-bottom: 6px;
+    }
+
+    .flow-num {
+      background: var(--green);
+      color: var(--white);
+      font-weight: 700;
+      font-size: 13px;
+      min-width: 32px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 10px;
+      border-radius: 4px 0 0 4px;
+    }
+
+    .flow-content {
+      background: var(--panel);
+      padding: 10px 14px;
+      flex: 1;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .flow-content strong {
+      display: block;
+      font-size: 14px;
+      color: var(--black);
+      margin-bottom: 2px;
+    }
+
+    .flow-content span {
+      font-size: 13px;
+      color: var(--gray);
+      line-height: 1.5;
+    }
+
+    /* Comms flow */
+    .comms-block {
+      border-radius: 6px;
+      padding: 14px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .comms-block.core { background: var(--green); }
+    .comms-block.reps { background: #2a2a2a; }
+    .comms-block.batch { background: var(--panel); }
+
+    .comms-role {
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .comms-block.core .comms-role,
+    .comms-block.reps .comms-role { color: var(--white); }
+    .comms-block.batch .comms-role { color: var(--black); }
+
+    .comms-desc { font-size: 12px; }
+    .comms-block.core .comms-desc { color: #aaddaa; }
+    .comms-block.reps .comms-desc { color: #cccccc; }
+    .comms-block.batch .comms-desc { color: var(--gray); }
+
+    .comms-arrow {
+      text-align: center;
+      font-size: 18px;
+      color: var(--light-gray);
+      padding: 4px 0;
+    }
+
+    .comms-note {
+      font-size: 14px;
+      color: var(--gray);
+      margin-top: 16px;
+      line-height: 1.6;
+    }
+
+    /* Reasons list */
+    .reason {
+      display: flex;
+      gap: 10px;
+      padding: 6px 0;
+      align-items: flex-start;
+    }
+
+    .reason-check {
+      color: var(--green);
+      font-weight: 700;
+      font-size: 15px;
+      flex-shrink: 0;
+      line-height: 1.5;
+    }
+
+    .reason-text {
+      font-size: 14px;
+      color: var(--black);
+      line-height: 1.5;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 2px solid var(--green);
+      padding: 12px 0;
+      text-align: center;
+    }
+
+    .footer-text {
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--light-gray);
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .site-title { font-size: 28px; }
+      header .container { flex-direction: column; align-items: flex-start; }
+      .header-right { text-align: left; padding-left: 0; margin-top: 12px; }
+      .detail-row { flex-direction: column; gap: 2px; }
+      .detail-label { min-width: auto; }
+      .step-desc { margin-left: 0; margin-top: 4px; }
+      .comms-block { flex-direction: column; align-items: flex-start; gap: 4px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container">
+      <div class="header-left">
+        <div class="eyebrow">USLS-IS Batch 2003 · 25th Alumni Homecoming · December 16, 2028</div>
+        <h1 class="site-title">The <span>Golden</span><br>Batch</h1>
+      </div>
+      <div class="header-right">
+        <div class="label">Website Rollout Plan</div>
+        <div class="highlight">2-Phase Approach</div>
+        <div class="sub">Committee Reference · February 2026</div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+
+      <!-- Intro -->
+      <p class="intro-bold">We need to show movement.</p>
+      <p class="intro-body">This document outlines the 2-phase rollout plan for thegoldenbatch2003.com. Phase 1 gets everyone in the door. Phase 2 builds everything behind the scenes before presenting the contribution framework through proper channels.</p>
+
+      <div class="gold-divider"></div>
+
+      <!-- PHASE 1 -->
+      <div class="phase-header active">
+        <div>
+          <div class="phase-label">Phase 1 · Must</div>
+          <div class="phase-title">Launch Registration</div>
+        </div>
+        <div class="phase-date">March 1, 2026</div>
+      </div>
+
+      <p class="phase-intro">Get everyone in the door. No money talk yet.</p>
+
+      <div class="detail-row">
+        <div class="detail-label">What goes live</div>
+        <div class="detail-value">Registration only. Batchmates receive their invite, create an account, and confirm their RSVP.</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">What they see</div>
+        <div class="detail-value">A welcome page with a "stay tuned for more" message. Clean, simple, no contribution or tier information visible.</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">What's NOT live</div>
+        <div class="detail-value">The new profile page (contribution tiers, payment uploads, progress tracking) stays admin-only until Phase 2 is ready.</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">The goal</div>
+        <div class="detail-value">Build the registered base. See who's engaged, which sections are responsive. This data informs Phase 2 decisions.</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">Overseas alumni</div>
+        <div class="detail-value">~30% of the batch are abroad. December 2028 means flights and leave planning. Getting them registered early is critical.</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">Committee goes first</div>
+        <div class="detail-value">The first ones to register will be the committee members. This ensures the system works smoothly before the batch comes in. Any new features coded after launch will be tested by the committee first (c/o Felie) before going live to everyone.</div>
+      </div>
+
+      <div class="gold-divider" style="margin-top: 32px;"></div>
+
+      <!-- PHASE 2 -->
+      <div class="phase-header upcoming">
+        <div>
+          <div class="phase-label">Phase 2 · Behind the Scenes</div>
+          <div class="phase-title">Contribution Rollout</div>
+        </div>
+        <div class="phase-date">While registrations come in</div>
+      </div>
+
+      <p class="phase-desc">While Phase 1 registrations are coming in, the committee works on everything below. Nothing goes public until all steps are complete and the core has approved.</p>
+
+      <div class="step">
+        <div class="step-header">
+          <span class="step-num">Step 1</span>
+          <span class="step-title">Finalize Tier Presentation Internally</span>
+        </div>
+        <p class="step-desc">Align the committee on exact messaging and the "why" behind the numbers. Review the contribution tiers (Platinum, Gold, Silver, Flex), monthly breakdown, and the 80/20 funding allocation model. This is the foundation — everything downstream depends on the committee being aligned here first.</p>
+      </div>
+
+      <div class="step">
+        <div class="step-header">
+          <span class="step-num">Step 2</span>
+          <span class="step-title">Draft the FAQ</span>
+        </div>
+        <p class="step-desc">Anticipate the questions before they come. Cover: tier flexibility (can I change?), payment methods, where the money goes, "what if I can't afford it," installment options, the timeline, and what happens to their payments if things change. The FAQ should be ready to hand off to class reps as their primary reference.</p>
+      </div>
+
+      <div class="step">
+        <div class="step-header">
+          <span class="step-num">Step 3</span>
+          <span class="step-title">Brief the Class Reps</span>
+        </div>
+        <p class="step-desc">Small meeting or call with section representatives. Walk them through the tier structure, hand them the FAQ, and align on messaging so everyone says the same thing. Reps become the front line — they answer questions at their level so the committee isn't overwhelmed.</p>
+      </div>
+
+      <div class="step">
+        <div class="step-header">
+          <span class="step-num">Step 4</span>
+          <span class="step-title">Release Contribution Framework to the Batch</span>
+        </div>
+        <p class="step-desc">Now it goes out through the proper channel: Core → Class Reps → Batchmates. Reps are briefed, FAQ exists, and the committee is ready. No surprises.</p>
+      </div>
+
+      <div class="step">
+        <div class="step-header">
+          <span class="step-num">Step 5</span>
+          <span class="step-title">Flip the New Profile Live</span>
+        </div>
+        <p class="step-desc">Batchmates now see their full profile with contribution tier selection, payment upload, and progress tracking. The system is ready because the support structure is already in place.</p>
+      </div>
+
+      <div class="gold-divider" style="margin-top: 12px;"></div>
+
+      <!-- KEY ANSWERS -->
+      <h2 class="section-title">Answering the Key Questions</h2>
+      <p class="section-subtitle">These are the answers to the most common questions that will come up. This section will feed directly into the FAQ for class reps.</p>
+
+      <div class="qa-block">
+        <div class="qa-question">Can they change their tier?</div>
+        <p class="qa-answer">Yes — upgrade or downgrade anytime. Just like RSVP. The new profile page handles this, and changes reflect on the admin side (Master List) automatically. No one is locked into a single choice.</p>
+        <div class="callout-gold">It's "where you're starting, not where you're stuck."</div>
+      </div>
+
+      <div class="qa-block">
+        <div class="qa-question">Are they locked in?</div>
+        <p class="qa-answer">No. Life changes, finances change. Someone who starts at Silver can move to Gold later, or vice versa. The system tracks total contributions regardless of tier changes. Flexibility builds trust and removes the biggest objection people have: "what if I commit and something happens?"</p>
+      </div>
+
+      <div class="qa-block">
+        <div class="qa-question">What's the journey after choosing a tier?</div>
+        <p class="qa-answer">The payment process is designed to be transparent and verifiable at every step.</p>
+
+        <div class="flow-step">
+          <div class="flow-num">1</div>
+          <div class="flow-content">
+            <strong>Choose a tier</strong>
+            <span>Batchmate selects their contribution tier from their profile. They see the total amount and monthly breakdown.</span>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">2</div>
+          <div class="flow-content">
+            <strong>See payment options</strong>
+            <span>Payment channels are displayed (bank transfer, e-wallet, etc.) with account details.</span>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">3</div>
+          <div class="flow-content">
+            <strong>Make payment</strong>
+            <span>Batchmate pays through their preferred channel, outside the website.</span>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">4</div>
+          <div class="flow-content">
+            <strong>Upload receipt(s)</strong>
+            <span>Back on the website, they upload a photo or screenshot of their receipt. They can upload multiple receipts at once. The site handles storage.</span>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">5</div>
+          <div class="flow-content">
+            <strong>Receipt lands in Receipts Inbox</strong>
+            <span>Controllers see all incoming receipts in one place. They click "Add to Ledger" — a new ledger row is created with the name and receipt pre-filled. Controller manually enters all financial details (amount, date, reference no., payment type).</span>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-num">6</div>
+          <div class="flow-content">
+            <strong>Verification happens later</strong>
+            <span>The ledger entry starts as "Pending." When the controller checks the passbook and confirms the amount, they mark it "OK." Master List updates, and the batchmate's profile shows payment progress and full receipt history.</span>
+          </div>
+        </div>
+
+        <div style="height: 12px;"></div>
+        <div class="callout-green">
+          <strong>Personal archive:</strong> Every receipt they upload stays on their profile — timestamped, with verification status. Monthly contributors can scroll back through their entire payment history. It's protection for both sides if there's ever a question about a payment.
+        </div>
+      </div>
+
+      <div class="gold-divider"></div>
+
+      <!-- COMMS FLOW -->
+      <h2 class="section-title">Communication Flow</h2>
+      <p class="section-subtitle">Streamlined so the committee isn't overwhelmed. Information flows in one direction, questions flow back up through the same channel.</p>
+
+      <div class="comms-block core">
+        <span class="comms-role">Core Committee</span>
+        <span class="comms-desc">Decisions, messaging, content</span>
+      </div>
+      <div class="comms-arrow">↓</div>
+      <div class="comms-block reps">
+        <span class="comms-role">Class Reps</span>
+        <span class="comms-desc">Briefed with FAQ, aligned on talking points</span>
+      </div>
+      <div class="comms-arrow">↓</div>
+      <div class="comms-block batch">
+        <span class="comms-role">Batchmates</span>
+        <span class="comms-desc">Receive information, ask questions through reps</span>
+      </div>
+
+      <p class="comms-note">Class reps are the multiplier. They extend the committee's reach without spreading the core team thin. Brief them properly once, equip them with the FAQ, and they handle the rest at their section level.</p>
+
+      <div class="gold-divider"></div>
+
+      <!-- WHY THIS ORDER -->
+      <h2 class="section-title">Why This Order Matters</h2>
+
+      <p class="phase-intro" style="margin-bottom: 16px;">If we release tiers before class reps are briefed and the FAQ exists, the committee gets flooded with questions and it looks unorganized. This sequence means by the time anyone sees a peso sign, the support structure is already in place.</p>
+
+      <div class="reason">
+        <span class="reason-check">✓</span>
+        <span class="reason-text">Registration first gives us real data on who's engaged before we talk money.</span>
+      </div>
+      <div class="reason">
+        <span class="reason-check">✓</span>
+        <span class="reason-text">Internal alignment prevents mixed messages going out to the batch.</span>
+      </div>
+      <div class="reason">
+        <span class="reason-check">✓</span>
+        <span class="reason-text">FAQs drafted before the reps meeting means reps walk away equipped, not confused.</span>
+      </div>
+      <div class="reason">
+        <span class="reason-check">✓</span>
+        <span class="reason-text">Reps briefed before public release means questions get answered at the section level.</span>
+      </div>
+      <div class="reason">
+        <span class="reason-check">✓</span>
+        <span class="reason-text">The new profile goes live only when every support layer is ready.</span>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-text">USLS-IS Batch 2003 Organizing Committee</div>
+    </div>
+  </footer>
+
+</body>
+</html>

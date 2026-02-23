@@ -1,401 +1,722 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Golden Batch — Silver Homecoming 2028</title>
-<style>
-  :root {
-    --gold: #CFB53B;
-    --green: #006633;
-    --ink: #1a1a2e;
-    --muted: #5a5a6b;
-    --light-muted: #8a8a9b;
-    --panel: #f8f8fa;
-    --line: #e0e0e5;
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Golden Batch — Contribution & Funding Plan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green: #006633;
+      --dark-green: #004d26;
+      --gold: #CFB53B;
+      --dark-gold: #5b4b12;
+      --black: #1a1a1a;
+      --gray: #666666;
+      --light-gray: #999999;
+      --panel: #f5f5f0;
+      --gold-panel: #faf6e8;
+      --green-panel: #e8f5e8;
+      --line: #e0e0d8;
+      --white: #ffffff;
+    }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  @page { 
-    size: letter landscape; 
-    margin: 0.4in 0.5in;
-  }
+    body {
+      font-family: 'Source Sans 3', sans-serif;
+      color: var(--black);
+      background: var(--white);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
 
-  * {
-    page-break-inside: avoid !important;
-  }
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
 
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    background: #fff;
-    color: var(--ink);
-    line-height: 1.3;
-    font-size: 9pt;
-    padding: 0;
-    margin: 0;
-  }
+    /* Header */
+    header {
+      background: var(--dark-green);
+      padding: 32px 0 28px;
+      border-bottom: 3px solid var(--gold);
+    }
 
-  .container {
-    max-width: 100%;
-    margin: 0;
-    padding: 0;
-  }
+    header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
 
-  /* HERO */
-  .hero {
-    padding: 12px 0 16px;
-    border-bottom: 3px solid var(--green);
-    margin-bottom: 16px;
-  }
+    .header-left { flex: 1; }
 
-  .hero-top {
-    text-align: center;
-    margin-bottom: 12px;
-  }
+    .eyebrow {
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #88bb88;
+      margin-bottom: 8px;
+    }
 
-  .badge {
-    display: inline-block;
-    background: var(--green);
-    color: #fff;
-    font-size: 8px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    padding: 4px 12px;
-    border-radius: 16px;
-    margin-bottom: 6px;
-  }
+    .site-title {
+      font-family: 'Source Serif 4', serif;
+      font-weight: 700;
+      font-size: 36px;
+      line-height: 1.15;
+      color: var(--white);
+    }
 
-  h1 {
-    font-size: 24px;
-    font-weight: 800;
-    margin-bottom: 4px;
-  }
+    .site-title span { color: var(--gold); }
 
-  .gold {
-    color: #CFB53B;
-  }
+    .badge {
+      display: inline-block;
+      background: var(--green);
+      color: var(--white);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-top: 10px;
+    }
 
-  .tagline {
-    font-size: 11px;
-    color: var(--muted);
-    margin-bottom: 10px;
-  }
+    .header-tagline {
+      font-size: 13px;
+      color: #cccccc;
+      margin-top: 8px;
+    }
 
-  .milestones {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-bottom: 8px;
-  }
+    .header-right {
+      text-align: right;
+      flex-shrink: 0;
+      padding-left: 20px;
+    }
 
-  .milestone {
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    padding: 10px;
-    text-align: center;
-  }
+    .header-right .label {
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #88bb88;
+    }
 
-  .milestone-icon {
-    font-size: 20px;
-    margin-bottom: 4px;
-  }
+    .header-right .funding-target {
+      font-family: 'Source Serif 4', serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--gold);
+      margin-top: 2px;
+    }
 
-  .milestone-label {
-    font-size: 8px;
-    font-weight: 700;
-    color: var(--green);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 2px;
-  }
+    .header-right .sub {
+      font-size: 11px;
+      color: #aaaaaa;
+      margin-top: 4px;
+      line-height: 1.4;
+    }
 
-  .milestone-text {
-    font-size: 10px;
-    color: var(--ink);
-    font-weight: 600;
-  }
+    main { padding: 40px 0 48px; }
 
-  .legacy-line {
-    text-align: center;
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--green);
-    margin-top: 6px;
-  }
+    .gold-divider { height: 2px; background: var(--gold); margin: 28px 0; }
 
-  /* TIERS */
-  .section-title {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--ink);
-    margin-bottom: 8px;
-    padding-bottom: 4px;
-    border-bottom: 2px solid var(--green);
-  }
+    /* Pillars */
+    .pillars {
+      display: flex;
+      justify-content: space-around;
+      margin: 0;
+    }
 
-  .tiers {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    margin-bottom: 14px;
-  }
+    .pillar {
+      text-align: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: 0.5px;
+      position: relative;
+    }
 
-  .tier-card {
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    padding: 12px 10px;
-    text-align: center;
-  }
+    .pillar::before {
+      content: '●';
+      color: var(--gold);
+      margin-right: 8px;
+      font-size: 10px;
+    }
 
-  .tier-card.featured {
-    border-color: var(--green);
-    background: rgba(0, 102, 51, 0.08);
-  }
+    /* Progress */
+    .progress-box {
+      background: var(--panel);
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 28px;
+    }
 
-  .tier-name {
-    font-size: 8px;
-    font-weight: 700;
-    color: var(--ink);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 6px;
-  }
+    .progress-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 8px;
+    }
 
-  .tier-amount {
-    font-size: 18px;
-    font-weight: 800;
-    color: var(--ink);
-    margin-bottom: 3px;
-  }
+    .progress-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
 
-  .tier-monthly {
-    font-size: 8px;
-    color: var(--muted);
-  }
+    .progress-amount {
+      font-family: 'Source Serif 4', serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--black);
+    }
 
-  /* WHAT WE FUND */
-  .fund-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-    margin-bottom: 14px;
-  }
+    .progress-pct {
+      font-family: 'Source Serif 4', serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--green);
+    }
 
-  .fund-item {
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    padding: 10px;
-    display: flex;
-    gap: 10px;
-  }
+    .progress-sub {
+      font-size: 12px;
+      color: var(--light-gray);
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
 
-  .fund-icon {
-    font-size: 22px;
-    flex-shrink: 0;
-  }
+    .progress-bar-track {
+      background: var(--line);
+      border-radius: 6px;
+      height: 10px;
+      overflow: hidden;
+    }
 
-  .fund-content {
-    flex: 1;
-  }
+    .progress-bar-fill {
+      background: var(--green);
+      height: 100%;
+      border-radius: 6px;
+      transition: width 0.5s ease;
+    }
 
-  .fund-title {
-    font-size: 10px;
-    font-weight: 700;
-    color: var(--ink);
-    margin-bottom: 3px;
-  }
+    .progress-timeline {
+      font-size: 12px;
+      color: var(--light-gray);
+      margin-top: 8px;
+    }
 
-  .fund-desc {
-    font-size: 8.5px;
-    color: var(--muted);
-    line-height: 1.3;
-  }
+    /* Letter */
+    .letter {
+      background: var(--panel);
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 24px;
+      font-size: 14px;
+      color: var(--gray);
+      line-height: 1.75;
+    }
 
-  /* CTA */
-  .cta {
-    background: linear-gradient(135deg, rgba(0, 102, 51, 0.15), rgba(0, 102, 51, 0.05));
-    border: 2px solid var(--green);
-    border-radius: 10px;
-    padding: 14px 20px;
-    text-align: center;
-  }
+    .letter p { margin-bottom: 12px; }
+    .letter p:last-child { margin-bottom: 0; }
+    .letter b { color: var(--black); }
+    .letter .sign { text-align: right; font-style: italic; margin-top: 12px; font-size: 13px; }
 
-  .cta h2 {
-    font-size: 14px;
-    font-weight: 800;
-    margin-bottom: 10px;
-  }
+    /* Section headings */
+    .section-title {
+      font-family: 'Source Serif 4', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 6px;
+    }
 
-  .cta-stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    margin-bottom: 10px;
-  }
+    .section-subtitle {
+      font-size: 14px;
+      color: var(--gray);
+      margin-bottom: 16px;
+    }
 
-  .cta-stat {
-    text-align: center;
-  }
+    /* Allocation items */
+    .alloc-section-label {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 12px;
+    }
 
-  .cta-stat-number {
-    font-size: 18px;
-    font-weight: 800;
-    color: var(--green);
-    display: block;
-  }
+    .alloc-item {
+      display: flex;
+      align-items: flex-start;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
+      gap: 12px;
+    }
 
-  .cta-stat-label {
-    font-size: 8px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
+    .alloc-item:last-child { border-bottom: none; }
 
-  .cta-button {
-    display: inline-block;
-    background: var(--green);
-    color: #fff;
-    font-size: 13px;
-    font-weight: 700;
-    padding: 10px 30px;
-    border-radius: 20px;
-    text-decoration: none;
-    margin-top: 4px;
-  }
+    .alloc-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+      width: 24px;
+      text-align: center;
+    }
 
-  .footer-note {
-    font-size: 8px;
-    color: var(--muted);
-    text-align: center;
-    margin-top: 8px;
-  }
-</style>
+    .alloc-details { flex: 1; }
+
+    .alloc-name {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--black);
+    }
+
+    .alloc-desc {
+      font-size: 13px;
+      color: var(--gray);
+      line-height: 1.4;
+    }
+
+    .alloc-pct {
+      font-family: 'Source Serif 4', serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--black);
+      flex-shrink: 0;
+      min-width: 50px;
+      text-align: right;
+    }
+
+    .big-pct {
+      font-family: 'Source Serif 4', serif;
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--green);
+      text-align: right;
+    }
+
+    .big-pct-label {
+      font-size: 12px;
+      color: var(--light-gray);
+      text-align: right;
+    }
+
+    .core-group, .fundraising-group {
+      margin-bottom: 20px;
+    }
+
+    .alloc-note {
+      font-size: 13px;
+      color: var(--light-gray);
+      padding: 8px 0;
+      border-top: 1px solid var(--line);
+      line-height: 1.5;
+    }
+
+    /* Tier cards */
+    .tier-heading {
+      font-family: 'Source Serif 4', serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 16px;
+      font-style: italic;
+    }
+
+    .tier-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .tier-card {
+      border-radius: 8px;
+      padding: 20px 16px;
+    }
+
+    .tier-card.platinum { background: var(--dark-green); color: var(--white); }
+    .tier-card.gold { background: #2a2a2a; color: var(--white); }
+    .tier-card.silver { background: #3d3d3d; color: var(--white); }
+    .tier-card.flex { background: var(--panel); color: var(--black); }
+
+    .tier-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .tier-card.platinum .tier-label { color: var(--gold); }
+    .tier-card.gold .tier-label { color: var(--gold); }
+    .tier-card.silver .tier-label { color: #cccccc; }
+    .tier-card.flex .tier-label { color: var(--green); }
+
+    .tier-amount {
+      font-family: 'Source Serif 4', serif;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .tier-range {
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .tier-card.platinum .tier-range,
+    .tier-card.gold .tier-range,
+    .tier-card.silver .tier-range { color: #aaaaaa; }
+    .tier-card.flex .tier-range { color: var(--gray); }
+
+    .tier-monthly {
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    .tier-card.platinum .tier-monthly,
+    .tier-card.gold .tier-monthly,
+    .tier-card.silver .tier-monthly { color: #88bb88; }
+    .tier-card.flex .tier-monthly { color: var(--green); }
+
+    .tier-desc {
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .tier-card.platinum .tier-desc { color: #ccddcc; }
+    .tier-card.gold .tier-desc,
+    .tier-card.silver .tier-desc { color: #bbbbbb; }
+    .tier-card.flex .tier-desc { color: var(--gray); }
+
+    /* Info boxes */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .info-box {
+      background: var(--panel);
+      border-radius: 8px;
+      padding: 18px;
+    }
+
+    .info-box-title {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--black);
+      margin-bottom: 6px;
+    }
+
+    .info-box p {
+      font-size: 13px;
+      color: var(--gray);
+      line-height: 1.5;
+    }
+
+    /* CTA */
+    .cta-section {
+      background: var(--dark-green);
+      border-radius: 10px;
+      padding: 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 28px;
+    }
+
+    .cta-text {
+      font-family: 'Source Serif 4', serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--white);
+    }
+
+    .cta-link {
+      background: var(--gold);
+      color: var(--dark-green);
+      font-weight: 700;
+      font-size: 14px;
+      padding: 12px 24px;
+      border-radius: 6px;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    .cta-link-sub {
+      font-size: 11px;
+      color: #cccccc;
+      text-align: right;
+      margin-top: 4px;
+    }
+
+    footer {
+      border-top: 2px solid var(--green);
+      padding: 12px 0;
+      text-align: center;
+    }
+
+    .footer-text {
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--light-gray);
+    }
+
+    @media (max-width: 600px) {
+      .site-title { font-size: 28px; }
+      header .container { flex-direction: column; align-items: flex-start; }
+      .header-right { text-align: left; padding-left: 0; margin-top: 12px; }
+      .tier-grid { grid-template-columns: repeat(2, 1fr); }
+      .info-grid { grid-template-columns: 1fr; }
+      .cta-section { flex-direction: column; gap: 16px; text-align: center; }
+      .pillars { flex-wrap: wrap; gap: 8px; }
+    }
+  </style>
 </head>
 <body>
 
-<div class="container">
-  <!-- HERO -->
-  <div class="hero">
-    <div class="hero-top">
-      <div class="badge">USLS-IS Batch 2003</div>
-      <h1>The <span class="gold">Golden</span> Batch</h1>
-      <p class="tagline">Silver Homecoming 2028</p>
+  <header>
+    <div class="container">
+      <div class="header-left">
+        <div class="eyebrow">USLS-IS Batch 2003 · 25th Alumni Homecoming · December 16, 2028</div>
+        <h1 class="site-title">The <span>Golden</span><br>Batch</h1>
+        <div class="badge">Contribution & Funding Plan</div>
+        <div class="header-tagline">25 years later, we're coming home. Together, let's make it unforgettable.</div>
+      </div>
+      <div class="header-right">
+        <div class="label">Funding Target</div>
+        <div class="funding-target">₱2,100,000</div>
+        <div class="sub">Full Batch Vision Target. Achievable<br>through collective commitment and<br>fundraising support.</div>
+      </div>
     </div>
+  </header>
 
-    <div class="milestones">
-      <div class="milestone">
-        <div class="milestone-icon">🏆</div>
-        <div class="milestone-label">Graduated 2003</div>
-        <div class="milestone-text">La Salle's 50th Golden Year</div>
-      </div>
-      <div class="milestone">
-        <div class="milestone-icon">💎</div>
-        <div class="milestone-label">Returning 2028</div>
-        <div class="milestone-text">La Salle's 75th Platinum Year</div>
-      </div>
-      <div class="milestone">
-        <div class="milestone-icon">🎓</div>
-        <div class="milestone-label">Our 25th Reunion</div>
-        <div class="milestone-text">Silver Jubilee Homecoming</div>
-      </div>
-    </div>
-
-    <p class="legacy-line">One Batch. Two Milestones. One Legacy.</p>
-  </div>
-
-  <!-- TIERS -->
-  <div class="section-title">Choose Your Contribution Tier</div>
-  <div class="tiers">
-    <div class="tier-card featured">
-      <div class="tier-name">Platinum</div>
-      <div class="tier-amount">₱25,000</div>
-      <div class="tier-monthly">₱700/mo × 36</div>
-    </div>
-    <div class="tier-card">
-      <div class="tier-name">Gold</div>
-      <div class="tier-amount">₱15,000</div>
-      <div class="tier-monthly">₱420/mo × 36</div>
-    </div>
-    <div class="tier-card">
-      <div class="tier-name">Silver</div>
-      <div class="tier-amount">₱10,000</div>
-      <div class="tier-monthly">₱280/mo × 36</div>
-    </div>
-    <div class="tier-card">
-      <div class="tier-name">Monthly Plan</div>
-      <div class="tier-amount">₱400-500</div>
-      <div class="tier-monthly">per month</div>
-    </div>
-  </div>
-
-  <!-- WHAT WE FUND -->
-  <div class="section-title">What Your Contribution Funds (₱1.7M Total)</div>
-  <div class="fund-grid">
-    <div class="fund-item">
-      <div class="fund-icon">🍽️</div>
-      <div class="fund-content">
-        <div class="fund-title">General Alumni Homecoming</div>
-        <div class="fund-desc">FREE for all USLS alumni. Food for 250-350 people. Premium catering. Our batch hosts the entire La Salle community.</div>
-      </div>
-    </div>
-    <div class="fund-item">
-      <div class="fund-icon">🎬</div>
-      <div class="fund-content">
-        <div class="fund-title">Professional Production</div>
-        <div class="fund-desc">Sound, lights, LED projection. Photo & video documentation. Commemorative tokens for all alumni.</div>
-      </div>
-    </div>
-    <div class="fund-item">
-      <div class="fund-icon">⛳</div>
-      <div class="fund-content">
-        <div class="fund-title">Golf Tournament Sponsorship</div>
-        <div class="fund-desc">November 2028. One La Salle Golf Tournament. Welcome dinner + awarding night. High visibility for La Salle's 75th.</div>
-      </div>
-    </div>
-    <div class="fund-item">
-      <div class="fund-icon">📚</div>
-      <div class="fund-content">
-        <div class="fund-title">Giving Back Project</div>
-        <div class="fund-desc">Batch 2003 Scholarship for La Salle's Platinum Year. Our permanent legacy. Teacher tributes. Community impact.</div>
+  <!-- Pillars bar -->
+  <div style="background: var(--dark-green); padding: 14px 0;">
+    <div class="container">
+      <div class="pillars">
+        <div class="pillar">Reconnect</div>
+        <div class="pillar">Celebrate</div>
+        <div class="pillar">Network</div>
+        <div class="pillar">Give Back</div>
       </div>
     </div>
   </div>
 
-  <!-- CTA -->
-  <div class="cta">
-    <h2>Register & Choose Your Tier</h2>
-    
-    <div class="cta-stats">
-      <div class="cta-stat">
-        <span class="cta-stat-number">35</span>
-        <span class="cta-stat-label">Months to Event</span>
-      </div>
-      <div class="cta-stat">
-        <span class="cta-stat-number">₱206K</span>
-        <span class="cta-stat-label">Collected (Month 1)</span>
-      </div>
-      <div class="cta-stat">
-        <span class="cta-stat-number">12.2%</span>
-        <span class="cta-stat-label">Of ₱1.7M Goal</span>
-      </div>
-      <div class="cta-stat">
-        <span class="cta-stat-number">80-100</span>
-        <span class="cta-stat-label">Contributors Needed</span>
-      </div>
-    </div>
+  <main>
+    <div class="container">
 
-    <a href="https://thegoldenbatch.com" class="cta-button">Visit thegoldenbatch.com</a>
-    
-    <p class="footer-note">
-      <strong>Transparency Commitment:</strong> Real-time accounting on thegoldenbatch.com • Every peso tracked daily • Full visibility into all contributions and expenses
-    </p>
-  </div>
-</div>
+      <!-- Progress -->
+      <div class="progress-box" style="border-left: 4px solid var(--green);">
+        <div class="progress-label">Our Progress</div>
+        <div class="progress-row">
+          <div class="progress-amount">₱206,950</div>
+          <div class="progress-pct">9.9%</div>
+        </div>
+        <div class="progress-sub">
+          <span>raised so far</span>
+          <span>of ₱2,100,000 goal</span>
+        </div>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" style="width: 9.9%;"></div>
+        </div>
+        <div class="progress-timeline">March 2026 — December 2028</div>
+      </div>
+
+      <!-- Letter -->
+      <div class="letter" style="border-left: 4px solid var(--green);">
+        <p><b style="color: var(--green);">Dear Batchmates,</b></p>
+        <p>As we prepare for our 25th Homecoming, we want to share a clear and complete picture of what we're building together.</p>
+        <p>The ₱2.1M shown here represents our total batch vision — covering the Main Event, Teachers' Dinner, commemorative items, fundraising initiatives, and our Giving Back commitment. This is not an amount expected to come solely from direct contributions. We are using a <b>hybrid model</b>, combining batch contributions with income generated from selected initiatives.</p>
+        <p>The Main Event remains the centerpiece of our milestone celebration, while our fundraising initiatives are structured to generate additional returns to support the overall plan. Our goal is transparency, balance, and a celebration worthy of 25 years.</p>
+        <p class="sign" style="color: var(--green);">— USLS-IS Batch 2003 Organizing Committee</p>
+      </div>
+
+      <div class="gold-divider"></div>
+
+      <!-- Where Your Contribution Goes -->
+      <h2 class="section-title" style="font-style: italic;">Where your contribution goes</h2>
+      <p class="section-subtitle">Total plan supported by contributions and fundraising. ₱2,100,000 Full Batch Vision Target.</p>
+
+      <!-- Core Celebration -->
+      <div class="core-group">
+        <div class="alloc-section-label">Core Celebration</div>
+
+        <div style="display: flex; align-items: flex-start; gap: 20px;">
+          <div style="flex: 1;">
+            <div class="alloc-item">
+              <span class="alloc-icon">🎉</span>
+              <div class="alloc-details">
+                <div class="alloc-name">Main Event</div>
+                <div class="alloc-desc">Primary celebration covering venue, catering, production, and full program execution.</div>
+              </div>
+              <span class="alloc-pct">50%</span>
+            </div>
+            <div class="alloc-item">
+              <span class="alloc-icon">🎓</span>
+              <div class="alloc-details">
+                <div class="alloc-name">Teachers' Dinner</div>
+                <div class="alloc-desc">A separate evening dedicated to the teachers who shaped us. Our way of saying thank you, long overdue.</div>
+              </div>
+              <span class="alloc-pct">12%</span>
+            </div>
+            <div class="alloc-item">
+              <span class="alloc-icon">👕</span>
+              <div class="alloc-details">
+                <div class="alloc-name">Merch & Commemorative Items</div>
+                <div class="alloc-desc">Every batchmate gets a shirt. Premium items sold separately help offset the cost.</div>
+              </div>
+              <span class="alloc-pct">8%</span>
+            </div>
+            <div class="alloc-item">
+              <span class="alloc-icon">💚</span>
+              <div class="alloc-details">
+                <div class="alloc-name">Charity / Giving Back</div>
+                <div class="alloc-desc">A portion of what we raise goes back to the school and its community.</div>
+              </div>
+              <span class="alloc-pct">7%</span>
+            </div>
+            <div class="alloc-item">
+              <span class="alloc-icon">🛡</span>
+              <div class="alloc-details">
+                <div class="alloc-name">Contingency & Buffer</div>
+                <div class="alloc-desc">Reserved buffer to protect the batch from unforeseen costs.</div>
+              </div>
+              <span class="alloc-pct">3%</span>
+            </div>
+          </div>
+          <div style="text-align: right; flex-shrink: 0;">
+            <div class="big-pct">80%</div>
+            <div class="big-pct-label">of total batch vision</div>
+          </div>
+        </div>
+
+        <div class="alloc-note">
+          <div style="height: 10px; background: var(--line); border-radius: 6px; overflow: hidden; margin-bottom: 8px;">
+            <div style="width: 80%; height: 100%; background: var(--green); border-radius: 6px;"></div>
+          </div>
+          80% of our total plan funds the core celebration — the Main Event, Teachers' Dinner, and commemorative items.
+        </div>
+      </div>
+
+      <!-- Fundraising Initiatives -->
+      <div class="fundraising-group">
+        <div class="alloc-section-label">Fundraising Initiatives</div>
+
+        <div style="display: flex; align-items: flex-start; gap: 20px;">
+          <div style="flex: 1;">
+            <div class="alloc-item">
+              <span class="alloc-icon">⛳</span>
+              <div class="alloc-details">
+                <div class="alloc-name">La Sallian Golf</div>
+                <div class="alloc-desc">A 2-day Mana Para event bringing La Sallians together from across the nation.</div>
+              </div>
+              <span class="alloc-pct">10%</span>
+            </div>
+            <div class="alloc-item">
+              <span class="alloc-icon">🏃</span>
+              <div class="alloc-details">
+                <div class="alloc-name">La Sallian Run</div>
+                <div class="alloc-desc">A tradition started by our own peers, held first quarter of 2028.</div>
+              </div>
+              <span class="alloc-pct">6%</span>
+            </div>
+            <div class="alloc-item">
+              <span class="alloc-icon">⚽</span>
+              <div class="alloc-details">
+                <div class="alloc-name">In Memoriam Football Cup</div>
+                <div class="alloc-desc">A tribute to the batchmates we've lost, played in their honor.</div>
+              </div>
+              <span class="alloc-pct">4%</span>
+            </div>
+          </div>
+          <div style="text-align: right; flex-shrink: 0;">
+            <div class="big-pct" style="color: var(--gold);">20%</div>
+            <div class="big-pct-label">revenue initiative</div>
+          </div>
+        </div>
+
+        <div class="alloc-note">
+          Upfront operating allocation. Designed to generate sponsorship and entry-fee returns to support the overall fund.
+          <div style="height: 10px; background: var(--line); border-radius: 6px; overflow: hidden; margin-top: 12px; margin-bottom: 8px;">
+            <div style="width: 20%; height: 100%; background: var(--gold); border-radius: 6px;"></div>
+          </div>
+          20% is allocated to launch the Golf tournament, designed to attract sponsors and generate returns to support the overall fund.
+        </div>
+      </div>
+
+      <div class="gold-divider"></div>
+
+      <!-- Choose your tier -->
+      <h2 class="tier-heading">Choose your tier</h2>
+
+      <div class="tier-grid">
+        <div class="tier-card" style="background: var(--dark-green); color: var(--white); border: 2px solid var(--dark-green); border-radius: 10px;">
+          <div class="tier-label" style="color: var(--gold); border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 8px;">Platinum</div>
+          <div class="tier-amount" style="margin-top: 12px;">₱25,000+</div>
+          <div class="tier-monthly" style="color: #88bb88;">≈ ₱758 / month · 33 months</div>
+          <div class="tier-desc" style="color: #ccddcc; margin-top: 12px;">You went all in. Your generosity means everything. The batch is grateful.</div>
+        </div>
+        <div class="tier-card" style="background: #6b5a1e; color: var(--white); border: 2px solid #6b5a1e; border-radius: 10px;">
+          <div class="tier-label" style="color: var(--gold);">Gold</div>
+          <div class="tier-amount" style="color: var(--gold); margin-top: 8px;">₱18,000</div>
+          <div style="font-family: 'Source Serif 4', serif; font-size: 16px; font-weight: 700; color: var(--gold);">to<br>₱24,000</div>
+          <div class="tier-monthly" style="color: #ccccaa;">≈ ₱545 – ₱727 / month · 33 months</div>
+          <div class="tier-desc" style="color: #ccccaa; margin-top: 12px;">A serious commitment. The kind that makes this reunion actually happen.</div>
+        </div>
+        <div class="tier-card" style="background: #4a4a4a; color: var(--white); border: 2px solid #4a4a4a; border-radius: 10px;">
+          <div class="tier-label" style="color: #cccccc;">Silver</div>
+          <div class="tier-amount" style="margin-top: 8px;">₱10,000</div>
+          <div style="font-family: 'Source Serif 4', serif; font-size: 16px; font-weight: 700; color: var(--white);">to<br>₱17,000</div>
+          <div class="tier-monthly" style="color: #aaaaaa;">≈ ₱303 – ₱515 / month · 33 months</div>
+          <div class="tier-desc" style="color: #bbbbbb; margin-top: 12px;">Solid and meaningful. Every contribution at this level makes a real difference.</div>
+        </div>
+        <div class="tier-card" style="background: var(--white); color: var(--black); border: 2px solid var(--line); border-radius: 10px;">
+          <div class="tier-label" style="color: var(--green);">Flex</div>
+          <div class="tier-amount" style="color: var(--green); margin-top: 8px; font-style: italic;">Below<br>₱10,000</div>
+          <div class="tier-desc" style="color: var(--gray); margin-top: 12px;">Every peso moves us forward. Give what you can, when you can.</div>
+        </div>
+      </div>
+
+      <!-- Info boxes -->
+      <div class="info-grid">
+        <div class="info-box" style="background: var(--white); border: 2px solid #c8e6c8; border-radius: 10px;">
+          <div class="info-box-title" style="color: var(--green);">Note on Fundraising Events</div>
+          <p>La Sallian Golf, La Sallian Run, and In Memoriam Football Cup are classified as fundraising initiatives. While they require upfront operating costs — covered within the 20% allocation — they are designed to generate revenue through entry fees and sponsorships. The percentages shown reflect gross allocation, not net cost. Any returns generated by these events go back into the overall fund, effectively reducing the batch's total contribution burden.</p>
+        </div>
+        <div class="info-box" style="background: var(--white); border: 2px solid var(--gold); border-radius: 10px;">
+          <div class="info-box-title" style="color: var(--gold);">No pressure, no deadline.</div>
+          <p>You can contribute in monthly installments from March 2026 through December 2028 — that's 33 months to hit your chosen tier. Every peso counts.</p>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div style="background: var(--dark-green); border: 3px solid var(--gold); border-radius: 12px; padding: 32px; display: flex; justify-content: space-between; align-items: center; margin-top: 28px;">
+        <div>
+          <div style="font-family: 'Source Serif 4', serif; font-size: 28px; font-weight: 700; color: var(--gold); font-style: italic;">Count me in.</div>
+          <div style="font-size: 13px; color: #aaddaa; margin-top: 6px;">Log in to your profile and choose your contribution tier.</div>
+        </div>
+        <div style="text-align: right;">
+          <a href="https://thegoldenbatch2003.com" style="display: inline-block; background: var(--gold); color: var(--dark-green); font-weight: 700; font-size: 14px; padding: 14px 28px; border-radius: 24px; text-decoration: none;">thegoldenbatch2003.com</a>
+          <div style="font-size: 11px; color: #aaaaaa; margin-top: 6px; font-style: italic;">Full budget transparency — every peso tracked in real time.</div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-text">USLS-IS Batch 2003 Organizing Committee</div>
+    </div>
+  </footer>
 
 </body>
 </html>
