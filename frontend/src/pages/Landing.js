@@ -139,7 +139,7 @@ export default function Landing() {
           <div className="hero-event-info">
             <span className="hero-date">December 16, 2028</span>
             <span className="hero-separator">•</span>
-            <span className="hero-location">USLS School Grounds, Bacolod City</span>
+            <span className="hero-location">Santuario de La Salle, USLS, Bacolod City</span>
           </div>
           <p className="hero-quote">"It's time to come home."</p>
           <button onClick={() => setShowFormModal(true)} className="btn-hero">
