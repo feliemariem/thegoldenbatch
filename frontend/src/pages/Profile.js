@@ -276,7 +276,7 @@ export default function Profile() {
               </div>
 
               <div className="form-group">
-                <label>Are you attending our homecoming on 12/16/28?</label>
+                <label>Are you attending our homecoming on December 16, 2028  at Santuario de La Salle, USLS, Bacolod City? *</label>
                 <div className="rsvp-buttons-register">
                   <button
                     type="button"
