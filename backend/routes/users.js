@@ -135,6 +135,45 @@ router.put('/', authenticateToken, async (req, res) => {
       ]
     );
 
+    // Cascade name changes to invites and master_list
+    if (first_name || last_name) {
+      const updatedFirstName = toTitleCase(first_name) || result.rows[0].first_name;
+      const updatedLastName = toTitleCase(last_name) || result.rows[0].last_name;
+
+      // Get the user's invite_id
+      const userInvite = await db.query(
+        'SELECT invite_id FROM users WHERE id = $1',
+        [req.user.id]
+      );
+
+      if (userInvite.rows.length > 0 && userInvite.rows[0].invite_id) {
+        const inviteId = userInvite.rows[0].invite_id;
+
+        // Update invites table
+        await db.query(
+          'UPDATE invites SET first_name = $1, last_name = $2 WHERE id = $3',
+          [updatedFirstName, updatedLastName, inviteId]
+        );
+
+        // Get master_list_id from invites
+        const inviteRow = await db.query(
+          'SELECT master_list_id FROM invites WHERE id = $1',
+          [inviteId]
+        );
+
+        if (inviteRow.rows.length > 0 && inviteRow.rows[0].master_list_id) {
+          const masterListId = inviteRow.rows[0].master_list_id;
+          const currentName = `${updatedFirstName} ${updatedLastName}`;
+
+          // Update master_list table
+          await db.query(
+            'UPDATE master_list SET first_name = $1, last_name = $2, current_name = $3 WHERE id = $4',
+            [updatedFirstName, updatedLastName, currentName, masterListId]
+          );
+        }
+      }
+    }
+
     // Update RSVP if provided
     if (rsvp_status && ['going', 'not_going', 'maybe'].includes(rsvp_status)) {
       await db.query(
