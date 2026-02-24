@@ -145,9 +145,14 @@ export default function Profile() {
         <h2 className="page-title-gold" style={{ marginBottom: '8px' }}>The Golden Batch</h2>
         <div className="header-row">
           <h4 style={{ margin: 0 }}>USLS-IS 2003</h4>
-          <button onClick={handleLogout} className="btn-link">
-            Logout
-          </button>
+          <div>
+            <button onClick={() => navigate('/')} className="btn-link" style={{ marginRight: '12px' }}>
+              Home
+            </button>
+            <button onClick={handleLogout} className="btn-link">
+              Logout
+            </button>
+          </div>
         </div>
 
         {/* Welcome Section */}
