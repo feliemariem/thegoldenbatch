@@ -15,6 +15,7 @@ const meetingRoutes = require('./routes/meetings');
 const announcementRoutes = require('./routes/announcements');
 const actionItemRoutes = require('./routes/action-items');
 const messageRoutes = require('./routes/messages');
+const receiptsRoutes = require('./routes/receipts');
 
 const app = express();
 
@@ -45,6 +46,7 @@ app.use('/api/action-items', actionItemRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/events', require('./routes/events'));
 app.use('/api/committee', require('./routes/committee'));
+app.use('/api/receipts', receiptsRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -111,6 +113,7 @@ app.listen(PORT, () => {
   console.log('  /api/messages');
   console.log('  /api/events');
   console.log('  /api/committee');
+  console.log('  /api/receipts');
   console.log('  /api/health');
   console.log('  /api/debug/routes');
 });

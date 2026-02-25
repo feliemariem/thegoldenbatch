@@ -6,6 +6,7 @@ import MyTasks from '../components/MyTasks';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import SystemAdminProfile from '../components/SystemAdminProfile';
+import ContributionPlan from '../components/ContributionPlan';
 import '../styles/profileNew.css';
 import { apiGet, apiPut, apiUpload, apiDelete } from '../api';
 
@@ -29,7 +30,12 @@ export default function ProfileNew() {
   const [merchSaving, setMerchSaving] = useState(false);
   const [alumniCardSaving, setAlumniCardSaving] = useState(false);
   const [calendarDropdownOpen, setCalendarDropdownOpen] = useState(false);
+  const [showContributionPlan, setShowContributionPlan] = useState(false);
+  const [receipts, setReceipts] = useState([]);
+  const [receiptUploading, setReceiptUploading] = useState(false);
+  const [paymentMethodsOpen, setPaymentMethodsOpen] = useState(false);
   const fileInputRef = useRef(null);
+  const receiptFileInputRef = useRef(null);
   const calendarDropdownRef = useRef(null);
 
   const [form, setForm] = useState({
@@ -80,6 +86,7 @@ export default function ProfileNew() {
   useEffect(() => {
     fetchProfile();
     fetchMyEvents();
+    fetchReceipts();
     checkSystemAdmin();
   }, [user]);
 
@@ -176,6 +183,60 @@ END:VCALENDAR`;
       }
     } catch (err) {
       console.error('Failed to fetch my events');
+    }
+  };
+
+  const fetchReceipts = async () => {
+    try {
+      const res = await apiGet('/api/receipts/my');
+      if (res.ok) {
+        const data = await res.json();
+        setReceipts(data.receipts || []);
+      }
+    } catch (err) {
+      console.error('Failed to fetch receipts');
+    }
+  };
+
+  const handleReceiptUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setMessage('Please select an image file');
+      setTimeout(() => setMessage(''), 3000);
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setMessage('Image must be less than 5MB');
+      setTimeout(() => setMessage(''), 3000);
+      return;
+    }
+
+    setReceiptUploading(true);
+    const formData = new FormData();
+    formData.append('receipt', file);
+
+    try {
+      const res = await apiUpload('/api/receipts', formData);
+
+      if (res.ok) {
+        fetchReceipts();
+        setMessage('Receipt uploaded! We will verify it within 48 hours.');
+        setTimeout(() => setMessage(''), 4000);
+      } else {
+        setMessage('Failed to upload receipt');
+        setTimeout(() => setMessage(''), 3000);
+      }
+    } catch (err) {
+      setMessage('Failed to upload receipt');
+      setTimeout(() => setMessage(''), 3000);
+    } finally {
+      setReceiptUploading(false);
+      if (receiptFileInputRef.current) {
+        receiptFileInputRef.current.value = '';
+      }
     }
   };
 
@@ -652,51 +713,144 @@ END:VCALENDAR`;
               </div>
               )}
 
-              {/* Payment Status Card - Graduates Only */}
-              {profile.is_graduate ? (
-                <div className="profile-card payment-card">
+              {/* Builder Card */}
+              {!profile.builder_tier ? (
+                <div className="profile-card builder-card">
                   <div className="card-header">
-                    <h3>Payment Status</h3>
-                    <span className={`payment-badge ${paymentStatus.toLowerCase()}`}>
-                      {paymentStatus}
-                    </span>
+                    <h3>Become a Golden Batch Builder</h3>
                   </div>
-                  <div className="payment-progress">
-                    <div className="progress-bar">
-                      <div
-                        className="progress-fill"
-                        style={{ width: `${paymentProgress}%` }}
-                      ></div>
-                    </div>
-                    <div className="payment-amounts">
-                      <span className="paid">₱{profile.total_paid?.toLocaleString() || 0}</span>
-                      <span className="total">/ ₱{profile.amount_due?.toLocaleString()}</span>
-                    </div>
-                  </div>
-                  {paymentStatus !== 'Full' && (
-                    <div className="payment-remaining">
-                      <p>Remaining balance: <strong>₱{((profile.amount_due || 0) - (profile.total_paid || 0)).toLocaleString()}</strong></p>
-                      <Link to="/funds" className="payment-link">View Payment Details</Link>
-                    </div>
-                  )}
-                  {paymentStatus === 'Full' && (
-                    <div className="payment-complete">
-                      <span className="checkmark">✓</span>
-                      <p>You're all set! Thank you for your payment.</p>
-                    </div>
-                  )}
+                  <p className="builder-intro-text">
+                    Choose your contribution tier and help build our 25th homecoming.
+                  </p>
+                  <button className="btn-view-plan" onClick={() => setShowContributionPlan(true)}>
+                    View Contribution Plan
+                  </button>
                 </div>
               ) : (
-                <div className="profile-card donate-card">
-                  <div className="card-header">
-                    <h3>Support the Batch</h3>
+                <div className="profile-card builder-card has-tier">
+                  <div className={`builder-tier-badge ${profile.builder_tier}`}>
+                    {profile.builder_tier.charAt(0).toUpperCase() + profile.builder_tier.slice(1)}
+                    {profile.builder_tier !== 'root' && profile.pledge_amount && (
+                      <span className="badge-amount">· ₱{profile.pledge_amount?.toLocaleString()}</span>
+                    )}
                   </div>
-                  <p className="donate-text">
-                    Help make our reunion memorable! Your contributions go towards venue, food, and activities.
-                  </p>
-                  <Link to="/funds" className="btn-donate">
-                    View Fund Details
-                  </Link>
+
+                  {profile.builder_tier !== 'root' && profile.pledge_amount ? (
+                    <>
+                      <div className="builder-progress">
+                        <div className="builder-progress-bar">
+                          <div
+                            className="builder-progress-fill"
+                            style={{ width: `${Math.min((profile.total_paid / profile.pledge_amount) * 100, 100)}%` }}
+                          ></div>
+                        </div>
+                        <div className="builder-progress-text">
+                          <span className="builder-paid">₱{profile.total_paid?.toLocaleString() || 0}</span>
+                          <span className="builder-total">/ ₱{profile.pledge_amount?.toLocaleString()}</span>
+                          <span className="builder-pct">({Math.round((profile.total_paid / profile.pledge_amount) * 100)}%)</span>
+                        </div>
+                        <div className="builder-remaining">
+                          Remaining: <strong>₱{((profile.pledge_amount || 0) - (profile.total_paid || 0)).toLocaleString()}</strong>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="builder-root-status">
+                      <span className="root-contributed">₱{profile.total_paid?.toLocaleString() || 0} contributed</span>
+                      <span className="root-message">Contributing at your own pace</span>
+                    </div>
+                  )}
+
+                  {/* Receipt Upload */}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleReceiptUpload}
+                    ref={receiptFileInputRef}
+                    style={{ display: 'none' }}
+                    id="receipt-upload"
+                  />
+                  <button
+                    className="btn-upload-receipt"
+                    onClick={() => receiptFileInputRef.current?.click()}
+                    disabled={receiptUploading}
+                  >
+                    {receiptUploading ? 'Uploading...' : '📤 Upload Receipt'}
+                  </button>
+
+                  {/* Payment Methods Toggle */}
+                  <div className="payment-methods-toggle">
+                    <button
+                      className={`toggle-btn ${paymentMethodsOpen ? 'open' : ''}`}
+                      onClick={() => setPaymentMethodsOpen(!paymentMethodsOpen)}
+                    >
+                      Payment Methods <span className="toggle-arrow">{paymentMethodsOpen ? '▲' : '▼'}</span>
+                    </button>
+                    {paymentMethodsOpen && (
+                      <div className="payment-methods-content">
+                        <div className="payment-method-item">
+                          <div className="method-label">🇵🇭 Local Bank Transfer</div>
+                          <div className="method-detail"><span>Bank:</span> BDO Unibank</div>
+                          <div className="method-detail"><span>Account:</span> USLS-IS Batch 2003</div>
+                          <div className="method-detail"><span>Number:</span> XXXX-XXXX-XXXX</div>
+                        </div>
+                        <div className="payment-method-item">
+                          <div className="method-label">🌐 International (SWIFT)</div>
+                          <div className="method-detail"><span>Bank:</span> BDO Unibank</div>
+                          <div className="method-detail"><span>SWIFT:</span> BNORPHMM</div>
+                          <div className="method-detail"><span>Account:</span> USLS-IS Batch 2003</div>
+                          <div className="method-detail"><span>Number:</span> XXXX-XXXX-XXXX</div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Receipt History */}
+                  {receipts.length > 0 && (
+                    <div className="builder-receipt-list">
+                      <h4>Receipt History</h4>
+                      <div className="receipt-list-scroll">
+                        {receipts.map(receipt => (
+                          <div key={receipt.id} className="receipt-row">
+                            <a
+                              href={receipt.image_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="receipt-thumb"
+                            >
+                              <img src={receipt.image_url} alt="Receipt" />
+                            </a>
+                            <div className="receipt-info">
+                              <span className="receipt-date">
+                                {new Date(receipt.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                              </span>
+                              <span className={`receipt-source-badge ${receipt.source}`}>
+                                {receipt.source === 'user' ? 'You' : 'Committee'}
+                              </span>
+                            </div>
+                            <span className={`receipt-status-badge ${receipt.status}`}>
+                              {receipt.status === 'submitted' ? 'Submitted' : 'Processed'}
+                            </span>
+                            {receipt.ledger_id && (
+                              <span className={`receipt-verified-badge ${receipt.ledger_status === 'OK' ? 'verified' : 'pending'}`}>
+                                {receipt.ledger_status === 'OK' ? '✓ Verified' : 'Pending'}
+                                {receipt.ledger_amount && ` · ₱${parseFloat(receipt.ledger_amount).toLocaleString()}`}
+                              </span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {receipts.length === 0 && (
+                    <p className="no-receipts-text">No receipts yet. Upload a receipt after making a payment.</p>
+                  )}
+
+                  <div className="builder-links">
+                    <button className="btn-link-text" onClick={() => setShowContributionPlan(true)}>Change Tier</button>
+                    <span className="link-separator">·</span>
+                    <button className="btn-link-text" onClick={() => setShowContributionPlan(true)}>View Full Plan</button>
+                  </div>
                 </div>
               )}
             </div>
@@ -1126,6 +1280,27 @@ END:VCALENDAR`;
             </div>
           </div>
         </div>
+      )}
+
+      {showContributionPlan && (
+        <ContributionPlan
+          isOpen={showContributionPlan}
+          onClose={() => setShowContributionPlan(false)}
+          onTierSaved={(tier, pledge) => {
+            setProfile(prev => ({
+              ...prev,
+              builder_tier: tier,
+              pledge_amount: pledge,
+              builder_tier_set_at: new Date().toISOString()
+            }));
+            setShowContributionPlan(false);
+            setMessage('Builder tier saved!');
+            setTimeout(() => setMessage(''), 3000);
+          }}
+          currentTier={profile.builder_tier}
+          currentPledge={profile.pledge_amount}
+          user={user}
+        />
       )}
     </div>
   );
