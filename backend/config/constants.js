@@ -4,6 +4,7 @@
  */
 
 // Financial constants
+// Default fallback — only used when user hasn't selected a builder tier yet
 const AMOUNT_DUE = 25000; // Target contribution amount per graduate (in PHP)
 
 // JWT token expiry durations

@@ -30,7 +30,10 @@ router.get('/', authenticateToken, async (req, res) => {
               r.status as rsvp_status,
               m.id as master_list_id,
               m.section,
-              m.current_name
+              m.current_name,
+              m.builder_tier,
+              m.pledge_amount,
+              m.builder_tier_set_at
        FROM users u
        LEFT JOIN rsvps r ON u.id = r.user_id
        LEFT JOIN invites i ON u.invite_id = i.id
@@ -54,10 +57,23 @@ router.get('/', authenticateToken, async (req, res) => {
         totalPaid = parseFloat(paymentResult.rows[0].total_paid) || 0;
       }
 
+      // Determine amount_due based on builder tier
+      let amountDue;
+      if (user.builder_tier && user.builder_tier !== 'root') {
+        amountDue = parseFloat(user.pledge_amount);
+      } else if (user.builder_tier === 'root') {
+        amountDue = null;
+      } else {
+        amountDue = AMOUNT_DUE; // Default fallback
+      }
+
       return res.json({
         ...user,
         total_paid: totalPaid,
-        amount_due: AMOUNT_DUE,
+        amount_due: amountDue,
+        builder_tier: user.builder_tier,
+        pledge_amount: user.pledge_amount ? parseFloat(user.pledge_amount) : null,
+        builder_tier_set_at: user.builder_tier_set_at,
         is_graduate: user.section && user.section !== 'Non-Graduate',
         isAdmin: req.user.isAdmin || false
       });
@@ -85,6 +101,69 @@ router.get('/', authenticateToken, async (req, res) => {
     }
 
     return res.status(404).json({ error: 'User not found' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Update builder tier
+router.put('/builder-tier', authenticateToken, async (req, res) => {
+  try {
+    const { tier, pledge_amount } = req.body;
+    const validTiers = ['cornerstone', 'pillar', 'anchor', 'root'];
+
+    // Validate tier
+    if (!tier || !validTiers.includes(tier)) {
+      return res.status(400).json({ error: 'Invalid tier. Must be one of: cornerstone, pillar, anchor, root' });
+    }
+
+    // Get user's master_list_id
+    const linkResult = await db.query(
+      `SELECT i.master_list_id FROM users u JOIN invites i ON u.invite_id = i.id WHERE u.id = $1`,
+      [req.user.id]
+    );
+
+    if (linkResult.rows.length === 0 || !linkResult.rows[0].master_list_id) {
+      return res.status(400).json({ error: 'Not linked to master list' });
+    }
+
+    const masterListId = linkResult.rows[0].master_list_id;
+
+    // Validate pledge_amount based on tier
+    let finalPledgeAmount;
+    if (tier === 'cornerstone') {
+      if (pledge_amount === null || pledge_amount === undefined || pledge_amount < 25000) {
+        return res.status(400).json({ error: 'Cornerstone tier requires pledge_amount >= 25000' });
+      }
+      finalPledgeAmount = pledge_amount;
+    } else if (tier === 'pillar') {
+      if (pledge_amount === null || pledge_amount === undefined || pledge_amount < 18000 || pledge_amount > 24000) {
+        return res.status(400).json({ error: 'Pillar tier requires pledge_amount between 18000-24000' });
+      }
+      finalPledgeAmount = pledge_amount;
+    } else if (tier === 'anchor') {
+      if (pledge_amount === null || pledge_amount === undefined || pledge_amount < 10000 || pledge_amount > 17000) {
+        return res.status(400).json({ error: 'Anchor tier requires pledge_amount between 10000-17000' });
+      }
+      finalPledgeAmount = pledge_amount;
+    } else if (tier === 'root') {
+      finalPledgeAmount = null;
+    }
+
+    // Update master_list
+    const result = await db.query(
+      `UPDATE master_list SET builder_tier = $1, pledge_amount = $2, builder_tier_set_at = NOW() WHERE id = $3
+       RETURNING builder_tier, pledge_amount, builder_tier_set_at`,
+      [tier, finalPledgeAmount, masterListId]
+    );
+
+    const row = result.rows[0];
+    res.json({
+      builder_tier: row.builder_tier,
+      pledge_amount: row.pledge_amount ? parseFloat(row.pledge_amount) : null,
+      builder_tier_set_at: row.builder_tier_set_at
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });

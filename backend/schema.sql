@@ -11,6 +11,7 @@ DROP TABLE IF EXISTS meeting_minutes;
 DROP TABLE IF EXISTS permissions;
 DROP TABLE IF EXISTS password_resets;
 DROP TABLE IF EXISTS announcements;
+DROP TABLE IF EXISTS receipt_uploads;
 DROP TABLE IF EXISTS ledger;
 DROP TABLE IF EXISTS rsvps;
 DROP TABLE IF EXISTS users;
@@ -47,8 +48,12 @@ CREATE TABLE master_list (
     in_memoriam BOOLEAN DEFAULT FALSE,
     is_unreachable BOOLEAN DEFAULT FALSE,
     is_admin BOOLEAN DEFAULT FALSE,
+    builder_tier VARCHAR(20),                   -- 'cornerstone', 'pillar', 'anchor', 'root'
+    pledge_amount DECIMAL(12,2),                -- Committed contribution amount (NULL for root tier)
+    builder_tier_set_at TIMESTAMP,              -- When tier was selected/changed
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT valid_builder_tier CHECK (builder_tier IS NULL OR builder_tier IN ('cornerstone', 'pillar', 'anchor', 'root'))
 );
 
 -- Invites table: the allow-list of emails
@@ -117,6 +122,23 @@ CREATE TABLE ledger (
     created_by VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Receipt uploads table: user-submitted payment receipts for controller processing
+CREATE TABLE receipt_uploads (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    master_list_id INTEGER REFERENCES master_list(id),
+    image_url VARCHAR(500) NOT NULL,
+    image_public_id VARCHAR(255),
+    note TEXT,
+    status VARCHAR(20) DEFAULT 'submitted',     -- 'submitted' or 'processed'
+    source VARCHAR(10) DEFAULT 'user',          -- 'user' or 'admin' (admin uploads on behalf)
+    is_duplicate BOOLEAN DEFAULT FALSE,
+    ledger_id INTEGER REFERENCES ledger(id) ON DELETE SET NULL,
+    processed_by INTEGER REFERENCES admins(id),
+    processed_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Announcements table
@@ -254,6 +276,11 @@ CREATE INDEX idx_messages_from_user ON messages(from_user_id);
 CREATE INDEX idx_messages_from_admin ON messages(from_admin_id);
 CREATE INDEX idx_messages_parent ON messages(parent_id);
 
+-- Indexes for receipt_uploads
+CREATE INDEX idx_receipt_uploads_user ON receipt_uploads(user_id);
+CREATE INDEX idx_receipt_uploads_master_list ON receipt_uploads(master_list_id);
+CREATE INDEX idx_receipt_uploads_status ON receipt_uploads(status);
+CREATE INDEX idx_receipt_uploads_ledger ON receipt_uploads(ledger_id);
 
 -- Indexes for performance
 CREATE INDEX idx_invite_token ON invites(invite_token);
@@ -279,6 +306,10 @@ CREATE INDEX idx_event_rsvps_event ON event_rsvps(event_id);
 CREATE INDEX idx_event_rsvps_user ON event_rsvps(user_id);
 CREATE INDEX idx_volunteer_interests_user ON volunteer_interests(user_id);
 
+-- Unique index on ledger.reference_no for dedup (non-null, non-empty only)
+CREATE UNIQUE INDEX idx_ledger_reference_no_unique 
+  ON ledger(reference_no) 
+  WHERE reference_no IS NOT NULL AND reference_no != '';
 
 
 -- ============================================================
@@ -304,6 +335,7 @@ CREATE INDEX idx_volunteer_interests_user ON volunteer_interests(user_id);
 -- DELETE FROM permissions WHERE admin_id != 1;
 -- DELETE FROM password_resets;
 -- DELETE FROM announcements;
+-- DELETE FROM receipt_uploads;
 -- DELETE FROM rsvps;
 -- DELETE FROM event_rsvps;
 -- DELETE FROM events;
@@ -316,7 +348,10 @@ CREATE INDEX idx_volunteer_interests_user ON volunteer_interests(user_id);
 --     current_name = NULL,
 --     status = 'Not Invited',
 --     is_admin = FALSE,
---     is_unreachable = FALSE
+--     is_unreachable = FALSE,
+--     builder_tier = NULL,
+--     pledge_amount = NULL,
+--     builder_tier_set_at = NULL
 --   WHERE id > 0;
 -- "
 --
@@ -339,7 +374,10 @@ CREATE INDEX idx_volunteer_interests_user ON volunteer_interests(user_id);
 --     current_name = NULL,
 --     status = 'Not Invited',
 --     is_admin = FALSE,
---     is_unreachable = FALSE
+--     is_unreachable = FALSE,
+--     builder_tier = NULL,
+--     pledge_amount = NULL,
+--     builder_tier_set_at = NULL
 --   WHERE id > 0;
 
 -- ============================================================
@@ -364,6 +402,22 @@ CREATE INDEX idx_volunteer_interests_user ON volunteer_interests(user_id);
 --
 -- CREATE INDEX idx_action_items_meeting ON action_items(meeting_id);
 -- CREATE INDEX idx_action_items_assignee ON action_items(assignee_id);
+
+-- ============================================================
+-- MIGRATION: Builder Tiers + Receipt Uploads (for existing databases)
+-- ============================================================
+-- If you already have data and need to add builder tiers + receipt uploads:
+--
+-- ALTER TABLE master_list ADD COLUMN IF NOT EXISTS builder_tier VARCHAR(20);
+-- ALTER TABLE master_list ADD COLUMN IF NOT EXISTS pledge_amount DECIMAL(12,2);
+-- ALTER TABLE master_list ADD COLUMN IF NOT EXISTS builder_tier_set_at TIMESTAMP;
+-- ALTER TABLE master_list ADD CONSTRAINT valid_builder_tier
+--   CHECK (builder_tier IS NULL OR builder_tier IN ('cornerstone', 'pillar', 'anchor', 'root'));
+--
+-- CREATE TABLE IF NOT EXISTS receipt_uploads ( ... );  -- See migration file
+--
+-- CREATE UNIQUE INDEX IF NOT EXISTS idx_ledger_reference_no_unique
+--   ON ledger(reference_no) WHERE reference_no IS NOT NULL AND reference_no != '';
 
 -- ============================================================
 -- COMMITTEE PAGE ORDERING

@@ -1,0 +1,1951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Golden Batch — Contribution & Funding Plan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green: #006633;
+      --dark-green: #004d26;
+      --deep-green: #003319;
+      --gold: #CFB53B;
+      --dark-gold: #5b4b12;
+      --gold-light: rgba(207, 181, 59, 0.12);
+      --black: #1a1a1a;
+      --gray: #666666;
+      --light-gray: #999999;
+      --panel: #f5f5f0;
+      --gold-panel: #faf6e8;
+      --green-panel: #e8f5e8;
+      --line: #e0e0d8;
+      --white: #ffffff;
+      --danger: #c0392b;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Source Sans 3', sans-serif;
+      color: var(--black);
+      background: var(--white);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ═══════════════════════════════════════
+       HEADER
+       ═══════════════════════════════════════ */
+    header {
+      background: var(--dark-green);
+      padding: 32px 0 28px;
+      border-bottom: 2px solid var(--gold);
+    }
+
+    header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .header-left { flex: 1; }
+
+    .eyebrow {
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: rgba(136, 187, 136, 0.7);
+      margin-bottom: 8px;
+    }
+
+    .site-title {
+      font-family: 'Source Serif 4', serif;
+      font-weight: 700;
+      font-size: 36px;
+      line-height: 1.15;
+      color: var(--white);
+    }
+
+    .site-title span { color: var(--gold); }
+
+    .badge {
+      display: inline-block;
+      background: var(--green);
+      color: var(--white);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-top: 16px;
+    }
+
+    .header-tagline {
+      font-size: 13px;
+      color: #cccccc;
+      margin-top: 8px;
+    }
+
+    .header-right {
+      text-align: center;
+      flex-shrink: 0;
+      padding-left: 20px;
+    }
+
+    .header-right .label {
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #88bb88;
+    }
+
+    .header-right .funding-target {
+      font-family: 'Source Serif 4', serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--gold);
+      margin-top: 2px;
+    }
+
+    .header-right .sub {
+      font-size: 11px;
+      color: #aaaaaa;
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    /* Pillars bar */
+    .pillars-bar {
+      background: var(--dark-green);
+      padding: 14px 0;
+    }
+
+    .pillars {
+      display: flex;
+      justify-content: space-around;
+    }
+
+    .pillar {
+      text-align: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: 0.5px;
+    }
+
+    .pillar::before {
+      content: '●';
+      color: var(--gold);
+      margin-right: 8px;
+      font-size: 10px;
+    }
+
+    /* ═══════════════════════════════════════
+       MAIN
+       ═══════════════════════════════════════ */
+    main { padding: 40px 0 48px; }
+
+    .gold-divider { height: 2px; background: var(--gold); margin: 28px 0; }
+
+    /* ═══════════════════════════════════════
+       PROGRESS
+       ═══════════════════════════════════════ */
+    .progress-box {
+      background: var(--panel);
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 28px;
+      border-left: 4px solid var(--green);
+    }
+
+    .progress-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 8px;
+    }
+
+    .progress-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+
+    .progress-amount {
+      font-family: 'Source Serif 4', serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--black);
+    }
+
+    .progress-pct {
+      font-family: 'Source Serif 4', serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--green);
+    }
+
+    .progress-sub {
+      font-size: 12px;
+      color: var(--light-gray);
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .progress-bar-track {
+      background: var(--line);
+      border-radius: 6px;
+      height: 10px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      background: var(--green);
+      height: 100%;
+      border-radius: 6px;
+      transition: width 0.5s ease;
+    }
+
+    .progress-timeline {
+      font-size: 12px;
+      color: var(--light-gray);
+      margin-top: 8px;
+    }
+
+    /* ═══════════════════════════════════════
+       LETTER
+       ═══════════════════════════════════════ */
+    .letter {
+      background: var(--panel);
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 24px;
+      font-size: 14px;
+      color: var(--gray);
+      line-height: 1.75;
+      border-left: 4px solid var(--green);
+    }
+
+    .letter p { margin-bottom: 12px; }
+    .letter p:last-child { margin-bottom: 0; }
+    .letter b { color: var(--black); }
+    .letter .sign { text-align: right; font-style: italic; margin-top: 12px; font-size: 13px; color: var(--green); }
+
+    /* ═══════════════════════════════════════
+       SECTION HEADINGS
+       ═══════════════════════════════════════ */
+    .section-title {
+      font-family: 'Source Serif 4', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 6px;
+    }
+
+    .section-subtitle {
+      font-size: 14px;
+      color: var(--gray);
+      margin-bottom: 16px;
+    }
+
+    /* ═══════════════════════════════════════
+       ALLOCATION
+       ═══════════════════════════════════════ */
+    .alloc-section-label {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 12px;
+    }
+
+    .alloc-group { margin-bottom: 20px; }
+
+    .alloc-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+    }
+
+    .alloc-items { flex: 1; }
+
+    .alloc-item {
+      display: flex;
+      align-items: flex-start;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
+      gap: 12px;
+    }
+
+    .alloc-item:last-child { border-bottom: none; }
+
+    .alloc-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+      width: 24px;
+      text-align: center;
+    }
+
+    .alloc-details { flex: 1; }
+
+    .alloc-name {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--black);
+    }
+
+    .alloc-desc {
+      font-size: 13px;
+      color: var(--gray);
+      line-height: 1.4;
+    }
+
+    .alloc-pct {
+      font-family: 'Source Serif 4', serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--black);
+      flex-shrink: 0;
+      min-width: 50px;
+      text-align: right;
+    }
+
+    .big-pct-block {
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .big-pct {
+      font-family: 'Source Serif 4', serif;
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--green);
+    }
+
+    .big-pct.gold { color: var(--gold); }
+
+    .big-pct-label {
+      font-size: 12px;
+      color: var(--light-gray);
+      text-align: right;
+    }
+
+    .alloc-note {
+      font-size: 13px;
+      color: var(--light-gray);
+      padding: 8px 0;
+      border-top: 1px solid var(--line);
+      line-height: 1.5;
+    }
+
+    .alloc-bar {
+      height: 10px;
+      background: var(--line);
+      border-radius: 6px;
+      overflow: hidden;
+      margin: 8px 0;
+    }
+
+    .alloc-bar-fill {
+      height: 100%;
+      border-radius: 6px;
+    }
+
+    .alloc-bar-fill.green { background: var(--green); }
+    .alloc-bar-fill.gold { background: var(--gold); }
+
+    /* ═══════════════════════════════════════
+       INFO BOXES
+       ═══════════════════════════════════════ */
+    .info-row {
+      display: flex;
+      gap: 16px;
+      margin-top: 28px;
+      margin-bottom: 8px;
+    }
+
+    .info-box {
+      flex: 1;
+      background: var(--white);
+      border-radius: 10px;
+      padding: 18px;
+    }
+
+    .info-box.green-border { border: 2px solid #c8e6c8; }
+    .info-box.gold-border { border: 2px solid var(--gold); }
+
+    .info-box-title {
+      font-weight: 700;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+
+    .info-box-title.green { color: var(--green); }
+    .info-box-title.gold { color: var(--gold); }
+
+    .info-box p {
+      font-size: 13px;
+      color: var(--gray);
+      line-height: 1.5;
+    }
+
+    /* ═══════════════════════════════════════
+       TIER CARDS — INTERACTIVE
+       ═══════════════════════════════════════ */
+    .tier-heading {
+      font-family: 'Source Serif 4', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--black);
+      font-style: italic;
+    }
+
+    .builders-count {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--green);
+      margin: 0 0 24px 0;
+    }
+
+    .tier-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .tier-card {
+      border-radius: 10px;
+      padding: 20px 16px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tier-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 10px;
+      border: 3px solid transparent;
+      transition: border-color 0.3s ease;
+      pointer-events: none;
+    }
+
+    .tier-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .tier-card.selected::after {
+      border-color: var(--gold);
+    }
+
+    .tier-card.selected {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(207, 181, 59, 0.3);
+    }
+
+    /* Tier card variants */
+    .tier-card.cornerstone {
+      background: var(--dark-green);
+      color: var(--white);
+    }
+
+    .tier-card.pillar {
+      background: #6b5a1e;
+      color: var(--white);
+    }
+
+    .tier-card.anchor {
+      background: #4a4a4a;
+      color: var(--white);
+    }
+
+    .tier-card.root {
+      background: var(--white);
+      color: var(--black);
+      border: 2px solid var(--line);
+    }
+
+    .tier-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .tier-card.cornerstone .tier-label { color: var(--gold); }
+    .tier-card.pillar .tier-label { color: var(--gold); }
+    .tier-card.anchor .tier-label { color: #cccccc; }
+    .tier-card.root .tier-label { color: var(--green); border-bottom-color: rgba(0,0,0,0.1); }
+
+    .tier-tagline {
+      font-size: 11px;
+      font-style: italic;
+      margin-top: 6px;
+    }
+
+    .tier-card.cornerstone .tier-tagline { color: #88bb88; }
+    .tier-card.pillar .tier-tagline { color: #ccccaa; }
+    .tier-card.anchor .tier-tagline { color: #aaaaaa; }
+    .tier-card.root .tier-tagline { color: var(--gray); }
+
+    .tier-amount {
+      font-family: 'Source Serif 4', serif;
+      font-size: 22px;
+      font-weight: 700;
+      margin-top: 12px;
+    }
+
+    .tier-card.root .tier-amount { color: var(--green); font-style: italic; }
+    .tier-card.pillar .tier-amount { color: var(--gold); }
+
+    .tier-monthly {
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .tier-card.cornerstone .tier-monthly { color: #88bb88; }
+    .tier-card.pillar .tier-monthly { color: #ccccaa; }
+    .tier-card.anchor .tier-monthly { color: #aaaaaa; }
+    .tier-card.root .tier-monthly { color: var(--gray); }
+
+    .tier-desc {
+      font-size: 12px;
+      line-height: 1.45;
+      margin-top: 12px;
+    }
+
+    .tier-card.cornerstone .tier-desc { color: #ccddcc; }
+    .tier-card.pillar .tier-desc { color: #ccccaa; }
+    .tier-card.anchor .tier-desc { color: #bbbbbb; }
+    .tier-card.root .tier-desc { color: var(--gray); }
+
+    .tier-flex-note {
+      font-size: 11px;
+      margin-top: 8px;
+    }
+
+    .tier-card.cornerstone .tier-flex-note { color: #88bb88; }
+    .tier-card.pillar .tier-flex-note { color: #ccccaa; }
+    .tier-card.anchor .tier-flex-note { color: #aaaaaa; }
+    .tier-card.root .tier-flex-note { color: var(--gray); }
+
+    /* Selected check indicator */
+    .tier-check {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--gold);
+      color: var(--dark-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      opacity: 0;
+      transform: scale(0.5);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .tier-card.selected .tier-check {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* ═══════════════════════════════════════
+       PLEDGE PANEL (appears after selection)
+       ═══════════════════════════════════════ */
+    .pledge-panel {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, margin 0.4s ease;
+      opacity: 0;
+      margin-top: 0;
+    }
+
+    .pledge-panel.open {
+      max-height: 1400px;
+      opacity: 1;
+      margin-top: 20px;
+    }
+
+    .pledge-inner {
+      background: var(--panel);
+      border: 2px solid var(--gold);
+      border-radius: 12px;
+      padding: 28px;
+    }
+
+    .pledge-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .pledge-tier-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .pledge-tier-badge.cornerstone { background: var(--dark-green); color: var(--gold); }
+    .pledge-tier-badge.pillar { background: #6b5a1e; color: var(--gold); }
+    .pledge-tier-badge.anchor { background: #4a4a4a; color: #cccccc; }
+    .pledge-tier-badge.root { background: var(--green-panel); color: var(--green); }
+
+    .pledge-title {
+      font-family: 'Source Serif 4', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--black);
+    }
+
+    /* Pledge amount input */
+    .pledge-amount-section {
+      margin-bottom: 24px;
+    }
+
+    .pledge-amount-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--black);
+      margin-bottom: 8px;
+    }
+
+    .pledge-amount-hint {
+      font-size: 12px;
+      color: var(--light-gray);
+      margin-bottom: 12px;
+    }
+
+    .pledge-input-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .pledge-input-wrapper {
+      position: relative;
+      flex: 1;
+      max-width: 280px;
+    }
+
+    .pledge-currency {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: 'Source Serif 4', serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--green);
+    }
+
+    .pledge-input {
+      width: 100%;
+      padding: 14px 14px 14px 32px;
+      font-family: 'Source Serif 4', serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--black);
+      background: var(--white);
+      border: 2px solid var(--line);
+      border-radius: 10px;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .pledge-input:focus {
+      border-color: var(--green);
+    }
+
+    .pledge-input.error {
+      border-color: var(--danger);
+    }
+
+    .pledge-monthly-calc {
+      font-size: 13px;
+      color: var(--green);
+      font-weight: 600;
+    }
+
+    /* Dynamic breakdown mini-table */
+    .pledge-breakdown {
+      display: none;
+      margin-top: 14px;
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 16px;
+      animation: fadeUp 0.3s ease both;
+    }
+
+    .pledge-breakdown.visible {
+      display: block;
+    }
+
+    .pledge-breakdown-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--green);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pledge-breakdown-title::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gold);
+      flex-shrink: 0;
+    }
+
+    .breakdown-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .breakdown-item {
+      padding: 12px;
+      text-align: center;
+      border-right: 1px solid var(--line);
+    }
+
+    .breakdown-item:last-child {
+      border-right: none;
+    }
+
+    .breakdown-value {
+      font-family: 'Source Serif 4', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--dark-green);
+      line-height: 1;
+    }
+
+    .breakdown-label {
+      font-size: 11px;
+      color: var(--light-gray);
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    .breakdown-remaining {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--gray);
+      line-height: 1.5;
+    }
+
+    .breakdown-remaining strong {
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    @media (max-width: 600px) {
+      .breakdown-grid { grid-template-columns: repeat(3, 1fr); }
+      .breakdown-value { font-size: 17px; }
+    }
+
+    .pledge-error {
+      font-size: 12px;
+      color: var(--danger);
+      margin-top: 6px;
+      min-height: 18px;
+    }
+
+    /* Root special — no amount input */
+    .pledge-root-message {
+      background: var(--green-panel);
+      border-radius: 8px;
+      padding: 16px;
+      font-size: 14px;
+      color: var(--green);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .pledge-root-message strong {
+      color: var(--dark-green);
+    }
+
+    /* ═══════════════════════════════════════
+       PAYMENT INFO (inside pledge panel)
+       ═══════════════════════════════════════ */
+    .payment-methods {
+      border-top: 1px solid var(--line);
+      padding-top: 20px;
+    }
+
+    .payment-methods-title {
+      font-family: 'Source Serif 4', serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 16px;
+    }
+
+    .payment-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .payment-card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 16px;
+    }
+
+    .payment-card-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--green);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .payment-card-label .flag { font-size: 14px; }
+
+    .payment-detail {
+      margin-bottom: 8px;
+    }
+
+    .payment-detail:last-child { margin-bottom: 0; }
+
+    .payment-detail-label {
+      font-size: 11px;
+      color: var(--light-gray);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .payment-detail-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--black);
+      font-family: 'Source Sans 3', sans-serif;
+      letter-spacing: 0.3px;
+      user-select: all;
+    }
+
+    .payment-note {
+      font-size: 12px;
+      color: var(--light-gray);
+      background: var(--gold-panel);
+      border-radius: 6px;
+      padding: 10px 14px;
+      line-height: 1.5;
+    }
+
+    .payment-note strong {
+      color: var(--dark-gold);
+    }
+
+    /* Confirm button */
+    .pledge-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .btn-confirm {
+      flex: 1;
+      padding: 16px 28px;
+      background: var(--dark-green);
+      color: var(--gold);
+      border: 2px solid var(--gold);
+      border-radius: 10px;
+      font-family: 'Source Serif 4', serif;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-confirm:hover {
+      background: var(--green);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 102, 51, 0.3);
+    }
+
+    .btn-confirm:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-change {
+      padding: 16px 24px;
+      background: transparent;
+      color: var(--gray);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-change:hover {
+      border-color: var(--gray);
+      color: var(--black);
+    }
+
+    /* ═══════════════════════════════════════
+       SUCCESS STATE
+       ═══════════════════════════════════════ */
+    .success-panel {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .success-panel.open {
+      max-height: 400px;
+      opacity: 1;
+      margin-top: 20px;
+    }
+
+    .success-inner {
+      background: linear-gradient(135deg, var(--dark-green) 0%, var(--green) 100%);
+      border: 2px solid var(--gold);
+      border-radius: 12px;
+      padding: 32px;
+      text-align: center;
+    }
+
+    .success-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: rgba(207, 181, 59, 0.2);
+      border: 2px solid var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      font-size: 28px;
+    }
+
+    .success-title {
+      font-family: 'Source Serif 4', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+
+    .success-message {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.85);
+      line-height: 1.6;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    .success-tier-summary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 10px 20px;
+      border-radius: 8px;
+      margin-top: 16px;
+      font-size: 14px;
+      color: var(--white);
+      font-weight: 600;
+    }
+
+    .success-tier-summary .amount {
+      font-family: 'Source Serif 4', serif;
+      color: var(--gold);
+      font-size: 18px;
+    }
+
+    .btn-start-over {
+      margin-top: 16px;
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 12px;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    .btn-start-over:hover {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    /* ═══════════════════════════════════════
+       RECOGNITION TABLE
+       ═══════════════════════════════════════ */
+    .recognition-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .recognition-table thead tr {
+      background: var(--dark-green);
+      color: var(--white);
+    }
+
+    .recognition-table th {
+      padding: 12px 10px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .recognition-table th:first-child {
+      text-align: left;
+      padding-left: 14px;
+      width: 40%;
+    }
+
+    .recognition-table th.gold-col { color: var(--gold); }
+
+    .recognition-table tbody tr {
+      border-bottom: 1px solid var(--line);
+    }
+
+    .recognition-table tbody tr:nth-child(odd) { background: var(--white); }
+    .recognition-table tbody tr:nth-child(even) { background: var(--panel); }
+
+    .recognition-table td {
+      padding: 12px 10px;
+      text-align: center;
+    }
+
+    .recognition-table td:first-child {
+      text-align: left;
+      padding-left: 14px;
+      font-weight: 600;
+    }
+
+    .recognition-table .check { color: var(--green); font-size: 15px; }
+    .recognition-table .dash { color: #ccc; }
+    .recognition-table .detail { font-size: 12px; color: var(--green); }
+
+    /* Recognition description cards */
+    .recog-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .recog-card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+    }
+
+    .recog-card.full { grid-column: 1 / -1; border-color: var(--gold); }
+
+    .recog-card-title {
+      font-weight: 700;
+      font-size: 12px;
+      color: var(--green);
+      margin-bottom: 4px;
+    }
+
+    .recog-card.full .recog-card-title { color: var(--gold); }
+
+    .recog-card p {
+      font-size: 12px;
+      color: var(--gray);
+    }
+
+    /* Commemorative note */
+    .commemorate {
+      background: var(--gold-panel);
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-top: 16px;
+    }
+
+    .commemorate-title {
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--dark-gold);
+      margin-bottom: 4px;
+    }
+
+    .commemorate p {
+      font-size: 12px;
+      color: var(--dark-gold);
+      line-height: 1.5;
+    }
+
+    /* ═══════════════════════════════════════
+       CTA
+       ═══════════════════════════════════════ */
+    .cta-box {
+      background: var(--dark-green);
+      border: 3px solid var(--gold);
+      border-radius: 12px;
+      padding: 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 28px;
+    }
+
+    .cta-title {
+      font-family: 'Source Serif 4', serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--gold);
+      font-style: italic;
+    }
+
+    .cta-sub {
+      font-size: 13px;
+      color: #aaddaa;
+      margin-top: 6px;
+    }
+
+    .cta-right { text-align: right; }
+
+    .cta-link {
+      display: inline-block;
+      background: var(--gold);
+      color: var(--dark-green);
+      font-weight: 700;
+      font-size: 14px;
+      padding: 14px 28px;
+      border-radius: 24px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .cta-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(207, 181, 59, 0.4);
+    }
+
+    .cta-link-sub {
+      font-size: 11px;
+      color: #aaaaaa;
+      margin-top: 6px;
+      font-style: italic;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 2px solid var(--green);
+      padding: 12px 0;
+      text-align: center;
+    }
+
+    .footer-text {
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--light-gray);
+    }
+
+    /* ═══════════════════════════════════════
+       ANIMATIONS
+       ═══════════════════════════════════════ */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+      animation: fadeUp 0.5s ease both;
+    }
+
+    /* ═══════════════════════════════════════
+       RESPONSIVE
+       ═══════════════════════════════════════ */
+    @media (max-width: 600px) {
+      .site-title { font-size: 28px; }
+      header .container { flex-direction: column; align-items: flex-start; }
+      .header-right { text-align: left; padding-left: 0; margin-top: 12px; }
+      .tier-grid { grid-template-columns: repeat(2, 1fr); }
+      .info-row { flex-direction: column; }
+      .cta-box { flex-direction: column; gap: 16px; text-align: center; }
+      .pillars { flex-wrap: wrap; gap: 8px; }
+      .payment-grid { grid-template-columns: 1fr; }
+      .pledge-input-row { flex-direction: column; align-items: flex-start; }
+      .recog-grid { grid-template-columns: 1fr; }
+      .recog-card.full { grid-column: 1; }
+      .alloc-row { flex-direction: column; }
+      .big-pct-block { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container">
+      <div class="header-left">
+        <div class="eyebrow">USLS-IS BATCH 2003 · 25TH ALUMNI HOMECOMING · DEC. 16, 2028 · SANTUARIO DE LA SALLE, BACOLOD CITY</div>
+        <h1 class="site-title">The <span>Golden</span> Batch 2003</h1>
+        <div style="font-family: 'Source Serif 4', serif; font-size: 28px; font-weight: 700; color: var(--gold); margin: 4px 0 12px 0; line-height: 1.2; letter-spacing: 1px;">25<sup style="font-size: 16px;">th</sup> Year Reunion</div>
+        <div class="badge">Contribution & Funding Plan</div>
+        <div class="header-tagline">25 years later, we're coming home. Together, let's make it unforgettable.</div>
+      </div>
+      <div class="header-right">
+        <div class="label">Funding Target</div>
+        <div class="funding-target">₱2,100,000</div>
+        <div class="sub">Full Batch Vision Target. Achievable<br>through collective commitment and<br>fundraising support.</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="pillars-bar">
+    <div class="container">
+      <div class="pillars">
+        <div class="pillar">Reconnect</div>
+        <div class="pillar">Celebrate</div>
+        <div class="pillar">Network</div>
+        <div class="pillar">Give Back</div>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <div class="container">
+
+      <!-- Progress -->
+      <div class="progress-box">
+        <div class="progress-label">Our Progress</div>
+        <div class="progress-row">
+          <div class="progress-amount">₱206,950</div>
+          <div class="progress-pct">9.9%</div>
+        </div>
+        <div class="progress-sub">
+          <span>raised so far</span>
+          <span>of ₱2,100,000 goal</span>
+        </div>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" style="width: 9.9%;"></div>
+        </div>
+        <div class="progress-timeline">January 2026 — December 2028</div>
+      </div>
+
+      <!-- Letter -->
+      <div class="letter">
+        <p><b style="color: var(--green);">Dear Batchmates,</b></p>
+        <p>As we prepare for our 25th Homecoming, we want to share a clear and complete picture of what we're building together.</p>
+        <p>The ₱2.1M shown here represents our total batch vision — covering the Main Event, Teachers' Dinner, commemorative items, fundraising initiatives, and our Giving Back commitment. This is not an amount expected to come solely from direct contributions. We are using a <b>hybrid model</b>, combining batch contributions with income generated from selected initiatives.</p>
+        <p>The Main Event remains the centerpiece of our milestone celebration, while our fundraising initiatives are structured to generate additional returns to support the overall plan. Our goal is transparency, balance, and a celebration worthy of 25 years.</p>
+        <p class="sign">— USLS-IS Batch 2003 Organizing Committee</p>
+      </div>
+
+      <div class="gold-divider"></div>
+
+      <!-- Where Your Contribution Goes -->
+      <h2 class="section-title" style="font-style: italic;">Where your contribution goes</h2>
+      <p class="section-subtitle">Total plan supported by contributions and fundraising. ₱2,100,000 Full Batch Vision Target.</p>
+
+      <!-- Core Celebration -->
+      <div class="alloc-group">
+        <div class="alloc-section-label">Core Celebration</div>
+        <div class="alloc-row">
+          <div class="alloc-items">
+            <div class="alloc-item">
+              <span class="alloc-icon">🎉</span>
+              <div class="alloc-details">
+                <div class="alloc-name">Main Event</div>
+                <div class="alloc-desc">Primary celebration covering venue, catering, production, and full program execution.</div>
+              </div>
+              <span class="alloc-pct">50%</span>
+            </div>
+            <div class="alloc-item">
+              <span class="alloc-icon">🎓</span>
+              <div class="alloc-details">
+                <div class="alloc-name">Teachers' Dinner</div>
+                <div class="alloc-desc">A separate evening dedicated to the teachers who shaped us. Our way of saying thank you, long overdue.</div>
+              </div>
+              <span class="alloc-pct">12%</span>
+            </div>
+            <div class="alloc-item">
+              <span class="alloc-icon">👕</span>
+              <div class="alloc-details">
+                <div class="alloc-name">Merch & Commemorative Items</div>
+                <div class="alloc-desc">Every batchmate gets a shirt. Premium items sold separately help offset the cost.</div>
+              </div>
+              <span class="alloc-pct">8%</span>
+            </div>
+            <div class="alloc-item">
+              <span class="alloc-icon">💚</span>
+              <div class="alloc-details">
+                <div class="alloc-name">Charity / Giving Back</div>
+                <div class="alloc-desc">A portion of what we raise goes back to the school and its community.</div>
+              </div>
+              <span class="alloc-pct">7%</span>
+            </div>
+            <div class="alloc-item">
+              <span class="alloc-icon">🔒</span>
+              <div class="alloc-details">
+                <div class="alloc-name">Contingency & Buffer</div>
+                <div class="alloc-desc">Reserved buffer to protect the batch from unforeseen costs.</div>
+              </div>
+              <span class="alloc-pct">3%</span>
+            </div>
+          </div>
+          <div class="big-pct-block">
+            <div class="big-pct">80%</div>
+            <div class="big-pct-label">of total batch vision</div>
+          </div>
+        </div>
+        <div class="alloc-note">
+          <div class="alloc-bar"><div class="alloc-bar-fill green" style="width: 80%;"></div></div>
+          80% of our total plan funds the core celebration — the Main Event, Teachers' Dinner, and commemorative items.
+        </div>
+      </div>
+
+      <!-- Fundraising Initiatives -->
+      <div class="alloc-group">
+        <div class="alloc-section-label">Fundraising Initiatives</div>
+        <div class="alloc-row">
+          <div class="alloc-items">
+            <div class="alloc-item">
+              <span class="alloc-icon">⛳</span>
+              <div class="alloc-details">
+                <div class="alloc-name">La Sallian Golf</div>
+                <div class="alloc-desc">A 2-day event at Negros Occidental Golf & Country Club (formerly Marapara) bringing La Sallians together from across the nation.</div>
+              </div>
+              <span class="alloc-pct">10%</span>
+            </div>
+            <div class="alloc-item">
+              <span class="alloc-icon">🏃</span>
+              <div class="alloc-details">
+                <div class="alloc-name">La Sallian Run</div>
+                <div class="alloc-desc">A tradition started by our own peers, held first quarter of 2028.</div>
+              </div>
+              <span class="alloc-pct">6%</span>
+            </div>
+            <div class="alloc-item">
+              <span class="alloc-icon">⚽</span>
+              <div class="alloc-details">
+                <div class="alloc-name">In Memoriam Football Cup</div>
+                <div class="alloc-desc">A tribute to the batchmates we've lost, played in their honor.</div>
+              </div>
+              <span class="alloc-pct">4%</span>
+            </div>
+          </div>
+          <div class="big-pct-block">
+            <div class="big-pct gold">20%</div>
+            <div class="big-pct-label">revenue initiative</div>
+          </div>
+        </div>
+        <div class="alloc-note">
+          Upfront operating allocation. Designed to generate sponsorship and entry-fee returns to support the overall fund.
+          <div class="alloc-bar" style="margin-top: 12px;"><div class="alloc-bar-fill gold" style="width: 20%;"></div></div>
+          20% is allocated to launch the Golf tournament, designed to attract sponsors and generate returns to support the overall fund.
+        </div>
+      </div>
+
+      <div class="gold-divider"></div>
+
+      <!-- ═══════════════════════════════════
+           INTERACTIVE BUILDER TIERS
+           ═══════════════════════════════════ -->
+      <h2 class="tier-heading">Golden Batch Builders</h2>
+      <p class="section-subtitle" style="font-style: italic; margin: 0 0 6px 0;">We're all building this homecoming. Choose how you build.</p>
+      <p class="builders-count">9 Builders already in.</p>
+
+      <div class="tier-grid" id="tierGrid">
+        <!-- Cornerstone -->
+        <div class="tier-card cornerstone" onclick="selectTier('cornerstone')" id="tier-cornerstone">
+          <div class="tier-check">✓</div>
+          <div class="tier-label">Cornerstone</div>
+          <div class="tier-tagline">The foundation everything else is built on.</div>
+          <div class="tier-amount">₱25,000+</div>
+          <div class="tier-monthly">≈ ₱694 / month · 36 months</div>
+          <div class="tier-desc">Covers a full program segment of the Main Event, including venue and production.</div>
+          <div class="tier-flex-note">Flexible installments welcome.</div>
+        </div>
+
+        <!-- Pillar -->
+        <div class="tier-card pillar" onclick="selectTier('pillar')" id="tier-pillar">
+          <div class="tier-check">✓</div>
+          <div class="tier-label">Pillar</div>
+          <div class="tier-tagline">Holding this reunion up.</div>
+          <div class="tier-amount">₱18,000 – ₱24,000</div>
+          <div class="tier-monthly">≈ ₱500 – ₱667 / month · 36 months</div>
+          <div class="tier-desc">Fully funds a major event component such as the Teachers' Dinner or staging.</div>
+          <div class="tier-flex-note">Flexible installments welcome.</div>
+        </div>
+
+        <!-- Anchor -->
+        <div class="tier-card anchor" onclick="selectTier('anchor')" id="tier-anchor">
+          <div class="tier-check">✓</div>
+          <div class="tier-label">Anchor</div>
+          <div class="tier-tagline">Keeping us grounded and moving forward.</div>
+          <div class="tier-amount">₱10,000 – ₱17,000</div>
+          <div class="tier-monthly">≈ ₱278 – ₱472 / month · 36 months</div>
+          <div class="tier-desc">Supports venue logistics, commemorative items, and program execution.</div>
+          <div class="tier-flex-note">Flexible installments welcome.</div>
+        </div>
+
+        <!-- Root -->
+        <div class="tier-card root" onclick="selectTier('root')" id="tier-root">
+          <div class="tier-check">✓</div>
+          <div class="tier-label">Root</div>
+          <div class="tier-tagline">Every contribution builds our 25-year legacy. You are part of it.</div>
+          <div class="tier-amount">Open amount</div>
+          <div class="tier-monthly">Any pace · Any amount</div>
+          <div class="tier-desc">Strengthens the collective fund and secures the success of our celebration.</div>
+          <div class="tier-flex-note">Flexible installments welcome.</div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════
+           PLEDGE PANEL (hidden until tier selected)
+           ═══════════════════════════════════ -->
+      <div class="pledge-panel" id="pledgePanel">
+        <div class="pledge-inner">
+          <div class="pledge-header">
+            <div class="pledge-tier-badge" id="pledgeBadge">Cornerstone</div>
+            <div class="pledge-title" id="pledgeTitle">Set your commitment</div>
+          </div>
+
+          <!-- Amount input (hidden for Root) -->
+          <div class="pledge-amount-section" id="pledgeAmountSection">
+            <div class="pledge-amount-label">Your pledge amount</div>
+            <div class="pledge-amount-hint" id="pledgeHint">Minimum ₱25,000</div>
+            <div class="pledge-input-row">
+              <div class="pledge-input-wrapper">
+                <span class="pledge-currency">₱</span>
+                <input type="text" class="pledge-input" id="pledgeInput" placeholder="25,000" inputmode="numeric">
+              </div>
+              <div class="pledge-monthly-calc" id="monthlyCalc"></div>
+            </div>
+            <div class="pledge-error" id="pledgeError"></div>
+
+            <!-- Dynamic breakdown -->
+            <div class="pledge-breakdown" id="pledgeBreakdown">
+              <div class="pledge-breakdown-title">Your contribution breakdown</div>
+              <div class="breakdown-grid">
+                <div class="breakdown-item">
+                  <div class="breakdown-value" id="breakdownMonthly">₱758</div>
+                  <div class="breakdown-label">per month</div>
+                </div>
+                <div class="breakdown-item">
+                  <div class="breakdown-value" id="breakdownWeekly">₱175</div>
+                  <div class="breakdown-label">per week</div>
+                </div>
+                <div class="breakdown-item">
+                  <div class="breakdown-value" id="breakdownDaily">₱25</div>
+                  <div class="breakdown-label">per day</div>
+                </div>
+              </div>
+              <div class="breakdown-remaining" id="breakdownRemaining">
+                <strong>₱25,000</strong> over <strong>35 months</strong> remaining
+                <br>January 2026 — December 2028
+              </div>
+            </div>
+          </div>
+
+          <!-- Root message (hidden for non-Root) -->
+          <div class="pledge-root-message" id="pledgeRootMessage" style="display: none;">
+            <strong>No fixed commitment needed.</strong> Contribute at your own pace, in any amount. Every peso builds our 25-year legacy. Your contributions will be tracked on your profile — no target, no pressure.
+          </div>
+
+          <!-- Payment Methods -->
+          <div class="payment-methods">
+            <div class="payment-methods-title">Payment Methods</div>
+            <div class="payment-grid">
+              <div class="payment-card">
+                <div class="payment-card-label"><span class="flag">🇵🇭</span> Local Bank Transfer</div>
+                <div class="payment-detail">
+                  <div class="payment-detail-label">Bank</div>
+                  <div class="payment-detail-value">BDO Unibank</div>
+                </div>
+                <div class="payment-detail">
+                  <div class="payment-detail-label">Account Name</div>
+                  <div class="payment-detail-value">USLS-IS Batch 2003</div>
+                </div>
+                <div class="payment-detail">
+                  <div class="payment-detail-label">Account Number</div>
+                  <div class="payment-detail-value">XXXX-XXXX-XXXX</div>
+                </div>
+              </div>
+              <div class="payment-card">
+                <div class="payment-card-label"><span class="flag">🌐</span> International (SWIFT)</div>
+                <div class="payment-detail">
+                  <div class="payment-detail-label">Bank</div>
+                  <div class="payment-detail-value">BDO Unibank</div>
+                </div>
+                <div class="payment-detail">
+                  <div class="payment-detail-label">SWIFT Code</div>
+                  <div class="payment-detail-value">BNORPHMM</div>
+                </div>
+                <div class="payment-detail">
+                  <div class="payment-detail-label">Account Name</div>
+                  <div class="payment-detail-value">USLS-IS Batch 2003</div>
+                </div>
+                <div class="payment-detail">
+                  <div class="payment-detail-label">Account Number</div>
+                  <div class="payment-detail-value">XXXX-XXXX-XXXX</div>
+                </div>
+              </div>
+            </div>
+            <div class="payment-note">
+              <strong>Important:</strong> After making a payment, upload your receipt on your profile page. The committee will verify and credit your account within 48 hours. Include your full name in the transfer reference for faster processing.
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="pledge-actions">
+            <button class="btn-confirm" id="btnConfirm" onclick="confirmPledge()">Count Me In</button>
+            <button class="btn-change" onclick="resetSelection()">Change Tier</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════
+           SUCCESS PANEL (hidden until confirmed)
+           ═══════════════════════════════════ -->
+      <div class="success-panel" id="successPanel">
+        <div class="success-inner">
+          <div class="success-icon">🏗️</div>
+          <div class="success-title">You're a Golden Batch Builder!</div>
+          <div class="success-message" id="successMessage">
+            Your commitment has been recorded. You'll see your builder tier and progress on your profile page.
+          </div>
+          <div class="success-tier-summary" id="successSummary">
+            <span id="successTierName">Cornerstone</span> · <span class="amount" id="successAmount">₱25,000</span>
+          </div>
+          <button class="btn-start-over" onclick="resetAll()">Change my selection</button>
+        </div>
+      </div>
+
+      <!-- Info boxes -->
+      <div class="info-row">
+        <div class="info-box green-border">
+          <div class="info-box-title green">Note on Fundraising Events</div>
+          <p>La Sallian Golf, La Sallian Run, and In Memoriam Football Cup are classified as fundraising initiatives. While they require upfront operating costs — covered within the 20% allocation — they are designed to generate revenue through entry fees and sponsorships. The percentages shown reflect gross allocation, not net cost. Any returns generated by these events go back into the overall fund, effectively reducing the batch's total contribution burden.</p>
+        </div>
+        <div class="info-box gold-border">
+          <div class="info-box-title gold">Flexible monthly commitments.</div>
+          <p>You can contribute in monthly installments from January 2026 through December 2028 — that's 36 months to reach your chosen tier. Every peso counts.</p>
+        </div>
+      </div>
+
+      <!-- Recognition -->
+      <div style="margin-top: 32px;">
+        <h2 class="tier-heading">Builder Recognition</h2>
+        <p class="section-subtitle" style="margin: 0 0 24px 0;">Every Builder is recognized. Greater commitments carry additional visibility and legacy distinction.</p>
+
+        <div style="overflow-x: auto;">
+          <table class="recognition-table">
+            <thead>
+              <tr>
+                <th>Recognition</th>
+                <th class="gold-col">Cornerstone</th>
+                <th class="gold-col">Pillar</th>
+                <th>Anchor</th>
+                <th>Root</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Builder's Wall</td>
+                <td class="check">✓</td>
+                <td class="check">✓</td>
+                <td class="check">✓</td>
+                <td class="check">✓</td>
+              </tr>
+              <tr>
+                <td>Souvenir Program</td>
+                <td class="check">✓</td>
+                <td class="check">✓</td>
+                <td class="check">✓</td>
+                <td class="check">✓</td>
+              </tr>
+              <tr>
+                <td>Website Spotlight</td>
+                <td class="detail">Individual feature</td>
+                <td class="detail">Individual feature</td>
+                <td class="detail">Grouped feature</td>
+                <td class="detail">Funds page credits</td>
+              </tr>
+              <tr>
+                <td>Stage Acknowledgment</td>
+                <td class="detail">Named segment</td>
+                <td class="detail">Consolidated mention</td>
+                <td class="dash">—</td>
+                <td class="dash">—</td>
+              </tr>
+              <tr>
+                <td>Giving Back Dedication</td>
+                <td class="check">✓</td>
+                <td class="dash">—</td>
+                <td class="dash">—</td>
+                <td class="dash">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="recog-grid">
+          <div class="recog-card">
+            <div class="recog-card-title">Builder's Wall</div>
+            <p>Physical display at the venue entrance with all Builder names organized by tier.</p>
+          </div>
+          <div class="recog-card">
+            <div class="recog-card-title">Souvenir Program</div>
+            <p>Dedicated page in the printed program with all Builder names. Every attendee receives a copy.</p>
+          </div>
+          <div class="recog-card">
+            <div class="recog-card-title">Website Spotlight</div>
+            <p>Featured on thegoldenbatch2003.com — individual profiles for Cornerstones and Pillars, grouped feature for Anchors.</p>
+          </div>
+          <div class="recog-card">
+            <div class="recog-card-title">Stage Acknowledgment</div>
+            <p>Cornerstones get a named program segment with their name on screen. Pillars are acknowledged together during a consolidated moment.</p>
+          </div>
+          <div class="recog-card full">
+            <div class="recog-card-title">Giving Back Dedication</div>
+            <p>A permanent plaque or marker for Batch 2003's giving-back project to the school — with Cornerstone names individually recognized as its founding contributors. A legacy that outlasts the celebration.</p>
+          </div>
+        </div>
+
+        <div class="commemorate">
+          <div class="commemorate-title">Commemorative Keepsake</div>
+          <p>Every Builder will receive a commemorative item as a token of gratitude — the form this takes is still being finalized by the committee. It could be anything from a custom piece to a collectible memento. Details will be announced once confirmed.</p>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="cta-box">
+        <div>
+          <div class="cta-title">Count me in.</div>
+          <div class="cta-sub">Log in to your profile and choose how you build.</div>
+        </div>
+        <div class="cta-right">
+          <a href="https://thegoldenbatch2003.com" class="cta-link">thegoldenbatch2003.com</a>
+          <div class="cta-link-sub">Full budget transparency — every peso tracked in real time.</div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-text">USLS-IS Batch 2003 Organizing Committee</div>
+    </div>
+  </footer>
+
+  <script>
+    // ═══════════════════════════════════════
+    // TIER SELECTION LOGIC
+    // ═══════════════════════════════════════
+
+    const TIERS = {
+      cornerstone: { label: 'Cornerstone', min: 25000, max: null, placeholder: '25,000' },
+      pillar:      { label: 'Pillar',      min: 18000, max: 24000, placeholder: '20,000' },
+      anchor:      { label: 'Anchor',      min: 10000, max: 17000, placeholder: '13,000' },
+      root:        { label: 'Root',        min: null,  max: null,  placeholder: null }
+    };
+
+    let selectedTier = null;
+    let confirmed = false;
+
+    // Calculate months remaining from today to Dec 2028
+    function getMonthsRemaining() {
+      const now = new Date();
+      const start = new Date(2026, 0, 1); // January 2026 (month is 0-indexed)
+      const end = new Date(2028, 11, 31); // December 2028
+
+      // If before January 2026, use January 2026 as start
+      const from = now < start ? start : now;
+
+      if (from >= end) return 1; // Safety: at least 1 month
+
+      const months = (end.getFullYear() - from.getFullYear()) * 12 + (end.getMonth() - from.getMonth());
+      return Math.max(months, 1);
+    }
+
+    function getStartLabel() {
+      const now = new Date();
+      const start = new Date(2026, 0, 1); // January 2026
+      const from = now < start ? start : now;
+      const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      return monthNames[from.getMonth()] + ' ' + from.getFullYear();
+    }
+
+    function selectTier(tier) {
+      if (confirmed) return;
+
+      selectedTier = tier;
+      const config = TIERS[tier];
+
+      // Update card states
+      document.querySelectorAll('.tier-card').forEach(card => card.classList.remove('selected'));
+      document.getElementById('tier-' + tier).classList.add('selected');
+
+      // Update pledge badge
+      const badge = document.getElementById('pledgeBadge');
+      badge.className = 'pledge-tier-badge ' + tier;
+      badge.textContent = config.label;
+
+      // Show/hide amount input vs root message
+      const amountSection = document.getElementById('pledgeAmountSection');
+      const rootMessage = document.getElementById('pledgeRootMessage');
+      const input = document.getElementById('pledgeInput');
+
+      if (tier === 'root') {
+        amountSection.style.display = 'none';
+        rootMessage.style.display = 'block';
+        document.getElementById('pledgeTitle').textContent = 'Contribute at your own pace';
+        document.getElementById('btnConfirm').disabled = false;
+      } else {
+        amountSection.style.display = 'block';
+        rootMessage.style.display = 'none';
+        document.getElementById('pledgeTitle').textContent = 'Set your commitment';
+
+        // Set hint text
+        const hint = document.getElementById('pledgeHint');
+        if (tier === 'cornerstone') {
+          hint.textContent = 'Minimum ₱25,000';
+        } else {
+          hint.textContent = '₱' + config.min.toLocaleString() + ' – ₱' + config.max.toLocaleString();
+        }
+
+        // Set placeholder and clear input
+        input.placeholder = config.placeholder;
+        input.value = '';
+        document.getElementById('pledgeError').textContent = '';
+        updateBreakdown(0);
+        validatePledge();
+      }
+
+      // Open pledge panel
+      document.getElementById('pledgePanel').classList.add('open');
+      document.getElementById('successPanel').classList.remove('open');
+
+      // Scroll to pledge panel
+      setTimeout(() => {
+        document.getElementById('pledgePanel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 100);
+    }
+
+    // Format number input
+    document.getElementById('pledgeInput').addEventListener('input', function(e) {
+      let raw = e.target.value.replace(/[^0-9]/g, '');
+      if (raw) {
+        e.target.value = parseInt(raw).toLocaleString();
+      }
+      updateBreakdown(parseInt(raw) || 0);
+      validatePledge();
+    });
+
+    function updateBreakdown(amount) {
+      const calc = document.getElementById('monthlyCalc');
+      const breakdown = document.getElementById('pledgeBreakdown');
+      const months = getMonthsRemaining();
+      const weeks = Math.round(months * 4.33);
+      const days = Math.round(months * 30.44);
+
+      if (amount > 0) {
+        const monthly = Math.ceil(amount / months);
+        const weekly = Math.ceil(amount / weeks);
+        const daily = Math.ceil(amount / days);
+
+        calc.textContent = '≈ ₱' + monthly.toLocaleString() + ' / month over ' + months + ' months';
+        calc.style.color = 'var(--green)';
+
+        document.getElementById('breakdownMonthly').textContent = '₱' + monthly.toLocaleString();
+        document.getElementById('breakdownWeekly').textContent = '₱' + weekly.toLocaleString();
+        document.getElementById('breakdownDaily').textContent = '₱' + daily.toLocaleString();
+        document.getElementById('breakdownRemaining').innerHTML =
+          '<strong>₱' + amount.toLocaleString() + '</strong> over <strong>' + months + ' months</strong> remaining' +
+          '<br>' + getStartLabel() + ' — December 2028';
+
+        breakdown.classList.add('visible');
+      } else {
+        calc.textContent = '';
+        breakdown.classList.remove('visible');
+      }
+    }
+
+    function validatePledge() {
+      if (!selectedTier || selectedTier === 'root') {
+        document.getElementById('btnConfirm').disabled = false;
+        return true;
+      }
+
+      const config = TIERS[selectedTier];
+      const raw = document.getElementById('pledgeInput').value.replace(/[^0-9]/g, '');
+      const amount = parseInt(raw) || 0;
+      const errorEl = document.getElementById('pledgeError');
+      const input = document.getElementById('pledgeInput');
+      const btn = document.getElementById('btnConfirm');
+
+      if (!raw) {
+        errorEl.textContent = '';
+        input.classList.remove('error');
+        btn.disabled = true;
+        return false;
+      }
+
+      if (config.min && amount < config.min) {
+        errorEl.textContent = 'Minimum for ' + config.label + ' is ₱' + config.min.toLocaleString();
+        errorEl.style.color = 'var(--danger)';
+        input.classList.add('error');
+        btn.disabled = true;
+        return false;
+      }
+
+      if (config.max && amount > config.max) {
+        // Suggest upgrade
+        const nextTier = selectedTier === 'anchor' ? 'Pillar' : 'Cornerstone';
+        errorEl.textContent = '₱' + amount.toLocaleString() + ' qualifies for ' + nextTier + '! Consider upgrading.';
+        errorEl.style.color = 'var(--green)';
+        input.classList.remove('error');
+        btn.disabled = false;
+        return true;
+      }
+
+      errorEl.textContent = '';
+      errorEl.style.color = 'var(--danger)';
+      input.classList.remove('error');
+      btn.disabled = false;
+      return true;
+    }
+
+    function confirmPledge() {
+      if (!selectedTier) return;
+
+      const config = TIERS[selectedTier];
+      let pledgeAmount = 0;
+
+      if (selectedTier !== 'root') {
+        const raw = document.getElementById('pledgeInput').value.replace(/[^0-9]/g, '');
+        pledgeAmount = parseInt(raw) || 0;
+        if (!validatePledge()) return;
+      }
+
+      confirmed = true;
+
+      // Close pledge, open success
+      document.getElementById('pledgePanel').classList.remove('open');
+
+      setTimeout(() => {
+        // Update success content
+        document.getElementById('successTierName').textContent = config.label;
+
+        if (selectedTier === 'root') {
+          document.getElementById('successAmount').textContent = 'Open';
+          document.getElementById('successMessage').textContent =
+            "You're in! Your contributions will be tracked on your profile — contribute at your own pace. Every peso counts.";
+        } else {
+          const months = getMonthsRemaining();
+          const monthly = Math.ceil(pledgeAmount / months);
+          document.getElementById('successAmount').textContent = '₱' + pledgeAmount.toLocaleString();
+          document.getElementById('successMessage').textContent =
+            'Your commitment of ₱' + pledgeAmount.toLocaleString() + ' as a ' + config.label +
+            ' Builder has been recorded. That\'s ≈ ₱' + monthly.toLocaleString() + '/month over ' +
+            months + ' months. You\'ll see your progress on your profile page.';
+        }
+
+        document.getElementById('successPanel').classList.add('open');
+
+        setTimeout(() => {
+          document.getElementById('successPanel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }, 300);
+
+      // Disable tier cards
+      document.querySelectorAll('.tier-card').forEach(card => {
+        card.style.opacity = '0.6';
+        card.style.pointerEvents = 'none';
+      });
+      document.getElementById('tier-' + selectedTier).style.opacity = '1';
+    }
+
+    function resetSelection() {
+      selectedTier = null;
+      document.querySelectorAll('.tier-card').forEach(card => card.classList.remove('selected'));
+      document.getElementById('pledgePanel').classList.remove('open');
+      document.getElementById('pledgeInput').value = '';
+      document.getElementById('pledgeError').textContent = '';
+      document.getElementById('monthlyCalc').textContent = '';
+      document.getElementById('pledgeBreakdown').classList.remove('visible');
+    }
+
+    function resetAll() {
+      confirmed = false;
+      selectedTier = null;
+
+      document.querySelectorAll('.tier-card').forEach(card => {
+        card.classList.remove('selected');
+        card.style.opacity = '1';
+        card.style.pointerEvents = 'auto';
+      });
+
+      document.getElementById('pledgePanel').classList.remove('open');
+      document.getElementById('successPanel').classList.remove('open');
+      document.getElementById('pledgeInput').value = '';
+      document.getElementById('pledgeError').textContent = '';
+      document.getElementById('monthlyCalc').textContent = '';
+      document.getElementById('pledgeBreakdown').classList.remove('visible');
+
+      // Scroll back to tiers
+      setTimeout(() => {
+        document.getElementById('tierGrid').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 200);
+    }
+  </script>
+
+</body>
+</html>
