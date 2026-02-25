@@ -345,6 +345,7 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
             <h2 className="cp-tier-heading">Golden Batch Builders</h2>
             <p className="cp-section-subtitle cp-italic">We're all building this homecoming. Choose how you build.</p>
             <p className="cp-builders-count">{batchProgress.builder_count} Builder{batchProgress.builder_count !== 1 ? 's' : ''} already in.</p>
+            <p className="cp-tier-hint">Tap a tier to begin.</p>
 
             <div className="cp-tier-grid">
               {/* Cornerstone */}
@@ -656,17 +657,6 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
               </div>
             </div>
 
-            {/* CTA */}
-            <div className="cp-cta-box">
-              <div>
-                <div className="cp-cta-title">Count me in.</div>
-                <div className="cp-cta-sub">Log in to your profile and choose how you build.</div>
-              </div>
-              <div className="cp-cta-right">
-                <a href="https://thegoldenbatch2003.com" className="cp-cta-link">thegoldenbatch2003.com</a>
-                <div className="cp-cta-link-sub">Full budget transparency — every peso tracked in real time.</div>
-              </div>
-            </div>
           </main>
 
           <footer className="cp-footer">

@@ -526,7 +526,13 @@
   font-size: 13px;
   font-weight: 700;
   color: var(--cp-green);
-  margin: 0 0 20px 0;
+  margin: 0 0 4px 0;
+}
+
+.cp-tier-hint {
+  font-size: 12px;
+  color: var(--cp-light-gray);
+  margin: 0 0 16px 0;
 }
 
 .cp-tier-grid {
@@ -780,7 +786,7 @@
 
 .cp-pledge-input {
   width: 100%;
-  padding: 12px 12px 12px 28px;
+  padding: 12px 12px 12px 40px;
   font-family: 'Source Serif 4', serif;
   font-size: 20px;
   font-weight: 700;
@@ -1269,62 +1275,6 @@
   margin: 0;
 }
 
-/* ===========================================
-   CTA
-   =========================================== */
-.cp-cta-box {
-  background: var(--cp-dark-green);
-  border: 3px solid var(--cp-gold);
-  border-radius: 12px;
-  padding: 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 24px;
-}
-
-.cp-cta-title {
-  font-family: 'Source Serif 4', serif;
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--cp-gold);
-  font-style: italic;
-}
-
-.cp-cta-sub {
-  font-size: 12px;
-  color: #aaddaa;
-  margin-top: 4px;
-}
-
-.cp-cta-right {
-  text-align: right;
-}
-
-.cp-cta-link {
-  display: inline-block;
-  background: var(--cp-gold);
-  color: var(--cp-dark-green);
-  font-weight: 700;
-  font-size: 13px;
-  padding: 12px 24px;
-  border-radius: 24px;
-  text-decoration: none;
-  transition: all 0.2s ease;
-}
-
-.cp-cta-link:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 14px rgba(207, 181, 59, 0.4);
-}
-
-.cp-cta-link-sub {
-  font-size: 10px;
-  color: #aaaaaa;
-  margin-top: 4px;
-  font-style: italic;
-}
-
 /* Footer */
 .cp-footer {
   border-top: 2px solid var(--cp-green);
@@ -1394,16 +1344,6 @@
 
   .cp-info-row {
     flex-direction: column;
-  }
-
-  .cp-cta-box {
-    flex-direction: column;
-    gap: 14px;
-    text-align: center;
-  }
-
-  .cp-cta-right {
-    text-align: center;
   }
 
   .cp-payment-grid {

@@ -162,7 +162,7 @@ router.get('/', authenticateAdmin, async (req, res) => {
 router.get('/total-raised', async (req, res) => {
   try {
     const totalResult = await db.query(
-      "SELECT COALESCE(SUM(deposit), 0) as total_raised FROM ledger WHERE verified = 'OK'"
+      "SELECT COALESCE(SUM(deposit), 0) - COALESCE(SUM(withdrawal), 0) as total_raised FROM ledger WHERE verified = 'OK'"
     );
     const builderResult = await db.query(
       "SELECT COUNT(*) as builder_count FROM master_list WHERE builder_tier IS NOT NULL"
