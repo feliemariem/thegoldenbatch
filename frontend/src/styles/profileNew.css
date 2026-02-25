@@ -2625,94 +2625,147 @@ body[data-theme="light"] .merch-form-hint {
    ======================================== */
 
 .alumni-card-nudge {
-  padding: 20px;
+  padding: 16px;
 }
 
-/* Mini Alumni Card Preview */
-.alumni-card-preview {
-  margin-bottom: 16px;
+/* Row Layout: Card on left, CTA on right */
+.alumni-card-row {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  align-items: flex-start;
 }
 
+/* Mini Alumni Card */
 .alumni-card-mini {
   position: relative;
-  width: 100%;
-  max-width: 320px;
-  aspect-ratio: 1.6 / 1;
-  background: linear-gradient(135deg, #CFB53B 0%, #E8D879 30%, #CFB53B 50%, #B8960C 100%);
-  border-radius: 12px;
-  padding: 12px 14px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  width: 130px;
+  height: 82px;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #C9A227 0%, #E8D48B 30%, #CFB53B 50%, #A8882B 80%, #8B6914 100%);
+  border-radius: 6px;
+  box-shadow: 0 3px 12px rgba(139, 105, 20, 0.35);
   overflow: hidden;
+}
+
+/* Diagonal shine overlay */
+.alumni-card-mini::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(255, 255, 255, 0.05) 40%,
+    transparent 60%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Top left: Seal + Text */
+.alumni-card-header {
+  position: absolute;
+  top: 5px;
+  left: 6px;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  align-items: center;
+  gap: 3px;
+  z-index: 2;
 }
 
 .alumni-card-seal {
-  position: absolute;
-  top: 8px;
-  left: 10px;
-  width: 40px;
-  height: 40px;
-  object-fit: contain;
-  opacity: 0.9;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  object-fit: cover;
+  opacity: 0.75;
 }
 
+.alumni-card-header-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.alumni-card-header-text span {
+  font-size: 0.33rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+/* Center: User's name */
 .alumni-card-name {
   position: absolute;
   top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  text-align: center;
   font-family: var(--font-heading);
-  font-size: 0.85rem;
+  font-size: 0.38rem;
   font-weight: 700;
   color: #1a1a1a;
-  letter-spacing: 1px;
-  text-align: center;
-  width: 60%;
-  line-height: 1.3;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  padding: 0 8px;
+  z-index: 2;
 }
 
-.alumni-card-right {
+/* Bottom right: Photo + Batch */
+.alumni-card-bottom-right {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  right: 9px;
+  bottom: 18px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 4px;
+  align-items: flex-end;
+  gap: 2px;
+  z-index: 2;
 }
 
 .alumni-card-photo-placeholder {
-  width: 36px;
-  height: 44px;
-  background: rgba(255, 255, 255, 0.4);
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  border-radius: 3px;
+  width: 20px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 0.5px solid rgba(0, 0, 0, 0.1);
 }
 
 .alumni-card-batch {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  font-size: 0.5rem;
-  font-weight: 600;
-  color: #1a1a1a;
-  line-height: 1.3;
+  align-items: flex-end;
+  line-height: 1.2;
 }
 
+.alumni-card-batch span {
+  font-size: 0.26rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+/* Bottom stripe */
 .alumni-card-stripe {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  background: #006633;
-  color: #fff;
-  text-align: center;
-  font-size: 0.6rem;
+  height: 14px;
+  background: linear-gradient(90deg, #004d26 0%, #006633 50%, #004d26 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.alumni-card-stripe {
+  font-size: 0.3rem;
   font-weight: 600;
-  padding: 4px 0;
-  letter-spacing: 1px;
+  color: #CFB53B;
+  letter-spacing: 0.5px;
   text-transform: uppercase;
 }
 
@@ -2720,13 +2773,15 @@ body[data-theme="light"] .merch-form-hint {
 .alumni-card-cta {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
 }
 
 .alumni-card-message {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   color: var(--color-text-secondary);
-  line-height: 1.5;
+  line-height: 1.4;
   margin: 0;
 }
 
@@ -2736,40 +2791,40 @@ body[data-theme="light"] .merch-form-hint {
 
 .btn-apply-card {
   display: inline-block;
-  padding: 10px 20px;
-  background: linear-gradient(135deg, #CFB53B 0%, #E8D879 50%, #CFB53B 100%);
-  color: #1a1a1a;
+  align-self: flex-start;
+  padding: 4px 0;
+  background: none;
+  color: var(--color-hover);
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   text-decoration: none;
-  border-radius: 6px;
-  text-align: center;
   transition: all 0.2s ease;
 }
 
 .btn-apply-card:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(207, 181, 59, 0.3);
+  text-decoration: underline;
 }
 
 .btn-have-card {
+  display: inline-block;
+  align-self: flex-start;
   background: none;
   border: none;
   color: var(--color-text-muted);
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   cursor: pointer;
-  text-decoration: underline;
-  padding: 4px 0;
-  opacity: 0.7;
+  padding: 0;
+  opacity: 0.6;
   transition: opacity 0.2s ease;
 }
 
 .btn-have-card:hover {
   opacity: 1;
+  text-decoration: underline;
 }
 
 .btn-have-card:disabled {
-  opacity: 0.4;
+  opacity: 0.3;
   cursor: not-allowed;
 }
 
@@ -2781,10 +2836,10 @@ body[data-theme="light"] .merch-form-hint {
 }
 
 .alumni-card-check {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  background: rgba(0, 102, 51, 0.15);
+  background: rgba(0, 102, 51, 0.12);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2793,24 +2848,24 @@ body[data-theme="light"] .merch-form-hint {
 
 .alumni-card-check .check-icon {
   color: #006633;
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: bold;
 }
 
 .alumni-card-holder-text {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
   flex: 1;
 }
 
 .alumni-card-holder-text strong {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: #006633;
 }
 
 .alumni-card-holder-text span {
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   color: var(--color-text-secondary);
 }
 
@@ -2818,20 +2873,20 @@ body[data-theme="light"] .merch-form-hint {
   background: none;
   border: none;
   color: var(--color-text-muted);
-  font-size: 0.7rem;
+  font-size: 0.6rem;
   cursor: pointer;
-  text-decoration: underline;
-  padding: 4px 8px;
-  opacity: 0.6;
+  padding: 4px;
+  opacity: 0.5;
   transition: opacity 0.2s ease;
 }
 
 .btn-undo-card:hover {
   opacity: 1;
+  text-decoration: underline;
 }
 
 .btn-undo-card:disabled {
-  opacity: 0.3;
+  opacity: 0.2;
   cursor: not-allowed;
 }
 
@@ -2841,48 +2896,36 @@ body[data-theme="light"] .merch-form-hint {
 }
 
 [data-theme="dark"] .alumni-card-check {
-  background: rgba(207, 181, 59, 0.15);
+  background: rgba(207, 181, 59, 0.12);
 }
 
 [data-theme="dark"] .alumni-card-check .check-icon {
   color: var(--color-hover);
 }
 
-/* Light Theme Adjustments */
+/* Light Theme */
 [data-theme="light"] .alumni-card-message strong {
   color: #006633;
 }
 
 [data-theme="light"] .btn-apply-card {
-  background: linear-gradient(135deg, #006633 0%, #008844 50%, #006633 100%);
-  color: #fff;
+  color: #006633;
 }
 
-[data-theme="light"] .btn-apply-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 102, 51, 0.3);
-}
-
-/* Responsive */
-@media (max-width: 480px) {
-  .alumni-card-mini {
-    max-width: 280px;
+/* Responsive: Stack on small screens */
+@media (max-width: 400px) {
+  .alumni-card-row {
+    flex-direction: column;
+    align-items: center;
   }
 
-  .alumni-card-name {
-    font-size: 0.75rem;
+  .alumni-card-cta {
+    text-align: center;
+    align-items: center;
   }
 
-  .alumni-card-seal {
-    width: 32px;
-    height: 32px;
-  }
-
-  .alumni-card-photo-placeholder {
-    width: 30px;
-    height: 38px;
-  }
-
-  .alumni-card-batch {
-    font-size: 0.45rem;
+  .btn-apply-card,
+  .btn-have-card {
+    align-self: center;
   }
 }
