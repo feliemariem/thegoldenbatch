@@ -2618,3 +2618,271 @@ body[data-theme="light"] .merch-form-hint {
   background: rgba(207, 181, 59, 0.1);
   color: var(--color-hover);
 }
+
+/* ========================================
+   ALUMNI CARD NUDGE
+   USLSAA Alumni Card promotion
+   ======================================== */
+
+.alumni-card-nudge {
+  padding: 20px;
+}
+
+/* Mini Alumni Card Preview */
+.alumni-card-preview {
+  margin-bottom: 16px;
+}
+
+.alumni-card-mini {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 1.6 / 1;
+  background: linear-gradient(135deg, #CFB53B 0%, #E8D879 30%, #CFB53B 50%, #B8960C 100%);
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.alumni-card-seal {
+  position: absolute;
+  top: 8px;
+  left: 10px;
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  opacity: 0.9;
+}
+
+.alumni-card-name {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: 1px;
+  text-align: center;
+  width: 60%;
+  line-height: 1.3;
+}
+
+.alumni-card-right {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.alumni-card-photo-placeholder {
+  width: 36px;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 3px;
+}
+
+.alumni-card-batch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.5rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  line-height: 1.3;
+}
+
+.alumni-card-stripe {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #006633;
+  color: #fff;
+  text-align: center;
+  font-size: 0.6rem;
+  font-weight: 600;
+  padding: 4px 0;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* CTA Section */
+.alumni-card-cta {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.alumni-card-message {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.alumni-card-message strong {
+  color: var(--color-hover);
+}
+
+.btn-apply-card {
+  display: inline-block;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #CFB53B 0%, #E8D879 50%, #CFB53B 100%);
+  color: #1a1a1a;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-decoration: none;
+  border-radius: 6px;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.btn-apply-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(207, 181, 59, 0.3);
+}
+
+.btn-have-card {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 4px 0;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.btn-have-card:hover {
+  opacity: 1;
+}
+
+.btn-have-card:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Alumni Card Holder State */
+.alumni-card-holder {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.alumni-card-check {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(0, 102, 51, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.alumni-card-check .check-icon {
+  color: #006633;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.alumni-card-holder-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.alumni-card-holder-text strong {
+  font-size: 0.9rem;
+  color: #006633;
+}
+
+.alumni-card-holder-text span {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
+.btn-undo-card {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 4px 8px;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.btn-undo-card:hover {
+  opacity: 1;
+}
+
+.btn-undo-card:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* Dark Theme */
+[data-theme="dark"] .alumni-card-holder-text strong {
+  color: var(--color-hover);
+}
+
+[data-theme="dark"] .alumni-card-check {
+  background: rgba(207, 181, 59, 0.15);
+}
+
+[data-theme="dark"] .alumni-card-check .check-icon {
+  color: var(--color-hover);
+}
+
+/* Light Theme Adjustments */
+[data-theme="light"] .alumni-card-message strong {
+  color: #006633;
+}
+
+[data-theme="light"] .btn-apply-card {
+  background: linear-gradient(135deg, #006633 0%, #008844 50%, #006633 100%);
+  color: #fff;
+}
+
+[data-theme="light"] .btn-apply-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 102, 51, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .alumni-card-mini {
+    max-width: 280px;
+  }
+
+  .alumni-card-name {
+    font-size: 0.75rem;
+  }
+
+  .alumni-card-seal {
+    width: 32px;
+    height: 32px;
+  }
+
+  .alumni-card-photo-placeholder {
+    width: 30px;
+    height: 38px;
+  }
+
+  .alumni-card-batch {
+    font-size: 0.45rem;
+  }
+}

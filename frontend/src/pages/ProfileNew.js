@@ -27,6 +27,7 @@ export default function ProfileNew() {
   const [showMerchModal, setShowMerchModal] = useState(false);
   const [merchForm, setMerchForm] = useState({ shirt_size: '', jacket_size: '' });
   const [merchSaving, setMerchSaving] = useState(false);
+  const [alumniCardSaving, setAlumniCardSaving] = useState(false);
   const [calendarDropdownOpen, setCalendarDropdownOpen] = useState(false);
   const fileInputRef = useRef(null);
   const calendarDropdownRef = useRef(null);
@@ -248,6 +249,20 @@ END:VCALENDAR`;
       setMessage('Failed to update RSVP');
     } finally {
       setRsvpSaving(false);
+    }
+  };
+
+  const handleAlumniCard = async (hasCard) => {
+    setAlumniCardSaving(true);
+    try {
+      const res = await apiPut('/api/me/alumni-card', { has_alumni_card: hasCard });
+      if (res.ok) {
+        setProfile({ ...profile, has_alumni_card: hasCard });
+      }
+    } catch (err) {
+      console.error('Failed to update alumni card status');
+    } finally {
+      setAlumniCardSaving(false);
     }
   };
 
@@ -612,6 +627,69 @@ END:VCALENDAR`;
                   </Link>
                 </div>
               )}
+
+              {/* Alumni Card Nudge */}
+              <div className="profile-card alumni-card-nudge">
+                {!profile.has_alumni_card ? (
+                  <>
+                    <div className="alumni-card-preview">
+                      <div className="alumni-card-mini">
+                        <img src={require('../images/usls-seal.jpg')} alt="USLS Seal" className="alumni-card-seal" />
+                        <div className="alumni-card-name">
+                          {(profile.first_name && profile.last_name)
+                            ? `${profile.first_name} ${profile.last_name}`.toUpperCase()
+                            : 'YOUR NAME HERE'}
+                        </div>
+                        <div className="alumni-card-right">
+                          <div className="alumni-card-photo-placeholder"></div>
+                          <div className="alumni-card-batch">
+                            <span>HS Batch 2003</span>
+                            <span>GS Batch 1999</span>
+                          </div>
+                        </div>
+                        <div className="alumni-card-stripe">Lifetime Membership</div>
+                      </div>
+                    </div>
+                    <div className="alumni-card-cta">
+                      <p className="alumni-card-message">
+                        <strong>{profile.first_name || 'Batchmate'}</strong>, make it official. Become a lifetime USLSAA member and enjoy alumni benefits and privileges. Apply for your Alumni Card.
+                      </p>
+                      <a
+                        href="https://sites.google.com/usls.edu.ph/uslscare/alumni-card"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn-apply-card"
+                      >
+                        Apply Now →
+                      </a>
+                      <button
+                        className="btn-have-card"
+                        onClick={() => handleAlumniCard(true)}
+                        disabled={alumniCardSaving}
+                      >
+                        I already have mine
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <div className="alumni-card-holder">
+                    <div className="alumni-card-check">
+                      <span className="check-icon">✓</span>
+                    </div>
+                    <div className="alumni-card-holder-text">
+                      <strong>Alumni Card Holder</strong>
+                      <span>You're a lifetime USLSAA member!</span>
+                    </div>
+                    <button
+                      className="btn-undo-card"
+                      onClick={() => handleAlumniCard(false)}
+                      disabled={alumniCardSaving}
+                    >
+                      Undo
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Right Column */}

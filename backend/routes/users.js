@@ -26,7 +26,7 @@ router.get('/', authenticateToken, async (req, res) => {
       `SELECT u.id, u.email, u.first_name, u.last_name, u.birthday,
               u.mobile, u.address, u.city, u.country, u.occupation, u.company,
               u.profile_photo, u.facebook_url, u.linkedin_url, u.instagram_url,
-              u.shirt_size, u.jacket_size,
+              u.shirt_size, u.jacket_size, u.has_alumni_card,
               r.status as rsvp_status,
               m.id as master_list_id,
               m.section,
@@ -246,6 +246,31 @@ router.put('/merch', authenticateToken, async (req, res) => {
        WHERE id = $3
        RETURNING shirt_size, jacket_size`,
       [shirt_size || null, jacket_size || null, req.user.id]
+    );
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Update alumni card status
+router.put('/alumni-card', authenticateToken, async (req, res) => {
+  try {
+    const { has_alumni_card } = req.body;
+
+    if (typeof has_alumni_card !== 'boolean') {
+      return res.status(400).json({ error: 'has_alumni_card must be a boolean' });
+    }
+
+    const result = await db.query(
+      `UPDATE users SET
+        has_alumni_card = $1,
+        updated_at = CURRENT_TIMESTAMP
+       WHERE id = $2
+       RETURNING has_alumni_card`,
+      [has_alumni_card, req.user.id]
     );
 
     res.json(result.rows[0]);

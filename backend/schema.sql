@@ -85,6 +85,7 @@ CREATE TABLE users (
     instagram_url TEXT,
     shirt_size VARCHAR(10),
     jacket_size VARCHAR(10),
+    has_alumni_card BOOLEAN DEFAULT false,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

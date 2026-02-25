@@ -102,7 +102,7 @@ export default function RegisteredTab({
 
       if (!allUsers.length) return;
 
-      const headers = ['First Name', 'Last Name', 'Email', 'Birthday', 'Mobile', 'Address', 'City', 'Country', 'Occupation', 'Company', 'RSVP', 'Shirt Size', 'Jacket Size', 'Registered At'];
+      const headers = ['First Name', 'Last Name', 'Email', 'Birthday', 'Mobile', 'Address', 'City', 'Country', 'Occupation', 'Company', 'RSVP', 'Alumni Card', 'Shirt Size', 'Jacket Size', 'Registered At'];
       const rows = allUsers.map(u => [
         u.first_name,
         u.last_name,
@@ -115,6 +115,7 @@ export default function RegisteredTab({
         u.occupation || '',
         u.company || '',
         u.rsvp_status || 'pending',
+        u.has_alumni_card ? 'Yes' : 'No',
         u.shirt_size || '',
         u.jacket_size || '',
         u.registered_at ? new Date(u.registered_at).toLocaleDateString() : ''
@@ -193,6 +194,7 @@ export default function RegisteredTab({
                   <th>Occupation</th>
                   <th>Company</th>
                   <th>RSVP</th>
+                  <th>Alumni Card</th>
                   <th>Shirt</th>
                   <th>Jacket</th>
                 </tr>
@@ -216,6 +218,7 @@ export default function RegisteredTab({
                           : 'pending'}
                       </span>
                     </td>
+                    <td style={{ textAlign: 'center' }}>{user.has_alumni_card ? '✓' : ''}</td>
                     <td>{user.shirt_size || '—'}</td>
                     <td>{user.jacket_size || '—'}</td>
                   </tr>

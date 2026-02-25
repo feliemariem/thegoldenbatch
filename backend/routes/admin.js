@@ -114,6 +114,7 @@ router.get('/users', authenticateAdmin, async (req, res) => {
         u.company,
         u.shirt_size,
         u.jacket_size,
+        u.has_alumni_card,
         u.created_at as registered_at,
         r.status as rsvp_status,
         r.updated_at as rsvp_updated_at
