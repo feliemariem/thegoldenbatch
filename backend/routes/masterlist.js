@@ -259,19 +259,30 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
     const { id } = req.params;
     const { last_name, first_name, current_name, email, section, in_memoriam, is_unreachable, is_admin } = req.body;
 
+    // Check if requester is super admin and get their admin id
+    const superAdminCheck = await db.query(
+      'SELECT id, is_super_admin FROM admins WHERE LOWER(email) = $1',
+      [req.user.email.toLowerCase()]
+    );
+    const isSuperAdmin = superAdminCheck.rows[0]?.is_super_admin === true;
+    const isSystemAdmin = isSuperAdmin && superAdminCheck.rows[0]?.id === 1;
+
     // Only super admins can change is_admin or in_memoriam
     const wantsToChangeProtectedFields =
       typeof req.body.is_admin === 'boolean' || typeof req.body.in_memoriam === 'boolean';
 
-    if (wantsToChangeProtectedFields) {
-      const superAdminCheck = await db.query(
-        'SELECT is_super_admin FROM admins WHERE LOWER(email) = $1',
-        [req.user.email.toLowerCase()]
-      );
+    if (wantsToChangeProtectedFields && !isSuperAdmin) {
+      return res.status(403).json({ error: 'Super Admin access required' });
+    }
 
-      if (!superAdminCheck.rows[0]?.is_super_admin) {
-        return res.status(403).json({ error: 'Super Admin access required' });
-      }
+    // Only System Admin (admin id=1) can change name fields - strip them for everyone else
+    let allowedLastName = last_name;
+    let allowedFirstName = first_name;
+    let allowedCurrentName = current_name;
+    if (!isSystemAdmin) {
+      allowedLastName = null;
+      allowedFirstName = null;
+      allowedCurrentName = null;
     }
 
 
@@ -356,9 +367,9 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
        WHERE id = $9
        RETURNING *`,
       [
-        toTitleCase(last_name),
-        toTitleCase(first_name),
-        toTitleCase(current_name),
+        toTitleCase(allowedLastName),
+        toTitleCase(allowedFirstName),
+        toTitleCase(allowedCurrentName),
         toLowerEmail(email),
         section,
         in_memoriam,

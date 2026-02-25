@@ -40,6 +40,7 @@ export default function AdminDashboard() {
   });
   const [permissions, setPermissions] = useState(null);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+  const [isSystemAdmin, setIsSystemAdmin] = useState(false);
   const [data, setData] = useState(null);
   const [inviteStats, setInviteStats] = useState({ total: 0, registered: 0, pending: 0 });
   const [registeredStats, setRegisteredStats] = useState({ total: 0, going: 0, maybe: 0, not_going: 0, no_response: 0 });
@@ -129,6 +130,8 @@ export default function AdminDashboard() {
 
         setPermissions(normalizedPermissions);
         setIsSuperAdmin(data.is_super_admin);
+        // System admin is specifically admin id=1
+        setIsSystemAdmin(data.is_super_admin && data.admin_id === 1);
       }
     } catch (err) {
       console.error('Failed to fetch permissions');
@@ -538,7 +541,8 @@ export default function AdminDashboard() {
             {/* Master List Tab */}
             {activeTab === 'masterlist' && (
               <MasterListTab
-                                isSuperAdmin={isSuperAdmin}
+                isSuperAdmin={isSuperAdmin}
+                isSystemAdmin={isSystemAdmin}
                 permissions={permissions}
                 onShowAdminRoleError={() => setShowAdminRoleError(true)}
                 onRefreshReady={setMasterListRefresh}

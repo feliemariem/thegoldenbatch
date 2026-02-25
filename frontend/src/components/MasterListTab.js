@@ -7,6 +7,7 @@ const MASTER_LIST_PAGE_SIZE = 45;
 
 export default function MasterListTab({
   isSuperAdmin,
+  isSystemAdmin,
   permissions,
   onShowAdminRoleError,
   onRefreshReady,
@@ -305,7 +306,9 @@ export default function MasterListTab({
                             type="text"
                             defaultValue={entry.last_name}
                             id={`edit-lastname-${entry.id}`}
-                            style={{ width: '100%', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '8px 12px', color: '#fff' }}
+                            style={{ width: '100%', background: isSystemAdmin ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '8px 12px', color: isSystemAdmin ? '#fff' : '#666', cursor: isSystemAdmin ? 'text' : 'not-allowed' }}
+                            readOnly={!isSystemAdmin}
+                            title={!isSystemAdmin ? 'Only System Admin can edit names' : undefined}
                           />
                         </td>
                         <td>
@@ -313,7 +316,9 @@ export default function MasterListTab({
                             type="text"
                             defaultValue={entry.first_name}
                             id={`edit-firstname-${entry.id}`}
-                            style={{ width: '100%', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '8px 12px', color: '#fff' }}
+                            style={{ width: '100%', background: isSystemAdmin ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '8px 12px', color: isSystemAdmin ? '#fff' : '#666', cursor: isSystemAdmin ? 'text' : 'not-allowed' }}
+                            readOnly={!isSystemAdmin}
+                            title={!isSystemAdmin ? 'Only System Admin can edit names' : undefined}
                           />
                         </td>
                         <td>
@@ -321,7 +326,9 @@ export default function MasterListTab({
                             type="text"
                             defaultValue={entry.current_name || ''}
                             id={`edit-current-name-${entry.id}`}
-                            style={{ width: '100%', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '8px 12px', color: '#fff' }}
+                            style={{ width: '100%', background: isSystemAdmin ? 'rgba(0,0,0,0.3)' : 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '8px 12px', color: isSystemAdmin ? '#fff' : '#666', cursor: isSystemAdmin ? 'text' : 'not-allowed' }}
+                            readOnly={!isSystemAdmin}
+                            title={!isSystemAdmin ? 'Only System Admin can edit names' : undefined}
                           />
                         </td>
                         <td>
