@@ -87,6 +87,16 @@ export default function ProfileNew() {
       : `₱${num.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   }
 
+  // Helper function to get milestone message based on payment percentage
+  function getMilestoneMessage(percentage) {
+    if (percentage === 0) return "Your pledge is set! Make your first payment to get started.";
+    if (percentage < 25) return "Great start! Every peso counts.";
+    if (percentage < 50) return "You're on your way!";
+    if (percentage < 75) return "Halfway there — keep it up!";
+    if (percentage < 100) return "Almost there — the finish line is in sight!";
+    return "Pledge complete! Thank you for stepping up for our batch.";
+  }
+
   // Helper function to format birthday without timezone conversion
   const formatBirthday = (dateStr) => {
     if (!dateStr) return '';
@@ -662,25 +672,27 @@ END:VCALENDAR`;
                         <div className="builder-progress-bar">
                           <div
                             className="builder-progress-fill"
-                            style={{ width: `${Math.min((profile.total_paid / profile.pledge_amount) * 100, 100)}%` }}
+                            style={{ width: `${Math.min(((profile.total_paid || 0) / profile.pledge_amount) * 100, 100)}%` }}
                           ></div>
                         </div>
                         <div className="builder-progress-text">
                           <span className="builder-paid">{formatPeso(profile.total_paid || 0)}</span>
                           <span className="builder-total">/ {formatPeso(profile.pledge_amount)}</span>
-                          <span className="builder-pct">({Math.min(Math.round((profile.total_paid / profile.pledge_amount) * 100), 100)}%)</span>
+                          <span className="builder-pct">({Math.min(Math.round(((profile.total_paid || 0) / profile.pledge_amount) * 100), 100)}%)</span>
                         </div>
                         {(profile.total_paid || 0) < (profile.pledge_amount || 0) && (
                           <div className="builder-remaining">
                             Remaining: <strong>{formatPeso((profile.pledge_amount || 0) - (profile.total_paid || 0))}</strong>
                           </div>
                         )}
+                        <div className="builder-milestone-message">
+                          {getMilestoneMessage(Math.round(((profile.total_paid || 0) / profile.pledge_amount) * 100))}
+                        </div>
                       </div>
                     </>
                   ) : (
                     <div className="builder-root-status">
-                      <span className="root-contributed">{formatPeso(profile.total_paid || 0)} contributed</span>
-                      <span className="root-message">Contributing at your own pace</span>
+                      <span className="root-message">{formatPeso(profile.total_paid || 0)} contributed. Every peso counts — thank you!</span>
                     </div>
                   )}
 

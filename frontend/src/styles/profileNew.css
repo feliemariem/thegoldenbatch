@@ -3156,12 +3156,27 @@ body[data-theme="light"] .merch-form-hint {
   color: #006633;
 }
 
+/* Milestone Message */
+.builder-milestone-message {
+  font-size: 0.85rem;
+  color: rgba(207, 181, 59, 0.85);
+  font-style: italic;
+  margin-top: 8px;
+  text-align: center;
+  line-height: 1.4;
+}
+
+[data-theme="light"] .builder-milestone-message {
+  color: rgba(0, 102, 51, 0.8);
+}
+
 /* Root Status */
 .builder-root-status {
   display: flex;
   flex-direction: column;
   gap: 4px;
   margin-bottom: 16px;
+  text-align: center;
 }
 
 .root-contributed {
@@ -3176,9 +3191,14 @@ body[data-theme="light"] .merch-form-hint {
 }
 
 .root-message {
-  font-size: 0.85rem;
-  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  color: rgba(207, 181, 59, 0.85);
   font-style: italic;
+  line-height: 1.4;
+}
+
+[data-theme="light"] .root-message {
+  color: rgba(0, 102, 51, 0.8);
 }
 
 /* Upload Receipt Button */
