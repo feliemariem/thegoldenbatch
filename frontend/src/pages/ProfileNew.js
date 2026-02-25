@@ -539,6 +539,7 @@ END:VCALENDAR`;
                   </div>
                 </div>
 
+                <p className="rsvp-label">Update RSVP</p>
                 <div className="countdown-rsvp-row">
                   <div className="countdown-box">
                     {getDaysUntilReunion() > 0 ? (
@@ -552,32 +553,28 @@ END:VCALENDAR`;
                       <span className="countdown-label countdown-passed">The reunion has happened!</span>
                     )}
                   </div>
-
-                  <div className="rsvp-section">
-                    <p className="rsvp-label">Are you attending?</p>
-                    <div className="rsvp-buttons">
-                      <button
-                        className={`btn-rsvp ${profile.rsvp_status === 'going' ? 'active going' : ''}`}
-                        onClick={() => handleRsvp('going')}
-                        disabled={rsvpSaving}
-                      >
-                        Going
-                      </button>
-                      <button
-                        className={`btn-rsvp ${profile.rsvp_status === 'maybe' ? 'active maybe' : ''}`}
-                        onClick={() => handleRsvp('maybe')}
-                        disabled={rsvpSaving}
-                      >
-                        Maybe
-                      </button>
-                      <button
-                        className={`btn-rsvp ${profile.rsvp_status === 'not_going' ? 'active not-going' : ''}`}
-                        onClick={() => handleRsvp('not_going')}
-                        disabled={rsvpSaving}
-                      >
-                        Can't Make It
-                      </button>
-                    </div>
+                  <div className="rsvp-buttons">
+                    <button
+                      className={`btn-rsvp ${profile.rsvp_status === 'going' ? 'active going' : ''}`}
+                      onClick={() => handleRsvp('going')}
+                      disabled={rsvpSaving}
+                    >
+                      Going
+                    </button>
+                    <button
+                      className={`btn-rsvp ${profile.rsvp_status === 'maybe' ? 'active maybe' : ''}`}
+                      onClick={() => handleRsvp('maybe')}
+                      disabled={rsvpSaving}
+                    >
+                      Maybe
+                    </button>
+                    <button
+                      className={`btn-rsvp ${profile.rsvp_status === 'not_going' ? 'active not-going' : ''}`}
+                      onClick={() => handleRsvp('not_going')}
+                      disabled={rsvpSaving}
+                    >
+                      Can't Make It
+                    </button>
                   </div>
                 </div>
               </div>

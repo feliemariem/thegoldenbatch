@@ -391,7 +391,7 @@
   align-items: center;
   background: linear-gradient(135deg, rgba(0, 102, 51, 0.25) 0%, rgba(0, 102, 51, 0.15) 100%);
   border: 1px solid rgba(0, 102, 51, 0.3);
-  border-radius: 12px;
+  border-radius: 10px;
   padding: 10px 14px;
   min-width: 62px;
 }
@@ -434,15 +434,15 @@
 }
 
 .rsvp-section {
-  text-align: center;
-  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Countdown and RSVP Row */
 .countdown-rsvp-row {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 10px;
 }
 
 /* Countdown Box */
@@ -450,7 +450,9 @@
   background: linear-gradient(135deg, rgba(207, 181, 59, 0.15) 0%, rgba(207, 181, 59, 0.05) 100%);
   border: 1px solid rgba(207, 181, 59, 0.25);
   border-radius: 10px;
-  min-width: 72px;
+  width: 90px;
+  min-width: 90px;
+  height: 72px;
   flex-shrink: 0;
   padding: 10px 14px;
   display: flex;
@@ -472,7 +474,6 @@
   font-size: 0.55rem;
   font-weight: 600;
   color: #e0e0e0;
-  text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-top: 4px;
   white-space: nowrap;
@@ -501,23 +502,23 @@
 }
 
 .rsvp-label {
-  color: #a0a0a0;
-  font-size: 0.8rem;
-  margin: 0 0 10px 0;
+  color: #999;
+  font-size: 0.7rem;
+  margin: 0 0 6px 0;
 }
 
 .rsvp-buttons {
   display: flex;
+  flex-direction: row;
   gap: 6px;
-  justify-content: center;
 }
 
 .btn-rsvp {
-  padding: 8px 14px;
+  padding: 6px 12px;
   border: 2px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   background: rgba(0, 0, 0, 0.2);
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
