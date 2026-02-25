@@ -434,7 +434,7 @@
 }
 
 .rsvp-section {
-  text-align: left;
+  flex: 1;
 }
 
 /* RSVP Row - countdown + buttons */
@@ -510,12 +510,12 @@
 .rsvp-buttons {
   display: flex;
   flex-direction: row;
-  align-items: center;
-  gap: 10px;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .btn-rsvp {
-  padding: 8px 14px;
+  padding: 7px 14px;
   border: 2px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   background: rgba(0, 0, 0, 0.2);
