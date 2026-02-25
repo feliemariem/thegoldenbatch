@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import Footer from '../components/Footer';
 import logo from '../images/lasalle.jpg';
 
 export default function Landing() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [showFormModal, setShowFormModal] = useState(false);
@@ -105,12 +108,26 @@ export default function Landing() {
     <div className={`landing-page ${heroAnimated ? 'animated' : ''}`}>
       {/* Header */}
       <header className={`landing-header ${headerSolid ? 'solid' : ''}`}>
-        <div className="landing-logo">
+        <div
+          className="landing-logo"
+          onClick={() => {
+            if (user) {
+              navigate(user.isAdmin ? '/profile-preview' : '/profile');
+            } else {
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+          }}
+          style={{ cursor: 'pointer' }}
+        >
           <img src={logo} alt="USLS Logo" />
           <span>UNIVERSITY OF ST. LA SALLE - IS 2003</span>
         </div>
         <div className="landing-header-actions">
-          <Link to="/login" className="btn-login">Login</Link>
+          {user ? (
+            <Link to={user.isAdmin ? '/profile-preview' : '/profile'} className="btn-login">My Profile</Link>
+          ) : (
+            <Link to="/login" className="btn-login">Login</Link>
+          )}
           <button
             onClick={toggleTheme}
             className="landing-theme-toggle"

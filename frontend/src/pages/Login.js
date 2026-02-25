@@ -10,7 +10,7 @@ const REMEMBERED_EMAIL_KEY = 'rememberedEmail';
 
 export default function Login() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { user, login } = useAuth();
   const { theme, toggleTheme } = useTheme();
 
   const [email, setEmail] = useState('');
@@ -19,6 +19,13 @@ export default function Login() {
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate(user.isAdmin ? '/admin' : '/profile', { replace: true });
+    }
+  }, [user, navigate]);
 
   // Pre-fill email from localStorage if saved
   useEffect(() => {
