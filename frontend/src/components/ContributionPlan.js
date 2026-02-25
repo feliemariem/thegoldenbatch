@@ -479,42 +479,57 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
                   <div className="cp-payment-methods-title">Payment Methods</div>
                   <div className="cp-payment-grid">
                     <div className="cp-payment-card">
-                      <div className="cp-payment-card-label"><span className="flag">🇵🇭</span> Local Bank Transfer</div>
+                      <div className="cp-payment-card-label">Bank Deposit</div>
                       <div className="cp-payment-detail">
                         <div className="cp-payment-detail-label">Bank</div>
-                        <div className="cp-payment-detail-value">BDO Unibank</div>
+                        <div className="cp-payment-detail-value">PNB (Philippine National Bank - Bacolod)</div>
                       </div>
                       <div className="cp-payment-detail">
-                        <div className="cp-payment-detail-label">Account Name</div>
-                        <div className="cp-payment-detail-value">USLS-IS Batch 2003</div>
+                        <div className="cp-payment-detail-label">Account Names</div>
+                        <div className="cp-payment-detail-value">Narciso Javelosa III or Mary Rose Frances Uy</div>
                       </div>
                       <div className="cp-payment-detail">
                         <div className="cp-payment-detail-label">Account Number</div>
-                        <div className="cp-payment-detail-value">XXXX-XXXX-XXXX</div>
+                        <div className="cp-payment-detail-value">307770014898</div>
                       </div>
                     </div>
                     <div className="cp-payment-card">
-                      <div className="cp-payment-card-label"><span className="flag">🌐</span> International (SWIFT)</div>
+                      <div className="cp-payment-card-label">For International Transfers</div>
                       <div className="cp-payment-detail">
                         <div className="cp-payment-detail-label">Bank</div>
-                        <div className="cp-payment-detail-value">BDO Unibank</div>
+                        <div className="cp-payment-detail-value">PNB Bacolod Lacson Branch</div>
+                      </div>
+                      <div className="cp-payment-detail">
+                        <div className="cp-payment-detail-label">Address</div>
+                        <div className="cp-payment-detail-value">10th Lacson Street, Bacolod City, Negros Occidental 6100</div>
+                      </div>
+                      <div className="cp-payment-detail">
+                        <div className="cp-payment-detail-label">Tel</div>
+                        <div className="cp-payment-detail-value">(63) (034) 432-0605 / 434-8007</div>
                       </div>
                       <div className="cp-payment-detail">
                         <div className="cp-payment-detail-label">SWIFT Code</div>
-                        <div className="cp-payment-detail-value">BNORPHMM</div>
+                        <div className="cp-payment-detail-value">PNBMPHMM</div>
                       </div>
                       <div className="cp-payment-detail">
-                        <div className="cp-payment-detail-label">Account Name</div>
-                        <div className="cp-payment-detail-value">USLS-IS Batch 2003</div>
+                        <div className="cp-payment-detail-label">Routing No</div>
+                        <div className="cp-payment-detail-value">040080019</div>
                       </div>
                       <div className="cp-payment-detail">
-                        <div className="cp-payment-detail-label">Account Number</div>
-                        <div className="cp-payment-detail-value">XXXX-XXXX-XXXX</div>
+                        <div className="cp-payment-detail-label">Email</div>
+                        <div className="cp-payment-detail-value">bacolod_lacson@pnb.com.ph</div>
+                      </div>
+                      <div className="cp-payment-detail">
+                        <div className="cp-payment-detail-label">Website</div>
+                        <div className="cp-payment-detail-value">pnb.com.ph</div>
                       </div>
                     </div>
                   </div>
                   <div className="cp-payment-note">
                     <strong>Important:</strong> After making a payment, upload your receipt on your profile page. The committee will verify and credit your account within 48 hours. Include your full name in the transfer reference for faster processing.
+                  </div>
+                  <div className="cp-payment-fees-note">
+                    Transfer fees and applicable taxes are shouldered by sender.
                   </div>
                 </div>
 

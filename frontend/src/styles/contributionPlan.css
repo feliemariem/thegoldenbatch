@@ -927,19 +927,12 @@
 }
 
 .cp-payment-card-label {
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.8px;
   color: var(--cp-green);
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.cp-payment-card-label .flag {
-  font-size: 12px;
+  margin-bottom: 10px;
 }
 
 .cp-payment-detail {
@@ -977,6 +970,13 @@
 
 .cp-payment-note strong {
   color: var(--cp-dark-gold);
+}
+
+.cp-payment-fees-note {
+  font-size: 10px;
+  color: var(--cp-light-gray);
+  margin-top: 8px;
+  font-style: italic;
 }
 
 .cp-error-message {
@@ -1594,6 +1594,10 @@ body[data-theme="dark"] .cp-payment-note {
 
 body[data-theme="dark"] .cp-payment-note strong {
   color: var(--cp-gold);
+}
+
+body[data-theme="dark"] .cp-payment-fees-note {
+  color: #888888;
 }
 
 /* Recognition Section */
