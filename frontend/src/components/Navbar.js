@@ -66,13 +66,15 @@ export default function Navbar() {
     <header className="navbar">
       <div className="navbar-content">
         {/* Logo Section */}
-        <div className="navbar-logo-section">
-          <img src={logo} alt="USLS Logo" className="navbar-logo" />
-          <div className="navbar-title">
-            <h1>THE GOLDEN BATCH</h1>
-            <span className="navbar-subtitle">25th Alumni Homecoming</span>
+        <Link to="/" className="navbar-logo-link">
+          <div className="navbar-logo-section">
+            <img src={logo} alt="USLS Logo" className="navbar-logo" />
+            <div className="navbar-title">
+              <h1>THE GOLDEN BATCH 2003</h1>
+              <span className="navbar-subtitle">25th Alumni Homecoming</span>
+            </div>
           </div>
-        </div>
+        </Link>
 
         {/* Desktop Navigation */}
         <nav className="navbar-nav desktop-nav">

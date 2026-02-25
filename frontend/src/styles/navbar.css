@@ -30,6 +30,12 @@
   gap: 20px;
 }
 
+/* Logo Link */
+.navbar-logo-link {
+  text-decoration: none;
+  cursor: pointer;
+}
+
 /* Logo Section */
 .navbar-logo-section {
   display: flex;
