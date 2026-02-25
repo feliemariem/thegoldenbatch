@@ -441,7 +441,7 @@
 /* Countdown and RSVP Row */
 .countdown-rsvp-row {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 16px;
 }
 
@@ -451,13 +451,13 @@
   border: 1px solid rgba(207, 181, 59, 0.25);
   border-radius: 10px;
   min-width: 72px;
-  width: 72px;
-  height: 72px;
   flex-shrink: 0;
+  padding: 10px 14px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  text-align: center;
   white-space: nowrap;
 }
 
