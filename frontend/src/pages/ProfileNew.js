@@ -584,6 +584,9 @@ END:VCALENDAR`;
 
               {/* Alumni Card Nudge */}
               <div className="profile-card alumni-card-nudge">
+                <div className="card-header">
+                  <h3>🎓 USLS Alumni Card</h3>
+                </div>
                 {!profile.has_alumni_card ? (
                   <div className="alumni-card-row">
                     <div className="alumni-card-mini">
