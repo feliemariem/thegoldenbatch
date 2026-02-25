@@ -73,6 +73,15 @@ export default function ProfileNew() {
     };
   };
 
+  // Helper function to format peso amounts (handles cents)
+  function formatPeso(amount) {
+    const num = parseFloat(amount);
+    if (Number.isNaN(num)) return '₱0';
+    return num % 1 === 0
+      ? `₱${num.toLocaleString('en-PH', { minimumFractionDigits: 0 })}`
+      : `₱${num.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  }
+
   // Helper function to format birthday without timezone conversion
   const formatBirthday = (dateStr) => {
     if (!dateStr) return '';
@@ -550,7 +559,153 @@ END:VCALENDAR`;
           <div className="profile-grid">
             {/* Left Column */}
             <div className="profile-left">
-              {/* RSVP Card */}
+              {/* Builder Card - My Contribution */}
+              {!profile.builder_tier ? (
+                <div className="profile-card builder-card">
+                  <div className="card-header">
+                    <h3>My Contribution</h3>
+                  </div>
+                  <p className="builder-intro-text">
+                    Choose your contribution tier and help build our 25th homecoming.
+                  </p>
+                  <button className="btn-view-plan" onClick={() => setShowContributionPlan(true)}>
+                    View Contribution Plan
+                  </button>
+                </div>
+              ) : (
+                <div className="profile-card builder-card has-tier">
+                  <div className="card-header">
+                    <h3>My Contribution</h3>
+                  </div>
+                  <div className={`builder-tier-badge ${profile.builder_tier}`}>
+                    {profile.builder_tier.charAt(0).toUpperCase() + profile.builder_tier.slice(1)}
+                    {profile.builder_tier !== 'root' && profile.pledge_amount && (
+                      <span className="badge-amount">· {formatPeso(profile.pledge_amount)}</span>
+                    )}
+                  </div>
+
+                  {profile.builder_tier !== 'root' && profile.pledge_amount ? (
+                    <>
+                      <div className="builder-progress">
+                        <div className="builder-progress-bar">
+                          <div
+                            className="builder-progress-fill"
+                            style={{ width: `${Math.min((profile.total_paid / profile.pledge_amount) * 100, 100)}%` }}
+                          ></div>
+                        </div>
+                        <div className="builder-progress-text">
+                          <span className="builder-paid">{formatPeso(profile.total_paid || 0)}</span>
+                          <span className="builder-total">/ {formatPeso(profile.pledge_amount)}</span>
+                          <span className="builder-pct">({Math.min(Math.round((profile.total_paid / profile.pledge_amount) * 100), 100)}%)</span>
+                        </div>
+                        {(profile.total_paid || 0) < (profile.pledge_amount || 0) && (
+                          <div className="builder-remaining">
+                            Remaining: <strong>{formatPeso((profile.pledge_amount || 0) - (profile.total_paid || 0))}</strong>
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="builder-root-status">
+                      <span className="root-contributed">{formatPeso(profile.total_paid || 0)} contributed</span>
+                      <span className="root-message">Contributing at your own pace</span>
+                    </div>
+                  )}
+
+                  {/* Receipt Upload */}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleReceiptUpload}
+                    ref={receiptFileInputRef}
+                    style={{ display: 'none' }}
+                    id="receipt-upload"
+                  />
+                  <button
+                    className="btn-upload-receipt"
+                    onClick={() => receiptFileInputRef.current?.click()}
+                    disabled={receiptUploading}
+                  >
+                    {receiptUploading ? 'Uploading...' : '📤 Upload Receipt'}
+                  </button>
+
+                  {/* Payment Methods Toggle */}
+                  <div className="payment-methods-toggle">
+                    <button
+                      className={`toggle-btn ${paymentMethodsOpen ? 'open' : ''}`}
+                      onClick={() => setPaymentMethodsOpen(!paymentMethodsOpen)}
+                    >
+                      Payment Methods <span className="toggle-arrow">{paymentMethodsOpen ? '▲' : '▼'}</span>
+                    </button>
+                    {paymentMethodsOpen && (
+                      <div className="payment-methods-content">
+                        <div className="payment-method-item">
+                          <div className="method-label">Bank Deposit</div>
+                          <div className="method-detail"><span>Bank:</span> Philippine National Bank (PNB)</div>
+                          <div className="method-detail"><span>Account Names:</span> Narciso Javelosa III or Mary Rose Frances Uy</div>
+                          <div className="method-detail"><span>Account Number:</span> 307770014898</div>
+                        </div>
+                        <div className="payment-method-item">
+                          <div className="method-label">International Transfers (SWIFT)</div>
+                          <div className="method-detail"><span>Bank:</span> PNB Bacolod Lacson Branch</div>
+                          <div className="method-detail"><span>SWIFT Code:</span> PNBMPHMM</div>
+                          <div className="method-detail"><span>Account Names:</span> Narciso Javelosa III or Mary Rose Frances Uy</div>
+                          <div className="method-detail"><span>Account Number:</span> 307770014898</div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Receipt History */}
+                  {receipts.length > 0 && (
+                    <div className="builder-receipt-list">
+                      <h4>Receipt History</h4>
+                      <div className="receipt-list-scroll">
+                        {receipts.map(receipt => (
+                          <div key={receipt.id} className="receipt-row">
+                            <a
+                              href={receipt.image_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="receipt-thumb"
+                            >
+                              <img src={receipt.image_url} alt="Receipt" />
+                            </a>
+                            <div className="receipt-info">
+                              <span className="receipt-date">
+                                {new Date(receipt.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                              </span>
+                              <span className={`receipt-source-badge ${receipt.source}`}>
+                                {receipt.source === 'user' ? 'You' : 'Committee'}
+                              </span>
+                            </div>
+                            <span className={`receipt-status-badge ${receipt.status}`}>
+                              {receipt.status === 'submitted' ? 'Submitted' : 'Processed'}
+                            </span>
+                            {receipt.ledger_id && (
+                              <span className={`receipt-verified-badge ${receipt.ledger_status === 'OK' ? 'verified' : 'pending'}`}>
+                                {receipt.ledger_status === 'OK' ? '✓ Verified' : 'Pending'}
+                                {receipt.ledger_amount && ` · ₱${parseFloat(receipt.ledger_amount).toLocaleString()}`}
+                              </span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {receipts.length === 0 && (
+                    <p className="no-receipts-text">No receipts yet. Upload a receipt after making a payment.</p>
+                  )}
+
+                  <div className="builder-links">
+                    <button className="btn-link-text" onClick={() => setShowContributionPlan(true)}>Change Tier</button>
+                    <span className="link-separator">·</span>
+                    <button className="btn-link-text" onClick={() => setShowContributionPlan(true)}>View Full Plan</button>
+                  </div>
+                </div>
+              )}
+
+              {/* RSVP Card - Main Event */}
               <div className="profile-card rsvp-card">
                 <div className="card-header">
                   <h3>Main Event</h3>
@@ -711,147 +866,6 @@ END:VCALENDAR`;
                   </div>
                 )}
               </div>
-              )}
-
-              {/* Builder Card */}
-              {!profile.builder_tier ? (
-                <div className="profile-card builder-card">
-                  <div className="card-header">
-                    <h3>Become a Golden Batch Builder</h3>
-                  </div>
-                  <p className="builder-intro-text">
-                    Choose your contribution tier and help build our 25th homecoming.
-                  </p>
-                  <button className="btn-view-plan" onClick={() => setShowContributionPlan(true)}>
-                    View Contribution Plan
-                  </button>
-                </div>
-              ) : (
-                <div className="profile-card builder-card has-tier">
-                  <div className={`builder-tier-badge ${profile.builder_tier}`}>
-                    {profile.builder_tier.charAt(0).toUpperCase() + profile.builder_tier.slice(1)}
-                    {profile.builder_tier !== 'root' && profile.pledge_amount && (
-                      <span className="badge-amount">· ₱{profile.pledge_amount?.toLocaleString()}</span>
-                    )}
-                  </div>
-
-                  {profile.builder_tier !== 'root' && profile.pledge_amount ? (
-                    <>
-                      <div className="builder-progress">
-                        <div className="builder-progress-bar">
-                          <div
-                            className="builder-progress-fill"
-                            style={{ width: `${Math.min((profile.total_paid / profile.pledge_amount) * 100, 100)}%` }}
-                          ></div>
-                        </div>
-                        <div className="builder-progress-text">
-                          <span className="builder-paid">₱{profile.total_paid?.toLocaleString() || 0}</span>
-                          <span className="builder-total">/ ₱{profile.pledge_amount?.toLocaleString()}</span>
-                          <span className="builder-pct">({Math.round((profile.total_paid / profile.pledge_amount) * 100)}%)</span>
-                        </div>
-                        <div className="builder-remaining">
-                          Remaining: <strong>₱{((profile.pledge_amount || 0) - (profile.total_paid || 0)).toLocaleString()}</strong>
-                        </div>
-                      </div>
-                    </>
-                  ) : (
-                    <div className="builder-root-status">
-                      <span className="root-contributed">₱{profile.total_paid?.toLocaleString() || 0} contributed</span>
-                      <span className="root-message">Contributing at your own pace</span>
-                    </div>
-                  )}
-
-                  {/* Receipt Upload */}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleReceiptUpload}
-                    ref={receiptFileInputRef}
-                    style={{ display: 'none' }}
-                    id="receipt-upload"
-                  />
-                  <button
-                    className="btn-upload-receipt"
-                    onClick={() => receiptFileInputRef.current?.click()}
-                    disabled={receiptUploading}
-                  >
-                    {receiptUploading ? 'Uploading...' : '📤 Upload Receipt'}
-                  </button>
-
-                  {/* Payment Methods Toggle */}
-                  <div className="payment-methods-toggle">
-                    <button
-                      className={`toggle-btn ${paymentMethodsOpen ? 'open' : ''}`}
-                      onClick={() => setPaymentMethodsOpen(!paymentMethodsOpen)}
-                    >
-                      Payment Methods <span className="toggle-arrow">{paymentMethodsOpen ? '▲' : '▼'}</span>
-                    </button>
-                    {paymentMethodsOpen && (
-                      <div className="payment-methods-content">
-                        <div className="payment-method-item">
-                          <div className="method-label">🇵🇭 Local Bank Transfer</div>
-                          <div className="method-detail"><span>Bank:</span> BDO Unibank</div>
-                          <div className="method-detail"><span>Account:</span> USLS-IS Batch 2003</div>
-                          <div className="method-detail"><span>Number:</span> XXXX-XXXX-XXXX</div>
-                        </div>
-                        <div className="payment-method-item">
-                          <div className="method-label">🌐 International (SWIFT)</div>
-                          <div className="method-detail"><span>Bank:</span> BDO Unibank</div>
-                          <div className="method-detail"><span>SWIFT:</span> BNORPHMM</div>
-                          <div className="method-detail"><span>Account:</span> USLS-IS Batch 2003</div>
-                          <div className="method-detail"><span>Number:</span> XXXX-XXXX-XXXX</div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Receipt History */}
-                  {receipts.length > 0 && (
-                    <div className="builder-receipt-list">
-                      <h4>Receipt History</h4>
-                      <div className="receipt-list-scroll">
-                        {receipts.map(receipt => (
-                          <div key={receipt.id} className="receipt-row">
-                            <a
-                              href={receipt.image_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="receipt-thumb"
-                            >
-                              <img src={receipt.image_url} alt="Receipt" />
-                            </a>
-                            <div className="receipt-info">
-                              <span className="receipt-date">
-                                {new Date(receipt.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                              </span>
-                              <span className={`receipt-source-badge ${receipt.source}`}>
-                                {receipt.source === 'user' ? 'You' : 'Committee'}
-                              </span>
-                            </div>
-                            <span className={`receipt-status-badge ${receipt.status}`}>
-                              {receipt.status === 'submitted' ? 'Submitted' : 'Processed'}
-                            </span>
-                            {receipt.ledger_id && (
-                              <span className={`receipt-verified-badge ${receipt.ledger_status === 'OK' ? 'verified' : 'pending'}`}>
-                                {receipt.ledger_status === 'OK' ? '✓ Verified' : 'Pending'}
-                                {receipt.ledger_amount && ` · ₱${parseFloat(receipt.ledger_amount).toLocaleString()}`}
-                              </span>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  {receipts.length === 0 && (
-                    <p className="no-receipts-text">No receipts yet. Upload a receipt after making a payment.</p>
-                  )}
-
-                  <div className="builder-links">
-                    <button className="btn-link-text" onClick={() => setShowContributionPlan(true)}>Change Tier</button>
-                    <span className="link-separator">·</span>
-                    <button className="btn-link-text" onClick={() => setShowContributionPlan(true)}>View Full Plan</button>
-                  </div>
-                </div>
               )}
             </div>
 

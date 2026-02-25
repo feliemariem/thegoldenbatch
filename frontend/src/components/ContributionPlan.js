@@ -482,7 +482,7 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
                       <div className="cp-payment-card-label">Bank Deposit</div>
                       <div className="cp-payment-detail">
                         <div className="cp-payment-detail-label">Bank</div>
-                        <div className="cp-payment-detail-value">PNB (Philippine National Bank - Bacolod)</div>
+                        <div className="cp-payment-detail-value">Philippine National Bank (PNB)</div>
                       </div>
                       <div className="cp-payment-detail">
                         <div className="cp-payment-detail-label">Account Names</div>
@@ -494,7 +494,7 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
                       </div>
                     </div>
                     <div className="cp-payment-card">
-                      <div className="cp-payment-card-label">For International Transfers</div>
+                      <div className="cp-payment-card-label">International Transfers (SWIFT)</div>
                       <div className="cp-payment-detail">
                         <div className="cp-payment-detail-label">Bank</div>
                         <div className="cp-payment-detail-value">PNB Bacolod Lacson Branch</div>

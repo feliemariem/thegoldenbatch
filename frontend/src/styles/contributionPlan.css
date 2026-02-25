@@ -945,7 +945,7 @@
 
 .cp-payment-detail-label {
   font-size: 9px;
-  color: var(--cp-light-gray);
+  color: var(--cp-gray);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -961,7 +961,7 @@
 
 .cp-payment-note {
   font-size: 11px;
-  color: var(--cp-light-gray);
+  color: var(--cp-gray);
   background: var(--cp-gold-panel);
   border-radius: 6px;
   padding: 10px 12px;
@@ -969,7 +969,7 @@
 }
 
 .cp-payment-note strong {
-  color: var(--cp-dark-gold);
+  color: var(--cp-black);
 }
 
 .cp-payment-fees-note {
@@ -1580,7 +1580,7 @@ body[data-theme="dark"] .cp-payment-card {
 }
 
 body[data-theme="dark"] .cp-payment-detail-label {
-  color: #888888;
+  color: #aaaaaa;
 }
 
 body[data-theme="dark"] .cp-payment-detail-value {
@@ -1589,11 +1589,11 @@ body[data-theme="dark"] .cp-payment-detail-value {
 
 body[data-theme="dark"] .cp-payment-note {
   background: rgba(207, 181, 59, 0.08);
-  color: #bbbbbb;
+  color: #cccccc;
 }
 
 body[data-theme="dark"] .cp-payment-note strong {
-  color: var(--cp-gold);
+  color: #ffffff;
 }
 
 body[data-theme="dark"] .cp-payment-fees-note {
