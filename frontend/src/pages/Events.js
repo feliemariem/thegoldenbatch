@@ -282,7 +282,7 @@ export default function Events() {
             <div className="main-event-info">
               <h3>25th Alumni Homecoming</h3>
               <p className="event-datetime">Saturday, December 16, 2028 • 5:00 PM</p>
-              <p className="event-location-text">📍 USLS School Grounds, Bacolod City</p>
+              <p className="event-location-text">📍 Santuario de La Salle, USLS, Bacolod City</p>
               <p className="event-description">The main event! 25 years since graduation. Let's make it unforgettable.</p>
               <div className="main-event-rsvp-stats">
                 <span className="rsvp-stat going">{mainEventStats.going} Going</span>

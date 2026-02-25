@@ -450,7 +450,7 @@ export default function ProfileNew() {
                   </div>
                   <div className="event-info">
                     <p className="event-name">25th Alumni Homecoming</p>
-                    <p className="event-location">USLS School Grounds, Bacolod City</p>
+                    <p className="event-location">Santuario de La Salle, USLS, Bacolod City</p>
                   </div>
                 </div>
 
