@@ -2518,3 +2518,103 @@ body[data-theme="light"] .merch-form-hint {
     text-align: center;
   }
 }
+
+/* ========================================
+   CALENDAR DROPDOWN
+   Add to Calendar feature
+   ======================================== */
+
+.calendar-dropdown {
+  position: relative;
+  display: inline-block;
+  margin-top: 8px;
+}
+
+.calendar-dropdown-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  background: rgba(0, 102, 51, 0.06);
+  border: 1px solid rgba(0, 102, 51, 0.12);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.calendar-dropdown-btn:hover {
+  background: rgba(0, 102, 51, 0.12);
+  border-color: rgba(0, 102, 51, 0.2);
+}
+
+.calendar-dropdown-btn .dropdown-arrow {
+  font-size: 0.6rem;
+  transition: transform 0.2s ease;
+}
+
+.calendar-dropdown-btn .dropdown-arrow.open {
+  transform: rotate(180deg);
+}
+
+.calendar-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 160px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 102, 51, 0.15);
+  border-radius: 8px;
+  padding: 6px 0;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  z-index: 100;
+}
+
+.calendar-option {
+  display: block;
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #333;
+  text-decoration: none;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.calendar-option:hover {
+  background: rgba(0, 102, 51, 0.08);
+  color: #006633;
+}
+
+/* Dark theme */
+[data-theme="dark"] .calendar-dropdown-btn {
+  color: var(--color-text-secondary);
+  background: rgba(207, 181, 59, 0.08);
+  border-color: rgba(207, 181, 59, 0.15);
+}
+
+[data-theme="dark"] .calendar-dropdown-btn:hover {
+  background: rgba(207, 181, 59, 0.15);
+  border-color: rgba(207, 181, 59, 0.25);
+}
+
+[data-theme="dark"] .calendar-dropdown-menu {
+  background: #1a2520;
+  border-color: rgba(207, 181, 59, 0.2);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .calendar-option {
+  color: var(--color-text-secondary);
+}
+
+[data-theme="dark"] .calendar-option:hover {
+  background: rgba(207, 181, 59, 0.1);
+  color: var(--color-hover);
+}

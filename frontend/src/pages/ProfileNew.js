@@ -27,7 +27,9 @@ export default function ProfileNew() {
   const [showMerchModal, setShowMerchModal] = useState(false);
   const [merchForm, setMerchForm] = useState({ shirt_size: '', jacket_size: '' });
   const [merchSaving, setMerchSaving] = useState(false);
+  const [calendarDropdownOpen, setCalendarDropdownOpen] = useState(false);
   const fileInputRef = useRef(null);
+  const calendarDropdownRef = useRef(null);
 
   const [form, setForm] = useState({
     first_name: '',
@@ -128,6 +130,41 @@ export default function ProfileNew() {
       return () => clearTimeout(timeout);
     }
   }, [location.state]);
+
+  // Close calendar dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (calendarDropdownRef.current && !calendarDropdownRef.current.contains(event.target)) {
+        setCalendarDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Generate .ics file for Apple Calendar
+  const downloadICS = () => {
+    const icsContent = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//USLS-IS Batch 2003//EN
+BEGIN:VEVENT
+DTSTART:20281216T090000
+DTEND:20281217T000000
+SUMMARY:USLS-IS Batch 2003 - 25th Alumni Homecoming
+LOCATION:Santuario de La Salle, USLS, Bacolod City
+DESCRIPTION:25th Alumni Homecoming of USLS-IS Batch 2003. The Golden Batch.
+END:VEVENT
+END:VCALENDAR`;
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'USLS-IS-2003-Reunion.ics';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link.href);
+    setCalendarDropdownOpen(false);
+  };
 
   const fetchMyEvents = async () => {
     try {
@@ -451,6 +488,39 @@ export default function ProfileNew() {
                   <div className="event-info">
                     <p className="event-name">25th Alumni Homecoming</p>
                     <p className="event-location">Santuario de La Salle, USLS, Bacolod City</p>
+                    <div className="calendar-dropdown" ref={calendarDropdownRef}>
+                      <button
+                        className="calendar-dropdown-btn"
+                        onClick={() => setCalendarDropdownOpen(!calendarDropdownOpen)}
+                      >
+                        📅 Add to Calendar <span className={`dropdown-arrow ${calendarDropdownOpen ? 'open' : ''}`}>▼</span>
+                      </button>
+                      {calendarDropdownOpen && (
+                        <div className="calendar-dropdown-menu">
+                          <a
+                            href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=USLS-IS+Batch+2003+25th+Alumni+Homecoming&dates=20281216T090000/20281217T000000&location=Santuario+de+La+Salle,+USLS,+Bacolod+City&details=25th+Alumni+Homecoming+of+USLS-IS+Batch+2003.+The+Golden+Batch."
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="calendar-option"
+                            onClick={() => setCalendarDropdownOpen(false)}
+                          >
+                            Google Calendar
+                          </a>
+                          <button className="calendar-option" onClick={downloadICS}>
+                            Apple Calendar
+                          </button>
+                          <a
+                            href="https://outlook.live.com/calendar/0/action/compose?subject=USLS-IS+Batch+2003+25th+Alumni+Homecoming&startdt=2028-12-16T09:00:00&enddt=2028-12-17T00:00:00&location=Santuario+de+La+Salle,+USLS,+Bacolod+City&body=25th+Alumni+Homecoming+of+USLS-IS+Batch+2003.+The+Golden+Batch."
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="calendar-option"
+                            onClick={() => setCalendarDropdownOpen(false)}
+                          >
+                            Outlook
+                          </a>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
 

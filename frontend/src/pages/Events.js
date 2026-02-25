@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
@@ -17,6 +17,8 @@ export default function Events() {
   const [mainEventStats, setMainEventStats] = useState({ going: 0, maybe: 0, not_going: 0 });
   const [showPastEvents, setShowPastEvents] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [calendarDropdownOpen, setCalendarDropdownOpen] = useState(false);
+  const calendarDropdownRef = useRef(null);
 
   // Admin form state
   const [showForm, setShowForm] = useState(false);
@@ -63,6 +65,41 @@ export default function Events() {
     const interval = setInterval(updateCountdown, 1000);
     return () => clearInterval(interval);
   }, []);
+
+  // Close calendar dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (calendarDropdownRef.current && !calendarDropdownRef.current.contains(event.target)) {
+        setCalendarDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Generate .ics file for Apple Calendar
+  const downloadICS = () => {
+    const icsContent = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//USLS-IS Batch 2003//EN
+BEGIN:VEVENT
+DTSTART:20281216T090000
+DTEND:20281217T000000
+SUMMARY:USLS-IS Batch 2003 - 25th Alumni Homecoming
+LOCATION:Santuario de La Salle, USLS, Bacolod City
+DESCRIPTION:25th Alumni Homecoming of USLS-IS Batch 2003. The Golden Batch.
+END:VEVENT
+END:VCALENDAR`;
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'USLS-IS-2003-Reunion.ics';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link.href);
+    setCalendarDropdownOpen(false);
+  };
 
   const fetchEvents = async () => {
     try {
@@ -283,6 +320,39 @@ export default function Events() {
               <h3>25th Alumni Homecoming</h3>
               <p className="event-datetime">Saturday, December 16, 2028 • 5:00 PM</p>
               <p className="event-location-text">📍 Santuario de La Salle, USLS, Bacolod City</p>
+              <div className="calendar-dropdown" ref={calendarDropdownRef}>
+                <button
+                  className="calendar-dropdown-btn"
+                  onClick={() => setCalendarDropdownOpen(!calendarDropdownOpen)}
+                >
+                  📅 Add to Calendar <span className={`dropdown-arrow ${calendarDropdownOpen ? 'open' : ''}`}>▼</span>
+                </button>
+                {calendarDropdownOpen && (
+                  <div className="calendar-dropdown-menu">
+                    <a
+                      href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=USLS-IS+Batch+2003+25th+Alumni+Homecoming&dates=20281216T090000/20281217T000000&location=Santuario+de+La+Salle,+USLS,+Bacolod+City&details=25th+Alumni+Homecoming+of+USLS-IS+Batch+2003.+The+Golden+Batch."
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="calendar-option"
+                      onClick={() => setCalendarDropdownOpen(false)}
+                    >
+                      Google Calendar
+                    </a>
+                    <button className="calendar-option" onClick={downloadICS}>
+                      Apple Calendar
+                    </button>
+                    <a
+                      href="https://outlook.live.com/calendar/0/action/compose?subject=USLS-IS+Batch+2003+25th+Alumni+Homecoming&startdt=2028-12-16T09:00:00&enddt=2028-12-17T00:00:00&location=Santuario+de+La+Salle,+USLS,+Bacolod+City&body=25th+Alumni+Homecoming+of+USLS-IS+Batch+2003.+The+Golden+Batch."
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="calendar-option"
+                      onClick={() => setCalendarDropdownOpen(false)}
+                    >
+                      Outlook
+                    </a>
+                  </div>
+                )}
+              </div>
               <p className="event-description">The main event! 25 years since graduation. Let's make it unforgettable.</p>
               <div className="main-event-rsvp-stats">
                 <span className="rsvp-stat going">{mainEventStats.going} Going</span>
