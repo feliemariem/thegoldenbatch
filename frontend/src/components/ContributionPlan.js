@@ -181,31 +181,24 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
         <div className="cp-scroll">
           {/* Header */}
           <header className="cp-header">
+            <div className="cp-badge">Contribution & Funding Plan</div>
             <div className="cp-header-content">
               <div className="cp-header-left">
-                <div className="cp-eyebrow">USLS-IS BATCH 2003 · 25TH ALUMNI HOMECOMING · DEC. 16, 2028 · SANTUARIO DE LA SALLE, BACOLOD CITY</div>
-                <h1 className="cp-site-title">The <span>Golden</span> Batch 2003</h1>
-                <div className="cp-reunion-line">25<sup>th</sup> Year Reunion</div>
-                <div className="cp-badge">Contribution & Funding Plan</div>
-                <div className="cp-header-tagline">25 years later, we're coming home. Together, let's make it unforgettable.</div>
+                <h1 className="cp-site-title"><span className="cp-green-text">USLS-IS</span> <span className="cp-gold-text">2003</span></h1>
+                <div className="cp-subtitle">25th Alumni Homecoming · Dec. 16, 2028 · Santuario de La Salle, Bacolod City</div>
+                <div className="cp-pillars">
+                  <span className="cp-pillar-pill">Reconnect</span>
+                  <span className="cp-pillar-pill">Celebrate</span>
+                  <span className="cp-pillar-pill">Network</span>
+                  <span className="cp-pillar-pill">Give Back</span>
+                </div>
               </div>
               <div className="cp-header-right">
                 <div className="cp-label">Funding Target</div>
                 <div className="cp-funding-target">₱{batchProgress.goal.toLocaleString()}</div>
-                <div className="cp-sub">Full Batch Vision Target. Achievable<br/>through collective commitment and<br/>fundraising support.</div>
               </div>
             </div>
           </header>
-
-          {/* Pillars Bar */}
-          <div className="cp-pillars-bar">
-            <div className="cp-pillars">
-              <div className="cp-pillar">Reconnect</div>
-              <div className="cp-pillar">Celebrate</div>
-              <div className="cp-pillar">Network</div>
-              <div className="cp-pillar">Give Back</div>
-            </div>
-          </div>
 
           <main className="cp-main">
             {/* Progress Box */}
