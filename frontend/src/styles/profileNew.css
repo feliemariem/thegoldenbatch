@@ -1031,14 +1031,6 @@
     text-align: center;
   }
 
-  .rsvp-buttons {
-    flex-direction: column;
-  }
-
-  .btn-rsvp {
-    width: 100%;
-  }
-
   .info-display .info-grid {
     grid-template-columns: 1fr;
   }
