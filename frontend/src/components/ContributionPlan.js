@@ -406,7 +406,7 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
                     {selectedTier ? TIERS[selectedTier].label : ''}
                   </div>
                   <div className="cp-pledge-title">
-                    {selectedTier === 'root' ? 'Contribute at your own pace' : 'Set your commitment'}
+                    {selectedTier === 'root' ? 'Contribute at your own pace' : 'How much would you like to contribute?'}
                   </div>
                 </div>
 
