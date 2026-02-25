@@ -434,126 +434,130 @@
 }
 
 /* RSVP Row - countdown LEFT, buttons stacked vertically RIGHT */
-.rsvp-row {
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
-  gap: 10px;
+.rsvp-card .rsvp-row {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: stretch !important;
+  gap: 10px !important;
 }
 
 /* Countdown Box - self-contained, no overflow */
-.countdown-box {
+.rsvp-card .countdown-box {
   background: linear-gradient(135deg, rgba(207, 181, 59, 0.15) 0%, rgba(207, 181, 59, 0.05) 100%);
   border: 1px solid rgba(207, 181, 59, 0.25);
   border-radius: 10px;
-  width: 72px;
-  min-width: 72px;
+  width: 72px !important;
+  min-width: 72px !important;
+  height: auto !important;
+  min-height: 64px !important;
   flex-shrink: 0;
-  padding: 12px 8px;
+  padding: 10px 8px !important;
   margin: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
+  overflow: hidden !important;
 }
 
-.countdown-days {
-  font-size: 1.5rem;
+.rsvp-card .countdown-days {
+  font-size: 1.3rem !important;
   font-weight: 700;
   color: var(--color-hover);
   line-height: 1;
 }
 
-.countdown-label {
-  font-size: 0.5rem;
+.rsvp-card .countdown-label {
+  font-size: 0.45rem !important;
   font-weight: 600;
   color: #e0e0e0;
   letter-spacing: 0.03em;
-  margin-top: 4px;
+  margin-top: 2px !important;
   white-space: nowrap;
   text-transform: uppercase;
 }
 
-.countdown-label.countdown-today {
+.rsvp-card .countdown-label.countdown-today {
   color: var(--color-hover);
   font-weight: 700;
-  font-size: 0.65rem;
+  font-size: 0.55rem !important;
   white-space: normal;
   line-height: 1.2;
 }
 
-.countdown-label.countdown-passed {
+.rsvp-card .countdown-label.countdown-passed {
   color: #a0a0a0;
   font-style: italic;
-  font-size: 0.45rem;
+  font-size: 0.4rem !important;
   white-space: normal;
   line-height: 1.2;
 }
 
 /* Light mode */
-[data-theme="light"] .countdown-box {
+[data-theme="light"] .rsvp-card .countdown-box {
   background: linear-gradient(135deg, rgba(0, 102, 51, 0.1) 0%, rgba(0, 102, 51, 0.05) 100%);
   border-color: rgba(0, 102, 51, 0.2);
 }
 
-[data-theme="light"] .countdown-label {
+[data-theme="light"] .rsvp-card .countdown-label {
   color: #555;
 }
 
-.rsvp-label {
+.rsvp-card .rsvp-label {
   color: #999;
   font-size: 0.7rem;
   margin: 0 0 6px 0;
 }
 
-.rsvp-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+.rsvp-card .rsvp-buttons {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
   flex: 1;
   min-width: 0;
   justify-content: center;
 }
 
-.btn-rsvp {
-  padding: 6px 8px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
-  background: rgba(0, 0, 0, 0.2);
-  font-size: 0.75rem;
+.rsvp-card .btn-rsvp {
+  padding: 6px 4px !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 6px !important;
+  background: rgba(0, 0, 0, 0.2) !important;
+  font-size: 0.72rem !important;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
   color: #909090;
   text-align: center;
   white-space: nowrap;
+  width: auto !important;
 }
 
-.btn-rsvp:hover:not(:disabled) {
-  border-color: rgba(207, 181, 59, 0.4);
+.rsvp-card .btn-rsvp:hover:not(:disabled) {
+  border-color: rgba(207, 181, 59, 0.4) !important;
   color: #c0c0c0;
 }
 
-.btn-rsvp.active.going {
-  background: linear-gradient(135deg, #059669 0%, #047857 100%);
-  border-color: #059669;
-  color: white;
+.rsvp-card .btn-rsvp.active.going {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+  border-color: #059669 !important;
+  color: white !important;
 }
 
-.btn-rsvp.active.maybe {
-  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
-  border-color: #d97706;
-  color: white;
+.rsvp-card .btn-rsvp.active.maybe {
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%) !important;
+  border-color: #d97706 !important;
+  color: white !important;
 }
 
-.btn-rsvp.active.not-going {
-  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-  border-color: #dc2626;
-  color: white;
+.rsvp-card .btn-rsvp.active.not-going {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%) !important;
+  border-color: #dc2626 !important;
+  color: white !important;
 }
 
-.btn-rsvp:disabled {
+.rsvp-card .btn-rsvp:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
@@ -1037,34 +1041,37 @@
     text-align: center;
   }
 
-  .rsvp-row {
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
+  .rsvp-card .rsvp-row {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 8px !important;
   }
 
-  .countdown-box {
-    width: 64px;
-    min-width: 64px;
-    padding: 10px 6px;
+  .rsvp-card .countdown-box {
+    width: 64px !important;
+    min-width: 64px !important;
+    min-height: 56px !important;
+    padding: 8px 6px !important;
   }
 
-  .countdown-days {
-    font-size: 1.3rem;
+  .rsvp-card .countdown-days {
+    font-size: 1.1rem !important;
   }
 
-  .countdown-label {
-    font-size: 0.45rem;
+  .rsvp-card .countdown-label {
+    font-size: 0.4rem !important;
   }
 
-  .rsvp-buttons {
-    width: 100%;
-    gap: 4px;
+  .rsvp-card .rsvp-buttons {
+    width: 100% !important;
+    gap: 4px !important;
+    flex-direction: column !important;
   }
 
-  .btn-rsvp {
-    font-size: 0.7rem;
-    padding: 8px 12px;
+  .rsvp-card .btn-rsvp {
+    font-size: 0.7rem !important;
+    padding: 8px 12px !important;
+    width: 100% !important;
   }
 
   .info-display .info-grid {
@@ -1210,15 +1217,18 @@
   color: #1a1a1a;
 }
 
-[data-theme="light"] .btn-rsvp {
-  background: rgba(0, 0, 0, 0.05);
-  border-color: rgba(0, 0, 0, 0.15);
-  color: #555;
+[data-theme="light"] .rsvp-card .btn-rsvp {
+  background: rgba(0, 0, 0, 0.05) !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
+  border-width: 1px !important;
+  color: #555 !important;
+  padding: 6px 4px !important;
+  font-size: 0.72rem !important;
 }
 
-[data-theme="light"] .btn-rsvp:hover:not(:disabled) {
-  border-color: #006633;
-  color: #006633;
+[data-theme="light"] .rsvp-card .btn-rsvp:hover:not(:disabled) {
+  border-color: #006633 !important;
+  color: #006633 !important;
 }
 
 [data-theme="light"] .edit-form input {
