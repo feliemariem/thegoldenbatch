@@ -433,15 +433,11 @@
   margin: 0;
 }
 
-.rsvp-section {
-  flex: 1;
-}
-
 /* RSVP Row - countdown + buttons */
 .rsvp-row {
   display: flex;
-  align-items: center;
-  gap: 12px;
+  align-items: stretch;
+  gap: 8px;
 }
 
 /* Countdown Box */
@@ -449,18 +445,16 @@
   background: linear-gradient(135deg, rgba(207, 181, 59, 0.15) 0%, rgba(207, 181, 59, 0.05) 100%);
   border: 1px solid rgba(207, 181, 59, 0.25);
   border-radius: 10px;
-  width: 90px;
-  min-width: 90px;
-  height: 72px;
+  width: 80px;
+  min-width: 80px;
   flex-shrink: 0;
-  padding: 10px 14px;
+  padding: 10px 8px;
   margin: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  white-space: nowrap;
 }
 
 .countdown-days {
@@ -510,16 +504,18 @@
 .rsvp-buttons {
   display: flex;
   flex-direction: row;
-  gap: 8px;
-  flex-wrap: wrap;
+  gap: 6px;
+  flex: 1;
 }
 
 .btn-rsvp {
-  padding: 7px 14px;
+  padding: 8px 0;
+  flex: 1;
+  text-align: center;
   border: 2px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   background: rgba(0, 0, 0, 0.2);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -1034,23 +1030,18 @@
   }
 
   .rsvp-row {
-    flex-direction: column;
-    align-items: center;
+    flex-direction: row;
+    align-items: stretch;
   }
 
   .countdown-box {
-    margin: 0 auto;
-  }
-
-  .rsvp-buttons {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
+    width: 70px;
+    min-width: 70px;
   }
 
   .btn-rsvp {
-    padding: 6px 12px;
-    font-size: 0.75rem;
+    padding: 6px 0;
+    font-size: 0.7rem;
   }
 
   .info-display .info-grid {
