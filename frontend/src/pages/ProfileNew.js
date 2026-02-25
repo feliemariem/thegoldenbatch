@@ -24,6 +24,9 @@ export default function ProfileNew() {
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [myEvents, setMyEvents] = useState([]);
   const [showGuide, setShowGuide] = useState(false);
+  const [showMerchModal, setShowMerchModal] = useState(false);
+  const [merchForm, setMerchForm] = useState({ shirt_size: '', jacket_size: '' });
+  const [merchSaving, setMerchSaving] = useState(false);
   const fileInputRef = useRef(null);
 
   const [form, setForm] = useState({
@@ -157,6 +160,10 @@ export default function ProfileNew() {
         linkedin_url: data.linkedin_url || '',
         instagram_url: data.instagram_url || '',
       });
+      setMerchForm({
+        shirt_size: data.shirt_size || '',
+        jacket_size: data.jacket_size || '',
+      });
     } catch (err) {
       console.error('Failed to fetch profile');
     }
@@ -264,6 +271,25 @@ export default function ProfileNew() {
     } catch (err) {
       setMessage('Failed to remove photo');
       setTimeout(() => setMessage(''), 3000);
+    }
+  };
+
+  const handleMerchSave = async () => {
+    setMerchSaving(true);
+    try {
+      const res = await apiPut('/api/me/merch', merchForm);
+      if (res.ok) {
+        const data = await res.json();
+        setProfile(prev => ({ ...prev, ...data }));
+        setShowMerchModal(false);
+        setMessage('Merch sizes saved!');
+        setTimeout(() => setMessage(''), 3000);
+      }
+    } catch (err) {
+      setMessage('Failed to save merch sizes');
+      setTimeout(() => setMessage(''), 3000);
+    } finally {
+      setMerchSaving(false);
     }
   };
 
@@ -801,6 +827,42 @@ export default function ProfileNew() {
                         )}
                       </div>
                     )}
+
+                    {/* Merch Sizes Section */}
+                    <div className="merch-section">
+                      <div className="merch-section-divider">
+                        <span>Merch Sizes</span>
+                      </div>
+                      <p className="merch-section-note">
+                        We're planning exclusive batch merch for the reunion! Save your sizes so we have them ready when orders open.
+                      </p>
+                      <div className="merch-inline-display">
+                        <div className="merch-inline-item">
+                          <span className="merch-label">Shirt</span>
+                          <span className={`merch-value ${!profile.shirt_size ? 'empty' : ''}`}>
+                            {profile.shirt_size || 'Not set'}
+                          </span>
+                        </div>
+                        <div className="merch-inline-item">
+                          <span className="merch-label">Jacket</span>
+                          <span className={`merch-value ${!profile.jacket_size ? 'empty' : ''}`}>
+                            {profile.jacket_size || 'Not set'}
+                          </span>
+                        </div>
+                        <button
+                          className="btn-merch-edit"
+                          onClick={() => {
+                            setMerchForm({
+                              shirt_size: profile.shirt_size || '',
+                              jacket_size: profile.jacket_size || '',
+                            });
+                            setShowMerchModal(true);
+                          }}
+                        >
+                          {profile.shirt_size || profile.jacket_size ? 'Edit Sizes' : 'Set Sizes'}
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
@@ -868,6 +930,77 @@ export default function ProfileNew() {
         </main>
       </div>
       <Footer />
+
+      {showMerchModal && (
+        <div className="modal-overlay" onClick={(e) => {
+          if (e.target === e.currentTarget) setShowMerchModal(false);
+        }}>
+          <div className="merch-modal">
+            <div className="merch-modal-header">
+              <h3>Merch Preferences</h3>
+              <button className="merch-modal-close" onClick={() => setShowMerchModal(false)}>✕</button>
+            </div>
+
+            <p className="merch-modal-note">
+              We're planning exclusive batch merch for the reunion! Save your sizes now so we have them ready when orders open.
+            </p>
+
+            <div className="merch-modal-form">
+              <div className="merch-form-group">
+                <label>Shirt Size</label>
+                <select
+                  value={merchForm.shirt_size}
+                  onChange={(e) => setMerchForm({ ...merchForm, shirt_size: e.target.value })}
+                >
+                  <option value="">— Select —</option>
+                  <option value="XS">XS</option>
+                  <option value="S">Small</option>
+                  <option value="M">Medium</option>
+                  <option value="L">Large</option>
+                  <option value="XL">XL</option>
+                  <option value="2XL">2XL</option>
+                  <option value="3XL">3XL</option>
+                </select>
+              </div>
+
+              <div className="merch-form-group">
+                <label>Jacket Size</label>
+                <select
+                  value={merchForm.jacket_size}
+                  onChange={(e) => setMerchForm({ ...merchForm, jacket_size: e.target.value })}
+                >
+                  <option value="">— Select —</option>
+                  <option value="XS">XS</option>
+                  <option value="S">Small</option>
+                  <option value="M">Medium</option>
+                  <option value="L">Large</option>
+                  <option value="XL">XL</option>
+                  <option value="2XL">2XL</option>
+                  <option value="3XL">3XL</option>
+                </select>
+              </div>
+
+              <p className="merch-form-hint">You can always update this later.</p>
+
+              <div className="merch-form-actions">
+                <button
+                  className="btn-save"
+                  onClick={handleMerchSave}
+                  disabled={merchSaving}
+                >
+                  {merchSaving ? 'Saving...' : 'Save'}
+                </button>
+                <button
+                  className="btn-cancel"
+                  onClick={() => setShowMerchModal(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

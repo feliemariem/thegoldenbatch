@@ -83,6 +83,8 @@ CREATE TABLE users (
     facebook_url TEXT,
     linkedin_url TEXT,
     instagram_url TEXT,
+    shirt_size VARCHAR(10),
+    jacket_size VARCHAR(10),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

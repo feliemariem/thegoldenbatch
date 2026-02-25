@@ -18,6 +18,7 @@ router.get('/', authenticateToken, async (req, res) => {
       `SELECT u.id, u.email, u.first_name, u.last_name, u.birthday,
               u.mobile, u.address, u.city, u.country, u.occupation, u.company,
               u.profile_photo, u.facebook_url, u.linkedin_url, u.instagram_url,
+              u.shirt_size, u.jacket_size,
               r.status as rsvp_status,
               m.id as master_list_id,
               m.section,
@@ -210,6 +211,36 @@ router.put('/rsvp', authenticateToken, async (req, res) => {
     );
 
     res.json({ status });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Update merch preferences
+router.put('/merch', authenticateToken, async (req, res) => {
+  try {
+    const { shirt_size, jacket_size } = req.body;
+    const validSizes = ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', '', null];
+
+    if (shirt_size !== undefined && !validSizes.includes(shirt_size)) {
+      return res.status(400).json({ error: 'Invalid shirt size' });
+    }
+    if (jacket_size !== undefined && !validSizes.includes(jacket_size)) {
+      return res.status(400).json({ error: 'Invalid jacket size' });
+    }
+
+    const result = await db.query(
+      `UPDATE users SET
+        shirt_size = $1,
+        jacket_size = $2,
+        updated_at = CURRENT_TIMESTAMP
+       WHERE id = $3
+       RETURNING shirt_size, jacket_size`,
+      [shirt_size || null, jacket_size || null, req.user.id]
+    );
+
+    res.json(result.rows[0]);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
