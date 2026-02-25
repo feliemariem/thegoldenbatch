@@ -1047,37 +1047,6 @@ END:VCALENDAR`;
                   </div>
                 </div>
               )}
-
-              {/* Quick Links - only show if other new pages are enabled or user is admin */}
-              {(showNewPages || user?.isAdmin) && (
-                <div className="profile-card quick-links-card">
-                  <h3>Quick Links</h3>
-                  <div className="quick-links">
-                    <Link to="/events" className="quick-link">
-                      <span className="quick-link-icon">📅</span>
-                      <span>View Events</span>
-                    </Link>
-                    {showNewPages && (
-                      <Link to="/directory" className="quick-link">
-                        <span className="quick-link-icon">👥</span>
-                        <span>Batch Directory</span>
-                      </Link>
-                    )}
-                    {user?.isAdmin && (
-                      <Link to="/media" className="quick-link">
-                        <span className="quick-link-icon">📸</span>
-                        <span>Media Gallery</span>
-                      </Link>
-                    )}
-                    {user?.isAdmin && (
-                      <Link to="/committee" className="quick-link">
-                        <span className="quick-link-icon">👔</span>
-                        <span>Committee</span>
-                      </Link>
-                    )}
-                  </div>
-                </div>
-              )}
             </div>
           </div>
 
