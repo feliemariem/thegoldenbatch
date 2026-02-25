@@ -5,9 +5,17 @@ const { authenticateToken } = require('../middleware/auth');
 const { AMOUNT_DUE } = require('../config/constants');
 
 // Helper function for text normalization
+// Preserves short acronyms (3 chars or fewer, all caps) like JR, CEO, LA, IT, HR, VP, CPA, MD
 const toTitleCase = (str) => {
   if (!str) return str;
-  return str.trim().toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase());
+  return str.trim().split(/\s+/).map(word => {
+    // If word is 3 chars or fewer and all uppercase, keep it (likely an acronym)
+    if (word.length <= 3 && word === word.toUpperCase() && /^[A-Z]+$/.test(word)) {
+      return word;
+    }
+    // Otherwise, apply normal title case
+    return word.toLowerCase().replace(/^\w/, char => char.toUpperCase());
+  }).join(' ');
 };
 
 // Get current user's profile with RSVP, section, and payment status
