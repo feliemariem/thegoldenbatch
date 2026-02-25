@@ -1163,6 +1163,16 @@ body[data-theme="light"] .consent-checkbox span {
     height: 32px;
   }
 
+  .landing-logo span {
+    font-size: 0.85rem;
+  }
+
+  .btn-login {
+    padding: 6px 14px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+  }
+
   .hero-title {
     font-size: 1.8rem;
   }
