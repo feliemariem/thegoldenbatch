@@ -16,6 +16,7 @@
   letter-spacing: 0.15em;
   text-transform: uppercase;
   margin: 0;
+  font-variant-numeric: lining-nums;
 }
 
 /* Light mode: solid green instead of gradient */
