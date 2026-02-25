@@ -514,9 +514,10 @@
   display: flex !important;
   flex-direction: column !important;
   gap: 4px !important;
-  flex: 1;
+  flex: 0 0 auto !important;
   min-width: 0;
   justify-content: center;
+  align-items: stretch;
 }
 
 .rsvp-card .btn-rsvp {
@@ -530,6 +531,8 @@
   transition: all 0.2s ease;
   color: #909090;
   text-align: center;
+  max-width: 180px !important;
+  width: auto !important;
   white-space: nowrap;
   width: auto !important;
 }
@@ -1066,12 +1069,14 @@
     width: 100% !important;
     gap: 4px !important;
     flex-direction: column !important;
+    flex: 1 1 auto !important;
   }
 
   .rsvp-card .btn-rsvp {
     font-size: 0.62rem !important;
     padding: 6px 8px !important;
     width: 100% !important;
+    max-width: none !important;
   }
 
   .info-display .info-grid {
