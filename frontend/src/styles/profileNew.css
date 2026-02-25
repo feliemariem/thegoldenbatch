@@ -437,18 +437,19 @@
 .rsvp-row {
   display: flex;
   align-items: stretch;
-  gap: 8px;
+  gap: 6px;
 }
 
 /* Countdown Box */
 .countdown-box {
   background: linear-gradient(135deg, rgba(207, 181, 59, 0.15) 0%, rgba(207, 181, 59, 0.05) 100%);
   border: 1px solid rgba(207, 181, 59, 0.25);
-  border-radius: 10px;
-  width: 80px;
-  min-width: 80px;
+  border-radius: 8px;
+  width: 68px;
+  min-width: 68px;
+  height: 56px;
   flex-shrink: 0;
-  padding: 10px 8px;
+  padding: 6px;
   margin: 0;
   display: flex;
   flex-direction: column;
@@ -458,19 +459,20 @@
 }
 
 .countdown-days {
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: var(--color-hover);
   line-height: 1;
 }
 
 .countdown-label {
-  font-size: 0.55rem;
+  font-size: 0.45rem;
   font-weight: 600;
   color: #e0e0e0;
-  letter-spacing: 0.05em;
-  margin-top: 4px;
+  letter-spacing: 0.03em;
+  margin-top: 2px;
   white-space: nowrap;
+  text-transform: uppercase;
 }
 
 .countdown-label.countdown-today {
@@ -506,20 +508,22 @@
   flex-direction: row;
   gap: 6px;
   flex: 1;
+  min-width: 0;
 }
 
 .btn-rsvp {
-  padding: 8px 0;
-  flex: 1;
-  text-align: center;
+  padding: 8px 4px;
   border: 2px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   background: rgba(0, 0, 0, 0.2);
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
   color: #909090;
+  flex: 1;
+  text-align: center;
+  white-space: nowrap;
 }
 
 .btn-rsvp:hover:not(:disabled) {
@@ -1030,18 +1034,14 @@
   }
 
   .rsvp-row {
+    display: flex;
     flex-direction: row;
     align-items: stretch;
   }
 
-  .countdown-box {
-    width: 70px;
-    min-width: 70px;
-  }
-
   .btn-rsvp {
-    padding: 6px 0;
-    font-size: 0.7rem;
+    font-size: 0.68rem;
+    padding: 6px 2px;
   }
 
   .info-display .info-grid {
