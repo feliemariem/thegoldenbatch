@@ -514,15 +514,13 @@
   display: flex !important;
   flex-direction: column !important;
   gap: 4px !important;
-  width: 160px !important;
-  min-width: 160px !important;
-  max-width: 160px !important;
+  width: auto !important;
   justify-content: center;
-  align-items: stretch;
+  align-items: stretch !important;
 }
 
 .rsvp-card .btn-rsvp {
-  padding: 4px 4px !important;
+  padding: 4px 16px !important;
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
   border-radius: 6px !important;
   background: rgba(0, 0, 0, 0.2) !important;
@@ -532,7 +530,7 @@
   transition: all 0.2s ease;
   color: #909090;
   text-align: center;
-  width: 100% !important;
+  width: auto !important;
   white-space: nowrap;
   width: auto !important;
 }
@@ -1066,17 +1064,19 @@
   }
 
   .rsvp-card .rsvp-buttons {
-    width: 100% !important;
+    width: auto !important;
     min-width: unset !important;
     max-width: none !important;
     gap: 4px !important;
     flex-direction: column !important;
+    align-items: center !important;
   }
 
   .rsvp-card .btn-rsvp {
-    font-size: 0.62rem !important;
-    padding: 6px 8px !important;
-    width: 100% !important;
+    font-size: 0.65rem !important;
+    padding: 4px 20px !important;
+    width: auto !important;
+    max-width: none !important;
   }
 
   .info-display .info-grid {
@@ -1227,7 +1227,7 @@
   border-color: rgba(0, 0, 0, 0.15) !important;
   border-width: 1px !important;
   color: #555 !important;
-  padding: 4px 4px !important;
+  padding: 4px 16px !important;
   font-size: 0.65rem !important;
 }
 
