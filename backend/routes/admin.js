@@ -117,9 +117,12 @@ router.get('/users', authenticateAdmin, async (req, res) => {
         u.has_alumni_card,
         u.created_at as registered_at,
         r.status as rsvp_status,
-        r.updated_at as rsvp_updated_at
+        r.updated_at as rsvp_updated_at,
+        m.section
       FROM users u
       LEFT JOIN rsvps r ON u.id = r.user_id
+      LEFT JOIN invites i ON u.invite_id = i.id
+      LEFT JOIN master_list m ON i.master_list_id = m.id
       ${whereClause}
       ORDER BY u.last_name ASC NULLS LAST, u.first_name ASC
       LIMIT $${paramIndex} OFFSET $${paramIndex + 1}

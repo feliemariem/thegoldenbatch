@@ -579,7 +579,8 @@ END:VCALENDAR`;
                 </div>
               </div>
 
-              {/* Alumni Card Nudge */}
+              {/* Alumni Card Nudge - Only show for graduates */}
+              {profile.section && profile.section !== 'Non-Graduate' && (
               <div className="profile-card alumni-card-nudge">
                 <div className="card-header">
                   <h3>🎓 USLS Alumni Card</h3>
@@ -648,6 +649,7 @@ END:VCALENDAR`;
                   </div>
                 )}
               </div>
+              )}
 
               {/* Payment Status Card - Graduates Only */}
               {profile.is_graduate ? (

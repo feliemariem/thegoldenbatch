@@ -115,7 +115,7 @@ export default function RegisteredTab({
         u.occupation || '',
         u.company || '',
         u.rsvp_status || 'pending',
-        u.has_alumni_card ? 'Yes' : 'No',
+        u.section === 'Non-Graduate' ? 'N/A' : (u.has_alumni_card ? 'Yes' : 'No'),
         u.shirt_size || '',
         u.jacket_size || '',
         u.registered_at ? new Date(u.registered_at).toLocaleDateString() : ''
@@ -218,7 +218,11 @@ export default function RegisteredTab({
                           : 'pending'}
                       </span>
                     </td>
-                    <td style={{ textAlign: 'center' }}>{user.has_alumni_card ? '✓' : ''}</td>
+                    <td style={{ textAlign: 'center' }}>
+                      {user.section === 'Non-Graduate'
+                        ? <span style={{ color: '#888', fontSize: '0.8em' }}>N/A</span>
+                        : user.has_alumni_card ? '✓' : ''}
+                    </td>
                     <td>{user.shirt_size || '—'}</td>
                     <td>{user.jacket_size || '—'}</td>
                   </tr>
