@@ -357,14 +357,14 @@
   background: var(--color-bg-card);
   border: 1px solid rgba(184, 150, 12, 0.15);
   border-radius: 16px;
-  padding: 24px;
+  padding: 18px;
 }
 
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 14px;
 }
 
 .card-header h3 {
@@ -378,10 +378,10 @@
 /* RSVP Card */
 .event-details {
   display: flex;
-  gap: 20px;
+  gap: 14px;
   align-items: center;
-  margin-bottom: 24px;
-  padding-bottom: 20px;
+  margin-bottom: 14px;
+  padding-bottom: 14px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
@@ -392,19 +392,19 @@
   background: linear-gradient(135deg, rgba(0, 102, 51, 0.25) 0%, rgba(0, 102, 51, 0.15) 100%);
   border: 1px solid rgba(0, 102, 51, 0.3);
   border-radius: 12px;
-  padding: 16px 20px;
-  min-width: 80px;
+  padding: 10px 14px;
+  min-width: 62px;
 }
 
 .event-day {
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: var(--color-hover);
   line-height: 1;
 }
 
 .event-month {
-  font-size: 0.85rem;
+  font-size: 0.72rem;
   font-weight: 600;
   color: #e0e0e0;
   text-transform: uppercase;
@@ -412,7 +412,7 @@
 }
 
 .event-year {
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   color: #808080;
 }
 
@@ -422,19 +422,27 @@
 
 .event-name {
   color: var(--text-primary);
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   font-weight: 600;
-  margin: 0 0 6px 0;
+  margin: 0 0 3px 0;
 }
 
 .event-location {
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   margin: 0;
 }
 
 .rsvp-section {
   text-align: center;
+  flex: 1;
+}
+
+/* Countdown and RSVP Row */
+.countdown-rsvp-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
 }
 
 /* Countdown Box */
@@ -442,9 +450,9 @@
   background: linear-gradient(135deg, rgba(207, 181, 59, 0.15) 0%, rgba(207, 181, 59, 0.05) 100%);
   border: 1px solid rgba(207, 181, 59, 0.25);
   border-radius: 10px;
-  width: 100px;
-  height: 100px;
-  margin: 0 auto 20px auto;
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -452,30 +460,31 @@
 }
 
 .countdown-days {
-  font-size: 1.8rem;
+  font-size: 1.4rem;
   font-weight: 700;
   color: var(--color-hover);
   line-height: 1;
 }
 
 .countdown-label {
-  font-size: 0.65rem;
+  font-size: 0.55rem;
   font-weight: 600;
   color: #e0e0e0;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  margin-top: 6px;
+  margin-top: 4px;
 }
 
 .countdown-label.countdown-today {
   color: var(--color-hover);
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 0.85rem;
 }
 
 .countdown-label.countdown-passed {
   color: #a0a0a0;
   font-style: italic;
+  font-size: 0.5rem;
 }
 
 /* Light mode */
@@ -490,22 +499,22 @@
 
 .rsvp-label {
   color: #a0a0a0;
-  font-size: 0.9rem;
-  margin: 0 0 16px 0;
+  font-size: 0.8rem;
+  margin: 0 0 10px 0;
 }
 
 .rsvp-buttons {
   display: flex;
-  gap: 10px;
+  gap: 6px;
   justify-content: center;
 }
 
 .btn-rsvp {
-  padding: 12px 20px;
+  padding: 8px 14px;
   border: 2px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   background: rgba(0, 0, 0, 0.2);
-  font-size: 0.9rem;
+  font-size: 0.78rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;

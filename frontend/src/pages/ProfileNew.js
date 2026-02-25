@@ -539,94 +539,48 @@ END:VCALENDAR`;
                   </div>
                 </div>
 
-                <div className="countdown-box">
-                  {getDaysUntilReunion() > 0 ? (
-                    <>
-                      <span className="countdown-days">{getDaysUntilReunion()}</span>
-                      <span className="countdown-label">Days Left!</span>
-                    </>
-                  ) : getDaysUntilReunion() === 0 ? (
-                    <span className="countdown-label countdown-today">Today is the day!</span>
-                  ) : (
-                    <span className="countdown-label countdown-passed">The reunion has happened!</span>
-                  )}
-                </div>
+                <div className="countdown-rsvp-row">
+                  <div className="countdown-box">
+                    {getDaysUntilReunion() > 0 ? (
+                      <>
+                        <span className="countdown-days">{getDaysUntilReunion()}</span>
+                        <span className="countdown-label">Days Left!</span>
+                      </>
+                    ) : getDaysUntilReunion() === 0 ? (
+                      <span className="countdown-label countdown-today">Today is the day!</span>
+                    ) : (
+                      <span className="countdown-label countdown-passed">The reunion has happened!</span>
+                    )}
+                  </div>
 
-                <div className="rsvp-section">
-                  <p className="rsvp-label">Are you attending?</p>
-                  <div className="rsvp-buttons">
-                    <button
-                      className={`btn-rsvp ${profile.rsvp_status === 'going' ? 'active going' : ''}`}
-                      onClick={() => handleRsvp('going')}
-                      disabled={rsvpSaving}
-                    >
-                      Going
-                    </button>
-                    <button
-                      className={`btn-rsvp ${profile.rsvp_status === 'maybe' ? 'active maybe' : ''}`}
-                      onClick={() => handleRsvp('maybe')}
-                      disabled={rsvpSaving}
-                    >
-                      Maybe
-                    </button>
-                    <button
-                      className={`btn-rsvp ${profile.rsvp_status === 'not_going' ? 'active not-going' : ''}`}
-                      onClick={() => handleRsvp('not_going')}
-                      disabled={rsvpSaving}
-                    >
-                      Can't Make It
-                    </button>
+                  <div className="rsvp-section">
+                    <p className="rsvp-label">Are you attending?</p>
+                    <div className="rsvp-buttons">
+                      <button
+                        className={`btn-rsvp ${profile.rsvp_status === 'going' ? 'active going' : ''}`}
+                        onClick={() => handleRsvp('going')}
+                        disabled={rsvpSaving}
+                      >
+                        Going
+                      </button>
+                      <button
+                        className={`btn-rsvp ${profile.rsvp_status === 'maybe' ? 'active maybe' : ''}`}
+                        onClick={() => handleRsvp('maybe')}
+                        disabled={rsvpSaving}
+                      >
+                        Maybe
+                      </button>
+                      <button
+                        className={`btn-rsvp ${profile.rsvp_status === 'not_going' ? 'active not-going' : ''}`}
+                        onClick={() => handleRsvp('not_going')}
+                        disabled={rsvpSaving}
+                      >
+                        Can't Make It
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-
-              {/* Payment Status Card - Graduates Only */}
-              {profile.is_graduate ? (
-                <div className="profile-card payment-card">
-                  <div className="card-header">
-                    <h3>Payment Status</h3>
-                    <span className={`payment-badge ${paymentStatus.toLowerCase()}`}>
-                      {paymentStatus}
-                    </span>
-                  </div>
-                  <div className="payment-progress">
-                    <div className="progress-bar">
-                      <div
-                        className="progress-fill"
-                        style={{ width: `${paymentProgress}%` }}
-                      ></div>
-                    </div>
-                    <div className="payment-amounts">
-                      <span className="paid">₱{profile.total_paid?.toLocaleString() || 0}</span>
-                      <span className="total">/ ₱{profile.amount_due?.toLocaleString()}</span>
-                    </div>
-                  </div>
-                  {paymentStatus !== 'Full' && (
-                    <div className="payment-remaining">
-                      <p>Remaining balance: <strong>₱{((profile.amount_due || 0) - (profile.total_paid || 0)).toLocaleString()}</strong></p>
-                      <Link to="/funds" className="payment-link">View Payment Details</Link>
-                    </div>
-                  )}
-                  {paymentStatus === 'Full' && (
-                    <div className="payment-complete">
-                      <span className="checkmark">✓</span>
-                      <p>You're all set! Thank you for your payment.</p>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className="profile-card donate-card">
-                  <div className="card-header">
-                    <h3>Support the Batch</h3>
-                  </div>
-                  <p className="donate-text">
-                    Help make our reunion memorable! Your contributions go towards venue, food, and activities.
-                  </p>
-                  <Link to="/funds" className="btn-donate">
-                    View Fund Details
-                  </Link>
-                </div>
-              )}
 
               {/* Alumni Card Nudge */}
               <div className="profile-card alumni-card-nudge">
@@ -694,6 +648,54 @@ END:VCALENDAR`;
                   </div>
                 )}
               </div>
+
+              {/* Payment Status Card - Graduates Only */}
+              {profile.is_graduate ? (
+                <div className="profile-card payment-card">
+                  <div className="card-header">
+                    <h3>Payment Status</h3>
+                    <span className={`payment-badge ${paymentStatus.toLowerCase()}`}>
+                      {paymentStatus}
+                    </span>
+                  </div>
+                  <div className="payment-progress">
+                    <div className="progress-bar">
+                      <div
+                        className="progress-fill"
+                        style={{ width: `${paymentProgress}%` }}
+                      ></div>
+                    </div>
+                    <div className="payment-amounts">
+                      <span className="paid">₱{profile.total_paid?.toLocaleString() || 0}</span>
+                      <span className="total">/ ₱{profile.amount_due?.toLocaleString()}</span>
+                    </div>
+                  </div>
+                  {paymentStatus !== 'Full' && (
+                    <div className="payment-remaining">
+                      <p>Remaining balance: <strong>₱{((profile.amount_due || 0) - (profile.total_paid || 0)).toLocaleString()}</strong></p>
+                      <Link to="/funds" className="payment-link">View Payment Details</Link>
+                    </div>
+                  )}
+                  {paymentStatus === 'Full' && (
+                    <div className="payment-complete">
+                      <span className="checkmark">✓</span>
+                      <p>You're all set! Thank you for your payment.</p>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="profile-card donate-card">
+                  <div className="card-header">
+                    <h3>Support the Batch</h3>
+                  </div>
+                  <p className="donate-text">
+                    Help make our reunion memorable! Your contributions go towards venue, food, and activities.
+                  </p>
+                  <Link to="/funds" className="btn-donate">
+                    View Fund Details
+                  </Link>
+                </div>
+              )}
             </div>
 
             {/* Right Column */}
