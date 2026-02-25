@@ -577,6 +577,7 @@ END:VCALENDAR`;
                     </button>
                   </div>
                 </div>
+                <Link to="/events" className="rsvp-card-events-link">View All Events →</Link>
               </div>
 
               {/* Alumni Card Nudge - Only show for graduates */}
