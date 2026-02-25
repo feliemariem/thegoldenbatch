@@ -158,6 +158,26 @@ router.get('/', authenticateAdmin, async (req, res) => {
 // PUBLIC ROUTES - Must be defined BEFORE /:id routes
 // =============================================================================
 
+// Public route - get total raised and builder count (for contribution plan progress)
+router.get('/total-raised', async (req, res) => {
+  try {
+    const totalResult = await db.query(
+      "SELECT COALESCE(SUM(deposit), 0) as total_raised FROM ledger WHERE verified = 'OK'"
+    );
+    const builderResult = await db.query(
+      "SELECT COUNT(*) as builder_count FROM master_list WHERE builder_tier IS NOT NULL"
+    );
+    res.json({
+      total_raised: parseFloat(totalResult.rows[0].total_raised),
+      builder_count: parseInt(builderResult.rows[0].builder_count),
+      goal: 2100000
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // Public route - get balance only (for public funds page)
 // NOTE: Only verified (status = 'OK') transactions count toward balances and totals.
 // Pending transactions are excluded until a financial controller marks them OK.

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { apiPut } from '../api';
+import { apiPut, apiGet } from '../api';
 import '../styles/contributionPlan.css';
 
 const TIERS = {
@@ -38,6 +38,23 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
   const [confirmed, setConfirmed] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [batchProgress, setBatchProgress] = useState({ total_raised: 0, builder_count: 0, goal: 2100000 });
+
+  // Fetch batch progress
+  useEffect(() => {
+    const fetchProgress = async () => {
+      try {
+        const res = await apiGet('/api/ledger/total-raised');
+        if (res.ok) {
+          const data = await res.json();
+          setBatchProgress(data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch batch progress:', err);
+      }
+    };
+    if (isOpen) fetchProgress();
+  }, [isOpen]);
 
   // Pre-select current tier if returning
   useEffect(() => {
@@ -123,6 +140,11 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
       if (res.ok) {
         setConfirmed(true);
         onTierSaved(selectedTier, amount);
+        // Refresh progress to update builder count
+        const progressRes = await apiGet('/api/ledger/total-raised');
+        if (progressRes.ok) {
+          setBatchProgress(await progressRes.json());
+        }
       } else {
         const data = await res.json();
         setError(data.error || 'Failed to save tier');
@@ -169,7 +191,7 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
               </div>
               <div className="cp-header-right">
                 <div className="cp-label">Funding Target</div>
-                <div className="cp-funding-target">₱2,100,000</div>
+                <div className="cp-funding-target">₱{batchProgress.goal.toLocaleString()}</div>
                 <div className="cp-sub">Full Batch Vision Target. Achievable<br/>through collective commitment and<br/>fundraising support.</div>
               </div>
             </div>
@@ -190,15 +212,15 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
             <div className="cp-progress-box">
               <div className="cp-progress-label">Our Progress</div>
               <div className="cp-progress-row">
-                <div className="cp-progress-amount">₱206,950</div>
-                <div className="cp-progress-pct">9.9%</div>
+                <div className="cp-progress-amount">₱{batchProgress.total_raised.toLocaleString()}</div>
+                <div className="cp-progress-pct">{((batchProgress.total_raised / batchProgress.goal) * 100).toFixed(1)}%</div>
               </div>
               <div className="cp-progress-sub">
                 <span>raised so far</span>
-                <span>of ₱2,100,000 goal</span>
+                <span>of ₱{batchProgress.goal.toLocaleString()} goal</span>
               </div>
               <div className="cp-progress-bar-track">
-                <div className="cp-progress-bar-fill" style={{ width: '9.9%' }}></div>
+                <div className="cp-progress-bar-fill" style={{ width: `${(batchProgress.total_raised / batchProgress.goal) * 100}%` }}></div>
               </div>
               <div className="cp-progress-timeline">January 2026 — December 2028</div>
             </div>
@@ -322,7 +344,7 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
             {/* Builder Tiers */}
             <h2 className="cp-tier-heading">Golden Batch Builders</h2>
             <p className="cp-section-subtitle cp-italic">We're all building this homecoming. Choose how you build.</p>
-            <p className="cp-builders-count">9 Builders already in.</p>
+            <p className="cp-builders-count">{batchProgress.builder_count} Builder{batchProgress.builder_count !== 1 ? 's' : ''} already in.</p>
 
             <div className="cp-tier-grid">
               {/* Cornerstone */}
