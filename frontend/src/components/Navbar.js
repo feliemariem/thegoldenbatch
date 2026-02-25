@@ -70,7 +70,7 @@ export default function Navbar() {
           <div className="navbar-logo-section">
             <img src={logo} alt="USLS Logo" className="navbar-logo" />
             <div className="navbar-title">
-              <h1>THE GOLDEN BATCH 2003</h1>
+              <h1>USLS-IS 2003</h1>
               <span className="navbar-subtitle">25th Alumni Homecoming</span>
             </div>
           </div>
