@@ -1367,6 +1367,7 @@ body[data-theme="dark"] .cp-close:hover {
   background: rgba(255, 255, 255, 0.2);
 }
 
+/* Header */
 body[data-theme="dark"] .cp-header {
   background: #1a2520;
   border-bottom-color: var(--cp-gold);
@@ -1389,46 +1390,112 @@ body[data-theme="dark"] .cp-header-right .cp-label {
   color: #aaaaaa;
 }
 
-body[data-theme="dark"] .cp-progress-box,
-body[data-theme="dark"] .cp-letter {
-  background: rgba(0, 77, 38, 0.15);
-  border-left-color: var(--cp-gold);
+/* Progress Box */
+body[data-theme="dark"] .cp-progress-box {
+  background: rgba(26, 37, 32, 0.8);
+  border-left: 4px solid var(--cp-gold);
 }
 
-body[data-theme="dark"] .cp-progress-amount,
-body[data-theme="dark"] .cp-section-title,
-body[data-theme="dark"] .cp-tier-heading,
-body[data-theme="dark"] .cp-alloc-name,
-body[data-theme="dark"] .cp-alloc-pct,
-body[data-theme="dark"] .cp-alloc-section-label {
-  color: #e0e0e0;
+body[data-theme="dark"] .cp-progress-amount {
+  color: #ffffff;
 }
 
-body[data-theme="dark"] .cp-letter {
+body[data-theme="dark"] .cp-progress-sub,
+body[data-theme="dark"] .cp-progress-timeline {
   color: #aaaaaa;
 }
 
+body[data-theme="dark"] .cp-progress-bar-track {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Letter Section */
+body[data-theme="dark"] .cp-letter {
+  background: rgba(26, 37, 32, 0.8);
+  border-left: 4px solid var(--cp-gold);
+  color: #cccccc;
+}
+
 body[data-theme="dark"] .cp-letter b {
+  color: #ffffff;
+}
+
+body[data-theme="dark"] .cp-letter b.cp-green {
+  color: var(--cp-gold);
+}
+
+body[data-theme="dark"] .cp-sign {
+  color: var(--cp-gold);
+}
+
+/* Section Headings */
+body[data-theme="dark"] .cp-section-title {
+  color: #ffffff;
+}
+
+body[data-theme="dark"] .cp-section-subtitle {
+  color: #aaaaaa;
+}
+
+/* Allocation Sections */
+body[data-theme="dark"] .cp-alloc-section-label {
+  color: #ffffff;
+}
+
+body[data-theme="dark"] .cp-alloc-name {
+  color: #ffffff;
+}
+
+body[data-theme="dark"] .cp-alloc-desc {
+  color: #aaaaaa;
+}
+
+body[data-theme="dark"] .cp-alloc-pct {
   color: #e0e0e0;
 }
 
-body[data-theme="dark"] .cp-line,
-body[data-theme="dark"] .cp-alloc-item,
-body[data-theme="dark"] .cp-alloc-note {
+body[data-theme="dark"] .cp-alloc-item {
   border-color: rgba(255, 255, 255, 0.1);
 }
 
-body[data-theme="dark"] .cp-progress-bar-track,
-body[data-theme="dark"] .cp-alloc-bar {
-  background: rgba(255, 255, 255, 0.1);
+body[data-theme="dark"] .cp-alloc-note {
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #aaaaaa;
 }
 
+body[data-theme="dark"] .cp-big-pct-label {
+  color: #aaaaaa;
+}
+
+body[data-theme="dark"] .cp-alloc-bar {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Info Boxes */
 body[data-theme="dark"] .cp-info-box {
-  background: rgba(0, 77, 38, 0.1);
+  background: rgba(26, 37, 32, 0.6);
+  border-width: 1px;
 }
 
 body[data-theme="dark"] .cp-info-box.green-border {
-  border-color: rgba(0, 102, 51, 0.3);
+  border-color: rgba(0, 102, 51, 0.4);
+}
+
+body[data-theme="dark"] .cp-info-box.gold-border {
+  border-color: rgba(207, 181, 59, 0.4);
+}
+
+body[data-theme="dark"] .cp-info-box p {
+  color: #bbbbbb;
+}
+
+/* Tier Cards & Headings */
+body[data-theme="dark"] .cp-tier-heading {
+  color: #ffffff;
+}
+
+body[data-theme="dark"] .cp-tier-hint {
+  color: #888888;
 }
 
 body[data-theme="dark"] .cp-tier-card.root {
@@ -1436,14 +1503,19 @@ body[data-theme="dark"] .cp-tier-card.root {
   border-color: rgba(255, 255, 255, 0.15);
 }
 
+/* Pledge Panel */
 body[data-theme="dark"] .cp-pledge-inner {
-  background: rgba(0, 77, 38, 0.15);
+  background: rgba(26, 37, 32, 0.8);
+  border-color: var(--cp-gold);
 }
 
 body[data-theme="dark"] .cp-pledge-title,
-body[data-theme="dark"] .cp-pledge-amount-label,
-body[data-theme="dark"] .cp-payment-methods-title {
-  color: #e0e0e0;
+body[data-theme="dark"] .cp-pledge-amount-label {
+  color: #ffffff;
+}
+
+body[data-theme="dark"] .cp-pledge-amount-hint {
+  color: #aaaaaa;
 }
 
 body[data-theme="dark"] .cp-pledge-input {
@@ -1452,9 +1524,21 @@ body[data-theme="dark"] .cp-pledge-input {
   color: #e0e0e0;
 }
 
+body[data-theme="dark"] .cp-pledge-input::placeholder {
+  color: #777777;
+}
+
+body[data-theme="dark"] .cp-pledge-monthly-calc {
+  color: var(--cp-gold);
+}
+
 body[data-theme="dark"] .cp-pledge-breakdown {
   background: rgba(30, 40, 35, 0.6);
   border-color: rgba(255, 255, 255, 0.1);
+}
+
+body[data-theme="dark"] .cp-pledge-breakdown-title {
+  color: var(--cp-gold);
 }
 
 body[data-theme="dark"] .cp-breakdown-grid {
@@ -1469,9 +1553,34 @@ body[data-theme="dark"] .cp-breakdown-value {
   color: var(--cp-gold);
 }
 
+body[data-theme="dark"] .cp-breakdown-label {
+  color: #aaaaaa;
+}
+
+body[data-theme="dark"] .cp-breakdown-remaining {
+  color: #aaaaaa;
+}
+
+body[data-theme="dark"] .cp-breakdown-remaining strong {
+  color: var(--cp-gold);
+}
+
+/* Payment Methods */
+body[data-theme="dark"] .cp-payment-methods {
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+body[data-theme="dark"] .cp-payment-methods-title {
+  color: #ffffff;
+}
+
 body[data-theme="dark"] .cp-payment-card {
   background: rgba(30, 40, 35, 0.6);
   border-color: rgba(255, 255, 255, 0.1);
+}
+
+body[data-theme="dark"] .cp-payment-detail-label {
+  color: #888888;
 }
 
 body[data-theme="dark"] .cp-payment-detail-value {
@@ -1479,17 +1588,15 @@ body[data-theme="dark"] .cp-payment-detail-value {
 }
 
 body[data-theme="dark"] .cp-payment-note {
-  background: rgba(207, 181, 59, 0.1);
+  background: rgba(207, 181, 59, 0.08);
+  color: #bbbbbb;
 }
 
-body[data-theme="dark"] .cp-recognition-table tbody tr:nth-child(odd) {
-  background: rgba(30, 40, 35, 0.6);
+body[data-theme="dark"] .cp-payment-note strong {
+  color: var(--cp-gold);
 }
 
-body[data-theme="dark"] .cp-recognition-table tbody tr:nth-child(even) {
-  background: rgba(0, 77, 38, 0.1);
-}
-
+/* Recognition Section */
 body[data-theme="dark"] .cp-recognition-table {
   border-color: rgba(255, 255, 255, 0.1);
 }
@@ -1498,28 +1605,62 @@ body[data-theme="dark"] .cp-recognition-table tbody tr {
   border-color: rgba(255, 255, 255, 0.1);
 }
 
+body[data-theme="dark"] .cp-recognition-table tbody tr:nth-child(odd) {
+  background: rgba(26, 37, 32, 0.8);
+}
+
+body[data-theme="dark"] .cp-recognition-table tbody tr:nth-child(even) {
+  background: rgba(20, 30, 25, 0.8);
+}
+
 body[data-theme="dark"] .cp-recognition-table td:first-child {
   color: #e0e0e0;
 }
 
+body[data-theme="dark"] .cp-recognition-table .check {
+  color: var(--cp-gold);
+}
+
+body[data-theme="dark"] .cp-recognition-table .detail {
+  color: var(--cp-gold);
+}
+
+body[data-theme="dark"] .cp-recognition-table .dash {
+  color: #555555;
+}
+
+/* Recognition Cards */
 body[data-theme="dark"] .cp-recog-card {
-  background: rgba(30, 40, 35, 0.6);
+  background: rgba(26, 37, 32, 0.6);
   border-color: rgba(255, 255, 255, 0.1);
 }
 
 body[data-theme="dark"] .cp-recog-card p {
-  color: #aaaaaa;
+  color: #bbbbbb;
 }
 
+body[data-theme="dark"] .cp-recog-card.full {
+  border-color: rgba(207, 181, 59, 0.4);
+}
+
+/* Commemorative Box */
 body[data-theme="dark"] .cp-commemorate {
-  background: rgba(207, 181, 59, 0.1);
+  background: rgba(207, 181, 59, 0.08);
 }
 
-body[data-theme="dark"] .cp-commemorate-title,
-body[data-theme="dark"] .cp-commemorate p {
+body[data-theme="dark"] .cp-commemorate-title {
   color: var(--cp-gold);
 }
 
+body[data-theme="dark"] .cp-commemorate p {
+  color: #bbbbbb;
+}
+
+/* Footer */
 body[data-theme="dark"] .cp-footer {
-  border-top-color: rgba(207, 181, 59, 0.3);
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+body[data-theme="dark"] .cp-footer-text {
+  color: #888888;
 }
