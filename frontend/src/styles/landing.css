@@ -1010,7 +1010,7 @@ body[data-theme="light"] .consent-checkbox span {
 }
 
   .landing-logo span {
-    font-size: 0.75rem;
+    font-size: 0.85rem;
     letter-spacing: 1px;
   }
 
@@ -1164,7 +1164,8 @@ body[data-theme="light"] .consent-checkbox span {
   }
 
   .landing-logo span {
-    font-size: 0.85rem;
+    font-size: 0.65rem;
+    letter-spacing: 0.5px;
   }
 
   .btn-login {
