@@ -146,12 +146,22 @@ return (
         </p>
 
         <p className="help-text">
-          Don't have an account? <br />You need an invite link to register.<br />
-          Please email{' '}
-          <a href="mailto:uslsis.batch2003@gmail.com">
-            uslsis.batch2003@gmail.com
+          Don't have an account?{' '}
+          Visit{' '}
+          <a href="https://thegoldenbatch2003.com" className="btn-link">
+            thegoldenbatch2003.com
           </a>{' '}
-          for questions.
+          and click{' '}
+          <a href="https://thegoldenbatch2003.com" className="btn-link">
+            Register Now
+          </a>{' '}
+          to request your invite link.
+        </p>
+        <p className="help-text" style={{ marginTop: '8px', fontSize: '0.85em', opacity: 0.7 }}>
+          Any questions?{' '}
+          <a href="mailto:uslsis.batch2003@gmail.com" className="btn-link">
+            uslsis.batch2003@gmail.com
+          </a>
         </p>
       </div>
       <Footer />
