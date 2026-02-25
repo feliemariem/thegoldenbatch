@@ -43,6 +43,58 @@ router.post('/', authenticateToken, upload.single('receipt'), async (req, res) =
   }
 });
 
+// Delete a receipt (only user's own, only if status is 'submitted')
+router.delete('/:id', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // First, verify the receipt belongs to this user and is still 'submitted'
+    const receiptResult = await db.query(
+      `SELECT r.*, i.master_list_id
+       FROM receipt_uploads r
+       LEFT JOIN users u ON r.user_id = u.id
+       LEFT JOIN invites i ON u.invite_id = i.id
+       WHERE r.id = $1`,
+      [id]
+    );
+
+    if (receiptResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Receipt not found' });
+    }
+
+    const receipt = receiptResult.rows[0];
+
+    // Check ownership (must be the user who uploaded it)
+    if (receipt.user_id !== req.user.id) {
+      return res.status(403).json({ error: 'You can only delete your own receipts' });
+    }
+
+    // Check status (can only delete 'submitted' receipts)
+    if (receipt.status !== 'submitted') {
+      return res.status(400).json({ error: 'Cannot delete processed receipts' });
+    }
+
+    // Delete from Cloudinary if public_id exists
+    if (receipt.image_public_id) {
+      const cloudinary = require('cloudinary').v2;
+      try {
+        await cloudinary.uploader.destroy(receipt.image_public_id);
+      } catch (cloudinaryErr) {
+        console.error('Failed to delete from Cloudinary:', cloudinaryErr);
+        // Continue with database deletion even if Cloudinary fails
+      }
+    }
+
+    // Delete from database
+    await db.query('DELETE FROM receipt_uploads WHERE id = $1', [id]);
+
+    res.json({ success: true, message: 'Receipt deleted' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to delete receipt' });
+  }
+});
+
 // Get my receipt history
 router.get('/my', authenticateToken, async (req, res) => {
   try {

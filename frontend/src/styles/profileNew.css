@@ -3314,6 +3314,7 @@ body[data-theme="light"] .merch-form-hint {
 .method-detail span {
   color: var(--color-text-muted);
   margin-right: 4px;
+  font-weight: 600;
 }
 
 /* Receipt List */
@@ -3493,4 +3494,299 @@ body[data-theme="light"] .merch-form-hint {
 
 .link-separator {
   color: var(--color-text-muted);
+}
+
+/* ========================================
+   RECEIPT DRAG & DROP ZONE
+   ======================================== */
+
+.receipt-dropzone {
+  width: 100%;
+  padding: 20px 16px;
+  background: rgba(207, 181, 59, 0.05);
+  border: 2px dashed rgba(207, 181, 59, 0.3);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.receipt-dropzone:hover {
+  background: rgba(207, 181, 59, 0.1);
+  border-color: rgba(207, 181, 59, 0.5);
+}
+
+.receipt-dropzone.drag-active {
+  background: rgba(207, 181, 59, 0.15);
+  border-color: var(--color-hover);
+  border-style: solid;
+}
+
+[data-theme="light"] .receipt-dropzone {
+  background: rgba(0, 102, 51, 0.05);
+  border-color: rgba(0, 102, 51, 0.3);
+}
+
+[data-theme="light"] .receipt-dropzone:hover {
+  background: rgba(0, 102, 51, 0.1);
+  border-color: rgba(0, 102, 51, 0.5);
+}
+
+[data-theme="light"] .receipt-dropzone.drag-active {
+  background: rgba(0, 102, 51, 0.15);
+  border-color: #006633;
+}
+
+.dropzone-icon {
+  font-size: 24px;
+}
+
+.dropzone-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.dropzone-primary {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-hover);
+}
+
+[data-theme="light"] .dropzone-primary {
+  color: #006633;
+}
+
+.dropzone-secondary {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+/* Receipt Preview Zone */
+.receipt-preview-zone {
+  width: 100%;
+  padding: 12px;
+  background: rgba(207, 181, 59, 0.05);
+  border: 1px solid rgba(207, 181, 59, 0.3);
+  border-radius: 8px;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+[data-theme="light"] .receipt-preview-zone {
+  background: rgba(0, 102, 51, 0.05);
+  border-color: rgba(0, 102, 51, 0.3);
+}
+
+.receipt-preview-zone .preview-image {
+  max-width: 100%;
+  max-height: 150px;
+  border-radius: 6px;
+  object-fit: contain;
+}
+
+.preview-actions {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.btn-preview-confirm {
+  flex: 1;
+  padding: 10px 16px;
+  background: var(--color-hover);
+  border: none;
+  border-radius: 6px;
+  color: #0d1a14;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-preview-confirm:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.btn-preview-confirm:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+[data-theme="light"] .btn-preview-confirm {
+  background: #006633;
+  color: #ffffff;
+}
+
+.btn-preview-cancel {
+  flex: 1;
+  padding: 10px 16px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-preview-cancel:hover:not(:disabled) {
+  border-color: rgba(255, 255, 255, 0.4);
+  color: var(--color-text-primary);
+}
+
+.btn-preview-cancel:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+[data-theme="light"] .btn-preview-cancel {
+  border-color: rgba(0, 102, 51, 0.3);
+  color: #666666;
+}
+
+[data-theme="light"] .btn-preview-cancel:hover:not(:disabled) {
+  border-color: rgba(0, 102, 51, 0.5);
+  color: #333333;
+}
+
+/* ========================================
+   RECEIPT IMAGE MODAL
+   ======================================== */
+
+.receipt-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.receipt-modal-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.receipt-modal-content img {
+  max-width: 100%;
+  max-height: 85vh;
+  border-radius: 8px;
+  object-fit: contain;
+}
+
+.receipt-modal-close {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #ffffff;
+  font-size: 20px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.receipt-modal-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* ========================================
+   RECEIPT DELETE BUTTON
+   ======================================== */
+
+.btn-delete-receipt {
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  margin-left: auto;
+}
+
+.btn-delete-receipt:hover {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.receipt-delete-confirm {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+.btn-delete-yes,
+.btn-delete-no {
+  background: transparent;
+  border: 1px solid;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-delete-yes {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.btn-delete-yes:hover:not(:disabled) {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+.btn-delete-no {
+  border-color: var(--color-text-muted);
+  color: var(--color-text-muted);
+}
+
+.btn-delete-no:hover:not(:disabled) {
+  border-color: var(--color-text-secondary);
+  color: var(--color-text-secondary);
+}
+
+.btn-delete-yes:disabled,
+.btn-delete-no:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Make receipt thumbnail a button */
+button.receipt-thumb {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
 }

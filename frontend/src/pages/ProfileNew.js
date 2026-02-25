@@ -34,6 +34,11 @@ export default function ProfileNew() {
   const [receipts, setReceipts] = useState([]);
   const [receiptUploading, setReceiptUploading] = useState(false);
   const [paymentMethodsOpen, setPaymentMethodsOpen] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
+  const [receiptPreview, setReceiptPreview] = useState(null);
+  const [receiptModalImage, setReceiptModalImage] = useState(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+  const [deleting, setDeleting] = useState(false);
   const fileInputRef = useRef(null);
   const receiptFileInputRef = useRef(null);
   const calendarDropdownRef = useRef(null);
@@ -207,10 +212,29 @@ END:VCALENDAR`;
     }
   };
 
-  const handleReceiptUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+  // Drag and drop handlers
+  const handleDrag = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === 'dragenter' || e.type === 'dragover') {
+      setDragActive(true);
+    } else if (e.type === 'dragleave') {
+      setDragActive(false);
+    }
+  };
 
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const file = e.dataTransfer.files[0];
+      handleFileSelect(file);
+    }
+  };
+
+  const handleFileSelect = (file) => {
     if (!file.type.startsWith('image/')) {
       setMessage('Please select an image file');
       setTimeout(() => setMessage(''), 3000);
@@ -223,9 +247,27 @@ END:VCALENDAR`;
       return;
     }
 
+    // Create preview
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setReceiptPreview({ file, previewUrl: e.target.result });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleReceiptFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      handleFileSelect(file);
+    }
+  };
+
+  const confirmUpload = async () => {
+    if (!receiptPreview) return;
+
     setReceiptUploading(true);
     const formData = new FormData();
-    formData.append('receipt', file);
+    formData.append('receipt', receiptPreview.file);
 
     try {
       const res = await apiUpload('/api/receipts', formData);
@@ -243,9 +285,39 @@ END:VCALENDAR`;
       setTimeout(() => setMessage(''), 3000);
     } finally {
       setReceiptUploading(false);
+      setReceiptPreview(null);
       if (receiptFileInputRef.current) {
         receiptFileInputRef.current.value = '';
       }
+    }
+  };
+
+  const cancelUpload = () => {
+    setReceiptPreview(null);
+    if (receiptFileInputRef.current) {
+      receiptFileInputRef.current.value = '';
+    }
+  };
+
+  const handleDeleteReceipt = async (receiptId) => {
+    setDeleting(true);
+    try {
+      const res = await apiDelete(`/api/receipts/${receiptId}`);
+      if (res.ok) {
+        fetchReceipts();
+        setMessage('Receipt deleted');
+        setTimeout(() => setMessage(''), 3000);
+      } else {
+        const data = await res.json();
+        setMessage(data.error || 'Failed to delete receipt');
+        setTimeout(() => setMessage(''), 3000);
+      }
+    } catch (err) {
+      setMessage('Failed to delete receipt');
+      setTimeout(() => setMessage(''), 3000);
+    } finally {
+      setDeleting(false);
+      setDeleteConfirmId(null);
     }
   };
 
@@ -612,22 +684,51 @@ END:VCALENDAR`;
                     </div>
                   )}
 
-                  {/* Receipt Upload */}
+                  {/* Receipt Upload - Drag & Drop Zone */}
                   <input
                     type="file"
                     accept="image/*"
-                    onChange={handleReceiptUpload}
+                    onChange={handleReceiptFileChange}
                     ref={receiptFileInputRef}
                     style={{ display: 'none' }}
                     id="receipt-upload"
                   />
-                  <button
-                    className="btn-upload-receipt"
-                    onClick={() => receiptFileInputRef.current?.click()}
-                    disabled={receiptUploading}
-                  >
-                    {receiptUploading ? 'Uploading...' : '📤 Upload Receipt'}
-                  </button>
+                  {!receiptPreview ? (
+                    <div
+                      className={`receipt-dropzone ${dragActive ? 'drag-active' : ''}`}
+                      onDragEnter={handleDrag}
+                      onDragLeave={handleDrag}
+                      onDragOver={handleDrag}
+                      onDrop={handleDrop}
+                      onClick={() => receiptFileInputRef.current?.click()}
+                    >
+                      <div className="dropzone-icon">📤</div>
+                      <div className="dropzone-text">
+                        <span className="dropzone-primary">Drop receipt image here</span>
+                        <span className="dropzone-secondary">or click to browse</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="receipt-preview-zone">
+                      <img src={receiptPreview.previewUrl} alt="Preview" className="preview-image" />
+                      <div className="preview-actions">
+                        <button
+                          className="btn-preview-confirm"
+                          onClick={confirmUpload}
+                          disabled={receiptUploading}
+                        >
+                          {receiptUploading ? 'Uploading...' : 'Upload'}
+                        </button>
+                        <button
+                          className="btn-preview-cancel"
+                          onClick={cancelUpload}
+                          disabled={receiptUploading}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Payment Methods Toggle */}
                   <div className="payment-methods-toggle">
@@ -663,14 +764,13 @@ END:VCALENDAR`;
                       <div className="receipt-list-scroll">
                         {receipts.map(receipt => (
                           <div key={receipt.id} className="receipt-row">
-                            <a
-                              href={receipt.image_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
+                            <button
                               className="receipt-thumb"
+                              onClick={() => setReceiptModalImage(receipt.image_url)}
+                              type="button"
                             >
                               <img src={receipt.image_url} alt="Receipt" />
-                            </a>
+                            </button>
                             <div className="receipt-info">
                               <span className="receipt-date">
                                 {new Date(receipt.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
@@ -687,6 +787,35 @@ END:VCALENDAR`;
                                 {receipt.ledger_status === 'OK' ? '✓ Verified' : 'Pending'}
                                 {receipt.ledger_amount && ` · ₱${parseFloat(receipt.ledger_amount).toLocaleString()}`}
                               </span>
+                            )}
+                            {receipt.status === 'submitted' && receipt.source === 'user' && (
+                              deleteConfirmId === receipt.id ? (
+                                <div className="receipt-delete-confirm">
+                                  <span>Delete?</span>
+                                  <button
+                                    className="btn-delete-yes"
+                                    onClick={() => handleDeleteReceipt(receipt.id)}
+                                    disabled={deleting}
+                                  >
+                                    Yes
+                                  </button>
+                                  <button
+                                    className="btn-delete-no"
+                                    onClick={() => setDeleteConfirmId(null)}
+                                    disabled={deleting}
+                                  >
+                                    No
+                                  </button>
+                                </div>
+                              ) : (
+                                <button
+                                  className="btn-delete-receipt"
+                                  onClick={() => setDeleteConfirmId(receipt.id)}
+                                  title="Delete receipt"
+                                >
+                                  ✕
+                                </button>
+                              )
                             )}
                           </div>
                         ))}
@@ -1315,6 +1444,16 @@ END:VCALENDAR`;
           currentPledge={profile.pledge_amount}
           user={user}
         />
+      )}
+
+      {/* Receipt Image Modal */}
+      {receiptModalImage && (
+        <div className="receipt-modal-overlay" onClick={() => setReceiptModalImage(null)}>
+          <div className="receipt-modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="receipt-modal-close" onClick={() => setReceiptModalImage(null)}>✕</button>
+            <img src={receiptModalImage} alt="Receipt" />
+          </div>
+        </div>
       )}
     </div>
   );
