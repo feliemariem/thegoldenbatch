@@ -3,10 +3,10 @@ import { apiPut, apiGet } from '../api';
 import '../styles/contributionPlan.css';
 
 const TIERS = {
-  cornerstone: { label: 'Cornerstone', min: 25000, max: null, placeholder: '25,000' },
-  pillar: { label: 'Pillar', min: 18000, max: 24000, placeholder: '20,000' },
-  anchor: { label: 'Anchor', min: 10000, max: 17000, placeholder: '13,000' },
-  root: { label: 'Root', min: null, max: null, placeholder: null }
+  cornerstone: { label: 'Cornerstone', min: 25000, max: null },
+  pillar: { label: 'Pillar', min: 18000, max: 24000 },
+  anchor: { label: 'Anchor', min: 10000, max: 17000 },
+  root: { label: 'Root', min: null, max: null }
 };
 
 // Calculate months remaining from today to Dec 2028
@@ -431,7 +431,7 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
                         <input
                           type="text"
                           className={`cp-pledge-input ${!validation.valid && validation.message ? 'error' : ''}`}
-                          placeholder={TIERS[selectedTier].placeholder}
+                          placeholder="Enter your amount"
                           value={pledgeAmount}
                           onChange={handleAmountChange}
                           inputMode="numeric"
