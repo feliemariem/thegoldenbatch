@@ -747,11 +747,14 @@ END:VCALENDAR`;
                           <div className="method-detail"><span>Account Number:</span> 307770014898</div>
                         </div>
                         <div className="payment-method-item">
-                          <div className="method-label">International Transfers (SWIFT)</div>
+                          <div className="method-label">For International Transfers</div>
                           <div className="method-detail"><span>Bank:</span> PNB Bacolod Lacson Branch</div>
+                          <div className="method-detail"><span>Address:</span> 10th Lacson Street, Bacolod City, Negros Occidental 6100</div>
+                          <div className="method-detail"><span>Tel:</span> (63) (034) 432-0605 / 434-8007</div>
                           <div className="method-detail"><span>SWIFT Code:</span> PNBMPHMM</div>
-                          <div className="method-detail"><span>Account Names:</span> Narciso Javelosa III or Mary Rose Frances Uy</div>
-                          <div className="method-detail"><span>Account Number:</span> 307770014898</div>
+                          <div className="method-detail"><span>Routing No.:</span> 040080019</div>
+                          <div className="method-detail"><span>Email:</span> bacolod_lacson@pnb.com.ph</div>
+                          <div className="method-detail"><span>Website:</span> pnb.com.ph</div>
                         </div>
                       </div>
                     )}
