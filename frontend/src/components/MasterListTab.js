@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import ScrollableTable from './ScrollableTable';
 import FundingProgressBar from './FundingProgressBar';
+import FundingReality from './FundingReality';
 import { apiGet, apiPut } from '../api';
 
 const MASTER_LIST_PAGE_SIZE = 45;
@@ -291,6 +292,11 @@ export default function MasterListTab({
         <div style={{ marginBottom: '20px' }}>
           <FundingProgressBar stats={masterListStats} />
         </div>
+      )}
+
+      {/* Funding Reality Engine - gated behind funding_view permission */}
+      {masterListStats && (isSuperAdmin || permissions?.funding_view) && (
+        <FundingReality stats={masterListStats} />
       )}
 
       {/* Filter and Search */}
