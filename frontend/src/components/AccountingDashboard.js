@@ -36,7 +36,6 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
   const [inboxUnprocessedCount, setInboxUnprocessedCount] = useState(0);
   const [viewingInboxReceipt, setViewingInboxReceipt] = useState(null);
   const [pendingReceiptForLedger, setPendingReceiptForLedger] = useState(null);
-  const [markingProcessed, setMarkingProcessed] = useState(null);
 
   // Pagination state
   const [page, setPage] = useState(1);
@@ -192,22 +191,6 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
       fetchInboxReceipts(inboxFilter);
     }
   }, [activeTab, inboxFilter, fetchInboxReceipts]);
-
-  // Mark receipt as processed (for duplicates)
-  const handleMarkProcessed = async (receiptId) => {
-    setMarkingProcessed(receiptId);
-    try {
-      const res = await apiPut(`/api/receipts/admin/${receiptId}/mark-processed`, { is_duplicate: false });
-      if (res.ok) {
-        fetchInboxReceipts(inboxFilter);
-        fetchUnprocessedCount();
-      }
-    } catch (err) {
-      console.error('Failed to mark receipt as processed');
-    } finally {
-      setMarkingProcessed(null);
-    }
-  };
 
   // Start "Add to Ledger" workflow
   const handleAddToLedger = (receipt) => {
@@ -1287,28 +1270,16 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
                 Open Full Size
               </a>
               {viewingInboxReceipt.status === 'submitted' && (
-                <>
-                  <button
-                    onClick={() => {
-                      setViewingInboxReceipt(null);
-                      handleAddToLedger(viewingInboxReceipt);
-                    }}
-                    className="btn-primary"
-                    style={{ padding: '8px 16px' }}
-                  >
-                    Add to Ledger
-                  </button>
-                  <button
-                    onClick={() => {
-                      handleMarkProcessed(viewingInboxReceipt.id);
-                      setViewingInboxReceipt(null);
-                    }}
-                    className="btn-link"
-                    style={{ color: '#888' }}
-                  >
-                    Mark Processed
-                  </button>
-                </>
+                <button
+                  onClick={() => {
+                    setViewingInboxReceipt(null);
+                    handleAddToLedger(viewingInboxReceipt);
+                  }}
+                  className="btn-primary"
+                  style={{ padding: '8px 16px' }}
+                >
+                  Add to Ledger
+                </button>
               )}
             </div>
           </div>
