@@ -225,7 +225,7 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
       amount: '',
       reference_no: '',
       verified: 'Pending',
-      master_list_id: receipt.master_list_id || null
+      master_list_id: null
     });
     setEditingId(null);
     setShowForm(true);
@@ -278,7 +278,12 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
       withdrawal: transactionType === 'withdrawal' ? form.amount : null,
       reference_no: form.reference_no,
       verified: form.verified,
-      master_list_id: form.master_list_id
+      master_list_id: form.master_list_id,
+      // Include receipt image from pending receipt if adding from inbox
+      ...(receiptToLink && !editingId && {
+        receipt_url: receiptToLink.image_url,
+        receipt_public_id: receiptToLink.image_public_id
+      })
     };
 
     try {
@@ -291,7 +296,12 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
 
         // If we have a pending receipt to link, link it to the new ledger entry
         if (receiptToLink && !editingId && data.id) {
-          await linkReceiptToLedger(receiptToLink.id, data.id);
+          try {
+            await linkReceiptToLedger(receiptToLink.id, data.id);
+          } catch (linkErr) {
+            console.error('Failed to link receipt to ledger entry:', linkErr);
+            // Continue anyway - transaction was saved successfully
+          }
           setResult({ success: true, message: 'Transaction added and receipt linked!' });
         } else {
           setResult({ success: true, message: editingId ? 'Transaction updated!' : 'Transaction added!' });
@@ -939,27 +949,18 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
                           <button onClick={() => handleEdit(t)} className="btn-link">
                             Edit
                           </button>
-                          {t.deposit && !t.master_list_id && (
-                            <button 
-                              onClick={() => setLinkingTransaction(t)} 
-                              className="btn-link"
-                              style={{ color: 'var(--color-hover)' }}
-                            >
-                              Link
-                            </button>
-                          )}
                           {t.master_list_id && (
-                            <button 
-                              onClick={() => handleUnlink(t.id)} 
+                            <button
+                              onClick={() => handleUnlink(t.id)}
                               className="btn-link"
                               style={{ color: '#888' }}
                             >
                               Unlink
                             </button>
                           )}
-                          <button 
-                            onClick={() => handleDelete(t.id)} 
-                            className="btn-link" 
+                          <button
+                            onClick={() => handleDelete(t.id)}
+                            className="btn-link"
                             style={{ color: 'var(--color-status-negative)' }}
                           >
                             Delete
