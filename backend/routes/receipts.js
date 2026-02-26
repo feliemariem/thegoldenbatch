@@ -178,7 +178,7 @@ router.put('/admin/:id/mark-processed', authenticateAdmin, async (req, res) => {
        SET status = 'processed', is_duplicate = $1, processed_by = $2, processed_at = NOW()
        WHERE id = $3
        RETURNING *`,
-      [is_duplicate || false, req.admin.id, id]
+      [is_duplicate || false, req.user.id, id]
     );
 
     if (result.rows.length === 0) {
@@ -207,7 +207,7 @@ router.put('/admin/:id/link-ledger', authenticateAdmin, async (req, res) => {
        SET status = 'processed', ledger_id = $1, processed_by = $2, processed_at = NOW()
        WHERE id = $3
        RETURNING *`,
-      [ledger_id, req.admin.id, id]
+      [ledger_id, req.user.id, id]
     );
 
     if (result.rows.length === 0) {
@@ -250,7 +250,7 @@ router.post('/admin/on-behalf', authenticateAdmin, upload.single('receipt'), asy
       `INSERT INTO receipt_uploads (user_id, master_list_id, image_url, image_public_id, note, status, source, ledger_id, processed_by, processed_at)
        VALUES ($1, $2, $3, $4, $5, 'processed', 'admin', $6, $7, NOW())
        RETURNING *`,
-      [userId, master_list_id, uploadResult.secure_url, uploadResult.public_id, note || null, ledger_id || null, req.admin.id]
+      [userId, master_list_id, uploadResult.secure_url, uploadResult.public_id, note || null, ledger_id || null, req.user.id]
     );
 
     res.status(201).json(result.rows[0]);

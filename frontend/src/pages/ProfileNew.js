@@ -835,6 +835,11 @@ END:VCALENDAR`;
                           </div>
                         ))}
                       </div>
+                      {receipts.some(r => r.status === 'submitted') && (
+                        <p className="receipt-pending-note">
+                          Your receipt has been submitted. The committee will verify and credit your account within 48 hours.
+                        </p>
+                      )}
                     </div>
                   )}
                   {receipts.length === 0 && (

@@ -259,7 +259,9 @@ router.post('/', authenticateAdmin, async (req, res) => {
       reference_no,
       verified,
       payment_type,
-      master_list_id
+      master_list_id,
+      receipt_url,
+      receipt_public_id
     } = req.body;
 
     // Validate - must have either deposit or withdrawal
@@ -284,8 +286,8 @@ router.post('/', authenticateAdmin, async (req, res) => {
     }
 
     const result = await db.query(
-      `INSERT INTO ledger (transaction_date, name, description, deposit, withdrawal, reference_no, verified, payment_type, master_list_id, recorded_by)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      `INSERT INTO ledger (transaction_date, name, description, deposit, withdrawal, reference_no, verified, payment_type, master_list_id, recorded_by, receipt_url, receipt_public_id)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
        RETURNING *`,
       [
         transaction_date || new Date(),
@@ -297,7 +299,9 @@ router.post('/', authenticateAdmin, async (req, res) => {
         verified || 'Pending',
         payment_type || null,
         master_list_id || null,
-        recorderName
+        recorderName,
+        receipt_url || null,
+        receipt_public_id || null
       ]
     );
 

@@ -3479,6 +3479,22 @@ body[data-theme="light"] .merch-form-hint {
   margin-bottom: 12px;
 }
 
+.receipt-pending-note {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  font-style: italic;
+  margin-top: 10px;
+  padding: 8px 10px;
+  background: rgba(251, 191, 36, 0.08);
+  border-radius: 6px;
+  line-height: 1.4;
+}
+
+[data-theme="light"] .receipt-pending-note {
+  background: rgba(251, 191, 36, 0.1);
+  color: #888;
+}
+
 /* Builder Links */
 .builder-links {
   display: flex;
