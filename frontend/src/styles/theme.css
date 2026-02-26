@@ -1936,27 +1936,6 @@ body[data-theme="light"] .receipt-modal-actions {
   border-top: 1px solid rgba(0, 102, 51, 0.12) !important;
 }
 
-/* Receipt Lightbox - light theme */
-body[data-theme="light"] .receipt-lightbox-overlay {
-  background: rgba(0, 0, 0, 0.88);
-}
-
-body[data-theme="light"] .receipt-lightbox-label {
-  color: rgba(255, 255, 255, 0.7);
-}
-
-body[data-theme="light"] .receipt-lightbox-close {
-  background: rgba(255, 255, 255, 0.15);
-}
-
-body[data-theme="light"] .receipt-lightbox-close:hover {
-  background: rgba(255, 255, 255, 0.25);
-}
-
-body[data-theme="light"] .receipt-lightbox-actions {
-  background: rgba(0, 0, 0, 0.5);
-}
-
 /* =========================================
    CONSENT CHECKBOX - Light & Dark Mode
    ========================================= */

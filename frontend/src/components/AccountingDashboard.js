@@ -1471,38 +1471,37 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
         </div>
       )}
 
-      {/* Receipt Viewing Lightbox */}
+      {/* Receipt Viewing Modal */}
       {viewingReceipt && (
-        <div className="receipt-lightbox-overlay" onClick={() => setViewingReceipt(null)}>
-          <div className="receipt-lightbox-label">
-            {viewingReceipt.display_name || viewingReceipt.name || viewingReceipt.description || 'Transaction'}
-          </div>
-          <button
-            className="receipt-lightbox-close"
-            onClick={() => setViewingReceipt(null)}
-          >
-            ✕
-          </button>
-          <img
-            src={viewingReceipt.receipt_url}
-            alt="Receipt"
-            className="receipt-lightbox-image"
-            onClick={(e) => {
-              e.stopPropagation();
-              e.currentTarget.classList.toggle('zoomed');
-            }}
-          />
-          {canEdit && (
-            <div className="receipt-lightbox-actions" onClick={(e) => e.stopPropagation()}>
-              <button
-                onClick={() => handleDeleteReceipt(viewingReceipt.id)}
-                className="btn-link"
-                style={{ color: 'var(--color-status-negative)' }}
-              >
-                Delete Receipt
-              </button>
+        <div className="receipt-modal-overlay" onClick={() => setViewingReceipt(null)}>
+          <div className="receipt-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="receipt-modal-header">
+              <h4>Receipt - {viewingReceipt.display_name || viewingReceipt.name || viewingReceipt.description || 'Transaction'}</h4>
+              <button onClick={() => setViewingReceipt(null)} className="receipt-modal-close">x</button>
             </div>
-          )}
+            <div className="receipt-modal-image">
+              <img src={viewingReceipt.receipt_url} alt="Receipt" />
+            </div>
+            <div className="receipt-modal-actions">
+              <a
+                href={viewingReceipt.receipt_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-secondary"
+              >
+                Open Full Size
+              </a>
+              {canEdit && (
+                <button
+                  onClick={() => handleDeleteReceipt(viewingReceipt.id)}
+                  className="btn-link"
+                  style={{ color: 'var(--color-status-negative)' }}
+                >
+                  Delete Receipt
+                </button>
+              )}
+            </div>
+          </div>
         </div>
       )}
 
