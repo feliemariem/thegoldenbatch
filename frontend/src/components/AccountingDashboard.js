@@ -1126,7 +1126,7 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
                     <th>User Name</th>
                     <th>Receipt</th>
                     <th>Status</th>
-                    <th>Actions</th>
+                    {inboxFilter !== 'processed' && <th>Actions</th>}
                   </tr>
                 </thead>
                 <tbody>
@@ -1183,19 +1183,21 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
                               : 'Pending Verification'}
                         </span>
                       </td>
-                      <td>
-                        {receipt.status === 'submitted' ? (
-                          <button
-                            onClick={() => handleAddToLedger(receipt)}
-                            className="btn-link"
-                            style={{ color: 'var(--color-status-positive)' }}
-                          >
-                            Add to Ledger
-                          </button>
-                        ) : (
-                          <span style={{ color: '#666' }}>-</span>
-                        )}
-                      </td>
+                      {inboxFilter !== 'processed' && (
+                        <td>
+                          {receipt.status === 'submitted' ? (
+                            <button
+                              onClick={() => handleAddToLedger(receipt)}
+                              className="btn-link"
+                              style={{ color: 'var(--color-status-positive)' }}
+                            >
+                              Add to Ledger
+                            </button>
+                          ) : (
+                            <span style={{ color: '#666' }}>-</span>
+                          )}
+                        </td>
+                      )}
                     </tr>
                   ))}
                 </tbody>
