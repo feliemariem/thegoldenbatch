@@ -597,13 +597,15 @@ END:VCALENDAR`;
                   </ul>
                 </div>
 
-                <div className="guide-item">
-                  <h4>Funds:</h4>
-                  <ul>
-                    <li>View the batch's fundraising progress</li>
-                    <li>See contribution history and how funds are being used</li>
-                  </ul>
-                </div>
+                {profile.is_graduate && (
+                  <div className="guide-item">
+                    <h4>Funds:</h4>
+                    <ul>
+                      <li>View the batch's fundraising progress</li>
+                      <li>See contribution history and how funds are being used</li>
+                    </ul>
+                  </div>
+                )}
 
                 <div className="guide-item">
                   <h4>Inbox:</h4>
