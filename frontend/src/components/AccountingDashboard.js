@@ -295,7 +295,13 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
         : await apiPost('/api/ledger', payload);
 
       if (res.ok) {
-        const data = await res.json();
+        let data = {};
+        try {
+          data = await res.json();
+        } catch (jsonErr) {
+          console.error('JSON parse error:', jsonErr);
+          // Response was OK but body may be empty or invalid - continue anyway
+        }
 
         // If we have a pending receipt to link, link it to the new ledger entry
         if (receiptToLink && !editingId && data.id) {
@@ -323,6 +329,7 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
         setResult({ success: false, message: responseData.error || 'Failed to save' });
       }
     } catch (err) {
+      console.error('Save error:', err);
       setResult({ success: false, message: 'Failed to save transaction' });
     } finally {
       setSaving(false);
@@ -334,7 +341,7 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
     setTransactionType(isDeposit ? 'deposit' : 'withdrawal');
     setForm({
       transaction_date: transaction.transaction_date?.split('T')[0] || '',
-      name: transaction.name || '',
+      name: transaction.display_name || transaction.name || '',
       description: transaction.description || '',
       amount: isDeposit ? transaction.deposit : transaction.withdrawal,
       reference_no: transaction.reference_no || '',
