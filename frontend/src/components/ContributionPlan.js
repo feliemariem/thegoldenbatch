@@ -555,6 +555,7 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
                         <div className="cp-breakdown-header">
                           <div className="cp-pledge-breakdown-title">Your contribution breakdown</div>
                           <div className="cp-currency-selector">
+                            <label className="cp-currency-label">View in your currency</label>
                             <select
                               value={selectedCurrency}
                               onChange={(e) => setSelectedCurrency(e.target.value)}
@@ -605,6 +606,11 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
                           <strong>₱{formatNumber(amount)}</strong> over <strong>{months} months</strong> remaining
                           <br/>{getStartLabel()} — December 2028
                         </div>
+                        {selectedCurrency !== 'PHP' && exchangeRates && (
+                          <div className="cp-breakdown-total-converted">
+                            ≈ {formatCurrency(amount, selectedCurrency, exchangeRates)} total
+                          </div>
+                        )}
                         {selectedCurrency !== 'PHP' && exchangeRates && (
                           <div className="cp-exchange-disclaimer">
                             Exchange rates are approximate and sourced from Open Exchange Rates. Actual rates at time of transfer may vary.

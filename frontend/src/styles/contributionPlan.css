@@ -881,6 +881,16 @@
 
 .cp-currency-selector {
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.cp-currency-label {
+  font-size: 10px;
+  color: var(--cp-light-gray);
+  font-weight: 500;
 }
 
 .cp-currency-dropdown {
@@ -926,6 +936,14 @@
   color: var(--cp-gold);
   font-weight: 600;
   margin-top: 2px;
+}
+
+.cp-breakdown-total-converted {
+  text-align: center;
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cp-gold);
 }
 
 .cp-exchange-disclaimer {
@@ -1662,6 +1680,14 @@ body[data-theme="dark"] .cp-currency-dropdown option {
 
 body[data-theme="dark"] .cp-breakdown-converted {
   color: #8bc34a;
+}
+
+body[data-theme="dark"] .cp-breakdown-total-converted {
+  color: #8bc34a;
+}
+
+body[data-theme="dark"] .cp-currency-label {
+  color: #888888;
 }
 
 body[data-theme="dark"] .cp-exchange-disclaimer {
