@@ -1145,44 +1145,21 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
                         </span>
                       </td>
                       <td>
-                        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
-                          {receipt.status === 'submitted' && (
-                            <button
-                              onClick={() => handleAddToLedger(receipt)}
-                              className="btn-link"
-                              style={{ color: 'var(--color-status-positive)' }}
-                            >
-                              Add to Ledger
-                            </button>
-                          )}
-                          <label style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '6px',
-                            cursor: receipt.status === 'processed' ? 'default' : 'pointer',
-                            color: receipt.status === 'processed' ? '#4ade80' : '#888',
-                            fontSize: '0.85rem'
-                          }}>
-                            <input
-                              type="checkbox"
-                              checked={receipt.status === 'processed'}
-                              disabled={receipt.status === 'processed' || markingProcessed === receipt.id}
-                              onChange={() => handleMarkProcessed(receipt.id)}
-                              style={{
-                                width: '16px',
-                                height: '16px',
-                                cursor: receipt.status === 'processed' ? 'default' : 'pointer',
-                                accentColor: '#4ade80'
-                              }}
-                            />
-                            {markingProcessed === receipt.id ? 'Processing...' : 'Processed'}
-                          </label>
-                          {receipt.status === 'processed' && receipt.ledger_id && (
-                            <span style={{ color: '#666', fontSize: '0.8rem' }}>
-                              Ledger #{receipt.ledger_id}
-                            </span>
-                          )}
-                        </div>
+                        {receipt.status === 'submitted' ? (
+                          <button
+                            onClick={() => handleAddToLedger(receipt)}
+                            className="btn-link"
+                            style={{ color: 'var(--color-status-positive)' }}
+                          >
+                            Add to Ledger
+                          </button>
+                        ) : receipt.ledger_id ? (
+                          <span style={{ color: '#666', fontSize: '0.8rem' }}>
+                            Ledger #{receipt.ledger_id}
+                          </span>
+                        ) : (
+                          <span style={{ color: '#666' }}>-</span>
+                        )}
                       </td>
                     </tr>
                   ))}
