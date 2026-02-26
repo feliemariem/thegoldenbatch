@@ -371,6 +371,10 @@ router.post('/', authenticateAdmin, async (req, res) => {
     res.status(201).json(result.rows[0]);
   } catch (err) {
     console.error(err);
+    // Handle duplicate reference_no constraint violation
+    if (err.code === '23505' && err.constraint && err.constraint.includes('reference_no')) {
+      return res.status(400).json({ error: 'This reference number already exists. Please check for duplicates.' });
+    }
     res.status(500).json({ error: 'Server error' });
   }
 });

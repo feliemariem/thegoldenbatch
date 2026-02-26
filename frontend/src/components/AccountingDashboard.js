@@ -58,8 +58,8 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
 
   // Master list linking states
   const [masterListOptions, setMasterListOptions] = useState([]);
-  const [linkingTransaction, setLinkingTransaction] = useState(null);
-  const [linkSearch, setLinkSearch] = useState('');
+  const [formLinkSearch, setFormLinkSearch] = useState('');
+  const [showFormLinkDropdown, setShowFormLinkDropdown] = useState(false);
 
   // Autocomplete names from existing ledger entries
   const [existingNames, setExistingNames] = useState([]);
@@ -208,7 +208,8 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
       amount: '',
       reference_no: '',
       verified: 'Pending',
-      master_list_id: null
+      // Auto-fill master_list_id from receipt since we know which user uploaded it
+      master_list_id: receipt.master_list_id || null
     });
     setEditingId(null);
     setShowForm(true);
@@ -243,6 +244,8 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
     setEditingId(null);
     setShowForm(false);
     setPendingReceiptForLedger(null);
+    setFormLinkSearch('');
+    setShowFormLinkDropdown(false);
   };
 
   const handleSubmit = async (e) => {
@@ -293,6 +296,11 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
         resetForm();
         refreshTransactions();
         fetchExistingNames(); // Refresh autocomplete list
+
+        // Notify parent if a payment was linked to master list
+        if (form.master_list_id) {
+          onPaymentLinked?.();
+        }
       } else {
         const responseData = await res.json();
         setResult({ success: false, message: responseData.error || 'Failed to save' });
@@ -336,43 +344,6 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
       }
     } catch (err) {
       console.error('Failed to delete');
-    }
-  };
-
-  // Link/Unlink handlers
-  const handleLink = async (transactionId, masterListId) => {
-    // If linking from the form (before transaction is saved), update form state
-    if (transactionId === 'form') {
-      setForm({ ...form, master_list_id: masterListId });
-      setLinkingTransaction(null);
-      setLinkSearch('');
-      return;
-    }
-
-    try {
-      const res = await apiPut(`/api/ledger/${transactionId}/link`, { master_list_id: masterListId });
-
-      if (res.ok) {
-        refreshTransactions();
-        setLinkingTransaction(null);
-        setLinkSearch('');
-        onPaymentLinked?.();
-      }
-    } catch (err) {
-      console.error('Failed to link');
-    }
-  };
-
-  const handleUnlink = async (transactionId) => {
-    try {
-      const res = await apiPut(`/api/ledger/${transactionId}/unlink`, {});
-
-      if (res.ok) {
-        refreshTransactions();
-        onPaymentLinked?.();
-      }
-    } catch (err) {
-      console.error('Failed to unlink');
     }
   };
 
@@ -499,11 +470,6 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
     }
   };
 
-  // Filter master list options for linking
-  const filteredMasterListOptions = masterListOptions.filter(m => {
-    const fullName = `${m.first_name} ${m.last_name}`.toLowerCase();
-    return fullName.includes(linkSearch.toLowerCase());
-  });
 
   if (loading) {
     return <p style={{ color: '#999' }}>Loading transactions...</p>;
@@ -773,37 +739,100 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
               </div>
             </div>
 
-            {/* Link to Master List - only show for deposits when Verified=OK */}
-            {transactionType === 'deposit' && form.verified === 'OK' && (
+            {/* Link to Master List - show for deposits */}
+            {transactionType === 'deposit' && (
               <div style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', color: '#ccc', fontSize: '0.9rem' }}>
+                  Link to Master List <span style={{ color: '#888', fontSize: '0.85rem' }}>(counts toward P25k target)</span>
+                </label>
                 {!form.master_list_id ? (
-                  <label style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    cursor: 'pointer',
-                    color: '#ccc',
-                    fontSize: '0.95rem'
-                  }}>
+                  <div style={{ position: 'relative' }}>
                     <input
-                      type="checkbox"
-                      checked={false}
-                      onChange={() => setLinkingTransaction({ id: 'form', name: form.name, deposit: form.amount })}
-                      style={{ width: '16px', height: '16px', accentColor: 'var(--color-hover)' }}
+                      type="text"
+                      placeholder="Search batchmate by name..."
+                      value={formLinkSearch}
+                      onChange={(e) => {
+                        setFormLinkSearch(e.target.value);
+                        setShowFormLinkDropdown(e.target.value.length > 0);
+                      }}
+                      onFocus={() => formLinkSearch && setShowFormLinkDropdown(true)}
+                      onBlur={() => setTimeout(() => setShowFormLinkDropdown(false), 200)}
+                      style={{
+                        width: '100%',
+                        padding: '10px 12px',
+                        borderRadius: '6px',
+                        border: '1px solid rgba(255,255,255,0.2)',
+                        background: 'rgba(0,0,0,0.2)',
+                        color: '#fff',
+                        fontSize: '0.9rem'
+                      }}
                     />
-                    Link to Master List
-                    <span style={{ color: '#888', fontSize: '0.85rem' }}>(counts toward P25k target)</span>
-                  </label>
+                    {showFormLinkDropdown && formLinkSearch && (
+                      <div style={{
+                        position: 'absolute',
+                        top: '100%',
+                        left: 0,
+                        right: 0,
+                        background: 'var(--bg-secondary, #1a1a1a)',
+                        border: '1px solid rgba(255,255,255,0.2)',
+                        borderRadius: '6px',
+                        marginTop: '4px',
+                        maxHeight: '200px',
+                        overflowY: 'auto',
+                        zIndex: 100
+                      }}>
+                        {masterListOptions
+                          .filter(m => {
+                            const fullName = `${m.first_name} ${m.last_name}`.toLowerCase();
+                            return fullName.includes(formLinkSearch.toLowerCase());
+                          })
+                          .slice(0, 10)
+                          .map(m => (
+                            <div
+                              key={m.id}
+                              onMouseDown={() => {
+                                setForm({ ...form, master_list_id: m.id });
+                                setFormLinkSearch('');
+                                setShowFormLinkDropdown(false);
+                              }}
+                              style={{
+                                padding: '10px 12px',
+                                cursor: 'pointer',
+                                borderBottom: '1px solid rgba(255,255,255,0.05)',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center'
+                              }}
+                              onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+                              onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                            >
+                              <span style={{ color: '#fff' }}>{m.first_name} {m.last_name}</span>
+                              <span style={{ color: '#888', fontSize: '0.8rem' }}>{m.section}</span>
+                            </div>
+                          ))
+                        }
+                        {masterListOptions.filter(m => {
+                          const fullName = `${m.first_name} ${m.last_name}`.toLowerCase();
+                          return fullName.includes(formLinkSearch.toLowerCase());
+                        }).length === 0 && (
+                          <div style={{ padding: '10px 12px', color: '#888', fontStyle: 'italic' }}>
+                            No matching batchmates
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 ) : (
-                  <div style={{ padding: '8px 12px', background: 'rgba(207, 181, 59, 0.1)', borderRadius: '6px', fontSize: '0.85rem', color: 'var(--color-hover)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ padding: '10px 12px', background: 'rgba(207, 181, 59, 0.1)', borderRadius: '6px', fontSize: '0.9rem', color: 'var(--color-hover)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <span style={{ color: '#4ade80' }}>✓</span>
-                    Linked to: {masterListOptions.find(m => m.id === form.master_list_id)?.first_name} {masterListOptions.find(m => m.id === form.master_list_id)?.last_name}
+                    <span>Linked to: <strong>{masterListOptions.find(m => m.id === form.master_list_id)?.first_name} {masterListOptions.find(m => m.id === form.master_list_id)?.last_name}</strong></span>
+                    <span style={{ color: '#888', fontSize: '0.8rem' }}>({masterListOptions.find(m => m.id === form.master_list_id)?.section})</span>
                     <button
                       type="button"
                       onClick={() => setForm({ ...form, master_list_id: null })}
                       style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#888', cursor: 'pointer', textDecoration: 'underline', fontSize: '0.85rem' }}
                     >
-                      Remove
+                      Change
                     </button>
                   </div>
                 )}
@@ -977,15 +1006,6 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
                           <button onClick={() => handleEdit(t)} className="btn-link">
                             Edit
                           </button>
-                          {t.master_list_id && (
-                            <button
-                              onClick={() => handleUnlink(t.id)}
-                              className="btn-link"
-                              style={{ color: '#888' }}
-                            >
-                              Unlink
-                            </button>
-                          )}
                           <button
                             onClick={() => handleDelete(t.id)}
                             className="btn-link"
@@ -1154,49 +1174,6 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
               {inboxFilter === 'submitted' ? 'No receipts waiting for processing' : 'No receipts found'}
             </p>
           )}
-        </div>
-      )}
-
-      {/* Link to Master List Modal */}
-      {linkingTransaction && (
-        <div className="receipt-modal-overlay" onClick={() => { setLinkingTransaction(null); setLinkSearch(''); }}>
-          <div className="receipt-modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '500px' }}>
-            <div className="receipt-modal-header">
-              <h4 className="link-modal-title">Link to Master List</h4>
-              <button onClick={() => { setLinkingTransaction(null); setLinkSearch(''); }} className="receipt-modal-close">x</button>
-            </div>
-            <div style={{ padding: '16px' }}>
-              <p className="link-modal-description">
-                Link "<strong>{linkingTransaction.name}</strong>" ({formatCurrency(linkingTransaction.deposit)}) to a batchmate:
-              </p>
-              <input
-                type="text"
-                placeholder="Search by name..."
-                value={linkSearch}
-                onChange={(e) => setLinkSearch(e.target.value)}
-                className="link-modal-search"
-                autoFocus
-              />
-              <div className="link-modal-list">
-                {filteredMasterListOptions.length > 0 ? (
-                  filteredMasterListOptions.map(m => (
-                    <div
-                      key={m.id}
-                      onClick={() => handleLink(linkingTransaction.id, m.id)}
-                      className="link-modal-item"
-                    >
-                      <span className="link-modal-name">{m.first_name} {m.last_name}</span>
-                      <span className="link-modal-section">({m.section})</span>
-                    </div>
-                  ))
-                ) : (
-                  <p className="link-modal-empty">
-                    {linkSearch ? 'No matching batchmates' : 'Type to search...'}
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
         </div>
       )}
 
