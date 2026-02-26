@@ -1097,7 +1097,6 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
                     <th>Date Submitted</th>
                     <th>User Name</th>
                     <th>Receipt</th>
-                    <th>Note</th>
                     <th>Status</th>
                     <th>Actions</th>
                   </tr>
@@ -1119,7 +1118,7 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
                           onClick={() => setViewingInboxReceipt(receipt)}
                           style={{
                             background: 'none',
-                            border: '1px solid rgba(255,255,255,0.2)',
+                            border: '1px solid var(--border-color, rgba(0,0,0,0.15))',
                             borderRadius: '4px',
                             padding: '4px',
                             cursor: 'pointer'
@@ -1132,25 +1131,22 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
                           />
                         </button>
                       </td>
-                      <td style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {receipt.note || '-'}
-                      </td>
                       <td>
                         <span style={{
                           padding: '4px 8px',
                           borderRadius: '4px',
                           fontSize: '0.8rem',
-                          fontWeight: '500',
+                          fontWeight: '600',
                           background: receipt.status === 'submitted'
-                            ? 'rgba(251, 191, 36, 0.2)'
+                            ? 'rgba(251, 191, 36, 0.15)'
                             : receipt.status === 'verified'
-                              ? 'rgba(74, 222, 128, 0.2)'
-                              : 'rgba(251, 191, 36, 0.2)',
+                              ? 'rgba(22, 163, 74, 0.15)'
+                              : 'rgba(217, 119, 6, 0.15)',
                           color: receipt.status === 'submitted'
-                            ? '#fbbf24'
+                            ? '#b45309'
                             : receipt.status === 'verified'
-                              ? '#4ade80'
-                              : '#fbbf24'
+                              ? '#15803d'
+                              : '#92400e'
                         }}>
                           {receipt.status === 'submitted'
                             ? 'Submitted'
@@ -1168,10 +1164,6 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
                           >
                             Add to Ledger
                           </button>
-                        ) : receipt.ledger_id ? (
-                          <span style={{ color: '#666', fontSize: '0.8rem' }}>
-                            Ledger #{receipt.ledger_id}
-                          </span>
                         ) : (
                           <span style={{ color: '#666' }}>-</span>
                         )}
