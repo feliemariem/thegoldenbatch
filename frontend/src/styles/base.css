@@ -502,11 +502,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .credits-scroll {
-  animation: scrollCredits 20s linear infinite;
   will-change: transform;
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
-  -webkit-animation: scrollCredits 20s linear infinite;
 }
 
 .donor-name {
@@ -515,26 +511,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   padding: 12px 0;
   margin: 0;
   letter-spacing: 0.02em;
-}
-
-@keyframes scrollCredits {
-  0% {
-    transform: translateY(0);
-  }
-  100% {
-    transform: translateY(-50%);
-  }
-}
-
-@-webkit-keyframes scrollCredits {
-  0% {
-    -webkit-transform: translateY(0);
-    transform: translateY(0);
-  }
-  100% {
-    -webkit-transform: translateY(-50%);
-    transform: translateY(-50%);
-  }
 }
 
 .donate-card {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
@@ -49,6 +49,29 @@ export default function Funds() {
     const interval = setInterval(fetchBalance, 30000);
     return () => clearInterval(interval);
   }, []);
+
+  const creditsContainerRef = useRef(null);
+  const creditsScrollRef = useRef(null);
+
+  useEffect(() => {
+    if (!creditsScrollRef.current || !creditsContainerRef.current) return;
+    if (donors.length === 0) return;
+
+    let animationId;
+    let position = 0;
+    const speed = 0.5; // pixels per frame
+
+    const animate = () => {
+      position += speed;
+      const halfHeight = creditsScrollRef.current.scrollHeight / 2;
+      if (position >= halfHeight) position = 0;
+      creditsScrollRef.current.style.transform = `translateY(-${position}px)`;
+      animationId = requestAnimationFrame(animate);
+    };
+
+    animationId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationId);
+  }, [donors]);
 
   const formatPeso = (amount, decimals = 2) => {
     return PESO + amount.toLocaleString('en-PH', {
@@ -201,8 +224,8 @@ export default function Funds() {
           {donors.length > 0 && (
             <div className="thank-you-section">
               <h3 className="thank-you-title">Golden Batch Builders</h3>
-              <div className="credits-container">
-                <div className="credits-scroll">
+              <div className="credits-container" ref={creditsContainerRef}>
+                <div className="credits-scroll" ref={creditsScrollRef}>
                   {[...donors, ...donors].map((name, index) => (
                     <p key={index} className="donor-name">{name}</p>
                   ))}
