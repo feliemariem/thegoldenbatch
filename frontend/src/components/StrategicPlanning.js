@@ -10,7 +10,7 @@ const presentations = [
   },
   {
     id: 'funding',
-    label: 'Funding Plan',
+    label: 'Funding Strategy Visual',
     file: '/presentations/Funding_Strategy_Visual.html',
     pdf: '/presentations/pdfs/Funding_Strategy_Visual.pdf'
   },
@@ -25,12 +25,6 @@ const presentations = [
     label: 'Budget Comparison (₱1.5M vs ₱1.7M)',
     file: '/presentations/Budget_Comparison.html',
     pdf: '/presentations/pdfs/Budget_Comparison.pdf'
-  },
-    {
-    id: 'batch tier payments',
-    label: 'Batch Tier Payments',
-    file: '/presentations/Batch_Tier_Payments.html',
-    pdf: '/presentations/pdfs/Batch_Tier_Payments.pdf'
   },
       {
     id: 'milestones',
