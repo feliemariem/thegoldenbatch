@@ -681,6 +681,11 @@ END:VCALENDAR`;
                           <span className="builder-total">/ {formatPeso(profile.pledge_amount)}</span>
                           <span className="builder-pct">({Math.min(Math.round(((profile.total_paid || 0) / profile.pledge_amount) * 100), 100)}%)</span>
                         </div>
+                        {(profile.pending_paid || 0) > 0 && (
+                          <div className="builder-pending">
+                            +{formatPeso(profile.pending_paid)} pending verification
+                          </div>
+                        )}
                         {(profile.total_paid || 0) < (profile.pledge_amount || 0) && (
                           <div className="builder-remaining">
                             Remaining: <strong>{formatPeso((profile.pledge_amount || 0) - (profile.total_paid || 0))}</strong>
@@ -694,6 +699,11 @@ END:VCALENDAR`;
                   ) : (
                     <div className="builder-root-status">
                       <span className="root-message">{formatPeso(profile.total_paid || 0)} contributed. Every peso counts — thank you!</span>
+                      {(profile.pending_paid || 0) > 0 && (
+                        <div className="builder-pending" style={{ marginTop: '8px' }}>
+                          +{formatPeso(profile.pending_paid)} pending verification
+                        </div>
+                      )}
                     </div>
                   )}
 

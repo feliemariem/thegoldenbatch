@@ -45,16 +45,21 @@ router.get('/', authenticateToken, async (req, res) => {
     if (userResult.rows.length > 0) {
       const user = userResult.rows[0];
 
-      // Get payment total if user is linked to master_list
+      // Get payment totals if user is linked to master_list
+      // Only verified (OK) deposits count toward pledge; pending shown separately
       let totalPaid = 0;
+      let pendingPaid = 0;
       if (user.master_list_id) {
         const paymentResult = await db.query(
-          `SELECT COALESCE(SUM(deposit), 0) as total_paid
+          `SELECT
+            COALESCE(SUM(CASE WHEN verified = 'OK' THEN deposit ELSE 0 END), 0) as total_paid,
+            COALESCE(SUM(CASE WHEN verified != 'OK' OR verified IS NULL THEN deposit ELSE 0 END), 0) as pending_paid
            FROM ledger
-           WHERE master_list_id = $1`,
+           WHERE master_list_id = $1 AND deposit > 0`,
           [user.master_list_id]
         );
         totalPaid = parseFloat(paymentResult.rows[0].total_paid) || 0;
+        pendingPaid = parseFloat(paymentResult.rows[0].pending_paid) || 0;
       }
 
       // Determine amount_due based on builder tier
@@ -70,6 +75,7 @@ router.get('/', authenticateToken, async (req, res) => {
       return res.json({
         ...user,
         total_paid: totalPaid,
+        pending_paid: pendingPaid,
         amount_due: amountDue,
         builder_tier: user.builder_tier,
         pledge_amount: user.pledge_amount ? parseFloat(user.pledge_amount) : null,

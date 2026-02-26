@@ -3143,6 +3143,16 @@ body[data-theme="light"] .merch-form-hint {
   margin-left: 4px;
 }
 
+.builder-pending {
+  font-size: 0.8rem;
+  color: var(--color-status-warning, #f59e0b);
+  margin-top: 4px;
+}
+
+[data-theme="light"] .builder-pending {
+  color: #b45309;
+}
+
 .builder-remaining {
   font-size: 0.85rem;
   color: var(--color-text-secondary);

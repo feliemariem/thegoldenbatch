@@ -73,7 +73,7 @@ router.get('/', authenticateAdmin, async (req, res) => {
       LEFT JOIN (
         SELECT master_list_id, SUM(deposit) as total_paid
         FROM ledger
-        WHERE master_list_id IS NOT NULL AND deposit > 0
+        WHERE master_list_id IS NOT NULL AND deposit > 0 AND verified = 'OK'
         GROUP BY master_list_id
       ) ledger_totals ON m.id = ledger_totals.master_list_id
     `;
@@ -186,6 +186,7 @@ router.get('/', authenticateAdmin, async (req, res) => {
     `);
 
     // Get payment stats (graduates with builder tier, excluding in memoriam)
+    // Only verified (OK) deposits count toward pledge calculations
     const paymentStatsResult = await db.query(`
       SELECT
         COUNT(CASE WHEN m.builder_tier IS NOT NULL THEN 1 END) as total_builders,
@@ -197,13 +198,14 @@ router.get('/', authenticateAdmin, async (req, res) => {
       LEFT JOIN (
         SELECT master_list_id, SUM(deposit) as total_paid
         FROM ledger
-        WHERE master_list_id IS NOT NULL AND deposit > 0
+        WHERE master_list_id IS NOT NULL AND deposit > 0 AND verified = 'OK'
         GROUP BY master_list_id
       ) ledger_totals ON m.id = ledger_totals.master_list_id
       WHERE m.section != 'Non-Graduate' AND (m.in_memoriam IS NULL OR m.in_memoriam = false)
     `);
 
     // Get tier breakdown stats
+    // Only verified (OK) deposits count toward collected totals
     const tierStatsResult = await db.query(`
       SELECT
         COUNT(CASE WHEN m.builder_tier = 'cornerstone' THEN 1 END) as cornerstone,
@@ -217,7 +219,7 @@ router.get('/', authenticateAdmin, async (req, res) => {
       LEFT JOIN (
         SELECT master_list_id, SUM(deposit) as total_paid
         FROM ledger
-        WHERE master_list_id IS NOT NULL AND deposit > 0
+        WHERE master_list_id IS NOT NULL AND deposit > 0 AND verified = 'OK'
         GROUP BY master_list_id
       ) ledger_totals ON m.id = ledger_totals.master_list_id
       WHERE m.section != 'Non-Graduate' AND (m.in_memoriam IS NULL OR m.in_memoriam = false)

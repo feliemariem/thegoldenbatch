@@ -82,7 +82,7 @@ router.get('/', authenticateAdmin, async (req, res) => {
 
     // First, get ALL transactions with master_list info to calculate running balances and payment types
     const allTransactionsResult = await db.query(
-      `SELECT l.id, l.deposit, l.withdrawal, l.verified, l.master_list_id,
+      `SELECT l.id, l.deposit, l.withdrawal, l.verified, l.master_list_id, l.payment_type,
               m.pledge_amount, m.builder_tier
        FROM ledger l
        LEFT JOIN master_list m ON l.master_list_id = m.id
@@ -106,25 +106,39 @@ router.get('/', authenticateAdmin, async (req, res) => {
       balanceMap.set(row.id, runningBalance);
 
       // Calculate payment_type dynamically
-      // Default to 'One-Time' for: Root tier, non-grad, unlinked, no pledge, external sponsor, withdrawals
       let calculatedPaymentType = 'One-Time';
+      const tierLower = row.builder_tier ? row.builder_tier.toLowerCase() : null;
 
-      if (row.master_list_id && deposit > 0 && isVerified) {
-        // Update running total of deposits for this master_list_id
-        const currentTotal = masterListRunningTotals.get(row.master_list_id) || 0;
-        const newTotal = currentTotal + deposit;
-        masterListRunningTotals.set(row.master_list_id, newTotal);
+      if (row.master_list_id && deposit > 0) {
+        if (isVerified) {
+          // Update running total of verified deposits for this master_list_id
+          const currentTotal = masterListRunningTotals.get(row.master_list_id) || 0;
+          const newTotal = currentTotal + deposit;
+          masterListRunningTotals.set(row.master_list_id, newTotal);
 
-        // Determine payment type based on running total vs pledge
-        const pledgeAmount = parseFloat(row.pledge_amount) || 0;
-        if (pledgeAmount > 0 && row.builder_tier && row.builder_tier !== 'root') {
-          if (newTotal >= pledgeAmount) {
-            calculatedPaymentType = 'Full';
+          // Determine payment type based on running total vs pledge
+          const pledgeAmount = parseFloat(row.pledge_amount) || 0;
+          if (pledgeAmount > 0 && tierLower && tierLower !== 'root') {
+            if (newTotal >= pledgeAmount) {
+              calculatedPaymentType = 'Full';
+            } else {
+              calculatedPaymentType = 'Partial';
+            }
+          } else if (tierLower === 'root') {
+            calculatedPaymentType = 'One-Time';
+          }
+          // else: stays 'One-Time' (no pledge, no tier, etc.)
+        } else {
+          // NOT verified - show "Pending" for linked transactions with a tier
+          if (tierLower && tierLower !== 'root') {
+            calculatedPaymentType = 'Pending';
           } else {
-            calculatedPaymentType = 'Partial';
+            calculatedPaymentType = 'Pending';
           }
         }
-        // else: stays 'One-Time' (Root tier, no pledge, etc.)
+      } else if (!isVerified && deposit > 0) {
+        // Unlinked, unverified deposit
+        calculatedPaymentType = 'Pending';
       }
 
       paymentTypeMap.set(row.id, calculatedPaymentType);
