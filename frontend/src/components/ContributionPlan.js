@@ -357,7 +357,7 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
 
             {/* Letter */}
             <div className="cp-letter">
-              <p><b className="cp-green">Dear Batchmates,</b></p>
+              <p><b className="cp-green">Dear {user?.first_name || 'Batchmate'},</b></p>
               <p>As we prepare for our 25th Homecoming, we want to share a clear and complete picture of what we're building together.</p>
               <p>The ₱2.1M shown here represents our total batch vision — covering the Main Event, Teachers' Dinner, commemorative items, fundraising initiatives, and our Giving Back commitment. This is not an amount expected to come solely from direct contributions. We are using a <b>hybrid model</b>, combining batch contributions with income generated from selected initiatives.</p>
               <p>The Main Event remains the centerpiece of our milestone celebration, while our fundraising initiatives are structured to generate additional returns to support the overall plan. Our goal is transparency, balance, and a celebration worthy of 25 years.</p>
