@@ -164,13 +164,7 @@ export default function MyTasks() {
   return (
     <div
       id="my-tasks-section"
-      style={{
-        background: 'rgba(207, 181, 59, 0.05)',
-        border: '1px solid rgba(207, 181, 59, 0.2)',
-        borderRadius: '12px',
-        padding: '16px',
-        marginBottom: '20px'
-      }}
+      className="my-tasks-container"
     >
       <div
         onClick={() => setExpanded(!expanded)}
@@ -198,7 +192,7 @@ export default function MyTasks() {
             {summary.completed}/{summary.total} completed
           </span>
           {summary.overdue > 0 && (
-            <span style={{
+            <span className="my-tasks-overdue-badge" style={{
               fontSize: '0.75rem',
               color: 'var(--color-status-negative)',
               background: 'rgba(220, 53, 69, 0.15)',
@@ -209,7 +203,7 @@ export default function MyTasks() {
             </span>
           )}
         </div>
-        <span style={{ color: '#888', fontSize: '0.85rem' }}>{expanded ? '▼' : '▶'}</span>
+        <span style={{ color: 'var(--color-text-secondary)', fontSize: '0.85rem' }}>{expanded ? '▼' : '▶'}</span>
       </div>
 
       {expanded && (
@@ -217,12 +211,7 @@ export default function MyTasks() {
           {activeTasks.map(task => (
             <div
               key={task.id}
-              style={{
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                borderRadius: '8px',
-                padding: '12px 14px'
-              }}
+              className="my-tasks-card"
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
                 <div style={{ flex: 1, fontSize: '0.9rem', color: 'var(--text-primary)', fontWeight: '500' }}>
@@ -254,18 +243,13 @@ export default function MyTasks() {
                 {task.due_date && formatDueDate(task.due_date)}
 
                 <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ color: '#888', fontSize: '0.75rem' }}>Status:</span>
+                  <span style={{ color: 'var(--color-text-secondary)', fontSize: '0.75rem' }}>Status:</span>
                   <select
                     value={task.status}
                     onChange={(e) => handleStatusChange(task.id, e.target.value)}
                     disabled={updatingId === task.id}
+                    className="my-tasks-status-select"
                     style={{
-                      padding: '4px 8px',
-                      fontSize: '0.75rem',
-                      background: 'rgba(0, 0, 0, 0.3)',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
-                      borderRadius: '6px',
-                      color: '#ffffff',
                       cursor: updatingId === task.id ? 'wait' : 'pointer'
                     }}
                   >

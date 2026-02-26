@@ -1499,6 +1499,64 @@ body[data-theme="light"] .my-tasks-badge.pending {
   color: #B8960C !important;
 }
 
+/* My Tasks container */
+body[data-theme="light"] .my-tasks-container {
+  background: rgba(0, 102, 51, 0.04) !important;
+  border-color: rgba(0, 102, 51, 0.15) !important;
+}
+
+/* Task cards */
+body[data-theme="light"] .my-tasks-card {
+  background: rgba(0, 102, 51, 0.03) !important;
+  border-color: rgba(0, 102, 51, 0.1) !important;
+}
+
+/* Status select dropdown */
+body[data-theme="light"] .my-tasks-status-select {
+  background: rgba(235, 245, 238, 0.9) !important;
+  border: 1px solid rgba(0, 102, 51, 0.2) !important;
+  color: #1a1a1a !important;
+}
+
+/* Priority badges */
+body[data-theme="light"] .task-priority-badge.priority-high {
+  background: rgba(150, 90, 40, 0.15) !important;
+  color: #9a5c28 !important;
+}
+
+body[data-theme="light"] .task-priority-badge.priority-critical {
+  background: rgba(140, 45, 45, 0.15) !important;
+  color: #943838 !important;
+}
+
+body[data-theme="light"] .task-priority-badge.priority-low {
+  background: rgba(100, 100, 100, 0.1) !important;
+  color: #666666 !important;
+}
+
+/* Status badges */
+body[data-theme="light"] .task-status-badge.status-not-started {
+  background: rgba(100, 100, 100, 0.1) !important;
+  color: #666666 !important;
+}
+
+body[data-theme="light"] .task-status-badge.status-done {
+  background: rgba(34, 87, 60, 0.12) !important;
+  color: #2d6a4f !important;
+}
+
+/* Completed badge */
+body[data-theme="light"] .my-tasks-badge.completed {
+  background: rgba(34, 87, 60, 0.15) !important;
+  color: #2d6a4f !important;
+}
+
+/* Overdue badge */
+body[data-theme="light"] .my-tasks-overdue-badge {
+  background: rgba(140, 45, 45, 0.12) !important;
+  color: #943838 !important;
+}
+
 /* Task meeting link */
 body[data-theme="light"] .task-meeting-link {
   color: #B8960C !important;

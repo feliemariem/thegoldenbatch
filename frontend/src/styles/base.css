@@ -1406,3 +1406,29 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   }
 }
 
+/* My Tasks */
+.my-tasks-container {
+  background: rgba(207, 181, 59, 0.05);
+  border: 1px solid rgba(207, 181, 59, 0.2);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.my-tasks-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.my-tasks-status-select {
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: #ffffff;
+  cursor: pointer;
+}
+
