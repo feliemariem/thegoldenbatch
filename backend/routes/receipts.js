@@ -174,12 +174,16 @@ router.put('/admin/:id/mark-processed', authenticateAdmin, async (req, res) => {
     const { id } = req.params;
     const { is_duplicate } = req.body;
 
+    // Look up admin ID from admins table using user's email
+    const adminResult = await db.query('SELECT id FROM admins WHERE LOWER(email) = $1', [req.user.email.toLowerCase()]);
+    const adminId = adminResult.rows.length > 0 ? adminResult.rows[0].id : null;
+
     const result = await db.query(
       `UPDATE receipt_uploads
        SET status = 'pending_verification', is_duplicate = $1, processed_by = $2, processed_at = NOW()
        WHERE id = $3
        RETURNING *`,
-      [is_duplicate || false, req.user.id, id]
+      [is_duplicate || false, adminId, id]
     );
 
     if (result.rows.length === 0) {
@@ -203,12 +207,16 @@ router.put('/admin/:id/link-ledger', authenticateAdmin, async (req, res) => {
       return res.status(400).json({ error: 'ledger_id is required' });
     }
 
+    // Look up admin ID from admins table using user's email
+    const adminResult = await db.query('SELECT id FROM admins WHERE LOWER(email) = $1', [req.user.email.toLowerCase()]);
+    const adminId = adminResult.rows.length > 0 ? adminResult.rows[0].id : null;
+
     const result = await db.query(
       `UPDATE receipt_uploads
        SET status = 'pending_verification', ledger_id = $1, processed_by = $2, processed_at = NOW()
        WHERE id = $3
        RETURNING *`,
-      [ledger_id, req.user.id, id]
+      [ledger_id, adminId, id]
     );
 
     if (result.rows.length === 0) {
@@ -235,6 +243,10 @@ router.post('/admin/on-behalf', authenticateAdmin, upload.single('receipt'), asy
       return res.status(400).json({ error: 'master_list_id is required' });
     }
 
+    // Look up admin ID from admins table using user's email
+    const adminResult = await db.query('SELECT id FROM admins WHERE LOWER(email) = $1', [req.user.email.toLowerCase()]);
+    const adminId = adminResult.rows.length > 0 ? adminResult.rows[0].id : null;
+
     // Try to find user_id from master_list_id
     const userResult = await db.query(
       `SELECT u.id FROM users u JOIN invites i ON u.invite_id = i.id WHERE i.master_list_id = $1`,
@@ -251,7 +263,7 @@ router.post('/admin/on-behalf', authenticateAdmin, upload.single('receipt'), asy
       `INSERT INTO receipt_uploads (user_id, master_list_id, image_url, image_public_id, note, status, source, ledger_id, processed_by, processed_at)
        VALUES ($1, $2, $3, $4, $5, 'pending_verification', 'admin', $6, $7, NOW())
        RETURNING *`,
-      [userId, master_list_id, uploadResult.secure_url, uploadResult.public_id, note || null, ledger_id || null, req.user.id]
+      [userId, master_list_id, uploadResult.secure_url, uploadResult.public_id, note || null, ledger_id || null, adminId]
     );
 
     res.status(201).json(result.rows[0]);
