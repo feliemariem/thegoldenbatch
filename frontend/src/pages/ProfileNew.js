@@ -697,49 +697,57 @@ END:VCALENDAR`;
                   )}
 
                   {/* Receipt Upload - Drag & Drop Zone */}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleReceiptFileChange}
-                    ref={receiptFileInputRef}
-                    style={{ display: 'none' }}
-                    id="receipt-upload"
-                  />
-                  {!receiptPreview ? (
-                    <div
-                      className={`receipt-dropzone ${dragActive ? 'drag-active' : ''}`}
-                      onDragEnter={handleDrag}
-                      onDragLeave={handleDrag}
-                      onDragOver={handleDrag}
-                      onDrop={handleDrop}
-                      onClick={() => receiptFileInputRef.current?.click()}
-                    >
-                      <div className="dropzone-icon">📤</div>
-                      <div className="dropzone-text">
-                        <span className="dropzone-primary">Drop receipt image here</span>
-                        <span className="dropzone-secondary">or click to browse</span>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="receipt-preview-zone">
-                      <img src={receiptPreview.previewUrl} alt="Preview" className="preview-image" />
-                      <div className="preview-actions">
-                        <button
-                          className="btn-preview-confirm"
-                          onClick={confirmUpload}
-                          disabled={receiptUploading}
+                  {/* Hide upload zone when fully paid for non-root tiers (Cornerstone, Pillar, Anchor) */}
+                  {/* Root tier always shows upload zone since there's no pledge cap */}
+                  {(profile.builder_tier === 'root' ||
+                    !profile.pledge_amount ||
+                    (profile.total_paid || 0) < profile.pledge_amount) && (
+                    <>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleReceiptFileChange}
+                        ref={receiptFileInputRef}
+                        style={{ display: 'none' }}
+                        id="receipt-upload"
+                      />
+                      {!receiptPreview ? (
+                        <div
+                          className={`receipt-dropzone ${dragActive ? 'drag-active' : ''}`}
+                          onDragEnter={handleDrag}
+                          onDragLeave={handleDrag}
+                          onDragOver={handleDrag}
+                          onDrop={handleDrop}
+                          onClick={() => receiptFileInputRef.current?.click()}
                         >
-                          {receiptUploading ? 'Uploading...' : 'Upload'}
-                        </button>
-                        <button
-                          className="btn-preview-cancel"
-                          onClick={cancelUpload}
-                          disabled={receiptUploading}
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </div>
+                          <div className="dropzone-icon">📤</div>
+                          <div className="dropzone-text">
+                            <span className="dropzone-primary">Drop receipt image here</span>
+                            <span className="dropzone-secondary">or click to browse</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="receipt-preview-zone">
+                          <img src={receiptPreview.previewUrl} alt="Preview" className="preview-image" />
+                          <div className="preview-actions">
+                            <button
+                              className="btn-preview-confirm"
+                              onClick={confirmUpload}
+                              disabled={receiptUploading}
+                            >
+                              {receiptUploading ? 'Uploading...' : 'Upload'}
+                            </button>
+                            <button
+                              className="btn-preview-cancel"
+                              onClick={cancelUpload}
+                              disabled={receiptUploading}
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </>
                   )}
 
                   {/* Payment Methods Toggle */}
