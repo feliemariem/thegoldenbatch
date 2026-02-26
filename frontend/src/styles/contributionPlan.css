@@ -1844,3 +1844,123 @@ body[data-theme="dark"] .cp-footer {
 body[data-theme="dark"] .cp-footer-text {
   color: #888888;
 }
+
+/* ===========================================
+   REMOVE TIER SECTION
+   =========================================== */
+
+.cp-remove-tier-section {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--cp-line);
+  text-align: center;
+}
+
+.cp-btn-not-ready {
+  background: none;
+  border: none;
+  color: var(--cp-light-gray);
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 8px 16px;
+  transition: color 0.2s ease;
+}
+
+.cp-btn-not-ready:hover {
+  color: var(--cp-gray);
+}
+
+.cp-remove-confirm {
+  background: rgba(192, 57, 43, 0.08);
+  border: 1px solid rgba(192, 57, 43, 0.2);
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.cp-remove-confirm-text {
+  color: var(--cp-danger);
+  font-size: 0.95rem;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.cp-remove-confirm-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.cp-btn-remove-confirm {
+  background: var(--cp-danger);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.cp-btn-remove-confirm:hover:not(:disabled) {
+  background: #a93226;
+}
+
+.cp-btn-remove-confirm:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.cp-btn-remove-cancel {
+  background: transparent;
+  color: var(--cp-gray);
+  border: 1px solid var(--cp-line);
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cp-btn-remove-cancel:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.cp-btn-remove-cancel:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Dark mode for remove tier section */
+body[data-theme="dark"] .cp-remove-tier-section {
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+body[data-theme="dark"] .cp-btn-not-ready {
+  color: #888888;
+}
+
+body[data-theme="dark"] .cp-btn-not-ready:hover {
+  color: #aaaaaa;
+}
+
+body[data-theme="dark"] .cp-remove-confirm {
+  background: rgba(192, 57, 43, 0.15);
+  border-color: rgba(192, 57, 43, 0.3);
+}
+
+body[data-theme="dark"] .cp-remove-confirm-text {
+  color: #e74c3c;
+}
+
+body[data-theme="dark"] .cp-btn-remove-cancel {
+  color: #aaaaaa;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+body[data-theme="dark"] .cp-btn-remove-cancel:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.05);
+}

@@ -118,6 +118,8 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
   const [selectedCurrency, setSelectedCurrency] = useState('PHP');
   const [exchangeRates, setExchangeRates] = useState(null);
   const [ratesLoading, setRatesLoading] = useState(false);
+  const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
+  const [removing, setRemoving] = useState(false);
   const exchangeRatesCache = useRef(null);
 
   // Fetch exchange rates (cached)
@@ -270,11 +272,37 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
     setPledgeAmount('');
     setConfirmed(false);
     setError('');
+    setShowRemoveConfirm(false);
   };
 
   const handleClose = () => {
     handleReset();
     onClose();
+  };
+
+  const handleRemoveTier = async () => {
+    setRemoving(true);
+    setError('');
+
+    try {
+      const res = await apiPut('/api/me/builder-tier', {
+        tier: null,
+        pledge_amount: null
+      });
+
+      if (res.ok) {
+        onTierSaved(null, null);
+        handleClose();
+      } else {
+        const data = await res.json();
+        setError(data.error || 'Failed to remove tier');
+      }
+    } catch (err) {
+      setError('Network error. Please try again.');
+    } finally {
+      setRemoving(false);
+      setShowRemoveConfirm(false);
+    }
   };
 
   const amount = getRawAmount();
@@ -818,6 +846,42 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
                 <p>Every Builder will receive a commemorative item as a token of gratitude — the form this takes is still being finalized by the committee. It could be anything from a custom piece to a collectible memento. Details will be announced once confirmed.</p>
               </div>
             </div>
+
+            {/* Remove Tier Option - Only show if user already has a tier */}
+            {currentTier && !confirmed && (
+              <div className="cp-remove-tier-section">
+                {!showRemoveConfirm ? (
+                  <button
+                    className="cp-btn-not-ready"
+                    onClick={() => setShowRemoveConfirm(true)}
+                  >
+                    I'm not ready yet.
+                  </button>
+                ) : (
+                  <div className="cp-remove-confirm">
+                    <p className="cp-remove-confirm-text">
+                      Are you sure? This will remove your current tier and pledge amount.
+                    </p>
+                    <div className="cp-remove-confirm-actions">
+                      <button
+                        className="cp-btn-remove-confirm"
+                        onClick={handleRemoveTier}
+                        disabled={removing}
+                      >
+                        {removing ? 'Removing...' : 'Yes, remove my tier'}
+                      </button>
+                      <button
+                        className="cp-btn-remove-cancel"
+                        onClick={() => setShowRemoveConfirm(false)}
+                        disabled={removing}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
           </main>
 

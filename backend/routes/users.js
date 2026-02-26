@@ -113,11 +113,6 @@ router.put('/builder-tier', authenticateToken, async (req, res) => {
     const { tier, pledge_amount } = req.body;
     const validTiers = ['cornerstone', 'pillar', 'anchor', 'root'];
 
-    // Validate tier
-    if (!tier || !validTiers.includes(tier)) {
-      return res.status(400).json({ error: 'Invalid tier. Must be one of: cornerstone, pillar, anchor, root' });
-    }
-
     // Get user's master_list_id
     const linkResult = await db.query(
       `SELECT i.master_list_id FROM users u JOIN invites i ON u.invite_id = i.id WHERE u.id = $1`,
@@ -129,6 +124,26 @@ router.put('/builder-tier', authenticateToken, async (req, res) => {
     }
 
     const masterListId = linkResult.rows[0].master_list_id;
+
+    // Handle tier removal (tier = null)
+    if (tier === null) {
+      const result = await db.query(
+        `UPDATE master_list SET builder_tier = NULL, pledge_amount = NULL, builder_tier_set_at = NULL WHERE id = $1
+         RETURNING builder_tier, pledge_amount, builder_tier_set_at`,
+        [masterListId]
+      );
+
+      return res.json({
+        builder_tier: null,
+        pledge_amount: null,
+        builder_tier_set_at: null
+      });
+    }
+
+    // Validate tier
+    if (!tier || !validTiers.includes(tier)) {
+      return res.status(400).json({ error: 'Invalid tier. Must be one of: cornerstone, pillar, anchor, root' });
+    }
 
     // Validate pledge_amount based on tier
     let finalPledgeAmount;
