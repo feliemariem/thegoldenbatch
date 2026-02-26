@@ -1079,7 +1079,7 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
                   cursor: 'pointer',
                   fontWeight: inboxFilter === status ? '600' : '400',
                   background: inboxFilter === status ? 'var(--color-hover)' : 'var(--bg-secondary, rgba(0,0,0,0.03))',
-                  color: inboxFilter === status ? '#0d1a14' : 'var(--text-secondary, #666)',
+                  color: inboxFilter === status ? '#fff' : 'var(--text-secondary, #666)',
                   textTransform: 'capitalize'
                 }}
               >
