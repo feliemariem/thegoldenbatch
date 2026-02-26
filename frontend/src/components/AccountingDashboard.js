@@ -358,6 +358,14 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
 
   // Link/Unlink handlers
   const handleLink = async (transactionId, masterListId) => {
+    // If linking from the form (before transaction is saved), update form state
+    if (transactionId === 'form') {
+      setForm({ ...form, master_list_id: masterListId });
+      setLinkingTransaction(null);
+      setLinkSearch('');
+      return;
+    }
+
     try {
       const res = await apiPut(`/api/ledger/${transactionId}/link`, { master_list_id: masterListId });
 
@@ -781,6 +789,43 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
                 </select>
               </div>
             </div>
+
+            {/* Link to Master List - only show for deposits when Verified=OK */}
+            {transactionType === 'deposit' && form.verified === 'OK' && (
+              <div style={{ marginBottom: '16px' }}>
+                {!form.master_list_id ? (
+                  <label style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    cursor: 'pointer',
+                    color: '#ccc',
+                    fontSize: '0.95rem'
+                  }}>
+                    <input
+                      type="checkbox"
+                      checked={false}
+                      onChange={() => setLinkingTransaction({ id: 'form', name: form.name, deposit: form.amount })}
+                      style={{ width: '16px', height: '16px', accentColor: 'var(--color-hover)' }}
+                    />
+                    Link to Master List
+                    <span style={{ color: '#888', fontSize: '0.85rem' }}>(counts toward P25k target)</span>
+                  </label>
+                ) : (
+                  <div style={{ padding: '8px 12px', background: 'rgba(207, 181, 59, 0.1)', borderRadius: '6px', fontSize: '0.85rem', color: 'var(--color-hover)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ color: '#4ade80' }}>✓</span>
+                    Linked to: {masterListOptions.find(m => m.id === form.master_list_id)?.first_name} {masterListOptions.find(m => m.id === form.master_list_id)?.last_name}
+                    <button
+                      type="button"
+                      onClick={() => setForm({ ...form, master_list_id: null })}
+                      style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#888', cursor: 'pointer', textDecoration: 'underline', fontSize: '0.85rem' }}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
 
             {result && (
               <div className={`invite-result ${result.success ? 'success' : 'error'}`}>
