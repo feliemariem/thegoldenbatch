@@ -643,7 +643,8 @@ END:VCALENDAR`;
             {/* Left Column */}
             <div className="profile-left">
               {/* Builder Card - My Contribution */}
-              {!profile.builder_tier ? (
+              {profile.is_graduate ? (
+              !profile.builder_tier ? (
                 <div className="profile-card builder-card">
                   <div className="card-header">
                     <h3>My Contribution</h3>
@@ -907,6 +908,47 @@ END:VCALENDAR`;
                     <span className="link-separator">·</span>
                     <button className="btn-link-text" onClick={() => setShowContributionPlan(true)}>View Full Plan</button>
                   </div>
+                </div>
+              )
+              ) : (
+                <div className="profile-card donate-card">
+                  <div className="card-header">
+                    <h3>Support the Batch</h3>
+                  </div>
+                  <p className="builder-intro-text">
+                    Help make our 25th homecoming memorable! Your support goes towards the venue, food, and activities for the celebration.
+                  </p>
+                  <div className="payment-methods-toggle" style={{ marginTop: '12px' }}>
+                    <button
+                      className={`toggle-btn ${paymentMethodsOpen ? 'open' : ''}`}
+                      onClick={() => setPaymentMethodsOpen(!paymentMethodsOpen)}
+                    >
+                      Payment Methods <span className="toggle-arrow">{paymentMethodsOpen ? '▲' : '▼'}</span>
+                    </button>
+                    {paymentMethodsOpen && (
+                      <div className="payment-methods-content">
+                        <div className="payment-method-item">
+                          <div className="method-label">Bank Deposit</div>
+                          <div className="method-detail"><span>Bank:</span> Philippine National Bank (PNB)</div>
+                          <div className="method-detail"><span>Account Names:</span> Narciso Javelosa III or Mary Rose Frances Uy</div>
+                          <div className="method-detail"><span>Account Number:</span> 307770014898</div>
+                        </div>
+                        <div className="payment-method-item">
+                          <div className="method-label">International Transfers (Swift)</div>
+                          <div className="method-detail"><span>Bank:</span> PNB Bacolod Lacson Branch</div>
+                          <div className="method-detail"><span>Address:</span> 10th Lacson Street, Bacolod City, Negros Occidental 6100</div>
+                          <div className="method-detail"><span>Tel:</span> (63) (034) 432-0605 / 434-8007</div>
+                          <div className="method-detail"><span>SWIFT Code:</span> PNBMPHMM</div>
+                          <div className="method-detail"><span>Routing No.:</span> 040080019</div>
+                          <div className="method-detail"><span>Email:</span> bacolod_lacson@pnb.com.ph</div>
+                          <div className="method-detail"><span>Website:</span> pnb.com.ph</div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <Link to="/funds" className="btn-view-plan" style={{ marginTop: '16px', display: 'inline-block', textAlign: 'center' }}>
+                    View Fund Details
+                  </Link>
                 </div>
               )}
 
@@ -1501,7 +1543,7 @@ END:VCALENDAR`;
         </div>
       )}
 
-      {showContributionPlan && (
+      {profile.is_graduate && showContributionPlan && (
         <ContributionPlan
           isOpen={showContributionPlan}
           onClose={() => setShowContributionPlan(false)}
