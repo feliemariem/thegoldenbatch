@@ -147,9 +147,9 @@ router.get('/admin/inbox', authenticateAdmin, async (req, res) => {
 
     const result = await db.query(
       `SELECT r.*,
-              u.first_name,
-              u.last_name,
-              u.email,
+              COALESCE(u.first_name, m.first_name) as first_name,
+              COALESCE(u.last_name, m.last_name) as last_name,
+              COALESCE(u.email, m.email) as email,
               m.section,
               a.first_name as processor_first_name,
               a.last_name as processor_last_name
