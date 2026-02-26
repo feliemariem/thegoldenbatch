@@ -1435,6 +1435,41 @@
   }
 }
 
+/* Mobile styles for smaller screens */
+@media (max-width: 600px) {
+  /* Stack currency selector below breakdown heading on mobile */
+  .cp-breakdown-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .cp-currency-selector {
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .cp-currency-dropdown {
+    width: 100%;
+  }
+
+  /* Stack pledge action buttons vertically on mobile */
+  .cp-pledge-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .cp-btn-confirm,
+  .cp-btn-change {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .cp-btn-change {
+    flex: none;
+  }
+}
+
 /* ===========================================
    DARK MODE SUPPORT
    =========================================== */
@@ -1576,6 +1611,12 @@ body[data-theme="dark"] .cp-info-box.gold-border {
 
 body[data-theme="dark"] .cp-info-box p {
   color: #bbbbbb;
+}
+
+/* Both info box headings should be gold in dark mode */
+body[data-theme="dark"] .cp-info-box-title.green,
+body[data-theme="dark"] .cp-info-box-title.gold {
+  color: var(--cp-gold);
 }
 
 /* Tier Cards & Headings */
