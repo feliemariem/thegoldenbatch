@@ -36,6 +36,7 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
   const [inboxUnprocessedCount, setInboxUnprocessedCount] = useState(0);
   const [viewingInboxReceipt, setViewingInboxReceipt] = useState(null);
   const [pendingReceiptForLedger, setPendingReceiptForLedger] = useState(null);
+  const [showReceiptPreviewModal, setShowReceiptPreviewModal] = useState(false);
 
   // Pagination state
   const [page, setPage] = useState(1);
@@ -192,32 +193,47 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
     }
   }, [activeTab, inboxFilter, fetchInboxReceipts]);
 
-  // Start "Add to Ledger" workflow
+  // Start "Add to Ledger" workflow - show receipt preview modal first
   const handleAddToLedger = (receipt) => {
-    const userName = receipt.first_name && receipt.last_name
-      ? `${receipt.first_name} ${receipt.last_name}`
-      : receipt.first_name || receipt.last_name || '';
-
     setPendingReceiptForLedger(receipt);
-    setActiveTab('ledger');
-    setTransactionType('deposit');
-    setForm({
-      transaction_date: new Date().toISOString().split('T')[0],
-      name: userName,
-      description: '',
-      amount: '',
-      reference_no: '',
-      verified: 'Pending',
-      // Auto-fill master_list_id from receipt since we know which user uploaded it
-      master_list_id: receipt.master_list_id || null
-    });
-    setEditingId(null);
-    setShowForm(true);
+    setShowReceiptPreviewModal(true);
+  };
 
-    // Scroll to form after it renders
-    setTimeout(() => {
-      formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
+  // Called when user closes the receipt preview modal to proceed to form
+  const handleReceiptPreviewClose = () => {
+    setShowReceiptPreviewModal(false);
+
+    if (pendingReceiptForLedger) {
+      const receipt = pendingReceiptForLedger;
+      const userName = receipt.first_name && receipt.last_name
+        ? `${receipt.first_name} ${receipt.last_name}`
+        : receipt.first_name || receipt.last_name || '';
+
+      setActiveTab('ledger');
+      setTransactionType('deposit');
+      setForm({
+        transaction_date: new Date().toISOString().split('T')[0],
+        name: userName,
+        description: '',
+        amount: '',
+        reference_no: '',
+        verified: 'Pending',
+        // Auto-fill master_list_id from receipt since we know which user uploaded it
+        master_list_id: receipt.master_list_id || null
+      });
+      setEditingId(null);
+      setShowForm(true);
+
+      // Scroll to form after it renders
+      setTimeout(() => {
+        formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  };
+
+  // Open receipt preview modal while filling in the form
+  const handleViewPendingReceipt = () => {
+    setShowReceiptPreviewModal(true);
   };
 
   // Link receipt to newly created ledger entry
@@ -244,6 +260,7 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
     setEditingId(null);
     setShowForm(false);
     setPendingReceiptForLedger(null);
+    setShowReceiptPreviewModal(false);
     setFormLinkSearch('');
     setShowFormLinkDropdown(false);
   };
@@ -576,7 +593,7 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
       {/* LEDGER TAB */}
       {activeTab === 'ledger' && (
         <>
-        {/* Pending receipt image when adding from inbox */}
+        {/* Pending receipt notice when adding from inbox */}
         {pendingReceiptForLedger && showForm && (
           <div style={{
             marginBottom: '16px',
@@ -585,10 +602,31 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
             border: '1px solid rgba(207, 181, 59, 0.3)',
             borderRadius: '8px'
           }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-              <span style={{ color: 'var(--color-hover)', fontWeight: '600', fontSize: '0.9rem' }}>
-                Adding from Receipt
-              </span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <span style={{ color: 'var(--color-hover)', fontWeight: '600', fontSize: '0.9rem' }}>
+                  Adding from Receipt
+                </span>
+                <button
+                  type="button"
+                  onClick={handleViewPendingReceipt}
+                  style={{
+                    background: 'rgba(255,255,255,0.1)',
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    borderRadius: '6px',
+                    padding: '6px 12px',
+                    color: '#fff',
+                    cursor: 'pointer',
+                    fontSize: '0.85rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  <span style={{ fontSize: '1rem' }}>&#128247;</span>
+                  View Receipt
+                </button>
+              </div>
               <button
                 onClick={() => setPendingReceiptForLedger(null)}
                 style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: '1.2rem' }}
@@ -596,17 +634,6 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
                 ×
               </button>
             </div>
-            <img
-              src={pendingReceiptForLedger.image_url}
-              alt="Receipt"
-              style={{
-                maxWidth: '100%',
-                maxHeight: '300px',
-                borderRadius: '6px',
-                objectFit: 'contain',
-                display: 'block'
-              }}
-            />
             {pendingReceiptForLedger.note && (
               <p style={{ marginTop: '8px', fontSize: '0.85rem', color: '#888', fontStyle: 'italic' }}>
                 Note: {pendingReceiptForLedger.note}
@@ -1263,6 +1290,107 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
                   Add to Ledger
                 </button>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Receipt Preview Modal - shown when adding to ledger from inbox */}
+      {showReceiptPreviewModal && pendingReceiptForLedger && (
+        <div
+          className="receipt-preview-modal-overlay"
+          onClick={handleReceiptPreviewClose}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.85)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: '20px'
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              position: 'relative',
+              maxWidth: '90vw',
+              maxHeight: '90vh',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center'
+            }}
+          >
+            {/* Close button */}
+            <button
+              onClick={handleReceiptPreviewClose}
+              style={{
+                position: 'absolute',
+                top: '-40px',
+                right: '-10px',
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                borderRadius: '50%',
+                width: '36px',
+                height: '36px',
+                color: '#fff',
+                cursor: 'pointer',
+                fontSize: '1.2rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 10
+              }}
+              aria-label="Close"
+            >
+              ×
+            </button>
+
+            {/* Receipt image */}
+            <img
+              src={pendingReceiptForLedger.image_url}
+              alt="Receipt"
+              style={{
+                maxWidth: '90vw',
+                maxHeight: '80vh',
+                objectFit: 'contain',
+                borderRadius: '8px',
+                boxShadow: '0 4px 30px rgba(0, 0, 0, 0.5)'
+              }}
+            />
+
+            {/* Receipt info and continue button */}
+            <div style={{
+              marginTop: '16px',
+              textAlign: 'center',
+              color: '#fff'
+            }}>
+              <p style={{ fontSize: '0.9rem', color: '#aaa', marginBottom: '8px' }}>
+                From: {pendingReceiptForLedger.first_name || pendingReceiptForLedger.last_name
+                  ? `${pendingReceiptForLedger.first_name || ''} ${pendingReceiptForLedger.last_name || ''}`.trim()
+                  : 'Unknown User'
+                }
+              </p>
+              {pendingReceiptForLedger.note && (
+                <p style={{ fontSize: '0.85rem', color: '#888', marginBottom: '12px', fontStyle: 'italic' }}>
+                  Note: {pendingReceiptForLedger.note}
+                </p>
+              )}
+              <button
+                onClick={handleReceiptPreviewClose}
+                className="btn-primary"
+                style={{
+                  padding: '12px 24px',
+                  fontSize: '1rem',
+                  marginTop: '8px'
+                }}
+              >
+                Continue to Add Transaction
+              </button>
             </div>
           </div>
         </div>
