@@ -1178,3 +1178,19 @@ tr:last-child td {
     height: 400px !important;
   }
 }
+
+/* ========================================
+   RECEIPTS BADGE
+   ======================================== */
+
+/* Dark mode: Gold background with dark text */
+.receipts-badge {
+  background: #CFB53B;
+  color: #1a1a14;
+}
+
+/* Light mode: Green background with white text */
+[data-theme="light"] .receipts-badge {
+  background: #006633;
+  color: #ffffff;
+}

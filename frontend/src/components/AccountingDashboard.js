@@ -556,16 +556,17 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
         >
           Receipts
           {inboxUnprocessedCount > 0 && (
-            <span style={{
-              background: 'var(--color-status-negative)',
-              color: '#fff',
-              fontSize: '0.7rem',
-              fontWeight: '700',
-              padding: '2px 6px',
-              borderRadius: '10px',
-              minWidth: '18px',
-              textAlign: 'center'
-            }}>
+            <span
+              className="receipts-badge"
+              style={{
+                fontSize: '0.7rem',
+                fontWeight: '700',
+                padding: '2px 6px',
+                borderRadius: '10px',
+                minWidth: '18px',
+                textAlign: 'center'
+              }}
+            >
               {inboxUnprocessedCount}
             </span>
           )}
