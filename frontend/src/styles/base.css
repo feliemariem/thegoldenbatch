@@ -504,6 +504,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .credits-scroll {
   animation: scrollCredits 20s linear infinite;
   will-change: transform;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
   -webkit-animation: scrollCredits 20s linear infinite;
 }
 
