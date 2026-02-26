@@ -1047,7 +1047,6 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
                   <tr>
                     <th>Date Submitted</th>
                     <th>User Name</th>
-                    <th>Section</th>
                     <th>Receipt</th>
                     <th>Note</th>
                     <th>Status</th>
@@ -1066,7 +1065,6 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
                           : <span style={{ color: '#666' }}>Unknown</span>
                         }
                       </td>
-                      <td>{receipt.section || '-'}</td>
                       <td>
                         <button
                           onClick={() => setViewingInboxReceipt(receipt)}
@@ -1101,8 +1099,8 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
                         </span>
                       </td>
                       <td>
-                        {receipt.status === 'submitted' ? (
-                          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+                          {receipt.status === 'submitted' && (
                             <button
                               onClick={() => handleAddToLedger(receipt)}
                               className="btn-link"
@@ -1110,21 +1108,35 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
                             >
                               Add to Ledger
                             </button>
-                            <button
-                              onClick={() => handleMarkProcessed(receipt.id)}
-                              disabled={markingProcessed === receipt.id}
-                              className="btn-link"
-                              style={{ color: '#888' }}
-                            >
-                              {markingProcessed === receipt.id ? '...' : 'Mark Processed'}
-                            </button>
-                          </div>
-                        ) : (
-                          <span style={{ color: '#666', fontSize: '0.85rem' }}>
-                            {receipt.processor_first_name && `by ${receipt.processor_first_name}`}
-                            {receipt.ledger_id && ` · Ledger #${receipt.ledger_id}`}
-                          </span>
-                        )}
+                          )}
+                          <label style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            cursor: receipt.status === 'processed' ? 'default' : 'pointer',
+                            color: receipt.status === 'processed' ? '#4ade80' : '#888',
+                            fontSize: '0.85rem'
+                          }}>
+                            <input
+                              type="checkbox"
+                              checked={receipt.status === 'processed'}
+                              disabled={receipt.status === 'processed' || markingProcessed === receipt.id}
+                              onChange={() => handleMarkProcessed(receipt.id)}
+                              style={{
+                                width: '16px',
+                                height: '16px',
+                                cursor: receipt.status === 'processed' ? 'default' : 'pointer',
+                                accentColor: '#4ade80'
+                              }}
+                            />
+                            {markingProcessed === receipt.id ? 'Processing...' : 'Processed'}
+                          </label>
+                          {receipt.status === 'processed' && receipt.ledger_id && (
+                            <span style={{ color: '#666', fontSize: '0.8rem' }}>
+                              Ledger #{receipt.ledger_id}
+                            </span>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}
