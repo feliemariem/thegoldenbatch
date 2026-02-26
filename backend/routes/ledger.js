@@ -560,14 +560,14 @@ router.delete('/:id', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Get receipt info to delete from Cloudinary
+    // Get ledger entry info
     const existing = await db.query('SELECT receipt_public_id FROM ledger WHERE id = $1', [id]);
 
     if (existing.rows.length === 0) {
       return res.status(404).json({ error: 'Transaction not found' });
     }
 
-    // Delete receipt from Cloudinary if exists
+    // Delete ledger's own receipt from Cloudinary if exists
     if (existing.rows[0].receipt_public_id) {
       try {
         await deleteFromCloudinary(existing.rows[0].receipt_public_id);
@@ -576,10 +576,36 @@ router.delete('/:id', authenticateAdmin, async (req, res) => {
       }
     }
 
-    const result = await db.query(
-      'DELETE FROM ledger WHERE id = $1 RETURNING *',
+    // Handle linked receipt_uploads
+    const linkedReceipts = await db.query(
+      'SELECT id, source, image_public_id FROM receipt_uploads WHERE ledger_id = $1',
       [id]
     );
+
+    for (const receipt of linkedReceipts.rows) {
+      if (receipt.source === 'admin') {
+        // Admin on-behalf upload: delete entirely including Cloudinary image
+        if (receipt.image_public_id) {
+          try {
+            await deleteFromCloudinary(receipt.image_public_id);
+          } catch (e) {
+            console.error('Failed to delete admin receipt from Cloudinary:', e);
+          }
+        }
+        await db.query('DELETE FROM receipt_uploads WHERE id = $1', [receipt.id]);
+      } else {
+        // User-uploaded receipt: revert to 'submitted' and clear processing fields
+        await db.query(
+          `UPDATE receipt_uploads
+           SET status = 'submitted', ledger_id = NULL, processed_by = NULL, processed_at = NULL
+           WHERE id = $1`,
+          [receipt.id]
+        );
+      }
+    }
+
+    // Delete the ledger entry
+    await db.query('DELETE FROM ledger WHERE id = $1', [id]);
 
     res.json({ message: 'Transaction deleted' });
   } catch (err) {

@@ -827,27 +827,27 @@ END:VCALENDAR`;
                                   {receipt.status === 'submitted' && receipt.source === 'user' && (
                                     deleteConfirmId === receipt.id ? (
                                       <div className="receipt-delete-confirm">
-                                        <span>Delete?</span>
+                                        <span>Delete this receipt? You can upload a new one after.</span>
                                         <button
                                           className="btn-delete-yes"
                                           onClick={() => handleDeleteReceipt(receipt.id)}
                                           disabled={deleting}
                                         >
-                                          Yes
+                                          Delete
                                         </button>
                                         <button
                                           className="btn-delete-no"
                                           onClick={() => setDeleteConfirmId(null)}
                                           disabled={deleting}
                                         >
-                                          No
+                                          Cancel
                                         </button>
                                       </div>
                                     ) : (
                                       <button
                                         className="btn-delete-receipt"
                                         onClick={() => setDeleteConfirmId(receipt.id)}
-                                        title="Delete receipt"
+                                        title="Delete this receipt"
                                       >
                                         ✕
                                       </button>
