@@ -1385,6 +1385,81 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* Receipt Lightbox (full-viewport image viewer) */
+.receipt-lightbox-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.receipt-lightbox-label {
+  position: absolute;
+  top: 20px;
+  left: 24px;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.6);
+  max-width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.receipt-lightbox-close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.receipt-lightbox-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.receipt-lightbox-image {
+  max-width: 90vw;
+  max-height: 85vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+  cursor: zoom-in;
+  transition: transform 0.3s ease;
+}
+
+.receipt-lightbox-image.zoomed {
+  transform: scale(1.8);
+  cursor: zoom-out;
+}
+
+.receipt-lightbox-actions {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 16px;
+  padding: 12px 20px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 8px;
+}
+
 /* Full-bleed layout on mobile for pages using .container/.card */
 @media (max-width: 600px) {
   .container,
