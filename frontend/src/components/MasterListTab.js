@@ -20,6 +20,7 @@ export default function MasterListTab({
   const [masterListTierFilter, setMasterListTierFilter] = useState('all');
   const [masterListSearch, setMasterListSearch] = useState('');
   const [editingEntry, setEditingEntry] = useState(null);
+  const [editingTier, setEditingTier] = useState('');
   const [masterListPage, setMasterListPage] = useState(1);
   const [masterListTotalPages, setMasterListTotalPages] = useState(1);
   const [masterListTotalCount, setMasterListTotalCount] = useState(0);
@@ -134,6 +135,7 @@ export default function MasterListTab({
       if (res.ok) {
         fetchMasterList({ page: masterListPage });
         setEditingEntry(null);
+        setEditingTier('');
       } else {
         const data = await res.json();
         if (data.error === 'Cannot assign admin role: user has not completed registration') {
@@ -161,6 +163,16 @@ export default function MasterListTab({
   const formatTierName = (tier) => {
     if (!tier) return '';
     return tier.charAt(0).toUpperCase() + tier.slice(1);
+  };
+
+  const getTierMinimum = (tier) => {
+    const minimums = { cornerstone: 50000, pillar: 35000, anchor: 25000 };
+    return minimums[tier] || null;
+  };
+
+  const handleStartEditing = (entry) => {
+    setEditingEntry(entry.id);
+    setEditingTier(entry.builder_tier || '');
   };
 
   const exportMasterListCSV = () => {
@@ -418,7 +430,8 @@ export default function MasterListTab({
                         <td>
                           {isSuperAdmin ? (
                             <select
-                              defaultValue={entry.builder_tier || ''}
+                              value={editingTier}
+                              onChange={(e) => setEditingTier(e.target.value)}
                               id={`edit-tier-${entry.id}`}
                               style={{ width: '100%', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '6px 8px', color: '#fff' }}
                             >
@@ -434,13 +447,29 @@ export default function MasterListTab({
                         </td>
                         <td>
                           {isSuperAdmin ? (
-                            <input
-                              type="number"
-                              defaultValue={entry.pledge_amount || ''}
-                              id={`edit-pledge-${entry.id}`}
-                              placeholder="Amount"
-                              style={{ width: '80px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '6px 8px', color: '#fff' }}
-                            />
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                              <input
+                                type="number"
+                                defaultValue={entry.pledge_amount || ''}
+                                id={`edit-pledge-${entry.id}`}
+                                placeholder={editingTier === 'root' || !editingTier ? '-' : 'Optional'}
+                                disabled={editingTier === 'root' || !editingTier}
+                                style={{
+                                  width: '90px',
+                                  background: (editingTier === 'root' || !editingTier) ? 'rgba(0,0,0,0.1)' : 'rgba(0,0,0,0.3)',
+                                  border: '1px solid rgba(255,255,255,0.1)',
+                                  borderRadius: '8px',
+                                  padding: '6px 8px',
+                                  color: (editingTier === 'root' || !editingTier) ? '#666' : '#fff',
+                                  cursor: (editingTier === 'root' || !editingTier) ? 'not-allowed' : 'text'
+                                }}
+                              />
+                              {getTierMinimum(editingTier) && (
+                                <span style={{ fontSize: '0.7rem', color: '#888' }}>
+                                  Min: ₱{getTierMinimum(editingTier).toLocaleString()}
+                                </span>
+                              )}
+                            </div>
                           ) : (
                             <span style={{ color: '#666' }}>{entry.pledge_amount ? `₱${parseFloat(entry.pledge_amount).toLocaleString()}` : '-'}</span>
                           )}
@@ -462,10 +491,19 @@ export default function MasterListTab({
                                   if (isSuperAdmin) {
                                     updates.in_memoriam = document.getElementById(`edit-memoriam-${entry.id}`)?.checked;
                                     updates.is_admin = document.getElementById(`edit-admin-${entry.id}`)?.checked;
-                                    const tierValue = document.getElementById(`edit-tier-${entry.id}`)?.value;
-                                    updates.builder_tier = tierValue === '' ? null : tierValue;
+                                    updates.builder_tier = editingTier === '' ? null : editingTier;
+
                                     const pledgeValue = document.getElementById(`edit-pledge-${entry.id}`)?.value;
-                                    updates.pledge_amount = pledgeValue ? parseFloat(pledgeValue) : null;
+                                    const pledgeNum = pledgeValue ? parseFloat(pledgeValue) : null;
+
+                                    // Validate pledge minimum if amount is entered
+                                    const minAmount = getTierMinimum(editingTier);
+                                    if (pledgeNum && minAmount && pledgeNum < minAmount) {
+                                      alert(`${formatTierName(editingTier)} requires minimum ₱${minAmount.toLocaleString()}. Leave blank to let the member set their own amount.`);
+                                      return;
+                                    }
+
+                                    updates.pledge_amount = pledgeNum;
                                   }
 
                                   handleUpdateEntry(entry.id, updates);
@@ -474,7 +512,7 @@ export default function MasterListTab({
                               >
                                 Save
                               </button>
-                              <button onClick={() => setEditingEntry(null)} className="btn-link">
+                              <button onClick={() => { setEditingEntry(null); setEditingTier(''); }} className="btn-link">
                                 Cancel
                               </button>
                             </div>
@@ -534,7 +572,7 @@ export default function MasterListTab({
                         </td>
                         {(isSuperAdmin || permissions?.masterlist_edit) && (
                           <td>
-                            <button onClick={() => setEditingEntry(entry.id)} className="btn-link">
+                            <button onClick={() => handleStartEditing(entry)} className="btn-link">
                               Edit
                             </button>
                           </td>
