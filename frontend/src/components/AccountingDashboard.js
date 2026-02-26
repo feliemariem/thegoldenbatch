@@ -1074,11 +1074,11 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
                 style={{
                   padding: '8px 16px',
                   borderRadius: '6px',
-                  border: 'none',
+                  border: inboxFilter === status ? 'none' : '1px solid var(--border-color, rgba(0,0,0,0.15))',
                   cursor: 'pointer',
                   fontWeight: inboxFilter === status ? '600' : '400',
-                  background: inboxFilter === status ? 'var(--color-hover)' : 'rgba(255,255,255,0.05)',
-                  color: inboxFilter === status ? '#0d1a14' : '#888',
+                  background: inboxFilter === status ? 'var(--color-hover)' : 'var(--bg-secondary, rgba(0,0,0,0.03))',
+                  color: inboxFilter === status ? '#0d1a14' : 'var(--text-secondary, #666)',
                   textTransform: 'capitalize'
                 }}
               >
