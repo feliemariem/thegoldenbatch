@@ -771,7 +771,7 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
             {transactionType === 'deposit' && (
               <div style={{ marginBottom: '16px' }}>
                 <label style={{ display: 'block', marginBottom: '8px', color: '#ccc', fontSize: '0.9rem' }}>
-                  Link to Master List <span style={{ color: '#888', fontSize: '0.85rem' }}>(counts toward P25k target)</span>
+                  Link to Master List <span style={{ color: '#888', fontSize: '0.85rem' }}>(counts toward pledge)</span>
                 </label>
                 {!form.master_list_id ? (
                   <div style={{ position: 'relative' }}>
@@ -894,7 +894,7 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
         fontSize: '0.85rem',
         color: '#888'
       }}>
-        [L] = Linked to Master List (counts toward P25k target)
+        [L] = Linked to Master List (counts toward pledge)
       </div>
 
       {/* Transactions Table */}
