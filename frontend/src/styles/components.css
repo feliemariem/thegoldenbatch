@@ -523,6 +523,55 @@ body[data-theme="light"] .modal-content {
 }
 
 /* ========================================
+   BUILDER TIER BADGES
+   ======================================== */
+
+.tier-badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.tier-badge.cornerstone {
+  background: rgba(207, 181, 59, 0.15);
+  color: #CFB53B;
+}
+
+.tier-badge.pillar {
+  background: rgba(192, 192, 192, 0.15);
+  color: #C0C0C0;
+}
+
+.tier-badge.anchor {
+  background: rgba(205, 127, 50, 0.15);
+  color: #CD7F32;
+}
+
+.tier-badge.root {
+  background: var(--color-status-positive-bg);
+  color: var(--color-status-positive);
+}
+
+/* Light mode tier badges */
+[data-theme="light"] .tier-badge.cornerstone {
+  background: rgba(184, 134, 11, 0.15);
+  color: #B8860B;
+}
+
+[data-theme="light"] .tier-badge.pillar {
+  background: rgba(128, 128, 128, 0.15);
+  color: #666;
+}
+
+[data-theme="light"] .tier-badge.anchor {
+  background: rgba(139, 90, 43, 0.15);
+  color: #8B5A2B;
+}
+
+/* ========================================
    THEMED PAGE HEADERS
    Solid background to prevent scroll bleed
    ======================================== */

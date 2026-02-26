@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 const { authenticateAdmin } = require('../middleware/auth');
-const { AMOUNT_DUE } = require('../config/constants');
 
 // Helper function for text normalization
 const toTitleCase = (str) => {
@@ -24,6 +23,7 @@ router.get('/', authenticateAdmin, async (req, res) => {
       limit = 45,
       status: statusFilter,
       paymentStatus: paymentStatusFilter,
+      tier: tierFilter,
       search
     } = req.query;
 
@@ -43,6 +43,8 @@ router.get('/', authenticateAdmin, async (req, res) => {
         m.in_memoriam,
         m.is_unreachable,
         m.is_admin,
+        m.builder_tier,
+        m.pledge_amount,
         m.created_at,
         CASE
           WHEN m.in_memoriam = true THEN 'In Memoriam'
@@ -55,13 +57,17 @@ router.get('/', authenticateAdmin, async (req, res) => {
         END as total_paid,
         CASE
           WHEN m.section = 'Non-Graduate' OR m.in_memoriam = true THEN NULL
-          ELSE ${AMOUNT_DUE} - COALESCE(ledger_totals.total_paid, 0)
+          WHEN m.builder_tier = 'root' THEN NULL
+          WHEN m.builder_tier IS NOT NULL THEN m.pledge_amount - COALESCE(ledger_totals.total_paid, 0)
+          ELSE NULL
         END as balance,
         CASE
           WHEN m.section = 'Non-Graduate' OR m.in_memoriam = true THEN NULL
-          WHEN COALESCE(ledger_totals.total_paid, 0) >= ${AMOUNT_DUE} THEN 'Full'
-          WHEN COALESCE(ledger_totals.total_paid, 0) > 0 THEN 'Partial'
-          ELSE 'Unpaid'
+          WHEN m.builder_tier = 'root' THEN 'Root'
+          WHEN m.builder_tier IS NOT NULL AND COALESCE(ledger_totals.total_paid, 0) >= m.pledge_amount THEN 'Full'
+          WHEN m.builder_tier IS NOT NULL AND COALESCE(ledger_totals.total_paid, 0) > 0 THEN 'Partial'
+          WHEN m.builder_tier IS NOT NULL THEN 'Unpaid'
+          ELSE NULL
         END as payment_status
       FROM master_list m
       LEFT JOIN (
@@ -101,6 +107,17 @@ router.get('/', authenticateAdmin, async (req, res) => {
         conditions.push(`m.status = 'Pending' AND (m.in_memoriam IS NULL OR m.in_memoriam = false) AND (m.is_unreachable IS NULL OR m.is_unreachable = false)`);
       } else if (statusLower === 'not invited') {
         conditions.push(`(m.status = 'Not Invited' OR m.status IS NULL) AND (m.in_memoriam IS NULL OR m.in_memoriam = false) AND (m.is_unreachable IS NULL OR m.is_unreachable = false)`);
+      }
+    }
+
+    // Tier filter
+    if (tierFilter && tierFilter !== 'all') {
+      if (tierFilter === 'none') {
+        conditions.push(`m.builder_tier IS NULL`);
+      } else {
+        conditions.push(`m.builder_tier = $${paramIndex}`);
+        params.push(tierFilter);
+        paramIndex++;
       }
     }
 
@@ -168,13 +185,34 @@ router.get('/', authenticateAdmin, async (req, res) => {
       FROM master_list m
     `);
 
-    // Get payment stats (graduates only, excluding in memoriam)
+    // Get payment stats (graduates with builder tier, excluding in memoriam)
     const paymentStatsResult = await db.query(`
       SELECT
-        COUNT(*) as total_graduates,
-        COUNT(CASE WHEN COALESCE(ledger_totals.total_paid, 0) >= ${AMOUNT_DUE} THEN 1 END) as full_paid,
-        COUNT(CASE WHEN COALESCE(ledger_totals.total_paid, 0) > 0 AND COALESCE(ledger_totals.total_paid, 0) < ${AMOUNT_DUE} THEN 1 END) as partial_paid,
-        COUNT(CASE WHEN COALESCE(ledger_totals.total_paid, 0) = 0 THEN 1 END) as unpaid
+        COUNT(CASE WHEN m.builder_tier IS NOT NULL THEN 1 END) as total_builders,
+        COUNT(CASE WHEN m.builder_tier IS NOT NULL AND m.builder_tier != 'root' AND COALESCE(ledger_totals.total_paid, 0) >= m.pledge_amount THEN 1 END) as full_paid,
+        COUNT(CASE WHEN m.builder_tier IS NOT NULL AND m.builder_tier != 'root' AND COALESCE(ledger_totals.total_paid, 0) > 0 AND COALESCE(ledger_totals.total_paid, 0) < m.pledge_amount THEN 1 END) as partial_paid,
+        COUNT(CASE WHEN m.builder_tier IS NOT NULL AND m.builder_tier != 'root' AND COALESCE(ledger_totals.total_paid, 0) = 0 THEN 1 END) as unpaid,
+        COUNT(CASE WHEN m.builder_tier = 'root' THEN 1 END) as root_count
+      FROM master_list m
+      LEFT JOIN (
+        SELECT master_list_id, SUM(deposit) as total_paid
+        FROM ledger
+        WHERE master_list_id IS NOT NULL AND deposit > 0
+        GROUP BY master_list_id
+      ) ledger_totals ON m.id = ledger_totals.master_list_id
+      WHERE m.section != 'Non-Graduate' AND (m.in_memoriam IS NULL OR m.in_memoriam = false)
+    `);
+
+    // Get tier breakdown stats
+    const tierStatsResult = await db.query(`
+      SELECT
+        COUNT(CASE WHEN m.builder_tier = 'cornerstone' THEN 1 END) as cornerstone,
+        COUNT(CASE WHEN m.builder_tier = 'pillar' THEN 1 END) as pillar,
+        COUNT(CASE WHEN m.builder_tier = 'anchor' THEN 1 END) as anchor,
+        COUNT(CASE WHEN m.builder_tier = 'root' THEN 1 END) as root,
+        COUNT(CASE WHEN m.builder_tier IS NULL AND m.section != 'Non-Graduate' AND (m.in_memoriam IS NULL OR m.in_memoriam = false) THEN 1 END) as no_tier,
+        COALESCE(SUM(CASE WHEN m.builder_tier IS NOT NULL AND m.builder_tier != 'root' THEN m.pledge_amount ELSE 0 END), 0) as total_pledged,
+        COALESCE(SUM(CASE WHEN m.builder_tier IS NOT NULL THEN ledger_totals.total_paid ELSE 0 END), 0) as total_collected
       FROM master_list m
       LEFT JOIN (
         SELECT master_list_id, SUM(deposit) as total_paid
@@ -194,7 +232,8 @@ router.get('/', authenticateAdmin, async (req, res) => {
       entries: result.rows,
       stats: {
         ...statsResult.rows[0],
-        ...paymentStatsResult.rows[0]
+        ...paymentStatsResult.rows[0],
+        tiers: tierStatsResult.rows[0]
       },
       sections: sectionsResult.rows.map(r => r.section),
       pagination: {
@@ -257,7 +296,7 @@ router.post('/bulk', authenticateAdmin, async (req, res) => {
 router.put('/:id', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params;
-    const { last_name, first_name, current_name, email, section, in_memoriam, is_unreachable, is_admin } = req.body;
+    const { last_name, first_name, current_name, email, section, in_memoriam, is_unreachable, is_admin, builder_tier, pledge_amount } = req.body;
 
     // Check if requester is super admin and get their admin id
     const superAdminCheck = await db.query(
@@ -267,12 +306,35 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
     const isSuperAdmin = superAdminCheck.rows[0]?.is_super_admin === true;
     const isSystemAdmin = isSuperAdmin && superAdminCheck.rows[0]?.id === 1;
 
-    // Only super admins can change is_admin or in_memoriam
+    // Only super admins can change is_admin, in_memoriam, or builder_tier/pledge_amount
     const wantsToChangeProtectedFields =
-      typeof req.body.is_admin === 'boolean' || typeof req.body.in_memoriam === 'boolean';
+      typeof req.body.is_admin === 'boolean' || typeof req.body.in_memoriam === 'boolean' ||
+      req.body.builder_tier !== undefined || req.body.pledge_amount !== undefined;
 
     if (wantsToChangeProtectedFields && !isSuperAdmin) {
       return res.status(403).json({ error: 'Super Admin access required' });
+    }
+
+    // Validate builder_tier and pledge_amount if provided
+    let validatedTier = undefined;
+    let validatedPledge = undefined;
+    if (isSuperAdmin && builder_tier !== undefined) {
+      const validTiers = ['cornerstone', 'pillar', 'anchor', 'root', null];
+      if (!validTiers.includes(builder_tier)) {
+        return res.status(400).json({ error: 'Invalid tier' });
+      }
+      validatedTier = builder_tier;
+
+      // Validate pledge_amount based on tier
+      if (builder_tier === 'root' || builder_tier === null) {
+        validatedPledge = null;
+      } else if (pledge_amount !== undefined) {
+        const pledgeNum = parseFloat(pledge_amount);
+        if (isNaN(pledgeNum) || pledgeNum < 0) {
+          return res.status(400).json({ error: 'Invalid pledge amount' });
+        }
+        validatedPledge = pledgeNum;
+      }
     }
 
     // Only System Admin (admin id=1) can change name fields - strip them for everyone else
@@ -353,8 +415,8 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
       );
     }
 
-    const result = await db.query(
-      `UPDATE master_list SET
+    // Build dynamic update for tier/pledge (need special handling for null values)
+    let updateFields = `
         last_name = COALESCE($1, last_name),
         first_name = COALESCE($2, first_name),
         current_name = COALESCE($3, current_name),
@@ -363,20 +425,43 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
         in_memoriam = COALESCE($6, in_memoriam),
         is_unreachable = COALESCE($7, is_unreachable),
         is_admin = COALESCE($8, is_admin),
-        updated_at = CURRENT_TIMESTAMP
-       WHERE id = $9
-       RETURNING *`,
-      [
-        toTitleCase(allowedLastName),
-        toTitleCase(allowedFirstName),
-        toTitleCase(allowedCurrentName),
-        toLowerEmail(email),
-        section,
-        in_memoriam,
-        is_unreachable,
-        is_admin,
-        id
-      ]
+        updated_at = CURRENT_TIMESTAMP`;
+
+    let queryParams = [
+      toTitleCase(allowedLastName),
+      toTitleCase(allowedFirstName),
+      toTitleCase(allowedCurrentName),
+      toLowerEmail(email),
+      section,
+      in_memoriam,
+      is_unreachable,
+      is_admin
+    ];
+    let paramIndex = 9;
+
+    // Add tier update if provided by super admin
+    if (isSuperAdmin && validatedTier !== undefined) {
+      updateFields += `, builder_tier = $${paramIndex}`;
+      queryParams.push(validatedTier);
+      paramIndex++;
+
+      updateFields += `, pledge_amount = $${paramIndex}`;
+      queryParams.push(validatedPledge);
+      paramIndex++;
+
+      // Set builder_tier_set_at when tier changes
+      if (validatedTier !== null) {
+        updateFields += `, builder_tier_set_at = NOW()`;
+      } else {
+        updateFields += `, builder_tier_set_at = NULL`;
+      }
+    }
+
+    queryParams.push(id);
+
+    const result = await db.query(
+      `UPDATE master_list SET ${updateFields} WHERE id = $${paramIndex} RETURNING *`,
+      queryParams
     );
 
     res.json(result.rows[0]);
