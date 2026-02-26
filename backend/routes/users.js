@@ -268,10 +268,10 @@ router.put('/', authenticateToken, async (req, res) => {
           const masterListId = inviteRow.rows[0].master_list_id;
           const currentName = `${updatedFirstName} ${updatedLastName}`;
 
-          // Update master_list table
+          // Update ONLY current_name on master_list (never overwrite yearbook first_name/last_name)
           await db.query(
-            'UPDATE master_list SET first_name = $1, last_name = $2, current_name = $3 WHERE id = $4',
-            [updatedFirstName, updatedLastName, currentName, masterListId]
+            'UPDATE master_list SET current_name = $1 WHERE id = $2',
+            [currentName, masterListId]
           );
         }
       }
