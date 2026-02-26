@@ -297,6 +297,8 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
         if (receiptToLink && !editingId && data.id) {
           try {
             await linkReceiptToLedger(receiptToLink.id, data.id);
+            // Refresh inbox data so Receipts tab shows updated status
+            fetchInboxReceipts(inboxFilter);
           } catch (linkErr) {
             console.error('Failed to link receipt:', linkErr);
           }

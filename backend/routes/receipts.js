@@ -211,12 +211,17 @@ router.put('/admin/:id/link-ledger', authenticateAdmin, async (req, res) => {
     const adminResult = await db.query('SELECT id FROM admins WHERE LOWER(email) = $1', [req.user.email.toLowerCase()]);
     const adminId = adminResult.rows.length > 0 ? adminResult.rows[0].id : null;
 
+    // Determine receipt status based on the ledger entry's verified field
+    const ledgerResult = await db.query('SELECT verified FROM ledger WHERE id = $1', [ledger_id]);
+    const ledgerVerified = ledgerResult.rows.length > 0 ? ledgerResult.rows[0].verified : null;
+    const receiptStatus = ledgerVerified === 'OK' ? 'verified' : 'pending_verification';
+
     const result = await db.query(
       `UPDATE receipt_uploads
-       SET status = 'pending_verification', ledger_id = $1, processed_by = $2, processed_at = NOW()
-       WHERE id = $3
+       SET status = $1, ledger_id = $2, processed_by = $3, processed_at = NOW()
+       WHERE id = $4
        RETURNING *`,
-      [ledger_id, adminId, id]
+      [receiptStatus, ledger_id, adminId, id]
     );
 
     if (result.rows.length === 0) {
@@ -255,15 +260,24 @@ router.post('/admin/on-behalf', authenticateAdmin, upload.single('receipt'), asy
 
     const userId = userResult.rows.length > 0 ? userResult.rows[0].id : null;
 
+    // Determine receipt status - if linked to a verified ledger entry, mark as verified
+    let receiptStatus = 'pending_verification';
+    if (ledger_id) {
+      const ledgerResult = await db.query('SELECT verified FROM ledger WHERE id = $1', [ledger_id]);
+      if (ledgerResult.rows.length > 0 && ledgerResult.rows[0].verified === 'OK') {
+        receiptStatus = 'verified';
+      }
+    }
+
     // Upload to Cloudinary
     const uploadResult = await uploadToCloudinary(req.file.buffer, 'receipts');
 
     // Insert receipt
     const result = await db.query(
       `INSERT INTO receipt_uploads (user_id, master_list_id, image_url, image_public_id, note, status, source, ledger_id, processed_by, processed_at)
-       VALUES ($1, $2, $3, $4, $5, 'pending_verification', 'admin', $6, $7, NOW())
+       VALUES ($1, $2, $3, $4, $5, $6, 'admin', $7, $8, NOW())
        RETURNING *`,
-      [userId, master_list_id, uploadResult.secure_url, uploadResult.public_id, note || null, ledger_id || null, adminId]
+      [userId, master_list_id, uploadResult.secure_url, uploadResult.public_id, note || null, receiptStatus, ledger_id || null, adminId]
     );
 
     res.status(201).json(result.rows[0]);
