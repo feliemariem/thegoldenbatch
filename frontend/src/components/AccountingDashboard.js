@@ -22,7 +22,6 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
     amount: '',
     reference_no: '',
     verified: 'Pending',
-    payment_type: '',
     master_list_id: null
   });
   const [result, setResult] = useState(null);
@@ -153,7 +152,6 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
       amount: '',
       reference_no: '',
       verified: 'Pending',
-      payment_type: '',
       master_list_id: null
     });
     setTransactionType('deposit');
@@ -174,7 +172,6 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
       withdrawal: transactionType === 'withdrawal' ? form.amount : null,
       reference_no: form.reference_no,
       verified: form.verified,
-      payment_type: form.payment_type || null,
       master_list_id: form.master_list_id
     };
 
@@ -209,12 +206,11 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
       amount: isDeposit ? transaction.deposit : transaction.withdrawal,
       reference_no: transaction.reference_no || '',
       verified: transaction.verified || 'Pending',
-      payment_type: transaction.payment_type || '',
       master_list_id: transaction.master_list_id || null
     });
     setEditingId(transaction.id);
     setShowForm(true);
-    
+
     // Scroll to form after it renders
     setTimeout(() => {
       formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -562,48 +558,6 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
                 </select>
               </div>
             </div>
-
-            {/* Payment Type - Only show for deposits */}
-            {transactionType === 'deposit' && (
-              <div className="form-group">
-                <label>Payment Type</label>
-                <div style={{ display: 'flex', gap: '16px', marginTop: '8px' }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                    <input
-                      type="radio"
-                      name="payment_type"
-                      value="Full"
-                      checked={form.payment_type === 'Full'}
-                      onChange={(e) => setForm({ ...form, payment_type: e.target.value })}
-                      style={{ width: '18px', height: '18px' }}
-                    />
-                    <span style={{ color: '#888' }}>Full</span>
-                  </label>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                    <input
-                      type="radio"
-                      name="payment_type"
-                      value="Installment"
-                      checked={form.payment_type === 'Installment'}
-                      onChange={(e) => setForm({ ...form, payment_type: e.target.value })}
-                      style={{ width: '18px', height: '18px' }}
-                    />
-                    <span style={{ color: '#888' }}>Installment</span>
-                  </label>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                    <input
-                      type="radio"
-                      name="payment_type"
-                      value=""
-                      checked={form.payment_type === ''}
-                      onChange={() => setForm({ ...form, payment_type: '' })}
-                      style={{ width: '18px', height: '18px' }}
-                    />
-                    <span style={{ color: '#888' }}>None</span>
-                  </label>
-                </div>
-              </div>
-            )}
 
             {result && (
               <div className={`invite-result ${result.success ? 'success' : 'error'}`}>
