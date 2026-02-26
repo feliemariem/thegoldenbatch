@@ -442,6 +442,23 @@ router.post('/', authenticateAdmin, async (req, res) => {
       return res.status(400).json({ error: 'Cannot have both deposit and withdrawal in same transaction' });
     }
 
+    // Check for duplicate reference number (digits-only comparison)
+    if (reference_no) {
+      const digitsOnly = reference_no.replace(/[^0-9]/g, '');
+      if (digitsOnly.length > 0) {
+        const duplicateCheck = await db.query(
+          `SELECT id, reference_no FROM ledger
+           WHERE REGEXP_REPLACE(reference_no, '[^0-9]', '', 'g') = $1`,
+          [digitsOnly]
+        );
+        if (duplicateCheck.rows.length > 0) {
+          return res.status(400).json({
+            error: `Duplicate reference number detected. Existing entry: ${duplicateCheck.rows[0].reference_no}`
+          });
+        }
+      }
+    }
+
     // Get recorder name
     let recorderName = null;
     const userResult = await db.query('SELECT first_name FROM users WHERE LOWER(email) = $1', [req.user.email.toLowerCase()]);
@@ -511,6 +528,24 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
       payment_type,
       master_list_id
     } = req.body;
+
+    // Check for duplicate reference number (digits-only comparison), excluding current transaction
+    if (reference_no) {
+      const digitsOnly = reference_no.replace(/[^0-9]/g, '');
+      if (digitsOnly.length > 0) {
+        const duplicateCheck = await db.query(
+          `SELECT id, reference_no FROM ledger
+           WHERE REGEXP_REPLACE(reference_no, '[^0-9]', '', 'g') = $1
+           AND id != $2`,
+          [digitsOnly, id]
+        );
+        if (duplicateCheck.rows.length > 0) {
+          return res.status(400).json({
+            error: `Duplicate reference number detected. Existing entry: ${duplicateCheck.rows[0].reference_no}`
+          });
+        }
+      }
+    }
 
     const result = await db.query(
       `UPDATE ledger SET
