@@ -1259,3 +1259,214 @@ tr:last-child td {
   background: #f0f0f0;
   color: #999;
 }
+
+/* ========================================
+   RECEIPT FORM SPLIT-SCREEN LAYOUT
+   Desktop: Side-by-side | Mobile: Stacked
+   ======================================== */
+
+.receipt-form-split {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+/* Receipt Panel - Left side */
+.receipt-panel {
+  flex: 0 0 320px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(207, 181, 59, 0.2);
+  border-radius: 12px;
+  overflow: hidden;
+  position: sticky;
+  top: 20px;
+}
+
+[data-theme="light"] .receipt-panel {
+  background: rgba(0, 102, 51, 0.04);
+  border: 1px solid rgba(0, 102, 51, 0.15);
+}
+
+/* Mobile toggle bar - hidden on desktop */
+.receipt-panel-toggle {
+  display: none;
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(207, 181, 59, 0.1);
+  border: none;
+  border-bottom: 1px solid rgba(207, 181, 59, 0.2);
+  color: var(--color-hover);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  justify-content: space-between;
+  align-items: center;
+}
+
+[data-theme="light"] .receipt-panel-toggle {
+  background: rgba(0, 102, 51, 0.08);
+  border-bottom: 1px solid rgba(0, 102, 51, 0.15);
+  color: #006633;
+}
+
+.toggle-arrow {
+  font-size: 0.8rem;
+}
+
+/* Receipt content */
+.receipt-panel-content {
+  padding: 16px;
+}
+
+.receipt-panel-image-container {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 8px;
+  margin-bottom: 12px;
+}
+
+[data-theme="light"] .receipt-panel-image-container {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.receipt-panel-image {
+  width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  border-radius: 6px;
+  display: block;
+}
+
+.receipt-panel-info {
+  font-size: 0.85rem;
+}
+
+.receipt-panel-submitter {
+  margin: 0 0 6px 0;
+  color: #ccc;
+}
+
+[data-theme="light"] .receipt-panel-submitter {
+  color: #555;
+}
+
+.receipt-panel-submitter strong {
+  color: var(--color-hover);
+}
+
+.receipt-panel-date {
+  margin: 0 0 6px 0;
+  color: #888;
+  font-size: 0.8rem;
+}
+
+.receipt-panel-note {
+  margin: 8px 0 0 0;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  color: #aaa;
+  font-style: italic;
+  font-size: 0.8rem;
+}
+
+[data-theme="light"] .receipt-panel-note {
+  background: rgba(0, 0, 0, 0.03);
+  color: #666;
+}
+
+.receipt-panel-fullsize {
+  display: inline-block;
+  margin-top: 10px;
+  color: var(--color-hover);
+  font-size: 0.8rem;
+  text-decoration: none;
+}
+
+.receipt-panel-fullsize:hover {
+  text-decoration: underline;
+}
+
+/* Form Panel - Right side */
+.form-panel {
+  flex: 1;
+  min-width: 0;
+}
+
+.form-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="light"] .form-panel-header {
+  border-bottom: 1px solid rgba(0, 102, 51, 0.12);
+}
+
+.form-panel-header h4 {
+  margin: 0;
+  color: var(--color-hover);
+  font-size: 1rem;
+}
+
+.btn-unlink-receipt {
+  background: none;
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  border-radius: 6px;
+  padding: 6px 12px;
+  color: #f87171;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-unlink-receipt:hover {
+  background: rgba(220, 38, 38, 0.1);
+  border-color: rgba(220, 38, 38, 0.5);
+}
+
+/* Mobile Responsive - Receipt Form Split */
+@media (max-width: 768px) {
+  .receipt-form-split {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .receipt-panel {
+    flex: none;
+    width: 100%;
+    position: static;
+    margin-bottom: 16px;
+  }
+
+  /* Show toggle on mobile */
+  .receipt-panel-toggle {
+    display: flex;
+  }
+
+  /* Collapse behavior on mobile */
+  .receipt-panel.collapsed .receipt-panel-content {
+    display: none;
+  }
+
+  .receipt-panel-image {
+    max-height: 200px;
+  }
+
+  .form-panel {
+    width: 100%;
+  }
+}
+
+/* Light mode specific adjustments */
+[data-theme="light"] .receipt-panel-submitter {
+  color: #333;
+}
+
+[data-theme="light"] .receipt-panel-date {
+  color: #666;
+}

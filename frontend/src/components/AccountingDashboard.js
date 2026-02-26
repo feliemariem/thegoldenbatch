@@ -36,7 +36,7 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
   const [inboxUnprocessedCount, setInboxUnprocessedCount] = useState(0);
   const [viewingInboxReceipt, setViewingInboxReceipt] = useState(null);
   const [pendingReceiptForLedger, setPendingReceiptForLedger] = useState(null);
-  const [showReceiptPreviewModal, setShowReceiptPreviewModal] = useState(false);
+  const [receiptPanelCollapsed, setReceiptPanelCollapsed] = useState(false);
 
   // Pagination state
   const [page, setPage] = useState(1);
@@ -193,48 +193,33 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
     }
   }, [activeTab, inboxFilter, fetchInboxReceipts]);
 
-  // Start "Add to Ledger" workflow - show receipt preview modal first
+  // Start "Add to Ledger" workflow - go directly to split-screen form
   const handleAddToLedger = (receipt) => {
+    const userName = receipt.first_name && receipt.last_name
+      ? `${receipt.first_name} ${receipt.last_name}`
+      : receipt.first_name || receipt.last_name || '';
+
     setPendingReceiptForLedger(receipt);
-    setShowReceiptPreviewModal(true);
-  };
+    setReceiptPanelCollapsed(false); // Start with receipt visible
+    setActiveTab('ledger');
+    setTransactionType('deposit');
+    setResult(null);
+    setForm({
+      transaction_date: new Date().toISOString().split('T')[0],
+      name: userName,
+      description: '',
+      amount: '',
+      reference_no: '',
+      verified: 'Pending',
+      master_list_id: receipt.master_list_id || null
+    });
+    setEditingId(null);
+    setShowForm(true);
 
-  // Called when user closes the receipt preview modal to proceed to form
-  const handleReceiptPreviewClose = () => {
-    setShowReceiptPreviewModal(false);
-
-    if (pendingReceiptForLedger) {
-      const receipt = pendingReceiptForLedger;
-      const userName = receipt.first_name && receipt.last_name
-        ? `${receipt.first_name} ${receipt.last_name}`
-        : receipt.first_name || receipt.last_name || '';
-
-      setActiveTab('ledger');
-      setTransactionType('deposit');
-      setResult(null); // Clear any previous error/success message
-      setForm({
-        transaction_date: new Date().toISOString().split('T')[0],
-        name: userName,
-        description: '',
-        amount: '',
-        reference_no: '',
-        verified: 'Pending',
-        // Auto-fill master_list_id from receipt since we know which user uploaded it
-        master_list_id: receipt.master_list_id || null
-      });
-      setEditingId(null);
-      setShowForm(true);
-
-      // Scroll to form after it renders
-      setTimeout(() => {
-        formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
-    }
-  };
-
-  // Open receipt preview modal while filling in the form
-  const handleViewPendingReceipt = () => {
-    setShowReceiptPreviewModal(true);
+    // Scroll to form after it renders
+    setTimeout(() => {
+      formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
   };
 
   // Link receipt to newly created ledger entry
@@ -261,7 +246,7 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
     setEditingId(null);
     setShowForm(false);
     setPendingReceiptForLedger(null);
-    setShowReceiptPreviewModal(false);
+    setReceiptPanelCollapsed(false);
     setFormLinkSearch('');
     setShowFormLinkDropdown(false);
     setResult(null);
@@ -607,61 +592,12 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
       {/* LEDGER TAB */}
       {activeTab === 'ledger' && (
         <>
-        {/* Pending receipt notice when adding from inbox */}
-        {pendingReceiptForLedger && showForm && (
-          <div style={{
-            marginBottom: '16px',
-            padding: '16px',
-            background: 'rgba(207, 181, 59, 0.1)',
-            border: '1px solid rgba(207, 181, 59, 0.3)',
-            borderRadius: '8px'
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <span style={{ color: 'var(--color-hover)', fontWeight: '600', fontSize: '0.9rem' }}>
-                  Adding from Receipt
-                </span>
-                <button
-                  type="button"
-                  onClick={handleViewPendingReceipt}
-                  style={{
-                    background: 'rgba(255,255,255,0.1)',
-                    border: '1px solid rgba(255,255,255,0.2)',
-                    borderRadius: '6px',
-                    padding: '6px 12px',
-                    color: '#fff',
-                    cursor: 'pointer',
-                    fontSize: '0.85rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px'
-                  }}
-                >
-                  <span style={{ fontSize: '1rem' }}>&#128247;</span>
-                  View Receipt
-                </button>
-              </div>
-              <button
-                onClick={() => setPendingReceiptForLedger(null)}
-                style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: '1.2rem' }}
-              >
-                ×
-              </button>
-            </div>
-            {pendingReceiptForLedger.note && (
-              <p style={{ marginTop: '8px', fontSize: '0.85rem', color: '#888', fontStyle: 'italic' }}>
-                Note: {pendingReceiptForLedger.note}
-              </p>
-            )}
-          </div>
-      )}
-
       {/* Add Transaction Button / Form */}
       {!showForm ? (
         canEdit && (
           <button
             onClick={() => {
-              setResult(null); // Clear any previous error/success message
+              setResult(null);
               setShowForm(true);
             }}
             className="btn-primary"
@@ -672,8 +608,73 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
         )
       ) : (
         <div className="invite-section" ref={formRef} style={{ marginBottom: '24px' }}>
-          <h4 style={{ marginBottom: '16px' }}>{editingId ? 'Edit Transaction' : 'Add New Transaction'}</h4>
-          <form onSubmit={handleSubmit}>
+          {/* Split-screen layout when adding from receipt */}
+          {pendingReceiptForLedger ? (
+            <div className="receipt-form-split">
+              {/* Receipt Panel - Left side on desktop, top on mobile */}
+              <div className={`receipt-panel ${receiptPanelCollapsed ? 'collapsed' : ''}`}>
+                {/* Mobile collapse toggle bar */}
+                <button
+                  type="button"
+                  className="receipt-panel-toggle"
+                  onClick={() => setReceiptPanelCollapsed(!receiptPanelCollapsed)}
+                >
+                  <span>Receipt from {pendingReceiptForLedger.first_name || pendingReceiptForLedger.last_name
+                    ? `${pendingReceiptForLedger.first_name || ''} ${pendingReceiptForLedger.last_name || ''}`.trim()
+                    : 'User'
+                  }</span>
+                  <span className="toggle-arrow">{receiptPanelCollapsed ? '▼' : '▲'}</span>
+                </button>
+
+                {/* Receipt content */}
+                <div className="receipt-panel-content">
+                  <div className="receipt-panel-image-container">
+                    <img
+                      src={pendingReceiptForLedger.image_url}
+                      alt="Receipt"
+                      className="receipt-panel-image"
+                    />
+                  </div>
+                  <div className="receipt-panel-info">
+                    <p className="receipt-panel-submitter">
+                      From: <strong>{pendingReceiptForLedger.first_name || pendingReceiptForLedger.last_name
+                        ? `${pendingReceiptForLedger.first_name || ''} ${pendingReceiptForLedger.last_name || ''}`.trim()
+                        : 'Unknown User'
+                      }</strong>
+                    </p>
+                    <p className="receipt-panel-date">
+                      Submitted: {new Date(pendingReceiptForLedger.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </p>
+                    {pendingReceiptForLedger.note && (
+                      <p className="receipt-panel-note">
+                        Note: {pendingReceiptForLedger.note}
+                      </p>
+                    )}
+                    <a
+                      href={pendingReceiptForLedger.image_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="receipt-panel-fullsize"
+                    >
+                      Open Full Size →
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              {/* Form Panel - Right side on desktop, bottom on mobile */}
+              <div className="form-panel">
+                <div className="form-panel-header">
+                  <h4>Add New Transaction</h4>
+                  <button
+                    type="button"
+                    onClick={() => setPendingReceiptForLedger(null)}
+                    className="btn-unlink-receipt"
+                  >
+                    Unlink Receipt
+                  </button>
+                </div>
+                <form onSubmit={handleSubmit}>
             {/* Transaction Type Toggle */}
             <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
               <button
@@ -904,6 +905,244 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
               </button>
             </div>
           </form>
+              </div>
+            </div>
+          ) : (
+            /* Regular form without receipt */
+            <form onSubmit={handleSubmit}>
+              <h4>{editingId ? 'Edit Transaction' : 'Add New Transaction'}</h4>
+
+              {/* Transaction Type Toggle */}
+              <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+                <button
+                  type="button"
+                  onClick={() => setTransactionType('deposit')}
+                  style={{
+                    padding: '10px 20px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontWeight: '600',
+                    background: transactionType === 'deposit' ? 'var(--color-status-positive-bg)' : 'rgba(255,255,255,0.05)',
+                    color: transactionType === 'deposit' ? 'var(--color-status-positive)' : '#888'
+                  }}
+                >
+                  + Deposit
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTransactionType('withdrawal')}
+                  style={{
+                    padding: '10px 20px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontWeight: '600',
+                    background: transactionType === 'withdrawal' ? 'var(--color-status-negative-bg)' : 'rgba(255,255,255,0.05)',
+                    color: transactionType === 'withdrawal' ? 'var(--color-status-negative)' : '#888'
+                  }}
+                >
+                  - Withdrawal
+                </button>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Date *</label>
+                  <input
+                    type="date"
+                    value={form.transaction_date}
+                    onChange={(e) => setForm({ ...form, transaction_date: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Amount (PHP) *</label>
+                  <input
+                    type="text"
+                    value={form.amount}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/[^0-9.]/g, '');
+                      setForm({ ...form, amount: val });
+                    }}
+                    onKeyDown={preventEnterSubmit}
+                    placeholder="0"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Name</label>
+                  <input
+                    type="text"
+                    value={form.name}
+                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                    onKeyDown={preventEnterSubmit}
+                    placeholder={transactionType === 'deposit' ? 'e.g., Juan Dela Cruz' : 'e.g., PNB, Vendor Name'}
+                    list="existing-names-regular"
+                    autoComplete="off"
+                  />
+                  <datalist id="existing-names-regular">
+                    {existingNames.map((name, idx) => (
+                      <option key={idx} value={name} />
+                    ))}
+                  </datalist>
+                </div>
+                <div className="form-group">
+                  <label>Description</label>
+                  <input
+                    type="text"
+                    value={form.description}
+                    onChange={(e) => setForm({ ...form, description: e.target.value })}
+                    onKeyDown={preventEnterSubmit}
+                    placeholder={transactionType === 'deposit' ? 'e.g., Cash Deposit, GCash Transfer' : 'e.g., Checkbook, Venue Deposit'}
+                  />
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Reference No.</label>
+                  <input
+                    type="text"
+                    value={form.reference_no}
+                    onChange={(e) => setForm({ ...form, reference_no: e.target.value })}
+                    onKeyDown={preventEnterSubmit}
+                    placeholder="e.g., REF NO. 123456"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Verified</label>
+                  <select
+                    value={form.verified}
+                    onChange={(e) => setForm({ ...form, verified: e.target.value })}
+                    style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #ddd' }}
+                  >
+                    <option value="Pending">Pending</option>
+                    <option value="OK">OK</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Link to Master List - show for deposits */}
+              {transactionType === 'deposit' && (
+                <div style={{ marginBottom: '16px' }}>
+                  <label style={{ display: 'block', marginBottom: '8px', color: '#ccc', fontSize: '0.9rem' }}>
+                    Link to Master List <span style={{ color: '#888', fontSize: '0.85rem' }}>(counts toward pledge)</span>
+                  </label>
+                  {!form.master_list_id ? (
+                    <div style={{ position: 'relative' }}>
+                      <input
+                        type="text"
+                        placeholder="Search batchmate by name..."
+                        value={formLinkSearch}
+                        onChange={(e) => {
+                          setFormLinkSearch(e.target.value);
+                          setShowFormLinkDropdown(e.target.value.length > 0);
+                        }}
+                        onKeyDown={preventEnterSubmit}
+                        onFocus={() => formLinkSearch && setShowFormLinkDropdown(true)}
+                        onBlur={() => setTimeout(() => setShowFormLinkDropdown(false), 200)}
+                        style={{
+                          width: '100%',
+                          padding: '10px 12px',
+                          borderRadius: '6px',
+                          border: '1px solid rgba(255,255,255,0.2)',
+                          background: 'rgba(0,0,0,0.2)',
+                          color: '#fff',
+                          fontSize: '0.9rem'
+                        }}
+                      />
+                      {showFormLinkDropdown && formLinkSearch && (
+                        <div style={{
+                          position: 'absolute',
+                          top: '100%',
+                          left: 0,
+                          right: 0,
+                          background: 'var(--bg-secondary, #1a1a1a)',
+                          border: '1px solid rgba(255,255,255,0.2)',
+                          borderRadius: '6px',
+                          marginTop: '4px',
+                          maxHeight: '200px',
+                          overflowY: 'auto',
+                          zIndex: 100
+                        }}>
+                          {masterListOptions
+                            .filter(m => {
+                              const fullName = `${m.first_name} ${m.last_name}`.toLowerCase();
+                              return fullName.includes(formLinkSearch.toLowerCase());
+                            })
+                            .slice(0, 10)
+                            .map(m => (
+                              <div
+                                key={m.id}
+                                onMouseDown={() => {
+                                  setForm({ ...form, master_list_id: m.id });
+                                  setFormLinkSearch('');
+                                  setShowFormLinkDropdown(false);
+                                }}
+                                style={{
+                                  padding: '10px 12px',
+                                  cursor: 'pointer',
+                                  borderBottom: '1px solid rgba(255,255,255,0.05)',
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  alignItems: 'center'
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+                                onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                              >
+                                <span style={{ color: '#fff' }}>{m.first_name} {m.last_name}</span>
+                                <span style={{ color: '#888', fontSize: '0.8rem' }}>{m.section}</span>
+                              </div>
+                            ))
+                          }
+                          {masterListOptions.filter(m => {
+                            const fullName = `${m.first_name} ${m.last_name}`.toLowerCase();
+                            return fullName.includes(formLinkSearch.toLowerCase());
+                          }).length === 0 && (
+                            <div style={{ padding: '10px 12px', color: '#888', fontStyle: 'italic' }}>
+                              No matching batchmates
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div style={{ padding: '10px 12px', background: 'rgba(207, 181, 59, 0.1)', borderRadius: '6px', fontSize: '0.9rem', color: 'var(--color-hover)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ color: '#4ade80' }}>✓</span>
+                      <span>Linked to: <strong>{masterListOptions.find(m => m.id === form.master_list_id)?.first_name} {masterListOptions.find(m => m.id === form.master_list_id)?.last_name}</strong></span>
+                      <span style={{ color: '#888', fontSize: '0.8rem' }}>({masterListOptions.find(m => m.id === form.master_list_id)?.section})</span>
+                      <button
+                        type="button"
+                        onClick={() => setForm({ ...form, master_list_id: null })}
+                        style={{ marginLeft: 'auto', background: 'none', border: 'none', color: '#888', cursor: 'pointer', textDecoration: 'underline', fontSize: '0.85rem' }}
+                      >
+                        Change
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {result && (
+                <div className={`invite-result ${result.success ? 'success' : 'error'}`}>
+                  <p>{result.message}</p>
+                </div>
+              )}
+
+              <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
+                <button type="submit" className="btn-primary" disabled={saving} style={{ width: 'auto' }}>
+                  {saving ? 'Saving...' : (editingId ? 'Update' : 'Add Transaction')}
+                </button>
+                <button type="button" onClick={resetForm} className="btn-secondary">
+                  Cancel
+                </button>
+              </div>
+            </form>
+          )}
         </div>
       )}
 
@@ -1314,107 +1553,6 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
                   Add to Ledger
                 </button>
               )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Receipt Preview Modal - shown when adding to ledger from inbox */}
-      {showReceiptPreviewModal && pendingReceiptForLedger && (
-        <div
-          className="receipt-preview-modal-overlay"
-          onClick={handleReceiptPreviewClose}
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0, 0, 0, 0.85)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 9999,
-            padding: '20px'
-          }}
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              position: 'relative',
-              maxWidth: '90vw',
-              maxHeight: '90vh',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center'
-            }}
-          >
-            {/* Close button */}
-            <button
-              onClick={handleReceiptPreviewClose}
-              style={{
-                position: 'absolute',
-                top: '-40px',
-                right: '-10px',
-                background: 'rgba(255, 255, 255, 0.1)',
-                border: '1px solid rgba(255, 255, 255, 0.3)',
-                borderRadius: '50%',
-                width: '36px',
-                height: '36px',
-                color: '#fff',
-                cursor: 'pointer',
-                fontSize: '1.2rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                zIndex: 10
-              }}
-              aria-label="Close"
-            >
-              ×
-            </button>
-
-            {/* Receipt image */}
-            <img
-              src={pendingReceiptForLedger.image_url}
-              alt="Receipt"
-              style={{
-                maxWidth: '90vw',
-                maxHeight: '80vh',
-                objectFit: 'contain',
-                borderRadius: '8px',
-                boxShadow: '0 4px 30px rgba(0, 0, 0, 0.5)'
-              }}
-            />
-
-            {/* Receipt info and continue button */}
-            <div style={{
-              marginTop: '16px',
-              textAlign: 'center',
-              color: '#fff'
-            }}>
-              <p style={{ fontSize: '0.9rem', color: '#aaa', marginBottom: '8px' }}>
-                From: {pendingReceiptForLedger.first_name || pendingReceiptForLedger.last_name
-                  ? `${pendingReceiptForLedger.first_name || ''} ${pendingReceiptForLedger.last_name || ''}`.trim()
-                  : 'Unknown User'
-                }
-              </p>
-              {pendingReceiptForLedger.note && (
-                <p style={{ fontSize: '0.85rem', color: '#888', marginBottom: '12px', fontStyle: 'italic' }}>
-                  Note: {pendingReceiptForLedger.note}
-                </p>
-              )}
-              <button
-                onClick={handleReceiptPreviewClose}
-                className="btn-primary"
-                style={{
-                  padding: '12px 24px',
-                  fontSize: '1rem',
-                  marginTop: '8px'
-                }}
-              >
-                Continue to Add Transaction
-              </button>
             </div>
           </div>
         </div>
