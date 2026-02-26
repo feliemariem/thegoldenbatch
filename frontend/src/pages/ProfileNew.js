@@ -915,7 +915,7 @@ END:VCALENDAR`;
               ) : (
                 <div className="profile-card donate-card">
                   <div className="card-header">
-                    <h3>Hi {profile.first_name || 'Guest'}!</h3>
+                    <h3>Hi, {profile.first_name || 'Guest'}!</h3>
                   </div>
                   <p className="donate-message">
                     Thank you for being part of our 25th Homecoming celebration. Whether you graduated with us or not, you were part of that chapter and that will always matter.
