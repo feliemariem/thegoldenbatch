@@ -132,7 +132,7 @@ export default function Navbar() {
             </div>
           )}
 
-          <Link to="/funds" className={`nav-link ${location.pathname === '/funds' ? 'active' : ''}`}>Funds</Link>
+          {user?.is_graduate && <Link to="/funds" className={`nav-link ${location.pathname === '/funds' ? 'active' : ''}`}>Funds</Link>}
           <Link to="/inbox" className={`nav-link ${location.pathname === '/inbox' ? 'active' : ''}`}>
             Inbox{unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}
           </Link>
@@ -193,9 +193,11 @@ export default function Navbar() {
           </>
         )}
 
-        <Link to="/funds" className={`mobile-nav-link ${location.pathname === '/funds' ? 'active' : ''}`}>
-          Funds
-        </Link>
+        {user?.is_graduate && (
+          <Link to="/funds" className={`mobile-nav-link ${location.pathname === '/funds' ? 'active' : ''}`}>
+            Funds
+          </Link>
+        )}
         <Link to="/inbox" className={`mobile-nav-link ${location.pathname === '/inbox' ? 'active' : ''}`}>
           Inbox{unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}
         </Link>

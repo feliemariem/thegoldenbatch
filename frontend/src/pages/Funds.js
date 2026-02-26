@@ -43,6 +43,13 @@ export default function Funds() {
     }
   };
 
+  // Redirect non-graduates away from Funds page
+  useEffect(() => {
+    if (user && !user.is_graduate) {
+      navigate('/profile');
+    }
+  }, [user, navigate]);
+
   useEffect(() => {
     fetchBalance();
     fetchDonors();
