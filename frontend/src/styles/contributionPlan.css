@@ -665,7 +665,8 @@
 }
 
 .cp-pledge-panel.open {
-  max-height: 2000px; /* Large enough to fit all content */
+  max-height: none; /* Allow full content height */
+  overflow: visible; /* Override hidden from collapsed state */
   opacity: 1;
   margin-top: 16px;
 }
@@ -675,10 +676,6 @@
   border: 2px solid var(--cp-gold);
   border-radius: 12px;
   padding: 24px;
-  padding-bottom: 100px; /* Space for sticky buttons */
-  position: relative;
-  max-height: 70vh;
-  overflow-y: auto;
 }
 
 .cp-pledge-header {
@@ -1082,22 +1079,11 @@
   margin-top: 12px;
 }
 
-/* Pledge Actions - Sticky at bottom */
+/* Pledge Actions */
 .cp-pledge-actions {
   display: flex;
   gap: 10px;
-  position: sticky;
-  bottom: 0;
   margin-top: 20px;
-  margin-left: -24px;
-  margin-right: -24px;
-  margin-bottom: -100px; /* Counteract the padding-bottom on parent */
-  padding: 16px 24px;
-  background: var(--cp-panel);
-  border-top: 1px solid var(--cp-line);
-  border-radius: 0 0 10px 10px;
-  z-index: 10;
-  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .cp-btn-confirm {
@@ -1451,16 +1437,6 @@
 
   .cp-pledge-inner {
     padding: 16px;
-    padding-bottom: 90px;
-    max-height: 60vh;
-  }
-
-  .cp-pledge-actions {
-    bottom: 0;
-    margin-left: -16px;
-    margin-right: -16px;
-    margin-bottom: -90px;
-    padding: 14px 16px;
   }
 }
 
@@ -1485,10 +1461,7 @@
   /* Stack pledge action buttons vertically on mobile */
   .cp-pledge-actions {
     flex-direction: column;
-    width: auto;
-    margin-left: -16px;
-    margin-right: -16px;
-    padding: 16px;
+    width: 100%;
   }
 
   .cp-btn-confirm,
@@ -1671,11 +1644,6 @@ body[data-theme="dark"] .cp-pledge-inner {
   border-color: var(--cp-gold);
 }
 
-body[data-theme="dark"] .cp-pledge-actions {
-  background: rgba(26, 37, 32, 0.98);
-  border-top-color: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.3);
-}
 
 body[data-theme="dark"] .cp-pledge-title,
 body[data-theme="dark"] .cp-pledge-amount-label {
