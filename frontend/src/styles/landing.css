@@ -182,7 +182,7 @@
 .hero-section.animate .hero-logo {
   opacity: 1;
   transform: scale(1);
-  transition-delay: 1.5s;
+  transition-delay: 0.3s;
 }
 
 .hero-title {
@@ -210,19 +210,19 @@
 .hero-section.animate .hero-title .word-1 {
   opacity: 1;
   transform: translateY(0);
-  transition-delay: 3s;
+  transition-delay: 0.8s;
 }
 
 .hero-section.animate .hero-title .word-2 {
   opacity: 1;
   transform: translateY(0);
-  transition-delay: 3.3s;
+  transition-delay: 1.0s;
 }
 
 .hero-section.animate .hero-title .word-3 {
   opacity: 1;
   transform: translateY(0);
-  transition-delay: 3.6s;
+  transition-delay: 1.2s;
 }
 
 .tagline {
@@ -244,9 +244,9 @@
 .hero-section.animate .tagline {
   opacity: 1;
   transform: translateY(0);
-  transition-delay: 4.5s;
+  transition-delay: 1.8s;
   animation: shimmer 3s ease-in-out infinite;
-  animation-delay: 5.5s;
+  animation-delay: 2.8s;
 }
 
 @keyframes shimmer {
@@ -277,7 +277,7 @@
 .hero-section.animate .hero-event-info {
   opacity: 1;
   transform: translateY(0);
-  transition-delay: 6s;
+  transition-delay: 2.3s;
 }
 
 .hero-separator {
@@ -301,7 +301,7 @@
 .hero-section.animate .hero-quote {
   opacity: 0.9;
   transform: translateY(0);
-  transition-delay: 7s;
+  transition-delay: 2.8s;
 }
 
 .btn-hero {
@@ -328,9 +328,9 @@
 .hero-section.animate .btn-hero {
   opacity: 1;
   transform: translateY(0);
-  transition-delay: 7.5s;
+  transition-delay: 3.2s;
   animation: breathingGlowDark 2s ease-in-out infinite;
-  animation-delay: 8s;
+  animation-delay: 3.7s;
 }
 
 .btn-hero:hover {
