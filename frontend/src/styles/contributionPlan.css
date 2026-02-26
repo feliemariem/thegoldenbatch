@@ -1653,24 +1653,24 @@ body[data-theme="dark"] .cp-breakdown-remaining strong {
 
 /* Currency Converter - Dark Mode */
 body[data-theme="dark"] .cp-currency-dropdown {
-  background: rgba(30, 40, 35, 0.8);
-  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(30, 40, 35, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   color: #ffffff;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23cfb53b' d='M3 5l3 3 3-3H3z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23aaaaaa' d='M3 5l3 3 3-3H3z'/%3E%3C/svg%3E");
 }
 
 body[data-theme="dark"] .cp-currency-dropdown:hover {
-  border-color: var(--cp-gold);
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
 body[data-theme="dark"] .cp-currency-dropdown:focus {
-  border-color: var(--cp-gold);
-  box-shadow: 0 0 0 2px rgba(207, 181, 59, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: none;
 }
 
 body[data-theme="dark"] .cp-currency-dropdown optgroup {
   background: #1a2520;
-  color: var(--cp-gold);
+  color: #aaaaaa;
 }
 
 body[data-theme="dark"] .cp-currency-dropdown option {
