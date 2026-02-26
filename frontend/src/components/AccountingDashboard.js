@@ -3,6 +3,9 @@ import ScrollableTable from './ScrollableTable';
 import { api, apiGet, apiPost, apiPut, apiDelete, apiUpload } from '../api';
 
 export default function AccountingDashboard({ canEdit = true, canExport = true, onPaymentLinked }) {
+  // Tab state
+  const [activeTab, setActiveTab] = useState('ledger');
+
   const [transactions, setTransactions] = useState([]);
   const [balance, setBalance] = useState(0);
   const [totalDeposits, setTotalDeposits] = useState(0);
@@ -25,6 +28,15 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
     master_list_id: null
   });
   const [result, setResult] = useState(null);
+
+  // Receipts Inbox state
+  const [inboxReceipts, setInboxReceipts] = useState([]);
+  const [inboxLoading, setInboxLoading] = useState(false);
+  const [inboxFilter, setInboxFilter] = useState('submitted');
+  const [inboxUnprocessedCount, setInboxUnprocessedCount] = useState(0);
+  const [viewingInboxReceipt, setViewingInboxReceipt] = useState(null);
+  const [pendingReceiptForLedger, setPendingReceiptForLedger] = useState(null);
+  const [markingProcessed, setMarkingProcessed] = useState(null);
 
   // Pagination state
   const [page, setPage] = useState(1);
@@ -86,7 +98,15 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
     fetchTransactions(1, searchFilter, typeFilter);
     fetchMasterListOptions();
     fetchExistingNames();
+    fetchUnprocessedCount();
   }, []);
+
+  // Fetch inbox receipts when tab changes or filter changes
+  useEffect(() => {
+    if (activeTab === 'receipts') {
+      fetchInboxReceipts(inboxFilter);
+    }
+  }, [activeTab, inboxFilter, fetchInboxReceipts]);
 
   // Debounced search
   useEffect(() => {
@@ -144,6 +164,88 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
     }
   };
 
+  // Fetch receipts inbox
+  const fetchInboxReceipts = useCallback(async (status = 'submitted') => {
+    setInboxLoading(true);
+    try {
+      const res = await apiGet(`/api/receipts/admin/inbox?status=${status}`);
+      if (res.ok) {
+        const data = await res.json();
+        setInboxReceipts(data.receipts || []);
+      }
+    } catch (err) {
+      console.error('Failed to fetch inbox receipts');
+    } finally {
+      setInboxLoading(false);
+    }
+  }, []);
+
+  // Fetch unprocessed count for badge
+  const fetchUnprocessedCount = useCallback(async () => {
+    try {
+      const res = await apiGet('/api/receipts/admin/inbox?status=submitted');
+      if (res.ok) {
+        const data = await res.json();
+        setInboxUnprocessedCount((data.receipts || []).length);
+      }
+    } catch (err) {
+      console.error('Failed to fetch unprocessed count');
+    }
+  }, []);
+
+  // Mark receipt as processed (for duplicates)
+  const handleMarkProcessed = async (receiptId) => {
+    setMarkingProcessed(receiptId);
+    try {
+      const res = await apiPut(`/api/receipts/admin/${receiptId}/mark-processed`, { is_duplicate: false });
+      if (res.ok) {
+        fetchInboxReceipts(inboxFilter);
+        fetchUnprocessedCount();
+      }
+    } catch (err) {
+      console.error('Failed to mark receipt as processed');
+    } finally {
+      setMarkingProcessed(null);
+    }
+  };
+
+  // Start "Add to Ledger" workflow
+  const handleAddToLedger = (receipt) => {
+    const userName = receipt.first_name && receipt.last_name
+      ? `${receipt.first_name} ${receipt.last_name}`
+      : receipt.first_name || receipt.last_name || '';
+
+    setPendingReceiptForLedger(receipt);
+    setActiveTab('ledger');
+    setTransactionType('deposit');
+    setForm({
+      transaction_date: new Date().toISOString().split('T')[0],
+      name: userName,
+      description: '',
+      amount: '',
+      reference_no: '',
+      verified: 'Pending',
+      master_list_id: receipt.master_list_id || null
+    });
+    setEditingId(null);
+    setShowForm(true);
+
+    // Scroll to form after it renders
+    setTimeout(() => {
+      formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  };
+
+  // Link receipt to newly created ledger entry
+  const linkReceiptToLedger = async (receiptId, ledgerId) => {
+    try {
+      await apiPut(`/api/receipts/admin/${receiptId}/link-ledger`, { ledger_id: ledgerId });
+      fetchUnprocessedCount();
+    } catch (err) {
+      console.error('Failed to link receipt to ledger');
+    }
+  };
+
   const resetForm = () => {
     setForm({
       transaction_date: new Date().toISOString().split('T')[0],
@@ -157,12 +259,16 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
     setTransactionType('deposit');
     setEditingId(null);
     setShowForm(false);
+    setPendingReceiptForLedger(null);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
     setResult(null);
+
+    // Capture pending receipt before resetForm clears it
+    const receiptToLink = pendingReceiptForLedger;
 
     const payload = {
       transaction_date: form.transaction_date,
@@ -181,13 +287,22 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
         : await apiPost('/api/ledger', payload);
 
       if (res.ok) {
-        setResult({ success: true, message: editingId ? 'Transaction updated!' : 'Transaction added!' });
+        const data = await res.json();
+
+        // If we have a pending receipt to link, link it to the new ledger entry
+        if (receiptToLink && !editingId && data.id) {
+          await linkReceiptToLedger(receiptToLink.id, data.id);
+          setResult({ success: true, message: 'Transaction added and receipt linked!' });
+        } else {
+          setResult({ success: true, message: editingId ? 'Transaction updated!' : 'Transaction added!' });
+        }
+
         resetForm();
         refreshTransactions();
         fetchExistingNames(); // Refresh autocomplete list
       } else {
-        const data = await res.json();
-        setResult({ success: false, message: data.error || 'Failed to save' });
+        const responseData = await res.json();
+        setResult({ success: false, message: responseData.error || 'Failed to save' });
       }
     } catch (err) {
       setResult({ success: false, message: 'Failed to save transaction' });
@@ -432,6 +547,104 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
         <div className="pending-notice">
           Pending transactions are shown in the table but excluded from totals until verified (OK).
         </div>
+      )}
+
+      {/* Tab Bar */}
+      <div className="accounting-tabs" style={{
+        display: 'flex',
+        gap: '0',
+        marginBottom: '24px',
+        borderBottom: '1px solid rgba(255,255,255,0.1)'
+      }}>
+        <button
+          onClick={() => setActiveTab('ledger')}
+          style={{
+            padding: '12px 24px',
+            background: 'transparent',
+            border: 'none',
+            borderBottom: activeTab === 'ledger' ? '2px solid var(--color-hover)' : '2px solid transparent',
+            color: activeTab === 'ledger' ? 'var(--color-hover)' : '#888',
+            fontWeight: activeTab === 'ledger' ? '600' : '400',
+            cursor: 'pointer',
+            fontSize: '0.95rem'
+          }}
+        >
+          Ledger
+        </button>
+        <button
+          onClick={() => setActiveTab('receipts')}
+          style={{
+            padding: '12px 24px',
+            background: 'transparent',
+            border: 'none',
+            borderBottom: activeTab === 'receipts' ? '2px solid var(--color-hover)' : '2px solid transparent',
+            color: activeTab === 'receipts' ? 'var(--color-hover)' : '#888',
+            fontWeight: activeTab === 'receipts' ? '600' : '400',
+            cursor: 'pointer',
+            fontSize: '0.95rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}
+        >
+          Receipts
+          {inboxUnprocessedCount > 0 && (
+            <span style={{
+              background: 'var(--color-status-negative)',
+              color: '#fff',
+              fontSize: '0.7rem',
+              fontWeight: '700',
+              padding: '2px 6px',
+              borderRadius: '10px',
+              minWidth: '18px',
+              textAlign: 'center'
+            }}>
+              {inboxUnprocessedCount}
+            </span>
+          )}
+        </button>
+      </div>
+
+      {/* LEDGER TAB */}
+      {activeTab === 'ledger' && (
+        <>
+        {/* Pending receipt image when adding from inbox */}
+        {pendingReceiptForLedger && showForm && (
+          <div style={{
+            marginBottom: '16px',
+            padding: '16px',
+            background: 'rgba(207, 181, 59, 0.1)',
+            border: '1px solid rgba(207, 181, 59, 0.3)',
+            borderRadius: '8px'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+              <span style={{ color: 'var(--color-hover)', fontWeight: '600', fontSize: '0.9rem' }}>
+                Adding from Receipt
+              </span>
+              <button
+                onClick={() => setPendingReceiptForLedger(null)}
+                style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: '1.2rem' }}
+              >
+                ×
+              </button>
+            </div>
+            <img
+              src={pendingReceiptForLedger.image_url}
+              alt="Receipt"
+              style={{
+                maxWidth: '100%',
+                maxHeight: '300px',
+                borderRadius: '6px',
+                objectFit: 'contain',
+                display: 'block'
+              }}
+            />
+            {pendingReceiptForLedger.note && (
+              <p style={{ marginTop: '8px', fontSize: '0.85rem', color: '#888', fontStyle: 'italic' }}>
+                Note: {pendingReceiptForLedger.note}
+              </p>
+            )}
+          </div>
       )}
 
       {/* Add Transaction Button / Form */}
@@ -797,6 +1010,134 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
           <p className="no-data">{searchFilter || typeFilter !== 'all' ? 'No matching transactions' : 'No transactions recorded yet'}</p>
         )}
       </div>
+      </>
+      )}
+
+      {/* RECEIPTS TAB */}
+      {activeTab === 'receipts' && (
+        <div>
+          {/* Filter buttons */}
+          <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+            {['submitted', 'processed', 'all'].map(status => (
+              <button
+                key={status}
+                onClick={() => setInboxFilter(status)}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: '6px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontWeight: inboxFilter === status ? '600' : '400',
+                  background: inboxFilter === status ? 'var(--color-hover)' : 'rgba(255,255,255,0.05)',
+                  color: inboxFilter === status ? '#0d1a14' : '#888',
+                  textTransform: 'capitalize'
+                }}
+              >
+                {status}
+              </button>
+            ))}
+          </div>
+
+          {inboxLoading ? (
+            <p style={{ color: '#888' }}>Loading receipts...</p>
+          ) : inboxReceipts.length > 0 ? (
+            <ScrollableTable maxHeight="600px">
+              <table className="ledger-table">
+                <thead>
+                  <tr>
+                    <th>Date Submitted</th>
+                    <th>User Name</th>
+                    <th>Section</th>
+                    <th>Receipt</th>
+                    <th>Note</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {inboxReceipts.map(receipt => (
+                    <tr key={receipt.id}>
+                      <td style={{ whiteSpace: 'nowrap' }}>
+                        {new Date(receipt.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </td>
+                      <td>
+                        {receipt.first_name || receipt.last_name
+                          ? `${receipt.first_name || ''} ${receipt.last_name || ''}`.trim()
+                          : <span style={{ color: '#666' }}>Unknown</span>
+                        }
+                      </td>
+                      <td>{receipt.section || '-'}</td>
+                      <td>
+                        <button
+                          onClick={() => setViewingInboxReceipt(receipt)}
+                          style={{
+                            background: 'none',
+                            border: '1px solid rgba(255,255,255,0.2)',
+                            borderRadius: '4px',
+                            padding: '4px',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          <img
+                            src={receipt.image_url}
+                            alt="Receipt"
+                            style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '2px' }}
+                          />
+                        </button>
+                      </td>
+                      <td style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {receipt.note || '-'}
+                      </td>
+                      <td>
+                        <span style={{
+                          padding: '4px 8px',
+                          borderRadius: '4px',
+                          fontSize: '0.8rem',
+                          fontWeight: '500',
+                          background: receipt.status === 'submitted' ? 'rgba(251, 191, 36, 0.2)' : 'rgba(74, 222, 128, 0.2)',
+                          color: receipt.status === 'submitted' ? '#fbbf24' : '#4ade80'
+                        }}>
+                          {receipt.status === 'submitted' ? 'Submitted' : 'Processed'}
+                        </span>
+                      </td>
+                      <td>
+                        {receipt.status === 'submitted' ? (
+                          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                            <button
+                              onClick={() => handleAddToLedger(receipt)}
+                              className="btn-link"
+                              style={{ color: 'var(--color-status-positive)' }}
+                            >
+                              Add to Ledger
+                            </button>
+                            <button
+                              onClick={() => handleMarkProcessed(receipt.id)}
+                              disabled={markingProcessed === receipt.id}
+                              className="btn-link"
+                              style={{ color: '#888' }}
+                            >
+                              {markingProcessed === receipt.id ? '...' : 'Mark Processed'}
+                            </button>
+                          </div>
+                        ) : (
+                          <span style={{ color: '#666', fontSize: '0.85rem' }}>
+                            {receipt.processor_first_name && `by ${receipt.processor_first_name}`}
+                            {receipt.ledger_id && ` · Ledger #${receipt.ledger_id}`}
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </ScrollableTable>
+          ) : (
+            <p className="no-data">
+              {inboxFilter === 'submitted' ? 'No receipts waiting for processing' : 'No receipts found'}
+            </p>
+          )}
+        </div>
+      )}
 
       {/* Link to Master List Modal */}
       {linkingTransaction && (
@@ -869,6 +1210,70 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
                 >
                   Delete Receipt
                 </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Inbox Receipt Viewing Modal */}
+      {viewingInboxReceipt && (
+        <div className="receipt-modal-overlay" onClick={() => setViewingInboxReceipt(null)}>
+          <div className="receipt-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="receipt-modal-header">
+              <h4>
+                Receipt from {viewingInboxReceipt.first_name || viewingInboxReceipt.last_name
+                  ? `${viewingInboxReceipt.first_name || ''} ${viewingInboxReceipt.last_name || ''}`.trim()
+                  : 'Unknown User'
+                }
+              </h4>
+              <button onClick={() => setViewingInboxReceipt(null)} className="receipt-modal-close">×</button>
+            </div>
+            <div className="receipt-modal-image">
+              <img src={viewingInboxReceipt.image_url} alt="Receipt" />
+            </div>
+            <div style={{ padding: '12px 16px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+              <p style={{ fontSize: '0.85rem', color: '#888', marginBottom: '4px' }}>
+                Submitted: {new Date(viewingInboxReceipt.created_at).toLocaleString()}
+              </p>
+              {viewingInboxReceipt.note && (
+                <p style={{ fontSize: '0.85rem', color: '#aaa' }}>
+                  Note: {viewingInboxReceipt.note}
+                </p>
+              )}
+            </div>
+            <div className="receipt-modal-actions">
+              <a
+                href={viewingInboxReceipt.image_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-secondary"
+              >
+                Open Full Size
+              </a>
+              {viewingInboxReceipt.status === 'submitted' && (
+                <>
+                  <button
+                    onClick={() => {
+                      setViewingInboxReceipt(null);
+                      handleAddToLedger(viewingInboxReceipt);
+                    }}
+                    className="btn-primary"
+                    style={{ padding: '8px 16px' }}
+                  >
+                    Add to Ledger
+                  </button>
+                  <button
+                    onClick={() => {
+                      handleMarkProcessed(viewingInboxReceipt.id);
+                      setViewingInboxReceipt(null);
+                    }}
+                    className="btn-link"
+                    style={{ color: '#888' }}
+                  >
+                    Mark Processed
+                  </button>
+                </>
               )}
             </div>
           </div>
