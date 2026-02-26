@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import ScrollableTable from './ScrollableTable';
+import FundingProgressBar from './FundingProgressBar';
 import { apiGet, apiPut } from '../api';
 
 const MASTER_LIST_PAGE_SIZE = 45;
@@ -246,7 +247,14 @@ export default function MasterListTab({
           <div className="status-card">
             <div className="status-card-header">Master List Status</div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
-              <span><strong className="status-card-value">{masterListStats.registered || 0}</strong> Registered</span>
+              <span>
+                <strong className="status-card-value">{masterListStats.registered || 0}</strong> Registered
+                {parseInt(masterListStats.registered) > 0 && (
+                  <span style={{ fontSize: '0.78rem', color: 'var(--color-text-secondary)', marginLeft: '4px' }}>
+                    ({masterListStats.registered_graduates || 0} grads · {masterListStats.registered_non_graduates || 0} non-grads)
+                  </span>
+                )}
+              </span>
               <span><strong className="status-card-value">{masterListStats.pending || 0}</strong> Pending</span>
               <span><strong className="status-card-value">{masterListStats.not_invited || 0}</strong> Not Invited</span>
               <span><strong className="status-card-value">{masterListStats.in_memoriam || 0}</strong> In Memoriam</span>
@@ -256,11 +264,14 @@ export default function MasterListTab({
           <div className="status-card">
             <div className="status-card-header">Builder Tiers</div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
-              <span><strong style={{ color: '#CFB53B' }}>{parseInt(masterListStats.tiers?.cornerstone) || 0}</strong> Cornerstone</span>
-              <span><strong style={{ color: '#C0C0C0' }}>{parseInt(masterListStats.tiers?.pillar) || 0}</strong> Pillar</span>
-              <span><strong style={{ color: '#CD7F32' }}>{parseInt(masterListStats.tiers?.anchor) || 0}</strong> Anchor</span>
-              <span><strong style={{ color: 'var(--color-status-positive)' }}>{parseInt(masterListStats.tiers?.root) || 0}</strong> Root</span>
-              <span><strong style={{ color: '#888' }}>{parseInt(masterListStats.tiers?.no_tier) || 0}</strong> No Tier</span>
+              <span><strong style={{ color: '#CFB53B' }}>{parseInt(masterListStats.cornerstone_count) || 0}</strong> Cornerstone</span>
+              <span><strong style={{ color: '#C0C0C0' }}>{parseInt(masterListStats.pillar_count) || 0}</strong> Pillar</span>
+              <span><strong style={{ color: '#CD7F32' }}>{parseInt(masterListStats.anchor_count) || 0}</strong> Anchor</span>
+              <span><strong style={{ color: 'var(--color-status-positive)' }}>{parseInt(masterListStats.root_count) || 0}</strong> Root</span>
+              <span><strong style={{ color: 'var(--color-text-secondary)' }}>{parseInt(masterListStats.no_tier) || 0}</strong> No Tier</span>
+            </div>
+            <div style={{ marginTop: '4px', fontSize: '0.78rem', color: 'var(--color-text-secondary)' }}>
+              / {parseInt(masterListStats.total_builders) || 0} builders
             </div>
           </div>
           <div className="status-card">
@@ -270,16 +281,15 @@ export default function MasterListTab({
               <span><strong style={{ color: 'var(--color-status-warning)' }}>{parseInt(masterListStats.partial_paid) || 0}</strong> Partial</span>
               <span><strong style={{ color: 'var(--color-status-negative)' }}>{parseInt(masterListStats.unpaid) || 0}</strong> Unpaid</span>
               <span><strong style={{ color: 'var(--color-status-positive)' }}>{parseInt(masterListStats.root_count) || 0}</strong> Root</span>
-              <span style={{ color: '#888' }}>/ {parseInt(masterListStats.total_builders) || 0} builders</span>
             </div>
           </div>
-          <div className="status-card">
-            <div className="status-card-header">Funds</div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
-              <span><strong className="status-card-value">₱{parseInt(masterListStats.tiers?.total_pledged || 0).toLocaleString()}</strong> Pledged</span>
-              <span><strong style={{ color: 'var(--color-status-positive)' }}>₱{parseInt(masterListStats.tiers?.total_collected || 0).toLocaleString()}</strong> Collected</span>
-            </div>
-          </div>
+        </div>
+      )}
+
+      {/* Funding Progress Bar - gated behind funding_view permission */}
+      {masterListStats && (isSuperAdmin || permissions?.funding_view) && (
+        <div style={{ marginBottom: '20px' }}>
+          <FundingProgressBar stats={masterListStats} />
         </div>
       )}
 

@@ -178,6 +178,8 @@ router.get('/', authenticateAdmin, async (req, res) => {
       SELECT
         COUNT(*) as total,
         COUNT(CASE WHEN m.status = 'Registered' AND (m.in_memoriam IS NULL OR m.in_memoriam = false) AND (m.is_unreachable IS NULL OR m.is_unreachable = false) THEN 1 END) as registered,
+        COUNT(CASE WHEN m.status = 'Registered' AND m.section != 'Non-Graduate' AND (m.in_memoriam IS NULL OR m.in_memoriam = false) AND (m.is_unreachable IS NULL OR m.is_unreachable = false) THEN 1 END) as registered_graduates,
+        COUNT(CASE WHEN m.status = 'Registered' AND m.section = 'Non-Graduate' AND (m.in_memoriam IS NULL OR m.in_memoriam = false) AND (m.is_unreachable IS NULL OR m.is_unreachable = false) THEN 1 END) as registered_non_graduates,
         COUNT(CASE WHEN m.status = 'Pending' AND (m.in_memoriam IS NULL OR m.in_memoriam = false) AND (m.is_unreachable IS NULL OR m.is_unreachable = false) THEN 1 END) as pending,
         COUNT(CASE WHEN m.status = 'Not Invited' AND (m.in_memoriam IS NULL OR m.in_memoriam = false) AND (m.is_unreachable IS NULL OR m.is_unreachable = false) THEN 1 END) as not_invited,
         COUNT(CASE WHEN m.in_memoriam = true THEN 1 END) as in_memoriam,
@@ -208,10 +210,11 @@ router.get('/', authenticateAdmin, async (req, res) => {
     // Only verified (OK) deposits count toward collected totals
     const tierStatsResult = await db.query(`
       SELECT
-        COUNT(CASE WHEN m.builder_tier = 'cornerstone' THEN 1 END) as cornerstone,
-        COUNT(CASE WHEN m.builder_tier = 'pillar' THEN 1 END) as pillar,
-        COUNT(CASE WHEN m.builder_tier = 'anchor' THEN 1 END) as anchor,
-        COUNT(CASE WHEN m.builder_tier = 'root' THEN 1 END) as root,
+        COUNT(CASE WHEN m.builder_tier = 'cornerstone' THEN 1 END) as cornerstone_count,
+        COUNT(CASE WHEN m.builder_tier = 'pillar' THEN 1 END) as pillar_count,
+        COUNT(CASE WHEN m.builder_tier = 'anchor' THEN 1 END) as anchor_count,
+        COUNT(CASE WHEN m.builder_tier = 'root' THEN 1 END) as root_count,
+        COUNT(CASE WHEN m.builder_tier IS NOT NULL THEN 1 END) as total_builders,
         COUNT(CASE WHEN m.builder_tier IS NULL AND m.section != 'Non-Graduate' AND (m.in_memoriam IS NULL OR m.in_memoriam = false) THEN 1 END) as no_tier,
         COALESCE(SUM(CASE WHEN m.builder_tier IS NOT NULL AND m.builder_tier != 'root' THEN m.pledge_amount ELSE 0 END), 0) as total_pledged,
         COALESCE(SUM(CASE WHEN m.builder_tier IS NOT NULL THEN ledger_totals.total_paid ELSE 0 END), 0) as total_collected
@@ -225,6 +228,37 @@ router.get('/', authenticateAdmin, async (req, res) => {
       WHERE m.section != 'Non-Graduate' AND (m.in_memoriam IS NULL OR m.in_memoriam = false)
     `);
 
+    // Get per-tier detail stats (for Funding Reality Engine)
+    const tierDetailResult = await db.query(`
+      SELECT
+        m.builder_tier,
+        COUNT(*) as count,
+        COALESCE(AVG(CASE WHEN m.builder_tier != 'root' THEN m.pledge_amount END), 0) as avg_pledge,
+        COALESCE(SUM(CASE WHEN m.builder_tier != 'root' THEN m.pledge_amount ELSE 0 END), 0) as total_tier_pledged,
+        COALESCE(SUM(ledger_totals.total_paid), 0) as total_tier_collected
+      FROM master_list m
+      LEFT JOIN (
+        SELECT master_list_id, SUM(deposit) as total_paid
+        FROM ledger
+        WHERE master_list_id IS NOT NULL AND deposit > 0 AND verified = 'OK'
+        GROUP BY master_list_id
+      ) ledger_totals ON m.id = ledger_totals.master_list_id
+      WHERE m.builder_tier IS NOT NULL
+        AND m.section != 'Non-Graduate'
+        AND (m.in_memoriam IS NULL OR m.in_memoriam = false)
+      GROUP BY m.builder_tier
+    `);
+
+    const tierDetails = {};
+    tierDetailResult.rows.forEach(row => {
+      tierDetails[row.builder_tier] = {
+        count: parseInt(row.count),
+        avg_pledge: parseFloat(row.avg_pledge),
+        total_pledged: parseFloat(row.total_tier_pledged),
+        total_collected: parseFloat(row.total_tier_collected)
+      };
+    });
+
     // Get sections for dropdown
     const sectionsResult = await db.query(`
       SELECT DISTINCT section FROM master_list ORDER BY section
@@ -235,7 +269,8 @@ router.get('/', authenticateAdmin, async (req, res) => {
       stats: {
         ...statsResult.rows[0],
         ...paymentStatsResult.rows[0],
-        tiers: tierStatsResult.rows[0]
+        ...tierStatsResult.rows[0],
+        tier_details: tierDetails
       },
       sections: sectionsResult.rows.map(r => r.section),
       pagination: {
