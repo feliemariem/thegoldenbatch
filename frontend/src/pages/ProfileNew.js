@@ -913,14 +913,17 @@ END:VCALENDAR`;
               ) : (
                 <div className="profile-card donate-card">
                   <div className="card-header">
-                    <h3>Welcome, {profile.first_name || 'Guest'}! 💚</h3>
+                    <h3>Welcome, {profile.first_name || 'Guest'}!</h3>
                   </div>
-                  <p className="donate-message" style={{ color: '#8b8b9e', fontSize: '0.88rem', lineHeight: '1.6', marginBottom: '0' }}>
-                    Thank you for being part of our 25th homecoming celebration! As an invited guest, you're here to enjoy the reunion with us — no contribution required.
+                  <p className="donate-message">
+                    Thank you for being part of our 25th Homecoming celebration. Whether you graduated with us or not, you were part of that chapter and that will always matter.
                   </p>
-                  <div style={{ height: '1px', background: 'rgba(255,255,255,0.06)', margin: '16px 0' }}></div>
-                  <p style={{ color: '#5a5a6e', fontSize: '0.8rem', lineHeight: '1.5' }}>
-                    Have questions or suggestions? Head to your <Link to="/inbox" style={{ color: '#CFB53B', textDecoration: 'none', fontWeight: '500' }}>Inbox</Link> and contact the committee.
+                  <p className="donate-message">
+                    We're grateful you're here to celebrate this milestone. Your presence is what truly counts.
+                  </p>
+                  <div className="donate-divider"></div>
+                  <p className="donate-note">
+                    Have questions or suggestions? Head to your <Link to="/inbox" className="donate-inbox-link">Inbox</Link> and contact the committee.
                   </p>
                 </div>
               )}
