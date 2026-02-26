@@ -433,7 +433,7 @@ export default function MasterListTab({
                               value={editingTier}
                               onChange={(e) => setEditingTier(e.target.value)}
                               id={`edit-tier-${entry.id}`}
-                              style={{ width: '100%', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '6px 8px', color: '#fff' }}
+                              className="edit-tier-select"
                             >
                               <option value="">None</option>
                               <option value="cornerstone">Cornerstone</option>
@@ -454,15 +454,7 @@ export default function MasterListTab({
                                 id={`edit-pledge-${entry.id}`}
                                 placeholder={editingTier === 'root' || !editingTier ? '-' : 'Optional'}
                                 disabled={editingTier === 'root' || !editingTier}
-                                style={{
-                                  width: '90px',
-                                  background: (editingTier === 'root' || !editingTier) ? 'rgba(0,0,0,0.1)' : 'rgba(0,0,0,0.3)',
-                                  border: '1px solid rgba(255,255,255,0.1)',
-                                  borderRadius: '8px',
-                                  padding: '6px 8px',
-                                  color: (editingTier === 'root' || !editingTier) ? '#666' : '#fff',
-                                  cursor: (editingTier === 'root' || !editingTier) ? 'not-allowed' : 'text'
-                                }}
+                                className={`edit-pledge-input ${(editingTier === 'root' || !editingTier) ? 'disabled' : ''}`}
                               />
                               {getTierMinimum(editingTier) && (
                                 <span style={{ fontSize: '0.7rem', color: '#888' }}>

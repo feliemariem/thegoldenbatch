@@ -1194,3 +1194,68 @@ tr:last-child td {
   background: #006633;
   color: #ffffff;
 }
+
+/* ========================================
+   MASTER LIST EDIT INPUTS
+   Tier dropdown and Pledge amount field
+   ======================================== */
+
+/* Tier dropdown - dark mode */
+.edit-tier-select {
+  width: 140px;
+  min-width: 140px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+/* Tier dropdown - light mode */
+[data-theme="light"] .edit-tier-select {
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  color: #1a1a1a;
+}
+
+/* Pledge amount input - dark mode */
+.edit-pledge-input {
+  width: 120px;
+  min-width: 120px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #fff;
+  font-size: 0.9rem;
+  /* Remove spinner arrows */
+  -moz-appearance: textfield;
+}
+
+.edit-pledge-input::-webkit-inner-spin-button,
+.edit-pledge-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Pledge input disabled state - dark mode */
+.edit-pledge-input.disabled {
+  background: rgba(0, 0, 0, 0.1);
+  color: #666;
+  cursor: not-allowed;
+}
+
+/* Pledge amount input - light mode */
+[data-theme="light"] .edit-pledge-input {
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  color: #1a1a1a;
+}
+
+/* Pledge input disabled state - light mode */
+[data-theme="light"] .edit-pledge-input.disabled {
+  background: #f0f0f0;
+  color: #999;
+}
