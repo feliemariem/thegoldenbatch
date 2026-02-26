@@ -211,6 +211,7 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
 
       setActiveTab('ledger');
       setTransactionType('deposit');
+      setResult(null); // Clear any previous error/success message
       setForm({
         transaction_date: new Date().toISOString().split('T')[0],
         name: userName,
@@ -263,6 +264,14 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
     setShowReceiptPreviewModal(false);
     setFormLinkSearch('');
     setShowFormLinkDropdown(false);
+    setResult(null);
+  };
+
+  // Prevent Enter key from auto-submitting the form in text inputs
+  const preventEnterSubmit = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -334,6 +343,7 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
   };
 
   const handleEdit = (transaction) => {
+    setResult(null); // Clear any previous error/success message
     const isDeposit = transaction.deposit !== null && transaction.deposit > 0;
     setTransactionType(isDeposit ? 'deposit' : 'withdrawal');
     setForm({
@@ -649,8 +659,11 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
       {/* Add Transaction Button / Form */}
       {!showForm ? (
         canEdit && (
-          <button 
-            onClick={() => setShowForm(true)} 
+          <button
+            onClick={() => {
+              setResult(null); // Clear any previous error/success message
+              setShowForm(true);
+            }}
             className="btn-primary"
             style={{ marginBottom: '24px', width: 'auto', padding: '12px 24px' }}
           >
@@ -714,6 +727,7 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
                     const val = e.target.value.replace(/[^0-9.]/g, '');
                     setForm({ ...form, amount: val });
                   }}
+                  onKeyDown={preventEnterSubmit}
                   placeholder="0"
                   required
                 />
@@ -727,6 +741,7 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
                   type="text"
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  onKeyDown={preventEnterSubmit}
                   placeholder={transactionType === 'deposit' ? 'e.g., Juan Dela Cruz' : 'e.g., PNB, Vendor Name'}
                   list="existing-names"
                   autoComplete="off"
@@ -743,6 +758,7 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
                   type="text"
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
+                  onKeyDown={preventEnterSubmit}
                   placeholder={transactionType === 'deposit' ? 'e.g., Cash Deposit, GCash Transfer' : 'e.g., Checkbook, Venue Deposit'}
                 />
               </div>
@@ -755,6 +771,7 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
                   type="text"
                   value={form.reference_no}
                   onChange={(e) => setForm({ ...form, reference_no: e.target.value })}
+                  onKeyDown={preventEnterSubmit}
                   placeholder="e.g., REF NO. 123456"
                 />
               </div>
@@ -787,6 +804,7 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
                         setFormLinkSearch(e.target.value);
                         setShowFormLinkDropdown(e.target.value.length > 0);
                       }}
+                      onKeyDown={preventEnterSubmit}
                       onFocus={() => formLinkSearch && setShowFormLinkDropdown(true)}
                       onBlur={() => setTimeout(() => setShowFormLinkDropdown(false), 200)}
                       style={{
