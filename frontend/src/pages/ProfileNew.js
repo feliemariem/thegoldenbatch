@@ -39,6 +39,7 @@ export default function ProfileNew() {
   const [receiptModalImage, setReceiptModalImage] = useState(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const [showFullPaidDetails, setShowFullPaidDetails] = useState(false);
   const fileInputRef = useRef(null);
   const receiptFileInputRef = useRef(null);
   const calendarDropdownRef = useRef(null);
@@ -696,167 +697,200 @@ END:VCALENDAR`;
                     </div>
                   )}
 
-                  {/* Receipt Upload - Drag & Drop Zone */}
-                  {/* Hide upload zone when fully paid for non-root tiers (Cornerstone, Pillar, Anchor) */}
-                  {/* Root tier always shows upload zone since there's no pledge cap */}
-                  {(profile.builder_tier === 'root' ||
-                    !profile.pledge_amount ||
-                    (profile.total_paid || 0) < profile.pledge_amount) && (
-                    <>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleReceiptFileChange}
-                        ref={receiptFileInputRef}
-                        style={{ display: 'none' }}
-                        id="receipt-upload"
-                      />
-                      {!receiptPreview ? (
-                        <div
-                          className={`receipt-dropzone ${dragActive ? 'drag-active' : ''}`}
-                          onDragEnter={handleDrag}
-                          onDragLeave={handleDrag}
-                          onDragOver={handleDrag}
-                          onDrop={handleDrop}
-                          onClick={() => receiptFileInputRef.current?.click()}
-                        >
-                          <div className="dropzone-icon">📤</div>
-                          <div className="dropzone-text">
-                            <span className="dropzone-primary">Drop receipt image here</span>
-                            <span className="dropzone-secondary">or click to browse</span>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="receipt-preview-zone">
-                          <img src={receiptPreview.previewUrl} alt="Preview" className="preview-image" />
-                          <div className="preview-actions">
-                            <button
-                              className="btn-preview-confirm"
-                              onClick={confirmUpload}
-                              disabled={receiptUploading}
-                            >
-                              {receiptUploading ? 'Uploading...' : 'Upload'}
-                            </button>
-                            <button
-                              className="btn-preview-cancel"
-                              onClick={cancelUpload}
-                              disabled={receiptUploading}
-                            >
-                              Cancel
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </>
-                  )}
+                  {/* Check if fully paid (non-root tier) */}
+                  {(() => {
+                    const isFullyPaid = profile.builder_tier !== 'root' &&
+                      profile.pledge_amount &&
+                      parseFloat(profile.total_paid || 0) >= parseFloat(profile.pledge_amount);
 
-                  {/* Payment Methods Toggle */}
-                  <div className="payment-methods-toggle">
-                    <button
-                      className={`toggle-btn ${paymentMethodsOpen ? 'open' : ''}`}
-                      onClick={() => setPaymentMethodsOpen(!paymentMethodsOpen)}
-                    >
-                      Payment Methods <span className="toggle-arrow">{paymentMethodsOpen ? '▲' : '▼'}</span>
-                    </button>
-                    {paymentMethodsOpen && (
-                      <div className="payment-methods-content">
-                        <div className="payment-method-item">
-                          <div className="method-label">Bank Deposit</div>
-                          <div className="method-detail"><span>Bank:</span> Philippine National Bank (PNB)</div>
-                          <div className="method-detail"><span>Account Names:</span> Narciso Javelosa III or Mary Rose Frances Uy</div>
-                          <div className="method-detail"><span>Account Number:</span> 307770014898</div>
-                        </div>
-                        <div className="payment-method-item">
-                          <div className="method-label">International Transfers (Swift)</div>
-                          <div className="method-detail"><span>Bank:</span> PNB Bacolod Lacson Branch</div>
-                          <div className="method-detail"><span>Address:</span> 10th Lacson Street, Bacolod City, Negros Occidental 6100</div>
-                          <div className="method-detail"><span>Tel:</span> (63) (034) 432-0605 / 434-8007</div>
-                          <div className="method-detail"><span>SWIFT Code:</span> PNBMPHMM</div>
-                          <div className="method-detail"><span>Routing No.:</span> 040080019</div>
-                          <div className="method-detail"><span>Email:</span> bacolod_lacson@pnb.com.ph</div>
-                          <div className="method-detail"><span>Website:</span> pnb.com.ph</div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Receipt History */}
-                  {receipts.length > 0 && (
-                    <div className="builder-receipt-list">
-                      <h4>Receipt History</h4>
-                      <div className="receipt-list-scroll">
-                        {receipts.map(receipt => (
-                          <div key={receipt.id} className="receipt-row">
-                            <button
-                              className="receipt-thumb"
-                              onClick={() => setReceiptModalImage(receipt.image_url)}
-                              type="button"
-                            >
-                              <img src={receipt.image_url} alt="Receipt" />
-                            </button>
-                            <div className="receipt-info">
-                              <span className="receipt-date">
-                                {new Date(receipt.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                              </span>
-                              <span className={`receipt-source-badge ${receipt.source}`}>
-                                {receipt.source === 'user' ? 'You' : 'Committee'}
-                              </span>
-                            </div>
-                            <span className={`receipt-status-badge ${receipt.status}`}>
-                              {receipt.status === 'submitted'
-                                ? 'Submitted'
-                                : receipt.status === 'verified'
-                                  ? 'Verified'
-                                  : 'Pending Verification'}
-                            </span>
-                            {receipt.ledger_id && (
-                              <span className={`receipt-verified-badge ${receipt.ledger_status === 'OK' ? 'verified' : 'pending'}`}>
-                                {receipt.ledger_status === 'OK' ? '✓ Verified' : 'Pending'}
-                                {receipt.ledger_amount && ` · ₱${parseFloat(receipt.ledger_amount).toLocaleString()}`}
-                              </span>
-                            )}
-                            {receipt.status === 'submitted' && receipt.source === 'user' && (
-                              deleteConfirmId === receipt.id ? (
-                                <div className="receipt-delete-confirm">
-                                  <span>Delete?</span>
+                    // Content for receipt upload, payment methods, and receipt history
+                    const detailsContent = (
+                      <>
+                        {/* Receipt Upload - Drag & Drop Zone */}
+                        {/* Show upload zone for root tier OR when not fully paid */}
+                        {(profile.builder_tier === 'root' ||
+                          !profile.pledge_amount ||
+                          (profile.total_paid || 0) < profile.pledge_amount) && (
+                          <>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={handleReceiptFileChange}
+                              ref={receiptFileInputRef}
+                              style={{ display: 'none' }}
+                              id="receipt-upload"
+                            />
+                            {!receiptPreview ? (
+                              <div
+                                className={`receipt-dropzone ${dragActive ? 'drag-active' : ''}`}
+                                onDragEnter={handleDrag}
+                                onDragLeave={handleDrag}
+                                onDragOver={handleDrag}
+                                onDrop={handleDrop}
+                                onClick={() => receiptFileInputRef.current?.click()}
+                              >
+                                <div className="dropzone-icon">📤</div>
+                                <div className="dropzone-text">
+                                  <span className="dropzone-primary">Drop receipt image here</span>
+                                  <span className="dropzone-secondary">or click to browse</span>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="receipt-preview-zone">
+                                <img src={receiptPreview.previewUrl} alt="Preview" className="preview-image" />
+                                <div className="preview-actions">
                                   <button
-                                    className="btn-delete-yes"
-                                    onClick={() => handleDeleteReceipt(receipt.id)}
-                                    disabled={deleting}
+                                    className="btn-preview-confirm"
+                                    onClick={confirmUpload}
+                                    disabled={receiptUploading}
                                   >
-                                    Yes
+                                    {receiptUploading ? 'Uploading...' : 'Upload'}
                                   </button>
                                   <button
-                                    className="btn-delete-no"
-                                    onClick={() => setDeleteConfirmId(null)}
-                                    disabled={deleting}
+                                    className="btn-preview-cancel"
+                                    onClick={cancelUpload}
+                                    disabled={receiptUploading}
                                   >
-                                    No
+                                    Cancel
                                   </button>
                                 </div>
-                              ) : (
-                                <button
-                                  className="btn-delete-receipt"
-                                  onClick={() => setDeleteConfirmId(receipt.id)}
-                                  title="Delete receipt"
-                                >
-                                  ✕
-                                </button>
-                              )
+                              </div>
+                            )}
+                          </>
+                        )}
+
+                        {/* Payment Methods Toggle */}
+                        <div className="payment-methods-toggle">
+                          <button
+                            className={`toggle-btn ${paymentMethodsOpen ? 'open' : ''}`}
+                            onClick={() => setPaymentMethodsOpen(!paymentMethodsOpen)}
+                          >
+                            Payment Methods <span className="toggle-arrow">{paymentMethodsOpen ? '▲' : '▼'}</span>
+                          </button>
+                          {paymentMethodsOpen && (
+                            <div className="payment-methods-content">
+                              <div className="payment-method-item">
+                                <div className="method-label">Bank Deposit</div>
+                                <div className="method-detail"><span>Bank:</span> Philippine National Bank (PNB)</div>
+                                <div className="method-detail"><span>Account Names:</span> Narciso Javelosa III or Mary Rose Frances Uy</div>
+                                <div className="method-detail"><span>Account Number:</span> 307770014898</div>
+                              </div>
+                              <div className="payment-method-item">
+                                <div className="method-label">International Transfers (Swift)</div>
+                                <div className="method-detail"><span>Bank:</span> PNB Bacolod Lacson Branch</div>
+                                <div className="method-detail"><span>Address:</span> 10th Lacson Street, Bacolod City, Negros Occidental 6100</div>
+                                <div className="method-detail"><span>Tel:</span> (63) (034) 432-0605 / 434-8007</div>
+                                <div className="method-detail"><span>SWIFT Code:</span> PNBMPHMM</div>
+                                <div className="method-detail"><span>Routing No.:</span> 040080019</div>
+                                <div className="method-detail"><span>Email:</span> bacolod_lacson@pnb.com.ph</div>
+                                <div className="method-detail"><span>Website:</span> pnb.com.ph</div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Receipt History */}
+                        {receipts.length > 0 && (
+                          <div className="builder-receipt-list">
+                            <h4>Receipt History</h4>
+                            <div className="receipt-list-scroll">
+                              {receipts.map(receipt => (
+                                <div key={receipt.id} className="receipt-row">
+                                  <button
+                                    className="receipt-thumb"
+                                    onClick={() => setReceiptModalImage(receipt.image_url)}
+                                    type="button"
+                                  >
+                                    <img src={receipt.image_url} alt="Receipt" />
+                                  </button>
+                                  <div className="receipt-info">
+                                    <span className="receipt-date">
+                                      {new Date(receipt.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                    </span>
+                                    <span className={`receipt-source-badge ${receipt.source}`}>
+                                      {receipt.source === 'user' ? 'You' : 'Committee'}
+                                    </span>
+                                  </div>
+                                  <span className={`receipt-status-badge ${receipt.status}`}>
+                                    {receipt.status === 'submitted'
+                                      ? 'Submitted'
+                                      : receipt.status === 'verified'
+                                        ? 'Verified'
+                                        : 'Pending Verification'}
+                                  </span>
+                                  {receipt.ledger_id && (
+                                    <span className={`receipt-verified-badge ${receipt.ledger_status === 'OK' ? 'verified' : 'pending'}`}>
+                                      {receipt.ledger_status === 'OK' ? '✓ Verified' : 'Pending'}
+                                      {receipt.ledger_amount && ` · ₱${parseFloat(receipt.ledger_amount).toLocaleString()}`}
+                                    </span>
+                                  )}
+                                  {receipt.status === 'submitted' && receipt.source === 'user' && (
+                                    deleteConfirmId === receipt.id ? (
+                                      <div className="receipt-delete-confirm">
+                                        <span>Delete?</span>
+                                        <button
+                                          className="btn-delete-yes"
+                                          onClick={() => handleDeleteReceipt(receipt.id)}
+                                          disabled={deleting}
+                                        >
+                                          Yes
+                                        </button>
+                                        <button
+                                          className="btn-delete-no"
+                                          onClick={() => setDeleteConfirmId(null)}
+                                          disabled={deleting}
+                                        >
+                                          No
+                                        </button>
+                                      </div>
+                                    ) : (
+                                      <button
+                                        className="btn-delete-receipt"
+                                        onClick={() => setDeleteConfirmId(receipt.id)}
+                                        title="Delete receipt"
+                                      >
+                                        ✕
+                                      </button>
+                                    )
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                            {receipts.some(r => r.status === 'submitted') && (
+                              <p className="receipt-pending-note">
+                                Your receipt has been submitted. The committee will verify and credit your account within 48 hours.
+                              </p>
                             )}
                           </div>
-                        ))}
-                      </div>
-                      {receipts.some(r => r.status === 'submitted') && (
-                        <p className="receipt-pending-note">
-                          Your receipt has been submitted. The committee will verify and credit your account within 48 hours.
-                        </p>
-                      )}
-                    </div>
-                  )}
-                  {receipts.length === 0 && (
-                    <p className="no-receipts-text">No receipts yet. Upload a receipt after making a payment.</p>
-                  )}
+                        )}
+                        {receipts.length === 0 && !isFullyPaid && (
+                          <p className="no-receipts-text">No receipts yet. Upload a receipt after making a payment.</p>
+                        )}
+                      </>
+                    );
+
+                    return isFullyPaid ? (
+                      <>
+                        {/* Toggle link for fully paid users */}
+                        <button
+                          className="btn-show-details"
+                          onClick={() => setShowFullPaidDetails(!showFullPaidDetails)}
+                        >
+                          {showFullPaidDetails ? 'Hide Details' : 'Show Details'} <span className="toggle-arrow">{showFullPaidDetails ? '▲' : '▼'}</span>
+                        </button>
+
+                        {/* Collapsible details section */}
+                        {showFullPaidDetails && (
+                          <div className="full-paid-details">
+                            {detailsContent}
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      // Show everything expanded when not fully paid
+                      detailsContent
+                    );
+                  })()}
 
                   <div className="builder-links">
                     <button className="btn-link-text" onClick={() => setShowContributionPlan(true)}>Change Tier</button>
