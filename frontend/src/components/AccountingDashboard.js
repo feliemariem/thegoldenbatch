@@ -295,34 +295,31 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
         : await apiPost('/api/ledger', payload);
 
       if (res.ok) {
-        let data = {};
-        try {
-          data = await res.json();
-        } catch (jsonErr) {
-          console.error('JSON parse error:', jsonErr);
-          // Response was OK but body may be empty or invalid - continue anyway
-        }
+        const data = await res.json();
 
         // If we have a pending receipt to link, link it to the new ledger entry
         if (receiptToLink && !editingId && data.id) {
           try {
             await linkReceiptToLedger(receiptToLink.id, data.id);
           } catch (linkErr) {
-            console.error('Failed to link receipt to ledger entry:', linkErr);
-            // Continue anyway - transaction was saved successfully
+            console.error('Failed to link receipt:', linkErr);
           }
           setResult({ success: true, message: 'Transaction added and receipt linked!' });
         } else {
           setResult({ success: true, message: editingId ? 'Transaction updated!' : 'Transaction added!' });
         }
 
+        // Capture master_list_id before resetForm clears it
+        const linkedId = form.master_list_id;
         resetForm();
-        refreshTransactions();
-        fetchExistingNames(); // Refresh autocomplete list
 
-        // Notify parent if a payment was linked to master list
-        if (form.master_list_id) {
-          onPaymentLinked?.();
+        // Post-save operations in their own try/catch so failures don't show "Failed to save"
+        try {
+          refreshTransactions();
+          fetchExistingNames();
+          if (linkedId) onPaymentLinked?.();
+        } catch (refreshErr) {
+          console.error('Post-save refresh error:', refreshErr);
         }
       } else {
         const responseData = await res.json();
