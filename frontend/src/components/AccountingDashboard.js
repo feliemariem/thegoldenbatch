@@ -55,6 +55,7 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
   // Receipt states
   const [uploadingReceipt, setUploadingReceipt] = useState(null);
   const [viewingReceipt, setViewingReceipt] = useState(null);
+  const [zoomingPanelReceipt, setZoomingPanelReceipt] = useState(false);
   const [dragOver, setDragOver] = useState(null);
 
   // Master list linking states
@@ -634,6 +635,8 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
                       src={pendingReceiptForLedger.image_url}
                       alt="Receipt"
                       className="receipt-panel-image"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => setZoomingPanelReceipt(true)}
                     />
                   </div>
                   <div className="receipt-panel-info">
@@ -651,14 +654,9 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
                         Note: {pendingReceiptForLedger.note}
                       </p>
                     )}
-                    <a
-                      href={pendingReceiptForLedger.image_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="receipt-panel-fullsize"
-                    >
-                      Open Full Size →
-                    </a>
+                    <span style={{ fontSize: '0.75rem', color: '#888' }}>
+                      Click image to zoom
+                    </span>
                   </div>
                 </div>
               </div>
@@ -1505,6 +1503,33 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
               </button>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Panel Receipt Zoom Lightbox */}
+      {zoomingPanelReceipt && pendingReceiptForLedger && (
+        <div className="receipt-lightbox-overlay" onClick={() => setZoomingPanelReceipt(false)}>
+          <div className="receipt-lightbox-label">
+            Receipt from {pendingReceiptForLedger.first_name || pendingReceiptForLedger.last_name
+              ? `${pendingReceiptForLedger.first_name || ''} ${pendingReceiptForLedger.last_name || ''}`.trim()
+              : 'User'
+            }
+          </div>
+          <button
+            className="receipt-lightbox-close"
+            onClick={() => setZoomingPanelReceipt(false)}
+          >
+            ✕
+          </button>
+          <img
+            src={pendingReceiptForLedger.image_url}
+            alt="Receipt"
+            className="receipt-lightbox-image"
+            onClick={(e) => {
+              e.stopPropagation();
+              e.currentTarget.classList.toggle('zoomed');
+            }}
+          />
         </div>
       )}
 
