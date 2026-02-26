@@ -475,7 +475,7 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
       const headers = ['Date', 'Name', 'Description', 'Deposit', 'Withdrawal', 'Balance', 'Reference No.', 'Verified', 'Payment Type', 'Recorded By', 'Receipt URL'];
       const rows = allTransactions.map(t => [
         t.transaction_date ? new Date(t.transaction_date.split('T')[0] + 'T00:00:00').toLocaleDateString() : '',
-        t.name || '',
+        t.display_name || t.name || '',
         t.description || '',
         t.deposit || '',
         t.withdrawal || '',
@@ -903,9 +903,9 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
                       {t.transaction_date ? new Date(t.transaction_date.split('T')[0] + 'T00:00:00').toLocaleDateString('en-PH', { month: 'numeric', day: 'numeric', year: '2-digit' }) : '-'}
                     </td>
                     <td>
-                      {t.name || '-'}
+                      {t.display_name || t.name || '-'}
                       {t.master_list_id && (
-                        <span 
+                        <span
                           title={t.ml_first_name ? `Linked to: ${t.ml_first_name} ${t.ml_last_name} (${t.ml_section})` : 'Linked to Master List'}
                           style={{ marginLeft: '6px', cursor: 'help', color: 'var(--color-hover)' }}
                         >
@@ -1205,7 +1205,7 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
         <div className="receipt-modal-overlay" onClick={() => setViewingReceipt(null)}>
           <div className="receipt-modal" onClick={(e) => e.stopPropagation()}>
             <div className="receipt-modal-header">
-              <h4>Receipt - {viewingReceipt.name || viewingReceipt.description || 'Transaction'}</h4>
+              <h4>Receipt - {viewingReceipt.display_name || viewingReceipt.name || viewingReceipt.description || 'Transaction'}</h4>
               <button onClick={() => setViewingReceipt(null)} className="receipt-modal-close">x</button>
             </div>
             <div className="receipt-modal-image">

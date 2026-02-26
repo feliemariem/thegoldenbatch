@@ -80,13 +80,26 @@ router.get('/', authenticateAdmin, async (req, res) => {
     });
 
     // Get paginated, filtered transactions
+    // Join through master_list -> invites -> users to get registered user's name
     const result = await db.query(
       `SELECT l.*,
               m.first_name as ml_first_name,
               m.last_name as ml_last_name,
-              m.section as ml_section
+              m.section as ml_section,
+              COALESCE(
+                CASE WHEN reg_user.first_name IS NOT NULL THEN reg_user.first_name || ' ' || reg_user.last_name END,
+                CASE WHEN m.first_name IS NOT NULL THEN m.first_name || ' ' || m.last_name END,
+                l.name
+              ) AS display_name
        FROM ledger l
        LEFT JOIN master_list m ON l.master_list_id = m.id
+       LEFT JOIN LATERAL (
+         SELECT u.first_name, u.last_name
+         FROM invites inv
+         JOIN users u ON u.invite_id = inv.id
+         WHERE inv.master_list_id = m.id
+         LIMIT 1
+       ) reg_user ON true
        ${whereClause}
        ORDER BY l.transaction_date DESC, l.created_at DESC
        LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`,
@@ -209,17 +222,67 @@ router.get('/balance', async (req, res) => {
 
 // Public route - get unique donor names (for thank you credits)
 // NOTE: Only verified (status = 'OK') donations are shown in donor credits.
+// Groups by master_list_id (for linked entries) or by name (for unlinked entries)
 router.get('/donors', async (req, res) => {
   try {
-    // Only show donors with verified deposits (status = 'OK')
+    // Get grouped contributors with display names and totals
+    // Priority: registered user name -> master list name -> ledger name
     const result = await db.query(
-      `SELECT DISTINCT name FROM ledger
-       WHERE deposit > 0 AND name IS NOT NULL AND name != '' AND verified = 'OK'
-       ORDER BY name ASC`
+      `WITH contributor_data AS (
+        SELECT
+          l.master_list_id,
+          l.name as ledger_name,
+          l.deposit,
+          m.first_name as ml_first_name,
+          m.last_name as ml_last_name,
+          reg_user.first_name as reg_first_name,
+          reg_user.last_name as reg_last_name
+        FROM ledger l
+        LEFT JOIN master_list m ON l.master_list_id = m.id
+        LEFT JOIN LATERAL (
+          SELECT u.first_name, u.last_name
+          FROM invites inv
+          JOIN users u ON u.invite_id = inv.id
+          WHERE inv.master_list_id = m.id
+          LIMIT 1
+        ) reg_user ON true
+        WHERE l.deposit > 0 AND l.verified = 'OK'
+      )
+      SELECT
+        COALESCE(master_list_id::text, ledger_name) as group_key,
+        COALESCE(
+          CASE WHEN reg_first_name IS NOT NULL THEN reg_first_name || ' ' || reg_last_name END,
+          CASE WHEN ml_first_name IS NOT NULL THEN ml_first_name || ' ' || ml_last_name END,
+          ledger_name
+        ) AS display_name,
+        SUM(deposit) as total_amount
+      FROM contributor_data
+      WHERE COALESCE(
+          CASE WHEN reg_first_name IS NOT NULL THEN reg_first_name || ' ' || reg_last_name END,
+          CASE WHEN ml_first_name IS NOT NULL THEN ml_first_name || ' ' || ml_last_name END,
+          ledger_name
+        ) IS NOT NULL
+        AND COALESCE(
+          CASE WHEN reg_first_name IS NOT NULL THEN reg_first_name || ' ' || reg_last_name END,
+          CASE WHEN ml_first_name IS NOT NULL THEN ml_first_name || ' ' || ml_last_name END,
+          ledger_name
+        ) != ''
+      GROUP BY
+        COALESCE(master_list_id::text, ledger_name),
+        COALESCE(
+          CASE WHEN reg_first_name IS NOT NULL THEN reg_first_name || ' ' || reg_last_name END,
+          CASE WHEN ml_first_name IS NOT NULL THEN ml_first_name || ' ' || ml_last_name END,
+          ledger_name
+        )
+      ORDER BY display_name ASC`
     );
 
     res.json({
-      donors: result.rows.map(r => r.name)
+      donors: result.rows.map(r => r.display_name),
+      contributors: result.rows.map(r => ({
+        display_name: r.display_name,
+        total_amount: parseFloat(r.total_amount) || 0
+      }))
     });
   } catch (err) {
     console.error(err);

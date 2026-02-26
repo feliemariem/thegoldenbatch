@@ -129,7 +129,7 @@ export default function Funds() {
               <div className="credits-scroll">
                 {/* Duplicate the list for seamless loop */}
                 {[...donors, ...donors].map((name, index) => (
-                  <p key={index} className="donor-name">{name}</p>
+                  <p key={index} className="donor-name" style={{ textTransform: 'uppercase' }}>{name}</p>
                 ))}
               </div>
             </div>
