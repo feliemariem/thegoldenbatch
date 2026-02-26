@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import '../styles/profileNew.css';
@@ -7,6 +8,7 @@ import { api } from '../api';
 
 export default function Funds() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [balance, setBalance] = useState(0);
   const [totalDeposits, setTotalDeposits] = useState(0);
   const [totalWithdrawals, setTotalWithdrawals] = useState(0);
@@ -14,7 +16,7 @@ export default function Funds() {
   const [lastUpdated, setLastUpdated] = useState(null);
   const [donors, setDonors] = useState([]);
 
-  const PESO = '\u20B1'; // Philippine Peso sign
+  const PESO = '\u20B1';
 
   const fetchBalance = async () => {
     try {
@@ -44,17 +46,14 @@ export default function Funds() {
   useEffect(() => {
     fetchBalance();
     fetchDonors();
-
-    // Auto-refresh every 30 seconds
     const interval = setInterval(fetchBalance, 30000);
-
     return () => clearInterval(interval);
   }, []);
 
   const formatPeso = (amount, decimals = 2) => {
-    return PESO + amount.toLocaleString('en-PH', { 
-      minimumFractionDigits: decimals, 
-      maximumFractionDigits: decimals 
+    return PESO + amount.toLocaleString('en-PH', {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals
     });
   };
 
@@ -67,270 +66,260 @@ export default function Funds() {
           <h2 className="funds-page-title">USLS-IS 2003</h2>
           <p className="funds-page-subtitle">25th Alumni Homecoming Fund</p>
 
-        {/* Total Funds Display */}
-        <div className="funds-balance-card">
-          <p className="funds-label">Current Balance</p>
-          {loading ? (
-            <p className="funds-total-loading">Loading...</p>
-          ) : (
-            <>
-              <p className="funds-total-amount">
-                {formatPeso(balance)}
-              </p>
-              
-              {/* Progress Bar */}
-              <div style={{ marginTop: '24px', marginBottom: '12px' }}>
-                <div className="progress-bar-track">
-                  <div 
-                    className="progress-bar-fill"
-                    style={{ width: `${Math.min((balance / 1700000) * 100, 100)}%` }}
-                  />
-                </div>
-                <p className="funds-progress-text">
-                  {((balance / 1700000) * 100).toFixed(1)}% of {formatPeso(1700000, 0)} goal
+          {/* Total Funds Display */}
+          <div className="funds-balance-card">
+            <p className="funds-label">Current Balance</p>
+            {loading ? (
+              <p className="funds-total-loading">Loading...</p>
+            ) : (
+              <>
+                <p className="funds-total-amount">
+                  {formatPeso(balance)}
                 </p>
-              </div>
 
-              {/* Deposits & Withdrawals breakdown */}
-              <div style={{ 
-                display: 'flex', 
-                justifyContent: 'center', 
-                gap: '24px', 
-                marginTop: '16px',
-                fontSize: '0.9rem'
-              }}>
-                <span style={{ color: '#4ade80' }}>
-                  {'\u2191'} {formatPeso(totalDeposits, 0)} in
-                </span>
-                <span style={{ color: '#f87171' }}>
-                  {'\u2193'} {formatPeso(totalWithdrawals, 0)} out
-                </span>
-              </div>
+                {/* Progress Bar */}
+                <div style={{ marginTop: '24px', marginBottom: '12px' }}>
+                  <div className="progress-bar-track">
+                    <div
+                      className="progress-bar-fill"
+                      style={{ width: `${Math.min((balance / 2100000) * 100, 100)}%` }}
+                    />
+                  </div>
+                  <p className="funds-progress-text">
+                    {((balance / 2100000) * 100).toFixed(1)}% of {formatPeso(2100000, 0)} goal
+                  </p>
+                </div>
 
-              <p className="funds-date">
-                Last updated: {lastUpdated ? lastUpdated.toLocaleTimeString('en-PH', { 
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  second: '2-digit'
-                }) : '-'}
-                <span style={{ marginLeft: '8px', fontSize: '0.8rem', opacity: 0.7 }}>
-                  (auto-refreshes every 30s)
-                </span>
-              </p>
-            </>
-          )}
-        </div>
+                {/* Deposits & Withdrawals breakdown */}
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  gap: '24px',
+                  marginTop: '16px',
+                  fontSize: '0.9rem'
+                }}>
+                  <span style={{ color: '#4ade80' }}>
+                    {'\u2191'} {formatPeso(totalDeposits, 0)} in
+                  </span>
+                  <span style={{ color: '#f87171' }}>
+                    {'\u2193'} {formatPeso(totalWithdrawals, 0)} out
+                  </span>
+                </div>
 
-        {/* Thank You Roll Credits */}
-        {donors.length > 0 && (
-          <div className="thank-you-section">
-            <h3 className="thank-you-title">Thank You for Your Contributions!</h3>
-            <div className="credits-container">
-              <div className="credits-scroll">
-                {/* Duplicate the list for seamless loop */}
-                {[...donors, ...donors].map((name, index) => (
-                  <p key={index} className="donor-name" style={{ textTransform: 'uppercase' }}>{name}</p>
-                ))}
-              </div>
-            </div>
+                <p className="funds-date">
+                  Last updated: {lastUpdated ? lastUpdated.toLocaleTimeString('en-PH', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                  }) : '-'}
+                  <span style={{ marginLeft: '8px', fontSize: '0.8rem', opacity: 0.7 }}>
+                    (auto-refreshes every 30s)
+                  </span>
+                </p>
+              </>
+            )}
           </div>
-        )}
 
-        {/* How to Donate */}
-        <div style={{ marginBottom: '32px' }}>
-          <h3 style={{ textAlign: 'center', marginBottom: '20px' }} className="donate-heading">
-            How to Donate
-          </h3>
-
+          {/* CTA: Go to Contribution Plan */}
           <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-            gap: '20px'
+            textAlign: 'center',
+            margin: '32px 0'
           }}>
-            {/* Bank Transfer <div className="donate-card">
-              <h4 className="donate-card-title">Bank Transfer</h4>
-              <div className="donate-card-content">
-                <p className="donate-bank-name">PNB (Philippine National Bank)</p>
-                <p className="donate-label">Account Number</p>
-                <p className="donate-value">307770014898</p>
-                
-                <p className="donate-label" style={{ marginTop: '16px' }}>Account Name(s)</p>
-                <p className="donate-value">NARCISO F. JAVELOSA or</p>
-                <p className="donate-value">MARY ROSE FRANCES M. UY</p>
-              </div>
-            </div> */}
-            
-
-            {/* GCash */}
-            <div className="donate-card">
-              <h4 className="donate-card-title">GCash</h4>
-              <div className="donate-card-content">
-                <p className="donate-label">Account Name</p>
-                <p className="donate-value">[Name]</p>
-                
-                <p className="donate-label" style={{ marginTop: '16px' }}>Mobile Number</p>
-                <p className="donate-value">0917-XXX-XXXX</p>
-              </div>
-              {/* Placeholder for QR code */}
-              <div style={{
-                width: '120px',
-                height: '120px',
-                background: '#f0f0f0',
-                margin: '16px auto 0',
-                borderRadius: '8px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#999',
-                fontSize: '0.8rem'
-              }}>
-                QR Code
-              </div>
-            </div>
+            <button
+              onClick={() => navigate('/profile-preview')}
+              className="funds-cta-btn"
+            >
+              View Contribution Plan & Choose Your Tier
+            </button>
+            <p style={{
+              fontSize: '0.82rem',
+              color: 'var(--color-text-secondary)',
+              marginTop: '8px'
+            }}>
+              Pick your Builder tier, see the breakdown, and commit — all from your profile.
+            </p>
           </div>
 
-          {/* International Transfers - Separate Section */}
-          <div className="intl-transfers-card">
-            <h4 className="intl-transfers-header">For International Transfers</h4>
-            <div className="intl-transfers-content">
-              <div className="intl-branch-info">
-                <p className="intl-branch-name">PNB Bacolod Lacson Branch</p>
-                <p className="intl-branch-address">
-                  10th Lacson Street<br/>
-                  Bacolod City, Negros Occidental 6100
-                </p>
-                <p className="intl-branch-tel">Tel: (63) (034) 432-0605 / 434-8007</p>
+          {/* Payment Methods */}
+          <div style={{ marginBottom: '32px' }}>
+            <h3 className="donate-heading">Payment Methods</h3>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: '20px'
+            }}>
+              {/* Bank Deposit */}
+              <div className="donate-card">
+                <h4 className="donate-card-title">Bank Deposit</h4>
+                <div className="donate-card-content">
+                  <p className="donate-label">Bank</p>
+                  <p className="donate-value">Philippine National Bank (PNB)</p>
+
+                  <p className="donate-label" style={{ marginTop: '16px' }}>Account Names</p>
+                  <p className="donate-value">Narciso Javelosa III or Mary Rose Frances Uy</p>
+
+                  <p className="donate-label" style={{ marginTop: '16px' }}>Account Number</p>
+                  <p className="donate-value">307770014898</p>
+                </div>
               </div>
-              <div className="intl-codes">
-                <div className="intl-row">
-                  <span className="intl-label">SWIFT Code</span>
-                  <span className="intl-value">PNBMPHMM</span>
-                </div>
-                <div className="intl-row">
-                  <span className="intl-label">Routing No.</span>
-                  <span className="intl-value">040080019</span>
-                </div>
-                <div className="intl-row">
-                  <span className="intl-label">Email</span>
-                  <span className="intl-value intl-email">bacolod_lacson@pnb.com.ph</span>
-                </div>
-                <div className="intl-row">
-                  <span className="intl-label">Website</span>
-                  <span className="intl-value intl-email">pnb.com.ph</span>
+
+              {/* International Transfers */}
+              <div className="donate-card">
+                <h4 className="donate-card-title">International Transfers (SWIFT)</h4>
+                <div className="donate-card-content">
+                  <p className="donate-label">Bank</p>
+                  <p className="donate-value">PNB Bacolod Lacson Branch</p>
+
+                  <p className="donate-label" style={{ marginTop: '12px' }}>Address</p>
+                  <p className="donate-value">10th Lacson Street, Bacolod City, Negros Occidental 6100</p>
+
+                  <p className="donate-label" style={{ marginTop: '12px' }}>Tel</p>
+                  <p className="donate-value">(63) (034) 432-0605 / 434-8007</p>
+
+                  <p className="donate-label" style={{ marginTop: '12px' }}>SWIFT Code</p>
+                  <p className="donate-value">PNBMPHMM</p>
+
+                  <p className="donate-label" style={{ marginTop: '12px' }}>Routing No</p>
+                  <p className="donate-value">040080019</p>
+
+                  <p className="donate-label" style={{ marginTop: '12px' }}>Email</p>
+                  <p className="donate-value">bacolod_lacson@pnb.com.ph</p>
                 </div>
               </div>
             </div>
-            <p className="intl-note">Transfer fees and applicable taxes are shouldered by sender.</p>
+
+            <p className="receipt-note" style={{ marginTop: '16px' }}>
+              <strong>Important:</strong> After making a payment, upload your receipt on your profile page. The committee will verify and credit your account within 48 hours. Include your full name in the transfer reference for faster processing.
+            </p>
+            <p className="receipt-note" style={{ marginTop: '8px', opacity: 0.7 }}>
+              Transfer fees and applicable taxes are shouldered by sender.
+            </p>
           </div>
 
-          <p className="receipt-note">
-            Please send a screenshot of your receipt to{' '}
-            <a href="mailto:uslsis.batch2003@gmail.com">uslsis.batch2003@gmail.com</a>
-            {' '}for confirmation.
-          </p>
-        </div>
-
-        {/* Cost Transparency */}
-        <div style={{ marginBottom: '32px' }}>
-          <h3 className="budget-heading">
-            25th Alumni Homecoming (2028)
-          </h3>
-          <p className="budget-target">
-            Target Budget: {formatPeso(1700000, 0)}
-          </p>
-          <p className="budget-description">
-            This budget prioritizes alumni participation, fair compensation, and a well-run milestone event held on school grounds.
-          </p>
-          
-          <div className="budget-container">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {/* Food & Catering */}
-              <div className="budget-row-with-desc">
-                <div className="budget-row">
-                  <span className="budget-label">Food & Catering</span>
-                  <span className="budget-amount">{formatPeso(680000, 0)}</span>
+          {/* Thank You Roll Credits */}
+          {donors.length > 0 && (
+            <div className="thank-you-section">
+              <h3 className="thank-you-title">Golden Batch Builders</h3>
+              <div className="credits-container">
+                <div className="credits-scroll">
+                  {[...donors, ...donors].map((name, index) => (
+                    <p key={index} className="donor-name">{name}</p>
+                  ))}
                 </div>
-                <p className="budget-desc">Meals, service staff, and logistics. Alumni-owned suppliers prioritized.</p>
-              </div>
-              
-              {/* Event Infrastructure */}
-              <div className="budget-row-with-desc">
-                <div className="budget-row">
-                  <span className="budget-label">Event Infrastructure</span>
-                  <span className="budget-amount">{formatPeso(180000, 0)}</span>
-                </div>
-                <p className="budget-desc">Replaces venue rental. Ensures comfort, safety, and proper setup.</p>
-              </div>
-              
-              {/* Sound, Lights & Power */}
-              <div className="budget-row-with-desc">
-                <div className="budget-row">
-                  <span className="budget-label">Sound, Lights & Power</span>
-                  <span className="budget-amount">{formatPeso(185000, 0)}</span>
-                </div>
-                <p className="budget-desc">Professional audio, lighting, and power for programs and performances.</p>
-              </div>
-              
-              {/* Decorations & Anniversary Setup */}
-              <div className="budget-row-with-desc">
-                <div className="budget-row">
-                  <span className="budget-label">Decorations & Setup</span>
-                  <span className="budget-amount">{formatPeso(125000, 0)}</span>
-                </div>
-                <p className="budget-desc">25th-anniversary branding, backdrops, and memory elements.</p>
-              </div>
-              
-              {/* Photo & Video */}
-              <div className="budget-row-with-desc">
-                <div className="budget-row">
-                  <span className="budget-label">Photo & Video</span>
-                  <span className="budget-amount">{formatPeso(95000, 0)}</span>
-                </div>
-                <p className="budget-desc">Professional coverage to preserve and share memories.</p>
-              </div>
-              
-              {/* Tokens & Giveaways */}
-              <div className="budget-row-with-desc">
-                <div className="budget-row">
-                  <span className="budget-label">Tokens & Giveaways</span>
-                  <span className="budget-amount">{formatPeso(120000, 0)}</span>
-                </div>
-                <p className="budget-desc">Commemorative items for attendees, volunteers, and contributors.</p>
-              </div>
-              
-              {/* Program, Security & Operations */}
-              <div className="budget-row-with-desc">
-                <div className="budget-row">
-                  <span className="budget-label">Program & Operations</span>
-                  <span className="budget-amount">{formatPeso(145000, 0)}</span>
-                </div>
-                <p className="budget-desc">Hosts, performers, marshals, coordination, permits, volunteer meals.</p>
-              </div>
-              
-              {/* Contingency */}
-              <div className="budget-row-with-desc">
-                <div className="budget-row">
-                  <span className="budget-label">Contingency & Buffer</span>
-                  <span className="budget-amount">{formatPeso(170000, 0)}</span>
-                </div>
-                <p className="budget-desc">Reserved for weather, last-minute needs. Unused amount will be reported.</p>
-              </div>
-              
-              {/* Divider */}
-              <div className="budget-divider" />
-              
-              {/* Total */}
-              <div className="budget-row budget-total-row">
-                <span className="budget-total-label">Total Budget</span>
-                <span className="budget-total-amount">{formatPeso(1700000, 0)}</span>
               </div>
             </div>
+          )}
+
+          {/* Where Your Contribution Goes — Events Breakdown */}
+          <div style={{ marginBottom: '32px' }}>
+            <h3 className="budget-heading">Where Your Contribution Goes</h3>
+            <p className="budget-description">
+              Total plan supported by contributions and fundraising. {formatPeso(2100000, 0)} Full Batch Vision Target.
+            </p>
+
+            {/* Core Celebration — 80% */}
+            <div className="funds-alloc-group">
+              <div className="funds-alloc-section-label">Core Celebration</div>
+              <div className="funds-alloc-row">
+                <div className="funds-alloc-items">
+                  <div className="funds-alloc-item">
+                    <span className="funds-alloc-icon">🎉</span>
+                    <div className="funds-alloc-details">
+                      <div className="funds-alloc-name">Main Event</div>
+                      <div className="funds-alloc-desc">Primary celebration covering venue, catering, production, and full program execution.</div>
+                    </div>
+                    <span className="funds-alloc-pct">50%</span>
+                  </div>
+                  <div className="funds-alloc-item">
+                    <span className="funds-alloc-icon">🎓</span>
+                    <div className="funds-alloc-details">
+                      <div className="funds-alloc-name">Teachers' Dinner</div>
+                      <div className="funds-alloc-desc">A separate evening dedicated to the teachers who shaped us. Our way of saying thank you, long overdue.</div>
+                    </div>
+                    <span className="funds-alloc-pct">12%</span>
+                  </div>
+                  <div className="funds-alloc-item">
+                    <span className="funds-alloc-icon">👕</span>
+                    <div className="funds-alloc-details">
+                      <div className="funds-alloc-name">Merch & Commemorative Items</div>
+                      <div className="funds-alloc-desc">Every batchmate gets a shirt. Premium items sold separately help offset the cost.</div>
+                    </div>
+                    <span className="funds-alloc-pct">8%</span>
+                  </div>
+                  <div className="funds-alloc-item">
+                    <span className="funds-alloc-icon">💚</span>
+                    <div className="funds-alloc-details">
+                      <div className="funds-alloc-name">Charity / Giving Back</div>
+                      <div className="funds-alloc-desc">A portion of what we raise goes back to the school and its community.</div>
+                    </div>
+                    <span className="funds-alloc-pct">7%</span>
+                  </div>
+                  <div className="funds-alloc-item">
+                    <span className="funds-alloc-icon">🔒</span>
+                    <div className="funds-alloc-details">
+                      <div className="funds-alloc-name">Contingency & Buffer</div>
+                      <div className="funds-alloc-desc">Reserved buffer to protect the batch from unforeseen costs.</div>
+                    </div>
+                    <span className="funds-alloc-pct">3%</span>
+                  </div>
+                </div>
+                <div className="funds-alloc-big-pct">
+                  <div className="funds-alloc-big-num">80%</div>
+                  <div className="funds-alloc-big-label">of total batch vision</div>
+                </div>
+              </div>
+              <div className="funds-alloc-note">
+                <div className="funds-alloc-bar"><div className="funds-alloc-bar-fill green" style={{ width: '80%' }} /></div>
+                80% of our total plan funds the core celebration — the Main Event, Teachers' Dinner, and commemorative items.
+              </div>
+            </div>
+
+            {/* Fundraising Initiatives — 20% */}
+            <div className="funds-alloc-group">
+              <div className="funds-alloc-section-label gold">Fundraising Initiatives</div>
+              <div className="funds-alloc-row">
+                <div className="funds-alloc-items">
+                  <div className="funds-alloc-item">
+                    <span className="funds-alloc-icon">⛳</span>
+                    <div className="funds-alloc-details">
+                      <div className="funds-alloc-name">La Sallian Golf</div>
+                      <div className="funds-alloc-desc">A 2-day event at Negros Occidental Golf & Country Club bringing La Sallians together from across the nation.</div>
+                    </div>
+                    <span className="funds-alloc-pct gold">10%</span>
+                  </div>
+                  <div className="funds-alloc-item">
+                    <span className="funds-alloc-icon">🏃</span>
+                    <div className="funds-alloc-details">
+                      <div className="funds-alloc-name">La Sallian Run</div>
+                      <div className="funds-alloc-desc">A tradition started by our own peers, held first quarter of 2028.</div>
+                    </div>
+                    <span className="funds-alloc-pct gold">6%</span>
+                  </div>
+                  <div className="funds-alloc-item">
+                    <span className="funds-alloc-icon">⚽</span>
+                    <div className="funds-alloc-details">
+                      <div className="funds-alloc-name">In Memoriam Football Cup</div>
+                      <div className="funds-alloc-desc">A tribute to the batchmates we've lost, played in their honor.</div>
+                    </div>
+                    <span className="funds-alloc-pct gold">4%</span>
+                  </div>
+                </div>
+                <div className="funds-alloc-big-pct gold-block">
+                  <div className="funds-alloc-big-num gold">20%</div>
+                  <div className="funds-alloc-big-label">revenue initiative</div>
+                </div>
+              </div>
+              <div className="funds-alloc-note">
+                <div className="funds-alloc-bar"><div className="funds-alloc-bar-fill gold" style={{ width: '20%' }} /></div>
+                Upfront operating allocation. Designed to generate sponsorship and entry-fee returns to support the overall fund.
+              </div>
+            </div>
+
+            <p className="budget-footnote" style={{ marginTop: '16px' }}>
+              Note on fundraising events: The percentages shown reflect gross allocation, not net cost. Any returns generated go back into the overall fund.
+            </p>
           </div>
-          
-          <p className="budget-footnote">
-            * Estimates subject to change. Full accounting will be shared after the event.
-          </p>
-        </div>
 
         </div>
       </main>
