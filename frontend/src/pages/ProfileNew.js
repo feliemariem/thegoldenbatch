@@ -795,7 +795,11 @@ END:VCALENDAR`;
                               </span>
                             </div>
                             <span className={`receipt-status-badge ${receipt.status}`}>
-                              {receipt.status === 'submitted' ? 'Submitted' : 'Processed'}
+                              {receipt.status === 'submitted'
+                                ? 'Submitted'
+                                : receipt.status === 'verified'
+                                  ? 'Verified'
+                                  : 'Pending Verification'}
                             </span>
                             {receipt.ledger_id && (
                               <span className={`receipt-verified-badge ${receipt.ledger_status === 'OK' ? 'verified' : 'pending'}`}>

@@ -430,6 +430,15 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
       return res.status(404).json({ error: 'Transaction not found' });
     }
 
+    // Update linked receipt status based on verified field
+    if (verified) {
+      const newReceiptStatus = verified === 'OK' ? 'verified' : 'pending_verification';
+      await db.query(
+        `UPDATE receipt_uploads SET status = $1 WHERE ledger_id = $2`,
+        [newReceiptStatus, id]
+      );
+    }
+
     res.json(result.rows[0]);
   } catch (err) {
     console.error(err);

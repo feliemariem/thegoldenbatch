@@ -140,7 +140,8 @@ router.get('/admin/inbox', authenticateAdmin, async (req, res) => {
     if (status === 'submitted') {
       whereClause = "WHERE r.status = 'submitted'";
     } else if (status === 'processed') {
-      whereClause = "WHERE r.status = 'processed'";
+      // 'processed' tab shows both pending_verification and verified receipts
+      whereClause = "WHERE r.status IN ('pending_verification', 'verified')";
     }
     // If 'all', no WHERE clause
 
@@ -175,7 +176,7 @@ router.put('/admin/:id/mark-processed', authenticateAdmin, async (req, res) => {
 
     const result = await db.query(
       `UPDATE receipt_uploads
-       SET status = 'processed', is_duplicate = $1, processed_by = $2, processed_at = NOW()
+       SET status = 'pending_verification', is_duplicate = $1, processed_by = $2, processed_at = NOW()
        WHERE id = $3
        RETURNING *`,
       [is_duplicate || false, req.user.id, id]
@@ -204,7 +205,7 @@ router.put('/admin/:id/link-ledger', authenticateAdmin, async (req, res) => {
 
     const result = await db.query(
       `UPDATE receipt_uploads
-       SET status = 'processed', ledger_id = $1, processed_by = $2, processed_at = NOW()
+       SET status = 'pending_verification', ledger_id = $1, processed_by = $2, processed_at = NOW()
        WHERE id = $3
        RETURNING *`,
       [ledger_id, req.user.id, id]
@@ -248,7 +249,7 @@ router.post('/admin/on-behalf', authenticateAdmin, upload.single('receipt'), asy
     // Insert receipt
     const result = await db.query(
       `INSERT INTO receipt_uploads (user_id, master_list_id, image_url, image_public_id, note, status, source, ledger_id, processed_by, processed_at)
-       VALUES ($1, $2, $3, $4, $5, 'processed', 'admin', $6, $7, NOW())
+       VALUES ($1, $2, $3, $4, $5, 'pending_verification', 'admin', $6, $7, NOW())
        RETURNING *`,
       [userId, master_list_id, uploadResult.secure_url, uploadResult.public_id, note || null, ledger_id || null, req.user.id]
     );

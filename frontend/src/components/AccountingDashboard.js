@@ -1141,10 +1141,22 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
                           borderRadius: '4px',
                           fontSize: '0.8rem',
                           fontWeight: '500',
-                          background: receipt.status === 'submitted' ? 'rgba(251, 191, 36, 0.2)' : 'rgba(74, 222, 128, 0.2)',
-                          color: receipt.status === 'submitted' ? '#fbbf24' : '#4ade80'
+                          background: receipt.status === 'submitted'
+                            ? 'rgba(251, 191, 36, 0.2)'
+                            : receipt.status === 'verified'
+                              ? 'rgba(74, 222, 128, 0.2)'
+                              : 'rgba(251, 191, 36, 0.2)',
+                          color: receipt.status === 'submitted'
+                            ? '#fbbf24'
+                            : receipt.status === 'verified'
+                              ? '#4ade80'
+                              : '#fbbf24'
                         }}>
-                          {receipt.status === 'submitted' ? 'Submitted' : 'Processed'}
+                          {receipt.status === 'submitted'
+                            ? 'Submitted'
+                            : receipt.status === 'verified'
+                              ? 'Verified'
+                              : 'Pending Verification'}
                         </span>
                       </td>
                       <td>
