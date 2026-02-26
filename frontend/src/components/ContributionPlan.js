@@ -1,6 +1,73 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { apiPut, apiGet } from '../api';
 import '../styles/contributionPlan.css';
+
+// Currency data grouped by region
+const CURRENCY_GROUPS = [
+  {
+    region: 'Asia-Pacific',
+    currencies: [
+      { code: 'PHP', name: 'Philippine Peso', symbol: '₱' },
+      { code: 'JPY', name: 'Japanese Yen', symbol: '¥' },
+      { code: 'KRW', name: 'South Korean Won', symbol: '₩' },
+      { code: 'SGD', name: 'Singapore Dollar', symbol: 'S$' },
+      { code: 'HKD', name: 'Hong Kong Dollar', symbol: 'HK$' },
+      { code: 'TWD', name: 'Taiwan Dollar', symbol: 'NT$' },
+      { code: 'CNY', name: 'Chinese Yuan', symbol: '¥' },
+      { code: 'INR', name: 'Indian Rupee', symbol: '₹' },
+      { code: 'THB', name: 'Thai Baht', symbol: '฿' },
+      { code: 'MYR', name: 'Malaysian Ringgit', symbol: 'RM' },
+      { code: 'IDR', name: 'Indonesian Rupiah', symbol: 'Rp' },
+      { code: 'VND', name: 'Vietnamese Dong', symbol: '₫' },
+      { code: 'AUD', name: 'Australian Dollar', symbol: 'A$' },
+      { code: 'NZD', name: 'New Zealand Dollar', symbol: 'NZ$' }
+    ]
+  },
+  {
+    region: 'Middle East',
+    currencies: [
+      { code: 'AED', name: 'UAE Dirham', symbol: 'د.إ' },
+      { code: 'SAR', name: 'Saudi Riyal', symbol: '﷼' },
+      { code: 'QAR', name: 'Qatari Riyal', symbol: 'ر.ق' },
+      { code: 'KWD', name: 'Kuwaiti Dinar', symbol: 'د.ك' },
+      { code: 'BHD', name: 'Bahraini Dinar', symbol: '.د.ب' },
+      { code: 'OMR', name: 'Omani Rial', symbol: 'ر.ع.' }
+    ]
+  },
+  {
+    region: 'Europe',
+    currencies: [
+      { code: 'EUR', name: 'Euro', symbol: '€' },
+      { code: 'GBP', name: 'British Pound', symbol: '£' },
+      { code: 'CHF', name: 'Swiss Franc', symbol: 'CHF' },
+      { code: 'SEK', name: 'Swedish Krona', symbol: 'kr' },
+      { code: 'NOK', name: 'Norwegian Krone', symbol: 'kr' },
+      { code: 'DKK', name: 'Danish Krone', symbol: 'kr' }
+    ]
+  },
+  {
+    region: 'Americas',
+    currencies: [
+      { code: 'USD', name: 'US Dollar', symbol: '$' },
+      { code: 'CAD', name: 'Canadian Dollar', symbol: 'C$' },
+      { code: 'MXN', name: 'Mexican Peso', symbol: '$' },
+      { code: 'BRL', name: 'Brazilian Real', symbol: 'R$' },
+      { code: 'ARS', name: 'Argentine Peso', symbol: '$' }
+    ]
+  },
+  {
+    region: 'Africa',
+    currencies: [
+      { code: 'ZAR', name: 'South African Rand', symbol: 'R' },
+      { code: 'NGN', name: 'Nigerian Naira', symbol: '₦' },
+      { code: 'EGP', name: 'Egyptian Pound', symbol: 'E£' },
+      { code: 'KES', name: 'Kenyan Shilling', symbol: 'KSh' }
+    ]
+  }
+];
+
+// Flatten currencies for easy lookup
+const ALL_CURRENCIES = CURRENCY_GROUPS.flatMap(g => g.currencies);
 
 const TIERS = {
   cornerstone: { label: 'Cornerstone', min: 25000, max: null },
@@ -32,6 +99,15 @@ function formatNumber(num) {
   return num.toLocaleString();
 }
 
+// Format currency with proper symbol and 2 decimal places
+function formatCurrency(amount, currencyCode, rates) {
+  if (!rates || !rates[currencyCode]) return null;
+  const converted = amount * rates[currencyCode];
+  const currency = ALL_CURRENCIES.find(c => c.code === currencyCode);
+  const symbol = currency ? currency.symbol : currencyCode;
+  return `${symbol}${converted.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
 export default function ContributionPlan({ isOpen, onClose, onTierSaved, currentTier, currentPledge, user }) {
   const [selectedTier, setSelectedTier] = useState(null);
   const [pledgeAmount, setPledgeAmount] = useState('');
@@ -39,6 +115,39 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [batchProgress, setBatchProgress] = useState({ total_raised: 0, builder_count: 0, goal: 2100000 });
+  const [selectedCurrency, setSelectedCurrency] = useState('PHP');
+  const [exchangeRates, setExchangeRates] = useState(null);
+  const [ratesLoading, setRatesLoading] = useState(false);
+  const exchangeRatesCache = useRef(null);
+
+  // Fetch exchange rates (cached)
+  useEffect(() => {
+    const fetchRates = async () => {
+      // Use cached rates if available
+      if (exchangeRatesCache.current) {
+        setExchangeRates(exchangeRatesCache.current);
+        return;
+      }
+
+      setRatesLoading(true);
+      try {
+        const response = await fetch('https://open.er-api.com/v6/latest/PHP');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.result === 'success') {
+            exchangeRatesCache.current = data.rates;
+            setExchangeRates(data.rates);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch exchange rates:', err);
+      } finally {
+        setRatesLoading(false);
+      }
+    };
+
+    if (isOpen) fetchRates();
+  }, [isOpen]);
 
   // Fetch batch progress
   useEffect(() => {
@@ -443,18 +552,52 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
                     {/* Dynamic breakdown */}
                     {amount > 0 && (
                       <div className="cp-pledge-breakdown visible">
-                        <div className="cp-pledge-breakdown-title">Your contribution breakdown</div>
+                        <div className="cp-breakdown-header">
+                          <div className="cp-pledge-breakdown-title">Your contribution breakdown</div>
+                          <div className="cp-currency-selector">
+                            <select
+                              value={selectedCurrency}
+                              onChange={(e) => setSelectedCurrency(e.target.value)}
+                              className="cp-currency-dropdown"
+                            >
+                              {CURRENCY_GROUPS.map(group => (
+                                <optgroup key={group.region} label={group.region}>
+                                  {group.currencies.map(currency => (
+                                    <option key={currency.code} value={currency.code}>
+                                      {currency.code} — {currency.name}
+                                    </option>
+                                  ))}
+                                </optgroup>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
                         <div className="cp-breakdown-grid">
                           <div className="cp-breakdown-item">
                             <div className="cp-breakdown-value">₱{formatNumber(monthly)}</div>
+                            {selectedCurrency !== 'PHP' && exchangeRates && (
+                              <div className="cp-breakdown-converted">
+                                {ratesLoading ? '...' : formatCurrency(monthly, selectedCurrency, exchangeRates)}
+                              </div>
+                            )}
                             <div className="cp-breakdown-label">per month</div>
                           </div>
                           <div className="cp-breakdown-item">
                             <div className="cp-breakdown-value">₱{formatNumber(weekly)}</div>
+                            {selectedCurrency !== 'PHP' && exchangeRates && (
+                              <div className="cp-breakdown-converted">
+                                {ratesLoading ? '...' : formatCurrency(weekly, selectedCurrency, exchangeRates)}
+                              </div>
+                            )}
                             <div className="cp-breakdown-label">per week</div>
                           </div>
                           <div className="cp-breakdown-item">
                             <div className="cp-breakdown-value">₱{formatNumber(daily)}</div>
+                            {selectedCurrency !== 'PHP' && exchangeRates && (
+                              <div className="cp-breakdown-converted">
+                                {ratesLoading ? '...' : formatCurrency(daily, selectedCurrency, exchangeRates)}
+                              </div>
+                            )}
                             <div className="cp-breakdown-label">per day</div>
                           </div>
                         </div>
@@ -462,6 +605,11 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
                           <strong>₱{formatNumber(amount)}</strong> over <strong>{months} months</strong> remaining
                           <br/>{getStartLabel()} — December 2028
                         </div>
+                        {selectedCurrency !== 'PHP' && exchangeRates && (
+                          <div className="cp-exchange-disclaimer">
+                            Exchange rates are approximate and sourced from Open Exchange Rates. Actual rates at time of transfer may vary.
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>

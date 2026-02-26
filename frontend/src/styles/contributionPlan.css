@@ -870,6 +870,74 @@
   font-weight: 700;
 }
 
+/* Currency Converter */
+.cp-breakdown-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  gap: 12px;
+}
+
+.cp-currency-selector {
+  flex-shrink: 0;
+}
+
+.cp-currency-dropdown {
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  background: #f5f5f5;
+  border: 1px solid var(--cp-line);
+  border-radius: 6px;
+  color: var(--cp-dark-green);
+  cursor: pointer;
+  min-width: 140px;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23006633' d='M3 5l3 3 3-3H3z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  padding-right: 26px;
+}
+
+.cp-currency-dropdown:hover {
+  border-color: var(--cp-green);
+}
+
+.cp-currency-dropdown:focus {
+  outline: none;
+  border-color: var(--cp-green);
+  box-shadow: 0 0 0 2px rgba(0, 102, 51, 0.1);
+}
+
+.cp-currency-dropdown optgroup {
+  font-weight: 600;
+  color: var(--cp-green);
+}
+
+.cp-currency-dropdown option {
+  font-weight: 400;
+  color: var(--cp-dark-green);
+  padding: 4px 0;
+}
+
+.cp-breakdown-converted {
+  font-size: 12px;
+  color: var(--cp-gold);
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.cp-exchange-disclaimer {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 10px;
+  color: var(--cp-light-gray);
+  font-style: italic;
+  line-height: 1.4;
+  padding: 0 8px;
+}
+
 .cp-pledge-error {
   font-size: 11px;
   color: var(--cp-danger);
@@ -1563,6 +1631,41 @@ body[data-theme="dark"] .cp-breakdown-remaining {
 
 body[data-theme="dark"] .cp-breakdown-remaining strong {
   color: var(--cp-gold);
+}
+
+/* Currency Converter - Dark Mode */
+body[data-theme="dark"] .cp-currency-dropdown {
+  background: rgba(30, 40, 35, 0.8);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23cfb53b' d='M3 5l3 3 3-3H3z'/%3E%3C/svg%3E");
+}
+
+body[data-theme="dark"] .cp-currency-dropdown:hover {
+  border-color: var(--cp-gold);
+}
+
+body[data-theme="dark"] .cp-currency-dropdown:focus {
+  border-color: var(--cp-gold);
+  box-shadow: 0 0 0 2px rgba(207, 181, 59, 0.2);
+}
+
+body[data-theme="dark"] .cp-currency-dropdown optgroup {
+  background: #1a2520;
+  color: var(--cp-gold);
+}
+
+body[data-theme="dark"] .cp-currency-dropdown option {
+  background: #1a2520;
+  color: #ffffff;
+}
+
+body[data-theme="dark"] .cp-breakdown-converted {
+  color: #8bc34a;
+}
+
+body[data-theme="dark"] .cp-exchange-disclaimer {
+  color: #888888;
 }
 
 /* Payment Methods */
