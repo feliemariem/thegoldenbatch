@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import PreviewInbox from './PreviewInbox';
+import PreviewNonGradProfile from './PreviewNonGradProfile';
 
 /**
  * SystemTest - Super Admin testing panel
@@ -14,8 +15,7 @@ export default function SystemTest() {
 
   const features = [
     { id: 'inbox-preview', label: 'User Inbox Preview', description: 'Preview what any user sees in their inbox' },
-    // Add more test features here as needed:
-    // { id: 'feature-id', label: 'Feature Name', description: 'Feature description' },
+    { id: 'nongrad-preview', label: 'Non-Grad Profile Preview', description: 'Preview what non-graduate users see on their profile' },
   ];
 
   return (
@@ -84,6 +84,10 @@ export default function SystemTest() {
       {/* Feature Content */}
       {activeFeature === 'inbox-preview' && (
         <PreviewInbox />
+      )}
+
+      {activeFeature === 'nongrad-preview' && (
+        <PreviewNonGradProfile />
       )}
 
       {/* Placeholder for future features */}
