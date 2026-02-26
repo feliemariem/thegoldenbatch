@@ -4,6 +4,26 @@ const db = require('../db');
 const { authenticateAdmin } = require('../middleware/auth');
 const { upload, uploadToCloudinary, deleteFromCloudinary } = require('../utils/cloudinary');
 
+// Helper function to normalize reference numbers for duplicate detection
+// Strips non-alphanumeric chars, uppercases, removes common prefixes
+function normalizeRefNo(ref) {
+  if (!ref) return null;
+
+  // Strip all non-alphanumeric characters and convert to uppercase
+  let normalized = ref.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+
+  // Remove common prefixes (order matters - check longer prefixes first)
+  const prefixes = ['REFNO', 'REF'];
+  for (const prefix of prefixes) {
+    if (normalized.startsWith(prefix)) {
+      normalized = normalized.slice(prefix.length);
+      break;
+    }
+  }
+
+  return normalized || null;
+}
+
 // =============================================================================
 // IMPORTANT: Route order matters in Express! Specific routes MUST come before
 // dynamic /:id routes, otherwise Express will match /balance as /:id with id="balance"
