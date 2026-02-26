@@ -1283,6 +1283,154 @@
     font-style: italic;
     text-align: center;
   }
+
+  /* ═══════════════════════════════════════
+     MOBILE RESPONSIVE — comprehensive
+     ═══════════════════════════════════════ */
+  @media (max-width: 600px) {
+    /* Layout */
+    .container { padding: 0 16px; }
+    section { margin: 28px 0; }
+
+    /* Header */
+    .page-header { padding: 32px 0 28px; }
+    .header-title { font-size: 1.3rem; }
+    .header-target-amount { font-size: 1.8rem; }
+    .header-right { text-align: left; }
+    .header-pills { gap: 6px; }
+    .header-pill { font-size: 0.65rem; padding: 3px 10px; }
+
+    /* Confidential Banner */
+    .conf-banner { font-size: 0.78rem; padding: 12px 14px; }
+
+    /* TOC */
+    .toc { gap: 4px; }
+    .toc a { font-size: 0.7rem; padding: 4px 10px; }
+
+    /* Sections */
+    .section-title { font-size: 1.2rem; }
+    .section-subtitle { font-size: 0.82rem; }
+
+    /* Letter */
+    .letter { padding: 20px; }
+    .letter p { font-size: 0.85rem; }
+
+    /* Dual columns */
+    .dual-col { grid-template-columns: 1fr; }
+    .dual-card { padding: 18px; }
+
+    /* Cards */
+    .card { padding: 18px; }
+
+    /* Tier cards */
+    .tier-cards { grid-template-columns: 1fr; gap: 12px; }
+    .tier-card { padding: 18px; }
+    .tier-card-amount { font-size: 1.1rem; }
+    .tier-card-internal { font-size: 0.75rem; }
+
+    /* Allocation */
+    .alloc-group { padding: 18px; }
+    .alloc-row { flex-direction: column; gap: 16px; }
+    .alloc-big-pct-block {
+      width: 100%;
+      flex-direction: row;
+      gap: 12px;
+      padding: 16px;
+    }
+    .alloc-big-pct { font-size: 2rem; }
+    .alloc-icon { font-size: 1.2rem; }
+    .alloc-name { font-size: 0.85rem; }
+    .alloc-desc { font-size: 0.78rem; }
+
+    /* Recognition table */
+    .recog-table { font-size: 0.7rem; }
+    .recog-table th { padding: 8px 6px; font-size: 0.65rem; }
+    .recog-table td { padding: 8px 6px; }
+    .recog-table .detail { font-size: 0.65rem; }
+
+    /* Mockups */
+    .mockups-grid { grid-template-columns: 1fr; }
+    .mock-wall { padding: 28px 18px; }
+    .mock-wall-title { font-size: 1rem; }
+    .mock-wall-names { font-size: 0.72rem; }
+    .mock-wall-names.cornerstone-names { font-size: 0.78rem; }
+    .mock-souvenir { padding: 24px 18px; }
+    .mock-website { padding: 24px 18px; }
+    .mock-stage { padding: 24px 18px; }
+    .mock-stage-name { font-size: 1.2rem; }
+    .mock-plaque { padding: 32px 20px; }
+
+    /* Scenario Engine */
+    .scenario-engine { padding: 24px 18px; }
+    .scenario-title { font-size: 1.1rem; }
+    .slider-grid { grid-template-columns: 1fr; gap: 16px; }
+    .results-grid { grid-template-columns: 1fr; gap: 10px; }
+    .result-value { font-size: 1.3rem; }
+    .breakdown-table { font-size: 0.75rem; }
+    .breakdown-table th { padding: 6px 8px; font-size: 0.68rem; }
+    .breakdown-table td { padding: 6px 8px; }
+    .scenario-bar-marker-label { font-size: 0.58rem; }
+    .preset-bar { gap: 6px; }
+    .preset-btn { font-size: 0.72rem; padding: 5px 10px; }
+    .verdict { font-size: 0.82rem; padding: 14px 16px; }
+
+    /* Pressure Test */
+    .pressure-test { padding: 24px 18px; }
+
+    /* Callouts */
+    .callout { padding: 16px 18px; font-size: 0.82rem; }
+
+    /* Expectations grid */
+    .expect-grid { grid-template-columns: 1fr; }
+    .expect-key {
+      border-bottom: none;
+      padding-bottom: 2px;
+    }
+    .expect-val {
+      padding-top: 0;
+      margin-bottom: 12px;
+    }
+
+    /* Non-negotiable */
+    .non-neg { padding: 20px; }
+    .non-neg-title { font-size: 1rem; }
+
+    /* Tier table (if still used anywhere) */
+    .tier-table { font-size: 0.75rem; }
+    .tier-table th { padding: 8px 10px; font-size: 0.68rem; }
+    .tier-table td { padding: 8px 10px; }
+
+    /* Divider */
+    .divider { margin: 28px 0; }
+  }
+
+  /* Slightly larger phones / small tablets */
+  @media (max-width: 768px) and (min-width: 601px) {
+    .header-target-amount { font-size: 2rem; }
+    .slider-grid { grid-template-columns: 1fr 1fr; }
+    .mockups-grid { grid-template-columns: 1fr; }
+    .alloc-row { flex-direction: column; }
+    .alloc-big-pct-block {
+      width: 100%;
+      flex-direction: row;
+      gap: 12px;
+      padding: 16px;
+    }
+    .expect-grid { grid-template-columns: 140px 1fr; }
+  }
+
+  /* Touch-friendly sliders */
+  @media (pointer: coarse) {
+    input[type="range"] { height: 8px; }
+    input[type="range"]::-webkit-slider-thumb {
+      width: 28px;
+      height: 28px;
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 28px;
+      height: 28px;
+    }
+  }
 </style>
 </head>
 <body>
