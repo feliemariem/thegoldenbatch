@@ -60,23 +60,54 @@ router.get('/', authenticateAdmin, async (req, res) => {
 
     const whereClause = conditions.length > 0 ? ` WHERE ${conditions.join(' AND ')}` : '';
 
-    // First, get ALL transactions (unfiltered) to calculate running balance correctly
+    // First, get ALL transactions with master_list info to calculate running balances and payment types
     const allTransactionsResult = await db.query(
-      `SELECT l.id, l.deposit, l.withdrawal, l.verified
+      `SELECT l.id, l.deposit, l.withdrawal, l.verified, l.master_list_id,
+              m.pledge_amount, m.builder_tier
        FROM ledger l
+       LEFT JOIN master_list m ON l.master_list_id = m.id
        ORDER BY l.transaction_date ASC, l.created_at ASC`
     );
 
-    // Calculate running balance for all transactions
+    // Calculate running balance for all transactions AND running deposit totals per master_list_id
     let runningBalance = 0;
     const balanceMap = new Map();
+    const masterListRunningTotals = new Map(); // master_list_id -> running total of verified deposits
+    const paymentTypeMap = new Map(); // transaction id -> calculated payment_type
+
     allTransactionsResult.rows.forEach(row => {
       const deposit = parseFloat(row.deposit) || 0;
       const withdrawal = parseFloat(row.withdrawal) || 0;
-      if (row.verified === 'OK') {
+      const isVerified = row.verified === 'OK';
+
+      if (isVerified) {
         runningBalance += deposit - withdrawal;
       }
       balanceMap.set(row.id, runningBalance);
+
+      // Calculate payment_type dynamically
+      // Default to 'One-Time' for: Root tier, non-grad, unlinked, no pledge, external sponsor, withdrawals
+      let calculatedPaymentType = 'One-Time';
+
+      if (row.master_list_id && deposit > 0 && isVerified) {
+        // Update running total of deposits for this master_list_id
+        const currentTotal = masterListRunningTotals.get(row.master_list_id) || 0;
+        const newTotal = currentTotal + deposit;
+        masterListRunningTotals.set(row.master_list_id, newTotal);
+
+        // Determine payment type based on running total vs pledge
+        const pledgeAmount = parseFloat(row.pledge_amount) || 0;
+        if (pledgeAmount > 0 && row.builder_tier && row.builder_tier !== 'root') {
+          if (newTotal >= pledgeAmount) {
+            calculatedPaymentType = 'Full';
+          } else {
+            calculatedPaymentType = 'Partial';
+          }
+        }
+        // else: stays 'One-Time' (Root tier, no pledge, etc.)
+      }
+
+      paymentTypeMap.set(row.id, calculatedPaymentType);
     });
 
     // Get paginated, filtered transactions
@@ -106,12 +137,13 @@ router.get('/', authenticateAdmin, async (req, res) => {
       [...params, limitNum, offset]
     );
 
-    // Attach running balance to each transaction
+    // Attach running balance and calculated payment_type to each transaction
     const transactions = result.rows.map(row => ({
       ...row,
       deposit: parseFloat(row.deposit) || null,
       withdrawal: parseFloat(row.withdrawal) || null,
-      balance: balanceMap.get(row.id) || 0
+      balance: balanceMap.get(row.id) || 0,
+      payment_type: paymentTypeMap.get(row.id) || 'One-Time'
     }));
 
     // Get total count for pagination
