@@ -101,13 +101,6 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
     fetchUnprocessedCount();
   }, []);
 
-  // Fetch inbox receipts when tab changes or filter changes
-  useEffect(() => {
-    if (activeTab === 'receipts') {
-      fetchInboxReceipts(inboxFilter);
-    }
-  }, [activeTab, inboxFilter, fetchInboxReceipts]);
-
   // Debounced search
   useEffect(() => {
     if (searchTimeoutRef.current) {
@@ -192,6 +185,13 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
       console.error('Failed to fetch unprocessed count');
     }
   }, []);
+
+  // Fetch inbox receipts when tab changes or filter changes
+  useEffect(() => {
+    if (activeTab === 'receipts') {
+      fetchInboxReceipts(inboxFilter);
+    }
+  }, [activeTab, inboxFilter, fetchInboxReceipts]);
 
   // Mark receipt as processed (for duplicates)
   const handleMarkProcessed = async (receiptId) => {
