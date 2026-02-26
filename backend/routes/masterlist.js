@@ -325,19 +325,39 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
       }
       validatedTier = builder_tier;
 
-      // Validate pledge_amount - only check minimum if amount is actually provided
-      if (builder_tier === 'root' || builder_tier === null) {
+      // Validate pledge_amount - only check range if amount is actually provided
+      if (builder_tier === 'root') {
+        // Root accepts any amount including null
+        if (pledge_amount !== undefined && pledge_amount !== null && pledge_amount !== '') {
+          const pledgeNum = parseFloat(pledge_amount);
+          if (isNaN(pledgeNum) || pledgeNum < 0) {
+            return res.status(400).json({ error: 'Invalid pledge amount' });
+          }
+          validatedPledge = pledgeNum;
+        } else {
+          validatedPledge = null;
+        }
+      } else if (builder_tier === null) {
         validatedPledge = null;
       } else if (pledge_amount !== undefined && pledge_amount !== null && pledge_amount !== '') {
         const pledgeNum = parseFloat(pledge_amount);
         if (isNaN(pledgeNum) || pledgeNum < 0) {
           return res.status(400).json({ error: 'Invalid pledge amount' });
         }
-        // Check minimum based on tier
-        const tierMinimums = { cornerstone: 50000, pillar: 35000, anchor: 25000 };
-        const minAmount = tierMinimums[builder_tier];
-        if (minAmount && pledgeNum < minAmount) {
-          return res.status(400).json({ error: `${builder_tier.charAt(0).toUpperCase() + builder_tier.slice(1)} tier requires minimum ₱${minAmount.toLocaleString()}` });
+        // Check range based on tier
+        const tierRanges = {
+          cornerstone: { min: 25000, max: null },
+          pillar: { min: 18000, max: 24000 },
+          anchor: { min: 10000, max: 17000 }
+        };
+        const range = tierRanges[builder_tier];
+        if (range) {
+          if (pledgeNum < range.min) {
+            return res.status(400).json({ error: `${builder_tier.charAt(0).toUpperCase() + builder_tier.slice(1)} tier requires minimum ₱${range.min.toLocaleString()}` });
+          }
+          if (range.max && pledgeNum > range.max) {
+            return res.status(400).json({ error: `${builder_tier.charAt(0).toUpperCase() + builder_tier.slice(1)} tier maximum is ₱${range.max.toLocaleString()}` });
+          }
         }
         validatedPledge = pledgeNum;
       } else {

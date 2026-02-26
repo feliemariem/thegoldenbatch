@@ -165,14 +165,42 @@ export default function MasterListTab({
     return tier.charAt(0).toUpperCase() + tier.slice(1);
   };
 
-  const getTierMinimum = (tier) => {
-    const minimums = { cornerstone: 50000, pillar: 35000, anchor: 25000 };
-    return minimums[tier] || null;
+  const getTierRange = (tier) => {
+    const ranges = {
+      cornerstone: { min: 25000, max: null, label: 'Min: ₱25,000' },
+      pillar: { min: 18000, max: 24000, label: '₱18,000 – ₱24,000' },
+      anchor: { min: 10000, max: 17000, label: '₱10,000 – ₱17,000' },
+      root: { min: null, max: null, label: 'Open amount' }
+    };
+    return ranges[tier] || null;
+  };
+
+  const getTierDefault = (tier) => {
+    const defaults = { cornerstone: 25000, pillar: 18000, anchor: 10000 };
+    return defaults[tier] || null;
   };
 
   const handleStartEditing = (entry) => {
     setEditingEntry(entry.id);
     setEditingTier(entry.builder_tier || '');
+  };
+
+  const handleTierChange = (e, entryId) => {
+    const newTier = e.target.value;
+    setEditingTier(newTier);
+
+    // Auto-fill default pledge amount when tier changes
+    const pledgeInput = document.getElementById(`edit-pledge-${entryId}`);
+    if (pledgeInput) {
+      if (newTier === 'root' || !newTier) {
+        pledgeInput.value = '';
+      } else {
+        const defaultAmount = getTierDefault(newTier);
+        if (defaultAmount && !pledgeInput.value) {
+          pledgeInput.value = defaultAmount;
+        }
+      }
+    }
   };
 
   const exportMasterListCSV = () => {
@@ -431,7 +459,7 @@ export default function MasterListTab({
                           {isSuperAdmin ? (
                             <select
                               value={editingTier}
-                              onChange={(e) => setEditingTier(e.target.value)}
+                              onChange={(e) => handleTierChange(e, entry.id)}
                               id={`edit-tier-${entry.id}`}
                               className="edit-tier-select"
                             >
@@ -452,13 +480,13 @@ export default function MasterListTab({
                                 type="number"
                                 defaultValue={entry.pledge_amount || ''}
                                 id={`edit-pledge-${entry.id}`}
-                                placeholder={editingTier === 'root' || !editingTier ? '-' : 'Optional'}
-                                disabled={editingTier === 'root' || !editingTier}
-                                className={`edit-pledge-input ${(editingTier === 'root' || !editingTier) ? 'disabled' : ''}`}
+                                placeholder={!editingTier ? '-' : 'Optional'}
+                                disabled={!editingTier}
+                                className={`edit-pledge-input ${!editingTier ? 'disabled' : ''}`}
                               />
-                              {getTierMinimum(editingTier) && (
+                              {getTierRange(editingTier) && (
                                 <span style={{ fontSize: '0.7rem', color: '#888' }}>
-                                  Min: ₱{getTierMinimum(editingTier).toLocaleString()}
+                                  {getTierRange(editingTier).label}
                                 </span>
                               )}
                             </div>
@@ -488,11 +516,17 @@ export default function MasterListTab({
                                     const pledgeValue = document.getElementById(`edit-pledge-${entry.id}`)?.value;
                                     const pledgeNum = pledgeValue ? parseFloat(pledgeValue) : null;
 
-                                    // Validate pledge minimum if amount is entered
-                                    const minAmount = getTierMinimum(editingTier);
-                                    if (pledgeNum && minAmount && pledgeNum < minAmount) {
-                                      alert(`${formatTierName(editingTier)} requires minimum ₱${minAmount.toLocaleString()}. Leave blank to let the member set their own amount.`);
-                                      return;
+                                    // Validate pledge range if amount is entered (skip for root tier)
+                                    const range = getTierRange(editingTier);
+                                    if (pledgeNum && range && editingTier !== 'root') {
+                                      if (range.min && pledgeNum < range.min) {
+                                        alert(`${formatTierName(editingTier)} requires minimum ₱${range.min.toLocaleString()}. Leave blank to let the member set their own amount.`);
+                                        return;
+                                      }
+                                      if (range.max && pledgeNum > range.max) {
+                                        alert(`${formatTierName(editingTier)} maximum is ₱${range.max.toLocaleString()}.`);
+                                        return;
+                                      }
                                     }
 
                                     updates.pledge_amount = pledgeNum;
