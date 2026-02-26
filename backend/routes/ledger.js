@@ -429,7 +429,8 @@ router.post('/', authenticateAdmin, async (req, res) => {
       payment_type,
       master_list_id,
       receipt_url,
-      receipt_public_id
+      receipt_public_id,
+      from_receipt_id
     } = req.body;
 
     // Validate - must have either deposit or withdrawal
@@ -474,8 +475,9 @@ router.post('/', authenticateAdmin, async (req, res) => {
     );
 
     // If ledger entry has receipt and is linked to master_list, create receipt_uploads row
-    // so it appears in user's profile receipt history
-    if (result.rows[0].receipt_url && result.rows[0].master_list_id) {
+    // so it appears in user's profile receipt history.
+    // Skip if from_receipt_id is provided (receipt came from inbox - linkReceiptToLedger handles it)
+    if (result.rows[0].receipt_url && result.rows[0].master_list_id && !from_receipt_id) {
       await createAdminReceiptUpload(result.rows[0], req.user.email);
     }
 

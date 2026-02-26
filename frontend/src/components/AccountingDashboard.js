@@ -279,7 +279,8 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
       // Include receipt image from pending receipt if adding from inbox
       ...(receiptToLink && !editingId && {
         receipt_url: receiptToLink.image_url,
-        receipt_public_id: receiptToLink.image_public_id
+        receipt_public_id: receiptToLink.image_public_id,
+        from_receipt_id: receiptToLink.id
       })
     };
 
