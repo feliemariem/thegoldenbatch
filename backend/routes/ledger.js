@@ -24,6 +24,45 @@ function normalizeRefNo(ref) {
   return normalized || null;
 }
 
+// Helper: Create receipt_uploads row for admin-uploaded receipts on ledger entries
+// This ensures receipts show up in user's profile receipt history
+async function createAdminReceiptUpload(ledgerEntry, adminEmail) {
+  if (!ledgerEntry.receipt_url || !ledgerEntry.master_list_id) return;
+
+  try {
+    // Find user_id from master_list_id
+    const userResult = await db.query(
+      `SELECT u.id FROM users u JOIN invites i ON u.invite_id = i.id WHERE i.master_list_id = $1`,
+      [ledgerEntry.master_list_id]
+    );
+    const userId = userResult.rows.length > 0 ? userResult.rows[0].id : null;
+
+    // Get admin id
+    const adminResult = await db.query('SELECT id FROM admins WHERE LOWER(email) = $1', [adminEmail.toLowerCase()]);
+    const adminId = adminResult.rows.length > 0 ? adminResult.rows[0].id : null;
+
+    // Determine status based on ledger verified status
+    const status = ledgerEntry.verified === 'OK' ? 'verified' : 'pending_verification';
+
+    // Check if receipt_uploads row already exists for this ledger
+    const existingReceipt = await db.query(
+      'SELECT id FROM receipt_uploads WHERE ledger_id = $1 AND source = $2',
+      [ledgerEntry.id, 'admin']
+    );
+
+    if (existingReceipt.rows.length === 0) {
+      await db.query(
+        `INSERT INTO receipt_uploads (user_id, master_list_id, image_url, image_public_id, note, status, source, ledger_id, processed_by, processed_at)
+         VALUES ($1, $2, $3, $4, $5, $6, 'admin', $7, $8, NOW())`,
+        [userId, ledgerEntry.master_list_id, ledgerEntry.receipt_url, ledgerEntry.receipt_public_id, null, status, ledgerEntry.id, adminId]
+      );
+    }
+  } catch (err) {
+    console.error('Failed to create admin receipt upload:', err);
+    // Don't throw - this is a non-critical operation
+  }
+}
+
 // =============================================================================
 // IMPORTANT: Route order matters in Express! Specific routes MUST come before
 // dynamic /:id routes, otherwise Express will match /balance as /:id with id="balance"
@@ -434,6 +473,12 @@ router.post('/', authenticateAdmin, async (req, res) => {
       ]
     );
 
+    // If ledger entry has receipt and is linked to master_list, create receipt_uploads row
+    // so it appears in user's profile receipt history
+    if (result.rows[0].receipt_url && result.rows[0].master_list_id) {
+      await createAdminReceiptUpload(result.rows[0], req.user.email);
+    }
+
     res.status(201).json(result.rows[0]);
   } catch (err) {
     console.error(err);
@@ -522,7 +567,7 @@ router.post('/:id/receipt', authenticateAdmin, upload.single('receipt'), async (
     }
 
     // Check if transaction exists
-    const existing = await db.query('SELECT receipt_url, receipt_public_id FROM ledger WHERE id = $1', [id]);
+    const existing = await db.query('SELECT receipt_url, receipt_public_id, master_list_id FROM ledger WHERE id = $1', [id]);
     if (existing.rows.length === 0) {
       return res.status(404).json({ error: 'Transaction not found' });
     }
@@ -534,6 +579,11 @@ router.post('/:id/receipt', authenticateAdmin, upload.single('receipt'), async (
       } catch (e) {
         console.error('Failed to delete old receipt:', e);
       }
+      // Also delete old admin receipt_uploads row if exists
+      await db.query(
+        `DELETE FROM receipt_uploads WHERE ledger_id = $1 AND source = 'admin'`,
+        [id]
+      );
     }
 
     // Upload to Cloudinary
@@ -548,6 +598,11 @@ router.post('/:id/receipt', authenticateAdmin, upload.single('receipt'), async (
        RETURNING *`,
       [uploadResult.secure_url, uploadResult.public_id, id]
     );
+
+    // If transaction is linked to master_list, create receipt_uploads row
+    if (result.rows[0].master_list_id) {
+      await createAdminReceiptUpload(result.rows[0], req.user.email);
+    }
 
     res.json(result.rows[0]);
   } catch (err) {
@@ -575,6 +630,12 @@ router.delete('/:id/receipt', authenticateAdmin, async (req, res) => {
         console.error('Failed to delete from Cloudinary:', e);
       }
     }
+
+    // Delete corresponding admin receipt_uploads row
+    await db.query(
+      `DELETE FROM receipt_uploads WHERE ledger_id = $1 AND source = 'admin'`,
+      [id]
+    );
 
     // Clear from database
     await db.query(
@@ -667,6 +728,11 @@ router.put('/:id/link', authenticateAdmin, async (req, res) => {
       return res.status(404).json({ error: 'Transaction not found' });
     }
 
+    // If transaction has a receipt, create receipt_uploads row for the linked user
+    if (result.rows[0].receipt_url) {
+      await createAdminReceiptUpload(result.rows[0], req.user.email);
+    }
+
     res.json(result.rows[0]);
   } catch (err) {
     console.error(err);
@@ -678,6 +744,13 @@ router.put('/:id/link', authenticateAdmin, async (req, res) => {
 router.put('/:id/unlink', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params;
+
+    // Remove admin-created receipt_uploads row for this ledger entry
+    // (user-uploaded receipts stay linked to their original user)
+    await db.query(
+      `DELETE FROM receipt_uploads WHERE ledger_id = $1 AND source = 'admin'`,
+      [id]
+    );
 
     const result = await db.query(
       `UPDATE ledger SET master_list_id = NULL WHERE id = $1 RETURNING *`,
