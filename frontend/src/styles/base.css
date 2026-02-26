@@ -786,6 +786,205 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 /* ========================================
+   FUNDS PAGE - Contribution Allocation Layout
+   ======================================== */
+
+/* CTA Button */
+.funds-cta-btn {
+  display: inline-block;
+  padding: 14px 32px;
+  background: linear-gradient(135deg, #006633 0%, #004d26 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 12px rgba(0, 102, 51, 0.3);
+  text-decoration: none;
+}
+
+.funds-cta-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(0, 102, 51, 0.4);
+}
+
+/* Allocation Group */
+.funds-alloc-group {
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* Section Label */
+.funds-alloc-section-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #4ade80;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.funds-alloc-section-label.gold {
+  color: #CFB53B;
+}
+
+/* Row layout: items + big pct */
+.funds-alloc-row {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.funds-alloc-items {
+  flex: 1;
+}
+
+/* Individual allocation item */
+.funds-alloc-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.funds-alloc-item:last-child {
+  border-bottom: none;
+}
+
+.funds-alloc-icon {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+  width: 28px;
+  text-align: center;
+  padding-top: 2px;
+}
+
+.funds-alloc-details {
+  flex: 1;
+}
+
+.funds-alloc-name {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #e8e8e8;
+  margin-bottom: 3px;
+}
+
+.funds-alloc-desc {
+  font-size: 0.82rem;
+  color: #a0a0a0;
+  line-height: 1.45;
+}
+
+.funds-alloc-pct {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #4ade80;
+  flex-shrink: 0;
+  min-width: 40px;
+  text-align: right;
+  padding-top: 2px;
+}
+
+.funds-alloc-pct.gold {
+  color: #CFB53B;
+}
+
+/* Big percentage block */
+.funds-alloc-big-pct {
+  flex-shrink: 0;
+  width: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  border-radius: 12px;
+  background: rgba(0, 102, 51, 0.15);
+  text-align: center;
+}
+
+.funds-alloc-big-pct.gold-block {
+  background: rgba(207, 181, 59, 0.12);
+}
+
+.funds-alloc-big-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #4ade80;
+  line-height: 1;
+}
+
+.funds-alloc-big-num.gold {
+  color: #CFB53B;
+}
+
+.funds-alloc-big-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #a0a0a0;
+  margin-top: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Note with bar */
+.funds-alloc-note {
+  margin-top: 16px;
+  font-size: 0.82rem;
+  color: #a0a0a0;
+  line-height: 1.5;
+}
+
+.funds-alloc-bar {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.funds-alloc-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+}
+
+.funds-alloc-bar-fill.green {
+  background: #006633;
+}
+
+.funds-alloc-bar-fill.gold {
+  background: #CFB53B;
+}
+
+/* Funds Allocation Mobile */
+@media (max-width: 600px) {
+  .funds-alloc-group { padding: 18px; }
+  .funds-alloc-row { flex-direction: column; gap: 16px; }
+  .funds-alloc-big-pct {
+    width: 100%;
+    flex-direction: row;
+    gap: 12px;
+    padding: 16px;
+  }
+  .funds-alloc-big-num { font-size: 2rem; }
+  .funds-alloc-icon { font-size: 1.1rem; }
+  .funds-alloc-name { font-size: 0.85rem; }
+  .funds-alloc-desc { font-size: 0.78rem; }
+  .funds-cta-btn { font-size: 0.9rem; padding: 12px 24px; }
+}
+
+/* ========================================
    PERMISSIONS MANAGER STYLES
    ======================================== */
 

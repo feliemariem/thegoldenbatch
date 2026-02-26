@@ -1152,6 +1152,78 @@ body[data-theme="light"] .accounting-total {
 }
 
 /* =========================================
+   FUNDS ALLOCATION - Light Mode
+   ========================================= */
+
+body[data-theme="light"] .funds-alloc-group {
+  border: 1px solid rgba(0, 102, 51, 0.12);
+  background: #ffffff;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+body[data-theme="light"] .funds-alloc-section-label {
+  color: #006633;
+  border-bottom-color: rgba(0, 102, 51, 0.12);
+}
+
+body[data-theme="light"] .funds-alloc-section-label.gold {
+  color: #B8960C;
+}
+
+body[data-theme="light"] .funds-alloc-item {
+  border-bottom-color: rgba(0, 0, 0, 0.04);
+}
+
+body[data-theme="light"] .funds-alloc-name {
+  color: #1a1a1a;
+}
+
+body[data-theme="light"] .funds-alloc-desc {
+  color: #555;
+}
+
+body[data-theme="light"] .funds-alloc-pct {
+  color: #006633;
+}
+
+body[data-theme="light"] .funds-alloc-pct.gold {
+  color: #B8960C;
+}
+
+body[data-theme="light"] .funds-alloc-big-pct {
+  background: rgba(0, 102, 51, 0.08);
+}
+
+body[data-theme="light"] .funds-alloc-big-pct.gold-block {
+  background: rgba(207, 181, 59, 0.1);
+}
+
+body[data-theme="light"] .funds-alloc-big-num {
+  color: #006633;
+}
+
+body[data-theme="light"] .funds-alloc-big-num.gold {
+  color: #B8960C;
+}
+
+body[data-theme="light"] .funds-alloc-big-label {
+  color: #888;
+}
+
+body[data-theme="light"] .funds-alloc-note {
+  color: #555;
+}
+
+body[data-theme="light"] .funds-alloc-bar {
+  background: #eee;
+}
+
+body[data-theme="light"] .funds-cta-btn {
+  background: linear-gradient(135deg, #006633 0%, #004d26 100%);
+  color: white;
+}
+
+/* =========================================
    PERMISSIONS MANAGER - Premium Light
    ========================================= */
 
