@@ -410,6 +410,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   margin-bottom: 12px;
 }
 
+.funds-page-title {
+  font-variant-numeric: lining-nums;
+}
+
 .funds-total-loading {
   color: var(--color-hover);
   font-size: 2rem;
