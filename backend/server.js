@@ -17,6 +17,7 @@ const announcementRoutes = require('./routes/announcements');
 const actionItemRoutes = require('./routes/action-items');
 const messageRoutes = require('./routes/messages');
 const receiptsRoutes = require('./routes/receipts');
+const webhookRoutes = require('./routes/webhooks');
 
 const app = express();
 
@@ -34,6 +35,9 @@ app.use(express.json());
 
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Webhooks (public endpoint - no auth required)
+app.use('/api/webhooks', webhookRoutes);
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -118,6 +122,7 @@ app.listen(PORT, () => {
   console.log('  /api/events');
   console.log('  /api/committee');
   console.log('  /api/receipts');
+  console.log('  /api/webhooks');
   console.log('  /api/health');
   console.log('  /api/debug/routes');
 });

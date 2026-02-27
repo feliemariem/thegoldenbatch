@@ -519,7 +519,34 @@ export default function InvitesTab({
                               <span className={`rsvp-badge ${invite.used ? 'going' : 'pending'}`} style={{ minWidth: '120px', textAlign: 'center' }}>
                                 {invite.used ? 'Registered' : 'Pending'}
                               </span>
-                              {invite.email_sent && <span>✉️</span>}
+                              {invite.email_sent && (
+                                <span
+                                  title={
+                                    invite.email_status === 'delivered' ? 'Delivered' :
+                                    invite.email_status === 'bounced' ? 'Bounced' :
+                                    invite.email_status === 'failed' ? 'Failed' :
+                                    invite.email_status === 'deferred' ? 'Deferred' :
+                                    'Sent'
+                                  }
+                                  style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', cursor: 'help' }}
+                                >
+                                  <span>✉️</span>
+                                  {invite.email_status && invite.email_status !== 'sent' && (
+                                    <span
+                                      style={{
+                                        width: '8px',
+                                        height: '8px',
+                                        borderRadius: '50%',
+                                        backgroundColor:
+                                          invite.email_status === 'delivered' ? '#22c55e' :
+                                          invite.email_status === 'bounced' || invite.email_status === 'failed' ? '#ef4444' :
+                                          invite.email_status === 'deferred' ? '#f59e0b' :
+                                          '#888'
+                                      }}
+                                    />
+                                  )}
+                                </span>
+                              )}
                             </span>
                           </td>
                           {(isSuperAdmin || permissions?.invites_link) && (

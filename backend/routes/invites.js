@@ -181,7 +181,7 @@ router.get('/', authenticateAdmin, async (req, res) => {
     // Get paginated results
     const result = await db.query(`
       SELECT
-        i.id, i.email, i.first_name, i.last_name, i.invite_token, i.used, i.email_sent, i.created_at, i.master_list_id,
+        i.id, i.email, i.first_name, i.last_name, i.invite_token, i.used, i.email_sent, i.email_status, i.created_at, i.master_list_id,
         m.first_name as ml_first_name, m.last_name as ml_last_name
       FROM invites i
       LEFT JOIN master_list m ON i.master_list_id = m.id
