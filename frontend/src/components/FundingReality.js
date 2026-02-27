@@ -120,11 +120,11 @@ Here's where we are:
 • ₱${formatPeso(currentGap)} to go
 
 Here's what closes the gap:
-• ${Math.ceil(currentGap / 25000)} batchmates at ₱25K (Cornerstone)
-• ${Math.ceil(currentGap / 20000)} at ₱20K (Pillar)
-• ${Math.ceil(currentGap / 12000)} at ₱12K (Anchor)
-• ${Math.ceil(currentGap / 5000)} at ₱5K (Root)
-• or any mix
+• ${Math.round((currentGap * 0.2) / 25000)} more at ₱25K
+• ${Math.round((currentGap * 0.3) / 20000)} more at ₱20K
+• ${Math.round((currentGap * 0.35) / 12000)} more at ₱12K
+• plus a few more at ₱5K
+That's roughly ${Math.round((currentGap * 0.2) / 25000) + Math.round((currentGap * 0.3) / 20000) + Math.round((currentGap * 0.35) / 12000) + Math.round((currentGap * 0.15) / 5000)} more batchmates at any level.
 
 View the full plan and choose your tier:
 thegoldenbatch2003.com
