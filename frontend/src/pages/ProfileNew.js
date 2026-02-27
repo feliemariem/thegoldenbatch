@@ -41,6 +41,7 @@ export default function ProfileNew() {
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
   const [deleting, setDeleting] = useState(false);
   const [showFullPaidDetails, setShowFullPaidDetails] = useState(false);
+  const [showStrategy, setShowStrategy] = useState(false);
   const fileInputRef = useRef(null);
   const receiptFileInputRef = useRef(null);
   const calendarDropdownRef = useRef(null);
@@ -645,6 +646,38 @@ END:VCALENDAR`;
           <div className="profile-grid">
             {/* Left Column */}
             <div className="profile-left">
+              {/* Committee Strategy Document - Admin Only */}
+              {user?.isAdmin && (
+                <div className="profile-card strategy-card">
+                  <button
+                    className="strategy-toggle"
+                    onClick={() => setShowStrategy(!showStrategy)}
+                  >
+                    <span className="strategy-toggle-text">📋 Committee, Please Read</span>
+                    <span className={`strategy-toggle-arrow ${showStrategy ? 'open' : ''}`}>
+                      {showStrategy ? '▲' : '▼'}
+                    </span>
+                  </button>
+                  {showStrategy && (
+                    <div className="strategy-content">
+                      <iframe
+                        src={`${process.env.REACT_APP_API_URL || 'https://api.thegoldenbatch2003.com'}/Funding_Strategy_Visual.html`}
+                        title="Funding Strategy"
+                        className="strategy-iframe"
+                      />
+                      <a
+                        href={`${process.env.REACT_APP_API_URL || 'https://api.thegoldenbatch2003.com'}/Funding_Strategy_Visual.html`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="strategy-external-link"
+                      >
+                        Open in new tab ↗
+                      </a>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Builder Card - My Contribution */}
               {profile.is_graduate ? (
               !profile.builder_tier ? (
