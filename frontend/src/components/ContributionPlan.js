@@ -122,6 +122,9 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
   const [removing, setRemoving] = useState(false);
   const exchangeRatesCache = useRef(null);
   const tierHeadingRef = useRef(null);
+  const progressRef = useRef(null);
+  const allocationRef = useRef(null);
+  const recognitionRef = useRef(null);
 
   // Fetch exchange rates (cached)
   useEffect(() => {
@@ -347,9 +350,25 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
             </div>
           </header>
 
+          {/* TOC Navigation */}
+          <nav className="cp-toc">
+            <button className="cp-toc-pill" onClick={() => progressRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
+              Progress
+            </button>
+            <button className="cp-toc-pill" onClick={() => allocationRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
+              Allocation
+            </button>
+            <button className="cp-toc-pill" onClick={() => tierHeadingRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
+              Tiers
+            </button>
+            <button className="cp-toc-pill" onClick={() => recognitionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
+              Recognition
+            </button>
+          </nav>
+
           <main className="cp-main">
             {/* Progress Box */}
-            <div className="cp-progress-box">
+            <div className="cp-progress-box" ref={progressRef}>
               <div className="cp-progress-label">Our Progress</div>
               <div className="cp-progress-row">
                 <div className="cp-progress-amount">₱{batchProgress.total_raised.toLocaleString()}</div>
@@ -377,7 +396,7 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
             <div className="cp-gold-divider"></div>
 
             {/* Where Your Contribution Goes */}
-            <h2 className="cp-section-title">Where your contribution goes</h2>
+            <h2 className="cp-section-title" ref={allocationRef}>Where your contribution goes</h2>
             <p className="cp-section-subtitle">Total plan supported by contributions and fundraising. ₱2,100,000 Full Batch Vision Target.</p>
 
             {/* Core Celebration */}
@@ -773,7 +792,7 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
             </div>
 
             {/* Recognition */}
-            <div className="cp-recognition-section">
+            <div className="cp-recognition-section" ref={recognitionRef}>
               <h2 className="cp-tier-heading">Builder Recognition</h2>
               <p className="cp-section-subtitle">Every Builder is recognized. Greater commitments carry additional visibility and legacy distinction.</p>
 
