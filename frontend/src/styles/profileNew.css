@@ -3013,7 +3013,7 @@ body[data-theme="light"] .merch-form-hint {
 }
 
 .builder-card .card-header h3 {
-  color: var(--color-hover);
+  color: #e0e0e0;
 }
 
 [data-theme="light"] .builder-card .card-header h3 {
@@ -3046,6 +3046,17 @@ body[data-theme="light"] .merch-form-hint {
   background: linear-gradient(135deg, #008040 0%, #006633 100%);
   transform: translateY(-2px);
   box-shadow: 0 4px 16px rgba(0, 102, 51, 0.3);
+}
+
+[data-theme="light"] .btn-view-plan {
+  background: linear-gradient(135deg, #CFB53B 0%, #B8960C 100%);
+  color: #1a1a1a;
+  border: 2px solid #B8960C;
+}
+
+[data-theme="light"] .btn-view-plan:hover {
+  background: linear-gradient(135deg, #d9c04a 0%, #CFB53B 100%);
+  box-shadow: 0 4px 16px rgba(207, 181, 59, 0.3);
 }
 
 /* Builder Tier Badge — Dark Mode (gold bg, black text) */
