@@ -10,7 +10,7 @@ const REMEMBERED_EMAIL_KEY = 'rememberedEmail';
 
 export default function Login() {
   const navigate = useNavigate();
-  const { user, login } = useAuth();
+  const { user, login, checkAuth } = useAuth();
   const { theme, toggleTheme } = useTheme();
 
   const [email, setEmail] = useState('');
@@ -58,7 +58,8 @@ export default function Login() {
       }
 
       login(data.user);
-      
+      await checkAuth();
+
       // Redirect based on user type
       if (data.user.isAdmin) {
         navigate('/admin');
