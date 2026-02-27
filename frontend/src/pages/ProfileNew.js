@@ -652,7 +652,7 @@ END:VCALENDAR`;
                     <h3>My Contribution</h3>
                   </div>
                   <p className="builder-intro-text">
-                    Choose your contribution tier and help build our 25th homecoming.
+                    {profile.first_name}, this is our 25-year milestone. It belongs to all of us. Every contribution, big or small, helps us build something worthy of where we started and how far we've come.
                   </p>
                   <button className="btn-view-plan" onClick={() => setShowContributionPlan(true)}>
                     View Contribution Plan
