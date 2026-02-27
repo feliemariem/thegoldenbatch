@@ -172,7 +172,7 @@ export default function Funds() {
 
           {/* Payment Methods */}
           <div style={{ marginBottom: '32px' }}>
-            <h3 className="donate-heading" style={{ textAlign: 'center', fontSize: '1.1rem' }}>Payment Methods</h3>
+            <h3 className="donate-heading" style={{ textAlign: 'center'}}>Payment Methods</h3>
 
             <div style={{
               display: 'grid',
