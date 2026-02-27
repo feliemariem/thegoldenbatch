@@ -3,27 +3,6 @@
    Admin Dashboard, Tables, Stats
    ======================================== */
 
-/* Common Dashboard Title Style */
-.admin-dashboard-title {
-  font-family: var(--font-heading);
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin: 0 0 20px 0;
-  /* Dark mode: gold gradient */
-  background: linear-gradient(135deg, #CFB53B 0%, #B8960C 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-[data-theme="light"] .admin-dashboard-title {
-  /* Light mode: green gradient */
-  background: linear-gradient(135deg, #006633 0%, #004d26 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
 /* Admin Dashboard Background - sits directly on page background */
 .admin-container {
   min-height: 100vh;
