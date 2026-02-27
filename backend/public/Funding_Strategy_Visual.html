@@ -874,6 +874,7 @@
     background: linear-gradient(90deg, transparent, var(--gold), transparent);
     margin: 40px 0;
     overflow: hidden;
+    max-width: 100%;
   }
 
   /* ── SCENARIO TIER BREAKDOWN TABLE ── */
@@ -1405,6 +1406,18 @@
 
     /* Divider */
     .divider { margin: 28px 0; }
+
+    /* Table mobile sizing */
+    .recog-table th, .recog-table td,
+    .tier-table th, .tier-table td,
+    .breakdown-table th, .breakdown-table td {
+      padding: 6px 5px;
+      font-size: 0.65rem;
+    }
+    .recog-table .detail,
+    .tier-table .notes {
+      font-size: 0.6rem;
+    }
   }
 
   /* Slightly larger phones / small tablets */
@@ -1721,25 +1734,27 @@
     <div class="section-subtitle">This is what differentiates "I'll send ₱10K" from "I want to be Cornerstone."</div>
 
     <div class="card">
-      <table class="recog-table">
-        <thead>
-          <tr>
-            <th>Recognition</th>
-            <th>Cornerstone</th>
-            <th>Pillar</th>
-            <th>Anchor</th>
-            <th>Root</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>Builder's Wall</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
-          <tr><td>Souvenir Program</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
-          <tr><td>Website Spotlight</td><td class="detail">Individual</td><td class="detail">Individual</td><td class="detail">Grouped</td><td class="detail">Funds page credits</td></tr>
-          <tr><td>Stage Acknowledgment</td><td class="detail">Named segment</td><td class="detail">Consolidated</td><td class="dash">—</td><td class="dash">—</td></tr>
-          <tr><td>Giving Back Dedication</td><td class="check">✓</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td></tr>
-          <tr><td>Commemorative Keepsake *</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
-        </tbody>
-      </table>
+      <div style="overflow-x: auto;">
+        <table class="recog-table">
+          <thead>
+            <tr>
+              <th>Recognition</th>
+              <th>Cornerstone</th>
+              <th>Pillar</th>
+              <th>Anchor</th>
+              <th>Root</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Builder's Wall</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+            <tr><td>Souvenir Program</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+            <tr><td>Website Spotlight</td><td class="detail">Individual</td><td class="detail">Individual</td><td class="detail">Grouped</td><td class="detail">Funds page credits</td></tr>
+            <tr><td>Stage Acknowledgment</td><td class="detail">Named segment</td><td class="detail">Consolidated</td><td class="dash">—</td><td class="dash">—</td></tr>
+            <tr><td>Giving Back Dedication</td><td class="check">✓</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td></tr>
+            <tr><td>Commemorative Keepsake *</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+          </tbody>
+        </table>
+      </div>
       <p style="font-size: 0.78rem; color: var(--text-muted); font-style: italic; margin-top: 12px;">* Commemorative Keepsake — form and design are still to be determined by the committee. Could be a custom piece, collectible, or memento. For now it signals that every Builder receives something tangible beyond recognition.</p>
     </div>
 
@@ -1984,18 +1999,20 @@
       </div>
 
       <!-- Tier Breakdown Table -->
-      <table class="breakdown-table" id="tier-breakdown">
-        <thead>
-          <tr>
-            <th>Tier</th>
-            <th>Count</th>
-            <th>Avg Amount</th>
-            <th>Subtotal</th>
-          </tr>
-        </thead>
-        <tbody id="breakdown-body"></tbody>
-        <tfoot id="breakdown-foot"></tfoot>
-      </table>
+      <div style="overflow-x: auto;">
+        <table class="breakdown-table" id="tier-breakdown">
+          <thead>
+            <tr>
+              <th>Tier</th>
+              <th>Count</th>
+              <th>Avg Amount</th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
+          <tbody id="breakdown-body"></tbody>
+          <tfoot id="breakdown-foot"></tfoot>
+        </table>
+      </div>
 
       <!-- Progress Bars -->
       <div class="scenario-bar-wrap" style="margin-top: 24px;">
@@ -2041,34 +2058,38 @@
 
       <div class="card" style="margin-top: 16px;">
         <div class="card-title">Contributors Required at Different Averages</div>
-        <table class="breakdown-table">
-          <thead>
-            <tr><th>Contributors</th><th>Avg Needed</th><th class="left">Implication</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>100</td><td>₱16,800</td><td class="left">Achievable with strong Anchor/Pillar mix</td></tr>
-            <tr><td>90</td><td>₱18,667</td><td class="left">Requires heavier Pillar/Cornerstone uptake</td></tr>
-            <tr><td>80</td><td>₱21,000</td><td class="left">High average. Demands strong personal outreach</td></tr>
-          </tbody>
-        </table>
+        <div style="overflow-x: auto;">
+          <table class="breakdown-table">
+            <thead>
+              <tr><th>Contributors</th><th>Avg Needed</th><th class="left">Implication</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>100</td><td>₱16,800</td><td class="left">Achievable with strong Anchor/Pillar mix</td></tr>
+              <tr><td>90</td><td>₱18,667</td><td class="left">Requires heavier Pillar/Cornerstone uptake</td></tr>
+              <tr><td>80</td><td>₱21,000</td><td class="left">High average. Demands strong personal outreach</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <div class="card" style="margin-top: 16px;">
         <div class="card-title">Minimum Safe Tier Mix</div>
-        <table class="breakdown-table">
-          <thead>
-            <tr><th>Tier</th><th>Count</th><th>Avg Amount</th><th>Subtotal</th></tr>
-          </thead>
-          <tbody>
-            <tr><td><strong>Cornerstone</strong></td><td>20</td><td>₱25,000</td><td>₱500,000</td></tr>
-            <tr><td><strong>Pillar</strong></td><td>35</td><td>₱20,000</td><td>₱700,000</td></tr>
-            <tr><td><strong>Anchor</strong></td><td>25</td><td>₱12,000</td><td>₱300,000</td></tr>
-            <tr><td><strong>Root</strong></td><td>20</td><td>₱5,000</td><td>₱100,000</td></tr>
-          </tbody>
-          <tfoot>
-            <tr><td><strong>Total</strong></td><td><strong>100</strong></td><td></td><td><strong>₱1,600,000</strong></td></tr>
-          </tfoot>
-        </table>
+        <div style="overflow-x: auto;">
+          <table class="breakdown-table">
+            <thead>
+              <tr><th>Tier</th><th>Count</th><th>Avg Amount</th><th>Subtotal</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Cornerstone</strong></td><td>20</td><td>₱25,000</td><td>₱500,000</td></tr>
+              <tr><td><strong>Pillar</strong></td><td>35</td><td>₱20,000</td><td>₱700,000</td></tr>
+              <tr><td><strong>Anchor</strong></td><td>25</td><td>₱12,000</td><td>₱300,000</td></tr>
+              <tr><td><strong>Root</strong></td><td>20</td><td>₱5,000</td><td>₱100,000</td></tr>
+            </tbody>
+            <tfoot>
+              <tr><td><strong>Total</strong></td><td><strong>100</strong></td><td></td><td><strong>₱1,600,000</strong></td></tr>
+            </tfoot>
+          </table>
+        </div>
         <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 12px;">
           Gap to ₱1.68M Core Target: <strong>~₱80,000</strong>. Manageable through fundraising surplus or targeted additional outreach. <em>This is the floor, not the goal.</em>
         </p>
