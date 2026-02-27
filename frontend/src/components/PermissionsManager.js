@@ -164,7 +164,7 @@ export default function PermissionsManager() {
   if (admins.length === 0) {
     return (
       <div>
-        <h3>Permissions Manager</h3>
+        <h3 className="admin-dashboard-title">Permissions Manager</h3>
         <p className="perm-muted">No admins found. Flag someone as Admin in Master List first.</p>
       </div>
     );
@@ -174,7 +174,7 @@ export default function PermissionsManager() {
 
   return (
     <div>
-      <h3>Permissions Manager</h3>
+      <h3 className="admin-dashboard-title">Permissions Manager</h3>
       <p className="perm-muted" style={{ marginBottom: '24px' }}>Control what each admin can access and edit.</p>
 
       {/* Admin Selector */}

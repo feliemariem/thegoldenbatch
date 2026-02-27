@@ -497,7 +497,7 @@ export default function AccountingDashboard({ canEdit = true, canExport = true, 
 
   return (
     <div>
-      <h3>Accounting Dashboard</h3>
+      <h3 className="admin-dashboard-title">Accounting Dashboard</h3>
       <p style={{ color: '#999', marginBottom: '24px' }}>Track funds for the reunion.</p>
 
       {/* Summary Cards - Only verified (OK) transactions are counted */}

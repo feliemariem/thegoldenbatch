@@ -423,7 +423,7 @@ export default function MeetingMinutes({ canEdit = false, initialMeetingId = nul
             </button>
           ) : (
             <div>
-              <h2 style={{ margin: 0, color: 'var(--text-primary)', fontSize: '1.1rem' }}>Meeting Minutes</h2>
+              <h3 className="admin-dashboard-title">Meeting Minutes</h3>
               <p style={{ margin: '4px 0 0', color: '#888', fontSize: '0.8rem' }}>
                 {meetings.length} meeting{meetings.length !== 1 ? 's' : ''} recorded
               </p>
@@ -971,7 +971,7 @@ Tip: Use ## for headers, - for bullet points"
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
         <div>
-          <h2 style={{ margin: 0, color: 'var(--text-primary)', fontSize: '1.25rem' }}>Meeting Minutes</h2>
+          <h3 className="admin-dashboard-title">Meeting Minutes</h3>
           <p style={{ margin: '4px 0 0', color: '#888', fontSize: '0.85rem' }}>
             {meetings.length} meeting{meetings.length !== 1 ? 's' : ''} recorded
           </p>
