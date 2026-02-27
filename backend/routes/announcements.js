@@ -106,7 +106,7 @@ router.post('/', authenticateToken, async (req, res) => {
           await sgMail.send({
             to: recipient.email,
             from: process.env.FROM_EMAIL || 'noreply@goldenbatch2003.com',
-            subject: `USLS-IS 2003 [The Golden Batch]: New message in your Inbox`,
+            subject: `New message in your Inbox`,
             html: `
               <div style="margin: 0; padding: 0; background: #ffffff;">
                 <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif; color: #1a1a1a;">
@@ -115,7 +115,7 @@ router.post('/', authenticateToken, async (req, res) => {
                   <div style="background: #0d1a14; padding: 28px; text-align: center;">
                     <img src="${siteUrl}/images/logo.png" alt="The Golden Batch Logo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 12px;" />
                     <div style="color: #CFB53B; letter-spacing: 3px; font-weight: 700; font-size: 28px; font-family: Georgia, 'Times New Roman', serif; margin-bottom: 8px;">
-                      THE GOLDEN BATCH
+                      THE GOLDEN BATCH 2003
                     </div>
                     <div style="color: #ffffff; font-size: 16px; font-family: Georgia, 'Times New Roman', serif; letter-spacing: 2px; margin-bottom: 6px;">
                       UNIVERSITY OF ST. LA SALLE - IS
@@ -161,7 +161,7 @@ router.post('/', authenticateToken, async (req, res) => {
 
                   <!-- Footer -->
                   <div style="background: #0d1a14; padding: 20px; text-align: center; font-size: 14px; font-family: Arial, sans-serif;">
-                    <span style="color: #CFB53B;">USLS-IS 2003</span><br/>
+                    <span style="color: #CFB53B;">© USLS-IS Golden Batch 2003</span><br/>
                     <span style="color: #ffffff;">Questions? Email us at</span>
                     <a href="mailto:uslsis.batch2003@gmail.com" style="color: #CFB53B; text-decoration: none;">
                       uslsis.batch2003@gmail.com
