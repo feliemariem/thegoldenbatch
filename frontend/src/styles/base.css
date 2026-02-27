@@ -788,21 +788,22 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .funds-cta-btn {
   display: inline-block;
   padding: 14px 32px;
-  background: linear-gradient(135deg, #006633 0%, #004d26 100%);
-  color: white;
-  border: none;
+  background: linear-gradient(135deg, #CFB53B 0%, #B8960C 100%);
+  color: #1a1a1a;
+  border: 2px solid #CFB53B;
   border-radius: 10px;
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 12px rgba(0, 102, 51, 0.3);
+  box-shadow: 0 2px 12px rgba(207, 181, 59, 0.3);
   text-decoration: none;
 }
 
 .funds-cta-btn:hover {
+  background: linear-gradient(135deg, #d9c04a 0%, #CFB53B 100%);
   transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(0, 102, 51, 0.4);
+  box-shadow: 0 4px 20px rgba(207, 181, 59, 0.4);
 }
 
 /* Allocation Group */
