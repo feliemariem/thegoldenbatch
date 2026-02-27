@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 
 const CORE_TARGET = 1680000;
 const FULL_TARGET = 2100000;
@@ -57,6 +57,8 @@ export default function FundingReality({ stats }) {
   const [selectedScenario, setSelectedScenario] = useState('target');
   const [fundraisingAmount, setFundraisingAmount] = useState(500000);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showShareCard, setShowShareCard] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const getActual = (tier) => {
     const details = stats.tier_details?.[tier];
@@ -99,6 +101,63 @@ export default function FundingReality({ stats }) {
   const projected = getProjected(currentScenario, fundraisingAmount);
   const gap = Math.max(FULL_TARGET - projected, 0);
   const coreGap = Math.max(CORE_TARGET - projected, 0);
+
+  // Generate shareable text
+  const currentGap = Math.max(FULL_TARGET - totalCollected - totalPledged, 0);
+  const shareableText = useMemo(() => {
+    const today = new Date();
+    const dateStr = today.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+    return `GOLDEN BATCH 2003 BUILDERS — FUNDING UPDATE
+As of ${dateStr}
+
+Goal: ₱2,100,000
+${totalBuilders} builders so far
+
+Here's where we are:
+• ₱${formatPeso(totalCollected)} collected (cash in hand)
+• ₱${formatPeso(totalPledged)} pledged (committed, in installments)
+• ₱${formatPeso(currentGap)} to go
+
+Here's what closes the gap:
+• ${Math.ceil(currentGap / 25000)} batchmates at ₱25K (Cornerstone)
+• ${Math.ceil(currentGap / 20000)} at ₱20K (Pillar)
+• ${Math.ceil(currentGap / 12000)} at ₱12K (Anchor)
+• ${Math.ceil(currentGap / 5000)} at ₱5K (Root)
+• or any mix
+
+View the full plan and choose your tier:
+thegoldenbatch2003.com
+
+USLS-IS Batch 2003 | 25th Alumni Homecoming | Dec 16, 2028`;
+  }, [totalBuilders, totalCollected, totalPledged, currentGap]);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(shareableText);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Golden Batch 2003 — Funding Update',
+          text: shareableText
+        });
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          handleCopy();
+        }
+      }
+    } else {
+      handleCopy();
+    }
+  };
 
   return (
     <div style={{ marginBottom: '20px' }}>
@@ -397,6 +456,92 @@ export default function FundingReality({ stats }) {
               })()}
             </div>
           )}
+
+          {/* Share Card */}
+          <div style={{ marginBottom: '16px' }}>
+            <button
+              onClick={() => setShowShareCard(!showShareCard)}
+              style={{
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '10px 14px',
+                background: 'rgba(207,181,59,0.08)',
+                border: '1px solid rgba(207,181,59,0.2)',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                color: '#CFB53B',
+                fontSize: '0.8rem',
+                fontWeight: 600
+              }}
+            >
+              <span>📋 Share with the Batch</span>
+              <span style={{ fontSize: '0.7rem' }}>{showShareCard ? '▲' : '▼'}</span>
+            </button>
+
+            {showShareCard && (
+              <div style={{
+                marginTop: '8px',
+                padding: '14px',
+                background: 'rgba(128,128,128,0.04)',
+                border: '1px solid rgba(128,128,128,0.1)',
+                borderRadius: '6px'
+              }}>
+                <div style={{ fontSize: '0.68rem', color: 'var(--color-text-secondary)', marginBottom: '8px' }}>
+                  Preview — Copy or share this funding update:
+                </div>
+                <pre style={{
+                  whiteSpace: 'pre-wrap',
+                  wordBreak: 'break-word',
+                  fontSize: '0.72rem',
+                  lineHeight: 1.5,
+                  color: 'var(--color-text-primary)',
+                  background: 'rgba(128,128,128,0.06)',
+                  padding: '12px',
+                  borderRadius: '4px',
+                  margin: '0 0 12px 0',
+                  fontFamily: 'inherit'
+                }}>
+                  {shareableText}
+                </pre>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button
+                    onClick={handleCopy}
+                    style={{
+                      flex: 1,
+                      padding: '10px',
+                      background: copied ? 'rgba(74, 157, 109, 0.15)' : 'rgba(128,128,128,0.08)',
+                      border: copied ? '1px solid rgba(74, 157, 109, 0.3)' : '1px solid rgba(128,128,128,0.15)',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      color: copied ? 'var(--color-status-positive)' : 'var(--color-text-primary)'
+                    }}
+                  >
+                    {copied ? '✓ Copied!' : 'Copy'}
+                  </button>
+                  <button
+                    onClick={handleShare}
+                    style={{
+                      flex: 1,
+                      padding: '10px',
+                      background: 'rgba(207,181,59,0.12)',
+                      border: '1px solid rgba(207,181,59,0.25)',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      color: '#CFB53B'
+                    }}
+                  >
+                    Share
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
 
           {/* Verdict */}
           {(() => {
