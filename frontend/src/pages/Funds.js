@@ -172,7 +172,7 @@ export default function Funds() {
 
           {/* Payment Methods */}
           <div style={{ marginBottom: '32px' }}>
-            <h3 className="donate-heading">Payment Methods</h3>
+            <h3 className="donate-heading" style={{ textAlign: 'center', fontSize: '1.1rem' }}>Payment Methods</h3>
 
             <div style={{
               display: 'grid',
@@ -230,7 +230,7 @@ export default function Funds() {
           {/* Thank You Roll Credits */}
           {donors.length > 0 && (
             <div className="thank-you-section">
-              <h3 className="thank-you-title">Golden Batch Builders</h3>
+              <h3 className="thank-you-title">Thank You for Your Contributions</h3>
               <div className="credits-container" ref={creditsContainerRef}>
                 <div className="credits-scroll" ref={creditsScrollRef}>
                   {[...donors, ...donors].map((name, index) => (
