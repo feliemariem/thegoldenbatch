@@ -166,6 +166,18 @@ export default function ProfileNew() {
     }
   }, [location.state]);
 
+  // Check for openPlan URL parameter to auto-open ContributionPlan modal
+  useEffect(() => {
+    if (profile && profile.is_graduate) {
+      const params = new URLSearchParams(location.search);
+      if (params.get('openPlan') === 'true') {
+        setShowContributionPlan(true);
+        // Clear the param from URL to prevent re-opening on refresh
+        window.history.replaceState({}, document.title, location.pathname);
+      }
+    }
+  }, [profile, location.search, location.pathname]);
+
   // Close calendar dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
