@@ -1517,14 +1517,14 @@ tr:last-child td {
    MEETING MINUTES - New Meeting Button
    ======================================== */
 
-[data-theme="light"] .btn-new-meeting {
+body[data-theme="light"] .btn-new-meeting {
   background: linear-gradient(135deg, #006633 0%, #004d26 100%) !important;
   color: #ffffff !important;
   border: none !important;
   box-shadow: 0 2px 8px rgba(0, 102, 51, 0.3) !important;
 }
 
-[data-theme="light"] .btn-new-meeting:hover:not(:disabled) {
+body[data-theme="light"] .btn-new-meeting:hover {
   background: linear-gradient(135deg, #008040 0%, #006633 100%) !important;
-  box-shadow: 0 4px 12px rgba(0, 102, 51, 0.4) !important;
+  box-shadow: 0 4px 12px rgba(0, 102, 51, 0.3) !important;
 }
