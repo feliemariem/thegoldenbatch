@@ -4029,8 +4029,8 @@ button.receipt-thumb {
    ========================================= */
 
 .strategy-card {
-  background: rgba(192, 57, 43, 0.08);
-  border: 1px solid rgba(192, 57, 43, 0.25);
+  background: rgba(192, 57, 43, 0.05);
+  border: 1px solid rgba(192, 57, 43, 0.15);
   padding: 0;
   overflow: hidden;
 }
@@ -4048,18 +4048,18 @@ button.receipt-thumb {
 }
 
 .strategy-toggle:hover {
-  background: rgba(192, 57, 43, 0.06);
+  background: rgba(192, 57, 43, 0.04);
 }
 
 .strategy-toggle-text {
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 600;
-  color: #c0392b;
+  color: #a93226;
 }
 
 .strategy-toggle-arrow {
   font-size: 0.75rem;
-  color: #c0392b;
+  color: #a93226;
   transition: transform 0.2s ease;
 }
 
@@ -4092,26 +4092,26 @@ button.receipt-thumb {
 }
 
 .strategy-external-link:hover {
-  color: #c0392b;
-  background: rgba(192, 57, 43, 0.08);
+  color: #a93226;
+  background: rgba(192, 57, 43, 0.06);
 }
 
 /* Light mode */
 [data-theme="light"] .strategy-card {
-  background: rgba(192, 57, 43, 0.06);
-  border-color: rgba(192, 57, 43, 0.2);
+  background: rgba(192, 57, 43, 0.04);
+  border-color: rgba(192, 57, 43, 0.12);
 }
 
 [data-theme="light"] .strategy-toggle:hover {
-  background: rgba(192, 57, 43, 0.08);
+  background: rgba(192, 57, 43, 0.06);
 }
 
 [data-theme="light"] .strategy-toggle-text {
-  color: #c0392b;
+  color: #a93226;
 }
 
 [data-theme="light"] .strategy-toggle-arrow {
-  color: #c0392b;
+  color: #a93226;
 }
 
 [data-theme="light"] .strategy-content {
@@ -4124,8 +4124,8 @@ button.receipt-thumb {
 }
 
 [data-theme="light"] .strategy-external-link:hover {
-  color: #c0392b;
-  background: rgba(192, 57, 43, 0.08);
+  color: #a93226;
+  background: rgba(192, 57, 43, 0.06);
 }
 
 /* Mobile responsive */
