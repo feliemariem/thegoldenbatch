@@ -3027,6 +3027,15 @@ body[data-theme="light"] .merch-form-hint {
   line-height: 1.5;
 }
 
+.builder-intro-name {
+  color: var(--color-hover);
+  font-weight: 600;
+}
+
+[data-theme="light"] .builder-intro-name {
+  color: #006633;
+}
+
 .btn-view-plan {
   width: 100%;
   padding: 14px 20px;
