@@ -65,6 +65,7 @@ CREATE TABLE invites (
     invite_token UUID DEFAULT gen_random_uuid() UNIQUE NOT NULL,
     used BOOLEAN DEFAULT FALSE,
     email_sent BOOLEAN DEFAULT FALSE,
+    email_status VARCHAR(20) DEFAULT 'sent',
     master_list_id INTEGER REFERENCES master_list(id),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -286,6 +287,7 @@ CREATE INDEX idx_receipt_uploads_ledger ON receipt_uploads(ledger_id);
 CREATE INDEX idx_invite_token ON invites(invite_token);
 CREATE INDEX idx_invites_email ON invites(email);
 CREATE INDEX idx_invites_master_list ON invites(master_list_id);
+CREATE INDEX idx_invites_email_status ON invites(email_status);
 CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_master_list_email ON master_list(email);
 CREATE INDEX idx_master_list_section ON master_list(section);

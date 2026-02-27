@@ -2,7 +2,7 @@ const sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const sendInviteEmail = async (to, firstName, registrationUrl) => {
-  const siteUrl = process.env.SITE_URL || 'https://the-golden-batch.onrender.com';
+  const siteUrl = process.env.SITE_URL || 'https://thegoldenbatch2003.com';
   const apiUrl = process.env.API_URL || 'https://api.thegoldenbatch2003.com';
   const msg = {
     to,
@@ -101,7 +101,7 @@ const sendInviteEmail = async (to, firstName, registrationUrl) => {
 };
 
 const sendPasswordResetEmail = async (to, firstName, resetUrl) => {
-  const siteUrl = process.env.SITE_URL || 'https://the-golden-batch.onrender.com';
+  const siteUrl = process.env.SITE_URL || 'https://thegoldenbatch2003.com';
   const apiUrl = process.env.API_URL || 'https://api.thegoldenbatch2003.com';
   const msg = {
     to,
