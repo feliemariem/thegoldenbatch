@@ -430,7 +430,7 @@ export default function MeetingMinutes({ canEdit = false, initialMeetingId = nul
             </div>
           )}
           {!selectedMeeting && canEdit && (
-            <button onClick={handleCreate} className="btn-primary btn-new-meeting" style={{ width: 'auto', padding: '10px 16px', marginTop: 0, fontSize: '0.85rem' }}>
+            <button onClick={handleCreate} className="btn-new-meeting" style={{ width: 'auto', padding: '10px 16px', marginTop: 0, fontSize: '0.85rem' }}>
               + New
             </button>
           )}
@@ -977,7 +977,7 @@ Tip: Use ## for headers, - for bullet points"
           </p>
         </div>
         {canEdit && (
-        <button onClick={handleCreate} className="btn-primary btn-new-meeting" style={{ width: 'auto', padding: '12px 24px', marginTop: 0 }}>
+        <button onClick={handleCreate} className="btn-new-meeting" style={{ width: 'auto', padding: '12px 24px', marginTop: 0 }}>
           + New Meeting
         </button>
         )}

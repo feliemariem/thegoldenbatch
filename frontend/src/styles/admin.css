@@ -1517,14 +1517,35 @@ tr:last-child td {
    MEETING MINUTES - New Meeting Button
    ======================================== */
 
+/* Base styles (dark mode - gold) */
+.btn-new-meeting {
+  background: linear-gradient(135deg, #CFB53B 0%, #B8960C 100%);
+  color: #1a1a1a;
+  border: none;
+  border-radius: 12px;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(207, 181, 59, 0.3);
+}
+
+.btn-new-meeting:hover {
+  background: linear-gradient(135deg, #d9c04a 0%, #CFB53B 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(207, 181, 59, 0.4);
+}
+
+/* Light mode - green */
 body[data-theme="light"] .btn-new-meeting {
-  background: linear-gradient(135deg, #006633 0%, #004d26 100%) !important;
-  color: #ffffff !important;
-  border: none !important;
-  box-shadow: 0 2px 8px rgba(0, 102, 51, 0.3) !important;
+  background: linear-gradient(135deg, #006633 0%, #004d26 100%);
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 102, 51, 0.3);
 }
 
 body[data-theme="light"] .btn-new-meeting:hover {
-  background: linear-gradient(135deg, #008040 0%, #006633 100%) !important;
-  box-shadow: 0 4px 12px rgba(0, 102, 51, 0.3) !important;
+  background: linear-gradient(135deg, #008040 0%, #006633 100%);
+  box-shadow: 0 4px 12px rgba(0, 102, 51, 0.4);
 }
