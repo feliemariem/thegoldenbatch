@@ -259,36 +259,14 @@ export default function AdminDashboard() {
 
           <button
             onClick={() => setDashboardMode('registry')}
-            style={{
-              flex: 1,
-              padding: '10px 8px',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontWeight: '600',
-              fontSize: '0.75rem',
-              background: dashboardMode === 'registry' ? '#CFB53B' : 'transparent',
-              color: dashboardMode === 'registry' ? '#1a1a2e' : '#999',
-              whiteSpace: 'nowrap'
-            }}
+            className={dashboardMode === 'registry' ? 'active' : ''}
           >
             Registry
           </button>
           {(isSuperAdmin || permissions?.accounting_view) && (
             <button
               onClick={() => setDashboardMode('accounting')}
-              style={{
-                flex: 1,
-                padding: '10px 8px',
-                border: 'none',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontWeight: '600',
-                fontSize: '0.75rem',
-                background: dashboardMode === 'accounting' ? '#CFB53B' : 'transparent',
-                color: dashboardMode === 'accounting' ? '#1a1a2e' : '#999',
-                whiteSpace: 'nowrap'
-              }}
+              className={dashboardMode === 'accounting' ? 'active' : ''}
             >
               Accounting
             </button>
@@ -296,18 +274,7 @@ export default function AdminDashboard() {
           {(isSuperAdmin || permissions?.announcements_view) && (
             <button
               onClick={() => setDashboardMode('announcements')}
-              style={{
-                flex: 1,
-                padding: '10px 8px',
-                border: 'none',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontWeight: '600',
-                fontSize: '0.75rem',
-                background: dashboardMode === 'announcements' ? '#CFB53B' : 'transparent',
-                color: dashboardMode === 'announcements' ? '#1a1a2e' : '#999',
-                whiteSpace: 'nowrap'
-              }}
+              className={dashboardMode === 'announcements' ? 'active' : ''}
             >
               Announce
             </button>
@@ -315,18 +282,7 @@ export default function AdminDashboard() {
           {(isSuperAdmin || permissions?.minutes_view) && (
             <button
               onClick={() => setDashboardMode('minutes')}
-              style={{
-                flex: 1,
-                padding: '10px 8px',
-                border: 'none',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontWeight: '600',
-                fontSize: '0.75rem',
-                background: dashboardMode === 'minutes' ? '#CFB53B' : 'transparent',
-                color: dashboardMode === 'minutes' ? '#1a1a2e' : '#999',
-                whiteSpace: 'nowrap'
-              }}
+              className={dashboardMode === 'minutes' ? 'active' : ''}
             >
               Meetings
             </button>
@@ -334,44 +290,12 @@ export default function AdminDashboard() {
           {(isSuperAdmin || permissions?.messages_view) && (
             <button
               onClick={() => setDashboardMode('messages')}
-              style={{
-                flex: 1,
-                padding: '10px 8px',
-                border: 'none',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontWeight: '600',
-                fontSize: '0.75rem',
-                background: dashboardMode === 'messages' ? '#CFB53B' : 'transparent',
-                color: dashboardMode === 'messages' ? '#1a1a2e' : '#999',
-                whiteSpace: 'nowrap',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '6px'
-              }}
+              className={dashboardMode === 'messages' ? 'active has-badge' : 'has-badge'}
             >
               Messages
               {adminUnreadCount > 0 && (
                 <span
-                  className={dashboardMode === 'messages' ? '' : 'unread-badge'}
-                  style={dashboardMode === 'messages' ? {
-                    background: '#1a1a2e',
-                    color: '#CFB53B',
-                    fontSize: '0.65rem',
-                    fontWeight: '700',
-                    padding: '2px 6px',
-                    borderRadius: '10px',
-                    minWidth: '16px',
-                    textAlign: 'center'
-                  } : {
-                    fontSize: '0.65rem',
-                    fontWeight: '700',
-                    padding: '2px 6px',
-                    borderRadius: '10px',
-                    minWidth: '16px',
-                    textAlign: 'center'
-                  }}
+                  className={dashboardMode === 'messages' ? 'unread-badge active-badge' : 'unread-badge'}
                 >
                   {adminUnreadCount}
                 </span>
@@ -381,18 +305,7 @@ export default function AdminDashboard() {
           {(isSuperAdmin || permissions?.strategic_view) && (
             <button
               onClick={() => setDashboardMode('strategic')}
-              style={{
-                flex: 1,
-                padding: '10px 8px',
-                border: 'none',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontWeight: '600',
-                fontSize: '0.75rem',
-                background: dashboardMode === 'strategic' ? '#CFB53B' : 'transparent',
-                color: dashboardMode === 'strategic' ? '#1a1a2e' : '#999',
-                whiteSpace: 'nowrap'
-              }}
+              className={dashboardMode === 'strategic' ? 'active' : ''}
             >
               Strategic
             </button>
@@ -400,18 +313,7 @@ export default function AdminDashboard() {
           {isSuperAdmin && (
             <button
               onClick={() => setDashboardMode('permissions')}
-              style={{
-                flex: 1,
-                padding: '10px 8px',
-                border: 'none',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontWeight: '600',
-                fontSize: '0.75rem',
-                background: dashboardMode === 'permissions' ? '#CFB53B' : 'transparent',
-                color: dashboardMode === 'permissions' ? '#1a1a2e' : '#999',
-                whiteSpace: 'nowrap'
-              }}
+              className={dashboardMode === 'permissions' ? 'active' : ''}
             >
               Permissions
             </button>
@@ -419,18 +321,7 @@ export default function AdminDashboard() {
           {user?.email?.toLowerCase() === 'uslsis.batch2003@gmail.com' && (
             <button
               onClick={() => setDashboardMode('systemTest')}
-              style={{
-                flex: 1,
-                padding: '10px 8px',
-                border: 'none',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontWeight: '600',
-                fontSize: '0.75rem',
-                background: dashboardMode === 'systemTest' ? '#CFB53B' : 'transparent',
-                color: dashboardMode === 'systemTest' ? '#1a1a2e' : '#999',
-                whiteSpace: 'nowrap'
-              }}
+              className={dashboardMode === 'systemTest' ? 'active' : ''}
             >
               System Test
             </button>
