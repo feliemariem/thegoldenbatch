@@ -1221,6 +1221,13 @@ body[data-theme="light"] .funds-alloc-bar {
 body[data-theme="light"] .funds-cta-btn {
   background: linear-gradient(135deg, #006633 0%, #004d26 100%);
   color: white;
+  border: 2px solid #006633;
+  box-shadow: 0 2px 12px rgba(0, 102, 51, 0.3);
+}
+
+body[data-theme="light"] .funds-cta-btn:hover {
+  background: linear-gradient(135deg, #008040 0%, #006633 100%);
+  box-shadow: 0 4px 20px rgba(0, 102, 51, 0.4);
 }
 
 /* =========================================
