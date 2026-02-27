@@ -4069,6 +4069,7 @@ button.receipt-thumb {
 
 .strategy-content {
   border-top: 1px solid rgba(192, 57, 43, 0.2);
+  overflow: hidden;
 }
 
 .strategy-iframe {

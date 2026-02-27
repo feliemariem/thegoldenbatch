@@ -28,7 +28,7 @@
     --radius: 12px;
   }
 
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; overflow-x: hidden; max-width: 100%; }
 
   body {
     font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -36,10 +36,12 @@
     color: var(--text);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    max-width: 100%;
   }
 
   /* ── LAYOUT ── */
-  .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+  .container { max-width: 960px; margin: 0 auto; padding: 0 24px; overflow-x: hidden; }
 
   /* ── HEADER ── */
   .page-header {
@@ -871,6 +873,7 @@
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--gold), transparent);
     margin: 40px 0;
+    overflow: hidden;
   }
 
   /* ── SCENARIO TIER BREAKDOWN TABLE ── */
