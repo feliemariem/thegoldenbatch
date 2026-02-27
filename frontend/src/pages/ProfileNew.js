@@ -31,6 +31,7 @@ export default function ProfileNew() {
   const [alumniCardSaving, setAlumniCardSaving] = useState(false);
   const [calendarDropdownOpen, setCalendarDropdownOpen] = useState(false);
   const [showContributionPlan, setShowContributionPlan] = useState(false);
+  const [scrollToTiers, setScrollToTiers] = useState(false);
   const [receipts, setReceipts] = useState([]);
   const [receiptUploading, setReceiptUploading] = useState(false);
   const [paymentMethodsOpen, setPaymentMethodsOpen] = useState(false);
@@ -654,7 +655,7 @@ END:VCALENDAR`;
                   <p className="builder-intro-text">
                     <span className="builder-intro-name">{profile.first_name}</span>, this is our 25-year milestone. It belongs to all of us. Every contribution, big or small, helps us build something worthy of where we started and how far we've come.
                   </p>
-                  <button className="btn-view-plan" onClick={() => setShowContributionPlan(true)}>
+                  <button className="btn-view-plan" onClick={() => { setShowContributionPlan(true); setScrollToTiers(false); }}>
                     View Contribution Plan
                   </button>
                 </div>
@@ -906,9 +907,9 @@ END:VCALENDAR`;
                   })()}
 
                   <div className="builder-links">
-                    <button className="btn-link-text" onClick={() => setShowContributionPlan(true)}>Change Tier</button>
+                    <button className="btn-link-text" onClick={() => { setShowContributionPlan(true); setScrollToTiers(true); }}>Change Tier</button>
                     <span className="link-separator">·</span>
-                    <button className="btn-link-text" onClick={() => setShowContributionPlan(true)}>View Full Plan</button>
+                    <button className="btn-link-text" onClick={() => { setShowContributionPlan(true); setScrollToTiers(false); }}>View Full Plan</button>
                   </div>
                 </div>
               )
@@ -1524,7 +1525,8 @@ END:VCALENDAR`;
       {profile.is_graduate && showContributionPlan && (
         <ContributionPlan
           isOpen={showContributionPlan}
-          onClose={() => setShowContributionPlan(false)}
+          onClose={() => { setShowContributionPlan(false); setScrollToTiers(false); }}
+          scrollToTiers={scrollToTiers}
           onTierSaved={(tier, pledge) => {
             setProfile(prev => ({
               ...prev,

@@ -108,7 +108,7 @@ function formatCurrency(amount, currencyCode, rates) {
   return `${symbol}${converted.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
-export default function ContributionPlan({ isOpen, onClose, onTierSaved, currentTier, currentPledge, user }) {
+export default function ContributionPlan({ isOpen, onClose, onTierSaved, currentTier, currentPledge, user, scrollToTiers }) {
   const [selectedTier, setSelectedTier] = useState(null);
   const [pledgeAmount, setPledgeAmount] = useState('');
   const [confirmed, setConfirmed] = useState(false);
@@ -121,6 +121,7 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
   const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
   const [removing, setRemoving] = useState(false);
   const exchangeRatesCache = useRef(null);
+  const tierHeadingRef = useRef(null);
 
   // Fetch exchange rates (cached)
   useEffect(() => {
@@ -188,6 +189,15 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
       document.body.style.overflow = '';
     };
   }, [isOpen]);
+
+  // Scroll to tier cards when scrollToTiers is true
+  useEffect(() => {
+    if (isOpen && scrollToTiers && tierHeadingRef.current) {
+      setTimeout(() => {
+        tierHeadingRef.current.scrollIntoView({ behavior: 'instant', block: 'start' });
+      }, 50);
+    }
+  }, [isOpen, scrollToTiers]);
 
   if (!isOpen) return null;
 
@@ -472,7 +482,7 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
             <div className="cp-gold-divider"></div>
 
             {/* Builder Tiers */}
-            <h2 className="cp-tier-heading">Golden Batch Builders</h2>
+            <h2 className="cp-tier-heading" ref={tierHeadingRef}>Golden Batch Builders</h2>
             <p className="cp-section-subtitle cp-italic">We're all building this homecoming. Choose how you build.</p>
             <p className="cp-builders-count">{batchProgress.builder_count} Builder{batchProgress.builder_count !== 1 ? 's' : ''} already in.</p>
             <p className="cp-tier-hint">Tap a tier to begin.</p>
