@@ -1497,13 +1497,13 @@ body[data-theme="light"] .task-status-badge.status-in-progress {
 
 /* My Tasks heading */
 body[data-theme="light"] .my-tasks-heading {
-  color: #B8960C !important;
+  color: #006633 !important;
 }
 
 /* My Tasks badge (pending) */
 body[data-theme="light"] .my-tasks-badge.pending {
-  background: rgba(184, 150, 12, 0.2) !important;
-  color: #B8960C !important;
+  background: rgba(0, 102, 51, 0.15) !important;
+  color: #006633 !important;
 }
 
 /* My Tasks container */
@@ -1527,8 +1527,8 @@ body[data-theme="light"] .my-tasks-status-select {
 
 /* Priority badges */
 body[data-theme="light"] .task-priority-badge.priority-high {
-  background: rgba(150, 90, 40, 0.15) !important;
-  color: #9a5c28 !important;
+  background: rgba(180, 80, 40, 0.12) !important;
+  color: #b45028 !important;
 }
 
 body[data-theme="light"] .task-priority-badge.priority-critical {
@@ -1545,6 +1545,11 @@ body[data-theme="light"] .task-priority-badge.priority-low {
 body[data-theme="light"] .task-status-badge.status-not-started {
   background: rgba(100, 100, 100, 0.1) !important;
   color: #666666 !important;
+}
+
+body[data-theme="light"] .task-status-badge.status-in-progress {
+  background: rgba(0, 102, 51, 0.12) !important;
+  color: #006633 !important;
 }
 
 body[data-theme="light"] .task-status-badge.status-done {
@@ -1566,7 +1571,7 @@ body[data-theme="light"] .my-tasks-overdue-badge {
 
 /* Task meeting link */
 body[data-theme="light"] .task-meeting-link {
-  color: #B8960C !important;
+  color: #006633 !important;
 }
 
 /* Action item assignee links */
