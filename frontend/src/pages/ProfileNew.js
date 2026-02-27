@@ -653,7 +653,7 @@ END:VCALENDAR`;
                     className="strategy-toggle"
                     onClick={() => setShowStrategy(!showStrategy)}
                   >
-                    <span className="strategy-toggle-text">📋 Committee, Please Read</span>
+                    <span className="strategy-toggle-text">🔒 Committee, Please Read — RE: Contribution Plan</span>
                     <span className={`strategy-toggle-arrow ${showStrategy ? 'open' : ''}`}>
                       {showStrategy ? '▲' : '▼'}
                     </span>

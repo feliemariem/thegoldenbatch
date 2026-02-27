@@ -4029,8 +4029,8 @@ button.receipt-thumb {
    ========================================= */
 
 .strategy-card {
-  background: rgba(207, 181, 59, 0.12);
-  border: 1px solid rgba(207, 181, 59, 0.35);
+  background: rgba(192, 57, 43, 0.08);
+  border: 1px solid rgba(192, 57, 43, 0.25);
   padding: 0;
   overflow: hidden;
 }
@@ -4048,18 +4048,18 @@ button.receipt-thumb {
 }
 
 .strategy-toggle:hover {
-  background: rgba(207, 181, 59, 0.08);
+  background: rgba(192, 57, 43, 0.06);
 }
 
 .strategy-toggle-text {
   font-size: 0.95rem;
   font-weight: 600;
-  color: var(--color-hover);
+  color: #c0392b;
 }
 
 .strategy-toggle-arrow {
   font-size: 0.75rem;
-  color: var(--color-hover);
+  color: #c0392b;
   transition: transform 0.2s ease;
 }
 
@@ -4068,7 +4068,7 @@ button.receipt-thumb {
 }
 
 .strategy-content {
-  border-top: 1px solid rgba(207, 181, 59, 0.25);
+  border-top: 1px solid rgba(192, 57, 43, 0.2);
 }
 
 .strategy-iframe {
@@ -4087,45 +4087,45 @@ button.receipt-thumb {
   color: var(--color-text-secondary);
   text-decoration: none;
   background: rgba(0, 0, 0, 0.15);
-  border-top: 1px solid rgba(207, 181, 59, 0.15);
+  border-top: 1px solid rgba(192, 57, 43, 0.15);
   transition: all 0.2s ease;
 }
 
 .strategy-external-link:hover {
-  color: var(--color-hover);
-  background: rgba(207, 181, 59, 0.1);
+  color: #c0392b;
+  background: rgba(192, 57, 43, 0.08);
 }
 
 /* Light mode */
 [data-theme="light"] .strategy-card {
-  background: rgba(207, 181, 59, 0.08);
-  border-color: rgba(184, 150, 12, 0.35);
+  background: rgba(192, 57, 43, 0.06);
+  border-color: rgba(192, 57, 43, 0.2);
 }
 
 [data-theme="light"] .strategy-toggle:hover {
-  background: rgba(207, 181, 59, 0.12);
+  background: rgba(192, 57, 43, 0.08);
 }
 
 [data-theme="light"] .strategy-toggle-text {
-  color: #B8960C;
+  color: #c0392b;
 }
 
 [data-theme="light"] .strategy-toggle-arrow {
-  color: #B8960C;
+  color: #c0392b;
 }
 
 [data-theme="light"] .strategy-content {
-  border-top-color: rgba(184, 150, 12, 0.25);
+  border-top-color: rgba(192, 57, 43, 0.2);
 }
 
 [data-theme="light"] .strategy-external-link {
   background: rgba(0, 0, 0, 0.03);
-  border-top-color: rgba(184, 150, 12, 0.15);
+  border-top-color: rgba(192, 57, 43, 0.15);
 }
 
 [data-theme="light"] .strategy-external-link:hover {
-  color: #B8960C;
-  background: rgba(184, 150, 12, 0.1);
+  color: #c0392b;
+  background: rgba(192, 57, 43, 0.08);
 }
 
 /* Mobile responsive */
