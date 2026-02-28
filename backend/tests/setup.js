@@ -48,6 +48,8 @@ const setupDatabase = async () => {
       DROP TABLE IF EXISTS permissions CASCADE;
       DROP TABLE IF EXISTS password_resets CASCADE;
       DROP TABLE IF EXISTS announcements CASCADE;
+      DROP TABLE IF EXISTS receipt_uploads CASCADE;
+      DROP TABLE IF EXISTS summary_snapshots CASCADE;
       DROP TABLE IF EXISTS ledger CASCADE;
       DROP TABLE IF EXISTS rsvps CASCADE;
       DROP TABLE IF EXISTS users CASCADE;
@@ -63,6 +65,10 @@ const setupDatabase = async () => {
     // Remove the DROP statements from schema.sql since we already dropped
     schema = schema.replace(/DROP TABLE IF EXISTS [^;]+;/gi, '');
 
+    // Make CREATE statements idempotent
+    schema = schema.replace(/CREATE TABLE /gi, 'CREATE TABLE IF NOT EXISTS ');
+    schema = schema.replace(/CREATE UNIQUE INDEX /gi, 'CREATE UNIQUE INDEX IF NOT EXISTS ');
+
     // Convert CREATE INDEX to CREATE INDEX IF NOT EXISTS to handle parallel test runs
     schema = schema.replace(/CREATE INDEX /gi, 'CREATE INDEX IF NOT EXISTS ');
 
@@ -70,13 +76,7 @@ const setupDatabase = async () => {
     schemaInitialized = true;
     console.log('Test database schema initialized');
   } catch (err) {
-    // If error is about relation already existing, schema was set up by another test file
-    if (err.message.includes('already exists')) {
-      schemaInitialized = true;
-      console.log('Test database schema already initialized by another test');
-      return;
-    }
-    console.error('Error initializing test database schema:', err.message);
+    console.error('FATAL: Error initializing test database schema:', err.message);
     throw err;
   }
 };
