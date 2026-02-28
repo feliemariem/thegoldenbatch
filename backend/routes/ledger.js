@@ -328,10 +328,12 @@ router.get('/balance', async (req, res) => {
 // Public route - get unique donor names (for thank you credits)
 // NOTE: Only verified (status = 'OK') donations are shown in donor credits.
 // Groups by master_list_id (for linked entries) or by name (for unlinked entries)
+// Filters out donors who have opted out of public recognition (recognition_public = false)
 router.get('/donors', async (req, res) => {
   try {
     // Get grouped contributors with display names and totals
     // Priority: registered user name -> master list name -> ledger name
+    // Filter: exclude linked entries where recognition_public = false
     const result = await db.query(
       `WITH contributor_data AS (
         SELECT
@@ -340,6 +342,7 @@ router.get('/donors', async (req, res) => {
           l.deposit,
           m.first_name as ml_first_name,
           m.last_name as ml_last_name,
+          m.recognition_public,
           reg_user.first_name as reg_first_name,
           reg_user.last_name as reg_last_name
         FROM ledger l
@@ -352,6 +355,9 @@ router.get('/donors', async (req, res) => {
           LIMIT 1
         ) reg_user ON true
         WHERE l.deposit > 0 AND l.verified = 'OK'
+          -- Filter out linked entries where recognition_public is explicitly false
+          -- Unlinked entries (no master_list_id) are shown, NULL defaults to true
+          AND (l.master_list_id IS NULL OR m.recognition_public IS NOT FALSE)
       )
       SELECT
         COALESCE(master_list_id::text, ledger_name) as group_key,
