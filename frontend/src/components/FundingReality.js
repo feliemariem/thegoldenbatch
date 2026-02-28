@@ -467,11 +467,11 @@ USLS-IS Batch 2003 | 25th Alumni Homecoming | Dec 16, 2028`;
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 padding: '10px 14px',
-                background: 'rgba(207,181,59,0.08)',
-                border: '1px solid rgba(207,181,59,0.2)',
+                background: 'rgba(0, 102, 51, 0.06)',
+                border: '1px solid rgba(0, 102, 51, 0.2)',
                 borderRadius: '6px',
                 cursor: 'pointer',
-                color: '#CFB53B',
+                color: '#006633',
                 fontSize: '0.8rem',
                 fontWeight: 600
               }}
