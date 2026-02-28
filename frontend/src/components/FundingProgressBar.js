@@ -168,6 +168,12 @@ export default function FundingProgressBar({ stats }) {
           Remaining to ₱2.1M
         </div>
       </div>
+
+      {/* Explainer notes */}
+      <div style={{ marginTop: '12px', fontSize: '0.78rem', color: '#888', fontStyle: 'italic', lineHeight: 1.5 }}>
+        <div>Projections update automatically as builders sign up. Scenarios estimate totals based on how many builders join.</div>
+        <div style={{ marginTop: '4px' }}>Amount to go is based on collected and pledged combined. Collected is cash received. Pledged is the total committed — some still being paid in installments.</div>
+      </div>
     </div>
   );
 }
