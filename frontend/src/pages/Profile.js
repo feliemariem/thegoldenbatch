@@ -15,7 +15,6 @@ export default function Profile() {
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [rsvpSaving, setRsvpSaving] = useState(false);
-  const [recognitionSaving, setRecognitionSaving] = useState(false);
   const [message, setMessage] = useState('');
 
   const [form, setForm] = useState({
@@ -97,24 +96,6 @@ export default function Profile() {
       setMessage('Failed to update RSVP');
     } finally {
       setRsvpSaving(false);
-    }
-  };
-
-  const handleRecognitionToggle = async (newValue) => {
-    setRecognitionSaving(true);
-    setMessage('');
-
-    try {
-      const res = await apiPut('/api/me/recognition-visibility', { recognition_public: newValue });
-
-      if (res.ok) {
-        setProfile({ ...profile, recognition_public: newValue });
-        setMessage('Recognition preference updated!');
-      }
-    } catch (err) {
-      setMessage('Failed to update recognition preference');
-    } finally {
-      setRecognitionSaving(false);
     }
   };
 
@@ -348,33 +329,6 @@ export default function Profile() {
           )}
         </div>
 
-        {/* Recognition Visibility Toggle - only show if user has a builder tier */}
-        {profile.builder_tier && (
-          <div className="profile-section" style={{ marginTop: '20px' }}>
-            <div className="section-header">
-              <h3>Builder Recognition</h3>
-            </div>
-            <div className="recognition-toggle-section">
-              <label className="recognition-toggle-label">
-                <input
-                  type="checkbox"
-                  checked={profile.recognition_public !== false}
-                  onChange={(e) => handleRecognitionToggle(e.target.checked)}
-                  disabled={recognitionSaving}
-                  className="recognition-checkbox"
-                />
-                <span className="recognition-toggle-text">
-                  Display my name in Builder recognition (Builder's Wall, program, website, stage)
-                </span>
-              </label>
-              <p className="recognition-note">
-                {profile.recognition_public !== false
-                  ? 'Your name will appear in public recognition materials.'
-                  : 'Your name will NOT appear in public recognition materials. You will still be recognized in the private program ledger.'}
-              </p>
-            </div>
-          </div>
-        )}
       </div>
       <Footer />
     </div>
