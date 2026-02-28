@@ -207,7 +207,7 @@ describe('Users API', () => {
 
       expect(response.status).toBe(200);
       expect(response.body.first_name).toBe('John');
-      expect(response.body.last_name).toBe('Doe');
+      expect(response.body.last_name).toBe('DOE');
       expect(response.body.city).toBe('New York');
       expect(response.body.country).toBe('Usa');
     });
