@@ -33,7 +33,7 @@ const CONFIG = {
   // These are the exact titles of your form questions
   FIELD_FIRST_NAME: 'First Name',
   FIELD_LAST_NAME: 'Last Name',
-  FIELD_EMAIL: 'Email Address'
+  FIELD_EMAIL: 'Email'
 };
 
 // ============================================================
