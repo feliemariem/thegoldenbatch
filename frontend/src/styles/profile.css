@@ -102,6 +102,46 @@
   font-weight: 500;
 }
 
+/* Recognition Toggle Section */
+.recognition-toggle-section {
+  background: rgba(0, 102, 51, 0.08);
+  border: 1px solid rgba(0, 102, 51, 0.2);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.recognition-toggle-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.recognition-checkbox {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: var(--color-accent);
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.recognition-toggle-text {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  line-height: 1.4;
+}
+
+.recognition-note {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  margin-top: 10px;
+  margin-left: 30px;
+  line-height: 1.5;
+  font-style: italic;
+}
+
 /* Mobile Responsive - Profile */
 @media (max-width: 600px) {
   .rsvp-buttons {

@@ -208,7 +208,7 @@ export default function MasterListTab({
   const exportMasterListCSV = () => {
     if (!masterList?.length) return;
 
-    const headers = ['Section', 'Last Name', 'First Name', 'Current Name', 'Email', 'Status', 'Tier', 'Pledge', 'Paid', 'Balance'];
+    const headers = ['Section', 'Last Name', 'First Name', 'Current Name', 'Email', 'Status', 'Tier', 'Pledge', 'Paid', 'Balance', 'Recognition Public'];
     const rows = masterList.map(m => [
       m.section,
       m.last_name,
@@ -219,7 +219,8 @@ export default function MasterListTab({
       formatTierName(m.builder_tier) || '',
       m.builder_tier && m.builder_tier !== 'root' ? m.pledge_amount : '',
       m.total_paid || 0,
-      m.balance != null ? m.balance : ''
+      m.balance != null ? m.balance : '',
+      m.builder_tier ? (m.recognition_public !== false ? 'Yes' : 'No') : ''
     ]);
 
     const csv = [headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
@@ -399,6 +400,7 @@ export default function MasterListTab({
                   <th>Pledge</th>
                   <th>Paid</th>
                   <th>Balance</th>
+                  <th title="Recognition Visibility">Vis</th>
                   {(isSuperAdmin || permissions?.masterlist_edit) && <th>Actions</th>}
                 </tr>
               </thead>
@@ -512,6 +514,19 @@ export default function MasterListTab({
                         </td>
                         <td style={{ color: '#666', textAlign: 'center' }}>-</td>
                         <td style={{ color: '#666', textAlign: 'center' }}>-</td>
+                        <td style={{ textAlign: 'center' }}>
+                          {editingTier ? (
+                            <input
+                              type="checkbox"
+                              defaultChecked={entry.recognition_public !== false}
+                              id={`edit-recognition-${entry.id}`}
+                              title="Public recognition visibility"
+                              style={{ width: '16px', height: '16px', cursor: 'pointer' }}
+                            />
+                          ) : (
+                            <span style={{ color: '#666' }}>-</span>
+                          )}
+                        </td>
                         {(isSuperAdmin || permissions?.masterlist_edit) && (
                           <td>
                             <div style={{ display: 'flex', gap: '8px', whiteSpace: 'nowrap' }}>
@@ -523,6 +538,11 @@ export default function MasterListTab({
                                     current_name: document.getElementById(`edit-current-name-${entry.id}`).value,
                                     is_unreachable: document.getElementById(`edit-unreachable-${entry.id}`).checked,
                                   };
+
+                                  // Include recognition_public if there's a tier
+                                  if (editingTier) {
+                                    updates.recognition_public = document.getElementById(`edit-recognition-${entry.id}`)?.checked;
+                                  }
 
                                   if (isSuperAdmin) {
                                     updates.in_memoriam = document.getElementById(`edit-memoriam-${entry.id}`)?.checked;
@@ -610,6 +630,15 @@ export default function MasterListTab({
                             <span style={{ color: 'var(--color-status-positive)', fontWeight: '600' }}>Paid</span>
                           ) : (
                             <span style={{ color: 'var(--text-primary)' }}>₱{parseFloat(entry.balance || 0).toLocaleString()}</span>
+                          )}
+                        </td>
+                        <td style={{ textAlign: 'center' }} title={entry.builder_tier ? (entry.recognition_public !== false ? 'Public recognition enabled' : 'Public recognition disabled') : ''}>
+                          {!entry.builder_tier ? (
+                            <span style={{ color: '#666' }}>-</span>
+                          ) : entry.recognition_public !== false ? (
+                            <span style={{ fontSize: '1rem' }} title="Visible in public recognition">👁</span>
+                          ) : (
+                            <span style={{ fontSize: '1rem', opacity: 0.4 }} title="Hidden from public recognition">👁</span>
                           )}
                         </td>
                         {(isSuperAdmin || permissions?.masterlist_edit) && (

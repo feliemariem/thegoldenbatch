@@ -45,6 +45,7 @@ router.get('/', authenticateAdmin, async (req, res) => {
         m.is_admin,
         m.builder_tier,
         m.pledge_amount,
+        m.recognition_public,
         m.created_at,
         CASE
           WHEN m.in_memoriam = true THEN 'In Memoriam'
@@ -333,7 +334,7 @@ router.post('/bulk', authenticateAdmin, async (req, res) => {
 router.put('/:id', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params;
-    const { last_name, first_name, current_name, email, section, in_memoriam, is_unreachable, is_admin, builder_tier, pledge_amount } = req.body;
+    const { last_name, first_name, current_name, email, section, in_memoriam, is_unreachable, is_admin, builder_tier, pledge_amount, recognition_public } = req.body;
 
     // Check if requester is super admin and get their admin id
     const superAdminCheck = await db.query(
@@ -521,6 +522,13 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
       } else {
         updateFields += `, builder_tier_set_at = NULL`;
       }
+    }
+
+    // Add recognition_public update if provided (any admin can toggle this)
+    if (recognition_public !== undefined) {
+      updateFields += `, recognition_public = $${paramIndex}`;
+      queryParams.push(recognition_public);
+      paramIndex++;
     }
 
     queryParams.push(id);

@@ -120,6 +120,7 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
   const [ratesLoading, setRatesLoading] = useState(false);
   const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
   const [removing, setRemoving] = useState(false);
+  const [recognitionPublic, setRecognitionPublic] = useState(true);
   const exchangeRatesCache = useRef(null);
   const tierHeadingRef = useRef(null);
   const progressRef = useRef(null);
@@ -258,7 +259,8 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
     try {
       const res = await apiPut('/api/me/builder-tier', {
         tier: selectedTier,
-        pledge_amount: amount
+        pledge_amount: amount,
+        recognition_public: recognitionPublic
       });
 
       if (res.ok) {
@@ -743,6 +745,20 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
                   <div className="cp-payment-fees-note">
                     Transfer fees and applicable taxes are shouldered by sender.
                   </div>
+                </div>
+
+                {/* Recognition Opt-in Toggle */}
+                <div className="cp-recognition-toggle">
+                  <label className="cp-recognition-label">
+                    <input
+                      type="checkbox"
+                      checked={recognitionPublic}
+                      onChange={(e) => setRecognitionPublic(e.target.checked)}
+                      className="cp-recognition-checkbox"
+                    />
+                    <span className="cp-recognition-text">Display my name in Builder recognition (Builder's Wall, program, website, stage)</span>
+                  </label>
+                  <div className="cp-recognition-note">You can change this anytime from your profile.</div>
                 </div>
 
                 {error && <div className="cp-error-message">{error}</div>}

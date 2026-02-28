@@ -1122,6 +1122,62 @@
   font-style: italic;
 }
 
+/* ===========================================
+   RECOGNITION TOGGLE
+   =========================================== */
+.cp-recognition-toggle {
+  background: var(--cp-green-panel);
+  border: 1px solid rgba(0, 102, 51, 0.2);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-top: 16px;
+}
+
+.cp-recognition-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.cp-recognition-checkbox {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: var(--cp-green);
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.cp-recognition-text {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cp-dark-green);
+  line-height: 1.4;
+}
+
+.cp-recognition-note {
+  font-size: 11px;
+  color: var(--cp-gray);
+  margin-top: 6px;
+  margin-left: 28px;
+  font-style: italic;
+}
+
+/* Dark mode */
+body[data-theme="dark"] .cp-recognition-toggle {
+  background: rgba(0, 102, 51, 0.1);
+  border-color: rgba(0, 102, 51, 0.25);
+}
+
+body[data-theme="dark"] .cp-recognition-text {
+  color: #e0e0e0;
+}
+
+body[data-theme="dark"] .cp-recognition-note {
+  color: #aaaaaa;
+}
+
 .cp-error-message {
   background: rgba(192, 57, 43, 0.1);
   border: 1px solid var(--cp-danger);

@@ -33,7 +33,8 @@ router.get('/', authenticateToken, async (req, res) => {
               m.current_name,
               m.builder_tier,
               m.pledge_amount,
-              m.builder_tier_set_at
+              m.builder_tier_set_at,
+              m.recognition_public
        FROM users u
        LEFT JOIN rsvps r ON u.id = r.user_id
        LEFT JOIN invites i ON u.invite_id = i.id
@@ -80,6 +81,7 @@ router.get('/', authenticateToken, async (req, res) => {
         builder_tier: user.builder_tier,
         pledge_amount: user.pledge_amount ? parseFloat(user.pledge_amount) : null,
         builder_tier_set_at: user.builder_tier_set_at,
+        recognition_public: user.recognition_public !== false, // Default to true if null
         is_graduate: user.section && user.section !== 'Non-Graduate',
         isAdmin: req.user.isAdmin || false
       });
@@ -116,7 +118,7 @@ router.get('/', authenticateToken, async (req, res) => {
 // Update builder tier
 router.put('/builder-tier', authenticateToken, async (req, res) => {
   try {
-    const { tier, pledge_amount } = req.body;
+    const { tier, pledge_amount, recognition_public } = req.body;
     const validTiers = ['cornerstone', 'pillar', 'anchor', 'root'];
 
     // Get user's master_list_id
@@ -172,19 +174,56 @@ router.put('/builder-tier', authenticateToken, async (req, res) => {
       finalPledgeAmount = null;
     }
 
-    // Update master_list
+    // Update master_list (include recognition_public if provided, default to true)
+    const recognitionValue = recognition_public !== undefined ? recognition_public : true;
     const result = await db.query(
-      `UPDATE master_list SET builder_tier = $1, pledge_amount = $2, builder_tier_set_at = NOW() WHERE id = $3
-       RETURNING builder_tier, pledge_amount, builder_tier_set_at`,
-      [tier, finalPledgeAmount, masterListId]
+      `UPDATE master_list SET builder_tier = $1, pledge_amount = $2, builder_tier_set_at = NOW(), recognition_public = $3 WHERE id = $4
+       RETURNING builder_tier, pledge_amount, builder_tier_set_at, recognition_public`,
+      [tier, finalPledgeAmount, recognitionValue, masterListId]
     );
 
     const row = result.rows[0];
     res.json({
       builder_tier: row.builder_tier,
       pledge_amount: row.pledge_amount ? parseFloat(row.pledge_amount) : null,
-      builder_tier_set_at: row.builder_tier_set_at
+      builder_tier_set_at: row.builder_tier_set_at,
+      recognition_public: row.recognition_public !== false
     });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Update recognition visibility independently
+router.put('/recognition-visibility', authenticateToken, async (req, res) => {
+  try {
+    const { recognition_public } = req.body;
+
+    if (typeof recognition_public !== 'boolean') {
+      return res.status(400).json({ error: 'recognition_public must be a boolean' });
+    }
+
+    // Get user's master_list_id
+    const linkResult = await db.query(
+      `SELECT i.master_list_id FROM users u JOIN invites i ON u.invite_id = i.id WHERE u.id = $1`,
+      [req.user.id]
+    );
+
+    if (linkResult.rows.length === 0 || !linkResult.rows[0].master_list_id) {
+      return res.status(400).json({ error: 'Not linked to master list' });
+    }
+
+    const masterListId = linkResult.rows[0].master_list_id;
+
+    // Update only recognition_public
+    const result = await db.query(
+      `UPDATE master_list SET recognition_public = $1 WHERE id = $2
+       RETURNING recognition_public`,
+      [recognition_public, masterListId]
+    );
+
+    res.json({ recognition_public: result.rows[0].recognition_public });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
