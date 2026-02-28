@@ -18,6 +18,7 @@ const actionItemRoutes = require('./routes/action-items');
 const messageRoutes = require('./routes/messages');
 const receiptsRoutes = require('./routes/receipts');
 const webhookRoutes = require('./routes/webhooks');
+const { initializeSummaryEmails } = require('./utils/summaryEmails');
 
 const app = express();
 
@@ -104,7 +105,7 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`Server running on port ${PORT}`);
   console.log('[SERVER] Routes mounted:');
   console.log('  /api/auth');
@@ -125,4 +126,7 @@ app.listen(PORT, () => {
   console.log('  /api/webhooks');
   console.log('  /api/health');
   console.log('  /api/debug/routes');
+
+  // Initialize summary email cron jobs (production only)
+  await initializeSummaryEmails();
 });

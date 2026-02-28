@@ -20,6 +20,7 @@ DROP TABLE IF EXISTS master_list;
 DROP TABLE IF EXISTS admins;
 DROP TABLE IF EXISTS volunteer_interests;
 DROP TABLE IF EXISTS messages;
+DROP TABLE IF EXISTS summary_snapshots;
 
 -- Admins table
 CREATE TABLE admins (
@@ -51,6 +52,7 @@ CREATE TABLE master_list (
     builder_tier VARCHAR(20),                   -- 'cornerstone', 'pillar', 'anchor', 'root'
     pledge_amount DECIMAL(12,2),                -- Committed contribution amount (NULL for root tier)
     builder_tier_set_at TIMESTAMP,              -- When tier was selected/changed
+    recognition_public BOOLEAN DEFAULT TRUE,    -- Opt-in for public recognition (Builder's Wall, program, etc.)
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT valid_builder_tier CHECK (builder_tier IS NULL OR builder_tier IN ('cornerstone', 'pillar', 'anchor', 'root'))
@@ -270,6 +272,21 @@ CREATE TABLE messages (
     created_at TIMESTAMP DEFAULT NOW()
 );
 
+-- Summary snapshots table (for week-over-week and month-over-month comparison in automated emails)
+CREATE TABLE summary_snapshots (
+    id SERIAL PRIMARY KEY,
+    snapshot_date DATE NOT NULL,
+    snapshot_type VARCHAR(10) NOT NULL,        -- 'weekly' or 'monthly'
+    registered_count INTEGER DEFAULT 0,
+    invited_count INTEGER DEFAULT 0,
+    total_raised DECIMAL(12,2) DEFAULT 0,
+    cornerstone_count INTEGER DEFAULT 0,
+    pillar_count INTEGER DEFAULT 0,
+    anchor_count INTEGER DEFAULT 0,
+    root_count INTEGER DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 
 -- Indexes for messages
 CREATE INDEX idx_messages_to_user ON messages(to_user_id);
@@ -307,6 +324,8 @@ CREATE INDEX idx_events_published ON events(is_published);
 CREATE INDEX idx_event_rsvps_event ON event_rsvps(event_id);
 CREATE INDEX idx_event_rsvps_user ON event_rsvps(user_id);
 CREATE INDEX idx_volunteer_interests_user ON volunteer_interests(user_id);
+CREATE INDEX idx_summary_snapshots_date ON summary_snapshots(snapshot_date DESC);
+CREATE INDEX idx_summary_snapshots_type ON summary_snapshots(snapshot_type);
 
 -- Unique index on ledger.reference_no for dedup (non-null, non-empty only)
 CREATE UNIQUE INDEX idx_ledger_reference_no_unique 
