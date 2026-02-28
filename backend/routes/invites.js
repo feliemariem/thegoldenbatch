@@ -7,6 +7,115 @@ const { sendInviteEmail } = require('../utils/email');
 // Get frontend URL from environment or fallback to localhost
 const getFrontendUrl = () => process.env.FRONTEND_URL || 'http://localhost:3000';
 
+// Middleware to authenticate Google Forms API key
+const authenticateApiKey = (req, res, next) => {
+  const apiKey = req.headers['x-api-key'];
+  const expectedKey = process.env.GOOGLE_FORMS_API_KEY;
+
+  if (!expectedKey) {
+    console.error('[AUTO-INVITE] GOOGLE_FORMS_API_KEY not configured');
+    return res.status(500).json({ error: 'Server configuration error' });
+  }
+
+  if (!apiKey || apiKey !== expectedKey) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  next();
+};
+
+// Auto-create invite from Google Forms submission (API key auth)
+router.post('/auto', authenticateApiKey, async (req, res) => {
+  try {
+    const { first_name, last_name, email } = req.body;
+
+    // Validate required fields
+    if (!first_name || !last_name || !email) {
+      return res.status(400).json({
+        error: 'Missing required fields',
+        details: 'first_name, last_name, and email are all required'
+      });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Check if email already exists
+    const existingResult = await db.query(
+      'SELECT id FROM invites WHERE LOWER(email) = $1',
+      [normalizedEmail]
+    );
+
+    if (existingResult.rows.length > 0) {
+      console.log(`[AUTO-INVITE] Email already invited: ${normalizedEmail}`);
+      return res.status(200).json({
+        message: 'Already invited',
+        status: 'exists'
+      });
+    }
+
+    // Create the invite
+    const result = await db.query(
+      'INSERT INTO invites (email, first_name, last_name) VALUES ($1, $2, $3) RETURNING id, email, first_name, last_name, invite_token, created_at',
+      [normalizedEmail, first_name.trim(), last_name.trim()]
+    );
+
+    const invite = result.rows[0];
+    const registrationUrl = `${getFrontendUrl()}/register/${invite.invite_token}`;
+
+    // Send the invite email
+    let emailSent = false;
+    let emailStatus = 'pending';
+
+    try {
+      const emailResult = await sendInviteEmail(normalizedEmail, first_name.trim(), registrationUrl);
+      if (emailResult.success) {
+        emailSent = true;
+        emailStatus = 'sent';
+        console.log(`[AUTO-INVITE] Email sent successfully to ${normalizedEmail}`);
+      } else {
+        emailStatus = 'failed';
+        console.error(`[AUTO-INVITE] Email failed for ${normalizedEmail}:`, emailResult.error);
+      }
+    } catch (emailErr) {
+      emailStatus = 'failed';
+      console.error(`[AUTO-INVITE] Email error for ${normalizedEmail}:`, emailErr.message);
+    }
+
+    // Update email status
+    await db.query(
+      'UPDATE invites SET email_sent = $1, email_status = $2 WHERE id = $3',
+      [emailSent, emailStatus, invite.id]
+    );
+
+    console.log(`[AUTO-INVITE] Created invite for ${normalizedEmail} (email_status: ${emailStatus})`);
+
+    if (emailSent) {
+      return res.status(201).json({
+        message: 'Invite created and email sent',
+        status: 'created'
+      });
+    } else {
+      return res.status(201).json({
+        message: 'Invite created but email failed to send',
+        status: 'created',
+        email_failed: true
+      });
+    }
+  } catch (err) {
+    console.error('[AUTO-INVITE] Error:', err.message);
+
+    // Handle duplicate email (race condition)
+    if (err.code === '23505') {
+      return res.status(200).json({
+        message: 'Already invited',
+        status: 'exists'
+      });
+    }
+
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // Create a new invite (admin only)
 router.post('/', authenticateAdmin, async (req, res) => {
   try {
