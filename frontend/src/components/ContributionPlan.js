@@ -503,6 +503,7 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
             {/* Builder Tiers */}
             <h2 className="cp-tier-heading" ref={tierHeadingRef}>Golden Batch Builders</h2>
             <p className="cp-section-subtitle cp-italic">We're all building this homecoming. Choose how you build.</p>
+            <p className="cp-section-subtitle cp-italic">Each tier represents a different way of supporting the same goal — no one is 'higher,' just contributing differently.</p>
             <p className="cp-builders-count">{batchProgress.builder_count} Builder{batchProgress.builder_count !== 1 ? 's' : ''} already in.</p>
             <p className="cp-tier-hint">Tap a tier to begin.</p>
 
@@ -793,8 +794,8 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
 
             {/* Recognition */}
             <div className="cp-recognition-section" ref={recognitionRef}>
-              <h2 className="cp-tier-heading">Builder Recognition</h2>
-              <p className="cp-section-subtitle">Every Builder is recognized. Greater commitments carry additional visibility and legacy distinction.</p>
+              <h2 className="cp-tier-heading">Builder Recognition & Appreciation</h2>
+              <p className="cp-section-subtitle">Every Builder is recognized. All recognition is opt-in — you choose whether your name appears publicly.</p>
 
               <div className="cp-table-wrapper">
                 <table className="cp-recognition-table">
@@ -831,8 +832,8 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
                     </tr>
                     <tr>
                       <td>Stage Acknowledgment</td>
-                      <td className="detail">Named segment</td>
-                      <td className="detail">Consolidated mention</td>
+                      <td className="detail">Named segment (opt-in)</td>
+                      <td className="detail">Consolidated mention (opt-in)</td>
                       <td className="dash">—</td>
                       <td className="dash">—</td>
                     </tr>
@@ -850,23 +851,23 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
               <div className="cp-recog-grid">
                 <div className="cp-recog-card">
                   <div className="cp-recog-card-title">Builder's Wall</div>
-                  <p>Physical display at the venue entrance with all Builder names organized by tier.</p>
+                  <p>Physical display at the venue entrance with Builder names organized by tier — listed only for those who opt in.</p>
                 </div>
                 <div className="cp-recog-card">
                   <div className="cp-recog-card-title">Souvenir Program</div>
-                  <p>Dedicated page in the printed program with all Builder names. Every attendee receives a copy.</p>
+                  <p>Dedicated page in the printed program with Builder names — listed only for those who opt in. Every attendee receives a copy.</p>
                 </div>
                 <div className="cp-recog-card">
                   <div className="cp-recog-card-title">Website Spotlight</div>
-                  <p>Featured on thegoldenbatch2003.com — individual profiles for Cornerstones and Pillars, grouped feature for Anchors.</p>
+                  <p>Featured on thegoldenbatch2003.com — individual profiles for Cornerstones and Pillars (opt-in), grouped feature for Anchors.</p>
                 </div>
                 <div className="cp-recog-card">
                   <div className="cp-recog-card-title">Stage Acknowledgment</div>
-                  <p>Cornerstones get a named program segment with their name on screen. Pillars are acknowledged together during a consolidated moment.</p>
+                  <p>Cornerstones get a named program segment (opt-in). Pillars are acknowledged together during a consolidated moment (opt-in). Builders who prefer privacy are recognized in the program and ledger only.</p>
                 </div>
                 <div className="cp-recog-card full">
                   <div className="cp-recog-card-title">Giving Back Dedication</div>
-                  <p>A permanent plaque or marker for Batch 2003's giving-back project to the school — with Cornerstone names individually recognized as its founding contributors. A legacy that outlasts the celebration.</p>
+                  <p>A permanent marker for Batch 2003's giving-back project to the school — Cornerstone Builders are acknowledged as founding supporters (opt-in). A legacy that outlasts the celebration.</p>
                 </div>
               </div>
 
