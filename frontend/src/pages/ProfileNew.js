@@ -673,12 +673,12 @@ END:VCALENDAR`;
                   {showStrategy && (
                     <div className="strategy-content">
                       <iframe
-                        src={`${process.env.REACT_APP_API_URL || 'https://api.thegoldenbatch2003.com'}/Funding_Strategy_Visual.html`}
+                        src="/presentations/Funding_Strategy_Visual.html"
                         title="Funding Strategy"
                         className="strategy-iframe"
                       />
                       <a
-                        href={`${process.env.REACT_APP_API_URL || 'https://api.thegoldenbatch2003.com'}/Funding_Strategy_Visual.html`}
+                        href="/presentations/Funding_Strategy_Visual.html"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="strategy-external-link"
