@@ -638,7 +638,7 @@ export default function MasterListTab({
                           ) : entry.recognition_public !== false ? (
                             <span style={{ fontSize: '1rem' }} title="Visible in public recognition">👁</span>
                           ) : (
-                            <span style={{ fontSize: '1rem', opacity: 0.4 }} title="Hidden from public recognition">👁</span>
+                            <span style={{ fontSize: '1rem', opacity: 0.15 }} title="Hidden from public recognition">👁</span>
                           )}
                         </td>
                         {(isSuperAdmin || permissions?.masterlist_edit) && (
