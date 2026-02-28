@@ -28,7 +28,7 @@
     --radius: 12px;
   }
 
-  html { scroll-behavior: smooth; overflow-x: hidden; max-width: 100%; }
+  html { scroll-behavior: smooth; }
 
   body {
     font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -36,12 +36,10 @@
     color: var(--text);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
-    max-width: 100%;
   }
 
   /* ── LAYOUT ── */
-  .container { max-width: 960px; margin: 0 auto; padding: 0 24px; overflow-x: hidden; }
+  .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
 
   /* ── HEADER ── */
   .page-header {
@@ -873,8 +871,6 @@
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--gold), transparent);
     margin: 40px 0;
-    overflow: hidden;
-    max-width: 100%;
   }
 
   /* ── SCENARIO TIER BREAKDOWN TABLE ── */
@@ -1406,18 +1402,6 @@
 
     /* Divider */
     .divider { margin: 28px 0; }
-
-    /* Table mobile sizing */
-    .recog-table th, .recog-table td,
-    .tier-table th, .tier-table td,
-    .breakdown-table th, .breakdown-table td {
-      padding: 6px 5px;
-      font-size: 0.65rem;
-    }
-    .recog-table .detail,
-    .tier-table .notes {
-      font-size: 0.6rem;
-    }
   }
 
   /* Slightly larger phones / small tablets */
@@ -1496,7 +1480,7 @@
   <section id="context">
     <div class="letter">
       <p><strong>Dear Committee,</strong></p>
-      <p>This document is the internal companion to the <a href="https://thegoldenbatch2003.com/profile-preview?openPlan=true" target="_blank" style="color: var(--green-dark); font-weight: 700;">Contribution & Funding Plan</a> we're presenting to the batch. Where the public plan shows <em>what</em> we're building, this one shows <em>how</em> we get there: the projections, the pressure points, and the decisions we need to align on.</p>
+      <p>This document is the internal companion to the <a href="https://thegoldenbatch2003.com/profile-preview" target="_blank" style="color: var(--green-dark); font-weight: 700;">Contribution & Funding Plan</a> we're presenting to the batch. Where the public plan shows <em>what</em> we're building, this one shows <em>how</em> we get there: the projections, the pressure points, and the decisions we need to align on.</p>
       <p>The contribution plan follows a deliberate arc: <strong>start with pride → show the target → show transparency → explain impact → offer tiers → show recognition → invite participation.</strong> Every design choice supports this, from the progress bar at the top to the "flexible monthly commitments" messaging at the bottom.</p>
       <p>Instead of presenting a traditional budget breakdown, each tier shows the events and experiences that level of contribution helps make possible. It's the simplest way to answer "where does my money go?" without handing anyone a spreadsheet.</p>
       <p>Our ₱2.1M target is achievable through the hybrid model: <strong>contributions as the foundation, fundraising as the multiplier.</strong> The projections here are honest. The pressure test below is a reminder that the floor works.</p>
@@ -1552,7 +1536,7 @@
         <div class="tier-card-flex">Flexible installments welcome.</div>
         <div class="tier-card-internal">
           <strong>Committee notes</strong>
-          Foundation-level. These are the names on the plaque. Requires personal outreach — this tier doesn't fill itself.
+          Foundation-level. Eligible for the giving-back plaque (opt-in). Requires personal outreach — this tier doesn't fill itself.
         </div>
       </div>
 
@@ -1599,10 +1583,17 @@
       </div>
     </div>
 
+    <div class="callout gold" style="margin-top: 20px;">
+      <strong>Public-Facing Copy Guidance</strong>
+      The internal rationale for Builder framing is solid: it avoids hierarchy and turns giving into shared ownership. But the public plan should make this explicit in one line. Add this sentence to the public contribution plan, near the tier heading:<br><br>
+      <em>"Each tier represents a different way of supporting the same goal — no one is 'higher,' just contributing differently."</em><br><br>
+      Keep it to one sentence. Confident, not defensive. Don't over-explain.
+    </div>
+
     <div class="callout green" style="margin-top: 20px;">
       <strong>How it works on the website</strong>
       <ul style="margin-top: 10px; padding-left: 18px; font-size: 0.88rem; line-height: 1.7; color: var(--text-secondary);">
-        <li>Tier selection is built into each member's profile at <a href="https://thegoldenbatch2003.com/profile-preview?openPlan=true" target="_blank" style="color: var(--green-dark); font-weight: 700;">thegoldenbatch2003.com</a></li>
+        <li>Tier selection is built into each member's profile at <a href="https://thegoldenbatch2003.com/profile-preview" target="_blank" style="color: var(--green-dark); font-weight: 700;">thegoldenbatch2003.com</a></li>
         <li>When a batchmate picks a tier and enters their pledge amount, the plan automatically breaks it down into <span style="font-weight:700; color: var(--text);">monthly, weekly, and daily</span> amounts over the remaining months</li>
         <li>For overseas batchmates, the <span style="font-weight:700; color: var(--text);">"View in your currency"</span> dropdown converts everything into their local currency (USD, AED, SGD, JPY, etc.) using live exchange rates</li>
         <li>The goal: remove the mental math barrier so people <span style="font-weight:700; color: var(--text);">commit on the spot</span> instead of saying "I'll think about it"</li>
@@ -1729,38 +1720,38 @@
 
   <!-- ═══════════════ RECOGNITION ═══════════════ -->
   <section id="recognition">
-    <div class="section-label">Incentive Structure</div>
-    <div class="section-title">Recognition Ladder</div>
-    <div class="section-subtitle">This is what differentiates "I'll send ₱10K" from "I want to be Cornerstone."</div>
+    <div class="section-label">Appreciation Framework</div>
+    <div class="section-title">Recognition & Appreciation</div>
+    <div class="section-subtitle">This helps us thank people in different ways. Every form of recognition is opt-in — Builders choose whether their name appears publicly.</div>
 
     <div class="card">
-      <div style="overflow-x: auto;">
-        <table class="recog-table">
-          <thead>
-            <tr>
-              <th>Recognition</th>
-              <th>Cornerstone</th>
-              <th>Pillar</th>
-              <th>Anchor</th>
-              <th>Root</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>Builder's Wall</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
-            <tr><td>Souvenir Program</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
-            <tr><td>Website Spotlight</td><td class="detail">Individual</td><td class="detail">Individual</td><td class="detail">Grouped</td><td class="detail">Funds page credits</td></tr>
-            <tr><td>Stage Acknowledgment</td><td class="detail">Named segment</td><td class="detail">Consolidated</td><td class="dash">—</td><td class="dash">—</td></tr>
-            <tr><td>Giving Back Dedication</td><td class="check">✓</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td></tr>
-            <tr><td>Commemorative Keepsake *</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
-          </tbody>
-        </table>
-      </div>
+      <table class="recog-table">
+        <thead>
+          <tr>
+            <th>Recognition</th>
+            <th>Cornerstone</th>
+            <th>Pillar</th>
+            <th>Anchor</th>
+            <th>Root</th>
+            <th>Visibility</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Builder's Wall</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="detail">Opt-in</td></tr>
+          <tr><td>Souvenir Program</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="detail">Opt-in</td></tr>
+          <tr><td>Website Spotlight</td><td class="detail">Individual</td><td class="detail">Individual</td><td class="detail">Grouped</td><td class="detail">Funds page credits</td><td class="detail">Opt-in</td></tr>
+          <tr><td>Stage Acknowledgment</td><td class="detail">Named segment (opt-in)</td><td class="detail">Consolidated mention (opt-in)</td><td class="dash">—</td><td class="dash">—</td><td class="detail">Opt-in</td></tr>
+          <tr><td>Giving Back Dedication</td><td class="check">✓</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="detail">Opt-in</td></tr>
+          <tr><td>Commemorative Keepsake *</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="detail">Opt-in</td></tr>
+        </tbody>
+      </table>
       <p style="font-size: 0.78rem; color: var(--text-muted); font-style: italic; margin-top: 12px;">* Commemorative Keepsake — form and design are still to be determined by the committee. Could be a custom piece, collectible, or memento. For now it signals that every Builder receives something tangible beyond recognition.</p>
+      <p style="font-size: 0.78rem; color: var(--text-muted); font-style: italic; margin-top: 12px;">All recognition is opt-in. By default, Builder names are kept private (credited in the ledger and personal profile only). Each Builder can toggle public display for any recognition channel — Builder's Wall, souvenir program, website, and stage acknowledgment.</p>
     </div>
 
     <div class="callout gold" style="margin-top: 20px;">
       <strong>Giving Back Dedication</strong>
-      Cornerstone names appear on a permanent plaque for Batch 2003's giving-back project. The project is from the batch as a whole; Cornerstones are individually recognized as its founding contributors. This is the strongest differentiator.
+      The Giving Back dedication is a permanent marker for Batch 2003's contribution to the school — the project belongs to the entire batch. Cornerstone Builders are acknowledged as founding supporters of that project (opt-in). This is the strongest differentiator, and it's tied to the giving-back legacy, not the party.
     </div>
   </section>
 
@@ -1802,7 +1793,7 @@
           </div>
         </div>
         <div class="mockup-caption">
-          <strong>Builder's Wall</strong> — Physical display at the venue entrance. All Builder names organized by tier. Every attendee sees this upon arrival.
+          <strong>Builder's Wall</strong> — Physical display at the venue entrance. Builder names organized by tier — only those who opted in to public recognition. Every attendee sees this upon arrival.
         </div>
       </div>
 
@@ -1840,7 +1831,7 @@
           </div>
         </div>
         <div class="mockup-caption">
-          <strong>Souvenir Program</strong> — Full page in printed program. Names only, no amounts. Every attendee receives a copy.
+          <strong>Souvenir Program</strong> — Full page in printed program. Names only, no amounts — listed only for those who opted in. Every attendee receives a copy.
         </div>
       </div>
 
@@ -1858,7 +1849,7 @@
           </div>
         </div>
         <div class="mockup-caption">
-          <strong>Website Spotlight</strong> — Individual feature for Cornerstone & Pillar. Grouped listing for Anchor. Funds page credits for Root.
+          <strong>Website Spotlight</strong> — Individual feature for Cornerstone & Pillar (opt-in). Grouped listing for Anchor. Funds page credits for Root. Builders who prefer privacy are not displayed.
         </div>
       </div>
 
@@ -1881,7 +1872,7 @@
           </div>
         </div>
         <div class="mockup-caption">
-          <strong>Stage Acknowledgment</strong> — Cornerstone = named segment with name on screen. Pillar = grouped consolidated mention.
+          <strong>Stage Acknowledgment</strong> — Cornerstone = named segment with name on screen (opt-in). Pillar = grouped consolidated mention (opt-in). Builders who prefer privacy are recognized in the program and ledger only.
         </div>
       </div>
 
@@ -1905,7 +1896,7 @@
           <div class="mock-plaque-foot">Cornerstone Builders · Est. 2028</div>
         </div>
         <div class="mockup-caption">
-          <strong>Giving Back Dedication</strong> — Cornerstone only. Permanent plaque on the batch's giving-back project to the school. A legacy that outlasts the celebration.
+          <strong>Giving Back Dedication</strong> — Cornerstone only (opt-in). Permanent marker on the batch's giving-back project to the school. Names appear only for those who choose to be listed. A legacy that outlasts the celebration.
         </div>
       </div>
 
@@ -1999,20 +1990,18 @@
       </div>
 
       <!-- Tier Breakdown Table -->
-      <div style="overflow-x: auto;">
-        <table class="breakdown-table" id="tier-breakdown">
-          <thead>
-            <tr>
-              <th>Tier</th>
-              <th>Count</th>
-              <th>Avg Amount</th>
-              <th>Subtotal</th>
-            </tr>
-          </thead>
-          <tbody id="breakdown-body"></tbody>
-          <tfoot id="breakdown-foot"></tfoot>
-        </table>
-      </div>
+      <table class="breakdown-table" id="tier-breakdown">
+        <thead>
+          <tr>
+            <th>Tier</th>
+            <th>Count</th>
+            <th>Avg Amount</th>
+            <th>Subtotal</th>
+          </tr>
+        </thead>
+        <tbody id="breakdown-body"></tbody>
+        <tfoot id="breakdown-foot"></tfoot>
+      </table>
 
       <!-- Progress Bars -->
       <div class="scenario-bar-wrap" style="margin-top: 24px;">
@@ -2058,38 +2047,34 @@
 
       <div class="card" style="margin-top: 16px;">
         <div class="card-title">Contributors Required at Different Averages</div>
-        <div style="overflow-x: auto;">
-          <table class="breakdown-table">
-            <thead>
-              <tr><th>Contributors</th><th>Avg Needed</th><th class="left">Implication</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>100</td><td>₱16,800</td><td class="left">Achievable with strong Anchor/Pillar mix</td></tr>
-              <tr><td>90</td><td>₱18,667</td><td class="left">Requires heavier Pillar/Cornerstone uptake</td></tr>
-              <tr><td>80</td><td>₱21,000</td><td class="left">High average. Demands strong personal outreach</td></tr>
-            </tbody>
-          </table>
-        </div>
+        <table class="breakdown-table">
+          <thead>
+            <tr><th>Contributors</th><th>Avg Needed</th><th class="left">Implication</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>100</td><td>₱16,800</td><td class="left">Achievable with strong Anchor/Pillar mix</td></tr>
+            <tr><td>90</td><td>₱18,667</td><td class="left">Requires heavier Pillar/Cornerstone uptake</td></tr>
+            <tr><td>80</td><td>₱21,000</td><td class="left">High average. Demands strong personal outreach</td></tr>
+          </tbody>
+        </table>
       </div>
 
       <div class="card" style="margin-top: 16px;">
         <div class="card-title">Minimum Safe Tier Mix</div>
-        <div style="overflow-x: auto;">
-          <table class="breakdown-table">
-            <thead>
-              <tr><th>Tier</th><th>Count</th><th>Avg Amount</th><th>Subtotal</th></tr>
-            </thead>
-            <tbody>
-              <tr><td><strong>Cornerstone</strong></td><td>20</td><td>₱25,000</td><td>₱500,000</td></tr>
-              <tr><td><strong>Pillar</strong></td><td>35</td><td>₱20,000</td><td>₱700,000</td></tr>
-              <tr><td><strong>Anchor</strong></td><td>25</td><td>₱12,000</td><td>₱300,000</td></tr>
-              <tr><td><strong>Root</strong></td><td>20</td><td>₱5,000</td><td>₱100,000</td></tr>
-            </tbody>
-            <tfoot>
-              <tr><td><strong>Total</strong></td><td><strong>100</strong></td><td></td><td><strong>₱1,600,000</strong></td></tr>
-            </tfoot>
-          </table>
-        </div>
+        <table class="breakdown-table">
+          <thead>
+            <tr><th>Tier</th><th>Count</th><th>Avg Amount</th><th>Subtotal</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Cornerstone</strong></td><td>20</td><td>₱25,000</td><td>₱500,000</td></tr>
+            <tr><td><strong>Pillar</strong></td><td>35</td><td>₱20,000</td><td>₱700,000</td></tr>
+            <tr><td><strong>Anchor</strong></td><td>25</td><td>₱12,000</td><td>₱300,000</td></tr>
+            <tr><td><strong>Root</strong></td><td>20</td><td>₱5,000</td><td>₱100,000</td></tr>
+          </tbody>
+          <tfoot>
+            <tr><td><strong>Total</strong></td><td><strong>100</strong></td><td></td><td><strong>₱1,600,000</strong></td></tr>
+          </tfoot>
+        </table>
         <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 12px;">
           Gap to ₱1.68M Core Target: <strong>~₱80,000</strong>. Manageable through fundraising surplus or targeted additional outreach. <em>This is the floor, not the goal.</em>
         </p>
@@ -2097,7 +2082,7 @@
 
       <div class="callout red" style="margin-top: 16px;">
         <strong>Committee Implication</strong>
-        If contributor count drops below 80, or Cornerstone/Pillar uptake is weak, additional direct outreach and sponsor engagement will be required. Responsibility is shared, and explicit. Each committee chair is expected to personally reach out to prospective Cornerstone and Pillar contributors within their network.
+        If contributor count drops below 80 or Cornerstone/Pillar uptake is slow, the committee will need to step up with direct, personal outreach and sponsor engagement. This is a shared effort — it works best when each member taps into their own network. A personal message from someone they know goes further than any campaign. The goal isn't to pressure anyone into a tier — it's to make sure every batchmate knows the plan exists, understands what we're building, and feels invited to be part of it.
       </div>
     </div>
   </section>
@@ -2111,7 +2096,7 @@
 
     <div class="expect-grid">
       <div class="expect-key">Public Document</div>
-      <div class="expect-val">Contribution & Funding Plan — accessible inside each member's <a href="https://thegoldenbatch2003.com/profile-preview?openPlan=true" target="_blank" style="color: var(--green); font-weight: 600; text-decoration: underline;">Profile page</a></div>
+      <div class="expect-val">Contribution & Funding Plan — accessible inside each member's <a href="https://thegoldenbatch2003.com/profile-preview" target="_blank" style="color: var(--green); font-weight: 600; text-decoration: underline;">Profile page</a></div>
       <div class="expect-key">Funding Target</div>
       <div class="expect-val">₱2,100,000, as presented in the contribution plan</div>
       <div class="expect-key">Timeline</div>
@@ -2123,7 +2108,7 @@
       <div class="expect-key">Personal Outreach</div>
       <div class="expect-val">The plan alone won't fill Cornerstone/Pillar. Committee must personally reach out, with help from classroom reps</div>
       <div class="expect-key">Recognition Delivery</div>
-      <div class="expect-val">Builder's Wall, souvenir program, website spotlight, stage acknowledgment, giving-back plaque. Committee must deliver on every promise</div>
+      <div class="expect-val">Builder's Wall, souvenir program, website spotlight, stage acknowledgment, giving-back plaque — all opt-in by default. Committee must deliver on every promise and implement the opt-in toggle on the website before the plan goes live</div>
       <div class="expect-key">FAQ Preparation</div>
       <div class="expect-val">Committee members should be ready to answer common batchmate questions about tiers, payment methods, timelines, and where their money goes. A shared FAQ document will be prepared before the plan goes live</div>
     </div>
