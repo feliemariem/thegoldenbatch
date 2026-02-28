@@ -86,17 +86,25 @@ function onFormSubmit(e) {
 
     for (let i = 0; i < itemResponses.length; i++) {
       const itemResponse = itemResponses[i];
-      const title = itemResponse.getItem().getTitle();
+      const title = itemResponse.getItem().getTitle().trim();
       const value = itemResponse.getResponse();
 
-      console.log('Field "' + title + '":', value);
+      console.log('Field "' + title + '" (length: ' + title.length + '):', value);
 
-      if (title === CONFIG.FIELD_FIRST_NAME) {
+      // Use case-insensitive comparison with trimmed values
+      const titleLower = title.toLowerCase();
+
+      if (titleLower === CONFIG.FIELD_FIRST_NAME.toLowerCase().trim()) {
         firstName = value;
-      } else if (title === CONFIG.FIELD_LAST_NAME) {
+        console.log('  -> Matched FIRST_NAME');
+      } else if (titleLower === CONFIG.FIELD_LAST_NAME.toLowerCase().trim()) {
         lastName = value;
-      } else if (title === CONFIG.FIELD_EMAIL) {
+        console.log('  -> Matched LAST_NAME');
+      } else if (titleLower === CONFIG.FIELD_EMAIL.toLowerCase().trim()) {
         email = value;
+        console.log('  -> Matched EMAIL');
+      } else {
+        console.log('  -> No match. Expected one of:', CONFIG.FIELD_FIRST_NAME, '/', CONFIG.FIELD_LAST_NAME, '/', CONFIG.FIELD_EMAIL);
       }
     }
 
