@@ -670,7 +670,7 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
                         )}
                         {selectedCurrency !== 'PHP' && exchangeRates && (
                           <div className="cp-exchange-disclaimer">
-                            Exchange rates are approximate and sourced from Open Exchange Rates. Actual rates at time of transfer may vary.
+                          Exchange rates are approximate and sourced from ExchangeRate-API. Actual rates at time of transfer may vary.
                           </div>
                         )}
                       </div>
