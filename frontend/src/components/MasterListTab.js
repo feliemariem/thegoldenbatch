@@ -317,6 +317,34 @@ export default function MasterListTab({
         </div>
       </div>
 
+      {/* Section Registration Stats */}
+      {masterListStats?.section_stats && masterListStats.section_stats.length > 0 && (
+        <div className="section-stats-row">
+          {(() => {
+            const maxPercentage = Math.max(...masterListStats.section_stats.map(s => s.percentage));
+            return masterListStats.section_stats.map(stat => (
+              <div
+                key={stat.section}
+                className={`section-stat-card ${stat.percentage === maxPercentage && maxPercentage > 0 ? 'leading' : ''}`}
+              >
+                <div className="section-stat-name">{stat.section}</div>
+                <div className="section-stat-count">
+                  {stat.registered} / {stat.total}
+                </div>
+                <div className="section-stat-label">registered</div>
+                <div className="section-stat-bar">
+                  <div
+                    className="section-stat-fill"
+                    style={{ width: `${stat.percentage}%` }}
+                  />
+                </div>
+                <div className="section-stat-percent">{stat.percentage}%</div>
+              </div>
+            ));
+          })()}
+        </div>
+      )}
+
       <div className="filter-row">
         <select value={masterListFilter} onChange={handleMasterListFilterChange}>
           <option value="all">All</option>

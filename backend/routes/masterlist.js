@@ -260,6 +260,25 @@ router.get('/', authenticateAdmin, async (req, res) => {
       };
     });
 
+    // Get per-section registration stats (for section stat cards)
+    const sectionStatsResult = await db.query(`
+      SELECT
+        m.section,
+        COUNT(*) as total,
+        COUNT(CASE WHEN m.status = 'Registered' AND (m.in_memoriam IS NULL OR m.in_memoriam = false) AND (m.is_unreachable IS NULL OR m.is_unreachable = false) THEN 1 END) as registered
+      FROM master_list m
+      WHERE m.section IN ('11A', '11B', '11C', '11D', '11E')
+      GROUP BY m.section
+      ORDER BY m.section
+    `);
+
+    const sectionStats = sectionStatsResult.rows.map(row => ({
+      section: row.section,
+      total: parseInt(row.total),
+      registered: parseInt(row.registered),
+      percentage: row.total > 0 ? Math.round((parseInt(row.registered) / parseInt(row.total)) * 100) : 0
+    }));
+
     // Get sections for dropdown
     const sectionsResult = await db.query(`
       SELECT DISTINCT section FROM master_list ORDER BY section
@@ -271,7 +290,8 @@ router.get('/', authenticateAdmin, async (req, res) => {
         ...statsResult.rows[0],
         ...paymentStatsResult.rows[0],
         ...tierStatsResult.rows[0],
-        tier_details: tierDetails
+        tier_details: tierDetails,
+        section_stats: sectionStats
       },
       sections: sectionsResult.rows.map(r => r.section),
       pagination: {
