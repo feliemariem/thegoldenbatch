@@ -1550,3 +1550,74 @@ body[data-theme="light"] .btn-new-meeting:hover {
   background: linear-gradient(135deg, #008040 0%, #006633 100%);
   box-shadow: 0 4px 12px rgba(0, 102, 51, 0.4);
 }
+
+/* ========================================
+   GRAD RSVP PROGRESS TRACKER
+   ======================================== */
+
+.grad-progress-tracker {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: rgba(0, 102, 51, 0.08);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 102, 51, 0.15);
+}
+
+.grad-progress-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--color-text-secondary);
+  margin-bottom: 8px;
+}
+
+.grad-progress-bar-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 4px;
+}
+
+.grad-progress-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.grad-progress-fill {
+  height: 100%;
+  background: #CFB53B;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.grad-progress-context {
+  margin-top: 6px;
+  font-size: 0.78rem;
+  color: var(--color-text-secondary);
+}
+
+.grad-progress-caption {
+  margin-top: 4px;
+  font-size: 0.72rem;
+  font-style: italic;
+  color: var(--color-text-secondary);
+  opacity: 0.8;
+}
+
+/* Light mode overrides */
+[data-theme="light"] .grad-progress-tracker {
+  background: rgba(0, 102, 51, 0.05);
+  border: 1px solid rgba(0, 102, 51, 0.12);
+}
+
+[data-theme="light"] .grad-progress-track {
+  background: rgba(0, 102, 51, 0.15);
+}
+
+[data-theme="light"] .grad-progress-fill {
+  background: #006633;
+}

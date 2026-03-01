@@ -149,6 +149,16 @@ router.get('/users', authenticateAdmin, async (req, res) => {
       LEFT JOIN rsvps r ON u.id = r.user_id
     `);
 
+    // Grad RSVP going count for progress tracker
+    const gradGoingResult = await db.query(`
+      SELECT
+        COUNT(CASE WHEN m.section != 'Non-Graduate' AND r.status = 'going' THEN 1 END) as grads_going
+      FROM users u
+      LEFT JOIN rsvps r ON u.id = r.user_id
+      LEFT JOIN invites i ON u.invite_id = i.id
+      LEFT JOIN master_list m ON i.master_list_id = m.id
+    `);
+
     // Parse stats from strings to integers (PostgreSQL COUNT returns strings)
     const rawStats = statsResult.rows[0];
     const stats = {
@@ -157,6 +167,7 @@ router.get('/users', authenticateAdmin, async (req, res) => {
       not_going: parseInt(rawStats.not_going) || 0,
       maybe: parseInt(rawStats.maybe) || 0,
       no_response: parseInt(rawStats.no_response) || 0,
+      grads_going: parseInt(gradGoingResult.rows[0].grads_going) || 0,
     };
 
     res.json({

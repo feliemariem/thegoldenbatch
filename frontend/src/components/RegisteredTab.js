@@ -2,13 +2,20 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import ScrollableTable from './ScrollableTable';
 import { apiGet } from '../api';
 
+// Grad attendance goal constants
+const TOTAL_GRADS = 198;
+const GRAD_TARGET_PERCENT = 65;
+const GRAD_TARGET_COUNT = Math.ceil(TOTAL_GRADS * GRAD_TARGET_PERCENT / 100); // 129
+const FUNDING_TARGET = 2100000;
+const TARGET_AVG = Math.ceil(FUNDING_TARGET / GRAD_TARGET_COUNT / 100) * 100; // ~16,300
+
 export default function RegisteredTab({
   isSuperAdmin,
   permissions,
   onStatsUpdate,
 }) {
   const [users, setUsers] = useState([]);
-  const [stats, setStats] = useState({ total: 0, going: 0, maybe: 0, not_going: 0, no_response: 0 });
+  const [stats, setStats] = useState({ total: 0, going: 0, maybe: 0, not_going: 0, no_response: 0, grads_going: 0 });
   const [registeredSearch, setRegisteredSearch] = useState('');
   const [registeredRsvpFilter, setRegisteredRsvpFilter] = useState('all');
 
@@ -34,7 +41,7 @@ export default function RegisteredTab({
       const data = await res.json();
 
       setUsers(data.users || []);
-      setStats(data.stats || { total: 0, going: 0, maybe: 0, not_going: 0, no_response: 0 });
+      setStats(data.stats || { total: 0, going: 0, maybe: 0, not_going: 0, no_response: 0, grads_going: 0 });
       setPage(data.pagination?.currentPage || 1);
       setTotalPages(data.pagination?.totalPages || 1);
       setTotalCount(data.pagination?.totalCount || 0);
@@ -133,8 +140,47 @@ export default function RegisteredTab({
     }
   };
 
+  // Computed values for grad progress tracker
+  const gradsGoing = stats.grads_going || 0;
+  const currentPercent = (gradsGoing / TOTAL_GRADS * 100).toFixed(1);
+  const progressWidth = Math.min((gradsGoing / GRAD_TARGET_COUNT) * 100, 100);
+  const avgPerGrad = gradsGoing > 0 ? Math.ceil(FUNDING_TARGET / gradsGoing / 100) * 100 : 0;
+
   return (
     <div className="users-section" ref={registeredTableRef}>
+      {/* Grad RSVP Progress Tracker */}
+      <div className="grad-progress-tracker">
+        <div className="grad-progress-label">GRAD ATTENDANCE GOAL</div>
+
+        <div className="grad-progress-bar-labels">
+          <span>{currentPercent}%</span>
+          <span>Target: {GRAD_TARGET_PERCENT}%</span>
+        </div>
+
+        <div className="grad-progress-track">
+          <div
+            className="grad-progress-fill"
+            style={{ width: `${progressWidth}%` }}
+          />
+        </div>
+
+        <div className="grad-progress-context">
+          {gradsGoing > 0 ? (
+            gradsGoing >= GRAD_TARGET_COUNT ? (
+              <>🎉 Target reached! {gradsGoing} grads going · avg ~₱{avgPerGrad.toLocaleString()} per grad</>
+            ) : (
+              <>{gradsGoing} of {GRAD_TARGET_COUNT} target grads going · avg ~₱{avgPerGrad.toLocaleString()} per grad to reach ₱{(FUNDING_TARGET / 1000000).toFixed(1)}M</>
+            )
+          ) : (
+            'No grads have RSVP\'d going yet'
+          )}
+        </div>
+
+        <div className="grad-progress-caption">
+          This is a planning projection — the avg drops as more grads confirm. At {GRAD_TARGET_PERCENT}%, it's only ~₱{TARGET_AVG.toLocaleString()} each.
+        </div>
+      </div>
+
       <div className="section-header">
         <h3>Registered Alumni ({stats.total})</h3>
         <div style={{ display: 'flex', gap: '8px' }}>
