@@ -1758,12 +1758,17 @@ body[data-theme="light"] .btn-new-meeting:hover {
 @media (max-width: 600px) {
   .section-stats-row {
     gap: 8px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
   }
 
   .section-stat-card {
-    min-width: calc(33.33% - 6px);
-    max-width: none;
-    flex: 1 1 calc(33.33% - 6px);
+    min-width: 80px;
+    max-width: 80px;
+    flex: 0 0 80px;
     padding: 8px 10px;
   }
 
