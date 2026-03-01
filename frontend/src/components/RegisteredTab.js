@@ -4,10 +4,10 @@ import { apiGet } from '../api';
 
 // Grad attendance goal constants
 const TOTAL_GRADS = 198;
-const GRAD_TARGET_PERCENT = 65;
-const GRAD_TARGET_COUNT = Math.ceil(TOTAL_GRADS * GRAD_TARGET_PERCENT / 100); // 129
+const GRAD_TARGET_COUNT = 100;
+const GRAD_TARGET_PERCENT = Math.round(GRAD_TARGET_COUNT / TOTAL_GRADS * 100); // 51
 const FUNDING_TARGET = 2100000;
-const TARGET_AVG = Math.ceil(FUNDING_TARGET / GRAD_TARGET_COUNT / 100) * 100; // ~16,300
+const TARGET_AVG = Math.ceil(FUNDING_TARGET / GRAD_TARGET_COUNT / 100) * 100; // ~21,000
 
 export default function RegisteredTab({
   isSuperAdmin,
@@ -143,7 +143,7 @@ export default function RegisteredTab({
   // Computed values for grad progress tracker
   const gradsGoing = stats.grads_going || 0;
   const currentPercent = (gradsGoing / TOTAL_GRADS * 100).toFixed(1);
-  const progressWidth = Math.min((gradsGoing / GRAD_TARGET_COUNT) * 100, 100);
+  const progressWidth = Math.min((gradsGoing / TOTAL_GRADS) * 100, 100);
   const avgPerGrad = gradsGoing > 0 ? Math.ceil(FUNDING_TARGET / gradsGoing / 100) * 100 : 0;
 
   return (
@@ -167,9 +167,9 @@ export default function RegisteredTab({
         <div className="grad-progress-context">
           {gradsGoing > 0 ? (
             gradsGoing >= GRAD_TARGET_COUNT ? (
-              <>🎉 Target reached! {gradsGoing} grads going · avg ~₱{avgPerGrad.toLocaleString()} per grad</>
+              <>🎉 Target reached! {gradsGoing} grads going · avg ~₱{avgPerGrad.toLocaleString()} per grad to reach ₱{(FUNDING_TARGET / 1000000).toFixed(1)}M</>
             ) : (
-              <>{gradsGoing} of {GRAD_TARGET_COUNT} target grads going · avg ~₱{avgPerGrad.toLocaleString()} per grad to reach ₱{(FUNDING_TARGET / 1000000).toFixed(1)}M</>
+              <>{gradsGoing} grads going · {GRAD_TARGET_COUNT} needed ({GRAD_TARGET_PERCENT}% of {TOTAL_GRADS}) · avg ~₱{avgPerGrad.toLocaleString()} per grad to reach ₱{(FUNDING_TARGET / 1000000).toFixed(1)}M</>
             )
           ) : (
             'No grads have RSVP\'d going yet'
@@ -177,7 +177,7 @@ export default function RegisteredTab({
         </div>
 
         <div className="grad-progress-caption">
-          This is a planning projection — the avg drops as more grads confirm. At {GRAD_TARGET_PERCENT}%, it's only ~₱{TARGET_AVG.toLocaleString()} each.
+          This is a planning projection — the avg drops as more grads confirm. At {GRAD_TARGET_COUNT} grads, it's only ~₱{TARGET_AVG.toLocaleString()} each.
         </div>
       </div>
 
