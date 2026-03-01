@@ -252,6 +252,13 @@ select option {
   flex: 1;
 }
 
+.filter-row .search-count {
+  position: static;
+  transform: none;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
 /* Search Bar */
 .search-bar {
   margin-bottom: 20px;
@@ -405,6 +412,10 @@ select option {
   .filter-row select,
   .filter-row .search-input {
     width: 100%;
+  }
+
+  .filter-row .search-count {
+    align-self: flex-start;
   }
 }
 
