@@ -285,6 +285,7 @@ router.put('/', authenticateToken, async (req, res) => {
 
     // Cascade name changes to invites and master_list
     if (first_name || last_name) {
+      console.log(`[Name Propagation] Triggered for user ${req.user.id}`);
       const updatedFirstName = toTitleCase(first_name) || result.rows[0].first_name;
       const updatedLastName = toTitleCase(last_name) || result.rows[0].last_name;
 
@@ -296,12 +297,14 @@ router.put('/', authenticateToken, async (req, res) => {
 
       if (userInvite.rows.length > 0 && userInvite.rows[0].invite_id) {
         const inviteId = userInvite.rows[0].invite_id;
+        console.log(`[Name Propagation] Found invite_id: ${inviteId}`);
 
         // Update invites table
         await db.query(
           'UPDATE invites SET first_name = $1, last_name = $2 WHERE id = $3',
           [updatedFirstName, updatedLastName, inviteId]
         );
+        console.log(`[Name Propagation] Updated invites table`);
 
         // Get master_list_id from invites
         const inviteRow = await db.query(
@@ -311,6 +314,7 @@ router.put('/', authenticateToken, async (req, res) => {
 
         if (inviteRow.rows.length > 0 && inviteRow.rows[0].master_list_id) {
           const masterListId = inviteRow.rows[0].master_list_id;
+          console.log(`[Name Propagation] Found master_list_id: ${masterListId}`);
           const currentName = `${updatedFirstName} ${updatedLastName}`;
 
           // Update ONLY current_name on master_list (never overwrite yearbook first_name/last_name)
@@ -318,7 +322,12 @@ router.put('/', authenticateToken, async (req, res) => {
             'UPDATE master_list SET current_name = $1 WHERE id = $2',
             [currentName, masterListId]
           );
+          console.log(`[Name Propagation] Updated master_list current_name to: ${currentName}`);
+        } else {
+          console.log(`[Name Propagation] Skipped: No master_list_id found for invite ${inviteId}`);
         }
+      } else {
+        console.log(`[Name Propagation] Skipped: No invite_id found for user ${req.user.id}`);
       }
     }
 
