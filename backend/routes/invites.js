@@ -4,6 +4,9 @@ const db = require('../db');
 const { authenticateAdmin } = require('../middleware/auth');
 const { sendInviteEmail } = require('../utils/email');
 
+// Helper function to add delay between bulk email sends (prevents Yahoo throttling)
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
 // Get frontend URL from environment or fallback to localhost
 const getFrontendUrl = () => process.env.FRONTEND_URL || 'http://localhost:3000';
 
@@ -160,7 +163,7 @@ router.post('/', authenticateAdmin, async (req, res) => {
 router.post('/bulk', authenticateAdmin, async (req, res) => {
   try {
     const { invites } = req.body;
-    
+
     if (!invites || !Array.isArray(invites) || invites.length === 0) {
       return res.status(400).json({ error: 'Invites array is required' });
     }
@@ -171,29 +174,43 @@ router.post('/bulk', authenticateAdmin, async (req, res) => {
       errors: []
     };
 
+    const totalInvites = invites.length;
+    let emailsSent = 0;
+
+    console.log(`[BULK-INVITE] Starting bulk invite send for ${totalInvites} invites`);
+
     for (const invite of invites) {
       try {
         const result = await db.query(
           'INSERT INTO invites (email, first_name, last_name) VALUES ($1, $2, $3) RETURNING id, email, first_name, last_name, invite_token',
           [invite.email.toLowerCase(), invite.first_name || null, invite.last_name || null]
         );
-        
+
         const newInvite = result.rows[0];
         const registrationUrl = `${getFrontendUrl()}/register/${newInvite.invite_token}`;
-        
+
         // Send email
         const emailResult = await sendInviteEmail(invite.email, invite.first_name, registrationUrl);
-        
+        emailsSent++;
+
+        // Log progress
+        console.log(`[BULK-INVITE] Sent invite ${emailsSent}/${totalInvites} to ${invite.email}`);
+
         // Update email_sent status
         if (emailResult.success) {
           await db.query('UPDATE invites SET email_sent = true WHERE id = $1', [newInvite.id]);
         }
-        
+
         results.success.push({
           ...newInvite,
           emailSent: emailResult.success,
           registrationUrl
         });
+
+        // Add delay between emails to prevent Yahoo throttling (skip delay after last email)
+        if (emailsSent < totalInvites) {
+          await sleep(2500);
+        }
       } catch (err) {
         if (err.code === '23505') {
           results.duplicates.push(invite.email);
@@ -202,6 +219,8 @@ router.post('/bulk', authenticateAdmin, async (req, res) => {
         }
       }
     }
+
+    console.log(`[BULK-INVITE] Completed: ${results.success.length} sent, ${results.duplicates.length} duplicates, ${results.errors.length} errors`);
 
     res.status(201).json({
       message: `Created ${results.success.length} invites`,
