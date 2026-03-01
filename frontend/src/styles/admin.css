@@ -1608,6 +1608,13 @@ body[data-theme="light"] .btn-new-meeting:hover {
   opacity: 0.8;
 }
 
+.grad-progress-nongrads {
+  margin-top: 6px;
+  font-size: 0.72rem;
+  color: var(--color-text-secondary);
+  opacity: 0.7;
+}
+
 /* Light mode overrides */
 [data-theme="light"] .grad-progress-tracker {
   background: rgba(0, 102, 51, 0.05);

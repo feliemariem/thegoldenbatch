@@ -152,7 +152,8 @@ router.get('/users', authenticateAdmin, async (req, res) => {
     // Grad RSVP going count for progress tracker
     const gradGoingResult = await db.query(`
       SELECT
-        COUNT(CASE WHEN m.section != 'Non-Graduate' AND r.status = 'going' THEN 1 END) as grads_going
+        COUNT(CASE WHEN m.section != 'Non-Graduate' AND r.status = 'going' THEN 1 END) as grads_going,
+        COUNT(CASE WHEN m.section = 'Non-Graduate' AND r.status = 'going' THEN 1 END) as non_grads_going
       FROM users u
       LEFT JOIN rsvps r ON u.id = r.user_id
       LEFT JOIN invites i ON u.invite_id = i.id
@@ -168,6 +169,7 @@ router.get('/users', authenticateAdmin, async (req, res) => {
       maybe: parseInt(rawStats.maybe) || 0,
       no_response: parseInt(rawStats.no_response) || 0,
       grads_going: parseInt(gradGoingResult.rows[0].grads_going) || 0,
+      non_grads_going: parseInt(gradGoingResult.rows[0].non_grads_going) || 0,
     };
 
     res.json({

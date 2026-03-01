@@ -15,7 +15,7 @@ export default function RegisteredTab({
   onStatsUpdate,
 }) {
   const [users, setUsers] = useState([]);
-  const [stats, setStats] = useState({ total: 0, going: 0, maybe: 0, not_going: 0, no_response: 0, grads_going: 0 });
+  const [stats, setStats] = useState({ total: 0, going: 0, maybe: 0, not_going: 0, no_response: 0, grads_going: 0, non_grads_going: 0 });
   const [registeredSearch, setRegisteredSearch] = useState('');
   const [registeredRsvpFilter, setRegisteredRsvpFilter] = useState('all');
 
@@ -41,7 +41,7 @@ export default function RegisteredTab({
       const data = await res.json();
 
       setUsers(data.users || []);
-      setStats(data.stats || { total: 0, going: 0, maybe: 0, not_going: 0, no_response: 0, grads_going: 0 });
+      setStats(data.stats || { total: 0, going: 0, maybe: 0, not_going: 0, no_response: 0, grads_going: 0, non_grads_going: 0 });
       setPage(data.pagination?.currentPage || 1);
       setTotalPages(data.pagination?.totalPages || 1);
       setTotalCount(data.pagination?.totalCount || 0);
@@ -142,6 +142,7 @@ export default function RegisteredTab({
 
   // Computed values for grad progress tracker
   const gradsGoing = stats.grads_going || 0;
+  const nonGradsGoing = stats.non_grads_going || 0;
   const currentPercent = (gradsGoing / TOTAL_GRADS * 100).toFixed(1);
   const progressWidth = Math.min((gradsGoing / TOTAL_GRADS) * 100, 100);
   const avgPerGrad = gradsGoing > 0 ? Math.ceil(FUNDING_TARGET / gradsGoing / 100) * 100 : 0;
@@ -179,6 +180,12 @@ export default function RegisteredTab({
         <div className="grad-progress-caption">
           This is a planning projection — the avg drops as more grads confirm. At {GRAD_TARGET_COUNT} grads, it's only ~₱{TARGET_AVG.toLocaleString()} each.
         </div>
+
+        {nonGradsGoing > 0 && (
+          <div className="grad-progress-nongrads">
+            + {nonGradsGoing} non-grad{nonGradsGoing !== 1 ? 's' : ''} going
+          </div>
+        )}
       </div>
 
       <div className="section-header">
