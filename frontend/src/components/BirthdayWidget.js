@@ -60,7 +60,7 @@ export default function BirthdayWidget() {
   };
 
   // Don't render if loading, hidden, no birthdays, or not logged in
-  if (loading || isHidden || birthdays.length === 0 || !token) {
+  if (loading || isHidden || birthdays.length === 0 || !user) {
     return null;
   }
 
