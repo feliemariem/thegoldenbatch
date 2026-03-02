@@ -261,13 +261,15 @@ router.get('/', authenticateAdmin, async (req, res) => {
     });
 
     // Get per-section registration stats (for section stat cards)
+    // Excludes in_memoriam members from both total and registered counts
     const sectionStatsResult = await db.query(`
       SELECT
         m.section,
         COUNT(*) as total,
-        COUNT(CASE WHEN m.status = 'Registered' AND (m.in_memoriam IS NULL OR m.in_memoriam = false) AND (m.is_unreachable IS NULL OR m.is_unreachable = false) THEN 1 END) as registered
+        COUNT(CASE WHEN m.status = 'Registered' AND (m.is_unreachable IS NULL OR m.is_unreachable = false) THEN 1 END) as registered
       FROM master_list m
       WHERE m.section IN ('11A', '11B', '11C', '11D', '11E')
+        AND (m.in_memoriam IS NULL OR m.in_memoriam = false)
       GROUP BY m.section
       ORDER BY m.section
     `);
