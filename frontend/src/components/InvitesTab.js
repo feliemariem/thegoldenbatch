@@ -346,8 +346,8 @@ export default function InvitesTab({
         </div>
       )}
 
-      {/* Bulk Upload */}
-      {(isSuperAdmin || permissions?.invites_upload) && (
+      {/* Bulk Upload - temporarily hidden, set to true to re-enable */}
+      {false && (isSuperAdmin || permissions?.invites_upload) && (
         <div className="invite-section">
           <h3>Bulk Upload (CSV)</h3>
           <p className="help-text-small">CSV format: First Name, Last Name, Email</p>
