@@ -117,7 +117,7 @@ export default function InvitesTab({
   };
 
   const copyLink = async (inviteToken) => {
-    const link = `${window.location.origin}/register/${inviteToken}`;
+    const link = `${window.location.origin}/i/${inviteToken}`;
     await navigator.clipboard.writeText(link);
     setCopiedId(inviteToken);
     setTimeout(() => setCopiedId(null), 2500);
@@ -274,7 +274,7 @@ export default function InvitesTab({
         i.last_name || '',
         i.email,
         i.used ? 'Registered' : 'Pending',
-        `${window.location.origin}/register/${i.invite_token}`
+        `${window.location.origin}/i/${i.invite_token}`
       ]);
 
       const csv = [headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
