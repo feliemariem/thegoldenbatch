@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { ActionItemsProvider } from './context/ActionItemsContext';
@@ -89,12 +89,23 @@ function ConditionalBirthdayWidget() {
   return <BirthdayWidget />;
 }
 
+// Messenger-safe invite redirect component
+// Render rewrites /i/:token to serve index.html, React Router then picks it up here
+// and immediately redirects to the actual registration page — same token, same form
+function InviteRedirect() {
+  const { token } = useParams();
+  return <Navigate to={`/register/${token}`} replace />;
+}
+
 function AppRoutes() {
   const { user } = useAuth();
 
   return (
     <Routes>
       <Route path="/" element={<Landing />} />
+      {/* Messenger-safe entry point — /i/:token rewrites to index.html via Render,
+          then React Router redirects to /register/:token client-side */}
+      <Route path="/i/:token" element={<InviteRedirect />} />
       <Route path="/register/:token" element={<Register />} />
       <Route path="/login" element={user ? <Navigate to="/profile" replace /> : <Login />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />

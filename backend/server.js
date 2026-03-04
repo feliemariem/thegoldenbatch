@@ -97,26 +97,6 @@ app.get('/api/debug/routes', (req, res) => {
   });
 });
 
-// Messenger-safe invite redirect
-// Facebook caches /register/:token links incorrectly in its in-app browser.
-// This /i/:token route acts as a fresh, uncached entry point that immediately
-// bounces the user to the actual registration page — same token, same result.
-app.get('/i/:token', (req, res) => {
-  res.send(`
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <!-- Instant redirect to the actual registration page -->
-        <meta http-equiv="refresh" content="0;url=/register/${req.params.token}" />
-        <!-- OG tags for Messenger link preview -->
-        <meta property="og:title" content="USLS-IS Batch 2003 Alumni Homecoming" />
-        <meta property="og:description" content="You're invited! Click to register for our 25th reunion." />
-      </head>
-      <body>Redirecting...</body>
-    </html>
-  `);
-});
-
 // Catch-all route for SPA - serve index.html for non-API requests
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));

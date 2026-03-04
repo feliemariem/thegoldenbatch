@@ -123,13 +123,6 @@ export default function InvitesTab({
     setTimeout(() => setCopiedId(null), 2500);
   };
 
-  const copyMessengerLink = async (inviteToken) => {
-    const link = `${window.location.origin}/i/${inviteToken}`;
-    await navigator.clipboard.writeText(link);
-    setCopiedId(`messenger-${inviteToken}`);
-    setTimeout(() => setCopiedId(null), 2000);
-  };
-
   const copyFullUrl = async (url) => {
     await navigator.clipboard.writeText(url);
     setCopiedId('invite-url');
@@ -594,40 +587,13 @@ export default function InvitesTab({
                           )}
                           <td>
                             {!invite.used && (
-                              <div style={{ display: 'flex', gap: '8px' }}>
-                                <button
-                                  className={`btn-link ${copiedId === invite.invite_token ? 'btn-copied-link' : ''}`}
-                                  onClick={() => copyLink(invite.invite_token)}
-                                  disabled={copiedId === invite.invite_token}
-                                >
-                                  {copiedId === invite.invite_token ? 'Copied ✓' : 'Copy link'}
-                                </button>
-                                <button
-                                  onClick={() => copyMessengerLink(invite.invite_token)}
-                                  disabled={copiedId === `messenger-${invite.invite_token}`}
-                                  style={{
-                                    background: '#0084FF',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '2px 6px',
-                                    borderRadius: '3px',
-                                    cursor: 'pointer',
-                                    fontSize: '0.85rem',
-                                    display: 'inline-flex',
-                                    alignItems: 'center',
-                                    whiteSpace: 'nowrap'
-                                  }}
-                                >
-                                  {copiedId === `messenger-${invite.invite_token}` ? 'Copied ✓' : (
-                                    <>
-                                      <svg width="12" height="12" viewBox="0 0 24 24" fill="white" style={{marginRight: 4, flexShrink: 0}}>
-                                        <path d="M12 0C5.373 0 0 4.975 0 11.111c0 3.497 1.745 6.616 4.472 8.652V24l4.086-2.242c1.09.301 2.246.464 3.442.464 6.627 0 12-4.975 12-11.111S18.627 0 12 0zm1.193 14.963l-3.056-3.259-5.963 3.259 6.559-6.963 3.13 3.259 5.889-3.259-6.559 6.963z"/>
-                                      </svg>
-                                      Messenger
-                                    </>
-                                  )}
-                                </button>
-                              </div>
+                              <button
+                                className={`btn-link ${copiedId === invite.invite_token ? 'btn-copied-link' : ''}`}
+                                onClick={() => copyLink(invite.invite_token)}
+                                disabled={copiedId === invite.invite_token}
+                              >
+                                {copiedId === invite.invite_token ? 'Copied ✓' : 'Copy link'}
+                              </button>
                             )}
                           </td>
                           {(isSuperAdmin || permissions?.invites_add) && (
