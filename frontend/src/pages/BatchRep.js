@@ -295,7 +295,7 @@ export default function BatchRep() {
               About Nomination
             </a>
             <a href="#responsibilities" onClick={(e) => handleNavClick(e, 'responsibilities')}>
-              Role & Responsibilities
+              Role
             </a>
           </nav>
 
