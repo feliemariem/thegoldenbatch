@@ -216,6 +216,7 @@ router.patch('/status', authenticateAdmin, async (req, res) => {
 
 // GET /api/batch-rep/graduates/search
 // Typeahead search for graduates (for nomination field)
+// Pulls from master_list: all graduates who are alive (not in_memoriam)
 router.get('/graduates/search', authenticateToken, async (req, res) => {
   try {
     const { q } = req.query;
@@ -226,23 +227,29 @@ router.get('/graduates/search', authenticateToken, async (req, res) => {
 
     const searchTerm = `%${q.trim()}%`;
 
-    // Search users who are graduates (have invite_id)
+    // Search master_list for graduates (section != 'Non-Graduate') who are alive
     const result = await db.query(`
-      SELECT u.id, u.first_name, u.last_name
-      FROM users u
-      WHERE u.invite_id IS NOT NULL
+      SELECT id, first_name, last_name, current_name
+      FROM master_list
+      WHERE section IS NOT NULL
+        AND section != 'Non-Graduate'
+        AND (in_memoriam IS NOT TRUE)
         AND (
-          u.first_name ILIKE $1
-          OR u.last_name ILIKE $1
-          OR CONCAT(u.first_name, ' ', u.last_name) ILIKE $1
+          first_name ILIKE $1
+          OR last_name ILIKE $1
+          OR current_name ILIKE $1
+          OR CONCAT(first_name, ' ', last_name) ILIKE $1
+          OR CONCAT(first_name, ' ', current_name) ILIKE $1
         )
-      ORDER BY u.last_name, u.first_name
+      ORDER BY last_name, first_name
       LIMIT 10
     `, [searchTerm]);
 
     res.json(result.rows.map(r => ({
       id: r.id,
-      name: `${r.first_name} ${r.last_name}`
+      name: r.current_name
+        ? `${r.first_name} ${r.current_name}`
+        : `${r.first_name} ${r.last_name}`
     })));
   } catch (err) {
     console.error('Error searching graduates:', err);
