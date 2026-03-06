@@ -15,8 +15,32 @@ const HASH_TO_SECTION = {
   'response': 'response'
 };
 
-// Temporary access restriction - will open to all graduates later
-const ALLOWED_EMAILS = ['felie@fnrcore.com'];
+// Access control phases:
+// Phase 1: Only felie@fnrcore.com
+// Phase 2: All admins
+// Phase 3: All registered graduates
+const BATCH_REP_PHASE = 1;
+
+// Check if user has access based on current phase
+const checkPhaseAccess = (user, isGrad) => {
+  if (!user) return false;
+
+  const userEmail = user.email?.toLowerCase();
+
+  switch (BATCH_REP_PHASE) {
+    case 1:
+      // Phase 1: Only specific email
+      return userEmail === 'felie@fnrcore.com';
+    case 2:
+      // Phase 2: All admins
+      return user.isAdmin === true;
+    case 3:
+      // Phase 3: All registered graduates
+      return isGrad === true;
+    default:
+      return false;
+  }
+};
 
 export default function BatchRep() {
   const navigate = useNavigate();
@@ -231,11 +255,10 @@ export default function BatchRep() {
     );
   }
 
-  // Check if user's email is in the allowed list (temporary restriction)
-  const userEmail = user?.email?.toLowerCase();
-  const isAllowed = ALLOWED_EMAILS.some(email => email.toLowerCase() === userEmail);
+  // Check access based on current phase
+  const hasAccess = checkPhaseAccess(user, isGrad);
 
-  if (!isAllowed) {
+  if (!hasAccess) {
     return (
       <>
         <Navbar />
