@@ -1682,7 +1682,7 @@ END:VCALENDAR`;
             <div className="batchrep-modal-bar"></div>
             <div className="batchrep-modal-body">
               <div className="batchrep-modal-badge">⚡ BATCH ACTION REQUIRED</div>
-              <h2 className="batchrep-modal-title">The batch needs your input.</h2>
+              <h2 className="batchrep-modal-title">Hi {profile?.first_name || 'there'}, the batch needs your input.</h2>
               <p className="batchrep-modal-desc">
                 The USLS Alumni Association has formally requested we submit a <strong>Batch 2003 Representative</strong> — who will also serve as Alumni Association President during our 25th Jubilee in 2028.
               </p>
