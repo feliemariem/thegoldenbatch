@@ -29,8 +29,16 @@ const checkPhaseAccess = (user, isGrad) => {
 
   switch (BATCH_REP_PHASE) {
     case 1:
-      // Phase 1: Only specific email
-      return userEmail === 'felie@fnrcore.com';
+      // Phase 1: Only specific emails
+      const allowedEmails = [
+        'felie@fnrcore.com',
+        'coycoy.cordova@gmail.com',
+        'emvjanklow@gmail.com',
+        'williamkramer27@gmail.com',
+        'jmrnv07@gmail.com',
+        'chayamalonso@gmail.com'
+      ];
+      return allowedEmails.includes(userEmail);
     case 2:
       // Phase 2: All admins
       return user.isAdmin === true;
