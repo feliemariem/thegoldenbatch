@@ -518,7 +518,7 @@ export default function BatchRep() {
           </div>
 
           <div className="batchrep-page-footer">
-            USLS-IS High School Batch 2003 · 25th Alumni Homecoming · December 16, 2028
+            USLS-IS · 25th Alumni Homecoming · December 16, 2028
           </div>
         </div>
         <Footer />

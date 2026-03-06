@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Batch Rep Modal Mock</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #006633;
+    --gold: #CFB53B;
+    --cream: #F5F2EA;
+    --text: #1a1a1a;
+    --muted: #666;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Lato', sans-serif;
+    background: var(--cream);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Simulated blurred profile page behind */
+  .page-bg {
+    position: fixed;
+    inset: 0;
+    background: var(--cream);
+    filter: blur(2px);
+    opacity: 0.6;
+    z-index: 0;
+  }
+
+  /* Overlay */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Modal */
+  .modal {
+    background: #fff;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.2);
+    overflow: hidden;
+    animation: slideUp 0.35s ease;
+    z-index: 20;
+    position: relative;
+  }
+
+  /* Top accent bar */
+  .modal-bar {
+    height: 5px;
+    background: linear-gradient(90deg, var(--green) 0%, var(--gold) 100%);
+  }
+
+  .modal-body {
+    padding: 32px 32px 28px;
+  }
+
+  /* Badge */
+  .modal-badge {
+    display: inline-block;
+    background: #FFF7E0;
+    color: #8a6e00;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+    border: 1px solid #e8d87a;
+  }
+
+  .modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: var(--green);
+    line-height: 1.3;
+    margin-bottom: 12px;
+  }
+
+  .modal-desc {
+    font-size: 0.95rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+
+  .modal-desc strong {
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  /* Nominee preview chip */
+  .nominee-chip {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #F0F7F3;
+    border: 1px solid #c8e0d2;
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 24px;
+  }
+
+  .nominee-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--green);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .nominee-info {
+    flex: 1;
+  }
+
+  .nominee-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--green);
+    margin-bottom: 2px;
+  }
+
+  .nominee-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  /* Deadline */
+  .deadline-note {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .deadline-note .date {
+    color: #c0392b;
+    font-weight: 700;
+  }
+
+  /* Buttons */
+  .modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: var(--green);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .btn-primary:hover {
+    background: #004d26;
+  }
+
+  .btn-later {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    color: var(--muted);
+    border: none;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.87rem;
+    cursor: pointer;
+    transition: color 0.2s;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .btn-later:hover {
+    color: var(--text);
+  }
+
+  /* Close X */
+  .modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: #aaa;
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px;
+    transition: color 0.2s;
+  }
+
+  .modal-close:hover {
+    color: var(--text);
+  }
+
+  /* Toggle button for demo */
+  .demo-toggle {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--green);
+    color: #fff;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.9rem;
+    cursor: pointer;
+    z-index: 5;
+  }
+
+  @media (max-width: 480px) {
+    .modal-body {
+      padding: 24px 20px 20px;
+    }
+    .modal-title {
+      font-size: 1.25rem;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-bg"></div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-bar"></div>
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-body">
+
+      <div class="modal-badge">⚡ Batch Action Required</div>
+
+      <h2 class="modal-title">The batch needs your input.</h2>
+
+      <p class="modal-desc">
+        The USLS Alumni Association has formally requested we submit a 
+        <strong>Batch 2003 Representative</strong> — who will also serve 
+        as Alumni Association President during our 25th Jubilee in 2028.
+      </p>
+
+      <div class="nominee-chip">
+        <div class="nominee-avatar">BJ</div>
+        <div class="nominee-info">
+          <div class="nominee-label">Current Nominee</div>
+          <div class="nominee-name">Bianca Jison</div>
+        </div>
+      </div>
+
+      <div class="deadline-note">
+        🕐 Feedback window closes <span class="date">March 10, 2026 at 8:00 AM PHT</span>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-primary" onclick="closeModal()">Weigh In Now →</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<button class="demo-toggle" onclick="openModal()">Show Modal Again</button>
+
+<script>
+  function closeModal() {
+    document.getElementById('overlay').style.display = 'none';
+  }
+  function openModal() {
+    document.getElementById('overlay').style.display = 'flex';
+  }
+</script>
+
+</body>
+</html>
