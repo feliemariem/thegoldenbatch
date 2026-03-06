@@ -4,7 +4,47 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import Footer from '../components/Footer';
 import logo from '../images/lasalle.jpg';
+import siteLogo from '../images/logo.png';
 import { apiGet, apiPut } from '../api';
+import '../styles/batchrep.css';
+
+// Access control phases for batch-rep feature:
+// Phase 1: Only felie@fnrcore.com
+// Phase 2: All admins
+// Phase 3: All registered graduates
+const BATCH_REP_PHASE = 1;
+
+// Check if user has access based on current phase
+const checkPhaseAccess = (user, isGrad) => {
+  if (!user) return false;
+
+  const userEmail = user.email?.toLowerCase();
+
+  switch (BATCH_REP_PHASE) {
+    case 1:
+      return userEmail === 'felie@fnrcore.com';
+    case 2:
+      return user.isAdmin === true;
+    case 3:
+      return isGrad === true;
+    default:
+      return false;
+  }
+};
+
+// Batch-rep deadline: March 14, 2026 at 8:00 AM PHT (UTC+8)
+const BATCH_REP_DEADLINE = new Date('2026-03-14T08:00:00+08:00');
+
+const isDeadlinePassed = () => {
+  return new Date() > BATCH_REP_DEADLINE;
+};
+
+const getDaysUntilBatchRepDeadline = () => {
+  const now = new Date();
+  const diffTime = BATCH_REP_DEADLINE - now;
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays;
+};
 
 export default function Profile() {
   const { user, logout, setUser } = useAuth();
@@ -16,6 +56,8 @@ export default function Profile() {
   const [saving, setSaving] = useState(false);
   const [rsvpSaving, setRsvpSaving] = useState(false);
   const [message, setMessage] = useState('');
+  const [showBatchRepModal, setShowBatchRepModal] = useState(false);
+  const [batchRepChecked, setBatchRepChecked] = useState(false);
 
   const [form, setForm] = useState({
     first_name: '',
@@ -33,6 +75,40 @@ export default function Profile() {
   useEffect(() => {
     fetchProfile();
   }, [user]);
+
+  // Check batch-rep status after profile loads
+  useEffect(() => {
+    const checkBatchRepStatus = async () => {
+      if (!profile || batchRepChecked) return;
+
+      // Don't show modal if deadline has passed
+      if (isDeadlinePassed()) {
+        setBatchRepChecked(true);
+        return;
+      }
+
+      try {
+        const res = await apiGet('/api/batch-rep/status');
+        if (res.ok) {
+          const data = await res.json();
+          // Show modal if:
+          // 1. User has phase access
+          // 2. User has NOT submitted
+          // 3. Status is active
+          const hasAccess = checkPhaseAccess(user, data.isGrad);
+          if (hasAccess && !data.hasSubmitted && data.status === 'active') {
+            setShowBatchRepModal(true);
+          }
+        }
+      } catch (err) {
+        console.error('Error checking batch-rep status:', err);
+      } finally {
+        setBatchRepChecked(true);
+      }
+    };
+
+    checkBatchRepStatus();
+  }, [profile, user, batchRepChecked]);
 
   const fetchProfile = async () => {
     try {
@@ -331,6 +407,43 @@ export default function Profile() {
 
       </div>
       <Footer />
+
+      {/* Batch Rep Announcement Modal - blocks profile until user responds */}
+      {showBatchRepModal && (
+        <div className="batchrep-modal-overlay">
+          <div className="batchrep-modal">
+            <div className="batchrep-modal-bar"></div>
+            <div className="batchrep-modal-body">
+              <div className="batchrep-modal-badge">⚡ BATCH ACTION REQUIRED</div>
+              <h2 className="batchrep-modal-title">The batch needs your input.</h2>
+              <p className="batchrep-modal-desc">
+                The USLS Alumni Association has formally requested we submit a <strong>Batch 2003 Representative</strong> — who will also serve as Alumni Association President during our 25th Jubilee in 2028.
+              </p>
+              <div className="batchrep-modal-nominee">
+                <div className="batchrep-modal-nominee-avatar">
+                  <img src={siteLogo} alt="The Golden Batch" />
+                </div>
+                <div className="batchrep-modal-nominee-info">
+                  <div className="batchrep-modal-nominee-label">Current Nominee</div>
+                  <div className="batchrep-modal-nominee-name">Bianca Jison</div>
+                </div>
+              </div>
+              <div className="batchrep-modal-deadline">
+                🕐 Feedback window closes <span className="deadline-date">March 14, 2026 at 8:00 AM PHT</span>
+                {getDaysUntilBatchRepDeadline() > 0 && (
+                  <span className="deadline-countdown"> · {getDaysUntilBatchRepDeadline()} day{getDaysUntilBatchRepDeadline() !== 1 ? 's' : ''} left</span>
+                )}
+              </div>
+              <button
+                className="batchrep-modal-btn"
+                onClick={() => navigate('/batch-rep')}
+              >
+                Submit My Response →
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
