@@ -555,8 +555,8 @@
 
 /* Response form button - light mode fix */
 [data-theme="light"] .batchrep-response-body .btn-primary {
-  background: #006633;
-  color: #ffffff;
+  background: #006633 !important;
+  color: #ffffff !important;
 }
 
 /* Success State */
