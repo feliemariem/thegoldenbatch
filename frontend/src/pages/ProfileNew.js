@@ -1681,7 +1681,7 @@ END:VCALENDAR`;
           <div className="batchrep-modal">
             <div className="batchrep-modal-bar"></div>
             <div className="batchrep-modal-body">
-              <div className="batchrep-modal-badge">⚡ Batch Action Required</div>
+              <div className="batchrep-modal-badge">⚡ BATCH ACTION REQUIRED</div>
               <h2 className="batchrep-modal-title">The batch needs your input.</h2>
               <p className="batchrep-modal-desc">
                 The USLS Alumni Association has formally requested we submit a <strong>Batch 2003 Representative</strong> — who will also serve as Alumni Association President during our 25th Jubilee in 2028.
@@ -1705,7 +1705,7 @@ END:VCALENDAR`;
                 className="batchrep-modal-btn"
                 onClick={() => navigate('/batch-rep')}
               >
-                Weigh In Now →
+                Submit My Response →
               </button>
             </div>
           </div>
