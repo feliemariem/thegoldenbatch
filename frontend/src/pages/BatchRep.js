@@ -42,6 +42,16 @@ const checkPhaseAccess = (user, isGrad) => {
   }
 };
 
+// Batch-rep deadline: March 14, 2026 at 8:00 AM PHT (UTC+8)
+const BATCH_REP_DEADLINE = new Date('2026-03-14T08:00:00+08:00');
+
+const getDaysUntilDeadline = () => {
+  const now = new Date();
+  const diffTime = BATCH_REP_DEADLINE - now;
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays;
+};
+
 export default function BatchRep() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -306,7 +316,10 @@ export default function BatchRep() {
 
           {/* Deadline */}
           <div className="batchrep-deadline">
-            Feedback window closes <strong>March 10, 2026 at 8:00 AM PHT</strong>. If no concerns or other nominations are raised by this date, Bianca Jison will be confirmed as our official Batch Representative.
+            Feedback window closes <strong>March 14, 2026 at 8:00 AM PHT</strong>
+            {getDaysUntilDeadline() > 0 && (
+              <span className="deadline-countdown"> · {getDaysUntilDeadline()} day{getDaysUntilDeadline() !== 1 ? 's' : ''} left</span>
+            )}. If no concerns or other nominations are raised by this date, Bianca Jison will be confirmed as our official Batch Representative.
           </div>
 
           {/* Official Letter - Collapsible */}

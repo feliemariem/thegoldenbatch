@@ -109,6 +109,12 @@
   color: var(--color-status-negative);
 }
 
+.batchrep-deadline .deadline-countdown,
+.batchrep-modal-deadline .deadline-countdown {
+  color: var(--color-hover);
+  font-weight: 600;
+}
+
 /* Collapsible Sections */
 .batchrep-collapsible {
   background: var(--color-bg-card);

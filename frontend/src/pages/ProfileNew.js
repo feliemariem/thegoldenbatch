@@ -36,11 +36,18 @@ const checkPhaseAccess = (user, isGrad) => {
   }
 };
 
-// Batch-rep deadline: March 10, 2026 at 8:00 AM PHT (UTC+8)
-const BATCH_REP_DEADLINE = new Date('2026-03-10T08:00:00+08:00');
+// Batch-rep deadline: March 14, 2026 at 8:00 AM PHT (UTC+8)
+const BATCH_REP_DEADLINE = new Date('2026-03-14T08:00:00+08:00');
 
 const isDeadlinePassed = () => {
   return new Date() > BATCH_REP_DEADLINE;
+};
+
+const getDaysUntilBatchRepDeadline = () => {
+  const now = new Date();
+  const diffTime = BATCH_REP_DEADLINE - now;
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays;
 };
 
 export default function ProfileNew() {
@@ -1689,7 +1696,10 @@ END:VCALENDAR`;
                 </div>
               </div>
               <div className="batchrep-modal-deadline">
-                🕐 Feedback window closes <span className="deadline-date">March 10, 2026 at 8:00 AM PHT</span>
+                🕐 Feedback window closes <span className="deadline-date">March 14, 2026 at 8:00 AM PHT</span>
+                {getDaysUntilBatchRepDeadline() > 0 && (
+                  <span className="deadline-countdown"> · {getDaysUntilBatchRepDeadline()} day{getDaysUntilBatchRepDeadline() !== 1 ? 's' : ''} left</span>
+                )}
               </div>
               <button
                 className="batchrep-modal-btn"
