@@ -293,7 +293,7 @@ export default function BatchRep() {
         <div className="card">
           <h1 className="page-title-gold">Batch 2003 Representative</h1>
           <p className="subtitle">
-            The USLS Alumni Association Bacolod, Inc. has formally requested that we submit one representative from Batch 2003.
+            The USLS Alumni Association has formally requested we submit a Batch 2003 Representative — who will also serve as Alumni Association President during our 25th Jubilee in 2028.
           </p>
 
           {/* Section Navigation */}
