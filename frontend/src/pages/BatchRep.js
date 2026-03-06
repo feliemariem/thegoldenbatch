@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { apiGet, apiPost } from '../api';
 import '../styles/batchrep.css';
@@ -12,8 +12,17 @@ try {
   // Image not yet added
 }
 
+// Map hash to section key
+const HASH_TO_SECTION = {
+  'official-letter': 'letter',
+  'about-nomination': 'nomination',
+  'responsibilities': 'role',
+  'response': 'response'
+};
+
 export default function BatchRep() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
 
   const [loading, setLoading] = useState(true);
@@ -22,7 +31,7 @@ export default function BatchRep() {
   const [isGrad, setIsGrad] = useState(false);
   const [hasAccess, setHasAccess] = useState(false);
 
-  const [openSections, setOpenSections] = useState({ nomination: true });
+  const [openSections, setOpenSections] = useState({});
   const [selection, setSelection] = useState('confirm');
   const [comments, setComments] = useState('');
   const [nomineeName, setNomineeName] = useState('');
@@ -114,20 +123,46 @@ export default function BatchRep() {
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
+  // Handle hash-based section expansion on mount
+  useEffect(() => {
+    const hash = location.hash.replace('#', '');
+    if (hash && HASH_TO_SECTION[hash]) {
+      const sectionKey = HASH_TO_SECTION[hash];
+      setOpenSections(prev => ({ ...prev, [sectionKey]: true }));
+
+      // Scroll to section after a brief delay to allow render
+      setTimeout(() => {
+        const element = document.getElementById(hash);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    }
+  }, [location.hash]);
+
   const toggleSection = (section) => {
     setOpenSections(prev => ({ ...prev, [section]: !prev[section] }));
   };
 
-  const scrollToSection = (sectionId) => {
-    const section = document.getElementById(sectionId);
-    if (section) {
-      if (!openSections[sectionId.replace('section-', '')]) {
-        setOpenSections(prev => ({ ...prev, [sectionId.replace('section-', '')]: true }));
-      }
-      setTimeout(() => {
-        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 50);
+  const handleNavClick = (e, hash) => {
+    e.preventDefault();
+    const sectionKey = HASH_TO_SECTION[hash];
+
+    // Update URL hash
+    window.history.pushState(null, '', `#${hash}`);
+
+    // Open section if not already open
+    if (sectionKey) {
+      setOpenSections(prev => ({ ...prev, [sectionKey]: true }));
     }
+
+    // Scroll to section
+    setTimeout(() => {
+      const element = document.getElementById(hash);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 50);
   };
 
   const handleSubmit = async () => {
@@ -234,10 +269,10 @@ export default function BatchRep() {
       </div>
 
       <nav className="batchrep-quick-nav">
-        <button onClick={() => scrollToSection('section-letter')}>Official Letter</button>
-        <button onClick={() => scrollToSection('section-nomination')}>About Nomination</button>
-        <button onClick={() => scrollToSection('section-role')}>Role & Responsibilities</button>
-        <button onClick={() => scrollToSection('section-response')} className="primary">Submit Response</button>
+        <a href="#official-letter" onClick={(e) => handleNavClick(e, 'official-letter')}>Official Letter</a>
+        <a href="#about-nomination" onClick={(e) => handleNavClick(e, 'about-nomination')}>About Nomination</a>
+        <a href="#responsibilities" onClick={(e) => handleNavClick(e, 'responsibilities')}>Role & Responsibilities</a>
+        <a href="#response" onClick={(e) => handleNavClick(e, 'response')} className="primary">Submit Response</a>
       </nav>
 
       <div className="batchrep-main">
@@ -254,7 +289,7 @@ export default function BatchRep() {
         </div>
 
         {/* Official Letter */}
-        <div className={`batchrep-collapsible ${openSections.letter ? 'open' : ''}`} id="section-letter">
+        <div className={`batchrep-collapsible ${openSections.letter ? 'open' : ''}`} id="official-letter">
           <button className="batchrep-collapsible-trigger" onClick={() => toggleSection('letter')}>
             <span className="trigger-left">Official Letter - USLS Alumni Association Bacolod, Inc.</span>
             <span className="batchrep-collapsible-arrow">&#9660;</span>
@@ -294,7 +329,7 @@ export default function BatchRep() {
         </div>
 
         {/* About Nomination */}
-        <div className={`batchrep-collapsible ${openSections.nomination ? 'open' : ''}`} id="section-nomination">
+        <div className={`batchrep-collapsible ${openSections.nomination ? 'open' : ''}`} id="about-nomination">
           <button className="batchrep-collapsible-trigger" onClick={() => toggleSection('nomination')}>
             <span className="trigger-left">About This Nomination</span>
             <span className="batchrep-collapsible-arrow">&#9660;</span>
@@ -311,7 +346,7 @@ export default function BatchRep() {
         </div>
 
         {/* Role & Responsibilities */}
-        <div className={`batchrep-collapsible ${openSections.role ? 'open' : ''}`} id="section-role">
+        <div className={`batchrep-collapsible ${openSections.role ? 'open' : ''}`} id="responsibilities">
           <button className="batchrep-collapsible-trigger" onClick={() => toggleSection('role')}>
             <span className="trigger-left">Role & Responsibilities</span>
             <span className="batchrep-collapsible-arrow">&#9660;</span>
@@ -336,7 +371,7 @@ export default function BatchRep() {
         </div>
 
         {/* Feedback Form */}
-        <div className="batchrep-feedback-card" id="section-response">
+        <div className="batchrep-feedback-card" id="response">
           <div className="batchrep-feedback-header">
             <h3>Your response</h3>
             <p>Registered graduates only - Responses are confidential</p>
