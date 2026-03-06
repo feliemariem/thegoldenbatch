@@ -3,18 +3,18 @@
    Uses existing app CSS variables and patterns
    ======================================== */
 
-/* Section Navigation - horizontally scrollable on mobile */
+/* Section Navigation - horizontally scrollable */
 .batchrep-section-nav {
   display: flex;
+  flex-direction: row;
   flex-wrap: nowrap;
   gap: 8px;
   margin-bottom: 16px;
+  padding-bottom: 8px;
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  white-space: nowrap;
-  padding-bottom: 4px;
 }
 
 .batchrep-section-nav::-webkit-scrollbar {
@@ -24,7 +24,6 @@
 .batchrep-section-nav a {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
   padding: 8px 16px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -605,16 +604,3 @@
   }
 }
 
-@media (min-width: 601px) {
-  .batchrep-section-nav {
-    flex-wrap: wrap;
-  }
-
-  .batchrep-section-nav {
-    margin-left: 0;
-    margin-right: 0;
-    padding-left: 0;
-    padding-right: 0;
-    flex-wrap: wrap;
-  }
-}
