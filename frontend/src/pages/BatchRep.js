@@ -297,10 +297,12 @@ export default function BatchRep() {
             <a href="#responsibilities" onClick={(e) => handleNavClick(e, 'responsibilities')}>
               Role & Responsibilities
             </a>
-            <a href="#response" onClick={(e) => handleNavClick(e, 'response')} className="primary">
-              Submit Response
-            </a>
           </nav>
+
+          {/* CTA Button - separate from nav pills */}
+          <a href="#response" onClick={(e) => handleNavClick(e, 'response')} className="batchrep-cta-btn">
+            Submit Response →
+          </a>
 
           {/* Deadline */}
           <div className="batchrep-deadline">
