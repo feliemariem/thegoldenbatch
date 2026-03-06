@@ -10,7 +10,7 @@ import ContributionPlan from '../components/ContributionPlan';
 import '../styles/profileNew.css';
 import '../styles/batchrep.css';
 import { apiGet, apiPut, apiUpload, apiDelete } from '../api';
-import lasalleLogo from '../images/lasalle.jpg';
+import siteLogo from '../images/logo.png';
 
 // Access control phases for batch-rep feature:
 // Phase 1: Only felie@fnrcore.com
@@ -1660,7 +1660,7 @@ END:VCALENDAR`;
         <div className="batchrep-modal-overlay">
           <div className="batchrep-modal">
             <div className="batchrep-modal-avatar">
-              <img src={lasalleLogo} alt="USLS Logo" />
+              <img src={siteLogo} alt="The Golden Batch" />
             </div>
             <h2 className="batchrep-modal-title">Batch Representative Nomination</h2>
             <p className="batchrep-modal-text">
