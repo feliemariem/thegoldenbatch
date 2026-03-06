@@ -36,6 +36,13 @@ const checkPhaseAccess = (user, isGrad) => {
   }
 };
 
+// Batch-rep deadline: March 10, 2026 at 8:00 AM PHT (UTC+8)
+const BATCH_REP_DEADLINE = new Date('2026-03-10T08:00:00+08:00');
+
+const isDeadlinePassed = () => {
+  return new Date() > BATCH_REP_DEADLINE;
+};
+
 export default function ProfileNew() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -149,6 +156,12 @@ export default function ProfileNew() {
   useEffect(() => {
     const checkBatchRepStatus = async () => {
       if (!profile || batchRepChecked) return;
+
+      // Don't show modal if deadline has passed
+      if (isDeadlinePassed()) {
+        setBatchRepChecked(true);
+        return;
+      }
 
       try {
         const res = await apiGet('/api/batch-rep/status');

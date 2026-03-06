@@ -400,15 +400,14 @@ export default function BatchRep() {
               {submitSuccess || hasSubmitted ? (
                 <div className="batchrep-success">
                   <div className="batchrep-success-icon">✓</div>
-                  <h4>Thank you!</h4>
-                  <p>Your response has been recorded. Results will be shared with the batch once the feedback window closes.</p>
+                  <p>Thank you for your response.</p>
                   <button className="btn-secondary" onClick={() => navigate('/profile')}>
                     Back to Profile
                   </button>
                 </div>
               ) : status !== 'active' ? (
                 <div className="batchrep-message">
-                  <p>Submissions are currently closed.</p>
+                  <p>Submissions are now closed.</p>
                   <button className="btn-secondary" onClick={() => navigate('/profile')}>
                     Back to Profile
                   </button>

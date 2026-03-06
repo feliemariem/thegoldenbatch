@@ -542,18 +542,7 @@
   align-items: center;
   justify-content: center;
   font-size: 1.5rem;
-  margin: 0 auto 20px;
-}
-
-.batchrep-success h4 {
-  font-family: var(--font-heading);
-  font-size: 1.3rem;
-  color: var(--color-hover);
-  margin-bottom: 12px;
-}
-
-[data-theme="light"] .batchrep-success h4 {
-  color: #006633;
+  margin: 0 auto 16px;
 }
 
 .batchrep-success p {
