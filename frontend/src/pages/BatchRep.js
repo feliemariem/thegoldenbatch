@@ -342,7 +342,6 @@ export default function BatchRep() {
             </div>
             <div className="batchrep-nominee-body">
               <div className="batchrep-nominee-name">Bianca Jison</div>
-              <div className="batchrep-nominee-sub">USLS-IS High School Batch 2003</div>
               <div className="batchrep-nominee-roles">
                 <div className="batchrep-nominee-role">
                   <span className="batchrep-role-badge">NOW</span>
