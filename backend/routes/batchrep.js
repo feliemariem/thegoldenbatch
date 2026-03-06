@@ -225,7 +225,24 @@ router.get('/graduates/search', authenticateToken, async (req, res) => {
       return res.json([]);
     }
 
-    const searchTerm = `%${q.trim()}%`;
+    // Split query into words for multi-word matching
+    const words = q.trim().toLowerCase().split(/\s+/).filter(w => w.length > 0);
+
+    if (words.length === 0) {
+      return res.json([]);
+    }
+
+    // Build WHERE conditions: each word must appear in the combined name fields
+    // This allows "Mel Yanson" to match "Mel Andrea F. Yanson"
+    const wordConditions = words.map((_, i) => `
+      (
+        LOWER(first_name) LIKE $${i + 1}
+        OR LOWER(last_name) LIKE $${i + 1}
+        OR LOWER(COALESCE(current_name, '')) LIKE $${i + 1}
+      )
+    `).join(' AND ');
+
+    const params = words.map(w => `%${w}%`);
 
     // Search master_list for graduates (section != 'Non-Graduate') who are alive
     const result = await db.query(`
@@ -234,22 +251,19 @@ router.get('/graduates/search', authenticateToken, async (req, res) => {
       WHERE section IS NOT NULL
         AND section != 'Non-Graduate'
         AND (in_memoriam IS NOT TRUE)
-        AND (
-          first_name ILIKE $1
-          OR last_name ILIKE $1
-          OR current_name ILIKE $1
-          OR CONCAT(first_name, ' ', last_name) ILIKE $1
-          OR CONCAT(first_name, ' ', current_name) ILIKE $1
-        )
-      ORDER BY last_name, first_name
+        AND (${wordConditions})
+      ORDER BY
+        CASE WHEN current_name IS NOT NULL THEN current_name ELSE last_name END,
+        first_name
       LIMIT 10
-    `, [searchTerm]);
+    `, params);
 
+    // Display logic:
+    // - If current_name exists: show current_name (it's the full registered/married name)
+    // - Otherwise: show yearbook name (first_name + last_name)
     res.json(result.rows.map(r => ({
       id: r.id,
-      name: r.current_name
-        ? `${r.first_name} ${r.current_name}`
-        : `${r.first_name} ${r.last_name}`
+      name: r.current_name || `${r.first_name} ${r.last_name}`
     })));
   } catch (err) {
     console.error('Error searching graduates:', err);
