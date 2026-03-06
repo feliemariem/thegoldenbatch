@@ -1,0 +1,755 @@
+/* BatchRep Page Styles */
+
+.batchrep-page {
+  --green: #006633;
+  --green-dark: #004d26;
+  --green-light: #e8f5ee;
+  --gold: #CFB53B;
+  --gold-light: #f7f0d0;
+  --white: #ffffff;
+  --gray: #f4f4f2;
+  --text: #1a1a1a;
+  --muted: #666;
+
+  font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #ffffff;
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* Header */
+.batchrep-header {
+  background: #ffffff;
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-bottom: 3px solid var(--green);
+}
+
+.batchrep-header-crest {
+  width: 42px;
+  height: 42px;
+  background: var(--green);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+  color: var(--gold);
+}
+
+.batchrep-header-text h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  color: var(--green);
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.batchrep-header-text p {
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* Main Content */
+.batchrep-main {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 32px 20px 60px;
+  background: #ffffff;
+}
+
+/* Animation */
+.batchrep-main > * {
+  animation: batchrepFadeUp 0.4s ease both;
+}
+
+.batchrep-main > *:nth-child(1) { animation-delay: 0.05s; }
+.batchrep-main > *:nth-child(2) { animation-delay: 0.1s; }
+.batchrep-main > *:nth-child(3) { animation-delay: 0.15s; }
+.batchrep-main > *:nth-child(4) { animation-delay: 0.2s; }
+.batchrep-main > *:nth-child(5) { animation-delay: 0.25s; }
+.batchrep-main > *:nth-child(6) { animation-delay: 0.3s; }
+.batchrep-main > *:nth-child(7) { animation-delay: 0.35s; }
+.batchrep-main > *:nth-child(8) { animation-delay: 0.4s; }
+
+@keyframes batchrepFadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Quick Nav */
+.batchrep-quick-nav {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 12px 20px;
+  background: #f9f9f9;
+  border-bottom: 1px solid #eee;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.batchrep-quick-nav::-webkit-scrollbar { display: none; }
+
+.batchrep-quick-nav button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  padding: 6px 12px;
+  background: var(--white);
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--green);
+  cursor: pointer;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.batchrep-quick-nav button:hover {
+  background: var(--green);
+  color: var(--white);
+  border-color: var(--green);
+}
+
+.batchrep-quick-nav button.primary {
+  background: var(--green);
+  color: var(--white);
+  border-color: var(--green);
+}
+
+/* Official Badge */
+.batchrep-official-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--gold);
+  color: var(--green-dark);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 2px;
+  margin-bottom: 20px;
+}
+
+/* Title Block */
+.batchrep-title-block {
+  margin-bottom: 28px;
+}
+
+.batchrep-title-block h2 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 26px;
+  color: var(--green);
+  line-height: 1.2;
+  margin-bottom: 10px;
+}
+
+.batchrep-title-block p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+/* Deadline Bar */
+.batchrep-deadline-bar {
+  background: #fff5f5;
+  border: 1px solid #e8a0a0;
+  border-left: 4px solid #cc3333;
+  border-radius: 6px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #7a1a1a;
+  margin-bottom: 24px;
+}
+
+/* Collapsible */
+.batchrep-collapsible {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.batchrep-collapsible-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: var(--white);
+  border: none;
+  cursor: pointer;
+  font-family: 'Lato', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 0.3px;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.batchrep-collapsible-trigger:hover {
+  background: var(--green-light);
+}
+
+.batchrep-collapsible-trigger .trigger-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.batchrep-collapsible-arrow {
+  font-size: 11px;
+  transition: transform 0.2s;
+  color: var(--muted);
+}
+
+.batchrep-collapsible.open .batchrep-collapsible-arrow {
+  transform: rotate(180deg);
+}
+
+.batchrep-collapsible-body {
+  display: none;
+  padding: 14px 18px 18px;
+  background: var(--white);
+  border-top: 1px solid #eee;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text);
+}
+
+.batchrep-collapsible.open .batchrep-collapsible-body {
+  display: block;
+}
+
+/* Letter Image */
+.batchrep-letter-img-wrap {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--white);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.batchrep-letter-img-wrap img {
+  width: 100%;
+  display: block;
+}
+
+.batchrep-letter-placeholder {
+  padding: 40px 20px;
+  text-align: center;
+  background: var(--gray);
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* Nominee Card */
+.batchrep-nominee-card {
+  background: var(--white);
+  border: 2px solid var(--gold);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.batchrep-nominee-header {
+  background: var(--gold);
+  padding: 10px 18px;
+}
+
+.batchrep-nominee-header span {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--green-dark);
+}
+
+.batchrep-nominee-body {
+  padding: 20px 18px;
+}
+
+.batchrep-nominee-name {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 22px;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+.batchrep-nominee-sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+.batchrep-nominee-roles {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.batchrep-nominee-role {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.batchrep-role-icon {
+  background: var(--green-light);
+  color: var(--green);
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 3px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* Local Notice */
+.batchrep-local-notice {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: #fff8e1;
+  border: 1px solid var(--gold);
+  border-left: 4px solid var(--gold);
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+.batchrep-local-notice-icon {
+  font-size: 15px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.batchrep-local-notice strong {
+  color: var(--green-dark);
+}
+
+/* Role list styling */
+.batchrep-collapsible-body ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 0;
+  margin: 0;
+}
+
+.batchrep-collapsible-body ul li {
+  font-size: 13px;
+  color: var(--text);
+  padding-left: 16px;
+  position: relative;
+  line-height: 1.5;
+}
+
+.batchrep-collapsible-body ul li::before {
+  content: '\25B8';
+  position: absolute;
+  left: 0;
+  color: var(--gold);
+  font-size: 11px;
+  top: 1px;
+}
+
+/* Reassurance */
+.batchrep-reassurance {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #eee;
+  font-size: 13px;
+  color: var(--green-dark);
+  line-height: 1.6;
+  font-style: italic;
+}
+
+/* Feedback Card */
+.batchrep-feedback-card {
+  background: var(--white);
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.batchrep-feedback-header {
+  background: var(--green-light);
+  padding: 14px 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.batchrep-feedback-header h3 {
+  font-family: 'Playfair Display', Georgia, serif;
+  color: var(--green);
+  font-size: 16px;
+  margin: 0;
+}
+
+.batchrep-feedback-header p {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 3px;
+}
+
+.batchrep-feedback-body {
+  padding: 20px;
+}
+
+.batchrep-feedback-body > p {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+
+/* Feedback Options */
+.batchrep-feedback-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.batchrep-feedback-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 2px solid #e5e5e5;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.batchrep-feedback-option:hover {
+  border-color: var(--green);
+  background: var(--green-light);
+}
+
+.batchrep-feedback-option.selected {
+  border-color: var(--green);
+  background: var(--green-light);
+}
+
+.batchrep-feedback-option input[type="radio"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--green);
+  flex-shrink: 0;
+}
+
+.batchrep-feedback-option-text {
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* Simple Field */
+.batchrep-simple-field {
+  margin-top: 16px;
+}
+
+.batchrep-simple-field label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 8px;
+}
+
+.batchrep-simple-field .optional {
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  font-style: italic;
+  font-size: 11px;
+}
+
+.batchrep-simple-field textarea {
+  width: 100%;
+  padding: 11px 14px;
+  border: 2px solid #e5e5e5;
+  border-radius: 6px;
+  font-family: 'Lato', sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  resize: vertical;
+  min-height: 80px;
+  outline: none;
+  transition: border-color 0.15s;
+  box-sizing: border-box;
+}
+
+.batchrep-simple-field textarea:focus {
+  border-color: var(--green);
+}
+
+/* Local Reminder */
+.batchrep-local-reminder {
+  font-size: 12px;
+  color: var(--green-dark);
+  background: #fff8e1;
+  border: 1px solid var(--gold);
+  border-radius: 4px;
+  padding: 7px 10px;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+/* Typeahead */
+.batchrep-typeahead-wrap {
+  position: relative;
+}
+
+.batchrep-typeahead-wrap input {
+  width: 100%;
+  padding: 11px 14px;
+  border: 2px solid #e5e5e5;
+  border-radius: 6px;
+  font-family: 'Lato', sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s;
+  box-sizing: border-box;
+}
+
+.batchrep-typeahead-wrap input:focus {
+  border-color: var(--green);
+}
+
+.batchrep-typeahead-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--white);
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  z-index: 100;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.batchrep-typeahead-dropdown.open {
+  display: block;
+}
+
+.batchrep-typeahead-item {
+  padding: 10px 14px;
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.1s;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.batchrep-typeahead-item:last-child {
+  border-bottom: none;
+}
+
+.batchrep-typeahead-item:hover {
+  background: var(--green-light);
+  color: var(--green);
+}
+
+.batchrep-typeahead-empty {
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* Submit Button */
+.batchrep-submit-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--green);
+  color: var(--white);
+  border: none;
+  border-radius: 6px;
+  font-family: 'Lato', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: background 0.15s;
+  margin-top: 16px;
+}
+
+.batchrep-submit-btn:hover {
+  background: var(--green-dark);
+}
+
+.batchrep-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Confidential Note */
+.batchrep-confidential-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 12px;
+  line-height: 1.5;
+}
+
+/* Error Message */
+.batchrep-error-message {
+  background: #fff5f5;
+  border: 1px solid #e8a0a0;
+  color: #7a1a1a;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-top: 12px;
+}
+
+/* Success Message */
+.batchrep-success-message {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.batchrep-success-icon {
+  width: 48px;
+  height: 48px;
+  background: var(--green);
+  color: var(--white);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin: 0 auto 16px;
+}
+
+.batchrep-success-message h4 {
+  font-family: 'Playfair Display', Georgia, serif;
+  color: var(--green);
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.batchrep-success-message p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+/* Closed Message */
+.batchrep-closed-message {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.batchrep-closed-message p {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+/* Access Denied */
+.batchrep-access-denied {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.batchrep-access-denied h2 {
+  font-family: 'Playfair Display', Georgia, serif;
+  color: var(--green);
+  font-size: 24px;
+  margin-bottom: 12px;
+}
+
+.batchrep-access-denied p {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 24px;
+}
+
+/* Buttons */
+.batchrep-btn-primary {
+  display: inline-block;
+  padding: 12px 24px;
+  background: var(--green);
+  color: var(--white);
+  border: none;
+  border-radius: 6px;
+  font-family: 'Lato', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.batchrep-btn-primary:hover {
+  background: var(--green-dark);
+}
+
+.batchrep-btn-secondary {
+  display: inline-block;
+  padding: 12px 24px;
+  background: var(--white);
+  color: var(--green);
+  border: 2px solid var(--green);
+  border-radius: 6px;
+  font-family: 'Lato', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.batchrep-btn-secondary:hover {
+  background: var(--green-light);
+}
+
+/* Footer */
+.batchrep-footer {
+  text-align: center;
+  font-size: 11px;
+  color: #aaa;
+  margin-top: 40px;
+  letter-spacing: 0.5px;
+}

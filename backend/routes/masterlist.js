@@ -69,7 +69,8 @@ router.get('/', authenticateAdmin, async (req, res) => {
           WHEN m.builder_tier IS NOT NULL AND COALESCE(ledger_totals.total_paid, 0) > 0 THEN 'Partial'
           WHEN m.builder_tier IS NOT NULL THEN 'Unpaid'
           ELSE NULL
-        END as payment_status
+        END as payment_status,
+        EXISTS(SELECT 1 FROM invites WHERE invites.master_list_id = m.id) as linked_to_invite
       FROM master_list m
       LEFT JOIN (
         SELECT master_list_id, SUM(deposit) as total_paid

@@ -64,6 +64,18 @@ export const apiDelete = (endpoint) => {
   });
 };
 
+// PATCH request (authenticated via cookies)
+export const apiPatch = (endpoint, data) => {
+  return fetch(`${API_URL}${endpoint}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    body: JSON.stringify(data),
+  });
+};
+
 // File upload POST (authenticated via cookies)
 export const apiUpload = (endpoint, formData) => {
   return fetch(`${API_URL}${endpoint}`, {

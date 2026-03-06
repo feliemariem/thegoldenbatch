@@ -573,7 +573,7 @@ export default function InvitesTab({
                                 >
                                   <option value="">-- Select --</option>
                                   {masterList
-                                    .filter(m => !m.email && !m.in_memoriam)
+                                    .filter(m => !m.linked_to_invite && !m.in_memoriam)
                                     .sort((a, b) => a.last_name.localeCompare(b.last_name))
                                     .map(m => (
                                       <option key={m.id} value={m.id}>

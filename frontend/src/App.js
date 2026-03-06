@@ -22,6 +22,7 @@ import EventDetail from './pages/EventDetail';
 import Media from './pages/Media';
 import Committee from './pages/Committee';
 import Directory from './pages/Directory';
+import BatchRep from './pages/BatchRep';
 import './styles/base.css';
 import './styles/components.css';
 import './styles/auth.css';
@@ -209,6 +210,14 @@ function AppRoutes() {
         }
       />
       <Route path="/preview" element={<Navigate to="/" replace />} /> {/* Redirect old /preview URL to new landing page for backwards compatibility */}
+      <Route
+        path="/batch-rep"
+        element={
+          <ProtectedRoute>
+            <BatchRep />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 }

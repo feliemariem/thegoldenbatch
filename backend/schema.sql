@@ -1,7 +1,9 @@
 -- Alumni Homecoming Database Schema (Complete)
--- The Golden Batch - USLS-IS Batch 2003
+-- The Golden Batch - USLS IS Batch 2003
 
 -- Drop tables in correct order (respecting foreign keys)
+DROP TABLE IF EXISTS batch_rep_submissions;
+DROP TABLE IF EXISTS site_config;
 DROP TABLE IF EXISTS action_items;
 DROP TABLE IF EXISTS event_rsvps;
 DROP TABLE IF EXISTS events;
@@ -30,14 +32,14 @@ CREATE TABLE admins (
     first_name VARCHAR(100),
     last_name VARCHAR(100),
     is_super_admin BOOLEAN DEFAULT FALSE,
-    role_title VARCHAR(100),                    -- Committee role (e.g., "Treasurer")
-    sub_committees TEXT,                        -- Sub-committees (e.g., "Financial Controller, Fundraising")
-    is_core_leader BOOLEAN DEFAULT FALSE,       -- If true, shows in top row on committee page
-    display_order INT DEFAULT 99,               -- Lower number = shows first on committee page
+    role_title VARCHAR(100),
+    sub_committees TEXT,
+    is_core_leader BOOLEAN DEFAULT FALSE,
+    display_order INT DEFAULT 99,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Master list table: all batch members for tracking
+-- Master list table
 CREATE TABLE master_list (
     id SERIAL PRIMARY KEY,
     section VARCHAR(50) NOT NULL,
@@ -49,16 +51,16 @@ CREATE TABLE master_list (
     in_memoriam BOOLEAN DEFAULT FALSE,
     is_unreachable BOOLEAN DEFAULT FALSE,
     is_admin BOOLEAN DEFAULT FALSE,
-    builder_tier VARCHAR(20),                   -- 'cornerstone', 'pillar', 'anchor', 'root'
-    pledge_amount DECIMAL(12,2),                -- Committed contribution amount (NULL for root tier)
-    builder_tier_set_at TIMESTAMP,              -- When tier was selected/changed
-    recognition_public BOOLEAN DEFAULT TRUE,    -- Opt-in for public recognition (Builder's Wall, program, etc.)
+    builder_tier VARCHAR(20),
+    pledge_amount DECIMAL(12,2),
+    builder_tier_set_at TIMESTAMP,
+    recognition_public BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT valid_builder_tier CHECK (builder_tier IS NULL OR builder_tier IN ('cornerstone', 'pillar', 'anchor', 'root'))
 );
 
--- Invites table: the allow-list of emails
+-- Invites table
 CREATE TABLE invites (
     id SERIAL PRIMARY KEY,
     email VARCHAR(255) UNIQUE NOT NULL,
@@ -72,7 +74,7 @@ CREATE TABLE invites (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Users table: registered alumni
+-- Users table
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     invite_id INTEGER REFERENCES invites(id),
@@ -98,7 +100,7 @@ CREATE TABLE users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- RSVPs table (for main event)
+-- RSVPs table
 CREATE TABLE rsvps (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) UNIQUE NOT NULL,
@@ -106,7 +108,7 @@ CREATE TABLE rsvps (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Ledger table: financial tracking
+-- Ledger table
 CREATE TABLE ledger (
     id SERIAL PRIMARY KEY,
     transaction_date DATE NOT NULL,
@@ -127,7 +129,7 @@ CREATE TABLE ledger (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Receipt uploads table: user-submitted payment receipts for controller processing
+-- Receipt uploads table
 CREATE TABLE receipt_uploads (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
@@ -135,8 +137,8 @@ CREATE TABLE receipt_uploads (
     image_url VARCHAR(500) NOT NULL,
     image_public_id VARCHAR(255),
     note TEXT,
-    status VARCHAR(20) DEFAULT 'submitted',     -- 'submitted' or 'processed'
-    source VARCHAR(10) DEFAULT 'user',          -- 'user' or 'admin' (admin uploads on behalf)
+    status VARCHAR(20) DEFAULT 'submitted',
+    source VARCHAR(10) DEFAULT 'user',
     is_duplicate BOOLEAN DEFAULT FALSE,
     ledger_id INTEGER REFERENCES ledger(id) ON DELETE SET NULL,
     processed_by INTEGER REFERENCES admins(id),
@@ -157,7 +159,7 @@ CREATE TABLE announcements (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Announcement reads table (tracks which users have read which announcements)
+-- Announcement reads table
 CREATE TABLE announcement_reads (
     id SERIAL PRIMARY KEY,
     announcement_id INTEGER REFERENCES announcements(id) ON DELETE CASCADE,
@@ -166,7 +168,7 @@ CREATE TABLE announcement_reads (
     UNIQUE(announcement_id, user_id)
 );
 
--- Password resets table (for user password recovery)
+-- Password resets table
 CREATE TABLE password_resets (
     id SERIAL PRIMARY KEY,
     email VARCHAR(255) NOT NULL,
@@ -211,7 +213,7 @@ CREATE TABLE meeting_attachments (
     uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Action Items table (for meeting tasks)
+-- Action Items table
 CREATE TABLE action_items (
     id SERIAL PRIMARY KEY,
     meeting_id INTEGER REFERENCES meeting_minutes(id) ON DELETE CASCADE,
@@ -223,7 +225,7 @@ CREATE TABLE action_items (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Events table: pre-reunion gatherings and main event
+-- Events table
 CREATE TABLE events (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
@@ -239,7 +241,7 @@ CREATE TABLE events (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Event RSVPs table: tracks who's going to which event
+-- Event RSVPs table
 CREATE TABLE event_rsvps (
     id SERIAL PRIMARY KEY,
     event_id INTEGER REFERENCES events(id) ON DELETE CASCADE,
@@ -250,33 +252,33 @@ CREATE TABLE event_rsvps (
     UNIQUE(event_id, user_id)
 );
 
--- Volunteer interests table (tracks who wants to help with which role)
+-- Volunteer interests table
 CREATE TABLE volunteer_interests (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
-    role VARCHAR(100) NOT NULL,                 -- Role they're interested in (e.g., "Fundraising")
+    role VARCHAR(100) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(user_id, role)                       -- One interest per role per user
+    UNIQUE(user_id, role)
 );
 
--- Messages table (internal messaging between users and admins)
+-- Messages table
 CREATE TABLE messages (
     id SERIAL PRIMARY KEY,
-    from_user_id INT REFERENCES users(id) ON DELETE CASCADE,      -- User who sent it (NULL if from admin)
-    from_admin_id INT REFERENCES admins(id) ON DELETE SET NULL,   -- Admin who sent it (NULL if from user)
-    to_user_id INT REFERENCES users(id) ON DELETE CASCADE,        -- NULL = goes to shared admin inbox
+    from_user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    from_admin_id INT REFERENCES admins(id) ON DELETE SET NULL,
+    to_user_id INT REFERENCES users(id) ON DELETE CASCADE,
     subject VARCHAR(255),
     message TEXT NOT NULL,
     is_read BOOLEAN DEFAULT FALSE,
-    parent_id INT REFERENCES messages(id) ON DELETE SET NULL,     -- For reply threading
+    parent_id INT REFERENCES messages(id) ON DELETE SET NULL,
     created_at TIMESTAMP DEFAULT NOW()
 );
 
--- Summary snapshots table (for week-over-week and month-over-month comparison in automated emails)
+-- Summary snapshots table
 CREATE TABLE summary_snapshots (
     id SERIAL PRIMARY KEY,
     snapshot_date DATE NOT NULL,
-    snapshot_type VARCHAR(10) NOT NULL,        -- 'weekly' or 'monthly'
+    snapshot_type VARCHAR(10) NOT NULL,
     registered_count INTEGER DEFAULT 0,
     invited_count INTEGER DEFAULT 0,
     total_raised DECIMAL(12,2) DEFAULT 0,
@@ -287,20 +289,44 @@ CREATE TABLE summary_snapshots (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- ============================================================
+-- NEW: Site Config table (global key-value settings)
+-- ============================================================
+CREATE TABLE site_config (
+    id SERIAL PRIMARY KEY,
+    key VARCHAR(100) UNIQUE NOT NULL,
+    value TEXT NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
--- Indexes for messages
+-- Batch rep page state: 'active', 'closed', 'published'
+-- Only system admin (id=1) can update these values
+INSERT INTO site_config (key, value) VALUES ('batch_rep_status', 'active');
+INSERT INTO site_config (key, value) VALUES ('batch_rep_enabled_emails', 'felie@fnrcore.com');
+
+-- ============================================================
+-- NEW: Batch Rep Submissions table
+-- ============================================================
+CREATE TABLE batch_rep_submissions (
+    id SERIAL PRIMARY KEY,
+    voter_id INTEGER UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+    selection VARCHAR(20) CHECK (selection IN ('confirm', 'nominate')) NOT NULL,
+    nominee_name VARCHAR(255),
+    comments TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ============================================================
+-- Indexes
+-- ============================================================
 CREATE INDEX idx_messages_to_user ON messages(to_user_id);
 CREATE INDEX idx_messages_from_user ON messages(from_user_id);
 CREATE INDEX idx_messages_from_admin ON messages(from_admin_id);
 CREATE INDEX idx_messages_parent ON messages(parent_id);
-
--- Indexes for receipt_uploads
 CREATE INDEX idx_receipt_uploads_user ON receipt_uploads(user_id);
 CREATE INDEX idx_receipt_uploads_master_list ON receipt_uploads(master_list_id);
 CREATE INDEX idx_receipt_uploads_status ON receipt_uploads(status);
 CREATE INDEX idx_receipt_uploads_ledger ON receipt_uploads(ledger_id);
-
--- Indexes for performance
 CREATE INDEX idx_invite_token ON invites(invite_token);
 CREATE INDEX idx_invites_email ON invites(email);
 CREATE INDEX idx_invites_master_list ON invites(master_list_id);
@@ -326,8 +352,8 @@ CREATE INDEX idx_event_rsvps_user ON event_rsvps(user_id);
 CREATE INDEX idx_volunteer_interests_user ON volunteer_interests(user_id);
 CREATE INDEX idx_summary_snapshots_date ON summary_snapshots(snapshot_date DESC);
 CREATE INDEX idx_summary_snapshots_type ON summary_snapshots(snapshot_type);
+CREATE INDEX idx_batch_rep_submissions_voter ON batch_rep_submissions(voter_id);
 
--- Unique index on ledger.reference_no for dedup (non-null, non-empty only)
 CREATE UNIQUE INDEX idx_ledger_reference_no_unique 
   ON ledger(reference_no) 
   WHERE reference_no IS NOT NULL AND reference_no != '';
@@ -347,6 +373,7 @@ CREATE UNIQUE INDEX idx_ledger_reference_no_unique
 -- Run this to wipe all test data while keeping master_list names, ledger, and Super Admin (id=1):
 --
 -- psql "YOUR_EXTERNAL_URL" -c "
+-- DELETE FROM batch_rep_submissions;
 -- DELETE FROM action_items;
 -- DELETE FROM announcement_reads;
 -- DELETE FROM meeting_attachments;
@@ -363,97 +390,65 @@ CREATE UNIQUE INDEX idx_ledger_reference_no_unique
 -- DELETE FROM users;
 -- DELETE FROM invites;
 -- DELETE FROM admins WHERE id != 1;
--- Reset Master List only (keep names, clear linked data):
---   UPDATE master_list SET
---     email = NULL,
---     current_name = NULL,
---     status = 'Not Invited',
---     is_admin = FALSE,
---     is_unreachable = FALSE,
---     builder_tier = NULL,
---     pledge_amount = NULL,
---     builder_tier_set_at = NULL
---   WHERE id > 0;
+-- UPDATE master_list SET
+--   email = NULL,
+--   current_name = NULL,
+--   status = 'Not Invited',
+--   is_admin = FALSE,
+--   is_unreachable = FALSE,
+--   builder_tier = NULL,
+--   pledge_amount = NULL,
+--   builder_tier_set_at = NULL
+-- WHERE id > 0;
 -- "
---
--- ============================================================
--- CLEANUP DUPLICATE PERMISSIONS
--- ============================================================
--- If you have duplicate rows in permissions table, run this:
---
--- DELETE FROM permissions a USING permissions b
--- WHERE a.id < b.id AND a.admin_id = b.admin_id;
---
--- Verify with: SELECT admin_id, COUNT(*) FROM permissions GROUP BY admin_id;
-
--- ============================================================
--- USEFUL COMMANDS
--- ============================================================
--- Reset Master List only (keep names, clear linked data):
---   UPDATE master_list SET
---     email = NULL,
---     current_name = NULL,
---     status = 'Not Invited',
---     is_admin = FALSE,
---     is_unreachable = FALSE,
---     builder_tier = NULL,
---     pledge_amount = NULL,
---     builder_tier_set_at = NULL
---   WHERE id > 0;
 
 -- ============================================================
 -- ADD NEW TABLES TO EXISTING DATABASE (without dropping)
 -- ============================================================
--- If you already have data and just need to add the new columns/tables:
+-- If you already have data and just need to add the new tables:
 --
--- ALTER TABLE master_list RENAME COLUMN nickname TO current_name;
--- ALTER TABLE master_list ADD COLUMN status VARCHAR(50) DEFAULT 'Not Invited';
--- ALTER TABLE announcements ADD COLUMN audience VARCHAR(20) DEFAULT 'all';
---
--- CREATE TABLE action_items (
+-- CREATE TABLE IF NOT EXISTS site_config (
 --     id SERIAL PRIMARY KEY,
---     meeting_id INTEGER REFERENCES meeting_minutes(id) ON DELETE CASCADE,
---     task TEXT NOT NULL,
---     assignee_id INTEGER REFERENCES admins(id) ON DELETE SET NULL,
---     due_date DATE,
---     status VARCHAR(20) DEFAULT 'Not Started',
---     priority VARCHAR(10) DEFAULT 'Medium',
+--     key VARCHAR(100) UNIQUE NOT NULL,
+--     value TEXT NOT NULL,
+--     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-- );
+--
+-- INSERT INTO site_config (key, value) VALUES ('batch_rep_status', 'active') ON CONFLICT (key) DO NOTHING;
+-- INSERT INTO site_config (key, value) VALUES ('batch_rep_enabled_emails', 'felie@fnrcore.com') ON CONFLICT (key) DO NOTHING;
+--
+-- CREATE TABLE IF NOT EXISTS batch_rep_submissions (
+--     id SERIAL PRIMARY KEY,
+--     voter_id INTEGER UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+--     selection VARCHAR(20) CHECK (selection IN ('confirm', 'nominate')) NOT NULL,
+--     nominee_name VARCHAR(255),
+--     comments TEXT,
 --     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 -- );
 --
--- CREATE INDEX idx_action_items_meeting ON action_items(meeting_id);
--- CREATE INDEX idx_action_items_assignee ON action_items(assignee_id);
+-- CREATE INDEX IF NOT EXISTS idx_batch_rep_submissions_voter ON batch_rep_submissions(voter_id);
 
 -- ============================================================
 -- MIGRATION: Builder Tiers + Receipt Uploads (for existing databases)
 -- ============================================================
--- If you already have data and need to add builder tiers + receipt uploads:
---
 -- ALTER TABLE master_list ADD COLUMN IF NOT EXISTS builder_tier VARCHAR(20);
 -- ALTER TABLE master_list ADD COLUMN IF NOT EXISTS pledge_amount DECIMAL(12,2);
 -- ALTER TABLE master_list ADD COLUMN IF NOT EXISTS builder_tier_set_at TIMESTAMP;
 -- ALTER TABLE master_list ADD CONSTRAINT valid_builder_tier
 --   CHECK (builder_tier IS NULL OR builder_tier IN ('cornerstone', 'pillar', 'anchor', 'root'));
---
--- CREATE TABLE IF NOT EXISTS receipt_uploads ( ... );  -- See migration file
---
--- CREATE UNIQUE INDEX IF NOT EXISTS idx_ledger_reference_no_unique
---   ON ledger(reference_no) WHERE reference_no IS NOT NULL AND reference_no != '';
+
+-- ============================================================
+-- CLEANUP DUPLICATE PERMISSIONS
+-- ============================================================
+-- DELETE FROM permissions a USING permissions b
+-- WHERE a.id < b.id AND a.admin_id = b.admin_id;
 
 -- ============================================================
 -- COMMITTEE PAGE ORDERING
 -- ============================================================
--- To arrange committee members on the Committee page:
--- Lower display_order = shows first
--- 
--- Example:
---   UPDATE admins SET display_order = 1 WHERE email = 'mary@example.com';      -- First
---   UPDATE admins SET display_order = 2 WHERE email = 'nikki@example.com';     -- Second
---   UPDATE admins SET display_order = 3 WHERE email = 'bianca@example.com';    -- Third
---   UPDATE admins SET display_order = 4 WHERE email = 'felie@example.com';     -- Fourth
---
--- Or view current order:
---   SELECT email, first_name, role_title, is_core_leader, display_order 
---   FROM admins 
---   WHERE role_title IS NOT NULL 
---   ORDER BY is_core_leader DESC, display_order ASC;
+-- UPDATE admins SET display_order = 1 WHERE email = 'mary@example.com';
+-- UPDATE admins SET display_order = 2 WHERE email = 'nikki@example.com';
+-- SELECT email, first_name, role_title, is_core_leader, display_order 
+-- FROM admins 
+-- WHERE role_title IS NOT NULL 
+-- ORDER BY is_core_leader DESC, display_order ASC;
