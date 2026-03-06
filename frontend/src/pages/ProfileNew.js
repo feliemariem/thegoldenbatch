@@ -1659,22 +1659,32 @@ END:VCALENDAR`;
       {showBatchRepModal && (
         <div className="batchrep-modal-overlay">
           <div className="batchrep-modal">
-            <div className="batchrep-modal-avatar">
-              <img src={siteLogo} alt="The Golden Batch" />
+            <div className="batchrep-modal-bar"></div>
+            <div className="batchrep-modal-body">
+              <div className="batchrep-modal-badge">⚡ Batch Action Required</div>
+              <h2 className="batchrep-modal-title">The batch needs your input.</h2>
+              <p className="batchrep-modal-desc">
+                The USLS Alumni Association has formally requested we submit a <strong>Batch 2003 Representative</strong> — who will also serve as Alumni Association President during our 25th Jubilee in 2028.
+              </p>
+              <div className="batchrep-modal-nominee">
+                <div className="batchrep-modal-nominee-avatar">
+                  <img src={siteLogo} alt="The Golden Batch" />
+                </div>
+                <div className="batchrep-modal-nominee-info">
+                  <div className="batchrep-modal-nominee-label">Current Nominee</div>
+                  <div className="batchrep-modal-nominee-name">Bianca Jison</div>
+                </div>
+              </div>
+              <div className="batchrep-modal-deadline">
+                🕐 Feedback window closes <span className="deadline-date">March 10, 2026 at 8:00 AM PHT</span>
+              </div>
+              <button
+                className="batchrep-modal-btn"
+                onClick={() => navigate('/batch-rep')}
+              >
+                Weigh In Now →
+              </button>
             </div>
-            <h2 className="batchrep-modal-title">Batch Representative Nomination</h2>
-            <p className="batchrep-modal-text">
-              The organizing committee is requesting your input on the nomination of <strong>Bianca Jison</strong> as our official Batch Representative to the USLS Alumni Association.
-            </p>
-            <p className="batchrep-modal-subtext">
-              As a registered graduate, your voice matters. Please review the announcement and submit your response.
-            </p>
-            <button
-              className="batchrep-modal-btn"
-              onClick={() => navigate('/batch-rep')}
-            >
-              Weigh In Now
-            </button>
           </div>
         </div>
       )}

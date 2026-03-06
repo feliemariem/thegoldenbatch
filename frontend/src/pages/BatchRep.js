@@ -228,7 +228,7 @@ export default function BatchRep() {
     return (
       <>
         <Navbar />
-        <div className="container">
+        <div className="container batchrep-page">
           <div className="card">
             <p>Loading...</p>
           </div>
@@ -241,7 +241,7 @@ export default function BatchRep() {
     return (
       <>
         <Navbar />
-        <div className="container">
+        <div className="container batchrep-page">
           <div className="card">
             <h1 className="page-title-gold">Sign In Required</h1>
             <p className="subtitle">Please log in to view and respond to this batch announcement.</p>
@@ -262,7 +262,7 @@ export default function BatchRep() {
     return (
       <>
         <Navbar />
-        <div className="container">
+        <div className="container batchrep-page">
           <div className="card">
             <h1 className="page-title-gold">Access Restricted</h1>
             <p className="subtitle">This announcement is not yet available for your account.</p>
