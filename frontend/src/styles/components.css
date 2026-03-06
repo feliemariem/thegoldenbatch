@@ -51,6 +51,32 @@ input:focus {
   background: rgba(0, 0, 0, 0.4);
 }
 
+/* Textarea */
+textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--color-text-primary);
+  resize: vertical;
+  min-height: 80px;
+  transition: all 0.2s ease;
+}
+
+textarea::placeholder {
+  color: var(--color-text-secondary);
+}
+
+textarea:focus {
+  outline: none;
+  border-color: rgba(207, 181, 59, 0.5);
+  box-shadow: 0 0 0 3px rgba(207, 181, 59, 0.1);
+  background: rgba(0, 0, 0, 0.4);
+}
+
 /* Select dropdown */
 select {
   padding: 14px 16px;

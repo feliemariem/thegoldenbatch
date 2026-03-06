@@ -1,191 +1,96 @@
-/* BatchRep Page Styles */
+/* ========================================
+   BATCH REP PAGE STYLES
+   Uses existing app CSS variables and patterns
+   ======================================== */
 
-.batchrep-page {
-  --green: #006633;
-  --green-dark: #004d26;
-  --green-light: #e8f5ee;
-  --gold: #CFB53B;
-  --gold-light: #f7f0d0;
-  --white: #ffffff;
-  --gray: #f4f4f2;
-  --text: #1a1a1a;
-  --muted: #666;
-
-  font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: #ffffff;
-  color: var(--text);
-  min-height: 100vh;
-}
-
-/* Header */
-.batchrep-header {
-  background: #ffffff;
-  padding: 18px 24px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  border-bottom: 3px solid var(--green);
-}
-
-.batchrep-header-crest {
-  width: 42px;
-  height: 42px;
-  background: var(--green);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  flex-shrink: 0;
-  color: var(--gold);
-}
-
-.batchrep-header-text h1 {
-  font-family: 'Playfair Display', Georgia, serif;
-  color: var(--green);
-  font-size: 15px;
-  font-weight: 700;
-  margin: 0;
-}
-
-.batchrep-header-text p {
-  color: var(--muted);
-  font-size: 11px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  margin-top: 2px;
-}
-
-/* Main Content */
-.batchrep-main {
-  max-width: 560px;
-  margin: 0 auto;
-  padding: 32px 20px 60px;
-  background: #ffffff;
-}
-
-/* Animation */
-.batchrep-main > * {
-  animation: batchrepFadeUp 0.4s ease both;
-}
-
-.batchrep-main > *:nth-child(1) { animation-delay: 0.05s; }
-.batchrep-main > *:nth-child(2) { animation-delay: 0.1s; }
-.batchrep-main > *:nth-child(3) { animation-delay: 0.15s; }
-.batchrep-main > *:nth-child(4) { animation-delay: 0.2s; }
-.batchrep-main > *:nth-child(5) { animation-delay: 0.25s; }
-.batchrep-main > *:nth-child(6) { animation-delay: 0.3s; }
-.batchrep-main > *:nth-child(7) { animation-delay: 0.35s; }
-.batchrep-main > *:nth-child(8) { animation-delay: 0.4s; }
-
-@keyframes batchrepFadeUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Quick Nav */
-.batchrep-quick-nav {
+/* Section Navigation - horizontally scrollable on mobile */
+.batchrep-section-nav {
   display: flex;
   gap: 8px;
+  padding: 12px 0;
+  margin-bottom: 24px;
   overflow-x: auto;
-  padding: 12px 20px;
-  background: #f9f9f9;
-  border-bottom: 1px solid #eee;
-  position: sticky;
-  top: 0;
-  z-index: 50;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-}
-
-.batchrep-quick-nav::-webkit-scrollbar { display: none; }
-
-.batchrep-quick-nav a {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
   white-space: nowrap;
-  padding: 6px 12px;
-  background: var(--white);
-  border: 1px solid #ddd;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--green);
-  text-decoration: none;
-  cursor: pointer;
-  transition: all 0.15s;
-  flex-shrink: 0;
 }
 
-.batchrep-quick-nav a:hover {
-  background: var(--green);
-  color: var(--white);
-  border-color: var(--green);
+.batchrep-section-nav::-webkit-scrollbar {
+  display: none;
 }
 
-.batchrep-quick-nav a.primary {
-  background: var(--green);
-  color: var(--white);
-  border-color: var(--green);
-}
-
-/* Official Badge */
-.batchrep-official-badge {
+.batchrep-section-nav a {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: var(--gold);
-  color: var(--green-dark);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  padding: 5px 12px;
-  border-radius: 2px;
-  margin-bottom: 20px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
-/* Title Block */
-.batchrep-title-block {
-  margin-bottom: 28px;
+.batchrep-section-nav a:hover {
+  background: rgba(207, 181, 59, 0.15);
+  border-color: rgba(207, 181, 59, 0.3);
+  color: var(--color-hover);
 }
 
-.batchrep-title-block h2 {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: 26px;
-  color: var(--green);
-  line-height: 1.2;
-  margin-bottom: 10px;
+.batchrep-section-nav a.primary {
+  background: linear-gradient(135deg, var(--color-title-gradient-start) 0%, var(--color-title-gradient-end) 100%);
+  border-color: transparent;
+  color: var(--color-bg-primary);
+  font-weight: 600;
 }
 
-.batchrep-title-block p {
-  font-size: 14px;
-  color: var(--muted);
-  line-height: 1.7;
+[data-theme="light"] .batchrep-section-nav a {
+  background: rgba(0, 102, 51, 0.05);
+  border-color: rgba(0, 102, 51, 0.15);
 }
 
-/* Deadline Bar */
-.batchrep-deadline-bar {
-  background: #fff5f5;
-  border: 1px solid #e8a0a0;
-  border-left: 4px solid #cc3333;
-  border-radius: 6px;
-  padding: 12px 16px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 13px;
-  color: #7a1a1a;
+[data-theme="light"] .batchrep-section-nav a:hover {
+  background: rgba(0, 102, 51, 0.1);
+  border-color: rgba(0, 102, 51, 0.3);
+  color: #006633;
+}
+
+[data-theme="light"] .batchrep-section-nav a.primary {
+  background: #006633;
+  color: #ffffff;
+}
+
+/* Deadline Banner */
+.batchrep-deadline {
+  background: var(--color-status-negative-bg);
+  border: 1px solid var(--color-status-negative);
+  border-radius: 12px;
+  padding: 14px 18px;
   margin-bottom: 24px;
+  font-size: 0.9rem;
+  color: var(--color-text-primary);
+  line-height: 1.5;
 }
 
-/* Collapsible */
+.batchrep-deadline strong {
+  color: var(--color-status-negative);
+}
+
+/* Collapsible Sections */
 .batchrep-collapsible {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  overflow: hidden;
+  background: var(--color-bg-card);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
   margin-bottom: 16px;
+  overflow: hidden;
+}
+
+[data-theme="light"] .batchrep-collapsible {
+  border-color: rgba(0, 102, 51, 0.15);
 }
 
 .batchrep-collapsible-trigger {
@@ -193,33 +98,34 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 18px;
-  background: var(--white);
+  padding: 16px 20px;
+  background: transparent;
   border: none;
   cursor: pointer;
-  font-family: 'Lato', sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--green);
-  letter-spacing: 0.3px;
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-hover);
   text-align: left;
-  transition: background 0.15s;
+  transition: background 0.2s ease;
 }
 
 .batchrep-collapsible-trigger:hover {
-  background: var(--green-light);
+  background: rgba(255, 255, 255, 0.03);
 }
 
-.batchrep-collapsible-trigger .trigger-left {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+[data-theme="light"] .batchrep-collapsible-trigger {
+  color: #006633;
+}
+
+[data-theme="light"] .batchrep-collapsible-trigger:hover {
+  background: rgba(0, 102, 51, 0.05);
 }
 
 .batchrep-collapsible-arrow {
-  font-size: 11px;
-  transition: transform 0.2s;
-  color: var(--muted);
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  transition: transform 0.2s ease;
 }
 
 .batchrep-collapsible.open .batchrep-collapsible-arrow {
@@ -228,357 +134,326 @@
 
 .batchrep-collapsible-body {
   display: none;
-  padding: 14px 18px 18px;
-  background: var(--white);
-  border-top: 1px solid #eee;
-  font-size: 13px;
+  padding: 0 20px 20px;
+  font-size: 0.9rem;
   line-height: 1.7;
-  color: var(--text);
+  color: var(--color-text-primary);
 }
 
 .batchrep-collapsible.open .batchrep-collapsible-body {
   display: block;
 }
 
-/* Letter Image */
-.batchrep-letter-img-wrap {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  overflow: hidden;
-  background: var(--white);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+.batchrep-collapsible-body p {
+  margin-bottom: 12px;
 }
 
-.batchrep-letter-img-wrap img {
+.batchrep-collapsible-body p:last-child {
+  margin-bottom: 0;
+}
+
+/* Letter Image */
+.batchrep-letter-wrap {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 12px;
+}
+
+.batchrep-letter-wrap img {
   width: 100%;
   display: block;
 }
 
-.batchrep-letter-placeholder {
-  padding: 40px 20px;
-  text-align: center;
-  background: var(--gray);
-  color: var(--muted);
-  font-size: 14px;
+[data-theme="light"] .batchrep-letter-wrap {
+  border-color: rgba(0, 102, 51, 0.15);
 }
 
-/* Nominee Card */
-.batchrep-nominee-card {
-  background: var(--white);
-  border: 2px solid var(--gold);
-  border-radius: 10px;
-  overflow: hidden;
-  margin-bottom: 24px;
-}
-
-.batchrep-nominee-header {
-  background: var(--gold);
-  padding: 10px 18px;
-}
-
-.batchrep-nominee-header span {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--green-dark);
-}
-
-.batchrep-nominee-body {
-  padding: 20px 18px;
-}
-
-.batchrep-nominee-name {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: 22px;
-  color: var(--green);
-  margin-bottom: 4px;
-}
-
-.batchrep-nominee-sub {
-  font-size: 13px;
-  color: var(--muted);
-  margin-bottom: 16px;
-}
-
-.batchrep-nominee-roles {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.batchrep-nominee-role {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  font-size: 13px;
-  color: var(--text);
-  line-height: 1.5;
-}
-
-.batchrep-role-icon {
-  background: var(--green-light);
-  color: var(--green);
-  font-size: 11px;
-  padding: 3px 8px;
-  border-radius: 3px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  white-space: nowrap;
-  flex-shrink: 0;
-  margin-top: 1px;
-}
-
-/* Local Notice */
-.batchrep-local-notice {
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
-  margin-top: 14px;
-  padding: 12px 14px;
-  background: #fff8e1;
-  border: 1px solid var(--gold);
-  border-left: 4px solid var(--gold);
-  border-radius: 6px;
-  font-size: 13px;
-  color: var(--text);
-  line-height: 1.6;
-}
-
-.batchrep-local-notice-icon {
-  font-size: 15px;
-  flex-shrink: 0;
-  margin-top: 1px;
-}
-
-.batchrep-local-notice strong {
-  color: var(--green-dark);
-}
-
-/* Role list styling */
+/* Role List */
 .batchrep-collapsible-body ul {
   list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
   padding: 0;
   margin: 0;
 }
 
 .batchrep-collapsible-body ul li {
-  font-size: 13px;
-  color: var(--text);
-  padding-left: 16px;
+  padding: 8px 0 8px 20px;
   position: relative;
-  line-height: 1.5;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.batchrep-collapsible-body ul li:last-child {
+  border-bottom: none;
 }
 
 .batchrep-collapsible-body ul li::before {
-  content: '\25B8';
+  content: '▸';
   position: absolute;
   left: 0;
-  color: var(--gold);
-  font-size: 11px;
-  top: 1px;
+  color: var(--color-hover);
+  font-size: 0.8rem;
+}
+
+[data-theme="light"] .batchrep-collapsible-body ul li {
+  border-color: rgba(0, 102, 51, 0.1);
+}
+
+[data-theme="light"] .batchrep-collapsible-body ul li::before {
+  color: #006633;
+}
+
+/* Notice Box */
+.batchrep-notice {
+  background: var(--color-status-warning-bg);
+  border: 1px solid var(--color-status-warning);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-top: 16px;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.batchrep-notice strong {
+  color: var(--color-status-warning);
 }
 
 /* Reassurance */
 .batchrep-reassurance {
-  display: flex;
-  gap: 8px;
-  align-items: flex-start;
-  margin-top: 14px;
-  padding-top: 14px;
-  border-top: 1px solid #eee;
-  font-size: 13px;
-  color: var(--green-dark);
-  line-height: 1.6;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
   font-style: italic;
+  color: var(--color-text-secondary);
 }
 
-/* Feedback Card */
-.batchrep-feedback-card {
-  background: var(--white);
-  border: 1px solid #ddd;
-  border-radius: 8px;
+[data-theme="light"] .batchrep-reassurance {
+  border-color: rgba(0, 102, 51, 0.1);
+}
+
+/* Nominee Card */
+.batchrep-nominee-card {
+  background: var(--color-bg-card);
+  border: 2px solid var(--color-hover);
+  border-radius: 16px;
   overflow: hidden;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
 }
 
-.batchrep-feedback-header {
-  background: var(--green-light);
-  padding: 14px 20px;
-  border-bottom: 1px solid #ddd;
+[data-theme="light"] .batchrep-nominee-card {
+  border-color: #006633;
 }
 
-.batchrep-feedback-header h3 {
-  font-family: 'Playfair Display', Georgia, serif;
-  color: var(--green);
-  font-size: 16px;
-  margin: 0;
+.batchrep-nominee-header {
+  background: linear-gradient(135deg, var(--color-title-gradient-start) 0%, var(--color-title-gradient-end) 100%);
+  padding: 10px 20px;
 }
 
-.batchrep-feedback-header p {
-  color: var(--muted);
-  font-size: 12px;
-  margin-top: 3px;
+.batchrep-nominee-header span {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--color-bg-primary);
 }
 
-.batchrep-feedback-body {
-  padding: 20px;
+[data-theme="light"] .batchrep-nominee-header {
+  background: #006633;
 }
 
-.batchrep-feedback-body > p {
-  font-size: 13px;
-  color: var(--muted);
-  line-height: 1.7;
-  margin-bottom: 16px;
+[data-theme="light"] .batchrep-nominee-header span {
+  color: #ffffff;
 }
 
-/* Feedback Options */
-.batchrep-feedback-options {
+.batchrep-nominee-body {
+  padding: 24px 20px;
+}
+
+.batchrep-nominee-name {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-hover);
+  margin-bottom: 4px;
+}
+
+[data-theme="light"] .batchrep-nominee-name {
+  color: #006633;
+}
+
+.batchrep-nominee-sub {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 20px;
+}
+
+.batchrep-nominee-roles {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.batchrep-feedback-option {
-  display: flex;
-  align-items: center;
   gap: 12px;
-  padding: 12px 14px;
-  border: 2px solid #e5e5e5;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.15s ease;
 }
 
-.batchrep-feedback-option:hover {
-  border-color: var(--green);
-  background: var(--green-light);
+.batchrep-nominee-role {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 0.9rem;
+  color: var(--color-text-primary);
+  line-height: 1.5;
 }
 
-.batchrep-feedback-option.selected {
-  border-color: var(--green);
-  background: var(--green-light);
-}
-
-.batchrep-feedback-option input[type="radio"] {
-  width: 16px;
-  height: 16px;
-  accent-color: var(--green);
+.batchrep-role-badge {
+  background: rgba(207, 181, 59, 0.15);
+  color: var(--color-hover);
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
   flex-shrink: 0;
 }
 
-.batchrep-feedback-option-text {
-  font-size: 14px;
-  color: var(--text);
+[data-theme="light"] .batchrep-role-badge {
+  background: rgba(0, 102, 51, 0.1);
+  color: #006633;
+}
+
+/* Response Card */
+.batchrep-response-card {
+  background: var(--color-bg-card);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+[data-theme="light"] .batchrep-response-card {
+  border-color: rgba(0, 102, 51, 0.15);
+}
+
+.batchrep-response-header {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="light"] .batchrep-response-header {
+  background: rgba(0, 102, 51, 0.05);
+  border-color: rgba(0, 102, 51, 0.1);
+}
+
+.batchrep-response-header h3 {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  color: var(--color-hover);
+  margin-bottom: 4px;
+}
+
+[data-theme="light"] .batchrep-response-header h3 {
+  color: #006633;
+}
+
+.batchrep-response-header p {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
+.batchrep-response-body {
+  padding: 24px 20px;
+}
+
+.batchrep-response-body > p {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+/* Confirm Option */
+.batchrep-confirm-option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 20px;
+}
+
+.batchrep-confirm-option:hover {
+  border-color: rgba(207, 181, 59, 0.3);
+  background: rgba(207, 181, 59, 0.05);
+}
+
+.batchrep-confirm-option.selected {
+  border-color: var(--color-hover);
+  background: rgba(207, 181, 59, 0.1);
+}
+
+[data-theme="light"] .batchrep-confirm-option {
+  border-color: rgba(0, 102, 51, 0.15);
+}
+
+[data-theme="light"] .batchrep-confirm-option:hover {
+  border-color: rgba(0, 102, 51, 0.3);
+  background: rgba(0, 102, 51, 0.05);
+}
+
+[data-theme="light"] .batchrep-confirm-option.selected {
+  border-color: #006633;
+  background: rgba(0, 102, 51, 0.1);
+}
+
+.batchrep-confirm-option input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-hover);
+  flex-shrink: 0;
+}
+
+[data-theme="light"] .batchrep-confirm-option input[type="radio"] {
+  accent-color: #006633;
+}
+
+.batchrep-confirm-text {
+  font-size: 0.95rem;
   font-weight: 600;
-}
-
-/* Simple Field */
-.batchrep-simple-field {
-  margin-top: 16px;
-}
-
-.batchrep-simple-field label {
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  color: var(--muted);
-  display: block;
-  margin-bottom: 8px;
-}
-
-.batchrep-simple-field .optional {
-  font-weight: 400;
-  text-transform: none;
-  letter-spacing: 0;
-  font-style: italic;
-  font-size: 11px;
-}
-
-.batchrep-simple-field textarea {
-  width: 100%;
-  padding: 11px 14px;
-  border: 2px solid #e5e5e5;
-  border-radius: 6px;
-  font-family: 'Lato', sans-serif;
-  font-size: 14px;
-  color: var(--text);
-  resize: vertical;
-  min-height: 80px;
-  outline: none;
-  transition: border-color 0.15s;
-  box-sizing: border-box;
-}
-
-.batchrep-simple-field textarea:focus {
-  border-color: var(--green);
-}
-
-/* Local Reminder */
-.batchrep-local-reminder {
-  font-size: 12px;
-  color: var(--green-dark);
-  background: #fff8e1;
-  border: 1px solid var(--gold);
-  border-radius: 4px;
-  padding: 7px 10px;
-  margin-bottom: 8px;
-  font-weight: 600;
+  color: var(--color-text-primary);
 }
 
 /* Typeahead */
-.batchrep-typeahead-wrap {
+.batchrep-typeahead {
   position: relative;
-}
-
-.batchrep-typeahead-wrap input {
-  width: 100%;
-  padding: 11px 14px;
-  border: 2px solid #e5e5e5;
-  border-radius: 6px;
-  font-family: 'Lato', sans-serif;
-  font-size: 14px;
-  color: var(--text);
-  outline: none;
-  transition: border-color 0.15s;
-  box-sizing: border-box;
-}
-
-.batchrep-typeahead-wrap input:focus {
-  border-color: var(--green);
+  margin-top: 8px;
 }
 
 .batchrep-typeahead-dropdown {
-  display: none;
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
   right: 0;
-  background: var(--white);
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  background: var(--color-bg-card);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
   z-index: 100;
-  max-height: 180px;
+  max-height: 200px;
   overflow-y: auto;
 }
 
-.batchrep-typeahead-dropdown.open {
-  display: block;
+[data-theme="light"] .batchrep-typeahead-dropdown {
+  border-color: rgba(0, 102, 51, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
 .batchrep-typeahead-item {
-  padding: 10px 14px;
-  font-size: 14px;
-  color: var(--text);
+  padding: 12px 16px;
+  font-size: 0.9rem;
+  color: var(--color-text-primary);
   cursor: pointer;
-  transition: background 0.1s;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background 0.15s ease;
 }
 
 .batchrep-typeahead-item:last-child {
@@ -586,171 +461,122 @@
 }
 
 .batchrep-typeahead-item:hover {
-  background: var(--green-light);
-  color: var(--green);
+  background: rgba(207, 181, 59, 0.1);
+  color: var(--color-hover);
+}
+
+[data-theme="light"] .batchrep-typeahead-item:hover {
+  background: rgba(0, 102, 51, 0.1);
+  color: #006633;
 }
 
 .batchrep-typeahead-empty {
-  padding: 10px 14px;
-  font-size: 13px;
-  color: var(--muted);
+  padding: 12px 16px;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
   font-style: italic;
 }
 
-/* Submit Button */
-.batchrep-submit-btn {
-  width: 100%;
-  padding: 14px;
-  background: var(--green);
-  color: var(--white);
-  border: none;
+/* Local Reminder */
+.batchrep-local-reminder {
+  font-size: 0.8rem;
+  color: var(--color-status-warning);
+  background: var(--color-status-warning-bg);
   border-radius: 6px;
-  font-family: 'Lato', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  cursor: pointer;
-  transition: background 0.15s;
-  margin-top: 16px;
-}
-
-.batchrep-submit-btn:hover {
-  background: var(--green-dark);
-}
-
-.batchrep-submit-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+  padding: 8px 12px;
+  margin-bottom: 8px;
 }
 
 /* Confidential Note */
-.batchrep-confidential-note {
+.batchrep-confidential {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 8px;
-  font-size: 12px;
-  color: var(--muted);
-  margin-top: 12px;
-  line-height: 1.5;
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  margin-top: 16px;
 }
 
-/* Error Message */
-.batchrep-error-message {
-  background: #fff5f5;
-  border: 1px solid #e8a0a0;
-  color: #7a1a1a;
-  padding: 10px 14px;
-  border-radius: 6px;
-  font-size: 13px;
-  margin-top: 12px;
-}
-
-/* Success Message */
-.batchrep-success-message {
+/* Success State */
+.batchrep-success {
   text-align: center;
-  padding: 20px 0;
+  padding: 32px 20px;
 }
 
 .batchrep-success-icon {
-  width: 48px;
-  height: 48px;
-  background: var(--green);
-  color: var(--white);
+  width: 56px;
+  height: 56px;
+  background: var(--color-status-positive);
+  color: #ffffff;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
-  margin: 0 auto 16px;
+  font-size: 1.5rem;
+  margin: 0 auto 20px;
 }
 
-.batchrep-success-message h4 {
-  font-family: 'Playfair Display', Georgia, serif;
-  color: var(--green);
-  font-size: 20px;
-  margin-bottom: 8px;
-}
-
-.batchrep-success-message p {
-  font-size: 14px;
-  color: var(--muted);
-  line-height: 1.6;
-  margin-bottom: 20px;
-}
-
-/* Closed Message */
-.batchrep-closed-message {
-  text-align: center;
-  padding: 20px 0;
-}
-
-.batchrep-closed-message p {
-  font-size: 14px;
-  color: var(--muted);
-  margin-bottom: 16px;
-}
-
-/* Access Denied */
-.batchrep-access-denied {
-  text-align: center;
-  padding: 60px 20px;
-}
-
-.batchrep-access-denied h2 {
-  font-family: 'Playfair Display', Georgia, serif;
-  color: var(--green);
-  font-size: 24px;
+.batchrep-success h4 {
+  font-family: var(--font-heading);
+  font-size: 1.3rem;
+  color: var(--color-hover);
   margin-bottom: 12px;
 }
 
-.batchrep-access-denied p {
-  font-size: 14px;
-  color: var(--muted);
+[data-theme="light"] .batchrep-success h4 {
+  color: #006633;
+}
+
+.batchrep-success p {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
   margin-bottom: 24px;
 }
 
-/* Buttons */
-.batchrep-btn-primary {
-  display: inline-block;
-  padding: 12px 24px;
-  background: var(--green);
-  color: var(--white);
-  border: none;
-  border-radius: 6px;
-  font-family: 'Lato', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.batchrep-btn-primary:hover {
-  background: var(--green-dark);
-}
-
-.batchrep-btn-secondary {
-  display: inline-block;
-  padding: 12px 24px;
-  background: var(--white);
-  color: var(--green);
-  border: 2px solid var(--green);
-  border-radius: 6px;
-  font-family: 'Lato', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.batchrep-btn-secondary:hover {
-  background: var(--green-light);
-}
-
-/* Footer */
-.batchrep-footer {
+/* Closed/Access States */
+.batchrep-message {
   text-align: center;
-  font-size: 11px;
-  color: #aaa;
-  margin-top: 40px;
+  padding: 24px;
+}
+
+.batchrep-message p {
+  font-size: 0.95rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 20px;
+}
+
+/* Page Footer */
+.batchrep-page-footer {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  padding: 24px 0;
   letter-spacing: 0.5px;
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+  .batchrep-section-nav {
+    margin-left: -16px;
+    margin-right: -16px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .batchrep-nominee-body {
+    padding: 20px 16px;
+  }
+
+  .batchrep-response-body {
+    padding: 20px 16px;
+  }
+
+  .batchrep-collapsible-trigger {
+    padding: 14px 16px;
+  }
+
+  .batchrep-collapsible-body {
+    padding: 0 16px 16px;
+  }
 }

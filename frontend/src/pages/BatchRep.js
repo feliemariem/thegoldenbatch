@@ -1,16 +1,11 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { apiGet, apiPost } from '../api';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import letterImage from '../images/batch-rep-letter.jpg';
 import '../styles/batchrep.css';
-
-// Letter image - place batch-rep-letter.png in src/images/
-let letterImage = null;
-try {
-  letterImage = require('../images/batch-rep-letter.png');
-} catch (e) {
-  // Image not yet added
-}
 
 // Map hash to section key
 const HASH_TO_SECTION = {
@@ -31,6 +26,7 @@ export default function BatchRep() {
   const [isGrad, setIsGrad] = useState(false);
   const [hasAccess, setHasAccess] = useState(false);
 
+  // All sections collapsed by default
   const [openSections, setOpenSections] = useState({});
   const [selection, setSelection] = useState('confirm');
   const [comments, setComments] = useState('');
@@ -71,6 +67,23 @@ export default function BatchRep() {
     }
   }, [user]);
 
+  // Handle hash-based section expansion on mount
+  useEffect(() => {
+    const hash = location.hash.replace('#', '');
+    if (hash && HASH_TO_SECTION[hash]) {
+      const sectionKey = HASH_TO_SECTION[hash];
+      setOpenSections(prev => ({ ...prev, [sectionKey]: true }));
+
+      // Scroll to section after render
+      setTimeout(() => {
+        const element = document.getElementById(hash);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    }
+  }, [location.hash]);
+
   // Search graduates for typeahead
   const searchGraduates = useCallback(async (query) => {
     if (query.length < 2) {
@@ -110,6 +123,7 @@ export default function BatchRep() {
     setNomineeName(nominee.name);
     setNomineeSearch(nominee.name);
     setShowDropdown(false);
+    setSelection('nominate');
   };
 
   // Close dropdown on outside click
@@ -123,23 +137,6 @@ export default function BatchRep() {
     return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
-  // Handle hash-based section expansion on mount
-  useEffect(() => {
-    const hash = location.hash.replace('#', '');
-    if (hash && HASH_TO_SECTION[hash]) {
-      const sectionKey = HASH_TO_SECTION[hash];
-      setOpenSections(prev => ({ ...prev, [sectionKey]: true }));
-
-      // Scroll to section after a brief delay to allow render
-      setTimeout(() => {
-        const element = document.getElementById(hash);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      }, 100);
-    }
-  }, [location.hash]);
-
   const toggleSection = (section) => {
     setOpenSections(prev => ({ ...prev, [section]: !prev[section] }));
   };
@@ -151,8 +148,8 @@ export default function BatchRep() {
     // Update URL hash
     window.history.pushState(null, '', `#${hash}`);
 
-    // Open section if not already open
-    if (sectionKey) {
+    // Open section if it's a collapsible
+    if (sectionKey && sectionKey !== 'response') {
       setOpenSections(prev => ({ ...prev, [sectionKey]: true }));
     }
 
@@ -204,291 +201,286 @@ export default function BatchRep() {
 
   if (loading) {
     return (
-      <div className="batchrep-page">
-        <div className="batchrep-main">
-          <p>Loading...</p>
+      <>
+        <Navbar />
+        <div className="container">
+          <div className="card">
+            <p>Loading...</p>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   if (!user) {
     return (
-      <div className="batchrep-page">
-        <div className="batchrep-header">
-          <div className="batchrep-header-crest">&#9884;</div>
-          <div className="batchrep-header-text">
-            <h1>The Golden Batch - USLS IS 2003</h1>
-            <p>thegoldenbatch2003.com</p>
-          </div>
-        </div>
-        <div className="batchrep-main">
-          <div className="batchrep-access-denied">
-            <h2>Sign In Required</h2>
-            <p>Please log in to view and respond to this batch announcement.</p>
-            <button className="batchrep-btn-primary" onClick={() => navigate('/login')}>
+      <>
+        <Navbar />
+        <div className="container">
+          <div className="card">
+            <h1 className="page-title-gold">Sign In Required</h1>
+            <p className="subtitle">Please log in to view and respond to this batch announcement.</p>
+            <button className="btn-primary" onClick={() => navigate('/login')}>
               Sign In
             </button>
           </div>
+          <Footer />
         </div>
-      </div>
+      </>
     );
   }
 
   if (!hasAccess) {
     return (
-      <div className="batchrep-page">
-        <div className="batchrep-header">
-          <div className="batchrep-header-crest">&#9884;</div>
-          <div className="batchrep-header-text">
-            <h1>The Golden Batch - USLS IS 2003</h1>
-            <p>thegoldenbatch2003.com</p>
-          </div>
-        </div>
-        <div className="batchrep-main">
-          <div className="batchrep-access-denied">
-            <h2>Access Restricted</h2>
-            <p>This announcement is not yet available for your account.</p>
-            <button className="batchrep-btn-secondary" onClick={() => navigate('/profile')}>
+      <>
+        <Navbar />
+        <div className="container">
+          <div className="card">
+            <h1 className="page-title-gold">Access Restricted</h1>
+            <p className="subtitle">This announcement is not yet available for your account.</p>
+            <button className="btn-secondary" onClick={() => navigate('/profile')}>
               Back to Profile
             </button>
           </div>
+          <Footer />
         </div>
-      </div>
+      </>
     );
   }
 
   return (
-    <div className="batchrep-page">
-      <div className="batchrep-header">
-        <div className="batchrep-header-crest">&#9884;</div>
-        <div className="batchrep-header-text">
-          <h1>The Golden Batch - USLS IS 2003</h1>
-          <p>thegoldenbatch2003.com</p>
-        </div>
-      </div>
+    <>
+      <Navbar />
+      <div className="container">
+        <div className="card">
+          <h1 className="page-title-gold">Batch 2003 Representative</h1>
+          <p className="subtitle">
+            The USLS Alumni Association Bacolod, Inc. has formally requested that we submit one representative from Batch 2003.
+          </p>
 
-      <nav className="batchrep-quick-nav">
-        <a href="#official-letter" onClick={(e) => handleNavClick(e, 'official-letter')}>Official Letter</a>
-        <a href="#about-nomination" onClick={(e) => handleNavClick(e, 'about-nomination')}>About Nomination</a>
-        <a href="#responsibilities" onClick={(e) => handleNavClick(e, 'responsibilities')}>Role & Responsibilities</a>
-        <a href="#response" onClick={(e) => handleNavClick(e, 'response')} className="primary">Submit Response</a>
-      </nav>
+          {/* Section Navigation */}
+          <nav className="batchrep-section-nav">
+            <a href="#official-letter" onClick={(e) => handleNavClick(e, 'official-letter')}>
+              Official Letter
+            </a>
+            <a href="#about-nomination" onClick={(e) => handleNavClick(e, 'about-nomination')}>
+              About Nomination
+            </a>
+            <a href="#responsibilities" onClick={(e) => handleNavClick(e, 'responsibilities')}>
+              Role & Responsibilities
+            </a>
+            <a href="#response" onClick={(e) => handleNavClick(e, 'response')} className="primary">
+              Submit Response
+            </a>
+          </nav>
 
-      <div className="batchrep-main">
-        <div className="batchrep-official-badge">Official Batch Action Required</div>
+          {/* Deadline */}
+          <div className="batchrep-deadline">
+            Feedback window closes <strong>March 10, 2026 at 8:00 AM PHT</strong>. If no concerns or other nominations are raised by this date, Bianca Jison will be confirmed as our official Batch Representative.
+          </div>
 
-        <div className="batchrep-title-block">
-          <h2>Batch 2003 Batch Representative</h2>
-          <p>The USLS Alumni Association Bacolod, Inc. has formally requested that we submit one representative from Batch 2003. Below is the official letter and our proposed nominee.</p>
-        </div>
-
-        {/* Deadline */}
-        <div className="batchrep-deadline-bar">
-          <span>Feedback window closes <strong>March 10, 2026 at 8:00 AM PHT</strong>. If no concerns or other nominations are raised by this date, Bianca Jison will be confirmed as our official Batch Representative.</span>
-        </div>
-
-        {/* Official Letter */}
-        <div className={`batchrep-collapsible ${openSections.letter ? 'open' : ''}`} id="official-letter">
-          <button className="batchrep-collapsible-trigger" onClick={() => toggleSection('letter')}>
-            <span className="trigger-left">Official Letter - USLS Alumni Association Bacolod, Inc.</span>
-            <span className="batchrep-collapsible-arrow">&#9660;</span>
-          </button>
-          <div className="batchrep-collapsible-body">
-            <div className="batchrep-letter-img-wrap">
-              {letterImage ? (
+          {/* Official Letter - Collapsible */}
+          <div className={`batchrep-collapsible ${openSections.letter ? 'open' : ''}`} id="official-letter">
+            <button className="batchrep-collapsible-trigger" onClick={() => toggleSection('letter')}>
+              <span>Official Letter - USLS Alumni Association Bacolod, Inc.</span>
+              <span className="batchrep-collapsible-arrow">▼</span>
+            </button>
+            <div className="batchrep-collapsible-body">
+              <div className="batchrep-letter-wrap">
                 <img src={letterImage} alt="Official letter from USLS Alumni Association Bacolod, Inc." />
-              ) : (
-                <div className="batchrep-letter-placeholder">
-                  <p>Official letter image will be displayed here.</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Nominee Card - Always visible */}
+          <div className="batchrep-nominee-card">
+            <div className="batchrep-nominee-header">
+              <span>Proposed Batch Representative</span>
+            </div>
+            <div className="batchrep-nominee-body">
+              <div className="batchrep-nominee-name">Bianca Jison</div>
+              <div className="batchrep-nominee-sub">USLS-IS High School Batch 2003</div>
+              <div className="batchrep-nominee-roles">
+                <div className="batchrep-nominee-role">
+                  <span className="batchrep-role-badge">NOW</span>
+                  <span>Batch 2003 Representative to the USLS Alumni Association Officers and Board of Directors for SY 2026-2027</span>
                 </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Nominee Card */}
-        <div className="batchrep-nominee-card">
-          <div className="batchrep-nominee-header">
-            <span>Proposed Batch Representative</span>
-          </div>
-          <div className="batchrep-nominee-body">
-            <div className="batchrep-nominee-name">Bianca Jison</div>
-            <div className="batchrep-nominee-sub">USLS-IS High School Batch 2003</div>
-            <div className="batchrep-nominee-roles">
-              <div className="batchrep-nominee-role">
-                <span className="batchrep-role-icon">Now</span>
-                Batch 2003 Representative to the USLS Alumni Association Officers and Board of Directors for SY 2026-2027
-              </div>
-              <div className="batchrep-nominee-role">
-                <span className="batchrep-role-icon">2028</span>
-                President of the USLS Alumni Association Bacolod, Inc. during our 25th Jubilee Homecoming
+                <div className="batchrep-nominee-role">
+                  <span className="batchrep-role-badge">2028</span>
+                  <span>President of the USLS Alumni Association Bacolod, Inc. during our 25th Jubilee Homecoming</span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* About Nomination */}
-        <div className={`batchrep-collapsible ${openSections.nomination ? 'open' : ''}`} id="about-nomination">
-          <button className="batchrep-collapsible-trigger" onClick={() => toggleSection('nomination')}>
-            <span className="trigger-left">About This Nomination</span>
-            <span className="batchrep-collapsible-arrow">&#9660;</span>
-          </button>
-          <div className="batchrep-collapsible-body">
-            <p>The Organizing Committee proposes <strong>Bianca Jison</strong> as our Batch Representative in recognition of the initiative she has shown in proactively taking on many of the responsibilities associated with the role.</p>
-            <p style={{ marginTop: '10px' }}>She has been coordinating with the organizing committee and the alumni office, helping organize our batch and move preparations forward for our 25th Jubilee.</p>
-            <p style={{ marginTop: '10px' }}>While the Organizing Committee believes Bianca can effectively fulfill this role, we recognize and value every batchmate's voice in this decision. If you have someone else in mind who you feel is equally capable and willing to take this on, we encourage you to put their name forward. This is the batch's decision as much as it is ours.</p>
-            <div className="batchrep-local-notice">
-              <span className="batchrep-local-notice-icon">&#128205;</span>
-              <span><strong>Please note:</strong> At the request of the USLS Alumni Association, the Batch Representative is preferred to be locally based in Bacolod, as this person will be required to attend board meetings in person and will eventually serve as Alumni Association President during our 25th Jubilee in 2028.</span>
+          {/* About Nomination - Collapsible */}
+          <div className={`batchrep-collapsible ${openSections.nomination ? 'open' : ''}`} id="about-nomination">
+            <button className="batchrep-collapsible-trigger" onClick={() => toggleSection('nomination')}>
+              <span>About This Nomination</span>
+              <span className="batchrep-collapsible-arrow">▼</span>
+            </button>
+            <div className="batchrep-collapsible-body">
+              <p>
+                The Organizing Committee proposes <strong>Bianca Jison</strong> as our Batch Representative in recognition of the initiative she has shown in proactively taking on many of the responsibilities associated with the role.
+              </p>
+              <p>
+                She has been coordinating with the organizing committee and the alumni office, helping organize our batch and move preparations forward for our 25th Jubilee.
+              </p>
+              <p>
+                While the Organizing Committee believes Bianca can effectively fulfill this role, we recognize and value every batchmate's voice in this decision. If you have someone else in mind who you feel is equally capable and willing to take this on, we encourage you to put their name forward. This is the batch's decision as much as it is ours.
+              </p>
+              <div className="batchrep-notice">
+                <strong>Please note:</strong> At the request of the USLS Alumni Association, the Batch Representative is preferred to be locally based in Bacolod, as this person will be required to attend board meetings in person and will eventually serve as Alumni Association President during our 25th Jubilee in 2028.
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Role & Responsibilities */}
-        <div className={`batchrep-collapsible ${openSections.role ? 'open' : ''}`} id="responsibilities">
-          <button className="batchrep-collapsible-trigger" onClick={() => toggleSection('role')}>
-            <span className="trigger-left">Role & Responsibilities</span>
-            <span className="batchrep-collapsible-arrow">&#9660;</span>
-          </button>
-          <div className="batchrep-collapsible-body">
-            <ul>
-              <li>Represent Batch 2003 in the USLS Alumni Association Officers and Board of Directors for SY 2026-2027</li>
-              <li>Attend regular alumni board meetings in person at the Alumni Office, USLS, Bacolod City</li>
-              <li>Act on behalf of the batch in all Alumni Association matters for the stated term</li>
-              <li>Coordinate with the USLS Alumni Association on batch-related concerns and updates</li>
-              <li>Serve as the official liaison between Batch 2003 and the alumni office</li>
-              <li>Assume the position of President of the USLS Alumni Association Bacolod, Inc. during our 25th Jubilee in 2028</li>
-              <li>Preside over the General Alumni Homecoming as the hosting batch president in December 2028</li>
-              <li>Work closely with the organizing committee on all preparations leading up to the 25th Jubilee Homecoming</li>
-              <li>Represent the batch in school and community engagements as needed</li>
-              <li>Help drive participation, fundraising, and engagement among batchmates in the lead-up to 2028</li>
-            </ul>
-            <div className="batchrep-reassurance">
-              <span>The Batch Representative will not be starting from scratch. There is already an organizing committee in place that has been working since 2023 - fully committed and ready to support whoever takes on this role.</span>
+          {/* Role & Responsibilities - Collapsible */}
+          <div className={`batchrep-collapsible ${openSections.role ? 'open' : ''}`} id="responsibilities">
+            <button className="batchrep-collapsible-trigger" onClick={() => toggleSection('role')}>
+              <span>Role & Responsibilities</span>
+              <span className="batchrep-collapsible-arrow">▼</span>
+            </button>
+            <div className="batchrep-collapsible-body">
+              <ul>
+                <li>Represent Batch 2003 in the USLS Alumni Association Officers and Board of Directors for SY 2026-2027</li>
+                <li>Attend regular alumni board meetings in person at the Alumni Office, USLS, Bacolod City</li>
+                <li>Act on behalf of the batch in all Alumni Association matters for the stated term</li>
+                <li>Coordinate with the USLS Alumni Association on batch-related concerns and updates</li>
+                <li>Serve as the official liaison between Batch 2003 and the alumni office</li>
+                <li>Assume the position of President of the USLS Alumni Association Bacolod, Inc. during our 25th Jubilee in 2028</li>
+                <li>Preside over the General Alumni Homecoming as the hosting batch president in December 2028</li>
+                <li>Work closely with the organizing committee on all preparations leading up to the 25th Jubilee Homecoming</li>
+                <li>Represent the batch in school and community engagements as needed</li>
+                <li>Help drive participation, fundraising, and engagement among batchmates in the lead-up to 2028</li>
+              </ul>
+              <div className="batchrep-reassurance">
+                The Batch Representative will not be starting from scratch. There is already an organizing committee in place that has been working since 2023 — fully committed and ready to support whoever takes on this role.
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Feedback Form */}
-        <div className="batchrep-feedback-card" id="response">
-          <div className="batchrep-feedback-header">
-            <h3>Your response</h3>
-            <p>Registered graduates only - Responses are confidential</p>
-          </div>
-          <div className="batchrep-feedback-body">
-            {submitSuccess || hasSubmitted ? (
-              <div className="batchrep-success-message">
-                <div className="batchrep-success-icon">&#10003;</div>
-                <h4>Thank you!</h4>
-                <p>Your response has been recorded. Results will be shared with the batch once the feedback window closes.</p>
-                <button className="batchrep-btn-secondary" onClick={() => navigate('/profile')}>
-                  Back to Profile
-                </button>
-              </div>
-            ) : status !== 'active' ? (
-              <div className="batchrep-closed-message">
-                <p>Submissions are currently closed.</p>
-                <button className="batchrep-btn-secondary" onClick={() => navigate('/profile')}>
-                  Back to Profile
-                </button>
-              </div>
-            ) : !isGrad ? (
-              <div className="batchrep-closed-message">
-                <p>Only registered graduates can submit responses.</p>
-                <button className="batchrep-btn-secondary" onClick={() => navigate('/profile')}>
-                  Back to Profile
-                </button>
-              </div>
-            ) : (
-              <>
-                <p>The organizing committee proposes Bianca Jison as our Batch Representative. Please confirm below. If you have feedback or would like to nominate someone else, you may use the optional fields.</p>
+          {/* Response Form - Always visible */}
+          <div className="batchrep-response-card" id="response">
+            <div className="batchrep-response-header">
+              <h3>Your Response</h3>
+              <p>Registered graduates only · Responses are confidential</p>
+            </div>
+            <div className="batchrep-response-body">
+              {submitSuccess || hasSubmitted ? (
+                <div className="batchrep-success">
+                  <div className="batchrep-success-icon">✓</div>
+                  <h4>Thank you!</h4>
+                  <p>Your response has been recorded. Results will be shared with the batch once the feedback window closes.</p>
+                  <button className="btn-secondary" onClick={() => navigate('/profile')}>
+                    Back to Profile
+                  </button>
+                </div>
+              ) : status !== 'active' ? (
+                <div className="batchrep-message">
+                  <p>Submissions are currently closed.</p>
+                  <button className="btn-secondary" onClick={() => navigate('/profile')}>
+                    Back to Profile
+                  </button>
+                </div>
+              ) : !isGrad ? (
+                <div className="batchrep-message">
+                  <p>Only registered graduates can submit responses.</p>
+                  <button className="btn-secondary" onClick={() => navigate('/profile')}>
+                    Back to Profile
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <p>
+                    The organizing committee proposes Bianca Jison as our Batch Representative. Please confirm below. If you have feedback or would like to nominate someone else, you may use the optional fields.
+                  </p>
 
-                <div className="batchrep-feedback-options">
                   <label
-                    className={`batchrep-feedback-option ${selection === 'confirm' ? 'selected' : ''}`}
+                    className={`batchrep-confirm-option ${selection === 'confirm' ? 'selected' : ''}`}
                     onClick={() => setSelection('confirm')}
                   >
                     <input
                       type="radio"
-                      name="feedback"
+                      name="selection"
                       value="confirm"
                       checked={selection === 'confirm'}
                       onChange={() => setSelection('confirm')}
                     />
-                    <div>
-                      <div className="batchrep-feedback-option-text">I confirm Bianca Jison as our Batch Representative</div>
-                    </div>
+                    <span className="batchrep-confirm-text">I confirm Bianca Jison as our Batch Representative</span>
                   </label>
-                </div>
 
-                <div className="batchrep-simple-field">
-                  <label>Feedback or comments <span className="optional">optional</span></label>
-                  <textarea
-                    placeholder="Share any feedback here..."
-                    value={comments}
-                    onChange={(e) => setComments(e.target.value)}
-                  />
-                </div>
-
-                <div className="batchrep-simple-field">
-                  <label>Nominate someone else <span className="optional">optional</span></label>
-                  <div className="batchrep-local-reminder">Your nominee must be locally based in Bacolod to be eligible.</div>
-                  <div className="batchrep-typeahead-wrap" ref={dropdownRef}>
-                    <input
-                      type="text"
-                      placeholder="Type a name to search graduates..."
-                      value={nomineeSearch}
-                      onChange={handleNomineeSearchChange}
-                      onFocus={() => nomineeSearch.length >= 2 && nominees.length > 0 && setShowDropdown(true)}
+                  <div className="form-group">
+                    <label>Feedback or comments <span style={{ fontWeight: 400, fontStyle: 'italic', textTransform: 'none', letterSpacing: 0 }}>(optional)</span></label>
+                    <textarea
+                      placeholder="Share any feedback here..."
+                      value={comments}
+                      onChange={(e) => setComments(e.target.value)}
+                      rows={3}
+                      style={{ width: '100%', resize: 'vertical' }}
                     />
-                    {showDropdown && (
-                      <div className="batchrep-typeahead-dropdown open">
-                        {nominees.length === 0 ? (
-                          <div className="batchrep-typeahead-empty">No matching graduates found</div>
-                        ) : (
-                          nominees.map((nominee) => (
-                            <div
-                              key={nominee.id}
-                              className="batchrep-typeahead-item"
-                              onClick={() => {
-                                selectNominee(nominee);
-                                setSelection('nominate');
-                              }}
-                            >
-                              {nominee.name}
-                            </div>
-                          ))
-                        )}
-                      </div>
-                    )}
                   </div>
-                </div>
 
-                {submitError && (
-                  <div className="batchrep-error-message">{submitError}</div>
-                )}
+                  <div className="form-group">
+                    <label>Nominate someone else <span style={{ fontWeight: 400, fontStyle: 'italic', textTransform: 'none', letterSpacing: 0 }}>(optional)</span></label>
+                    <div className="batchrep-local-reminder">
+                      Your nominee must be locally based in Bacolod to be eligible.
+                    </div>
+                    <div className="batchrep-typeahead" ref={dropdownRef}>
+                      <input
+                        type="text"
+                        placeholder="Type a name to search graduates..."
+                        value={nomineeSearch}
+                        onChange={handleNomineeSearchChange}
+                        onFocus={() => nomineeSearch.length >= 2 && nominees.length > 0 && setShowDropdown(true)}
+                      />
+                      {showDropdown && (
+                        <div className="batchrep-typeahead-dropdown">
+                          {nominees.length === 0 ? (
+                            <div className="batchrep-typeahead-empty">No matching graduates found</div>
+                          ) : (
+                            nominees.map((nominee) => (
+                              <div
+                                key={nominee.id}
+                                className="batchrep-typeahead-item"
+                                onClick={() => selectNominee(nominee)}
+                              >
+                                {nominee.name}
+                              </div>
+                            ))
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
 
-                <button
-                  className="batchrep-submit-btn"
-                  onClick={handleSubmit}
-                  disabled={submitting}
-                >
-                  {submitting ? 'Submitting...' : 'Submit'}
-                </button>
+                  {submitError && (
+                    <div className="error">{submitError}</div>
+                  )}
 
-                <div className="batchrep-confidential-note">
-                  <span>Responses are confidential. Results will be shared with the batch once the window closes.</span>
-                </div>
-              </>
-            )}
+                  <button
+                    className="btn-primary"
+                    onClick={handleSubmit}
+                    disabled={submitting}
+                  >
+                    {submitting ? 'Submitting...' : 'Submit Response'}
+                  </button>
+
+                  <div className="batchrep-confidential">
+                    <span>🔒</span>
+                    <span>Responses are confidential. Results will be shared with the batch once the window closes.</span>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+
+          <div className="batchrep-page-footer">
+            USLS-IS High School Batch 2003 · 25th Alumni Homecoming · December 16, 2028
           </div>
         </div>
-
-        <div className="batchrep-footer">
-          USLS-IS High School Batch 2003 - 25th Alumni Homecoming - December 16, 2028
-        </div>
+        <Footer />
       </div>
-    </div>
+    </>
   );
 }
