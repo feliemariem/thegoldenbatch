@@ -3,6 +3,17 @@
    Uses existing app CSS variables and patterns
    ======================================== */
 
+/* Page container - add breathing room from navbar */
+.batchrep-page {
+  padding-top: 24px;
+}
+
+@media (min-width: 600px) {
+  .batchrep-page {
+    padding-top: 32px;
+  }
+}
+
 /* Section Navigation - horizontally scrollable */
 .batchrep-section-nav {
   display: flex;

@@ -279,7 +279,7 @@ export default function BatchRep() {
   return (
     <>
       <Navbar />
-      <div className="container">
+      <div className="container batchrep-page">
         <div className="card">
           <h1 className="page-title-gold">Batch 2003 Representative</h1>
           <p className="subtitle">
