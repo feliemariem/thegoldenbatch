@@ -6,10 +6,13 @@
 /* Section Navigation - horizontally scrollable on mobile */
 .batchrep-section-nav {
   display: flex;
+  flex-wrap: nowrap;
   gap: 8px;
-  padding: 12px 0;
-  margin-bottom: 24px;
+  padding: 12px 40px 12px 0;
+  margin: 0 -40px 24px -40px;
+  padding-left: 40px;
   overflow-x: auto;
+  overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   white-space: nowrap;
@@ -33,6 +36,7 @@
   text-decoration: none;
   transition: all 0.2s ease;
   flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .batchrep-section-nav a:hover {
@@ -561,7 +565,7 @@
     margin-left: -16px;
     margin-right: -16px;
     padding-left: 16px;
-    padding-right: 16px;
+    padding-right: 40px;
   }
 
   .batchrep-nominee-body {
@@ -578,5 +582,15 @@
 
   .batchrep-collapsible-body {
     padding: 0 16px 16px;
+  }
+}
+
+@media (min-width: 601px) {
+  .batchrep-section-nav {
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+    flex-wrap: wrap;
   }
 }

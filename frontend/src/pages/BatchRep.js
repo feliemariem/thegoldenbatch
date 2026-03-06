@@ -27,7 +27,6 @@ export default function BatchRep() {
   const [status, setStatus] = useState(null);
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [isGrad, setIsGrad] = useState(false);
-  const [hasAccess, setHasAccess] = useState(false);
 
   // All sections collapsed by default
   const [openSections, setOpenSections] = useState({});
@@ -54,7 +53,6 @@ export default function BatchRep() {
           setStatus(data.status);
           setHasSubmitted(data.hasSubmitted);
           setIsGrad(data.isGrad);
-          setHasAccess(data.hasAccess);
         }
       } catch (err) {
         console.error('Error fetching batch-rep status:', err);
