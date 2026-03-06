@@ -12,6 +12,10 @@
   margin-top: 0;
 }
 
+.batchrep-page .page-title-gold {
+  margin-bottom: 16px;
+}
+
 @media (min-width: 600px) {
   .batchrep-page.container {
     padding-top: 56px !important;
