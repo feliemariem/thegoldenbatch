@@ -8,7 +8,33 @@ import Footer from '../components/Footer';
 import SystemAdminProfile from '../components/SystemAdminProfile';
 import ContributionPlan from '../components/ContributionPlan';
 import '../styles/profileNew.css';
+import '../styles/batchrep.css';
 import { apiGet, apiPut, apiUpload, apiDelete } from '../api';
+import lasalleLogo from '../images/lasalle.jpg';
+
+// Access control phases for batch-rep feature:
+// Phase 1: Only felie@fnrcore.com
+// Phase 2: All admins
+// Phase 3: All registered graduates
+const BATCH_REP_PHASE = 1;
+
+// Check if user has access based on current phase
+const checkPhaseAccess = (user, isGrad) => {
+  if (!user) return false;
+
+  const userEmail = user.email?.toLowerCase();
+
+  switch (BATCH_REP_PHASE) {
+    case 1:
+      return userEmail === 'felie@fnrcore.com';
+    case 2:
+      return user.isAdmin === true;
+    case 3:
+      return isGrad === true;
+    default:
+      return false;
+  }
+};
 
 export default function ProfileNew() {
   const { user } = useAuth();
@@ -42,6 +68,8 @@ export default function ProfileNew() {
   const [deleting, setDeleting] = useState(false);
   const [showFullPaidDetails, setShowFullPaidDetails] = useState(false);
   const [showStrategy, setShowStrategy] = useState(false);
+  const [showBatchRepModal, setShowBatchRepModal] = useState(false);
+  const [batchRepChecked, setBatchRepChecked] = useState(false);
   const fileInputRef = useRef(null);
   const receiptFileInputRef = useRef(null);
   const calendarDropdownRef = useRef(null);
@@ -116,6 +144,34 @@ export default function ProfileNew() {
     fetchReceipts();
     checkSystemAdmin();
   }, [user]);
+
+  // Check batch-rep status after profile loads
+  useEffect(() => {
+    const checkBatchRepStatus = async () => {
+      if (!profile || batchRepChecked) return;
+
+      try {
+        const res = await apiGet('/api/batch-rep/status');
+        if (res.ok) {
+          const data = await res.json();
+          // Show modal if:
+          // 1. User has phase access
+          // 2. User has NOT submitted
+          // 3. Status is active
+          const hasAccess = checkPhaseAccess(user, data.isGrad);
+          if (hasAccess && !data.hasSubmitted && data.status === 'active') {
+            setShowBatchRepModal(true);
+          }
+        }
+      } catch (err) {
+        console.error('Error checking batch-rep status:', err);
+      } finally {
+        setBatchRepChecked(true);
+      }
+    };
+
+    checkBatchRepStatus();
+  }, [profile, user, batchRepChecked]);
 
   // Calculate days remaining until the reunion (Dec 16, 2028)
   const getDaysUntilReunion = () => {
@@ -1595,6 +1651,30 @@ END:VCALENDAR`;
           <div className="receipt-modal-content" onClick={(e) => e.stopPropagation()}>
             <button className="receipt-modal-close" onClick={() => setReceiptModalImage(null)}>✕</button>
             <img src={receiptModalImage} alt="Receipt" />
+          </div>
+        </div>
+      )}
+
+      {/* Batch Rep Announcement Modal - blocks profile until user responds */}
+      {showBatchRepModal && (
+        <div className="batchrep-modal-overlay">
+          <div className="batchrep-modal">
+            <div className="batchrep-modal-avatar">
+              <img src={lasalleLogo} alt="USLS Logo" />
+            </div>
+            <h2 className="batchrep-modal-title">Batch Representative Nomination</h2>
+            <p className="batchrep-modal-text">
+              The organizing committee is requesting your input on the nomination of <strong>Bianca Jison</strong> as our official Batch Representative to the USLS Alumni Association.
+            </p>
+            <p className="batchrep-modal-subtext">
+              As a registered graduate, your voice matters. Please review the announcement and submit your response.
+            </p>
+            <button
+              className="batchrep-modal-btn"
+              onClick={() => navigate('/batch-rep')}
+            >
+              Weigh In Now
+            </button>
           </div>
         </div>
       )}

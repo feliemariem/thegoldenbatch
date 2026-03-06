@@ -604,3 +604,140 @@
   }
 }
 
+/* ========================================
+   BATCH REP MODAL (Profile blocking modal)
+   ======================================== */
+
+.batchrep-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+}
+
+.batchrep-modal {
+  background: var(--color-bg-card);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 40px 32px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="light"] .batchrep-modal {
+  border-color: rgba(0, 102, 51, 0.15);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.2);
+}
+
+.batchrep-modal-avatar {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 24px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--color-hover);
+  box-shadow: 0 4px 16px rgba(207, 181, 59, 0.3);
+}
+
+[data-theme="light"] .batchrep-modal-avatar {
+  border-color: #006633;
+  box-shadow: 0 4px 16px rgba(0, 102, 51, 0.2);
+}
+
+.batchrep-modal-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.batchrep-modal-title {
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--color-hover);
+  margin-bottom: 16px;
+}
+
+[data-theme="light"] .batchrep-modal-title {
+  color: #006633;
+}
+
+.batchrep-modal-text {
+  font-size: 0.95rem;
+  color: var(--color-text-primary);
+  line-height: 1.7;
+  margin-bottom: 12px;
+}
+
+.batchrep-modal-text strong {
+  color: var(--color-hover);
+}
+
+[data-theme="light"] .batchrep-modal-text strong {
+  color: #006633;
+}
+
+.batchrep-modal-subtext {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: 28px;
+}
+
+.batchrep-modal-btn {
+  display: inline-block;
+  padding: 14px 36px;
+  background: linear-gradient(135deg, var(--color-title-gradient-start) 0%, var(--color-title-gradient-end) 100%);
+  color: var(--color-bg-primary);
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.batchrep-modal-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(207, 181, 59, 0.4);
+}
+
+[data-theme="light"] .batchrep-modal-btn {
+  background: #006633;
+  color: #ffffff;
+}
+
+[data-theme="light"] .batchrep-modal-btn:hover {
+  box-shadow: 0 6px 20px rgba(0, 102, 51, 0.3);
+}
+
+@media (max-width: 480px) {
+  .batchrep-modal {
+    padding: 32px 24px;
+  }
+
+  .batchrep-modal-avatar {
+    width: 70px;
+    height: 70px;
+  }
+
+  .batchrep-modal-title {
+    font-size: 1.25rem;
+  }
+
+  .batchrep-modal-btn {
+    width: 100%;
+  }
+}
+
