@@ -552,6 +552,12 @@
   margin-top: 16px;
 }
 
+/* Response form button - light mode fix */
+[data-theme="light"] .batchrep-response-body .btn-primary {
+  background: #006633;
+  color: #ffffff;
+}
+
 /* Success State */
 .batchrep-success {
   text-align: center;
