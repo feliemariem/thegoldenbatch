@@ -15,6 +15,9 @@ const HASH_TO_SECTION = {
   'response': 'response'
 };
 
+// Temporary access restriction - will open to all graduates later
+const ALLOWED_EMAILS = ['felie@fnrcore.com'];
+
 export default function BatchRep() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -230,7 +233,11 @@ export default function BatchRep() {
     );
   }
 
-  if (!hasAccess) {
+  // Check if user's email is in the allowed list (temporary restriction)
+  const userEmail = user?.email?.toLowerCase();
+  const isAllowed = ALLOWED_EMAILS.some(email => email.toLowerCase() === userEmail);
+
+  if (!isAllowed) {
     return (
       <>
         <Navbar />
