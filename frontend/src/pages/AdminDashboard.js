@@ -335,7 +335,7 @@ export default function AdminDashboard() {
             <div className="stats-grid">
               <div className="stat-card">
                 <div className="stat-number">{inviteStats.total}</div>
-                <div className="stat-label">Total Invited</div>
+                <div className="stat-label">Emails Received</div>
               </div>
               <div className="stat-card">
                 <div className="stat-number">{registeredCount}</div>
