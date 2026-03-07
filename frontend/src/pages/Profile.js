@@ -24,7 +24,6 @@ const checkPhaseAccess = (user, isGrad) => {
     case 1:
       // Phase 1: Only specific emails
       const allowedEmails = [
-        'felie@fnrcore.com',
         'coycoy.cordova@gmail.com',
         'emvjanklow@gmail.com',
         'williamkramer27@gmail.com',
