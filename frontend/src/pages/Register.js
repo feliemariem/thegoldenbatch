@@ -106,7 +106,7 @@ export default function Register() {
         throw new Error(data.error || 'Registration failed');
       }
       login(data.user);
-      navigate('/batch-rep');
+      navigate('/profile');
     } catch (err) {
       setError(err.message);
     } finally {
