@@ -170,56 +170,86 @@ router.post('/submit', authenticateToken, async (req, res) => {
 });
 
 // GET /api/batch-rep/results
-// Admin only - returns aggregate results
+// Admin only - returns aggregate results with willingness data
 router.get('/results', authenticateAdmin, async (req, res) => {
   try {
-    // Get total submissions
+    // Get total responses
     const totalResult = await db.query('SELECT COUNT(*) as total FROM batch_rep_submissions');
-    const totalSubmissions = parseInt(totalResult.rows[0].total);
+    const totalResponses = parseInt(totalResult.rows[0].total);
 
     // Get confirmations count
     const confirmsResult = await db.query(
       "SELECT COUNT(*) as count FROM batch_rep_submissions WHERE selection = 'confirm'"
     );
-    const totalConfirms = parseInt(confirmsResult.rows[0].count);
+    const totalConfirmations = parseInt(confirmsResult.rows[0].count);
 
-    // Get nominations with counts (only those with 2+ votes shown by name)
-    const nominationsResult = await db.query(`
-      SELECT nominee_name, COUNT(*) as count
-      FROM batch_rep_submissions
-      WHERE selection = 'nominate' AND nominee_name IS NOT NULL
-      GROUP BY nominee_name
+    // Get nominations count
+    const totalNominations = totalResponses - totalConfirmations;
+
+    // Calculate confirmation percentage
+    const confirmationPct = totalResponses > 0
+      ? Math.round((totalConfirmations / totalResponses) * 100 * 10) / 10
+      : 0;
+
+    // Get nominees with willingness status and comments
+    const nomineesResult = await db.query(`
+      SELECT
+        brs.nominee_name,
+        COUNT(*) as count,
+        array_agg(brs.comments) FILTER (WHERE brs.comments IS NOT NULL) as comments,
+        brw.willing
+      FROM batch_rep_submissions brs
+      LEFT JOIN users u ON u.id = (
+        SELECT u2.id FROM users u2
+        JOIN invites i ON i.id = u2.invite_id
+        JOIN master_list ml ON ml.id = i.master_list_id
+        WHERE LOWER(u2.first_name || ' ' || u2.last_name) = LOWER(brs.nominee_name)
+        LIMIT 1
+      )
+      LEFT JOIN batch_rep_willingness brw ON brw.user_id = u.id
+      WHERE brs.selection = 'nominate' AND brs.nominee_name IS NOT NULL
+      GROUP BY brs.nominee_name, brw.willing
       ORDER BY count DESC
     `);
 
-    // Process nominations: show names for 2+ votes, aggregate singles into "Other"
-    const topNominees = [];
-    let otherCount = 0;
+    const nominees = nomineesResult.rows.map(row => ({
+      name: row.nominee_name,
+      count: parseInt(row.count),
+      pct: totalResponses > 0
+        ? Math.round((parseInt(row.count) / totalResponses) * 100 * 10) / 10
+        : 0,
+      willing: row.willing,
+      comments: row.comments || []
+    }));
 
-    for (const row of nominationsResult.rows) {
-      if (parseInt(row.count) >= 2) {
-        topNominees.push({
-          name: row.nominee_name,
-          count: parseInt(row.count)
-        });
-      } else {
-        otherCount += parseInt(row.count);
-      }
-    }
+    // Get willingness stats
+    const willingnessResult = await db.query(`
+      SELECT
+        COUNT(*) as total,
+        COUNT(*) FILTER (WHERE willing = true) as yes_count,
+        COUNT(*) FILTER (WHERE willing = false) as no_count
+      FROM batch_rep_willingness
+    `);
 
-    // Add "Other" if there are single-vote nominees
-    if (otherCount > 0) {
-      topNominees.push({
-        name: 'Other',
-        count: otherCount
-      });
-    }
+    const willingnessTotal = parseInt(willingnessResult.rows[0].total);
+    const willingnessYes = parseInt(willingnessResult.rows[0].yes_count);
+    const willingnessNo = parseInt(willingnessResult.rows[0].no_count);
 
     res.json({
-      totalSubmissions,
-      totalConfirms,
-      totalNominations: totalSubmissions - totalConfirms,
-      topNominees
+      totalResponses,
+      totalConfirmations,
+      totalNominations,
+      confirmationPct,
+      nominees,
+      willingnessTotal,
+      willingnessYes,
+      willingnessNo,
+      willingnessYesPct: willingnessTotal > 0
+        ? Math.round((willingnessYes / willingnessTotal) * 100 * 10) / 10
+        : 0,
+      willingnessNoPct: willingnessTotal > 0
+        ? Math.round((willingnessNo / willingnessTotal) * 100 * 10) / 10
+        : 0
     });
   } catch (err) {
     console.error('Error fetching batch-rep results:', err);
