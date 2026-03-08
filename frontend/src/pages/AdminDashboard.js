@@ -603,8 +603,9 @@ export default function AdminDashboard() {
                                   fontSize: '0.75rem',
                                   color: 'var(--color-text-secondary)'
                                 }}>
-                                  <span>Status: {nominee.registered ? 'Registered' : 'Not registered'}</span>
-                                  <span>City: {nominee.city || '—'}</span>
+                                  <span><strong>Status:</strong> {nominee.registered ? 'Registered' : 'Not registered'}</span>
+                                  <span><strong>City:</strong> {nominee.city || '—'}</span>
+                                  <span><strong>Country:</strong> {nominee.country || '—'}</span>
                                 </div>
                                 {nominee.comments.length > 0 && (
                                   <div style={{ marginTop: '8px' }}>

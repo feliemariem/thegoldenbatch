@@ -188,7 +188,7 @@ router.get('/results', authenticateAdmin, async (req, res) => {
       ? Math.round((totalConfirmations / totalResponses) * 100 * 10) / 10
       : 0;
 
-    // Get nominees with willingness status, registration, city, and comments
+    // Get nominees with willingness status, registration, city, country, and comments
     const nomineesResult = await db.query(`
       SELECT
         brs.nominee_name,
@@ -197,14 +197,15 @@ router.get('/results', authenticateAdmin, async (req, res) => {
         array_agg(brs.comments) FILTER (WHERE brs.comments IS NOT NULL) as comments,
         brw.willing,
         CASE WHEN u.id IS NOT NULL THEN true ELSE false END as registered,
-        u.city
+        u.city,
+        u.country
       FROM batch_rep_submissions brs
       LEFT JOIN master_list ml ON ml.id = brs.nominee_master_list_id
       LEFT JOIN invites i ON i.master_list_id = ml.id
       LEFT JOIN users u ON u.invite_id = i.id
       LEFT JOIN batch_rep_willingness brw ON brw.user_id = u.id
       WHERE brs.selection = 'nominate' AND brs.nominee_name IS NOT NULL
-      GROUP BY brs.nominee_name, brs.nominee_master_list_id, brw.willing, u.id, u.city
+      GROUP BY brs.nominee_name, brs.nominee_master_list_id, brw.willing, u.id, u.city, u.country
       ORDER BY count DESC
     `);
 
@@ -218,6 +219,7 @@ router.get('/results', authenticateAdmin, async (req, res) => {
       willing: row.willing,
       registered: row.registered,
       city: row.city,
+      country: row.country,
       comments: row.comments || []
     }));
 
@@ -287,8 +289,8 @@ router.patch('/status', authenticateAdmin, async (req, res) => {
 });
 
 // GET /api/batch-rep/graduates/search
-// Typeahead search for all registered graduates (for nomination field)
-// Searches both user's registered name and master list name
+// Typeahead search for all graduates (for nomination field)
+// Searches from master_list directly, includes registered user name if available
 router.get('/graduates/search', authenticateToken, async (req, res) => {
   try {
     const { q } = req.query;
@@ -301,21 +303,22 @@ router.get('/graduates/search', authenticateToken, async (req, res) => {
 
     const result = await db.query(`
       SELECT
-        u.id,
+        ml.id AS master_list_id,
         COALESCE(
           NULLIF(TRIM(u.first_name || ' ' || u.last_name), ''),
           TRIM(ml.first_name || ' ' || ml.last_name)
         ) AS name,
-        ml.id AS master_list_id
-      FROM users u
-      JOIN invites i ON i.id = u.invite_id
-      JOIN master_list ml ON ml.id = i.master_list_id
+        u.id AS user_id
+      FROM master_list ml
+      LEFT JOIN invites i ON i.master_list_id = ml.id
+      LEFT JOIN users u ON u.invite_id = i.id
       WHERE (
-        LOWER(u.first_name || ' ' || u.last_name) LIKE LOWER('%' || $1 || '%')
-        OR LOWER(ml.first_name || ' ' || ml.last_name) LIKE LOWER('%' || $1 || '%')
+        LOWER(ml.first_name || ' ' || ml.last_name) LIKE LOWER('%' || $1 || '%')
+        OR (u.id IS NOT NULL AND LOWER(u.first_name || ' ' || u.last_name) LIKE LOWER('%' || $1 || '%'))
       )
-      AND NOT (LOWER(u.first_name) = 'bianca' AND LOWER(u.last_name) = 'jison')
+      AND NOT (LOWER(ml.first_name) = 'bianca' AND LOWER(ml.last_name) = 'jison')
       AND ml.section != 'Non-Graduate'
+      AND ml.in_memoriam = FALSE
       LIMIT 10
     `, [searchTerm]);
 
