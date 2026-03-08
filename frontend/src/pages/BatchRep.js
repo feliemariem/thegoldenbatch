@@ -331,7 +331,7 @@ export default function BatchRep() {
               </div>
               <div className="batchrep-response-body">
                 <p style={{ marginBottom: '20px' }}>
-                  Before viewing the full batch rep page, we'd like to know — would you be willing to serve as Batch 2003 Representative if nominated by your batchmates?
+                  Would you be willing to serve as Batch 2003 Representative if nominated?
                 </p>
 
                 {/* Role & Responsibilities Collapsible */}
@@ -376,7 +376,7 @@ export default function BatchRep() {
                 </div>
 
                 <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', margin: 0 }}>
-                  You can change your answer at any time before the window closes. Only graduates who answer Yes will appear as potential nominees.
+                  You can change this anytime. Only graduates who say Yes appear as potential nominees.
                 </p>
               </div>
             </div>
