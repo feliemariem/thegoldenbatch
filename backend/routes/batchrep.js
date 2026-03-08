@@ -50,15 +50,58 @@ router.get('/status', authenticateToken, async (req, res) => {
     // Check if user has access
     const hasAccess = await checkEmailAccess(userEmail);
 
+    // Check user's willingness answer
+    const willingnessResult = await db.query(
+      'SELECT willing FROM batch_rep_willingness WHERE user_id = $1',
+      [userId]
+    );
+    const willingnessAnswer = willingnessResult.rows.length > 0
+      ? willingnessResult.rows[0].willing
+      : null;
+
     res.json({
       status,
       hasSubmitted,
       isGrad,
       isAdmin,
-      hasAccess
+      hasAccess,
+      willingnessAnswer
     });
   } catch (err) {
     console.error('Error fetching batch-rep status:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// POST /api/batch-rep/willingness
+// Upsert willingness to serve (grad only)
+router.post('/willingness', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { willing } = req.body;
+
+    // Validate willing is boolean
+    if (typeof willing !== 'boolean') {
+      return res.status(400).json({ error: 'Invalid value. Must be true or false.' });
+    }
+
+    // Check user is a grad
+    const isGrad = await checkIsGrad(userId);
+    if (!isGrad) {
+      return res.status(403).json({ error: 'Only graduates can submit willingness.' });
+    }
+
+    // Upsert willingness record
+    await db.query(
+      `INSERT INTO batch_rep_willingness (user_id, willing, updated_at)
+       VALUES ($1, $2, NOW())
+       ON CONFLICT (user_id) DO UPDATE SET willing = $2, updated_at = NOW()`,
+      [userId, willing]
+    );
+
+    res.json({ willing });
+  } catch (err) {
+    console.error('Error submitting willingness:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -236,25 +279,29 @@ router.get('/graduates/search', authenticateToken, async (req, res) => {
     // This allows "Mel Yanson" to match "Mel Andrea F. Yanson"
     const wordConditions = words.map((_, i) => `
       (
-        LOWER(first_name) LIKE $${i + 1}
-        OR LOWER(last_name) LIKE $${i + 1}
-        OR LOWER(COALESCE(current_name, '')) LIKE $${i + 1}
+        LOWER(m.first_name) LIKE $${i + 1}
+        OR LOWER(m.last_name) LIKE $${i + 1}
+        OR LOWER(COALESCE(m.current_name, '')) LIKE $${i + 1}
       )
     `).join(' AND ');
 
     const params = words.map(w => `%${w}%`);
 
     // Search master_list for graduates (section != 'Non-Graduate') who are alive
+    // and have indicated willingness to serve
     const result = await db.query(`
-      SELECT id, first_name, last_name, current_name
-      FROM master_list
-      WHERE section IS NOT NULL
-        AND section != 'Non-Graduate'
-        AND (in_memoriam IS NOT TRUE)
+      SELECT m.id, m.first_name, m.last_name, m.current_name
+      FROM master_list m
+      JOIN invites i ON i.master_list_id = m.id
+      JOIN users u ON u.invite_id = i.id
+      JOIN batch_rep_willingness brw ON brw.user_id = u.id AND brw.willing = TRUE
+      WHERE m.section IS NOT NULL
+        AND m.section != 'Non-Graduate'
+        AND (m.in_memoriam IS NOT TRUE)
         AND (${wordConditions})
       ORDER BY
-        CASE WHEN current_name IS NOT NULL THEN current_name ELSE last_name END,
-        first_name
+        CASE WHEN m.current_name IS NOT NULL THEN m.current_name ELSE m.last_name END,
+        m.first_name
       LIMIT 10
     `, params);
 

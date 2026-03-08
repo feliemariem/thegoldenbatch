@@ -317,6 +317,17 @@ CREATE TABLE batch_rep_submissions (
 );
 
 -- ============================================================
+-- NEW: Batch Rep Willingness table
+-- Tracks whether graduates are willing to serve if nominated
+-- ============================================================
+CREATE TABLE batch_rep_willingness (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+    willing BOOLEAN NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ============================================================
 -- Indexes
 -- ============================================================
 CREATE INDEX idx_messages_to_user ON messages(to_user_id);
@@ -353,6 +364,8 @@ CREATE INDEX idx_volunteer_interests_user ON volunteer_interests(user_id);
 CREATE INDEX idx_summary_snapshots_date ON summary_snapshots(snapshot_date DESC);
 CREATE INDEX idx_summary_snapshots_type ON summary_snapshots(snapshot_type);
 CREATE INDEX idx_batch_rep_submissions_voter ON batch_rep_submissions(voter_id);
+CREATE INDEX idx_batch_rep_willingness_user ON batch_rep_willingness(user_id);
+CREATE INDEX idx_batch_rep_willingness_willing ON batch_rep_willingness(willing);
 
 CREATE UNIQUE INDEX idx_ledger_reference_no_unique 
   ON ledger(reference_no) 
@@ -452,3 +465,14 @@ CREATE UNIQUE INDEX idx_ledger_reference_no_unique
 -- FROM admins 
 -- WHERE role_title IS NOT NULL 
 -- ORDER BY is_core_leader DESC, display_order ASC;
+
+-- CREATE TABLE IF NOT EXISTS batch_rep_willingness (
+--     id SERIAL PRIMARY KEY,
+--     user_id INTEGER NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+--     willing BOOLEAN NOT NULL,
+--     created_at TIMESTAMPTZ DEFAULT NOW(),
+--     updated_at TIMESTAMPTZ DEFAULT NOW()
+-- );
+--
+-- CREATE INDEX IF NOT EXISTS idx_batch_rep_willingness_user ON batch_rep_willingness(user_id);
+-- CREATE INDEX IF NOT EXISTS idx_batch_rep_willingness_willing ON batch_rep_willingness(willing);

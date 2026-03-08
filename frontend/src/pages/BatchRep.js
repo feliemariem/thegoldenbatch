@@ -85,6 +85,9 @@ export default function BatchRep() {
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [roleAcknowledged, setRoleAcknowledged] = useState(false);
   const [willingnessConfirmed, setWillingnessConfirmed] = useState(false);
+  const [willingnessAnswer, setWillingnessAnswer] = useState(null); // null | true | false
+  const [willingnessSubmitting, setWillingnessSubmitting] = useState(false);
+  const [roleOpen, setRoleOpen] = useState(false);
 
   const dropdownRef = useRef(null);
   const searchTimeoutRef = useRef(null);
@@ -99,6 +102,7 @@ export default function BatchRep() {
           setStatus(data.status);
           setHasSubmitted(data.hasSubmitted);
           setIsGrad(data.isGrad);
+          setWillingnessAnswer(data.willingnessAnswer ?? null);
         }
       } catch (err) {
         console.error('Error fetching batch-rep status:', err);
@@ -209,6 +213,19 @@ export default function BatchRep() {
     }, 50);
   };
 
+  const handleWillingnessSubmit = async (willing) => {
+    setWillingnessSubmitting(true);
+    try {
+      const res = await apiPost('/api/batch-rep/willingness', { willing });
+      const data = await res.json();
+      if (res.ok) setWillingnessAnswer(data.willing);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setWillingnessSubmitting(false);
+    }
+  };
+
   const handleSubmit = async () => {
     setSubmitError('');
 
@@ -308,6 +325,96 @@ export default function BatchRep() {
             The USLS Alumni Association has asked our batch to put forward a Batch 2003 Representative who will also serve as Alumni Association President during our 25th Jubilee in 2028.
           </p>
 
+          {/* Willingness Gate - Graduates must answer before seeing full page */}
+          {isGrad && willingnessAnswer === null && (
+            <div className="batchrep-response-card" style={{ marginTop: '24px' }}>
+              <div className="batchrep-response-header">
+                <h3>One quick question before you proceed</h3>
+              </div>
+              <div className="batchrep-response-body">
+                <p style={{ marginBottom: '20px' }}>
+                  Before viewing the full batch rep page, we'd like to know — would you be willing to serve as Batch 2003 Representative if nominated by your batchmates?
+                </p>
+
+                {/* Role & Responsibilities Collapsible */}
+                <div className={`batchrep-collapsible ${roleOpen ? 'open' : ''}`} style={{ marginBottom: '20px' }}>
+                  <button className="batchrep-collapsible-trigger" onClick={() => setRoleOpen(!roleOpen)}>
+                    <span>Role & Responsibilities</span>
+                    <span className="batchrep-collapsible-arrow">▼</span>
+                  </button>
+                  <div className="batchrep-collapsible-body">
+                    <ul>
+                      <li>Represent Batch 2003 in the USLS Alumni Association Officers and Board of Directors for SY 2026-2027</li>
+                      <li>Attend regular alumni board meetings in person at the Alumni Office, USLS, Bacolod City</li>
+                      <li>Act on behalf of the batch in all Alumni Association matters for the stated term</li>
+                      <li>Coordinate with the USLS Alumni Association on batch-related concerns and updates</li>
+                      <li>Serve as the official liaison between Batch 2003 and the alumni office</li>
+                      <li>Assume the position of President of the USLS Alumni Association Bacolod, Inc. during our 25th Jubilee in 2028</li>
+                      <li>Preside over the General Alumni Homecoming as the hosting batch president in December 2028</li>
+                      <li>Work closely with the organizing committee on all preparations leading up to the 25th Jubilee Homecoming</li>
+                      <li>Represent the batch in school and community engagements as needed</li>
+                      <li>Help drive participation, fundraising, and engagement among batchmates in the lead-up to 2028</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '12px', marginBottom: '16px' }}>
+                  <button
+                    className="btn-primary"
+                    onClick={() => handleWillingnessSubmit(true)}
+                    disabled={willingnessSubmitting}
+                    style={{ flex: 1 }}
+                  >
+                    {willingnessSubmitting ? 'Saving...' : "Yes, I'm willing"}
+                  </button>
+                  <button
+                    className="btn-secondary"
+                    onClick={() => handleWillingnessSubmit(false)}
+                    disabled={willingnessSubmitting}
+                    style={{ flex: 1 }}
+                  >
+                    {willingnessSubmitting ? 'Saving...' : 'Not at this time'}
+                  </button>
+                </div>
+
+                <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', margin: 0 }}>
+                  You can change your answer at any time before the window closes. Only graduates who answer Yes will appear as potential nominees.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Willingness Status Banner - Shows after answering */}
+          {isGrad && willingnessAnswer !== null && (
+            <div className={`batchrep-notice`} style={{ marginBottom: '16px', background: willingnessAnswer ? 'var(--color-status-positive-bg)' : 'var(--color-status-warning-bg)', borderColor: willingnessAnswer ? 'var(--color-status-positive)' : 'var(--color-status-warning)' }}>
+              {willingnessAnswer ? (
+                <>
+                  <span style={{ color: 'var(--color-status-positive)' }}>✓</span>{' '}
+                  You're open to being nominated. Your name may appear when batchmates search for nominees.{' '}
+                  <button
+                    onClick={() => setWillingnessAnswer(null)}
+                    style={{ background: 'none', border: 'none', padding: 0, color: 'var(--color-hover)', textDecoration: 'underline', cursor: 'pointer', fontSize: 'inherit' }}
+                  >
+                    Change my answer
+                  </button>
+                </>
+              ) : (
+                <>
+                  Noted. Your name will not appear as a potential nominee.{' '}
+                  <button
+                    onClick={() => setWillingnessAnswer(null)}
+                    style={{ background: 'none', border: 'none', padding: 0, color: 'var(--color-hover)', textDecoration: 'underline', cursor: 'pointer', fontSize: 'inherit' }}
+                  >
+                    Actually, let me reconsider
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+
+          {/* Rest of page - hidden until willingness answered (for grads) */}
+          {(!isGrad || willingnessAnswer !== null) && (
+            <>
           {/* Section Navigation */}
           <nav className="batchrep-section-nav">
             <a href="#official-letter" onClick={(e) => handleNavClick(e, 'official-letter')}>
@@ -617,6 +724,8 @@ export default function BatchRep() {
           <div className="batchrep-page-footer">
             USLS-IS · 25th Alumni Homecoming · December 16, 2028
           </div>
+          </>
+          )}
         </div>
         <Footer />
       </div>
