@@ -319,9 +319,11 @@ export default function BatchRep() {
       <div className="container batchrep-page">
         <div className="card">
           <h1 className="page-title-gold">Batch 2003 Representative</h1>
-          <p className="subtitle">
-            The USLS Alumni Association has asked our batch to put forward a Batch 2003 Representative who will also serve as Alumni Association President during our 25th Jubilee in 2028.
-          </p>
+          {(!isGrad || willingnessAnswer !== null) && (
+            <p className="subtitle">
+              The USLS Alumni Association has asked our batch to put forward a Batch 2003 Representative who will also serve as Alumni Association President during our 25th Jubilee in 2028.
+            </p>
+          )}
 
           {/* Willingness Gate - Graduates must answer before seeing full page */}
           {isGrad && willingnessAnswer === null && (
