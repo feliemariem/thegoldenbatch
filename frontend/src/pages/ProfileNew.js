@@ -191,8 +191,9 @@ export default function ProfileNew() {
           // Show modal if:
           // 1. User has phase access
           // 2. Status is active
+          // 3. Deadline has not passed
           const hasAccess = checkPhaseAccess(user, data.isGrad);
-          if (hasAccess && data.status === 'active') {
+          if (hasAccess && data.status === 'active' && !isDeadlinePassed()) {
             setShowBatchRepModal(true);
           }
         }
@@ -1699,14 +1700,8 @@ END:VCALENDAR`;
                   <div className="batchrep-modal-badge submitted">✓ Response Recorded</div>
                   <h2 className="batchrep-modal-title">Hi {profile?.first_name || 'there'}, you've already responded.</h2>
                   <p className="batchrep-modal-desc">
-                    Thank you for your input on the Batch Rep selection. If you've changed your mind or want to update your response, you can do so before the deadline.
+                    Changed your mind? You can update your response anytime before the deadline.
                   </p>
-                  <div className="batchrep-modal-deadline">
-                    🕐 Feedback window closes <span className="deadline-date">March 14, 2026 at 8:00 AM PHT</span>
-                    {getDaysUntilBatchRepDeadline() > 0 && (
-                      <span className="deadline-countdown"> · {getDaysUntilBatchRepDeadline()} day{getDaysUntilBatchRepDeadline() !== 1 ? 's' : ''} left</span>
-                    )}
-                  </div>
                   <button
                     className="batchrep-modal-btn"
                     onClick={() => navigate('/batch-rep')}
@@ -1717,7 +1712,7 @@ END:VCALENDAR`;
                     className="batchrep-modal-dismiss"
                     onClick={() => setShowBatchRepModal(false)}
                   >
-                    Dismiss and go to Profile
+                    Dismiss
                   </button>
                 </>
               ) : (
