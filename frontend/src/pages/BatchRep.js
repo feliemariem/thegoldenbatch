@@ -83,6 +83,8 @@ export default function BatchRep() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [roleAcknowledged, setRoleAcknowledged] = useState(false);
+  const [willingnessConfirmed, setWillingnessConfirmed] = useState(false);
 
   const dropdownRef = useRef(null);
   const searchTimeoutRef = useRef(null);
@@ -303,7 +305,7 @@ export default function BatchRep() {
         <div className="card">
           <h1 className="page-title-gold">Batch 2003 Representative</h1>
           <p className="subtitle">
-            The USLS Alumni Association has formally requested we submit a Batch 2003 Representative — who will also serve as Alumni Association President during our 25th Jubilee in 2028.
+            The USLS Alumni Association has asked our batch to put forward a Batch 2003 Representative who will also serve as Alumni Association President during our 25th Jubilee in 2028.
           </p>
 
           {/* Section Navigation */}
@@ -478,31 +480,116 @@ export default function BatchRep() {
                     <div className="batchrep-local-reminder">
                       Your nominee must be locally based in Bacolod to be eligible.
                     </div>
-                    <div className="batchrep-typeahead" ref={dropdownRef}>
-                      <input
-                        type="text"
-                        placeholder="Type a name to search graduates..."
-                        value={nomineeSearch}
-                        onChange={handleNomineeSearchChange}
-                        onFocus={() => nomineeSearch.length >= 2 && nominees.length > 0 && setShowDropdown(true)}
-                      />
-                      {showDropdown && (
-                        <div className="batchrep-typeahead-dropdown">
-                          {nominees.length === 0 ? (
-                            <div className="batchrep-typeahead-empty">No matching graduates found</div>
-                          ) : (
-                            nominees.map((nominee) => (
-                              <div
-                                key={nominee.id}
-                                className="batchrep-typeahead-item"
-                                onClick={() => selectNominee(nominee)}
-                              >
-                                {nominee.name}
-                              </div>
-                            ))
-                          )}
+
+                    {/* 3-Step Progress Indicator */}
+                    <div className="batchrep-steps-indicator">
+                      <div className={`batchrep-step ${roleAcknowledged ? 'completed' : ''}`}>
+                        <span className="batchrep-step-number">1</span>
+                      </div>
+                      <div className="batchrep-step-connector" />
+                      <div className={`batchrep-step ${willingnessConfirmed ? 'completed' : ''} ${!roleAcknowledged ? 'disabled' : ''}`}>
+                        <span className="batchrep-step-number">2</span>
+                      </div>
+                      <div className="batchrep-step-connector" />
+                      <div className={`batchrep-step ${roleAcknowledged && willingnessConfirmed ? 'completed' : ''} ${!(roleAcknowledged && willingnessConfirmed) ? 'disabled' : ''}`}>
+                        <span className="batchrep-step-number">3</span>
+                      </div>
+                    </div>
+
+                    {/* Step 1: Review Role & Responsibilities */}
+                    <div className={`batchrep-nomination-step ${roleAcknowledged ? 'completed' : ''}`}>
+                      <div className="batchrep-step-header">
+                        <span className="batchrep-step-label">Step 1</span>
+                        {roleAcknowledged && <span className="batchrep-step-badge">✓</span>}
+                      </div>
+                      {!roleAcknowledged ? (
+                        <div className="batchrep-step-content">
+                          <p style={{ marginBottom: '12px', color: 'var(--text-secondary)' }}>
+                            Before nominating someone, please review the role and responsibilities they would be taking on:
+                          </p>
+                          <ul className="batchrep-responsibilities-list">
+                            <li>Represent Batch 2003 in the USLS Alumni Association Officers and Board of Directors for SY 2026-2027</li>
+                            <li>Attend regular alumni board meetings in person at the Alumni Office, USLS, Bacolod City</li>
+                            <li>Act on behalf of the batch in all Alumni Association matters for the stated term</li>
+                            <li>Coordinate with the USLS Alumni Association on batch-related concerns and updates</li>
+                            <li>Serve as the official liaison between Batch 2003 and the alumni office</li>
+                            <li>Assume the position of President of the USLS Alumni Association Bacolod, Inc. during our 25th Jubilee in 2028</li>
+                            <li>Preside over the General Alumni Homecoming as the hosting batch president in December 2028</li>
+                            <li>Work closely with the organizing committee on all preparations leading up to the 25th Jubilee Homecoming</li>
+                            <li>Represent the batch in school and community engagements as needed</li>
+                            <li>Help drive participation, fundraising, and engagement among batchmates in the lead-up to 2028</li>
+                          </ul>
+                          <button
+                            type="button"
+                            className="btn-secondary batchrep-step-btn"
+                            onClick={() => setRoleAcknowledged(true)}
+                          >
+                            I've reviewed the role and responsibilities ✓
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="batchrep-step-collapsed">
+                          Role & responsibilities reviewed
                         </div>
                       )}
+                    </div>
+
+                    {/* Step 2: Confirm Willingness */}
+                    <div className={`batchrep-nomination-step ${!roleAcknowledged ? 'disabled' : ''} ${willingnessConfirmed ? 'completed' : ''}`}>
+                      <div className="batchrep-step-header">
+                        <span className="batchrep-step-label">Step 2</span>
+                        {willingnessConfirmed && <span className="batchrep-step-badge">✓</span>}
+                      </div>
+                      <div className="batchrep-step-content">
+                        <label className="batchrep-checkbox-label" style={{ opacity: roleAcknowledged ? 1 : 0.5 }}>
+                          <input
+                            type="checkbox"
+                            checked={willingnessConfirmed}
+                            onChange={(e) => setWillingnessConfirmed(e.target.checked)}
+                            disabled={!roleAcknowledged}
+                          />
+                          <span>I have spoken with my nominee and they are willing to take on this role.</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    {/* Step 3: Select Nominee */}
+                    <div className={`batchrep-nomination-step ${!(roleAcknowledged && willingnessConfirmed) ? 'disabled' : ''}`}>
+                      <div className="batchrep-step-header">
+                        <span className="batchrep-step-label">Step 3</span>
+                      </div>
+                      <div className="batchrep-step-content">
+                        <div className={`batchrep-typeahead ${!(roleAcknowledged && willingnessConfirmed) ? 'disabled' : ''}`} ref={dropdownRef}>
+                          <input
+                            type="text"
+                            placeholder="Type a name to search graduates..."
+                            value={nomineeSearch}
+                            onChange={handleNomineeSearchChange}
+                            onFocus={() => nomineeSearch.length >= 2 && nominees.length > 0 && setShowDropdown(true)}
+                            disabled={!(roleAcknowledged && willingnessConfirmed)}
+                          />
+                          {showDropdown && (
+                            <div className="batchrep-typeahead-dropdown">
+                              {nominees.length === 0 ? (
+                                <div className="batchrep-typeahead-empty">No matching graduates found</div>
+                              ) : (
+                                nominees.map((nominee) => (
+                                  <div
+                                    key={nominee.id}
+                                    className="batchrep-typeahead-item"
+                                    onClick={() => selectNominee(nominee)}
+                                  >
+                                    {nominee.name}
+                                  </div>
+                                ))
+                              )}
+                            </div>
+                          )}
+                        </div>
+                        {!(roleAcknowledged && willingnessConfirmed) && (
+                          <div className="batchrep-lock-hint">🔒 Complete steps 1 and 2 to unlock</div>
+                        )}
+                      </div>
                     </div>
                   </div>
 
