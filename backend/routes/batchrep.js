@@ -107,7 +107,7 @@ router.post('/willingness', authenticateToken, async (req, res) => {
 });
 
 // POST /api/batch-rep/submit
-// Submit confirmation or nomination (grad only, one per user)
+// Submit or update confirmation/nomination (grad only)
 router.post('/submit', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;
@@ -137,19 +137,14 @@ router.post('/submit', authenticateToken, async (req, res) => {
       return res.status(400).json({ error: 'Submissions are currently closed.' });
     }
 
-    // Check if already submitted
-    const existingResult = await db.query(
-      'SELECT id FROM batch_rep_submissions WHERE voter_id = $1',
-      [userId]
-    );
-    if (existingResult.rows.length > 0) {
-      return res.status(400).json({ error: 'You have already submitted your response.' });
-    }
-
-    // Insert submission
+    // Upsert submission (insert or update)
     await db.query(
       `INSERT INTO batch_rep_submissions (voter_id, selection, nominee_name, comments)
-       VALUES ($1, $2, $3, $4)`,
+       VALUES ($1, $2, $3, $4)
+       ON CONFLICT (voter_id) DO UPDATE SET
+         selection = $2,
+         nominee_name = $3,
+         comments = $4`,
       [
         userId,
         selection,
@@ -160,10 +155,6 @@ router.post('/submit', authenticateToken, async (req, res) => {
 
     res.json({ success: true, message: 'Your response has been recorded.' });
   } catch (err) {
-    // Handle unique constraint violation
-    if (err.code === '23505') {
-      return res.status(400).json({ error: 'You have already submitted your response.' });
-    }
     console.error('Error submitting batch-rep response:', err);
     res.status(500).json({ error: 'Server error' });
   }

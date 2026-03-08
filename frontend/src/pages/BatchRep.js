@@ -533,9 +533,23 @@ export default function BatchRep() {
                 <div className="batchrep-success">
                   <div className="batchrep-success-icon">✓</div>
                   <p>Thank you for your response.</p>
-                  <button className="btn-secondary" onClick={() => navigate('/profile')}>
-                    Back to Profile
-                  </button>
+                  <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+                    <button className="btn-secondary" onClick={() => navigate('/profile')}>
+                      Back to Profile
+                    </button>
+                    {status === 'active' && (
+                      <button
+                        className="btn-secondary"
+                        onClick={() => {
+                          setSubmitSuccess(false);
+                          setHasSubmitted(false);
+                        }}
+                        style={{ background: 'transparent', border: '1px solid var(--color-hover)', color: 'var(--color-hover)' }}
+                      >
+                        Edit my response
+                      </button>
+                    )}
+                  </div>
                 </div>
               ) : status !== 'active' ? (
                 <div className="batchrep-message">
