@@ -170,9 +170,13 @@ router.post('/submit', authenticateToken, async (req, res) => {
 });
 
 // GET /api/batch-rep/results
-// Admin only - returns aggregate results with willingness data
+// System admin (id=1) only - returns aggregate results with willingness data
 router.get('/results', authenticateAdmin, async (req, res) => {
   try {
+    if (req.user.id !== 1) {
+      return res.status(403).json({ error: 'Access denied.' });
+    }
+
     // Get total responses
     const totalResult = await db.query('SELECT COUNT(*) as total FROM batch_rep_submissions');
     const totalResponses = parseInt(totalResult.rows[0].total);
