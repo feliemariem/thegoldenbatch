@@ -862,6 +862,43 @@
   box-shadow: 0 6px 20px rgba(0, 102, 51, 0.3);
 }
 
+/* Submitted badge variant */
+.batchrep-modal-badge.submitted {
+  background: rgba(39, 174, 96, 0.15);
+  color: var(--color-status-positive);
+  border-color: rgba(39, 174, 96, 0.3);
+}
+
+[data-theme="light"] .batchrep-modal-badge.submitted {
+  background: #e8f5e9;
+  color: #27ae60;
+  border-color: #a5d6a7;
+}
+
+/* Dismiss link */
+.batchrep-modal-dismiss {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  padding: 8px;
+  background: none;
+  border: none;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.batchrep-modal-dismiss:hover {
+  color: var(--color-text-primary);
+}
+
+[data-theme="light"] .batchrep-modal-dismiss:hover {
+  color: #1a1a1a;
+}
+
 @media (max-width: 480px) {
   .batchrep-modal-body {
     padding: 24px 20px 20px;

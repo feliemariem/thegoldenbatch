@@ -95,6 +95,7 @@ export default function ProfileNew() {
   const [showStrategy, setShowStrategy] = useState(false);
   const [showBatchRepModal, setShowBatchRepModal] = useState(false);
   const [batchRepChecked, setBatchRepChecked] = useState(false);
+  const [batchRepHasSubmitted, setBatchRepHasSubmitted] = useState(false);
   const fileInputRef = useRef(null);
   const receiptFileInputRef = useRef(null);
   const calendarDropdownRef = useRef(null);
@@ -185,12 +186,13 @@ export default function ProfileNew() {
         const res = await apiGet('/api/batch-rep/status');
         if (res.ok) {
           const data = await res.json();
+          // Store submission state
+          setBatchRepHasSubmitted(data.hasSubmitted);
           // Show modal if:
           // 1. User has phase access
-          // 2. User has NOT submitted
-          // 3. Status is active
+          // 2. Status is active
           const hasAccess = checkPhaseAccess(user, data.isGrad);
-          if (hasAccess && !data.hasSubmitted && data.status === 'active') {
+          if (hasAccess && data.status === 'active') {
             setShowBatchRepModal(true);
           }
         }
@@ -1692,32 +1694,62 @@ END:VCALENDAR`;
           <div className="batchrep-modal">
             <div className="batchrep-modal-bar"></div>
             <div className="batchrep-modal-body">
-              <div className="batchrep-modal-badge">⚡ Quick Batch Input</div>
-              <h2 className="batchrep-modal-title">Hi {profile?.first_name || 'there'}, the batch needs to hear from you.</h2>
-              <p className="batchrep-modal-desc">
-                The organizing committee has been working behind the scenes to lay the groundwork. Now it's time for the batch to choose who will represent Batch 2003 and serve as Alumni Association President during our 25th Jubilee in 2028.
-              </p>
-              <div className="batchrep-modal-nominee">
-                <div className="batchrep-modal-nominee-avatar">
-                  <img src={siteLogo} alt="The Golden Batch" />
-                </div>
-                <div className="batchrep-modal-nominee-info">
-                  <div className="batchrep-modal-nominee-label">Current Nominee</div>
-                  <div className="batchrep-modal-nominee-name">Bianca Jison</div>
-                </div>
-              </div>
-              <div className="batchrep-modal-deadline">
-                🕐 Feedback window closes <span className="deadline-date">March 14, 2026 at 8:00 AM PHT</span>
-                {getDaysUntilBatchRepDeadline() > 0 && (
-                  <span className="deadline-countdown"> · {getDaysUntilBatchRepDeadline()} day{getDaysUntilBatchRepDeadline() !== 1 ? 's' : ''} left</span>
-                )}
-              </div>
-              <button
-                className="batchrep-modal-btn"
-                onClick={() => navigate('/batch-rep')}
-              >
-                Submit My Response →
-              </button>
+              {batchRepHasSubmitted ? (
+                <>
+                  <div className="batchrep-modal-badge submitted">✓ Response Recorded</div>
+                  <h2 className="batchrep-modal-title">Hi {profile?.first_name || 'there'}, you've already responded.</h2>
+                  <p className="batchrep-modal-desc">
+                    Thank you for your input on the Batch Rep selection. If you've changed your mind or want to update your response, you can do so before the deadline.
+                  </p>
+                  <div className="batchrep-modal-deadline">
+                    🕐 Feedback window closes <span className="deadline-date">March 14, 2026 at 8:00 AM PHT</span>
+                    {getDaysUntilBatchRepDeadline() > 0 && (
+                      <span className="deadline-countdown"> · {getDaysUntilBatchRepDeadline()} day{getDaysUntilBatchRepDeadline() !== 1 ? 's' : ''} left</span>
+                    )}
+                  </div>
+                  <button
+                    className="batchrep-modal-btn"
+                    onClick={() => navigate('/batch-rep')}
+                  >
+                    Update My Response →
+                  </button>
+                  <button
+                    className="batchrep-modal-dismiss"
+                    onClick={() => setShowBatchRepModal(false)}
+                  >
+                    Dismiss and go to Profile
+                  </button>
+                </>
+              ) : (
+                <>
+                  <div className="batchrep-modal-badge">⚡ Quick Batch Input</div>
+                  <h2 className="batchrep-modal-title">Hi {profile?.first_name || 'there'}, the batch needs to hear from you.</h2>
+                  <p className="batchrep-modal-desc">
+                    The organizing committee has been working behind the scenes to lay the groundwork. Now it's time for the batch to choose who will represent Batch 2003 and serve as Alumni Association President during our 25th Jubilee in 2028.
+                  </p>
+                  <div className="batchrep-modal-nominee">
+                    <div className="batchrep-modal-nominee-avatar">
+                      <img src={siteLogo} alt="The Golden Batch" />
+                    </div>
+                    <div className="batchrep-modal-nominee-info">
+                      <div className="batchrep-modal-nominee-label">Current Nominee</div>
+                      <div className="batchrep-modal-nominee-name">Bianca Jison</div>
+                    </div>
+                  </div>
+                  <div className="batchrep-modal-deadline">
+                    🕐 Feedback window closes <span className="deadline-date">March 14, 2026 at 8:00 AM PHT</span>
+                    {getDaysUntilBatchRepDeadline() > 0 && (
+                      <span className="deadline-countdown"> · {getDaysUntilBatchRepDeadline()} day{getDaysUntilBatchRepDeadline() !== 1 ? 's' : ''} left</span>
+                    )}
+                  </div>
+                  <button
+                    className="batchrep-modal-btn"
+                    onClick={() => navigate('/batch-rep')}
+                  >
+                    Submit My Response →
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>
