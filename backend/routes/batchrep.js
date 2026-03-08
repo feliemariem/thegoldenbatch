@@ -291,6 +291,7 @@ router.patch('/status', authenticateAdmin, async (req, res) => {
 // GET /api/batch-rep/graduates/search
 // Typeahead search for all graduates (for nomination field)
 // Searches from master_list directly, includes registered user name if available
+// Splits search term by spaces to match each word independently
 router.get('/graduates/search', authenticateToken, async (req, res) => {
   try {
     const { q } = req.query;
@@ -299,7 +300,12 @@ router.get('/graduates/search', authenticateToken, async (req, res) => {
       return res.json([]);
     }
 
-    const searchTerm = q.trim();
+    // Split search term into words for independent matching
+    const words = q.trim().split(/\s+/);
+    const conditions = words.map((_, i) => `(
+      LOWER(ml.first_name || ' ' || ml.last_name) LIKE LOWER('%' || $${i + 1} || '%')
+      OR (u.id IS NOT NULL AND LOWER(u.first_name || ' ' || u.last_name) LIKE LOWER('%' || $${i + 1} || '%'))
+    )`).join(' AND ');
 
     const result = await db.query(`
       SELECT
@@ -312,15 +318,12 @@ router.get('/graduates/search', authenticateToken, async (req, res) => {
       FROM master_list ml
       LEFT JOIN invites i ON i.master_list_id = ml.id
       LEFT JOIN users u ON u.invite_id = i.id
-      WHERE (
-        LOWER(ml.first_name || ' ' || ml.last_name) LIKE LOWER('%' || $1 || '%')
-        OR (u.id IS NOT NULL AND LOWER(u.first_name || ' ' || u.last_name) LIKE LOWER('%' || $1 || '%'))
-      )
+      WHERE (${conditions})
       AND NOT (LOWER(ml.first_name) = 'bianca' AND LOWER(ml.last_name) = 'jison')
       AND ml.section != 'Non-Graduate'
       AND ml.in_memoriam = FALSE
       LIMIT 10
-    `, [searchTerm]);
+    `, words);
 
     res.json(result.rows);
   } catch (err) {
