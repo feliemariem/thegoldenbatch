@@ -30,7 +30,8 @@ const checkPhaseAccess = (user, isGrad) => {
         'williamkramer27@gmail.com',
         'jmrnv07@gmail.com',
         'chayamalonso@gmail.com',
-        'nqa.attynea@gmail.com'
+        'nqa.attynea@gmail.com',
+        'eckkee03@gmail.com'
       ];
       return allowedEmails.includes(userEmail);
     case 2:
