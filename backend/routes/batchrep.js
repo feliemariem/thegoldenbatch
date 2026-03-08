@@ -111,7 +111,7 @@ router.post('/willingness', authenticateToken, async (req, res) => {
 router.post('/submit', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;
-    const { selection, nominee_name, comments } = req.body;
+    const { selection, nominee_name, nominee_master_list_id, comments } = req.body;
 
     // Validate selection
     if (!selection || !['confirm', 'nominate'].includes(selection)) {
@@ -139,16 +139,18 @@ router.post('/submit', authenticateToken, async (req, res) => {
 
     // Upsert submission (insert or update)
     await db.query(
-      `INSERT INTO batch_rep_submissions (voter_id, selection, nominee_name, comments)
-       VALUES ($1, $2, $3, $4)
+      `INSERT INTO batch_rep_submissions (voter_id, selection, nominee_name, nominee_master_list_id, comments)
+       VALUES ($1, $2, $3, $4, $5)
        ON CONFLICT (voter_id) DO UPDATE SET
          selection = $2,
          nominee_name = $3,
-         comments = $4`,
+         nominee_master_list_id = $4,
+         comments = $5`,
       [
         userId,
         selection,
         selection === 'nominate' ? nominee_name.trim() : null,
+        selection === 'nominate' ? nominee_master_list_id : null,
         comments?.trim() || null
       ]
     );
@@ -186,34 +188,36 @@ router.get('/results', authenticateAdmin, async (req, res) => {
       ? Math.round((totalConfirmations / totalResponses) * 100 * 10) / 10
       : 0;
 
-    // Get nominees with willingness status and comments
+    // Get nominees with willingness status, registration, city, and comments
     const nomineesResult = await db.query(`
       SELECT
         brs.nominee_name,
+        brs.nominee_master_list_id,
         COUNT(*) as count,
         array_agg(brs.comments) FILTER (WHERE brs.comments IS NOT NULL) as comments,
-        brw.willing
+        brw.willing,
+        CASE WHEN u.id IS NOT NULL THEN true ELSE false END as registered,
+        u.city
       FROM batch_rep_submissions brs
-      LEFT JOIN users u ON u.id = (
-        SELECT u2.id FROM users u2
-        JOIN invites i ON i.id = u2.invite_id
-        JOIN master_list ml ON ml.id = i.master_list_id
-        WHERE LOWER(u2.first_name || ' ' || u2.last_name) = LOWER(brs.nominee_name)
-        LIMIT 1
-      )
+      LEFT JOIN master_list ml ON ml.id = brs.nominee_master_list_id
+      LEFT JOIN invites i ON i.master_list_id = ml.id
+      LEFT JOIN users u ON u.invite_id = i.id
       LEFT JOIN batch_rep_willingness brw ON brw.user_id = u.id
       WHERE brs.selection = 'nominate' AND brs.nominee_name IS NOT NULL
-      GROUP BY brs.nominee_name, brw.willing
+      GROUP BY brs.nominee_name, brs.nominee_master_list_id, brw.willing, u.id, u.city
       ORDER BY count DESC
     `);
 
     const nominees = nomineesResult.rows.map(row => ({
       name: row.nominee_name,
+      masterListId: row.nominee_master_list_id,
       count: parseInt(row.count),
       pct: totalResponses > 0
         ? Math.round((parseInt(row.count) / totalResponses) * 100 * 10) / 10
         : 0,
       willing: row.willing,
+      registered: row.registered,
+      city: row.city,
       comments: row.comments || []
     }));
 
@@ -283,7 +287,7 @@ router.patch('/status', authenticateAdmin, async (req, res) => {
 });
 
 // GET /api/batch-rep/graduates/search
-// Typeahead search for willing graduates (for nomination field)
+// Typeahead search for all registered graduates (for nomination field)
 // Searches both user's registered name and master list name
 router.get('/graduates/search', authenticateToken, async (req, res) => {
   try {
@@ -301,11 +305,11 @@ router.get('/graduates/search', authenticateToken, async (req, res) => {
         COALESCE(
           NULLIF(TRIM(u.first_name || ' ' || u.last_name), ''),
           TRIM(ml.first_name || ' ' || ml.last_name)
-        ) AS name
+        ) AS name,
+        ml.id AS master_list_id
       FROM users u
       JOIN invites i ON i.id = u.invite_id
       JOIN master_list ml ON ml.id = i.master_list_id
-      JOIN batch_rep_willingness brw ON brw.user_id = u.id AND brw.willing = TRUE
       WHERE (
         LOWER(u.first_name || ' ' || u.last_name) LIKE LOWER('%' || $1 || '%')
         OR LOWER(ml.first_name || ' ' || ml.last_name) LIKE LOWER('%' || $1 || '%')

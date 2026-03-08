@@ -77,6 +77,7 @@ export default function BatchRep() {
   const [selection, setSelection] = useState('confirm');
   const [comments, setComments] = useState('');
   const [nomineeName, setNomineeName] = useState('');
+  const [nomineeMasterListId, setNomineeMasterListId] = useState(null);
   const [nomineeSearch, setNomineeSearch] = useState('');
   const [nominees, setNominees] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -171,8 +172,15 @@ export default function BatchRep() {
   const selectNominee = (nominee) => {
     setNomineeName(nominee.name);
     setNomineeSearch(nominee.name);
+    setNomineeMasterListId(nominee.master_list_id);
     setShowDropdown(false);
     setSelection('nominate');
+  };
+
+  const clearNominee = () => {
+    setNomineeName('');
+    setNomineeSearch('');
+    setNomineeMasterListId(null);
   };
 
   // Close dropdown on outside click
@@ -243,6 +251,7 @@ export default function BatchRep() {
       const res = await apiPost('/api/batch-rep/submit', {
         selection,
         nominee_name: selection === 'nominate' ? nomineeName : null,
+        nominee_master_list_id: selection === 'nominate' ? nomineeMasterListId : null,
         comments: comments.trim() || null
       });
 
@@ -601,32 +610,64 @@ export default function BatchRep() {
                     <div className="batchrep-local-reminder">
                       Your nominee must be locally based in Bacolod to be eligible.
                     </div>
-                    <div className="batchrep-typeahead" ref={dropdownRef}>
-                      <input
-                        type="text"
-                        placeholder="Type a name to search graduates..."
-                        value={nomineeSearch}
-                        onChange={handleNomineeSearchChange}
-                        onFocus={() => nomineeSearch.length >= 2 && nominees.length > 0 && setShowDropdown(true)}
-                      />
-                      {showDropdown && (
-                        <div className="batchrep-typeahead-dropdown">
-                          {nominees.length === 0 ? (
-                            <div className="batchrep-typeahead-empty">No matching graduates found</div>
-                          ) : (
-                            nominees.map((nominee) => (
-                              <div
-                                key={nominee.id}
-                                className="batchrep-typeahead-item"
-                                onClick={() => selectNominee(nominee)}
-                              >
-                                {nominee.name}
-                              </div>
-                            ))
-                          )}
+                    {nomineeName ? (
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '12px 16px',
+                        background: 'rgba(207, 181, 59, 0.1)',
+                        border: '1px solid rgba(207, 181, 59, 0.3)',
+                        borderRadius: '8px',
+                        marginTop: '8px'
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span style={{ color: 'var(--color-status-positive)' }}>✓</span>
+                          <span style={{ fontWeight: 600, color: 'var(--color-text-primary)' }}>{nomineeName}</span>
                         </div>
-                      )}
-                    </div>
+                        <button
+                          type="button"
+                          onClick={clearNominee}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: 'var(--color-text-secondary)',
+                            cursor: 'pointer',
+                            fontSize: '0.85rem',
+                            textDecoration: 'underline'
+                          }}
+                        >
+                          Clear
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="batchrep-typeahead" ref={dropdownRef}>
+                        <input
+                          type="text"
+                          placeholder="Type a name to search graduates..."
+                          value={nomineeSearch}
+                          onChange={handleNomineeSearchChange}
+                          onFocus={() => nomineeSearch.length >= 2 && nominees.length > 0 && setShowDropdown(true)}
+                        />
+                        {showDropdown && (
+                          <div className="batchrep-typeahead-dropdown">
+                            {nominees.length === 0 ? (
+                              <div className="batchrep-typeahead-empty">No matching graduates found</div>
+                            ) : (
+                              nominees.map((nominee) => (
+                                <div
+                                  key={nominee.id}
+                                  className="batchrep-typeahead-item"
+                                  onClick={() => selectNominee(nominee)}
+                                >
+                                  {nominee.name}
+                                </div>
+                              ))
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   {submitError && (

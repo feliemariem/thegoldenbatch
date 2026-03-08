@@ -259,6 +259,17 @@ export default function SystemAdminProfile() {
                                   borderRadius: '4px'
                                 }} />
                               </div>
+                              {/* Master list info row */}
+                              <div style={{
+                                display: 'flex',
+                                gap: '16px',
+                                marginTop: '8px',
+                                fontSize: '0.75rem',
+                                color: 'var(--color-text-secondary)'
+                              }}>
+                                <span>Status: {nominee.registered ? 'Registered' : 'Not registered'}</span>
+                                <span>City: {nominee.city || '—'}</span>
+                              </div>
                               {nominee.comments.length > 0 && (
                                 <div style={{ marginTop: '8px' }}>
                                   {nominee.comments.map((comment, j) => (

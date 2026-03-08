@@ -312,6 +312,7 @@ CREATE TABLE batch_rep_submissions (
     voter_id INTEGER UNIQUE REFERENCES users(id) ON DELETE CASCADE,
     selection VARCHAR(20) CHECK (selection IN ('confirm', 'nominate')) NOT NULL,
     nominee_name VARCHAR(255),
+    nominee_master_list_id INTEGER REFERENCES master_list(id),
     comments TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
