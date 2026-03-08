@@ -258,8 +258,8 @@ router.patch('/status', authenticateAdmin, async (req, res) => {
 });
 
 // GET /api/batch-rep/graduates/search
-// Typeahead search for graduates (for nomination field)
-// Pulls from master_list: all graduates who are alive (not in_memoriam)
+// Typeahead search for willing graduates (for nomination field)
+// Searches both user's registered name and master list name
 router.get('/graduates/search', authenticateToken, async (req, res) => {
   try {
     const { q } = req.query;
@@ -268,50 +268,29 @@ router.get('/graduates/search', authenticateToken, async (req, res) => {
       return res.json([]);
     }
 
-    // Split query into words for multi-word matching
-    const words = q.trim().toLowerCase().split(/\s+/).filter(w => w.length > 0);
+    const searchTerm = q.trim();
 
-    if (words.length === 0) {
-      return res.json([]);
-    }
-
-    // Build WHERE conditions: each word must appear in the combined name fields
-    // This allows "Mel Yanson" to match "Mel Andrea F. Yanson"
-    const wordConditions = words.map((_, i) => `
-      (
-        LOWER(m.first_name) LIKE $${i + 1}
-        OR LOWER(m.last_name) LIKE $${i + 1}
-        OR LOWER(COALESCE(m.current_name, '')) LIKE $${i + 1}
-      )
-    `).join(' AND ');
-
-    const params = words.map(w => `%${w}%`);
-
-    // Search master_list for graduates (section != 'Non-Graduate') who are alive
-    // and have indicated willingness to serve
     const result = await db.query(`
-      SELECT m.id, m.first_name, m.last_name, m.current_name
-      FROM master_list m
-      JOIN invites i ON i.master_list_id = m.id
-      JOIN users u ON u.invite_id = i.id
+      SELECT
+        u.id,
+        COALESCE(
+          NULLIF(TRIM(u.first_name || ' ' || u.last_name), ''),
+          TRIM(ml.first_name || ' ' || ml.last_name)
+        ) AS name
+      FROM users u
+      JOIN invites i ON i.id = u.invite_id
+      JOIN master_list ml ON ml.id = i.master_list_id
       JOIN batch_rep_willingness brw ON brw.user_id = u.id AND brw.willing = TRUE
-      WHERE m.section IS NOT NULL
-        AND m.section != 'Non-Graduate'
-        AND (m.in_memoriam IS NOT TRUE)
-        AND (${wordConditions})
-      ORDER BY
-        CASE WHEN m.current_name IS NOT NULL THEN m.current_name ELSE m.last_name END,
-        m.first_name
+      WHERE (
+        LOWER(u.first_name || ' ' || u.last_name) LIKE LOWER('%' || $1 || '%')
+        OR LOWER(ml.first_name || ' ' || ml.last_name) LIKE LOWER('%' || $1 || '%')
+      )
+      AND NOT (LOWER(u.first_name) = 'bianca' AND LOWER(u.last_name) = 'jison')
+      AND ml.section != 'Non-Graduate'
       LIMIT 10
-    `, params);
+    `, [searchTerm]);
 
-    // Display logic:
-    // - If current_name exists: show current_name (it's the full registered/married name)
-    // - Otherwise: show yearbook name (first_name + last_name)
-    res.json(result.rows.map(r => ({
-      id: r.id,
-      name: r.current_name || `${r.first_name} ${r.last_name}`
-    })));
+    res.json(result.rows);
   } catch (err) {
     console.error('Error searching graduates:', err);
     res.status(500).json({ error: 'Server error' });
