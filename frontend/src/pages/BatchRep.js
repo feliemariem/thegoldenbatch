@@ -387,7 +387,7 @@ export default function BatchRep() {
                 </div>
 
                 <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', margin: 0 }}>
-                  You can change this anytime. Only graduates who say Yes appear as potential nominees.
+                  You can change this anytime.
                 </p>
               </div>
             </div>
@@ -399,7 +399,7 @@ export default function BatchRep() {
               {willingnessAnswer ? (
                 <>
                   <span style={{ color: 'var(--color-status-positive)' }}>✓</span>{' '}
-                  You're open to being nominated. Your name may appear when batchmates search for nominees.{' '}
+                  Thank you for letting us know. Your response has been recorded.{' '}
                   <button
                     onClick={() => setWillingnessAnswer(null)}
                     style={{ background: 'none', border: 'none', padding: 0, color: 'var(--color-hover)', textDecoration: 'underline', cursor: 'pointer', fontSize: 'inherit' }}
@@ -409,7 +409,7 @@ export default function BatchRep() {
                 </>
               ) : (
                 <>
-                  Noted. Your name will not appear as a potential nominee.{' '}
+                  Noted. Your response has been recorded.{' '}
                   <button
                     onClick={() => setWillingnessAnswer(null)}
                     style={{ background: 'none', border: 'none', padding: 0, color: 'var(--color-hover)', textDecoration: 'underline', cursor: 'pointer', fontSize: 'inherit' }}
