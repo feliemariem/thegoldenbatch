@@ -49,6 +49,12 @@ const presentations = [
     label: 'Payment Flow',
     file: '/presentations/PaymentFlow.html',
     pdf: '/presentations/pdfs/PaymentFlow.pdf'
+  },
+           {
+    id: 'batchrepprocess',
+    label: 'Batch Rep Process',
+    file: '/presentations/BatchRep_Process.html',
+    pdf: '/presentations/pdfs/BatchRep_Process.pdf'
   }
 
 ];

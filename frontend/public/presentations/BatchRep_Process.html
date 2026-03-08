@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Golden Batch — Batch Rep Selection Process</title>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green: #006633;
+      --dark-green: #004d26;
+      --gold: #CFB53B;
+      --dark-gold: #5b4b12;
+      --black: #1a1a1a;
+      --gray: #666666;
+      --light-gray: #999999;
+      --panel: #f5f5f0;
+      --gold-panel: #faf6e8;
+      --green-panel: #e8f5e8;
+      --line: #e0e0d8;
+      --white: #ffffff;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Source Sans 3', sans-serif;
+      color: var(--black);
+      background: var(--white);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    header {
+      background: var(--dark-green);
+      padding: 32px 0 28px;
+      border-bottom: 3px solid var(--gold);
+    }
+
+    header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .header-left { flex: 1; }
+
+    .eyebrow {
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #88bb88;
+      margin-bottom: 8px;
+    }
+
+    .site-title {
+      font-family: 'Source Serif 4', serif;
+      font-weight: 700;
+      font-size: 36px;
+      line-height: 1.15;
+      color: var(--white);
+    }
+
+    .site-title span { color: var(--gold); }
+
+    .header-right {
+      text-align: right;
+      flex-shrink: 0;
+      padding-left: 20px;
+    }
+
+    .header-right .label {
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #cccccc;
+    }
+
+    .header-right .highlight {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: var(--gold);
+      margin-top: 2px;
+    }
+
+    .header-right .sub {
+      font-size: 10px;
+      color: #aaaaaa;
+      margin-top: 2px;
+    }
+
+    main { padding: 40px 0 48px; }
+
+    .intro-bold {
+      font-family: 'Source Serif 4', serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--black);
+      margin-bottom: 8px;
+    }
+
+    .intro-body {
+      font-size: 18px;
+      color: var(--gray);
+      margin-bottom: 24px;
+      line-height: 1.7;
+    }
+
+    .gold-divider {
+      height: 2px;
+      background: var(--gold);
+      margin: 24px 0;
+    }
+
+    .section-header {
+      border-radius: 6px;
+      padding: 14px 20px;
+      margin-bottom: 16px;
+    }
+
+    .section-header.green { background: var(--green); }
+    .section-header.dark { background: #2a2a2a; }
+    .section-header.gold-bg { background: #8a7200; }
+
+    .section-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .section-title-bar {
+      font-family: 'Source Serif 4', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--white);
+      margin-top: 2px;
+    }
+
+    .section-desc {
+      font-size: 17px;
+      color: var(--gray);
+      margin-bottom: 16px;
+      line-height: 1.7;
+    }
+
+    .flow-step {
+      display: flex;
+      gap: 0;
+      margin-bottom: 6px;
+    }
+
+    .flow-num {
+      min-width: 32px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 10px;
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--white);
+      border-radius: 4px 0 0 4px;
+    }
+
+    .flow-num.green { background: var(--green); }
+    .flow-num.dark { background: #2a2a2a; }
+    .flow-num.gold-num { background: #8a7200; }
+
+    .flow-content {
+      background: var(--panel);
+      padding: 10px 14px;
+      flex: 1;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .flow-content strong {
+      display: block;
+      font-size: 17px;
+      color: var(--black);
+      margin-bottom: 2px;
+    }
+
+    .flow-content p {
+      font-size: 16px;
+      color: var(--gray);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .callout-gold {
+      background: var(--gold-panel);
+      border-radius: 6px;
+      padding: 12px 16px;
+      font-size: 17px;
+      color: var(--dark-gold);
+      line-height: 1.6;
+      margin-top: 12px;
+    }
+
+    .callout-gold b { color: var(--dark-gold); }
+
+    .callout-green {
+      background: var(--green-panel);
+      border-radius: 6px;
+      padding: 12px 16px;
+      font-size: 17px;
+      color: #004d26;
+      line-height: 1.6;
+      margin-top: 12px;
+    }
+
+    .callout-green b { color: #004d26; }
+
+    .detail-row {
+      display: flex;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
+      gap: 16px;
+    }
+
+    .detail-row:last-child { border-bottom: none; }
+
+    .detail-label {
+      font-weight: 700;
+      font-size: 17px;
+      color: var(--black);
+      min-width: 160px;
+      flex-shrink: 0;
+    }
+
+    .detail-value {
+      font-size: 17px;
+      color: var(--gray);
+      line-height: 1.6;
+    }
+
+    .subsection-title {
+      font-family: 'Source Serif 4', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--green);
+      margin-bottom: 6px;
+      margin-top: 8px;
+    }
+
+    .body-heading {
+      font-family: 'Source Serif 4', serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 6px;
+    }
+
+    .body-subtitle {
+      font-size: 17px;
+      color: var(--gray);
+      margin-bottom: 16px;
+    }
+
+    .reason {
+      display: flex;
+      gap: 10px;
+      padding: 6px 0;
+      align-items: flex-start;
+    }
+
+    .reason-check {
+      color: var(--green);
+      font-weight: 700;
+      font-size: 15px;
+      flex-shrink: 0;
+      line-height: 1.5;
+    }
+
+    .reason-text {
+      font-size: 17px;
+      color: var(--black);
+      line-height: 1.6;
+    }
+
+    /* Branch box */
+    .branch-box {
+      background: var(--panel);
+      border-radius: 6px;
+      padding: 14px 16px;
+      margin-top: 8px;
+      display: flex;
+      gap: 12px;
+    }
+
+    .branch-item {
+      flex: 1;
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 12px 14px;
+    }
+
+    .branch-item .bi-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 6px;
+    }
+
+    .branch-item .bi-label.gold { color: #8a7200; }
+
+    .branch-item p {
+      font-size: 15px;
+      color: var(--gray);
+      line-height: 1.6;
+    }
+
+    footer {
+      border-top: 2px solid var(--green);
+      padding: 12px 0;
+      text-align: center;
+    }
+
+    .footer-text {
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--light-gray);
+    }
+
+    @media (max-width: 600px) {
+      .site-title { font-size: 28px; }
+      header .container { flex-direction: column; align-items: flex-start; }
+      .header-right { text-align: left; padding-left: 0; margin-top: 12px; }
+      .detail-row { flex-direction: column; gap: 2px; }
+      .detail-label { min-width: auto; }
+      .branch-box { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container">
+      <div class="header-left">
+        <div class="eyebrow">USLS-IS Batch 2003 · 25th Alumni Homecoming · December 16, 2028</div>
+        <h1 class="site-title">The <span>Golden</span><br>Batch</h1>
+      </div>
+      <div class="header-right">
+        <div class="label">Batch Rep Process</div>
+        <div class="highlight">Selection & Nomination Flow</div>
+        <div class="sub">Committee Reference · March 2026</div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+
+      <p class="intro-bold">How the Batch Rep Selection Works</p>
+      <p class="intro-body">This document explains how Batch 2003 will select its representative to the USLS Alumni Association. The process is designed to give every registered graduate a voice while keeping individual responses confidential. The committee facilitates — the batch decides.</p>
+
+      <div class="gold-divider"></div>
+
+      <!-- ROUND 1 -->
+      <div class="section-header green">
+        <div class="section-label">Round 1 · Now Open</div>
+        <div class="section-title-bar">Nomination & Temperature Check</div>
+      </div>
+
+      <p class="section-desc">Every registered graduate sees a prompt on their profile asking two things: their nomination choice, and their personal willingness to serve.</p>
+
+      <div class="flow-step">
+        <div class="flow-num green">1</div>
+        <div class="flow-content">
+          <strong>Willingness question</strong>
+          <p>Before anything else, the graduate is asked if they'd personally be willing to serve as Batch Rep if nominated. This is separate from their nomination choice — answering yes doesn't mean they're running, it just means they're available if the batch wants them.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num green">2</div>
+        <div class="flow-content">
+          <strong>Confirm Bia or nominate someone else</strong>
+          <p>The graduate either confirms Bianca Jison as the proposed representative, or nominates another batchmate by name. They may also add a short comment. They can update their response anytime before the deadline.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num green">3</div>
+        <div class="flow-content">
+          <strong>Deadline</strong>
+          <p>The nomination window is open for 5 days, closing at 11:59 PM PHT. After the deadline, the page locks and no further responses are accepted.</p>
+        </div>
+      </div>
+
+      <div class="callout-gold">
+        <b>Confidentiality:</b> Individual responses are not visible to anyone. Willingness answers and nominee names are only visible to the committee when reviewing results — so the batch knows Bianca's confirmation count and aggregate stats only.
+      </div>
+
+      <div class="gold-divider"></div>
+
+      <!-- COMMITTEE REVIEW -->
+      <div class="section-header dark">
+        <div class="section-label">After the Deadline</div>
+        <div class="section-title-bar">Committee Reviews Results</div>
+      </div>
+
+      <p class="section-desc">The organizing committee reviews the results together before any announcement is made to the batch.</p>
+
+      <div class="detail-row">
+        <div class="detail-label">What the committee sees</div>
+        <div class="detail-value">Total responses, confirmation count for Bianca, all nominees with willingness status, registration status, city, and country</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">What the batch sees</div>
+        <div class="detail-value">Aggregate stats only — no individual names or responses are ever shown publicly</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">Key question</div>
+        <div class="detail-value">Did any willing nominee emerge with significant nominations? This determines whether Round 2 is needed.</div>
+      </div>
+
+      <div class="gold-divider"></div>
+
+      <!-- DECISION POINT -->
+      <h2 class="body-heading">Decision Point</h2>
+      <p class="body-subtitle">Based on Round 1 results, one of two paths is taken.</p>
+
+      <div class="branch-box">
+        <div class="branch-item">
+          <div class="bi-label">Path A — No contest</div>
+          <p>No willing nominee emerged with significant nominations. Bianca is confirmed as Batch Rep. The committee proceeds to the alumni office agreement form.</p>
+        </div>
+        <div class="branch-item">
+          <div class="bi-label gold">Path B — Round 2</div>
+          <p>One or more willing nominees emerged. A second vote is opened to the full batch — all willing candidates including Bianca appear on equal footing.</p>
+        </div>
+      </div>
+
+      <div class="gold-divider"></div>
+
+      <!-- ROUND 2 -->
+      <div class="section-header gold-bg">
+        <div class="section-label">Round 2 · If Needed</div>
+        <div class="section-title-bar">Batch Vote</div>
+      </div>
+
+      <p class="section-desc">If Round 2 is triggered, the same page opens in a new phase. All registered graduates cast a single vote.</p>
+
+      <div class="flow-step">
+        <div class="flow-num gold-num">1</div>
+        <div class="flow-content">
+          <strong>Candidates presented</strong>
+          <p>All willing candidates are shown — Bianca plus any nominees who confirmed willingness. Each candidate is labeled clearly (organizing committee member, batch-nominated, etc.).</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num gold-num">2</div>
+        <div class="flow-content">
+          <strong>Graduate votes</strong>
+          <p>Each registered graduate picks one candidate. Votes are confidential. Graduates can update their vote before the Round 2 deadline.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num gold-num">3</div>
+        <div class="flow-content">
+          <strong>Winner determined</strong>
+          <p>Candidate with the most votes wins. Ties are resolved by the committee. Results are announced to the full batch.</p>
+        </div>
+      </div>
+
+      <div class="gold-divider"></div>
+
+      <!-- FINAL STEP -->
+      <div class="section-header green">
+        <div class="section-label">Final Step</div>
+        <div class="section-title-bar">Batch Consensus & Submission</div>
+      </div>
+
+      <p class="section-desc">The winner is announced to the batch with a short window for objections. This is how consensus is achieved.</p>
+
+      <div class="flow-step">
+        <div class="flow-num green">1</div>
+        <div class="flow-content">
+          <strong>Announcement</strong>
+          <p>The committee posts the result to the batch — winner's name, vote count, and a brief summary of the process. Shared on Messenger and the website.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num green">2</div>
+        <div class="flow-content">
+          <strong>Objection window</strong>
+          <p>A short window is given for anyone to raise concerns. Silence equals consensus — if no one objects, the result stands as the batch's unanimous decision.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num green">3</div>
+        <div class="flow-content">
+          <strong>Submission to alumni office</strong>
+          <p>The confirmed Batch Rep signs the agreement form and is submitted to the USLS Alumni Association as Batch 2003's official representative.</p>
+        </div>
+      </div>
+
+      <div class="callout-green">
+        <b>Why this process works:</b> Every graduate had a voice. The result came from the batch — not the committee. That's what makes it legitimate.
+      </div>
+
+      <div class="gold-divider"></div>
+
+      <!-- WHY THIS APPROACH -->
+      <h2 class="body-heading">Why This Approach</h2>
+      <div style="height: 12px;"></div>
+
+      <div class="reason">
+        <span class="reason-check">✓</span>
+        <span class="reason-text">The batch decides — the committee only facilitates the process.</span>
+      </div>
+      <div class="reason">
+        <span class="reason-check">✓</span>
+        <span class="reason-text">All responses are confidential — no one can be pressured based on their answer.</span>
+      </div>
+      <div class="reason">
+        <span class="reason-check">✓</span>
+        <span class="reason-text">Willingness is verified before any name is put forward — no one is nominated without their knowledge.</span>
+      </div>
+      <div class="reason">
+        <span class="reason-check">✓</span>
+        <span class="reason-text">The process scales — Round 2 only happens if it's needed, keeping things simple by default.</span>
+      </div>
+      <div class="reason">
+        <span class="reason-check">✓</span>
+        <span class="reason-text">Consensus by silence gives everyone a final chance to object before the result is made official.</span>
+      </div>
+      <div class="reason">
+        <span class="reason-check">✓</span>
+        <span class="reason-text">The alumni office receives a result that came from a transparent, documented process — not just a committee decision.</span>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-text">USLS-IS Batch 2003 Organizing Committee</div>
+    </div>
+  </footer>
+
+</body>
+</html>
