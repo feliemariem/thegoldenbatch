@@ -380,7 +380,7 @@ export default function BatchRep() {
                 She has been coordinating with the organizing committee and the alumni office, helping organize our batch and move preparations forward for our 25th Jubilee.
               </p>
               <p>
-                While the Organizing Committee believes Bianca can effectively fulfill this role, we recognize and value every batchmate's voice in this decision. If you have someone else in mind who you feel is equally capable and willing to take this on, we encourage you to put their name forward. This is the batch's decision as much as it is ours.
+                While the Organizing Committee believes Bianca can effectively fulfill this role, we recognize and value every batchmate's voice in this decision. If you have someone else in mind who you feel is equally capable and willing to take this on, we encourage you to put their name forward. This is ultimately the batch's decision.
               </p>
               <div className="batchrep-notice">
                 <strong>Please note:</strong> At the request of the USLS Alumni Association, the Batch Representative is preferred to be locally based in Bacolod, as this person will be required to attend board meetings in person and will eventually serve as Alumni Association President during our 25th Jubilee in 2028.
