@@ -260,19 +260,29 @@ export default function BatchRep() {
   };
 
   const handleWillingnessSave = async () => {
-    if (willingnessPos1 === null || willingnessPos2 === null) return;
+    console.log('[handleWillingnessSave] Called. willingnessPos1:', willingnessPos1, '| willingnessPos2:', willingnessPos2);
+
+    if (willingnessPos1 === null || willingnessPos2 === null) {
+      console.log('[handleWillingnessSave] Early return - one or both positions are null');
+      return;
+    }
 
     setWillingnessSubmitting(true);
     try {
-      const res = await apiPost('/api/batch-rep/willingness', {
+      const payload = {
         position1: willingnessPos1,
         position2: willingnessPos2
-      });
+      };
+      console.log('[handleWillingnessSave] About to call apiPost with payload:', JSON.stringify(payload));
+
+      const res = await apiPost('/api/batch-rep/willingness', payload);
+      console.log('[handleWillingnessSave] apiPost response:', res.status, res.ok);
+
       if (res.ok) {
         setShowWillingnessModal(false);
       }
     } catch (err) {
-      console.error(err);
+      console.error('[handleWillingnessSave] Error:', err);
     } finally {
       setWillingnessSubmitting(false);
     }
