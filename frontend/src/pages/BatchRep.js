@@ -627,9 +627,12 @@ export default function BatchRep() {
                                 </div>
                               ) : (
                                 <div className="batchrep-typeahead" ref={dropdownRef1}>
+                                  <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginBottom: '6px' }}>
+                                    📍 Local presence required (preferably Bacolod or nearby cities)
+                                  </div>
                                   <input
                                     type="text"
-                                    placeholder="Search batchmate by name... (local to Bacolod or nearby cities)"
+                                    placeholder="Search batchmate by name..."
                                     value={nomineeSearch1}
                                     onChange={handleNomineeSearchChange1}
                                     onFocus={() => nomineeSearch1.length >= 2 && nominees1.length > 0 && setShowDropdown1(true)}
