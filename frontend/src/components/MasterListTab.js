@@ -23,6 +23,7 @@ export default function MasterListTab({
   const [masterListSearch, setMasterListSearch] = useState('');
   const [editingEntry, setEditingEntry] = useState(null);
   const [editingTier, setEditingTier] = useState('');
+  const [exporting, setExporting] = useState(false);
   const [masterListPage, setMasterListPage] = useState(1);
   const [masterListTotalPages, setMasterListTotalPages] = useState(1);
   const [masterListTotalCount, setMasterListTotalCount] = useState(0);
@@ -205,31 +206,55 @@ export default function MasterListTab({
     }
   };
 
-  const exportMasterListCSV = () => {
-    if (!masterList?.length) return;
+  const exportMasterListCSV = async () => {
+    setExporting(true);
+    try {
+      // Fetch all rows matching current filters
+      const params = new URLSearchParams();
+      if (masterListFilter && masterListFilter !== 'all') params.append('section', masterListFilter);
+      params.append('page', 1);
+      params.append('limit', 9999);
+      if (masterListStatusFilter && masterListStatusFilter !== 'all') params.append('status', masterListStatusFilter);
+      if (masterListPaymentFilter && masterListPaymentFilter !== 'all') params.append('paymentStatus', masterListPaymentFilter);
+      if (masterListTierFilter && masterListTierFilter !== 'all') params.append('tier', masterListTierFilter);
+      if (masterListSearch && masterListSearch.trim()) params.append('search', masterListSearch.trim());
 
-    const headers = ['Section', 'Last Name', 'First Name', 'Current Name', 'Email', 'Status', 'Tier', 'Pledge', 'Paid', 'Balance', 'Recognition Public'];
-    const rows = masterList.map(m => [
-      m.section,
-      m.last_name,
-      m.first_name,
-      m.current_name || '',
-      m.email || '',
-      m.status,
-      formatTierName(m.builder_tier) || '',
-      m.builder_tier && m.builder_tier !== 'root' ? m.pledge_amount : '',
-      m.total_paid || 0,
-      m.balance != null ? m.balance : '',
-      m.builder_tier ? (m.recognition_public !== false ? 'Yes' : 'No') : ''
-    ]);
+      const res = await apiGet(`/api/master-list?${params.toString()}`);
+      const data = await res.json();
+      const entries = data.entries || [];
 
-    const csv = [headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'usls-batch-2003-master-list.csv';
-    a.click();
+      if (!entries.length) {
+        setExporting(false);
+        return;
+      }
+
+      const headers = ['Section', 'Last Name', 'First Name', 'Current Name', 'Email', 'Status', 'Tier', 'Pledge', 'Paid', 'Balance', 'Recognition Public'];
+      const rows = entries.map(m => [
+        m.section,
+        m.last_name,
+        m.first_name,
+        m.current_name || '',
+        m.email || '',
+        m.status,
+        formatTierName(m.builder_tier) || '',
+        m.builder_tier && m.builder_tier !== 'root' ? m.pledge_amount : '',
+        m.total_paid || 0,
+        m.balance != null ? m.balance : '',
+        m.builder_tier ? (m.recognition_public !== false ? 'Yes' : 'No') : ''
+      ]);
+
+      const csv = [headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'usls-batch-2003-master-list.csv';
+      a.click();
+    } catch (err) {
+      console.error('Failed to export master list:', err);
+    } finally {
+      setExporting(false);
+    }
   };
 
   const hasActiveFilters = masterListFilter !== 'all' || masterListStatusFilter !== 'all' || masterListPaymentFilter !== 'all' || masterListTierFilter !== 'all' || masterListSearch;
@@ -310,8 +335,8 @@ export default function MasterListTab({
             </button>
           )}
           {(isSuperAdmin || permissions?.masterlist_export) && (
-            <button onClick={exportMasterListCSV} className="btn-secondary">
-              Export CSV
+            <button onClick={exportMasterListCSV} className="btn-secondary" disabled={exporting}>
+              {exporting ? 'Exporting...' : 'Export CSV'}
             </button>
           )}
         </div>
