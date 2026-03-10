@@ -1728,14 +1728,14 @@ END:VCALENDAR`;
                     <div className="batchrep-modal-nominee">
                       <div className="batchrep-modal-nominee-avatar initials">BJ</div>
                       <div className="batchrep-modal-nominee-info">
-                        <div className="batchrep-modal-nominee-label">Alumni Association Representative</div>
+                        <div className="batchrep-modal-nominee-label">Nominee · Alumni Association Representative</div>
                         <div className="batchrep-modal-nominee-name">Bianca Jison</div>
                       </div>
                     </div>
                     <div className="batchrep-modal-nominee">
                       <div className="batchrep-modal-nominee-avatar initials">FM</div>
                       <div className="batchrep-modal-nominee-info">
-                        <div className="batchrep-modal-nominee-label">Batch Representative</div>
+                        <div className="batchrep-modal-nominee-label">Nominee · Batch Representative</div>
                         <div className="batchrep-modal-nominee-name">Felie Magbanua</div>
                       </div>
                     </div>

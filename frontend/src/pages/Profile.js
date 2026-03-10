@@ -4,7 +4,6 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import Footer from '../components/Footer';
 import logo from '../images/lasalle.jpg';
-import siteLogo from '../images/logo.png';
 import { apiGet, apiPut } from '../api';
 import '../styles/batchrep.css';
 
@@ -418,18 +417,25 @@ export default function Profile() {
           <div className="batchrep-modal">
             <div className="batchrep-modal-bar"></div>
             <div className="batchrep-modal-body">
-              <div className="batchrep-modal-badge">⚡ BATCH ACTION REQUIRED</div>
-              <h2 className="batchrep-modal-title">Hi {profile?.first_name || 'there'}, the batch needs your input.</h2>
+              <div className="batchrep-modal-badge">⚡ Quick Batch Input</div>
+              <h2 className="batchrep-modal-title">Hi {profile?.first_name || 'there'}, the batch needs to hear from you.</h2>
               <p className="batchrep-modal-desc">
-                The USLS Alumni Association has formally requested we submit a <strong>Batch 2003 Representative</strong> — who will also serve as Alumni Association President during our 25th Jubilee in 2028.
+                The organizing committee has been working behind the scenes to lay the groundwork. Now it's time for the batch to choose who will represent Batch 2003 for <strong>two official positions</strong>.
               </p>
-              <div className="batchrep-modal-nominee">
-                <div className="batchrep-modal-nominee-avatar">
-                  <img src={siteLogo} alt="The Golden Batch" />
+              <div className="batchrep-modal-nominees">
+                <div className="batchrep-modal-nominee">
+                  <div className="batchrep-modal-nominee-avatar initials">BJ</div>
+                  <div className="batchrep-modal-nominee-info">
+                    <div className="batchrep-modal-nominee-label">Nominee · Alumni Association Representative</div>
+                    <div className="batchrep-modal-nominee-name">Bianca Jison</div>
+                  </div>
                 </div>
-                <div className="batchrep-modal-nominee-info">
-                  <div className="batchrep-modal-nominee-label">Current Nominee</div>
-                  <div className="batchrep-modal-nominee-name">Bianca Jison</div>
+                <div className="batchrep-modal-nominee">
+                  <div className="batchrep-modal-nominee-avatar initials">FM</div>
+                  <div className="batchrep-modal-nominee-info">
+                    <div className="batchrep-modal-nominee-label">Nominee · Batch Representative</div>
+                    <div className="batchrep-modal-nominee-name">Felie Magbanua</div>
+                  </div>
                 </div>
               </div>
               <div className="batchrep-modal-deadline">
