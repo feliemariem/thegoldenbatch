@@ -563,9 +563,14 @@
 }
 
 /* Response form button - light mode fix */
-[data-theme="light"] .batchrep-response-body .btn-primary {
+[data-theme="light"] .batchrep-response-body .btn-primary,
+[data-theme="light"] .batchrep-form-section .btn-primary {
   background: #006633 !important;
   color: #ffffff !important;
+}
+
+[data-theme="light"] .batchrep-form-section .btn-primary:hover:not(:disabled) {
+  background: #005528 !important;
 }
 
 /* Success State */
