@@ -2,10 +2,17 @@ import React, { createContext, useContext, useState, useEffect, useRef } from 'r
 
 const ThemeContext = createContext(null);
 
+// One-time migration: wipe old forced-dark default for users who never explicitly toggled
+if (typeof window !== 'undefined') {
+  if (localStorage.getItem('theme') === 'dark' && !localStorage.getItem('theme_explicit')) {
+    localStorage.removeItem('theme');
+  }
+}
+
 export function ThemeProvider({ children }) {
   const [theme, setThemeState] = useState(() => {
     const saved = localStorage.getItem('theme');
-    return saved || 'dark';
+    return saved || 'light';
   });
 
   // Track whether to persist the next theme change
@@ -40,6 +47,7 @@ export function ThemeProvider({ children }) {
   };
 
   const toggleTheme = () => {
+    localStorage.setItem('theme_explicit', 'true');
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
