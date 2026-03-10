@@ -1722,7 +1722,7 @@ END:VCALENDAR`;
                   <div className="batchrep-modal-badge">⚡ Quick Batch Input</div>
                   <h2 className="batchrep-modal-title">Hi {profile?.first_name || 'there'}, the batch needs to hear from you.</h2>
                   <p className="batchrep-modal-desc">
-                    The organizing committee has been working behind the scenes to lay the groundwork. Now it's time for the batch to choose who will represent Batch 2003 and serve as Alumni Association President during our 25th Jubilee in 2028.
+                    The organizing committee has been working behind the scenes to lay the groundwork. Now it's time for the batch to choose who will represent Batch 2003 for <strong>two official positions</strong>.
                   </p>
                   <div className="batchrep-modal-nominees">
                     <div className="batchrep-modal-nominee">
