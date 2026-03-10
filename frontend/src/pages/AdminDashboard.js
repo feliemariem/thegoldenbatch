@@ -66,6 +66,7 @@ export default function AdminDashboard() {
   const [data, setData] = useState(null);
   const [inviteStats, setInviteStats] = useState({ total: 0, registered: 0, pending: 0 });
   const [registeredStats, setRegisteredStats] = useState({ total: 0, going: 0, maybe: 0, not_going: 0, no_response: 0 });
+  const [masterListStats, setMasterListStats] = useState({ total: 0 });
   const [loading, setLoading] = useState(true);
   const [showAdminRoleError, setShowAdminRoleError] = useState(false);
   const [adminUnreadCount, setAdminUnreadCount] = useState(0);
@@ -87,10 +88,11 @@ export default function AdminDashboard() {
   // Fetch all dashboard stats on mount (independent of tab selection)
   const fetchDashboardStats = async () => {
     try {
-      // Fetch invite stats and registered stats in parallel
-      const [invitesRes, usersRes] = await Promise.all([
+      // Fetch invite stats, registered stats, and master list stats in parallel
+      const [invitesRes, usersRes, masterListRes] = await Promise.all([
         apiGet('/api/invites?page=1&limit=1'),
-        apiGet('/api/admin/users?page=1&limit=1')
+        apiGet('/api/admin/users?page=1&limit=1'),
+        apiGet('/api/master-list?page=1&limit=1')
       ]);
 
       if (invitesRes.ok) {
@@ -104,6 +106,13 @@ export default function AdminDashboard() {
         const usersData = await usersRes.json();
         if (usersData.stats) {
           setRegisteredStats(usersData.stats);
+        }
+      }
+
+      if (masterListRes.ok) {
+        const masterListData = await masterListRes.json();
+        if (masterListData.stats) {
+          setMasterListStats(masterListData.stats);
         }
       }
     } catch (err) {
@@ -820,7 +829,7 @@ export default function AdminDashboard() {
                 className={`tab ${activeTab === 'masterlist' ? 'active' : ''}`}
                 onClick={() => setActiveTab('masterlist')}
               >
-                Master List
+                Master List ({masterListStats.total || 0})
               </button>
             </div>
 
@@ -863,6 +872,7 @@ export default function AdminDashboard() {
                 permissions={permissions}
                 onShowAdminRoleError={() => setShowAdminRoleError(true)}
                 onRefreshReady={setMasterListRefresh}
+                onStatsUpdate={setMasterListStats}
               />
             )}
           </>

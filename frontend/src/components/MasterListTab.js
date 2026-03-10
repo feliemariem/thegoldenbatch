@@ -13,6 +13,7 @@ export default function MasterListTab({
   permissions,
   onShowAdminRoleError,
   onRefreshReady,
+  onStatsUpdate,
 }) {
   const [masterList, setMasterList] = useState([]);
   const [masterListStats, setMasterListStats] = useState(null);
@@ -62,6 +63,9 @@ export default function MasterListTab({
       setMasterList(data.entries || []);
       setMasterListStats(data.stats);
       setMasterListSections(data.sections || []);
+      if (onStatsUpdate && data.stats) {
+        onStatsUpdate(data.stats);
+      }
       if (data.pagination) {
         setMasterListPage(data.pagination.currentPage);
         setMasterListTotalPages(data.pagination.totalPages);
