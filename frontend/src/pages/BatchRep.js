@@ -60,6 +60,7 @@ export default function BatchRep() {
   const [showWillingnessModal, setShowWillingnessModal] = useState(false);
   const [willingnessPos1, setWillingnessPos1] = useState(null); // null | true | false
   const [willingnessPos2, setWillingnessPos2] = useState(null);
+  const [willingnessSaved, setWillingnessSaved] = useState(true); // Track if current values are saved
   const [rolesOpen1, setRolesOpen1] = useState(false);
   const [rolesOpen2, setRolesOpen2] = useState(false);
   const [willingnessSubmitting, setWillingnessSubmitting] = useState(false);
@@ -111,6 +112,10 @@ export default function BatchRep() {
           setIsGrad(data.isGrad);
           setWillingnessPos1(data.willingnessPos1 ?? null);
           setWillingnessPos2(data.willingnessPos2 ?? null);
+          // If both values exist from API, they're already saved
+          if (data.willingnessPos1 !== null && data.willingnessPos2 !== null) {
+            setWillingnessSaved(true);
+          }
         }
       } catch (err) {
         console.error('Error fetching batch-rep status:', err);
@@ -127,6 +132,35 @@ export default function BatchRep() {
       setWillingnessLoading(false);
     }
   }, [user]);
+
+  // Auto-save willingness when both positions are selected and not yet saved
+  useEffect(() => {
+    const autoSaveWillingness = async () => {
+      if (willingnessPos1 !== null && willingnessPos2 !== null && !willingnessSaved && !willingnessSubmitting) {
+        console.log('[autoSaveWillingness] Both positions selected, auto-saving...');
+        setWillingnessSubmitting(true);
+        try {
+          const payload = {
+            position1: willingnessPos1,
+            position2: willingnessPos2
+          };
+          console.log('[autoSaveWillingness] Payload:', JSON.stringify(payload));
+          const res = await apiPost('/api/batch-rep/willingness', payload);
+          console.log('[autoSaveWillingness] Response:', res.status, res.ok);
+          if (res.ok) {
+            setWillingnessSaved(true);
+            setShowWillingnessModal(false);
+          }
+        } catch (err) {
+          console.error('[autoSaveWillingness] Error:', err);
+        } finally {
+          setWillingnessSubmitting(false);
+        }
+      }
+    };
+
+    autoSaveWillingness();
+  }, [willingnessPos1, willingnessPos2, willingnessSaved, willingnessSubmitting]);
 
   // Handle hash navigation on mount
   useEffect(() => {
@@ -279,6 +313,7 @@ export default function BatchRep() {
       console.log('[handleWillingnessSave] apiPost response:', res.status, res.ok);
 
       if (res.ok) {
+        setWillingnessSaved(true);
         setShowWillingnessModal(false);
       }
     } catch (err) {
@@ -901,13 +936,13 @@ export default function BatchRep() {
                     <div className="batchrep-willing-btns">
                       <button
                         className={`batchrep-willing-btn yes ${willingnessPos1 === true ? 'active' : ''}`}
-                        onClick={() => setWillingnessPos1(true)}
+                        onClick={() => { setWillingnessPos1(true); setWillingnessSaved(false); }}
                       >
                         Yes, I'm willing
                       </button>
                       <button
                         className={`batchrep-willing-btn no ${willingnessPos1 === false ? 'active' : ''}`}
-                        onClick={() => setWillingnessPos1(false)}
+                        onClick={() => { setWillingnessPos1(false); setWillingnessSaved(false); }}
                       >
                         Not at this time
                       </button>
@@ -949,13 +984,13 @@ export default function BatchRep() {
                     <div className="batchrep-willing-btns">
                       <button
                         className={`batchrep-willing-btn yes ${willingnessPos2 === true ? 'active' : ''}`}
-                        onClick={() => setWillingnessPos2(true)}
+                        onClick={() => { setWillingnessPos2(true); setWillingnessSaved(false); }}
                       >
                         Yes, I'm willing
                       </button>
                       <button
                         className={`batchrep-willing-btn no ${willingnessPos2 === false ? 'active' : ''}`}
-                        onClick={() => setWillingnessPos2(false)}
+                        onClick={() => { setWillingnessPos2(false); setWillingnessSaved(false); }}
                       >
                         Not at this time
                       </button>
@@ -1028,13 +1063,13 @@ export default function BatchRep() {
                   <div className="batchrep-willing-btns">
                     <button
                       className={`batchrep-willing-btn yes ${willingnessPos1 === true ? 'active' : ''}`}
-                      onClick={() => setWillingnessPos1(true)}
+                      onClick={() => { setWillingnessPos1(true); setWillingnessSaved(false); }}
                     >
                       Yes, I'm willing
                     </button>
                     <button
                       className={`batchrep-willing-btn no ${willingnessPos1 === false ? 'active' : ''}`}
-                      onClick={() => setWillingnessPos1(false)}
+                      onClick={() => { setWillingnessPos1(false); setWillingnessSaved(false); }}
                     >
                       Not at this time
                     </button>
@@ -1076,13 +1111,13 @@ export default function BatchRep() {
                   <div className="batchrep-willing-btns">
                     <button
                       className={`batchrep-willing-btn yes ${willingnessPos2 === true ? 'active' : ''}`}
-                      onClick={() => setWillingnessPos2(true)}
+                      onClick={() => { setWillingnessPos2(true); setWillingnessSaved(false); }}
                     >
                       Yes, I'm willing
                     </button>
                     <button
                       className={`batchrep-willing-btn no ${willingnessPos2 === false ? 'active' : ''}`}
-                      onClick={() => setWillingnessPos2(false)}
+                      onClick={() => { setWillingnessPos2(false); setWillingnessSaved(false); }}
                     >
                       Not at this time
                     </button>
