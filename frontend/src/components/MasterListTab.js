@@ -283,7 +283,7 @@ export default function MasterListTab({
                 )}
               </span>
               <span><strong className="status-card-value">{masterListStats.pending || 0}</strong> Pending</span>
-              <span><strong className="status-card-value">{masterListStats.not_invited || 0}</strong> Not Invited</span>
+              <span><strong className="status-card-value">{masterListStats.not_invited || 0}</strong> Not Registered</span>
               <span><strong className="status-card-value">{masterListStats.in_memoriam || 0}</strong> In Memoriam</span>
               <span><strong className="status-card-value">{masterListStats.unreachable || 0}</strong> Unreachable</span>
             </div>
@@ -384,7 +384,7 @@ export default function MasterListTab({
           style={{ width: '150px' }}
         >
           <option value="all">All Status</option>
-          <option value="not invited">Not Invited</option>
+          <option value="not invited">Not Registered</option>
           <option value="pending">Pending</option>
           <option value="registered">Registered</option>
           <option value="in memoriam">In Memoriam</option>
