@@ -37,12 +37,14 @@ router.get('/status', authenticateToken, async (req, res) => {
     );
     const status = statusResult.rows[0]?.value || 'active';
 
-    // Check if user has already submitted
+    // Check if user has submitted for each position
     const submissionResult = await db.query(
-      'SELECT id FROM batch_rep_submissions WHERE voter_id = $1',
+      'SELECT position FROM batch_rep_submissions WHERE voter_id = $1',
       [userId]
     );
-    const hasSubmitted = submissionResult.rows.length > 0;
+    const submittedPositions = submissionResult.rows.map(r => r.position);
+    const hasSubmittedPos1 = submittedPositions.includes(1);
+    const hasSubmittedPos2 = submittedPositions.includes(2);
 
     // Check if user is a grad
     const isGrad = await checkIsGrad(userId);
@@ -50,22 +52,27 @@ router.get('/status', authenticateToken, async (req, res) => {
     // Check if user has access
     const hasAccess = await checkEmailAccess(userEmail);
 
-    // Check user's willingness answer
+    // Check user's willingness answers for both positions
     const willingnessResult = await db.query(
-      'SELECT willing FROM batch_rep_willingness WHERE user_id = $1',
+      'SELECT position, willing FROM batch_rep_willingness WHERE user_id = $1',
       [userId]
     );
-    const willingnessAnswer = willingnessResult.rows.length > 0
-      ? willingnessResult.rows[0].willing
-      : null;
+    let willingnessPos1 = null;
+    let willingnessPos2 = null;
+    for (const row of willingnessResult.rows) {
+      if (row.position === 1) willingnessPos1 = row.willing;
+      if (row.position === 2) willingnessPos2 = row.willing;
+    }
 
     res.json({
       status,
-      hasSubmitted,
+      hasSubmittedPos1,
+      hasSubmittedPos2,
       isGrad,
       isAdmin,
       hasAccess,
-      willingnessAnswer
+      willingnessPos1,
+      willingnessPos2
     });
   } catch (err) {
     console.error('Error fetching batch-rep status:', err);
@@ -74,16 +81,11 @@ router.get('/status', authenticateToken, async (req, res) => {
 });
 
 // POST /api/batch-rep/willingness
-// Upsert willingness to serve (grad only)
+// Upsert willingness to serve for both positions (grad only)
 router.post('/willingness', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;
-    const { willing } = req.body;
-
-    // Validate willing is boolean
-    if (typeof willing !== 'boolean') {
-      return res.status(400).json({ error: 'Invalid value. Must be true or false.' });
-    }
+    const { position1, position2, willing } = req.body;
 
     // Check user is a grad
     const isGrad = await checkIsGrad(userId);
@@ -91,15 +93,38 @@ router.post('/willingness', authenticateToken, async (req, res) => {
       return res.status(403).json({ error: 'Only graduates can submit willingness.' });
     }
 
-    // Upsert willingness record
-    await db.query(
-      `INSERT INTO batch_rep_willingness (user_id, willing, updated_at)
-       VALUES ($1, $2, NOW())
-       ON CONFLICT (user_id) DO UPDATE SET willing = $2, updated_at = NOW()`,
-      [userId, willing]
-    );
+    // Support both old single-willingness format and new two-position format
+    if (typeof willing === 'boolean') {
+      // Old format: single willingness (for backwards compatibility)
+      await db.query(
+        `INSERT INTO batch_rep_willingness (user_id, position, willing, updated_at)
+         VALUES ($1, 1, $2, NOW())
+         ON CONFLICT (user_id, position) DO UPDATE SET willing = $2, updated_at = NOW()`,
+        [userId, willing]
+      );
+      return res.json({ willing });
+    }
 
-    res.json({ willing });
+    // New format: two positions
+    if (typeof position1 === 'boolean') {
+      await db.query(
+        `INSERT INTO batch_rep_willingness (user_id, position, willing, updated_at)
+         VALUES ($1, 1, $2, NOW())
+         ON CONFLICT (user_id, position) DO UPDATE SET willing = $2, updated_at = NOW()`,
+        [userId, position1]
+      );
+    }
+
+    if (typeof position2 === 'boolean') {
+      await db.query(
+        `INSERT INTO batch_rep_willingness (user_id, position, willing, updated_at)
+         VALUES ($1, 2, $2, NOW())
+         ON CONFLICT (user_id, position) DO UPDATE SET willing = $2, updated_at = NOW()`,
+        [userId, position2]
+      );
+    }
+
+    res.json({ position1, position2 });
   } catch (err) {
     console.error('Error submitting willingness:', err);
     res.status(500).json({ error: 'Server error' });
@@ -107,11 +132,17 @@ router.post('/willingness', authenticateToken, async (req, res) => {
 });
 
 // POST /api/batch-rep/submit
-// Submit or update confirmation/nomination (grad only)
+// Submit or update confirmation/nomination for a position (grad only)
 router.post('/submit', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;
-    const { selection, nominee_name, nominee_master_list_id, comments } = req.body;
+    const { position, selection, nominee_name, nominee_master_list_id, comments } = req.body;
+
+    // Validate position
+    const positionNum = parseInt(position) || 1;
+    if (positionNum !== 1 && positionNum !== 2) {
+      return res.status(400).json({ error: 'Invalid position. Must be 1 or 2.' });
+    }
 
     // Validate selection
     if (!selection || !['confirm', 'nominate'].includes(selection)) {
@@ -137,17 +168,18 @@ router.post('/submit', authenticateToken, async (req, res) => {
       return res.status(400).json({ error: 'Submissions are currently closed.' });
     }
 
-    // Upsert submission (insert or update)
+    // Upsert submission (insert or update) - now with position
     await db.query(
-      `INSERT INTO batch_rep_submissions (voter_id, selection, nominee_name, nominee_master_list_id, comments)
-       VALUES ($1, $2, $3, $4, $5)
-       ON CONFLICT (voter_id) DO UPDATE SET
-         selection = $2,
-         nominee_name = $3,
-         nominee_master_list_id = $4,
-         comments = $5`,
+      `INSERT INTO batch_rep_submissions (voter_id, position, selection, nominee_name, nominee_master_list_id, comments)
+       VALUES ($1, $2, $3, $4, $5, $6)
+       ON CONFLICT (voter_id, position) DO UPDATE SET
+         selection = $3,
+         nominee_name = $4,
+         nominee_master_list_id = $5,
+         comments = $6`,
       [
         userId,
+        positionNum,
         selection,
         selection === 'nominate' ? nominee_name.trim() : null,
         selection === 'nominate' ? nominee_master_list_id : null,
@@ -170,13 +202,13 @@ router.get('/results', authenticateAdmin, async (req, res) => {
       return res.status(403).json({ error: 'Access denied.' });
     }
 
-    // Get total responses
-    const totalResult = await db.query('SELECT COUNT(*) as total FROM batch_rep_submissions');
+    // Get total responses (unique voters)
+    const totalResult = await db.query('SELECT COUNT(DISTINCT voter_id) as total FROM batch_rep_submissions');
     const totalResponses = parseInt(totalResult.rows[0].total);
 
-    // Get confirmations count
+    // Get confirmations count (for backwards compat, count position 1 confirms)
     const confirmsResult = await db.query(
-      "SELECT COUNT(*) as count FROM batch_rep_submissions WHERE selection = 'confirm'"
+      "SELECT COUNT(*) as count FROM batch_rep_submissions WHERE selection = 'confirm' AND (position = 1 OR position IS NULL)"
     );
     const totalConfirmations = parseInt(confirmsResult.rows[0].count);
 
@@ -193,6 +225,7 @@ router.get('/results', authenticateAdmin, async (req, res) => {
       SELECT
         brs.nominee_name,
         brs.nominee_master_list_id,
+        brs.position,
         COUNT(*) as count,
         array_agg(brs.comments) FILTER (WHERE brs.comments IS NOT NULL) as comments,
         brw.willing,
@@ -203,15 +236,16 @@ router.get('/results', authenticateAdmin, async (req, res) => {
       LEFT JOIN master_list ml ON ml.id = brs.nominee_master_list_id
       LEFT JOIN invites i ON i.master_list_id = ml.id
       LEFT JOIN users u ON u.invite_id = i.id
-      LEFT JOIN batch_rep_willingness brw ON brw.user_id = u.id
+      LEFT JOIN batch_rep_willingness brw ON brw.user_id = u.id AND brw.position = brs.position
       WHERE brs.selection = 'nominate' AND brs.nominee_name IS NOT NULL
-      GROUP BY brs.nominee_name, brs.nominee_master_list_id, brw.willing, u.id, u.city, u.country
+      GROUP BY brs.nominee_name, brs.nominee_master_list_id, brs.position, brw.willing, u.id, u.city, u.country
       ORDER BY count DESC
     `);
 
     const nominees = nomineesResult.rows.map(row => ({
       name: row.nominee_name,
       masterListId: row.nominee_master_list_id,
+      position: row.position || 1,
       count: parseInt(row.count),
       pct: totalResponses > 0
         ? Math.round((parseInt(row.count) / totalResponses) * 100 * 10) / 10
@@ -289,9 +323,8 @@ router.patch('/status', authenticateAdmin, async (req, res) => {
 });
 
 // GET /api/batch-rep/graduates/search
-// Typeahead search for all graduates (for nomination field)
-// Searches from master_list directly, includes registered user name if available
-// Splits search term by spaces to match each word independently
+// Typeahead search for graduates only (for nomination field)
+// Fuzzy partial name match - each token must appear somewhere in the name
 router.get('/graduates/search', authenticateToken, async (req, res) => {
   try {
     const { q } = req.query;
@@ -300,30 +333,35 @@ router.get('/graduates/search', authenticateToken, async (req, res) => {
       return res.json([]);
     }
 
-    // Split search term into words for independent matching
-    const words = q.trim().split(/\s+/);
-    const conditions = words.map((_, i) => `(
-      LOWER(ml.first_name || ' ' || ml.last_name) LIKE LOWER('%' || $${i + 1} || '%')
-      OR (u.id IS NOT NULL AND LOWER(u.first_name || ' ' || u.last_name) LIKE LOWER('%' || $${i + 1} || '%'))
-    )`).join(' AND ');
+    // Split search term into tokens for fuzzy matching
+    const tokens = q.trim().toLowerCase().split(/\s+/);
+
+    // Build conditions: each token must appear in the combined name string
+    const conditions = tokens.map((_, i) =>
+      `LOWER(COALESCE(ml.current_name, '') || ' ' || ml.first_name || ' ' || ml.last_name) LIKE $${i + 1}`
+    );
+    const values = tokens.map(t => `%${t}%`);
 
     const result = await db.query(`
       SELECT
-        ml.id AS master_list_id,
+        ml.id,
         COALESCE(
-          NULLIF(TRIM(u.first_name || ' ' || u.last_name), ''),
+          NULLIF(TRIM(COALESCE(u.first_name, '') || ' ' || COALESCE(u.last_name, '')), ''),
+          NULLIF(ml.current_name, ''),
           TRIM(ml.first_name || ' ' || ml.last_name)
-        ) AS name,
-        u.id AS user_id
+        ) AS display_name,
+        ml.section,
+        (u.id IS NOT NULL) AS is_registered
       FROM master_list ml
       LEFT JOIN invites i ON i.master_list_id = ml.id
       LEFT JOIN users u ON u.invite_id = i.id
-      WHERE (${conditions})
-      AND NOT (LOWER(ml.first_name) = 'bianca' AND LOWER(ml.last_name) = 'jison')
-      AND ml.section != 'Non-Graduate'
-      AND ml.in_memoriam = FALSE
+      WHERE ml.section != 'Non-Graduate'
+        AND ml.in_memoriam = FALSE
+        AND (ml.is_unreachable IS NULL OR ml.is_unreachable = FALSE)
+        AND (${conditions.join(' AND ')})
+      ORDER BY display_name
       LIMIT 10
-    `, words);
+    `, values);
 
     res.json(result.rows);
   } catch (err) {

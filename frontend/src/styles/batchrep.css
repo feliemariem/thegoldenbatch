@@ -550,7 +550,8 @@
   gap: 8px;
   font-size: 0.8rem;
   color: var(--color-text-secondary);
-  margin-top: 16px;
+  margin-top: 8px;
+  margin-bottom: 24px;
 }
 
 /* Response form button - light mode fix */
@@ -748,6 +749,18 @@
   color: #1a1a1a;
 }
 
+/* Nominees wrapper (for multiple nominees) */
+.batchrep-modal-nominees {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.batchrep-modal-nominees .batchrep-modal-nominee {
+  margin-bottom: 0;
+}
+
 /* Nominee chip */
 .batchrep-modal-nominee {
   display: flex;
@@ -782,6 +795,23 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.batchrep-modal-nominee-avatar.initials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--color-title-gradient-start) 0%, var(--color-title-gradient-end) 100%);
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-bg-primary);
+  letter-spacing: 0.02em;
+}
+
+[data-theme="light"] .batchrep-modal-nominee-avatar.initials {
+  background: #006633;
+  color: #ffffff;
 }
 
 .batchrep-modal-nominee-info {
@@ -1125,5 +1155,189 @@
   display: flex;
   align-items: center;
   gap: 6px;
+}
+
+/* ========================================
+   WILLINGNESS GATE POSITION BLOCKS
+   ======================================== */
+
+.batchrep-willingness-block {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="light"] .batchrep-willingness-block {
+  background: rgba(0, 102, 51, 0.03);
+  border-color: rgba(0, 102, 51, 0.12);
+}
+
+.batchrep-willingness-block.modal {
+  margin-bottom: 20px;
+}
+
+.batchrep-willingness-position-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--color-text-secondary);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.batchrep-willingness-position-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-hover);
+  margin-bottom: 12px;
+}
+
+.batchrep-willingness-position-title.modal {
+  font-size: 1rem;
+}
+
+[data-theme="light"] .batchrep-willingness-position-title {
+  color: #006633;
+}
+
+.batchrep-willingness-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.batchrep-willingness-buttons.modal {
+  gap: 10px;
+}
+
+.batchrep-willingness-buttons button {
+  flex: 1;
+  padding: 10px 16px;
+  font-size: 0.9rem;
+}
+
+.batchrep-willingness-buttons.modal button {
+  padding: 8px 12px;
+  font-size: 0.85rem;
+}
+
+.batchrep-willingness-hint {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 16px;
+}
+
+/* Remote participation hint in Position 2 */
+.batchrep-remote-hint {
+  background: rgba(39, 174, 96, 0.1);
+  color: var(--color-status-positive);
+  border: 1px solid rgba(39, 174, 96, 0.2);
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  font-size: 0.8rem;
+}
+
+[data-theme="light"] .batchrep-remote-hint {
+  background: rgba(39, 174, 96, 0.08);
+  border-color: rgba(39, 174, 96, 0.25);
+}
+
+/* Overview card dividers */
+.batchrep-overview-divider {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin: 20px 0;
+  padding-top: 20px;
+}
+
+[data-theme="light"] .batchrep-overview-divider {
+  border-top-color: rgba(0, 102, 51, 0.15);
+}
+
+.batchrep-overview-steps {
+  padding-left: 20px;
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.8;
+}
+
+.batchrep-overview-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.batchrep-overview-letter-link {
+  color: var(--color-hover);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+[data-theme="light"] .batchrep-overview-letter-link {
+  color: #006633;
+}
+
+.batchrep-overview-deadline {
+  font-size: 0.85rem;
+  color: var(--color-status-warning);
+}
+
+/* Position form section divider */
+.batchrep-form-section {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="light"] .batchrep-form-section {
+  border-top-color: rgba(0, 102, 51, 0.15);
+}
+
+/* Selected nominee display */
+.batchrep-selected-nominee {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: rgba(207, 181, 59, 0.1);
+  border: 1px solid rgba(207, 181, 59, 0.3);
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+[data-theme="light"] .batchrep-selected-nominee {
+  background: rgba(0, 102, 51, 0.08);
+  border-color: rgba(0, 102, 51, 0.25);
+}
+
+.batchrep-selected-nominee-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.batchrep-selected-nominee-check {
+  color: var(--color-status-positive);
+}
+
+.batchrep-selected-nominee-name {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.batchrep-selected-nominee-clear {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: 0.85rem;
+  text-decoration: underline;
+}
+
+.batchrep-selected-nominee-clear:hover {
+  color: var(--color-text-primary);
 }
 

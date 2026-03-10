@@ -1722,13 +1722,20 @@ END:VCALENDAR`;
                   <p className="batchrep-modal-desc">
                     The organizing committee has been working behind the scenes to lay the groundwork. Now it's time for the batch to choose who will represent Batch 2003 and serve as Alumni Association President during our 25th Jubilee in 2028.
                   </p>
-                  <div className="batchrep-modal-nominee">
-                    <div className="batchrep-modal-nominee-avatar">
-                      <img src={siteLogo} alt="The Golden Batch" />
+                  <div className="batchrep-modal-nominees">
+                    <div className="batchrep-modal-nominee">
+                      <div className="batchrep-modal-nominee-avatar initials">BJ</div>
+                      <div className="batchrep-modal-nominee-info">
+                        <div className="batchrep-modal-nominee-label">Alumni Association Representative</div>
+                        <div className="batchrep-modal-nominee-name">Bianca Jison</div>
+                      </div>
                     </div>
-                    <div className="batchrep-modal-nominee-info">
-                      <div className="batchrep-modal-nominee-label">Current Nominee</div>
-                      <div className="batchrep-modal-nominee-name">Bianca Jison</div>
+                    <div className="batchrep-modal-nominee">
+                      <div className="batchrep-modal-nominee-avatar initials">FM</div>
+                      <div className="batchrep-modal-nominee-info">
+                        <div className="batchrep-modal-nominee-label">Batch Representative</div>
+                        <div className="batchrep-modal-nominee-name">Felie Magbanua</div>
+                      </div>
                     </div>
                   </div>
                   <div className="batchrep-modal-deadline">
