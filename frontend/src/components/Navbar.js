@@ -24,8 +24,8 @@ export default function Navbar() {
   const eventsDropdownRef = useRef(null);
   const communityDropdownRef = useRef(null);
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     setMobileMenuOpen(false);
     navigate('/login');
   };
