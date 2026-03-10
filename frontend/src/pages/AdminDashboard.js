@@ -513,10 +513,10 @@ export default function AdminDashboard() {
                           marginBottom: '24px'
                         }}>
                           {[
-                            { label: 'Responses', value: batchRepResults.totalResponses },
-                            { label: 'Confirmations', value: batchRepResults.totalConfirmations },
-                            { label: 'Nominations', value: batchRepResults.totalNominations },
-                            { label: 'Willing', value: batchRepResults.willingnessYes }
+                            { label: 'Unique Voters', value: batchRepResults.totalUniqueVoters },
+                            { label: 'Pos 1 Confirms', value: batchRepResults.confirmationsPos1 },
+                            { label: 'Pos 2 Confirms', value: batchRepResults.confirmationsPos2 },
+                            { label: 'Willing to Serve', value: batchRepResults.willingnessYes }
                           ].map((stat, i) => (
                             <div key={i} style={{
                               background: 'rgba(255, 255, 255, 0.03)',
@@ -534,15 +534,16 @@ export default function AdminDashboard() {
                           ))}
                         </div>
 
+                        {/* Confirmations - Position 1 */}
                         <div style={{ marginBottom: '24px' }}>
                           <h4 style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-text-primary)', marginBottom: '12px' }}>
-                            Confirmations
+                            Position 1 · Alumni Association Representative
                           </h4>
                           <div style={{ marginBottom: '8px' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
                               <span style={{ fontSize: '0.9rem', color: 'var(--color-text-primary)' }}>Bianca Jison</span>
                               <span style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
-                                {batchRepResults.totalConfirmations} ({batchRepResults.confirmationPct}%)
+                                {batchRepResults.confirmationsPos1} / {batchRepResults.totalResponsesPos1} ({batchRepResults.confirmationPos1Pct}%)
                               </span>
                             </div>
                             <div style={{
@@ -553,7 +554,35 @@ export default function AdminDashboard() {
                             }}>
                               <div style={{
                                 height: '100%',
-                                width: `${batchRepResults.confirmationPct}%`,
+                                width: `${batchRepResults.confirmationPos1Pct}%`,
+                                background: '#006633',
+                                borderRadius: '4px'
+                              }} />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Confirmations - Position 2 */}
+                        <div style={{ marginBottom: '24px' }}>
+                          <h4 style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-text-primary)', marginBottom: '12px' }}>
+                            Position 2 · Batch Representative
+                          </h4>
+                          <div style={{ marginBottom: '8px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                              <span style={{ fontSize: '0.9rem', color: 'var(--color-text-primary)' }}>Felie Magbanua</span>
+                              <span style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
+                                {batchRepResults.confirmationsPos2} / {batchRepResults.totalResponsesPos2} ({batchRepResults.confirmationPos2Pct}%)
+                              </span>
+                            </div>
+                            <div style={{
+                              height: '8px',
+                              background: 'rgba(255, 255, 255, 0.1)',
+                              borderRadius: '4px',
+                              overflow: 'hidden'
+                            }}>
+                              <div style={{
+                                height: '100%',
+                                width: `${batchRepResults.confirmationPos2Pct}%`,
                                 background: '#006633',
                                 borderRadius: '4px'
                               }} />
@@ -569,8 +598,18 @@ export default function AdminDashboard() {
                             {batchRepResults.nominees.map((nominee, i) => (
                               <div key={i} style={{ marginBottom: '16px' }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                                     <span style={{ fontSize: '0.9rem', color: 'var(--color-text-primary)' }}>{nominee.name}</span>
+                                    <span style={{
+                                      fontSize: '0.6rem',
+                                      fontWeight: 600,
+                                      padding: '2px 6px',
+                                      borderRadius: '4px',
+                                      background: 'rgba(207, 181, 59, 0.15)',
+                                      color: 'var(--color-hover)'
+                                    }}>
+                                      {nominee.position === 1 ? 'Position 1' : 'Position 2'}
+                                    </span>
                                     <span style={{
                                       fontSize: '0.65rem',
                                       fontWeight: 600,
@@ -643,46 +682,106 @@ export default function AdminDashboard() {
                           <h4 style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-text-primary)', marginBottom: '12px' }}>
                             Willingness Summary · {batchRepResults.willingnessTotal} responded
                           </h4>
-                          <div style={{ marginBottom: '8px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                              <span style={{ fontSize: '0.9rem', color: 'var(--color-text-primary)' }}>Yes, willing to serve</span>
-                              <span style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
-                                {batchRepResults.willingnessYes} ({batchRepResults.willingnessYesPct}%)
-                              </span>
+
+                          {/* AA Rep Willingness */}
+                          <div style={{ marginBottom: '16px' }}>
+                            <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--color-text-secondary)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                              AA Rep (Position 1)
                             </div>
-                            <div style={{
-                              height: '8px',
-                              background: 'rgba(255, 255, 255, 0.1)',
-                              borderRadius: '4px',
-                              overflow: 'hidden'
-                            }}>
-                              <div style={{
-                                height: '100%',
-                                width: `${batchRepResults.willingnessYesPct}%`,
-                                background: '#006633',
-                                borderRadius: '4px'
-                              }} />
+                            <div style={{ display: 'flex', gap: '12px' }}>
+                              <div style={{ flex: 1 }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                                  <span style={{ fontSize: '0.85rem', color: 'var(--color-text-primary)' }}>Yes</span>
+                                  <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
+                                    {batchRepResults.willingnessPos1Yes}
+                                  </span>
+                                </div>
+                                <div style={{
+                                  height: '6px',
+                                  background: 'rgba(255, 255, 255, 0.1)',
+                                  borderRadius: '3px',
+                                  overflow: 'hidden'
+                                }}>
+                                  <div style={{
+                                    height: '100%',
+                                    width: batchRepResults.willingnessTotal > 0 ? `${(batchRepResults.willingnessPos1Yes / batchRepResults.willingnessTotal) * 100}%` : '0%',
+                                    background: '#006633',
+                                    borderRadius: '3px'
+                                  }} />
+                                </div>
+                              </div>
+                              <div style={{ flex: 1 }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                                  <span style={{ fontSize: '0.85rem', color: 'var(--color-text-primary)' }}>No</span>
+                                  <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
+                                    {batchRepResults.willingnessPos1No}
+                                  </span>
+                                </div>
+                                <div style={{
+                                  height: '6px',
+                                  background: 'rgba(255, 255, 255, 0.1)',
+                                  borderRadius: '3px',
+                                  overflow: 'hidden'
+                                }}>
+                                  <div style={{
+                                    height: '100%',
+                                    width: batchRepResults.willingnessTotal > 0 ? `${(batchRepResults.willingnessPos1No / batchRepResults.willingnessTotal) * 100}%` : '0%',
+                                    background: 'rgba(255, 255, 255, 0.3)',
+                                    borderRadius: '3px'
+                                  }} />
+                                </div>
+                              </div>
                             </div>
                           </div>
+
+                          {/* Batch Rep Willingness */}
                           <div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                              <span style={{ fontSize: '0.9rem', color: 'var(--color-text-primary)' }}>No, not at this time</span>
-                              <span style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
-                                {batchRepResults.willingnessNo} ({batchRepResults.willingnessNoPct}%)
-                              </span>
+                            <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--color-text-secondary)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                              Batch Rep (Position 2)
                             </div>
-                            <div style={{
-                              height: '8px',
-                              background: 'rgba(255, 255, 255, 0.1)',
-                              borderRadius: '4px',
-                              overflow: 'hidden'
-                            }}>
-                              <div style={{
-                                height: '100%',
-                                width: `${batchRepResults.willingnessNoPct}%`,
-                                background: 'rgba(255, 255, 255, 0.3)',
-                                borderRadius: '4px'
-                              }} />
+                            <div style={{ display: 'flex', gap: '12px' }}>
+                              <div style={{ flex: 1 }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                                  <span style={{ fontSize: '0.85rem', color: 'var(--color-text-primary)' }}>Yes</span>
+                                  <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
+                                    {batchRepResults.willingnessPos2Yes}
+                                  </span>
+                                </div>
+                                <div style={{
+                                  height: '6px',
+                                  background: 'rgba(255, 255, 255, 0.1)',
+                                  borderRadius: '3px',
+                                  overflow: 'hidden'
+                                }}>
+                                  <div style={{
+                                    height: '100%',
+                                    width: batchRepResults.willingnessTotal > 0 ? `${(batchRepResults.willingnessPos2Yes / batchRepResults.willingnessTotal) * 100}%` : '0%',
+                                    background: '#006633',
+                                    borderRadius: '3px'
+                                  }} />
+                                </div>
+                              </div>
+                              <div style={{ flex: 1 }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                                  <span style={{ fontSize: '0.85rem', color: 'var(--color-text-primary)' }}>No</span>
+                                  <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
+                                    {batchRepResults.willingnessPos2No}
+                                  </span>
+                                </div>
+                                <div style={{
+                                  height: '6px',
+                                  background: 'rgba(255, 255, 255, 0.1)',
+                                  borderRadius: '3px',
+                                  overflow: 'hidden'
+                                }}>
+                                  <div style={{
+                                    height: '100%',
+                                    width: batchRepResults.willingnessTotal > 0 ? `${(batchRepResults.willingnessPos2No / batchRepResults.willingnessTotal) * 100}%` : '0%',
+                                    background: 'rgba(255, 255, 255, 0.3)',
+                                    borderRadius: '3px'
+                                  }} />
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>

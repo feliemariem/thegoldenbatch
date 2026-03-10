@@ -201,23 +201,46 @@ router.get('/results', authenticateAdmin, async (req, res) => {
       return res.status(403).json({ error: 'Access denied.' });
     }
 
-    // Get total responses (unique voters)
+    // Get total unique voters (distinct voter_ids across both positions)
     const totalResult = await db.query('SELECT COUNT(DISTINCT voter_id) as total FROM batch_rep_submissions');
-    const totalResponses = parseInt(totalResult.rows[0].total);
+    const totalUniqueVoters = parseInt(totalResult.rows[0].total);
 
-    // Get confirmations count (for backwards compat, count position 1 confirms)
-    const confirmsResult = await db.query(
-      "SELECT COUNT(*) as count FROM batch_rep_submissions WHERE selection = 'confirm' AND (position = 1 OR position IS NULL)"
+    // Get confirmations count for Position 1 (AA Rep - Bianca)
+    const confirmsPos1Result = await db.query(
+      "SELECT COUNT(*) as count FROM batch_rep_submissions WHERE selection = 'confirm' AND position = 1"
     );
-    const totalConfirmations = parseInt(confirmsResult.rows[0].count);
+    const confirmationsPos1 = parseInt(confirmsPos1Result.rows[0].count);
+
+    // Get confirmations count for Position 2 (Batch Rep - Felie)
+    const confirmsPos2Result = await db.query(
+      "SELECT COUNT(*) as count FROM batch_rep_submissions WHERE selection = 'confirm' AND position = 2"
+    );
+    const confirmationsPos2 = parseInt(confirmsPos2Result.rows[0].count);
+
+    // Total confirmations (backwards compat)
+    const totalConfirmations = confirmationsPos1 + confirmationsPos2;
+
+    // Get total responses per position for percentage calculation
+    const responsesPos1Result = await db.query(
+      "SELECT COUNT(*) as count FROM batch_rep_submissions WHERE position = 1"
+    );
+    const totalResponsesPos1 = parseInt(responsesPos1Result.rows[0].count);
+
+    const responsesPos2Result = await db.query(
+      "SELECT COUNT(*) as count FROM batch_rep_submissions WHERE position = 2"
+    );
+    const totalResponsesPos2 = parseInt(responsesPos2Result.rows[0].count);
+
+    // Calculate confirmation percentages per position
+    const confirmationPos1Pct = totalResponsesPos1 > 0
+      ? Math.round((confirmationsPos1 / totalResponsesPos1) * 100 * 10) / 10
+      : 0;
+    const confirmationPos2Pct = totalResponsesPos2 > 0
+      ? Math.round((confirmationsPos2 / totalResponsesPos2) * 100 * 10) / 10
+      : 0;
 
     // Get nominations count
-    const totalNominations = totalResponses - totalConfirmations;
-
-    // Calculate confirmation percentage
-    const confirmationPct = totalResponses > 0
-      ? Math.round((totalConfirmations / totalResponses) * 100 * 10) / 10
-      : 0;
+    const totalNominations = (totalResponsesPos1 - confirmationsPos1) + (totalResponsesPos2 - confirmationsPos2);
 
     // Get nominees with willingness status, registration, city, country, and comments
     const nomineesResult = await db.query(`
@@ -228,9 +251,9 @@ router.get('/results', authenticateAdmin, async (req, res) => {
         COUNT(*) as count,
         array_agg(brs.comments) FILTER (WHERE brs.comments IS NOT NULL) as comments,
         CASE
-          WHEN brs.position = 1 THEN brw.willing_batch_rep
-          WHEN brs.position = 2 THEN brw.willing_aa_rep
-          ELSE brw.willing_batch_rep
+          WHEN brs.position = 1 THEN brw.willing_aa_rep
+          WHEN brs.position = 2 THEN brw.willing_batch_rep
+          ELSE NULL
         END as willing,
         CASE WHEN u.id IS NOT NULL THEN true ELSE false END as registered,
         u.city,
@@ -241,55 +264,73 @@ router.get('/results', authenticateAdmin, async (req, res) => {
       LEFT JOIN users u ON u.invite_id = i.id
       LEFT JOIN batch_rep_willingness brw ON brw.user_id = u.id
       WHERE brs.selection = 'nominate' AND brs.nominee_name IS NOT NULL
-      GROUP BY brs.nominee_name, brs.nominee_master_list_id, brs.position, brw.willing_batch_rep, brw.willing_aa_rep, u.id, u.city, u.country
-      ORDER BY count DESC
+      GROUP BY brs.nominee_name, brs.nominee_master_list_id, brs.position, brw.willing_aa_rep, brw.willing_batch_rep, u.id, u.city, u.country
+      ORDER BY brs.position ASC, count DESC
     `);
 
-    const nominees = nomineesResult.rows.map(row => ({
-      name: row.nominee_name,
-      masterListId: row.nominee_master_list_id,
-      position: row.position || 1,
-      count: parseInt(row.count),
-      pct: totalResponses > 0
-        ? Math.round((parseInt(row.count) / totalResponses) * 100 * 10) / 10
-        : 0,
-      willing: row.willing,
-      registered: row.registered,
-      city: row.city,
-      country: row.country,
-      comments: row.comments || []
-    }));
+    const nominees = nomineesResult.rows.map(row => {
+      const positionTotal = row.position === 1 ? totalResponsesPos1 : totalResponsesPos2;
+      return {
+        name: row.nominee_name,
+        masterListId: row.nominee_master_list_id,
+        position: row.position || 1,
+        count: parseInt(row.count),
+        pct: positionTotal > 0
+          ? Math.round((parseInt(row.count) / positionTotal) * 100 * 10) / 10
+          : 0,
+        willing: row.willing,
+        registered: row.registered,
+        city: row.city,
+        country: row.country,
+        comments: row.comments || []
+      };
+    });
 
-    // Get willingness stats (count responses for both positions)
+    // Get willingness stats per position
     const willingnessResult = await db.query(`
       SELECT
-        (COUNT(*) FILTER (WHERE willing_batch_rep IS NOT NULL) +
-         COUNT(*) FILTER (WHERE willing_aa_rep IS NOT NULL)) as total,
-        (COUNT(*) FILTER (WHERE willing_batch_rep = true) +
-         COUNT(*) FILTER (WHERE willing_aa_rep = true)) as yes_count,
-        (COUNT(*) FILTER (WHERE willing_batch_rep = false) +
-         COUNT(*) FILTER (WHERE willing_aa_rep = false)) as no_count
+        COUNT(*) as total_respondents,
+        COUNT(*) FILTER (WHERE willing_aa_rep = true) as aa_rep_yes,
+        COUNT(*) FILTER (WHERE willing_aa_rep = false) as aa_rep_no,
+        COUNT(*) FILTER (WHERE willing_batch_rep = true) as batch_rep_yes,
+        COUNT(*) FILTER (WHERE willing_batch_rep = false) as batch_rep_no
       FROM batch_rep_willingness
     `);
 
-    const willingnessTotal = parseInt(willingnessResult.rows[0].total);
-    const willingnessYes = parseInt(willingnessResult.rows[0].yes_count);
-    const willingnessNo = parseInt(willingnessResult.rows[0].no_count);
+    const willingnessTotal = parseInt(willingnessResult.rows[0].total_respondents);
+    const willingnessPos1Yes = parseInt(willingnessResult.rows[0].aa_rep_yes);
+    const willingnessPos1No = parseInt(willingnessResult.rows[0].aa_rep_no);
+    const willingnessPos2Yes = parseInt(willingnessResult.rows[0].batch_rep_yes);
+    const willingnessPos2No = parseInt(willingnessResult.rows[0].batch_rep_no);
+
+    // Total willing (at least one yes)
+    const willingnessYes = willingnessPos1Yes + willingnessPos2Yes;
+    const willingnessNo = willingnessPos1No + willingnessPos2No;
 
     res.json({
-      totalResponses,
+      totalUniqueVoters,
+      totalResponses: totalUniqueVoters, // backwards compat
       totalConfirmations,
       totalNominations,
-      confirmationPct,
+      confirmationsPos1,
+      confirmationsPos2,
+      confirmationPos1Pct,
+      confirmationPos2Pct,
+      totalResponsesPos1,
+      totalResponsesPos2,
       nominees,
       willingnessTotal,
       willingnessYes,
       willingnessNo,
+      willingnessPos1Yes,
+      willingnessPos1No,
+      willingnessPos2Yes,
+      willingnessPos2No,
       willingnessYesPct: willingnessTotal > 0
-        ? Math.round((willingnessYes / willingnessTotal) * 100 * 10) / 10
+        ? Math.round((willingnessYes / (willingnessTotal * 2)) * 100 * 10) / 10
         : 0,
       willingnessNoPct: willingnessTotal > 0
-        ? Math.round((willingnessNo / willingnessTotal) * 100 * 10) / 10
+        ? Math.round((willingnessNo / (willingnessTotal * 2)) * 100 * 10) / 10
         : 0
     });
   } catch (err) {
