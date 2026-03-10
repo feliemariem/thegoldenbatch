@@ -466,10 +466,10 @@ export default function BatchRep() {
                 </div>
                 <div className="batchrep-response-body">
                   <p>
-                    The USLS Alumni Association has asked our batch to put forward an official representative — someone who will sit on the alumni board and eventually serve as <strong>Alumni Association President</strong> during our 25th Jubilee in 2028.
+                    The USLS Alumni Association has asked our batch to put forward an official representative. After clarifying with the alumni office, we learned that the responsibilities may be structured into two roles — an <strong>Alumni Association Representative</strong> (school-facing) and a <strong>Batch Representative</strong> (batch-facing).
                   </p>
                   <p>
-                    After clarifying with the alumni office, we learned the role can be split into two: an <strong>Alumni Association Representative</strong> (school-facing) and a <strong>Batch Representative</strong> (batch-facing). The organizing committee is nominating its two co-chairs for each position.
+                    The organizing committee is putting forward its two co-chairs as nominees for these roles.
                   </p>
                   <p>
                     While the Organizing Committee believes our nominees are well-suited for their respective roles, we recognize and value every batchmate's voice. If you have someone else in mind who you feel is equally capable and willing to take this on, we encourage you to put their name forward. This is ultimately the batch's decision.
@@ -494,7 +494,7 @@ export default function BatchRep() {
                   </div>
 
                   <div className="batchrep-deadline-notice">
-                    Deadline: <strong>March 14, 2026 · closes 11:59 PM PHT</strong>. If no other nominations are raised by this date and the majority confirms, both nominees will be confirmed for their respective positions.
+                    Deadline: <strong>March 14, 2026 · closes 11:59 PM PHT</strong>. If no other willing nominations are raised by this date and the majority confirms, both nominees will be confirmed for their respective positions.
                   </div>
                 </div>
               </div>
