@@ -521,7 +521,7 @@ export default function BatchRep() {
                   <div style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--color-primary)', opacity: 0.8, marginBottom: '4px' }}>COMMITTEE NOMINEE</div>
                   <div className="batchrep-nominee-name">Bianca Jison</div>
                   <div className="batchrep-nominee-blurb">
-                    Initiated the formation of the organizing committee in 2023 and co-led its strategic planning and operations ever since. Has been the batch's local anchor, attends local events, builds connections on the ground, and has been the direct line to the USLS Alumni Association, including attending meetings on behalf of the batch.
+                    Initiated the formation of the organizing committee in 2023 and has co-led its planning and operations since. Has served as the batch's local anchor, attending events, building connections on the ground, and acting as the direct line to the USLS Alumni Association, including attending meetings on behalf of the batch.
                   </div>
                   <div className="batchrep-nominee-roles">
                     <div className="batchrep-nominee-role">
