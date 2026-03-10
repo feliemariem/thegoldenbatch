@@ -158,10 +158,17 @@ export default function ProfileNew() {
   };
 
   useEffect(() => {
-    fetchProfile();
-    fetchMyEvents();
-    fetchReceipts();
-    checkSystemAdmin();
+    if (user) {
+      fetchProfile();
+      fetchMyEvents();
+      fetchReceipts();
+      checkSystemAdmin();
+    } else {
+      // Reset batch rep state on logout
+      setBatchRepChecked(false);
+      setBatchRepHasSubmitted(false);
+      setShowBatchRepModal(false);
+    }
   }, [user]);
 
   // Check batch-rep status after profile loads
