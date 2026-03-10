@@ -68,8 +68,8 @@ export default function BatchRep() {
 
   // Position 1 form state
   const [selection1, setSelection1] = useState('confirm');
-  const [comments1, setComments1] = useState('');
   const [nomineeName1, setNomineeName1] = useState('');
+  const [nomineeRationale1, setNomineeRationale1] = useState('');
   const [nomineeMasterListId1, setNomineeMasterListId1] = useState(null);
   const [nomineeSearch1, setNomineeSearch1] = useState('');
   const [nominees1, setNominees1] = useState([]);
@@ -80,8 +80,8 @@ export default function BatchRep() {
 
   // Position 2 form state
   const [selection2, setSelection2] = useState('confirm');
-  const [comments2, setComments2] = useState('');
   const [nomineeName2, setNomineeName2] = useState('');
+  const [nomineeRationale2, setNomineeRationale2] = useState('');
   const [nomineeMasterListId2, setNomineeMasterListId2] = useState(null);
   const [nomineeSearch2, setNomineeSearch2] = useState('');
   const [nominees2, setNominees2] = useState([]);
@@ -294,7 +294,7 @@ export default function BatchRep() {
         selection: selection1,
         nominee_name: selection1 === 'nominate' ? nomineeName1 : null,
         nominee_master_list_id: selection1 === 'nominate' ? nomineeMasterListId1 : null,
-        comments: comments1.trim() || null
+        comments: selection1 === 'nominate' ? (nomineeRationale1.trim() || null) : null
       });
 
       const data = await res.json();
@@ -341,7 +341,7 @@ export default function BatchRep() {
         selection: selection2,
         nominee_name: selection2 === 'nominate' ? nomineeName2 : null,
         nominee_master_list_id: selection2 === 'nominate' ? nomineeMasterListId2 : null,
-        comments: comments2.trim() || null
+        comments: selection2 === 'nominate' ? (nomineeRationale2.trim() || null) : null
       });
 
       const data = await res.json();
@@ -518,6 +518,7 @@ export default function BatchRep() {
                   <span>Position 1 · Alumni Association Representative</span>
                 </div>
                 <div className="batchrep-nominee-body">
+                  <div style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--color-primary)', opacity: 0.8, marginBottom: '4px' }}>COMMITTEE NOMINEE</div>
                   <div className="batchrep-nominee-name">Bianca Jison</div>
                   <div className="batchrep-nominee-blurb">
                     Initiated the formation of the organizing committee in 2023 and co-led its strategic planning and operations ever since. Has been the batch's local anchor, attends local events, builds connections on the ground, and has been the direct line to the USLS Alumni Association, including attending meetings on behalf of the batch.
@@ -601,56 +602,68 @@ export default function BatchRep() {
                           <span className="batchrep-confirm-text">I confirm Bianca Jison as Alumni Association Representative</span>
                         </label>
 
-                        <div className="form-group">
-                          <label>Feedback or comments <span style={{ fontWeight: 400, fontStyle: 'italic', textTransform: 'none', letterSpacing: 0 }}>(optional)</span></label>
-                          <textarea
-                            placeholder="Share any feedback here..."
-                            value={comments1}
-                            onChange={(e) => setComments1(e.target.value)}
-                            rows={2}
-                            style={{ width: '100%', resize: 'vertical' }}
+                        <label
+                          className={`batchrep-confirm-option ${selection1 === 'nominate' ? 'selected' : ''}`}
+                          onClick={() => setSelection1('nominate')}
+                        >
+                          <input
+                            type="radio"
+                            name="selection1"
+                            value="nominate"
+                            checked={selection1 === 'nominate'}
+                            onChange={() => setSelection1('nominate')}
                           />
-                        </div>
+                          <span className="batchrep-confirm-text">I want to nominate someone else</span>
+                        </label>
 
-                        <div className="form-group">
-                          <label>Nominate someone else <span style={{ fontWeight: 400, fontStyle: 'italic', textTransform: 'none', letterSpacing: 0 }}>(optional)</span></label>
-                          <div className="batchrep-local-reminder">
-                            Position 1 requires local presence in Bacolod.
-                          </div>
-                          {nomineeName1 ? (
-                            <div className="batchrep-selected-nominee">
-                              <div className="batchrep-selected-nominee-info">
-                                <span className="batchrep-selected-nominee-check">✓</span>
-                                <span className="batchrep-selected-nominee-name">{nomineeName1}</span>
-                              </div>
-                              <button type="button" onClick={clearNominee1} className="batchrep-selected-nominee-clear">Clear</button>
-                            </div>
-                          ) : (
-                            <div className="batchrep-typeahead" ref={dropdownRef1}>
-                              <input
-                                type="text"
-                                placeholder="Type a name to search graduates..."
-                                value={nomineeSearch1}
-                                onChange={handleNomineeSearchChange1}
-                                onFocus={() => nomineeSearch1.length >= 2 && nominees1.length > 0 && setShowDropdown1(true)}
-                              />
-                              {showDropdown1 && (
-                                <div className="batchrep-typeahead-dropdown">
-                                  {nominees1.length === 0 ? (
-                                    <div className="batchrep-typeahead-empty">No matching graduates found</div>
-                                  ) : (
-                                    nominees1.map((nominee) => (
-                                      <div key={nominee.id || nominee.master_list_id} className="batchrep-typeahead-item" onClick={() => selectNominee1(nominee)}>
-                                        {nominee.display_name || nominee.name}
-                                        {nominee.section && <span style={{ color: 'var(--color-text-secondary)', marginLeft: '8px', fontSize: '0.8rem' }}>({nominee.section})</span>}
-                                      </div>
-                                    ))
+                        {selection1 === 'nominate' && (
+                          <div className="batchrep-nominate-section" style={{ marginTop: '16px' }}>
+                            <div className="form-group">
+                              {nomineeName1 ? (
+                                <div className="batchrep-selected-nominee">
+                                  <div className="batchrep-selected-nominee-info">
+                                    <span className="batchrep-selected-nominee-check">✓</span>
+                                    <span className="batchrep-selected-nominee-name">{nomineeName1}</span>
+                                  </div>
+                                  <button type="button" onClick={clearNominee1} className="batchrep-selected-nominee-clear">Clear</button>
+                                </div>
+                              ) : (
+                                <div className="batchrep-typeahead" ref={dropdownRef1}>
+                                  <input
+                                    type="text"
+                                    placeholder="Search batchmate by name... (local to Bacolod or nearby cities)"
+                                    value={nomineeSearch1}
+                                    onChange={handleNomineeSearchChange1}
+                                    onFocus={() => nomineeSearch1.length >= 2 && nominees1.length > 0 && setShowDropdown1(true)}
+                                  />
+                                  {showDropdown1 && (
+                                    <div className="batchrep-typeahead-dropdown">
+                                      {nominees1.length === 0 ? (
+                                        <div className="batchrep-typeahead-empty">No matching graduates found</div>
+                                      ) : (
+                                        nominees1.map((nominee) => (
+                                          <div key={nominee.id || nominee.master_list_id} className="batchrep-typeahead-item" onClick={() => selectNominee1(nominee)}>
+                                            {nominee.display_name || nominee.name}
+                                            {nominee.section && <span style={{ color: 'var(--color-text-secondary)', marginLeft: '8px', fontSize: '0.8rem' }}>({nominee.section})</span>}
+                                          </div>
+                                        ))
+                                      )}
+                                    </div>
                                   )}
                                 </div>
                               )}
                             </div>
-                          )}
-                        </div>
+                            <div className="form-group" style={{ marginTop: '12px' }}>
+                              <textarea
+                                placeholder="Share why you're nominating them (optional)"
+                                value={nomineeRationale1}
+                                onChange={(e) => setNomineeRationale1(e.target.value)}
+                                rows={2}
+                                style={{ width: '100%', resize: 'vertical' }}
+                              />
+                            </div>
+                          </div>
+                        )}
 
                         {submitError1 && <div className="error">{submitError1}</div>}
 
@@ -669,6 +682,7 @@ export default function BatchRep() {
                   <span>Position 2 · Batch Representative</span>
                 </div>
                 <div className="batchrep-nominee-body">
+                  <div style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--color-primary)', opacity: 0.8, marginBottom: '4px' }}>COMMITTEE NOMINEE</div>
                   <div className="batchrep-nominee-name">Felie Magbanua</div>
                   <div className="batchrep-nominee-blurb">
                     Co-led the strategic planning and operations of the organizing committee since 2023. Formalized the committee structure, defined roles and scopes, onboarded additional committee members, and built the platform that keeps everything organized, moving, and transparent.
@@ -742,56 +756,68 @@ export default function BatchRep() {
                           <span className="batchrep-confirm-text">I confirm Felie Magbanua as Batch Representative</span>
                         </label>
 
-                        <div className="form-group">
-                          <label>Feedback or comments <span style={{ fontWeight: 400, fontStyle: 'italic', textTransform: 'none', letterSpacing: 0 }}>(optional)</span></label>
-                          <textarea
-                            placeholder="Share any feedback here..."
-                            value={comments2}
-                            onChange={(e) => setComments2(e.target.value)}
-                            rows={2}
-                            style={{ width: '100%', resize: 'vertical' }}
+                        <label
+                          className={`batchrep-confirm-option ${selection2 === 'nominate' ? 'selected' : ''}`}
+                          onClick={() => setSelection2('nominate')}
+                        >
+                          <input
+                            type="radio"
+                            name="selection2"
+                            value="nominate"
+                            checked={selection2 === 'nominate'}
+                            onChange={() => setSelection2('nominate')}
                           />
-                        </div>
+                          <span className="batchrep-confirm-text">I want to nominate someone else</span>
+                        </label>
 
-                        <div className="form-group">
-                          <label>Nominate someone else <span style={{ fontWeight: 400, fontStyle: 'italic', textTransform: 'none', letterSpacing: 0 }}>(optional)</span></label>
-                          <div className="batchrep-remote-hint">
-                            Remote participation accepted — no Bacolod presence required.
-                          </div>
-                          {nomineeName2 ? (
-                            <div className="batchrep-selected-nominee">
-                              <div className="batchrep-selected-nominee-info">
-                                <span className="batchrep-selected-nominee-check">✓</span>
-                                <span className="batchrep-selected-nominee-name">{nomineeName2}</span>
-                              </div>
-                              <button type="button" onClick={clearNominee2} className="batchrep-selected-nominee-clear">Clear</button>
-                            </div>
-                          ) : (
-                            <div className="batchrep-typeahead" ref={dropdownRef2}>
-                              <input
-                                type="text"
-                                placeholder="Type a name to search graduates..."
-                                value={nomineeSearch2}
-                                onChange={handleNomineeSearchChange2}
-                                onFocus={() => nomineeSearch2.length >= 2 && nominees2.length > 0 && setShowDropdown2(true)}
-                              />
-                              {showDropdown2 && (
-                                <div className="batchrep-typeahead-dropdown">
-                                  {nominees2.length === 0 ? (
-                                    <div className="batchrep-typeahead-empty">No matching graduates found</div>
-                                  ) : (
-                                    nominees2.map((nominee) => (
-                                      <div key={nominee.id || nominee.master_list_id} className="batchrep-typeahead-item" onClick={() => selectNominee2(nominee)}>
-                                        {nominee.display_name || nominee.name}
-                                        {nominee.section && <span style={{ color: 'var(--color-text-secondary)', marginLeft: '8px', fontSize: '0.8rem' }}>({nominee.section})</span>}
-                                      </div>
-                                    ))
+                        {selection2 === 'nominate' && (
+                          <div className="batchrep-nominate-section" style={{ marginTop: '16px' }}>
+                            <div className="form-group">
+                              {nomineeName2 ? (
+                                <div className="batchrep-selected-nominee">
+                                  <div className="batchrep-selected-nominee-info">
+                                    <span className="batchrep-selected-nominee-check">✓</span>
+                                    <span className="batchrep-selected-nominee-name">{nomineeName2}</span>
+                                  </div>
+                                  <button type="button" onClick={clearNominee2} className="batchrep-selected-nominee-clear">Clear</button>
+                                </div>
+                              ) : (
+                                <div className="batchrep-typeahead" ref={dropdownRef2}>
+                                  <input
+                                    type="text"
+                                    placeholder="Search batchmate by name..."
+                                    value={nomineeSearch2}
+                                    onChange={handleNomineeSearchChange2}
+                                    onFocus={() => nomineeSearch2.length >= 2 && nominees2.length > 0 && setShowDropdown2(true)}
+                                  />
+                                  {showDropdown2 && (
+                                    <div className="batchrep-typeahead-dropdown">
+                                      {nominees2.length === 0 ? (
+                                        <div className="batchrep-typeahead-empty">No matching graduates found</div>
+                                      ) : (
+                                        nominees2.map((nominee) => (
+                                          <div key={nominee.id || nominee.master_list_id} className="batchrep-typeahead-item" onClick={() => selectNominee2(nominee)}>
+                                            {nominee.display_name || nominee.name}
+                                            {nominee.section && <span style={{ color: 'var(--color-text-secondary)', marginLeft: '8px', fontSize: '0.8rem' }}>({nominee.section})</span>}
+                                          </div>
+                                        ))
+                                      )}
+                                    </div>
                                   )}
                                 </div>
                               )}
                             </div>
-                          )}
-                        </div>
+                            <div className="form-group" style={{ marginTop: '12px' }}>
+                              <textarea
+                                placeholder="Share why you're nominating them (optional)"
+                                value={nomineeRationale2}
+                                onChange={(e) => setNomineeRationale2(e.target.value)}
+                                rows={2}
+                                style={{ width: '100%', resize: 'vertical' }}
+                              />
+                            </div>
+                          </div>
+                        )}
 
                         {submitError2 && <div className="error">{submitError2}</div>}
 
