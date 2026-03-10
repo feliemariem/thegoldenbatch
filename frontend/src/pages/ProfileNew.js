@@ -157,6 +157,11 @@ export default function ProfileNew() {
     return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
   };
 
+  // Reset batchRepChecked on every mount so status is re-fetched fresh
+  useEffect(() => {
+    setBatchRepChecked(false);
+  }, []);
+
   useEffect(() => {
     if (user) {
       fetchProfile();

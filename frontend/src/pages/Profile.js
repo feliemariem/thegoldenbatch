@@ -61,6 +61,7 @@ export default function Profile() {
   const [message, setMessage] = useState('');
   const [showBatchRepModal, setShowBatchRepModal] = useState(false);
   const [batchRepChecked, setBatchRepChecked] = useState(false);
+  const [batchRepHasSubmitted, setBatchRepHasSubmitted] = useState(false);
 
   const [form, setForm] = useState({
     first_name: '',
@@ -75,8 +76,20 @@ export default function Profile() {
     rsvp_status: '',
   });
 
+  // Reset batchRepChecked on every mount so status is re-fetched fresh
   useEffect(() => {
-    fetchProfile();
+    setBatchRepChecked(false);
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      fetchProfile();
+    } else {
+      // Reset batch rep state on logout
+      setBatchRepChecked(false);
+      setBatchRepHasSubmitted(false);
+      setShowBatchRepModal(false);
+    }
   }, [user]);
 
   // Check batch-rep status after profile loads
@@ -94,12 +107,14 @@ export default function Profile() {
         const res = await apiGet('/api/batch-rep/status');
         if (res.ok) {
           const data = await res.json();
+          // Store submission state
+          setBatchRepHasSubmitted(data.hasSubmitted);
           // Show modal if:
           // 1. User has phase access
-          // 2. User has NOT submitted
-          // 3. Status is active
+          // 2. Status is active
+          // 3. Deadline has not passed
           const hasAccess = checkPhaseAccess(user, data.isGrad);
-          if (hasAccess && !data.hasSubmitted && data.status === 'active') {
+          if (hasAccess && data.status === 'active' && !isDeadlinePassed()) {
             setShowBatchRepModal(true);
           }
         }
