@@ -558,7 +558,19 @@ export default function AdminDashboard() {
                           </h4>
                           <div style={{ marginBottom: '8px' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                              <span style={{ fontSize: '0.9rem', color: 'var(--color-text-primary)' }}>Bianca Jison</span>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <span style={{ fontSize: '0.9rem', color: 'var(--color-text-primary)' }}>Bianca Jison</span>
+                                <span style={{
+                                  fontSize: '0.6rem',
+                                  fontWeight: 600,
+                                  padding: '2px 6px',
+                                  borderRadius: '4px',
+                                  background: 'rgba(207, 181, 59, 0.15)',
+                                  color: 'var(--color-hover)'
+                                }}>
+                                  Committee Nominee
+                                </span>
+                              </div>
                               <span style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
                                 {batchRepResults.confirmationsPos1} / {batchRepResults.totalResponsesPos1} ({batchRepResults.confirmationPos1Pct}%)
                               </span>
@@ -657,7 +669,19 @@ export default function AdminDashboard() {
                           </h4>
                           <div style={{ marginBottom: '8px' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                              <span style={{ fontSize: '0.9rem', color: 'var(--color-text-primary)' }}>Felie Magbanua</span>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <span style={{ fontSize: '0.9rem', color: 'var(--color-text-primary)' }}>Felie Magbanua</span>
+                                <span style={{
+                                  fontSize: '0.6rem',
+                                  fontWeight: 600,
+                                  padding: '2px 6px',
+                                  borderRadius: '4px',
+                                  background: 'rgba(207, 181, 59, 0.15)',
+                                  color: 'var(--color-hover)'
+                                }}>
+                                  Committee Nominee
+                                </span>
+                              </div>
                               <span style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
                                 {batchRepResults.confirmationsPos2} / {batchRepResults.totalResponsesPos2} ({batchRepResults.confirmationPos2Pct}%)
                               </span>
