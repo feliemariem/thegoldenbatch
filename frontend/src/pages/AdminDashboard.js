@@ -841,7 +841,8 @@ export default function AdminDashboard() {
             {/* Registered Tab */}
             {!isRegistryAdmin && activeTab === 'registered' && (
               <RegisteredTab
-                                isSuperAdmin={isSuperAdmin}
+                isSuperAdmin={isSuperAdmin}
+                isRegistryAdmin={isRegistryAdmin}
                 permissions={permissions}
                 onStatsUpdate={setRegisteredStats}
               />

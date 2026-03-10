@@ -11,6 +11,7 @@ const TARGET_AVG = Math.ceil(FUNDING_TARGET / GRAD_TARGET_COUNT / 100) * 100; //
 
 export default function RegisteredTab({
   isSuperAdmin,
+  isRegistryAdmin,
   permissions,
   onStatsUpdate,
 }) {
@@ -205,20 +206,22 @@ export default function RegisteredTab({
       </div>
 
       <div className="filter-row" style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
-        <select
-          value={registeredRsvpFilter}
-          onChange={(e) => setRegisteredRsvpFilter(e.target.value)}
-          style={{ padding: '8px 12px', borderRadius: '4px', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', minWidth: '150px' }}
-        >
-          <option value="all">All RSVP ({stats.total})</option>
-          <option value="going">Going ({stats.going})</option>
-          <option value="maybe">Maybe ({stats.maybe})</option>
-          <option value="not_going">Not Going ({stats.not_going})</option>
-          <option value="no_response">No Response ({stats.no_response})</option>
-        </select>
+        {!isRegistryAdmin && (
+          <select
+            value={registeredRsvpFilter}
+            onChange={(e) => setRegisteredRsvpFilter(e.target.value)}
+            style={{ padding: '8px 12px', borderRadius: '4px', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', minWidth: '150px' }}
+          >
+            <option value="all">All RSVP ({stats.total})</option>
+            <option value="going">Going ({stats.going})</option>
+            <option value="maybe">Maybe ({stats.maybe})</option>
+            <option value="not_going">Not Going ({stats.not_going})</option>
+            <option value="no_response">No Response ({stats.no_response})</option>
+          </select>
+        )}
         <input
           type="text"
-          placeholder="Search by name, email, city, country..."
+          placeholder={isRegistryAdmin ? "Search by name, city, country..." : "Search by name, email, city, country..."}
           value={registeredSearch}
           onChange={(e) => setRegisteredSearch(e.target.value)}
           className="search-input"
@@ -238,46 +241,50 @@ export default function RegisteredTab({
               <thead>
                 <tr>
                   <th>Name</th>
-                  <th>Email</th>
-                  <th>Birthday</th>
-                  <th>Mobile</th>
-                  <th>Address</th>
+                  {!isRegistryAdmin && <th>Email</th>}
+                  {!isRegistryAdmin && <th>Birthday</th>}
+                  {!isRegistryAdmin && <th>Mobile</th>}
+                  {!isRegistryAdmin && <th>Address</th>}
                   <th>City</th>
                   <th>Country</th>
-                  <th>Occupation</th>
-                  <th>Company</th>
-                  <th>RSVP</th>
-                  <th>Alumni Card</th>
-                  <th>Shirt</th>
-                  <th>Jacket</th>
+                  {!isRegistryAdmin && <th>Occupation</th>}
+                  {!isRegistryAdmin && <th>Company</th>}
+                  {!isRegistryAdmin && <th>RSVP</th>}
+                  {!isRegistryAdmin && <th>Alumni Card</th>}
+                  {!isRegistryAdmin && <th>Shirt</th>}
+                  {!isRegistryAdmin && <th>Jacket</th>}
                 </tr>
               </thead>
               <tbody>
                 {users.map((user) => (
                   <tr key={user.id}>
                     <td style={{ whiteSpace: 'nowrap' }}>{user.first_name} {user.last_name}</td>
-                    <td>{user.email}</td>
-                    <td>{formatBirthday(user.birthday) || '-'}</td>
-                    <td>{user.mobile || '-'}</td>
-                    <td>{user.address || '-'}</td>
+                    {!isRegistryAdmin && <td>{user.email}</td>}
+                    {!isRegistryAdmin && <td>{formatBirthday(user.birthday) || '-'}</td>}
+                    {!isRegistryAdmin && <td>{user.mobile || '-'}</td>}
+                    {!isRegistryAdmin && <td>{user.address || '-'}</td>}
                     <td>{user.city}</td>
                     <td>{user.country}</td>
-                    <td>{user.occupation || '-'}</td>
-                    <td>{user.company || '-'}</td>
-                    <td>
-                      <span className={`rsvp-badge ${user.rsvp_status || 'pending'}`}>
-                        {user.rsvp_status
-                          ? user.rsvp_status.replace('_', ' ')
-                          : 'pending'}
-                      </span>
-                    </td>
-                    <td style={{ textAlign: 'center' }}>
-                      {user.section === 'Non-Graduate'
-                        ? <span style={{ color: '#888', fontSize: '0.8em' }}>N/A</span>
-                        : user.has_alumni_card ? '✓' : ''}
-                    </td>
-                    <td>{user.shirt_size || '—'}</td>
-                    <td>{user.jacket_size || '—'}</td>
+                    {!isRegistryAdmin && <td>{user.occupation || '-'}</td>}
+                    {!isRegistryAdmin && <td>{user.company || '-'}</td>}
+                    {!isRegistryAdmin && (
+                      <td>
+                        <span className={`rsvp-badge ${user.rsvp_status || 'pending'}`}>
+                          {user.rsvp_status
+                            ? user.rsvp_status.replace('_', ' ')
+                            : 'pending'}
+                        </span>
+                      </td>
+                    )}
+                    {!isRegistryAdmin && (
+                      <td style={{ textAlign: 'center' }}>
+                        {user.section === 'Non-Graduate'
+                          ? <span style={{ color: '#888', fontSize: '0.8em' }}>N/A</span>
+                          : user.has_alumni_card ? '✓' : ''}
+                      </td>
+                    )}
+                    {!isRegistryAdmin && <td>{user.shirt_size || '—'}</td>}
+                    {!isRegistryAdmin && <td>{user.jacket_size || '—'}</td>}
                   </tr>
                 ))}
               </tbody>
