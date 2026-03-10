@@ -1449,21 +1449,23 @@
   color: var(--color-text-primary);
 }
 
-.batchrep-willing-btn.yes.active {
-  background: #006633;
-  color: #ffffff;
-  border-color: #006633;
+.batchrep-willing-btn.yes.active,
+[data-theme="light"] .batchrep-willing-btn.yes.active {
+  background: #006633 !important;
+  color: #ffffff !important;
+  border-color: #006633 !important;
 }
 
 .batchrep-willing-btn.no.active {
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--color-text-primary);
-  border-color: rgba(207, 181, 59, 0.3);
+  background: rgba(207, 181, 59, 0.15) !important;
+  color: var(--color-text-primary) !important;
+  border-color: var(--color-hover) !important;
 }
 
 [data-theme="light"] .batchrep-willing-btn.no.active {
-  background: rgba(0, 102, 51, 0.05);
-  border-color: rgba(0, 102, 51, 0.25);
+  background: rgba(0, 102, 51, 0.1) !important;
+  color: var(--color-text-primary) !important;
+  border-color: #006633 !important;
 }
 
 /* Hint Text */
