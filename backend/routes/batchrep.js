@@ -37,6 +37,9 @@ router.get('/status', authenticateToken, async (req, res) => {
     );
     const status = statusResult.rows[0]?.value || 'active';
 
+    // Debug logging
+    console.log('[batch-rep/status] User:', userEmail, '| DB status row:', statusResult.rows[0], '| Resolved status:', status);
+
     // Check if user has submitted for each position
     const submissionResult = await db.query(
       'SELECT position FROM batch_rep_submissions WHERE voter_id = $1',
@@ -64,8 +67,12 @@ router.get('/status', authenticateToken, async (req, res) => {
       if (row.position === 2) willingnessPos2 = row.willing;
     }
 
+    // Include hasSubmitted for backwards compatibility with ProfileNew.js modal
+    const hasSubmitted = hasSubmittedPos1 || hasSubmittedPos2;
+
     res.json({
       status,
+      hasSubmitted,       // backwards compat for profile modal
       hasSubmittedPos1,
       hasSubmittedPos2,
       isGrad,

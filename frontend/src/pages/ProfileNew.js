@@ -179,13 +179,22 @@ export default function ProfileNew() {
         const res = await apiGet('/api/batch-rep/status');
         if (res.ok) {
           const data = await res.json();
+          // Debug logging
+          const hasAccess = checkPhaseAccess(user, data.isGrad);
+          console.log('[BatchRep Modal Debug]', {
+            apiResponse: data,
+            hasAccess,
+            statusIsActive: data.status === 'active',
+            deadlinePassed: isDeadlinePassed(),
+            userEmail: user?.email,
+            shouldShow: hasAccess && data.status === 'active' && !isDeadlinePassed()
+          });
           // Store submission state
           setBatchRepHasSubmitted(data.hasSubmitted);
           // Show modal if:
           // 1. User has phase access
           // 2. Status is active
           // 3. Deadline has not passed
-          const hasAccess = checkPhaseAccess(user, data.isGrad);
           if (hasAccess && data.status === 'active' && !isDeadlinePassed()) {
             setShowBatchRepModal(true);
           }
