@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -11,7 +11,8 @@ const REMEMBERED_EMAIL_KEY = 'rememberedEmail';
 export default function Login() {
   const navigate = useNavigate();
   const { user, login, checkAuth } = useAuth();
-  const { theme, toggleTheme } = useTheme();
+  const { theme, setThemeTemporary, toggleTheme } = useTheme();
+  const previousThemeRef = useRef(theme);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -19,6 +20,19 @@ export default function Login() {
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  // Force dark theme on this page
+  useEffect(() => {
+    previousThemeRef.current = theme;
+    if (theme !== 'dark') {
+      setThemeTemporary('dark');
+    }
+    return () => {
+      if (previousThemeRef.current !== 'dark') {
+        setThemeTemporary(previousThemeRef.current);
+      }
+    };
+  }, []);
 
   // Redirect if already logged in
   useEffect(() => {

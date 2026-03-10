@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -10,7 +10,8 @@ export default function Register() {
   const { token: inviteToken } = useParams();
   const navigate = useNavigate();
   const { login } = useAuth();
-  const { theme, toggleTheme } = useTheme();
+  const { theme, setThemeTemporary, toggleTheme } = useTheme();
+  const previousThemeRef = useRef(theme);
 
   const [validating, setValidating] = useState(true);
   const [email, setEmail] = useState('');
@@ -34,6 +35,19 @@ export default function Register() {
     company: '',
     rsvp: '',
   });
+
+  // Force dark theme on this page
+  useEffect(() => {
+    previousThemeRef.current = theme;
+    if (theme !== 'dark') {
+      setThemeTemporary('dark');
+    }
+    return () => {
+      if (previousThemeRef.current !== 'dark') {
+        setThemeTemporary(previousThemeRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     // Validate invite token

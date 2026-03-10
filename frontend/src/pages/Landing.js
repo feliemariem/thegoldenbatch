@@ -8,7 +8,7 @@ import logo from '../images/lasalle.jpg';
 export default function Landing() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { theme, toggleTheme } = useTheme();
+  const { theme, setThemeTemporary, toggleTheme } = useTheme();
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [showFormModal, setShowFormModal] = useState(false);
   const [consentGiven, setConsentGiven] = useState(false);
@@ -23,6 +23,20 @@ export default function Landing() {
   // Refs for intersection observer
   const countdownRef = useRef(null);
   const aboutRef = useRef(null);
+  const previousThemeRef = useRef(theme);
+
+  // Force dark theme on this page
+  useEffect(() => {
+    previousThemeRef.current = theme;
+    if (theme !== 'dark') {
+      setThemeTemporary('dark');
+    }
+    return () => {
+      if (previousThemeRef.current !== 'dark') {
+        setThemeTemporary(previousThemeRef.current);
+      }
+    };
+  }, []);
 
   // Trigger hero animation on mount
   useEffect(() => {
