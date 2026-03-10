@@ -62,6 +62,7 @@ export default function AdminDashboard() {
   const [permissions, setPermissions] = useState(null);
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [isSystemAdmin, setIsSystemAdmin] = useState(false);
+  const [isRegistryAdmin, setIsRegistryAdmin] = useState(false);
   const [data, setData] = useState(null);
   const [inviteStats, setInviteStats] = useState({ total: 0, registered: 0, pending: 0 });
   const [registeredStats, setRegisteredStats] = useState({ total: 0, going: 0, maybe: 0, not_going: 0, no_response: 0 });
@@ -160,10 +161,12 @@ export default function AdminDashboard() {
     }
   }, [urlTab, urlMeetingId, navigate]);
 
-  // Save active tab to localStorage
+  // Save active tab to localStorage (skip for Registry Admins)
   useEffect(() => {
-    localStorage.setItem('adminActiveTab', activeTab);
-  }, [activeTab]);
+    if (!isRegistryAdmin) {
+      localStorage.setItem('adminActiveTab', activeTab);
+    }
+  }, [activeTab, isRegistryAdmin]);
 
   const fetchPermissions = async () => {
     try {
@@ -180,6 +183,14 @@ export default function AdminDashboard() {
         setIsSuperAdmin(data.is_super_admin);
         // System admin is specifically admin id=1
         setIsSystemAdmin(data.is_super_admin && data.admin_id === 1);
+
+        // Registry Admin: not super admin and has no permissions
+        const registryAdminStatus = !data.is_super_admin && (!normalizedPermissions || Object.values(normalizedPermissions).every(v => !v));
+        setIsRegistryAdmin(registryAdminStatus);
+        if (registryAdminStatus) {
+          // Force activeTab to 'registered' and don't persist to localStorage
+          setActiveTab('registered');
+        }
       }
     } catch (err) {
       console.error('Failed to fetch permissions');

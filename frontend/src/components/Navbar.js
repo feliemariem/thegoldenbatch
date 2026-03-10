@@ -13,6 +13,9 @@ export default function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Registry Admin: admin with no super admin status and no permissions
+  const isRegistryAdmin = user?.isAdmin && !user?.is_super_admin && !user?.hasPermissions;
+
   const [eventsDropdownOpen, setEventsDropdownOpen] = useState(false);
   const [communityDropdownOpen, setCommunityDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -78,34 +81,36 @@ export default function Navbar() {
 
         {/* Desktop Navigation */}
         <nav className="navbar-nav desktop-nav">
-          {/* Events Dropdown */}
-          <div className={`nav-dropdown ${eventsDropdownOpen ? 'open' : ''}`} ref={eventsDropdownRef}>
-            <button
-              className={`nav-dropdown-trigger ${isEventsActive ? 'active' : ''} ${eventsDropdownOpen ? 'open' : ''}`}
-              onClick={() => setEventsDropdownOpen(!eventsDropdownOpen)}
-            >
-              Events <span className="dropdown-arrow">▼</span>
-            </button>
-            <div className="nav-dropdown-menu">
-              <Link
-                to="/events"
-                className={`nav-dropdown-item ${location.pathname === '/events' ? 'active' : ''}`}
-                onClick={() => setEventsDropdownOpen(false)}
+          {/* Events Dropdown - hidden from Registry Admins */}
+          {!isRegistryAdmin && (
+            <div className={`nav-dropdown ${eventsDropdownOpen ? 'open' : ''}`} ref={eventsDropdownRef}>
+              <button
+                className={`nav-dropdown-trigger ${isEventsActive ? 'active' : ''} ${eventsDropdownOpen ? 'open' : ''}`}
+                onClick={() => setEventsDropdownOpen(!eventsDropdownOpen)}
               >
-                Upcoming
-              </Link>
-              <Link
-                to="/media"
-                className={`nav-dropdown-item ${location.pathname === '/media' ? 'active' : ''}`}
-                onClick={() => setEventsDropdownOpen(false)}
-              >
-                Media
-              </Link>
+                Events <span className="dropdown-arrow">▼</span>
+              </button>
+              <div className="nav-dropdown-menu">
+                <Link
+                  to="/events"
+                  className={`nav-dropdown-item ${location.pathname === '/events' ? 'active' : ''}`}
+                  onClick={() => setEventsDropdownOpen(false)}
+                >
+                  Upcoming
+                </Link>
+                <Link
+                  to="/media"
+                  className={`nav-dropdown-item ${location.pathname === '/media' ? 'active' : ''}`}
+                  onClick={() => setEventsDropdownOpen(false)}
+                >
+                  Media
+                </Link>
+              </div>
             </div>
-          </div>
+          )}
 
-          {/* Community Dropdown - Admin only */}
-          {user?.isAdmin && (
+          {/* Community Dropdown - Admin only, hidden from Registry Admins */}
+          {user?.isAdmin && !isRegistryAdmin && (
             <div className={`nav-dropdown ${communityDropdownOpen ? 'open' : ''}`} ref={communityDropdownRef}>
               <button
                 className={`nav-dropdown-trigger ${isCommunityActive ? 'active' : ''} ${communityDropdownOpen ? 'open' : ''}`}
@@ -132,11 +137,13 @@ export default function Navbar() {
             </div>
           )}
 
-          {(user?.is_graduate || user?.isAdmin) && <Link to="/funds" className={`nav-link ${location.pathname === '/funds' ? 'active' : ''}`}>Funds</Link>}
-          <Link to="/inbox" className={`nav-link ${location.pathname === '/inbox' ? 'active' : ''}`}>
-            Inbox{unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}
-          </Link>
-          <Link to={user?.isAdmin ? "/profile-preview" : "/profile"} className={`nav-link ${location.pathname === '/profile' || location.pathname === '/profile-preview' ? 'active' : ''}`}>Profile</Link>
+          {!isRegistryAdmin && (user?.is_graduate || user?.isAdmin) && <Link to="/funds" className={`nav-link ${location.pathname === '/funds' ? 'active' : ''}`}>Funds</Link>}
+          {!isRegistryAdmin && (
+            <Link to="/inbox" className={`nav-link ${location.pathname === '/inbox' ? 'active' : ''}`}>
+              Inbox{unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}
+            </Link>
+          )}
+          <Link to={isRegistryAdmin ? "/profile" : (user?.isAdmin ? "/profile-preview" : "/profile")} className={`nav-link ${location.pathname === '/profile' || location.pathname === '/profile-preview' ? 'active' : ''}`}>Profile</Link>
           {user?.isAdmin && <Link to="/admin" className={`nav-link admin-link ${location.pathname === '/admin' ? 'active' : ''}`}>Admin</Link>}
           <button onClick={handleLogout} className="nav-link logout-btn">Logout</button>
         </nav>
@@ -163,26 +170,28 @@ export default function Navbar() {
 
       {/* Mobile Navigation */}
       <nav className={`navbar-nav mobile-nav ${mobileMenuOpen ? 'open' : ''}`}>
-        {/* Events with expand/collapse */}
-        <div className="mobile-nav-group">
-          <button
-            className={`mobile-nav-trigger ${isEventsActive ? 'active' : ''}`}
-            onClick={() => setMobileEventsOpen(!mobileEventsOpen)}
-          >
-            Events <span className={`dropdown-arrow ${mobileEventsOpen ? 'open' : ''}`}>▼</span>
-          </button>
-          <div className={`mobile-nav-submenu ${mobileEventsOpen ? 'open' : ''}`}>
-            <Link to="/events" className={`mobile-nav-subitem ${location.pathname === '/events' ? 'active' : ''}`}>
-              Upcoming
-            </Link>
-            <Link to="/media" className={`mobile-nav-subitem ${location.pathname === '/media' ? 'active' : ''}`}>
-              Media
-            </Link>
+        {/* Events with expand/collapse - hidden from Registry Admins */}
+        {!isRegistryAdmin && (
+          <div className="mobile-nav-group">
+            <button
+              className={`mobile-nav-trigger ${isEventsActive ? 'active' : ''}`}
+              onClick={() => setMobileEventsOpen(!mobileEventsOpen)}
+            >
+              Events <span className={`dropdown-arrow ${mobileEventsOpen ? 'open' : ''}`}>▼</span>
+            </button>
+            <div className={`mobile-nav-submenu ${mobileEventsOpen ? 'open' : ''}`}>
+              <Link to="/events" className={`mobile-nav-subitem ${location.pathname === '/events' ? 'active' : ''}`}>
+                Upcoming
+              </Link>
+              <Link to="/media" className={`mobile-nav-subitem ${location.pathname === '/media' ? 'active' : ''}`}>
+                Media
+              </Link>
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* Committee and Directory as separate items on mobile */}
-        {user?.isAdmin && (
+        {/* Committee and Directory as separate items on mobile - hidden from Registry Admins */}
+        {user?.isAdmin && !isRegistryAdmin && (
           <>
             <Link to="/committee" className={`mobile-nav-link ${location.pathname === '/committee' ? 'active' : ''}`}>
               Committee
@@ -193,16 +202,18 @@ export default function Navbar() {
           </>
         )}
 
-        {(user?.is_graduate || user?.isAdmin) && (
+        {!isRegistryAdmin && (user?.is_graduate || user?.isAdmin) && (
           <Link to="/funds" className={`mobile-nav-link ${location.pathname === '/funds' ? 'active' : ''}`}>
             Funds
           </Link>
         )}
-        <Link to="/inbox" className={`mobile-nav-link ${location.pathname === '/inbox' ? 'active' : ''}`}>
-          Inbox{unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}
-        </Link>
+        {!isRegistryAdmin && (
+          <Link to="/inbox" className={`mobile-nav-link ${location.pathname === '/inbox' ? 'active' : ''}`}>
+            Inbox{unreadCount > 0 && <span className="unread-badge">{unreadCount}</span>}
+          </Link>
+        )}
         <Link
-          to={user?.isAdmin ? "/profile-preview" : "/profile"}
+          to={isRegistryAdmin ? "/profile" : (user?.isAdmin ? "/profile-preview" : "/profile")}
           className={`mobile-nav-link ${location.pathname === '/profile' || location.pathname === '/profile-preview' ? 'active' : ''}`}
         >
           Profile

@@ -192,11 +192,17 @@ export default function PermissionsManager() {
           }}
         >
           <option value="" disabled>Select Admin...</option>
-          {admins.map(admin => (
-            <option key={admin.id} value={admin.id}>
-              {admin.current_name || `${admin.first_name} ${admin.last_name}`.trim()} {admin.is_super_admin ? '(Super Admin)' : ''}
-            </option>
-          ))}
+          {admins.map(admin => {
+            const hasPerms = admin.permissions && Object.values(admin.permissions).some(v => v);
+            const label = admin.is_super_admin
+              ? '(Super Admin)'
+              : !hasPerms ? '(Registry Only)' : '(Admin)';
+            return (
+              <option key={admin.id} value={admin.id}>
+                {admin.current_name || `${admin.first_name} ${admin.last_name}`.trim()} {label}
+              </option>
+            );
+          })}
         </select>
       </div>
 
