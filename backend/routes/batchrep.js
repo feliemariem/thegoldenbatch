@@ -57,14 +57,14 @@ router.get('/status', authenticateToken, async (req, res) => {
 
     // Check user's willingness answers for both positions
     const willingnessResult = await db.query(
-      'SELECT position, willing FROM batch_rep_willingness WHERE user_id = $1',
+      'SELECT willing_batch_rep, willing_aa_rep FROM batch_rep_willingness WHERE user_id = $1',
       [userId]
     );
     let willingnessPos1 = null;
     let willingnessPos2 = null;
-    for (const row of willingnessResult.rows) {
-      if (row.position === 1) willingnessPos1 = row.willing;
-      if (row.position === 2) willingnessPos2 = row.willing;
+    if (willingnessResult.rows.length > 0) {
+      willingnessPos1 = willingnessResult.rows[0].willing_batch_rep;
+      willingnessPos2 = willingnessResult.rows[0].willing_aa_rep;
     }
 
     // Include hasSubmitted for backwards compatibility with ProfileNew.js modal
@@ -102,34 +102,26 @@ router.post('/willingness', authenticateToken, async (req, res) => {
 
     // Support both old single-willingness format and new two-position format
     if (typeof willing === 'boolean') {
-      // Old format: single willingness (for backwards compatibility)
+      // Old format: single willingness (for backwards compatibility) - applies to batch rep position
       await db.query(
-        `INSERT INTO batch_rep_willingness (user_id, position, willing, updated_at)
-         VALUES ($1, 1, $2, NOW())
-         ON CONFLICT (user_id, position) DO UPDATE SET willing = $2, updated_at = NOW()`,
+        `INSERT INTO batch_rep_willingness (user_id, willing_batch_rep, updated_at)
+         VALUES ($1, $2, NOW())
+         ON CONFLICT (user_id) DO UPDATE SET willing_batch_rep = $2, updated_at = NOW()`,
         [userId, willing]
       );
       return res.json({ willing });
     }
 
-    // New format: two positions
-    if (typeof position1 === 'boolean') {
-      await db.query(
-        `INSERT INTO batch_rep_willingness (user_id, position, willing, updated_at)
-         VALUES ($1, 1, $2, NOW())
-         ON CONFLICT (user_id, position) DO UPDATE SET willing = $2, updated_at = NOW()`,
-        [userId, position1]
-      );
-    }
-
-    if (typeof position2 === 'boolean') {
-      await db.query(
-        `INSERT INTO batch_rep_willingness (user_id, position, willing, updated_at)
-         VALUES ($1, 2, $2, NOW())
-         ON CONFLICT (user_id, position) DO UPDATE SET willing = $2, updated_at = NOW()`,
-        [userId, position2]
-      );
-    }
+    // New format: two positions - upsert both columns in one query
+    await db.query(
+      `INSERT INTO batch_rep_willingness (user_id, willing_batch_rep, willing_aa_rep, updated_at)
+       VALUES ($1, $2, $3, NOW())
+       ON CONFLICT (user_id) DO UPDATE SET
+         willing_batch_rep = COALESCE($2, batch_rep_willingness.willing_batch_rep),
+         willing_aa_rep = COALESCE($3, batch_rep_willingness.willing_aa_rep),
+         updated_at = NOW()`,
+      [userId, position1, position2]
+    );
 
     res.json({ position1, position2 });
   } catch (err) {
@@ -235,7 +227,11 @@ router.get('/results', authenticateAdmin, async (req, res) => {
         brs.position,
         COUNT(*) as count,
         array_agg(brs.comments) FILTER (WHERE brs.comments IS NOT NULL) as comments,
-        brw.willing,
+        CASE
+          WHEN brs.position = 1 THEN brw.willing_batch_rep
+          WHEN brs.position = 2 THEN brw.willing_aa_rep
+          ELSE brw.willing_batch_rep
+        END as willing,
         CASE WHEN u.id IS NOT NULL THEN true ELSE false END as registered,
         u.city,
         u.country
@@ -243,9 +239,9 @@ router.get('/results', authenticateAdmin, async (req, res) => {
       LEFT JOIN master_list ml ON ml.id = brs.nominee_master_list_id
       LEFT JOIN invites i ON i.master_list_id = ml.id
       LEFT JOIN users u ON u.invite_id = i.id
-      LEFT JOIN batch_rep_willingness brw ON brw.user_id = u.id AND brw.position = brs.position
+      LEFT JOIN batch_rep_willingness brw ON brw.user_id = u.id
       WHERE brs.selection = 'nominate' AND brs.nominee_name IS NOT NULL
-      GROUP BY brs.nominee_name, brs.nominee_master_list_id, brs.position, brw.willing, u.id, u.city, u.country
+      GROUP BY brs.nominee_name, brs.nominee_master_list_id, brs.position, brw.willing_batch_rep, brw.willing_aa_rep, u.id, u.city, u.country
       ORDER BY count DESC
     `);
 
@@ -264,12 +260,15 @@ router.get('/results', authenticateAdmin, async (req, res) => {
       comments: row.comments || []
     }));
 
-    // Get willingness stats
+    // Get willingness stats (count responses for both positions)
     const willingnessResult = await db.query(`
       SELECT
-        COUNT(*) as total,
-        COUNT(*) FILTER (WHERE willing = true) as yes_count,
-        COUNT(*) FILTER (WHERE willing = false) as no_count
+        (COUNT(*) FILTER (WHERE willing_batch_rep IS NOT NULL) +
+         COUNT(*) FILTER (WHERE willing_aa_rep IS NOT NULL)) as total,
+        (COUNT(*) FILTER (WHERE willing_batch_rep = true) +
+         COUNT(*) FILTER (WHERE willing_aa_rep = true)) as yes_count,
+        (COUNT(*) FILTER (WHERE willing_batch_rep = false) +
+         COUNT(*) FILTER (WHERE willing_aa_rep = false)) as no_count
       FROM batch_rep_willingness
     `);
 

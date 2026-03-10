@@ -320,11 +320,13 @@ CREATE TABLE batch_rep_submissions (
 -- ============================================================
 -- NEW: Batch Rep Willingness table
 -- Tracks whether graduates are willing to serve if nominated
+-- Two separate columns for each position type
 -- ============================================================
 CREATE TABLE batch_rep_willingness (
     id SERIAL PRIMARY KEY,
     user_id INTEGER UNIQUE REFERENCES users(id) ON DELETE CASCADE,
-    willing BOOLEAN NOT NULL,
+    willing_batch_rep BOOLEAN,
+    willing_aa_rep BOOLEAN,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -366,7 +368,8 @@ CREATE INDEX idx_summary_snapshots_date ON summary_snapshots(snapshot_date DESC)
 CREATE INDEX idx_summary_snapshots_type ON summary_snapshots(snapshot_type);
 CREATE INDEX idx_batch_rep_submissions_voter ON batch_rep_submissions(voter_id);
 CREATE INDEX idx_batch_rep_willingness_user ON batch_rep_willingness(user_id);
-CREATE INDEX idx_batch_rep_willingness_willing ON batch_rep_willingness(willing);
+CREATE INDEX idx_batch_rep_willingness_batch_rep ON batch_rep_willingness(willing_batch_rep);
+CREATE INDEX idx_batch_rep_willingness_aa_rep ON batch_rep_willingness(willing_aa_rep);
 
 CREATE UNIQUE INDEX idx_ledger_reference_no_unique 
   ON ledger(reference_no) 
@@ -470,10 +473,12 @@ CREATE UNIQUE INDEX idx_ledger_reference_no_unique
 -- CREATE TABLE IF NOT EXISTS batch_rep_willingness (
 --     id SERIAL PRIMARY KEY,
 --     user_id INTEGER NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
---     willing BOOLEAN NOT NULL,
+--     willing_batch_rep BOOLEAN,
+--     willing_aa_rep BOOLEAN,
 --     created_at TIMESTAMPTZ DEFAULT NOW(),
 --     updated_at TIMESTAMPTZ DEFAULT NOW()
 -- );
 --
 -- CREATE INDEX IF NOT EXISTS idx_batch_rep_willingness_user ON batch_rep_willingness(user_id);
--- CREATE INDEX IF NOT EXISTS idx_batch_rep_willingness_willing ON batch_rep_willingness(willing);
+-- CREATE INDEX IF NOT EXISTS idx_batch_rep_willingness_batch_rep ON batch_rep_willingness(willing_batch_rep);
+-- CREATE INDEX IF NOT EXISTS idx_batch_rep_willingness_aa_rep ON batch_rep_willingness(willing_aa_rep);
