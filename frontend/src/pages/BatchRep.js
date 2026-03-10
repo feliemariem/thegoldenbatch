@@ -875,9 +875,16 @@ export default function BatchRep() {
                   <div className={`batchrep-roles-content ${rolesOpen1 ? 'open' : ''}`}>
                     <ul>
                       <li>Serves as the batch's official representative within the Alumni Association structure</li>
-                      <li>Attends alumni association meetings — local presence required (preferably Bacolod or nearby cities)</li>
-                      <li>Follows the alumni leadership ladder: AA Rep → VP → Alumni Association President (during the Jubilee)</li>
+                      <li>Attends alumni association meetings and represents the batch in alumni matters. Local presence required (preferably Bacolod or nearby cities)</li>
+                      <li>Coordinates directly with the Alumni Association board and alumni office</li>
+                      <li>Communicates alumni-level updates and requirements to the Batch Rep and organizing committee</li>
+                      <li>Represents the batch in official alumni events, ceremonies, and institutional activities</li>
+                      <li>Follows the alumni leadership ladder: AA Rep → Vice President → Alumni Association President (during the Jubilee)</li>
+                      <li>Helps ensure the batch fulfills its responsibilities as the Jubilee host batch</li>
                     </ul>
+                    <p className="batchrep-roles-note">
+                      The Alumni Association Representative will not be starting from scratch. There is already an organizing committee in place that has been working since 2023, fully committed and ready to support whoever takes on this role.
+                    </p>
                   </div>
                   <div className="batchrep-willing-question">
                     <div className="batchrep-willing-label">Are you willing to serve if nominated?</div>
@@ -914,10 +921,18 @@ export default function BatchRep() {
                   </div>
                   <div className={`batchrep-roles-content ${rolesOpen2 ? 'open' : ''}`}>
                     <ul>
-                      <li>Serves as the primary point of contact between the batch and the organizing committee</li>
-                      <li>Leads batch coordination and engagement leading up to the Jubilee</li>
-                      <li>Remote participation accepted — no Bacolod presence required</li>
+                      <li>Represents Batch 2003 to the batch itself and serves as the main point of contact for batchmates</li>
+                      <li>Leads batch coordination and engagement leading up to the Jubilee and other batch initiatives</li>
+                      <li>Works closely with the organizing committee to plan activities, gatherings, and participation</li>
+                      <li>Communicates updates, decisions, and announcements to the batch</li>
+                      <li>Mobilizes batch participation in alumni events, registration drives, and batch projects</li>
+                      <li>Coordinates with the AA Rep when alumni matters affect the batch</li>
+                      <li>Helps maintain unity and participation within the batch community</li>
+                      <li>Remote participation accepted. No Bacolod presence required</li>
                     </ul>
+                    <p className="batchrep-roles-note">
+                      The Batch Representative will not be starting from scratch. There is already an organizing committee in place that has been working since 2023, fully committed and ready to support whoever takes on this role.
+                    </p>
                   </div>
                   <div className="batchrep-willing-question">
                     <div className="batchrep-willing-label">Are you willing to serve if nominated?</div>
@@ -987,9 +1002,16 @@ export default function BatchRep() {
                 <div className={`batchrep-roles-content ${rolesOpen1 ? 'open' : ''}`}>
                   <ul>
                     <li>Serves as the batch's official representative within the Alumni Association structure</li>
-                    <li>Attends alumni association meetings — local presence required (preferably Bacolod or nearby cities)</li>
-                    <li>Follows the alumni leadership ladder: AA Rep → VP → Alumni Association President (during the Jubilee)</li>
+                    <li>Attends alumni association meetings and represents the batch in alumni matters. Local presence required (preferably Bacolod or nearby cities)</li>
+                    <li>Coordinates directly with the Alumni Association board and alumni office</li>
+                    <li>Communicates alumni-level updates and requirements to the Batch Rep and organizing committee</li>
+                    <li>Represents the batch in official alumni events, ceremonies, and institutional activities</li>
+                    <li>Follows the alumni leadership ladder: AA Rep → Vice President → Alumni Association President (during the Jubilee)</li>
+                    <li>Helps ensure the batch fulfills its responsibilities as the Jubilee host batch</li>
                   </ul>
+                  <p className="batchrep-roles-note">
+                    The Alumni Association Representative will not be starting from scratch. There is already an organizing committee in place that has been working since 2023, fully committed and ready to support whoever takes on this role.
+                  </p>
                 </div>
                 <div className="batchrep-willing-question">
                   <div className="batchrep-willing-label">Are you willing to serve if nominated?</div>
@@ -1026,10 +1048,18 @@ export default function BatchRep() {
                 </div>
                 <div className={`batchrep-roles-content ${rolesOpen2 ? 'open' : ''}`}>
                   <ul>
-                    <li>Serves as the primary point of contact between the batch and the organizing committee</li>
-                    <li>Leads batch coordination and engagement leading up to the Jubilee</li>
-                    <li>Remote participation accepted — no Bacolod presence required</li>
+                    <li>Represents Batch 2003 to the batch itself and serves as the main point of contact for batchmates</li>
+                    <li>Leads batch coordination and engagement leading up to the Jubilee and other batch initiatives</li>
+                    <li>Works closely with the organizing committee to plan activities, gatherings, and participation</li>
+                    <li>Communicates updates, decisions, and announcements to the batch</li>
+                    <li>Mobilizes batch participation in alumni events, registration drives, and batch projects</li>
+                    <li>Coordinates with the AA Rep when alumni matters affect the batch</li>
+                    <li>Helps maintain unity and participation within the batch community</li>
+                    <li>Remote participation accepted. No Bacolod presence required</li>
                   </ul>
+                  <p className="batchrep-roles-note">
+                    The Batch Representative will not be starting from scratch. There is already an organizing committee in place that has been working since 2023, fully committed and ready to support whoever takes on this role.
+                  </p>
                 </div>
                 <div className="batchrep-willing-question">
                   <div className="batchrep-willing-label">Are you willing to serve if nominated?</div>
