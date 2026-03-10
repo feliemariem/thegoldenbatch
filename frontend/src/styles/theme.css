@@ -336,14 +336,14 @@ body[data-theme="light"] .rsvp-badge.memoriam {
 
 /* Buttons */
 body[data-theme="light"] .btn-primary {
-  background: linear-gradient(135deg, #CFB53B 0%, #b8a235 100%) !important;
-  color: #1a1a1a !important;
-  box-shadow: 0 2px 8px rgba(207, 181, 59, 0.3) !important;
+  background: linear-gradient(135deg, #006633 0%, #005528 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(0, 102, 51, 0.3) !important;
 }
 
 body[data-theme="light"] .btn-primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #d9c04a 0%, #c4ad3d 100%) !important;
-  box-shadow: 0 4px 12px rgba(207, 181, 59, 0.4) !important;
+  background: linear-gradient(135deg, #007a3d 0%, #006633 100%) !important;
+  box-shadow: 0 4px 12px rgba(0, 102, 51, 0.4) !important;
 }
 
 body[data-theme="light"] .btn-link {
