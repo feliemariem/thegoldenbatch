@@ -238,17 +238,19 @@ export default function AdminDashboard() {
         <p style={{ color: '#666', marginBottom: '4px', fontSize: '0.9rem' }}>Welcome, {user?.first_name || 'Admin'}!</p>
         <div className="header-row">
           <h1>Admin Dashboard</h1>
-          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-            <button
-              onClick={() => setShowGuide(!showGuide)}
-              className="btn-guide"
-            >
-              {showGuide ? 'Hide' : '📖 Guide'}
-            </button>
-          </div>
+          {!isRegistryAdmin && (
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+              <button
+                onClick={() => setShowGuide(!showGuide)}
+                className="btn-guide"
+              >
+                {showGuide ? 'Hide' : '📖 Guide'}
+              </button>
+            </div>
+          )}
         </div>
 
-        {showGuide && (
+        {!isRegistryAdmin && showGuide && (
           <div className="admin-guide">
             <h3 className="admin-guide-title">Admin Guide</h3>
 
