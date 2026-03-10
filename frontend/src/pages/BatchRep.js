@@ -644,7 +644,6 @@ export default function BatchRep() {
                                         nominees1.map((nominee) => (
                                           <div key={nominee.id || nominee.master_list_id} className="batchrep-typeahead-item" onClick={() => selectNominee1(nominee)}>
                                             {nominee.display_name || nominee.name}
-                                            {nominee.section && <span style={{ color: 'var(--color-text-secondary)', marginLeft: '8px', fontSize: '0.8rem' }}>({nominee.section})</span>}
                                           </div>
                                         ))
                                       )}
@@ -798,7 +797,6 @@ export default function BatchRep() {
                                         nominees2.map((nominee) => (
                                           <div key={nominee.id || nominee.master_list_id} className="batchrep-typeahead-item" onClick={() => selectNominee2(nominee)}>
                                             {nominee.display_name || nominee.name}
-                                            {nominee.section && <span style={{ color: 'var(--color-text-secondary)', marginLeft: '8px', fontSize: '0.8rem' }}>({nominee.section})</span>}
                                           </div>
                                         ))
                                       )}
