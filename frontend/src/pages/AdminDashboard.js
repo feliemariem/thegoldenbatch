@@ -642,22 +642,6 @@ export default function AdminDashboard() {
                                 <span><strong>City:</strong> {nominee.city || '—'}</span>
                                 <span><strong>Country:</strong> {nominee.country || '—'}</span>
                               </div>
-                              {nominee.comments.length > 0 && (
-                                <div style={{ marginTop: '8px' }}>
-                                  {nominee.comments.map((comment, j) => (
-                                    <p key={j} style={{
-                                      fontSize: '0.8rem',
-                                      fontStyle: 'italic',
-                                      color: 'var(--color-text-secondary)',
-                                      margin: '4px 0',
-                                      paddingLeft: '12px',
-                                      borderLeft: '2px solid rgba(255, 255, 255, 0.1)'
-                                    }}>
-                                      "{comment}"
-                                    </p>
-                                  ))}
-                                </div>
-                              )}
                             </div>
                           ))}
                         </div>
@@ -753,22 +737,6 @@ export default function AdminDashboard() {
                                 <span><strong>City:</strong> {nominee.city || '—'}</span>
                                 <span><strong>Country:</strong> {nominee.country || '—'}</span>
                               </div>
-                              {nominee.comments.length > 0 && (
-                                <div style={{ marginTop: '8px' }}>
-                                  {nominee.comments.map((comment, j) => (
-                                    <p key={j} style={{
-                                      fontSize: '0.8rem',
-                                      fontStyle: 'italic',
-                                      color: 'var(--color-text-secondary)',
-                                      margin: '4px 0',
-                                      paddingLeft: '12px',
-                                      borderLeft: '2px solid rgba(255, 255, 255, 0.1)'
-                                    }}>
-                                      "{comment}"
-                                    </p>
-                                  ))}
-                                </div>
-                              )}
                             </div>
                           ))}
                         </div>
