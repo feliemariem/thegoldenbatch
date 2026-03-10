@@ -78,29 +78,18 @@ router.get('/', authenticateToken, async (req, res) => {
       let hasPermissions = false;
       if (req.user.isAdmin) {
         const adminCheck = await db.query(
-          `SELECT a.is_super_admin,
-                  p.invites_add, p.invites_link, p.invites_upload, p.invites_export,
-                  p.registered_export, p.masterlist_edit, p.masterlist_upload, p.masterlist_export,
-                  p.announcements_view, p.announcements_send,
-                  p.accounting_view, p.accounting_edit, p.accounting_export,
-                  p.minutes_view, p.minutes_edit,
-                  p.messages_view, p.strategic_view, p.funding_view
-           FROM admins a
-           LEFT JOIN permissions p ON a.id = p.admin_id
-           WHERE LOWER(a.email) = LOWER($1)`,
+          `SELECT id, is_super_admin FROM admins WHERE LOWER(email) = LOWER($1)`,
           [user.email]
         );
         if (adminCheck.rows.length > 0) {
           const adminData = adminCheck.rows[0];
           isSuperAdmin = adminData.is_super_admin || false;
-          hasPermissions = [
-            adminData.invites_add, adminData.invites_link, adminData.invites_upload, adminData.invites_export,
-            adminData.registered_export, adminData.masterlist_edit, adminData.masterlist_upload, adminData.masterlist_export,
-            adminData.announcements_view, adminData.announcements_send,
-            adminData.accounting_view, adminData.accounting_edit, adminData.accounting_export,
-            adminData.minutes_view, adminData.minutes_edit,
-            adminData.messages_view, adminData.strategic_view, adminData.funding_view
-          ].some(v => v === true);
+          // Check if admin has at least one enabled permission
+          const permsCheck = await db.query(
+            `SELECT 1 FROM permissions WHERE admin_id = $1 AND enabled = true LIMIT 1`,
+            [adminData.id]
+          );
+          hasPermissions = permsCheck.rows.length > 0;
         }
       }
 
@@ -122,30 +111,19 @@ router.get('/', authenticateToken, async (req, res) => {
 
     // If not found in users table, check admins table
     const adminResult = await db.query(
-      `SELECT a.id, a.email, a.first_name, a.last_name, a.role_title, a.is_super_admin,
-              p.invites_add, p.invites_link, p.invites_upload, p.invites_export,
-              p.registered_export, p.masterlist_edit, p.masterlist_upload, p.masterlist_export,
-              p.announcements_view, p.announcements_send,
-              p.accounting_view, p.accounting_edit, p.accounting_export,
-              p.minutes_view, p.minutes_edit,
-              p.messages_view, p.strategic_view, p.funding_view
-       FROM admins a
-       LEFT JOIN permissions p ON a.id = p.admin_id
-       WHERE a.id = $1`,
+      `SELECT id, email, first_name, last_name, role_title, is_super_admin
+       FROM admins WHERE id = $1`,
       [req.user.id]
     );
 
     if (adminResult.rows.length > 0) {
       const admin = adminResult.rows[0];
-      // Check if admin has at least one permission set to true
-      const hasPermissions = [
-        admin.invites_add, admin.invites_link, admin.invites_upload, admin.invites_export,
-        admin.registered_export, admin.masterlist_edit, admin.masterlist_upload, admin.masterlist_export,
-        admin.announcements_view, admin.announcements_send,
-        admin.accounting_view, admin.accounting_edit, admin.accounting_export,
-        admin.minutes_view, admin.minutes_edit,
-        admin.messages_view, admin.strategic_view, admin.funding_view
-      ].some(v => v === true);
+      // Check if admin has at least one enabled permission
+      const permsCheck = await db.query(
+        `SELECT 1 FROM permissions WHERE admin_id = $1 AND enabled = true LIMIT 1`,
+        [admin.id]
+      );
+      const hasPermissions = permsCheck.rows.length > 0;
 
       return res.json({
         id: admin.id,
