@@ -462,7 +462,7 @@ export default function AdminDashboard() {
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <span style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--color-hover)' }}>
-                      🗳️ Batch Rep Results
+                      🗳️ Batch Positions Results
                     </span>
                     <span style={{
                       fontSize: '0.7rem',
@@ -513,9 +513,9 @@ export default function AdminDashboard() {
                           marginBottom: '24px'
                         }}>
                           {[
-                            { label: 'Unique Voters', value: batchRepResults.totalUniqueVoters },
-                            { label: 'Pos 1 Confirms', value: batchRepResults.confirmationsPos1 },
-                            { label: 'Pos 2 Confirms', value: batchRepResults.confirmationsPos2 },
+                            { label: 'Responses', value: batchRepResults.totalUniqueVoters },
+                            { label: 'AA Rep Confirms', value: batchRepResults.confirmationsPos1 },
+                            { label: 'Batch Rep Confirms', value: batchRepResults.confirmationsPos2 },
                             { label: 'Willing to Serve', value: batchRepResults.willingnessYes }
                           ].map((stat, i) => (
                             <div key={i} style={{
@@ -686,7 +686,7 @@ export default function AdminDashboard() {
                           {/* AA Rep Willingness */}
                           <div style={{ marginBottom: '16px' }}>
                             <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--color-text-secondary)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                              AA Rep (Position 1)
+                              AA Rep
                             </div>
                             <div style={{ display: 'flex', gap: '12px' }}>
                               <div style={{ flex: 1 }}>
@@ -737,7 +737,7 @@ export default function AdminDashboard() {
                           {/* Batch Rep Willingness */}
                           <div>
                             <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--color-text-secondary)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                              Batch Rep (Position 2)
+                              Batch Rep
                             </div>
                             <div style={{ display: 'flex', gap: '12px' }}>
                               <div style={{ flex: 1 }}>
