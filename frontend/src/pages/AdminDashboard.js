@@ -551,7 +551,7 @@ export default function AdminDashboard() {
                           ))}
                         </div>
 
-                        {/* Confirmations - Position 1 */}
+                        {/* Position 1 · Alumni Association Representative */}
                         <div style={{ marginBottom: '24px' }}>
                           <h4 style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-text-primary)', marginBottom: '12px' }}>
                             Position 1 · Alumni Association Representative
@@ -577,9 +577,80 @@ export default function AdminDashboard() {
                               }} />
                             </div>
                           </div>
+                          {/* Position 1 Alternative Nominations */}
+                          {batchRepResults.nominees.filter(n => n.position === 1).map((nominee, i) => (
+                            <div key={i} style={{ marginTop: '12px' }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                                  <span style={{ fontSize: '0.9rem', color: 'var(--color-text-primary)' }}>{nominee.name}</span>
+                                  <span style={{
+                                    fontSize: '0.65rem',
+                                    fontWeight: 600,
+                                    padding: '2px 6px',
+                                    borderRadius: '4px',
+                                    background: nominee.willing === true
+                                      ? 'rgba(39, 174, 96, 0.15)'
+                                      : nominee.willing === false
+                                        ? 'rgba(231, 76, 60, 0.15)'
+                                        : 'rgba(255, 255, 255, 0.1)',
+                                    color: nominee.willing === true
+                                      ? 'var(--color-status-positive)'
+                                      : nominee.willing === false
+                                        ? 'var(--color-status-negative)'
+                                        : 'var(--color-text-secondary)'
+                                  }}>
+                                    {nominee.willing === true ? '✓ Willing' : nominee.willing === false ? '✕ Not willing' : '? Unknown'}
+                                  </span>
+                                </div>
+                                <span style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
+                                  {nominee.count} ({nominee.pct}%)
+                                </span>
+                              </div>
+                              <div style={{
+                                height: '8px',
+                                background: 'rgba(255, 255, 255, 0.1)',
+                                borderRadius: '4px',
+                                overflow: 'hidden'
+                              }}>
+                                <div style={{
+                                  height: '100%',
+                                  width: `${nominee.pct}%`,
+                                  background: nominee.willing === true ? '#CFB53B' : 'rgba(255, 255, 255, 0.3)',
+                                  borderRadius: '4px'
+                                }} />
+                              </div>
+                              <div style={{
+                                display: 'flex',
+                                gap: '16px',
+                                marginTop: '8px',
+                                fontSize: '0.75rem',
+                                color: 'var(--color-text-secondary)'
+                              }}>
+                                <span><strong>Status:</strong> {nominee.registered ? 'Registered' : 'Not registered'}</span>
+                                <span><strong>City:</strong> {nominee.city || '—'}</span>
+                                <span><strong>Country:</strong> {nominee.country || '—'}</span>
+                              </div>
+                              {nominee.comments.length > 0 && (
+                                <div style={{ marginTop: '8px' }}>
+                                  {nominee.comments.map((comment, j) => (
+                                    <p key={j} style={{
+                                      fontSize: '0.8rem',
+                                      fontStyle: 'italic',
+                                      color: 'var(--color-text-secondary)',
+                                      margin: '4px 0',
+                                      paddingLeft: '12px',
+                                      borderLeft: '2px solid rgba(255, 255, 255, 0.1)'
+                                    }}>
+                                      "{comment}"
+                                    </p>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          ))}
                         </div>
 
-                        {/* Confirmations - Position 2 */}
+                        {/* Position 2 · Batch Representative */}
                         <div style={{ marginBottom: '24px' }}>
                           <h4 style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-text-primary)', marginBottom: '12px' }}>
                             Position 2 · Batch Representative
@@ -605,95 +676,78 @@ export default function AdminDashboard() {
                               }} />
                             </div>
                           </div>
-                        </div>
-
-                        {batchRepResults.nominees.length > 0 && (
-                          <div style={{ marginBottom: '24px' }}>
-                            <h4 style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-text-primary)', marginBottom: '12px' }}>
-                              Other Nominations
-                            </h4>
-                            {batchRepResults.nominees.map((nominee, i) => (
-                              <div key={i} style={{ marginBottom: '16px' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                                    <span style={{ fontSize: '0.9rem', color: 'var(--color-text-primary)' }}>{nominee.name}</span>
-                                    <span style={{
-                                      fontSize: '0.6rem',
-                                      fontWeight: 600,
-                                      padding: '2px 6px',
-                                      borderRadius: '4px',
-                                      background: 'rgba(207, 181, 59, 0.15)',
-                                      color: 'var(--color-hover)'
-                                    }}>
-                                      {nominee.position === 1 ? 'Position 1' : 'Position 2'}
-                                    </span>
-                                    <span style={{
-                                      fontSize: '0.65rem',
-                                      fontWeight: 600,
-                                      padding: '2px 6px',
-                                      borderRadius: '4px',
-                                      background: nominee.willing === true
-                                        ? 'rgba(39, 174, 96, 0.15)'
-                                        : nominee.willing === false
-                                          ? 'rgba(231, 76, 60, 0.15)'
-                                          : 'rgba(255, 255, 255, 0.1)',
-                                      color: nominee.willing === true
-                                        ? 'var(--color-status-positive)'
-                                        : nominee.willing === false
-                                          ? 'var(--color-status-negative)'
-                                          : 'var(--color-text-secondary)'
-                                    }}>
-                                      {nominee.willing === true ? '✓ Willing' : nominee.willing === false ? '✕ Not willing' : '? Unknown'}
-                                    </span>
-                                  </div>
-                                  <span style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
-                                    {nominee.count} ({nominee.pct}%)
+                          {/* Position 2 Alternative Nominations */}
+                          {batchRepResults.nominees.filter(n => n.position === 2).map((nominee, i) => (
+                            <div key={i} style={{ marginTop: '12px' }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                                  <span style={{ fontSize: '0.9rem', color: 'var(--color-text-primary)' }}>{nominee.name}</span>
+                                  <span style={{
+                                    fontSize: '0.65rem',
+                                    fontWeight: 600,
+                                    padding: '2px 6px',
+                                    borderRadius: '4px',
+                                    background: nominee.willing === true
+                                      ? 'rgba(39, 174, 96, 0.15)'
+                                      : nominee.willing === false
+                                        ? 'rgba(231, 76, 60, 0.15)'
+                                        : 'rgba(255, 255, 255, 0.1)',
+                                    color: nominee.willing === true
+                                      ? 'var(--color-status-positive)'
+                                      : nominee.willing === false
+                                        ? 'var(--color-status-negative)'
+                                        : 'var(--color-text-secondary)'
+                                  }}>
+                                    {nominee.willing === true ? '✓ Willing' : nominee.willing === false ? '✕ Not willing' : '? Unknown'}
                                   </span>
                                 </div>
-                                <div style={{
-                                  height: '8px',
-                                  background: 'rgba(255, 255, 255, 0.1)',
-                                  borderRadius: '4px',
-                                  overflow: 'hidden'
-                                }}>
-                                  <div style={{
-                                    height: '100%',
-                                    width: `${nominee.pct}%`,
-                                    background: nominee.willing === true ? '#CFB53B' : 'rgba(255, 255, 255, 0.3)',
-                                    borderRadius: '4px'
-                                  }} />
-                                </div>
-                                <div style={{
-                                  display: 'flex',
-                                  gap: '16px',
-                                  marginTop: '8px',
-                                  fontSize: '0.75rem',
-                                  color: 'var(--color-text-secondary)'
-                                }}>
-                                  <span><strong>Status:</strong> {nominee.registered ? 'Registered' : 'Not registered'}</span>
-                                  <span><strong>City:</strong> {nominee.city || '—'}</span>
-                                  <span><strong>Country:</strong> {nominee.country || '—'}</span>
-                                </div>
-                                {nominee.comments.length > 0 && (
-                                  <div style={{ marginTop: '8px' }}>
-                                    {nominee.comments.map((comment, j) => (
-                                      <p key={j} style={{
-                                        fontSize: '0.8rem',
-                                        fontStyle: 'italic',
-                                        color: 'var(--color-text-secondary)',
-                                        margin: '4px 0',
-                                        paddingLeft: '12px',
-                                        borderLeft: '2px solid rgba(255, 255, 255, 0.1)'
-                                      }}>
-                                        "{comment}"
-                                      </p>
-                                    ))}
-                                  </div>
-                                )}
+                                <span style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
+                                  {nominee.count} ({nominee.pct}%)
+                                </span>
                               </div>
-                            ))}
-                          </div>
-                        )}
+                              <div style={{
+                                height: '8px',
+                                background: 'rgba(255, 255, 255, 0.1)',
+                                borderRadius: '4px',
+                                overflow: 'hidden'
+                              }}>
+                                <div style={{
+                                  height: '100%',
+                                  width: `${nominee.pct}%`,
+                                  background: nominee.willing === true ? '#CFB53B' : 'rgba(255, 255, 255, 0.3)',
+                                  borderRadius: '4px'
+                                }} />
+                              </div>
+                              <div style={{
+                                display: 'flex',
+                                gap: '16px',
+                                marginTop: '8px',
+                                fontSize: '0.75rem',
+                                color: 'var(--color-text-secondary)'
+                              }}>
+                                <span><strong>Status:</strong> {nominee.registered ? 'Registered' : 'Not registered'}</span>
+                                <span><strong>City:</strong> {nominee.city || '—'}</span>
+                                <span><strong>Country:</strong> {nominee.country || '—'}</span>
+                              </div>
+                              {nominee.comments.length > 0 && (
+                                <div style={{ marginTop: '8px' }}>
+                                  {nominee.comments.map((comment, j) => (
+                                    <p key={j} style={{
+                                      fontSize: '0.8rem',
+                                      fontStyle: 'italic',
+                                      color: 'var(--color-text-secondary)',
+                                      margin: '4px 0',
+                                      paddingLeft: '12px',
+                                      borderLeft: '2px solid rgba(255, 255, 255, 0.1)'
+                                    }}>
+                                      "{comment}"
+                                    </p>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
 
                         <div>
                           <h4 style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-text-primary)', marginBottom: '12px' }}>
