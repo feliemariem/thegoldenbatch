@@ -22,14 +22,7 @@ const checkPhaseAccess = (user, isGrad) => {
   switch (BATCH_REP_PHASE) {
     case 1:
       const allowedEmails = [
-        'felie@fnrcore.com',
-        'coycoy.cordova@gmail.com',
-        'emvjanklow@gmail.com',
-        'williamkramer27@gmail.com',
-        'jmrnv07@gmail.com',
-        'chayamalonso@gmail.com',
-        'nqa.attynea@gmail.com',
-        'eckkee03@gmail.com'
+        'felie@fnrcore.com'
       ];
       return allowedEmails.includes(userEmail);
     case 2:
