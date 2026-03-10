@@ -81,6 +81,7 @@ router.get('/', authenticateToken, async (req, res) => {
           `SELECT id, is_super_admin FROM admins WHERE LOWER(email) = LOWER($1)`,
           [user.email]
         );
+        console.log('[/api/me] adminCheck for', user.email, ':', adminCheck.rows);
         if (adminCheck.rows.length > 0) {
           const adminData = adminCheck.rows[0];
           isSuperAdmin = adminData.is_super_admin || false;
@@ -90,6 +91,9 @@ router.get('/', authenticateToken, async (req, res) => {
             [adminData.id]
           );
           hasPermissions = permsCheck.rows.length > 0;
+          console.log('[/api/me] Result: is_super_admin=', isSuperAdmin, ', hasPermissions=', hasPermissions);
+        } else {
+          console.log('[/api/me] No admin entry found in admins table for', user.email);
         }
       }
 

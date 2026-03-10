@@ -16,6 +16,9 @@ export default function Navbar() {
   // Registry Admin: admin with no super admin status and no permissions
   const isRegistryAdmin = user?.isAdmin && !user?.is_super_admin && !user?.hasPermissions;
 
+  // Debug: log the values to see what's happening
+  console.log('[Navbar] user:', { isAdmin: user?.isAdmin, is_super_admin: user?.is_super_admin, hasPermissions: user?.hasPermissions, isRegistryAdmin });
+
   const [eventsDropdownOpen, setEventsDropdownOpen] = useState(false);
   const [communityDropdownOpen, setCommunityDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
