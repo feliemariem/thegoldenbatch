@@ -491,9 +491,10 @@ export default function BatchRep() {
                     >
                       📄 See Official Letter →
                     </a>
-                    <span className="batchrep-overview-deadline">
-                      Deadline: TBD · 11:59 PM PHT
-                    </span>
+                  </div>
+
+                  <div className="batchrep-deadline-notice">
+                    Deadline: <strong>March 14, 2026 · closes 11:59 PM PHT</strong>. If no other nominations are raised by this date and the majority confirms, both nominees will be confirmed for their respective positions.
                   </div>
                 </div>
               </div>
@@ -518,7 +519,9 @@ export default function BatchRep() {
                 </div>
                 <div className="batchrep-nominee-body">
                   <div className="batchrep-nominee-name">Bianca Jison</div>
-                  <div className="batchrep-nominee-sub">GS 1999 · HS 2003</div>
+                  <div className="batchrep-nominee-blurb">
+                    Initiated the formation of the organizing committee in 2023 and co-led its strategic planning and operations ever since. Has been the batch's local anchor, attends local events, builds connections on the ground, and has been the direct line to the USLS Alumni Association, including attending meetings on behalf of the batch.
+                  </div>
                   <div className="batchrep-nominee-roles">
                     <div className="batchrep-nominee-role">
                       <span className="batchrep-role-badge">2026–2027</span>
@@ -527,6 +530,30 @@ export default function BatchRep() {
                     <div className="batchrep-nominee-role">
                       <span className="batchrep-role-badge">2028</span>
                       <span>President of the USLS Alumni Association Bacolod, Inc.</span>
+                    </div>
+                  </div>
+
+                  {/* Roles & Responsibilities Collapsible */}
+                  <div className={`batchrep-collapsible ${roleOpen1 ? 'open' : ''}`} style={{ marginTop: '16px', marginBottom: '8px' }}>
+                    <button className="batchrep-collapsible-trigger" onClick={() => setRoleOpen1(!roleOpen1)} style={{ padding: '12px 16px' }}>
+                      <span style={{ fontSize: '0.85rem' }}>Role & Responsibilities</span>
+                      <span className="batchrep-collapsible-arrow">▼</span>
+                    </button>
+                    <div className="batchrep-collapsible-body" style={{ fontSize: '0.85rem' }}>
+                      <ul>
+                        <li>Represents Batch 2003 on the USLS Alumni Association Board of Directors for SY 2026-2027</li>
+                        <li>Attends board meetings and alumni events in person at the Alumni Office, USLS, Bacolod City</li>
+                        <li>Acts as the official liaison between the batch and the alumni office</li>
+                        <li>Coordinates with the USLS Alumni Association on batch-related concerns and updates</li>
+                        <li>Acts on behalf of the batch in all Alumni Association matters for the stated term</li>
+                        <li>Follows the succession ladder: Representative → Vice President → Alumni Association President (2028)</li>
+                        <li>Presides over the General Alumni Homecoming as Alumni Association President in December 2028</li>
+                        <li>Represents the batch in school and community engagements as needed</li>
+                        <li>Local presence required (preferably Bacolod or nearby cities)</li>
+                      </ul>
+                      <p style={{ fontStyle: 'italic', marginTop: '12px', marginBottom: 0, color: 'var(--color-text-secondary)' }}>
+                        The Alumni Association Representative will not be starting from scratch. There is already an organizing committee in place that has been working since 2023 — fully committed and ready to support whoever takes on this role.
+                      </p>
                     </div>
                   </div>
 
@@ -639,11 +666,35 @@ export default function BatchRep() {
                 </div>
                 <div className="batchrep-nominee-body">
                   <div className="batchrep-nominee-name">Felie Magbanua</div>
-                  <div className="batchrep-nominee-sub">GS 1999 · HS 2003</div>
+                  <div className="batchrep-nominee-blurb">
+                    Co-led the strategic planning and operations of the organizing committee since 2023. Formalized the committee structure, defined roles and scopes, onboarded additional committee members, and built the platform that keeps everything organized, moving, and transparent.
+                  </div>
                   <div className="batchrep-nominee-roles">
                     <div className="batchrep-nominee-role">
                       <span className="batchrep-role-badge">2026–2028</span>
                       <span>Batch 2003 Representative</span>
+                    </div>
+                  </div>
+
+                  {/* Roles & Responsibilities Collapsible */}
+                  <div className={`batchrep-collapsible ${roleOpen2 ? 'open' : ''}`} style={{ marginTop: '16px', marginBottom: '8px' }}>
+                    <button className="batchrep-collapsible-trigger" onClick={() => setRoleOpen2(!roleOpen2)} style={{ padding: '12px 16px' }}>
+                      <span style={{ fontSize: '0.85rem' }}>Role & Responsibilities</span>
+                      <span className="batchrep-collapsible-arrow">▼</span>
+                    </button>
+                    <div className="batchrep-collapsible-body" style={{ fontSize: '0.85rem' }}>
+                      <ul>
+                        <li>Leads Batch 2003 as its official Batch President</li>
+                        <li>Drives batch engagement, participation, and fundraising toward the 25th Jubilee</li>
+                        <li>Coordinates the organizing committee and all sub-committees through to the homecoming</li>
+                        <li>Primary point of contact for batchmates on homecoming-related matters</li>
+                        <li>Works closely with the Alumni Association Representative on matters requiring both roles</li>
+                        <li>Helps drive participation, fundraising, and engagement among batchmates in the lead-up to 2028</li>
+                        <li>Remote participation accepted — no Bacolod presence required</li>
+                      </ul>
+                      <p style={{ fontStyle: 'italic', marginTop: '12px', marginBottom: 0, color: 'var(--color-text-secondary)' }}>
+                        The Batch Representative will not be starting from scratch. There is already an organizing committee in place that has been working since 2023 — fully committed and ready to support whoever takes on this role.
+                      </p>
                     </div>
                   </div>
 

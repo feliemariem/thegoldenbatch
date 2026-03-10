@@ -341,6 +341,14 @@
   margin-bottom: 20px;
 }
 
+.batchrep-nominee-blurb {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: 16px;
+  font-style: italic;
+}
+
 .batchrep-nominee-roles {
   display: flex;
   flex-direction: column;
@@ -1256,10 +1264,43 @@
 }
 
 .batchrep-overview-steps {
-  padding-left: 20px;
+  list-style: none;
+  padding-left: 0;
   margin: 0;
   font-size: 0.9rem;
-  line-height: 1.8;
+  line-height: 1.6;
+  counter-reset: step-counter;
+}
+
+.batchrep-overview-steps li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+  counter-increment: step-counter;
+}
+
+.batchrep-overview-steps li:last-child {
+  margin-bottom: 0;
+}
+
+.batchrep-overview-steps li::before {
+  content: counter(step-counter);
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  background: var(--color-hover);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+[data-theme="light"] .batchrep-overview-steps li::before {
+  background: #006633;
 }
 
 .batchrep-overview-footer {
@@ -1283,6 +1324,30 @@
 .batchrep-overview-deadline {
   font-size: 0.85rem;
   color: var(--color-status-warning);
+}
+
+.batchrep-deadline-notice {
+  background: rgba(255, 183, 77, 0.15);
+  border: 1px solid rgba(255, 183, 77, 0.3);
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 20px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--color-text-primary);
+}
+
+.batchrep-deadline-notice strong {
+  color: var(--color-status-warning);
+}
+
+[data-theme="light"] .batchrep-deadline-notice {
+  background: rgba(255, 152, 0, 0.1);
+  border-color: rgba(255, 152, 0, 0.3);
+}
+
+[data-theme="light"] .batchrep-deadline-notice strong {
+  color: #e65100;
 }
 
 /* Position form section divider */
