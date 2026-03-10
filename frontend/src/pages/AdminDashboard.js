@@ -705,48 +705,25 @@ export default function AdminDashboard() {
                             <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--color-text-secondary)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                               AA Rep
                             </div>
-                            <div style={{ display: 'flex', gap: '12px' }}>
-                              <div style={{ flex: 1 }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                                  <span style={{ fontSize: '0.85rem', color: 'var(--color-text-primary)' }}>Yes</span>
-                                  <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
-                                    {batchRepResults.willingnessPos1Yes}
-                                  </span>
-                                </div>
-                                <div style={{
-                                  height: '6px',
-                                  background: 'rgba(255, 255, 255, 0.1)',
-                                  borderRadius: '3px',
-                                  overflow: 'hidden'
-                                }}>
-                                  <div style={{
-                                    height: '100%',
-                                    width: batchRepResults.willingnessTotal > 0 ? `${(batchRepResults.willingnessPos1Yes / batchRepResults.willingnessTotal) * 100}%` : '0%',
-                                    background: '#006633',
-                                    borderRadius: '3px'
-                                  }} />
-                                </div>
+                            <div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                                <span style={{ fontSize: '0.85rem', color: 'var(--color-text-primary)' }}>Yes</span>
+                                <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
+                                  {batchRepResults.willingnessPos1Yes}
+                                </span>
                               </div>
-                              <div style={{ flex: 1 }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                                  <span style={{ fontSize: '0.85rem', color: 'var(--color-text-primary)' }}>No</span>
-                                  <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
-                                    {batchRepResults.willingnessPos1No}
-                                  </span>
-                                </div>
+                              <div style={{
+                                height: '6px',
+                                background: 'rgba(255, 255, 255, 0.1)',
+                                borderRadius: '3px',
+                                overflow: 'hidden'
+                              }}>
                                 <div style={{
-                                  height: '6px',
-                                  background: 'rgba(255, 255, 255, 0.1)',
-                                  borderRadius: '3px',
-                                  overflow: 'hidden'
-                                }}>
-                                  <div style={{
-                                    height: '100%',
-                                    width: batchRepResults.willingnessTotal > 0 ? `${(batchRepResults.willingnessPos1No / batchRepResults.willingnessTotal) * 100}%` : '0%',
-                                    background: 'rgba(255, 255, 255, 0.3)',
-                                    borderRadius: '3px'
-                                  }} />
-                                </div>
+                                  height: '100%',
+                                  width: batchRepResults.willingnessTotal > 0 ? `${(batchRepResults.willingnessPos1Yes / batchRepResults.willingnessTotal) * 100}%` : '0%',
+                                  background: '#006633',
+                                  borderRadius: '3px'
+                                }} />
                               </div>
                             </div>
                           </div>
@@ -756,48 +733,25 @@ export default function AdminDashboard() {
                             <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--color-text-secondary)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                               Batch Rep
                             </div>
-                            <div style={{ display: 'flex', gap: '12px' }}>
-                              <div style={{ flex: 1 }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                                  <span style={{ fontSize: '0.85rem', color: 'var(--color-text-primary)' }}>Yes</span>
-                                  <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
-                                    {batchRepResults.willingnessPos2Yes}
-                                  </span>
-                                </div>
-                                <div style={{
-                                  height: '6px',
-                                  background: 'rgba(255, 255, 255, 0.1)',
-                                  borderRadius: '3px',
-                                  overflow: 'hidden'
-                                }}>
-                                  <div style={{
-                                    height: '100%',
-                                    width: batchRepResults.willingnessTotal > 0 ? `${(batchRepResults.willingnessPos2Yes / batchRepResults.willingnessTotal) * 100}%` : '0%',
-                                    background: '#006633',
-                                    borderRadius: '3px'
-                                  }} />
-                                </div>
+                            <div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                                <span style={{ fontSize: '0.85rem', color: 'var(--color-text-primary)' }}>Yes</span>
+                                <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
+                                  {batchRepResults.willingnessPos2Yes}
+                                </span>
                               </div>
-                              <div style={{ flex: 1 }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                                  <span style={{ fontSize: '0.85rem', color: 'var(--color-text-primary)' }}>No</span>
-                                  <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
-                                    {batchRepResults.willingnessPos2No}
-                                  </span>
-                                </div>
+                              <div style={{
+                                height: '6px',
+                                background: 'rgba(255, 255, 255, 0.1)',
+                                borderRadius: '3px',
+                                overflow: 'hidden'
+                              }}>
                                 <div style={{
-                                  height: '6px',
-                                  background: 'rgba(255, 255, 255, 0.1)',
-                                  borderRadius: '3px',
-                                  overflow: 'hidden'
-                                }}>
-                                  <div style={{
-                                    height: '100%',
-                                    width: batchRepResults.willingnessTotal > 0 ? `${(batchRepResults.willingnessPos2No / batchRepResults.willingnessTotal) * 100}%` : '0%',
-                                    background: 'rgba(255, 255, 255, 0.3)',
-                                    borderRadius: '3px'
-                                  }} />
-                                </div>
+                                  height: '100%',
+                                  width: batchRepResults.willingnessTotal > 0 ? `${(batchRepResults.willingnessPos2Yes / batchRepResults.willingnessTotal) * 100}%` : '0%',
+                                  background: '#006633',
+                                  borderRadius: '3px'
+                                }} />
                               </div>
                             </div>
                           </div>
