@@ -646,7 +646,7 @@ export default function MasterListTab({
                         <td>{entry.current_name || '-'}</td>
                         <td>
                           <span style={{ whiteSpace: 'nowrap' }} className={`rsvp-badge ${entry.status === 'Registered' ? 'going' : entry.status === 'Pending' ? 'maybe' : entry.status === 'In Memoriam' ? 'memoriam' : entry.status === 'Unreachable' ? 'pending' : 'pending'}`}>
-                            {entry.status === 'In Memoriam' ? 'IN MEMORIAM' : entry.status === 'Unreachable' ? 'UNREACHABLE' : entry.status}
+                            {entry.status === 'In Memoriam' ? 'IN MEMORIAM' : entry.status === 'Unreachable' ? 'UNREACHABLE' : entry.status === 'Not Invited' ? 'NOT REGISTERED' : entry.status}
                           </span>
                         </td>
                         <td>
