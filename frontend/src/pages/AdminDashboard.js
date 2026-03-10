@@ -406,18 +406,22 @@ export default function AdminDashboard() {
                 <div className="stat-number">{pendingCount}</div>
                 <div className="stat-label">Pending</div>
               </div>
-              <div className="stat-card going">
-                <div className="stat-number">{registeredStats.going || 0}</div>
-                <div className="stat-label">Going</div>
-              </div>
-              <div className="stat-card maybe">
-                <div className="stat-number">{registeredStats.maybe || 0}</div>
-                <div className="stat-label">Maybe</div>
-              </div>
-              <div className="stat-card not-going">
-                <div className="stat-number">{registeredStats.not_going || 0}</div>
-                <div className="stat-label">Not Going</div>
-              </div>
+              {!isRegistryAdmin && (
+                <>
+                  <div className="stat-card going">
+                    <div className="stat-number">{registeredStats.going || 0}</div>
+                    <div className="stat-label">Going</div>
+                  </div>
+                  <div className="stat-card maybe">
+                    <div className="stat-number">{registeredStats.maybe || 0}</div>
+                    <div className="stat-label">Maybe</div>
+                  </div>
+                  <div className="stat-card not-going">
+                    <div className="stat-number">{registeredStats.not_going || 0}</div>
+                    <div className="stat-label">Not Going</div>
+                  </div>
+                </>
+              )}
             </div>
 
             {/* Percentage Stats */}
@@ -429,14 +433,16 @@ export default function AdminDashboard() {
                   <span className="percentage-item">{inviteStats.total ? Math.round(((pendingCount || 0) / inviteStats.total) * 100) : 0}% Pending</span>
                 </div>
               </div>
-              <div className="percentage-box">
-                <span className="percentage-label">Registered:</span>
-                <div className="percentage-grid">
-                  <span className="percentage-item going">{registeredStats.total ? Math.round(((registeredStats.going || 0) / registeredStats.total) * 100) : 0}% Going</span>
-                  <span className="percentage-item maybe">{registeredStats.total ? Math.round(((registeredStats.maybe || 0) / registeredStats.total) * 100) : 0}% Maybe</span>
-                  <span className="percentage-item not-going full-width">{registeredStats.total ? Math.round(((registeredStats.not_going || 0) / registeredStats.total) * 100) : 0}% Not Going</span>
+              {!isRegistryAdmin && (
+                <div className="percentage-box">
+                  <span className="percentage-label">Registered:</span>
+                  <div className="percentage-grid">
+                    <span className="percentage-item going">{registeredStats.total ? Math.round(((registeredStats.going || 0) / registeredStats.total) * 100) : 0}% Going</span>
+                    <span className="percentage-item maybe">{registeredStats.total ? Math.round(((registeredStats.maybe || 0) / registeredStats.total) * 100) : 0}% Maybe</span>
+                    <span className="percentage-item not-going full-width">{registeredStats.total ? Math.round(((registeredStats.not_going || 0) / registeredStats.total) * 100) : 0}% Not Going</span>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             {/* Batch Rep Results - System Admin Only */}
