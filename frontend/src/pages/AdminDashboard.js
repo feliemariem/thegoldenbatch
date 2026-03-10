@@ -802,14 +802,12 @@ export default function AdminDashboard() {
               >
                 Invites ({inviteStats.total})
               </button>
-              {!isRegistryAdmin && (
-                <button
-                  className={`tab ${activeTab === 'registered' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('registered')}
-                >
-                  Registered ({registeredStats.total || 0})
-                </button>
-              )}
+              <button
+                className={`tab ${activeTab === 'registered' ? 'active' : ''}`}
+                onClick={() => setActiveTab('registered')}
+              >
+                Registered ({registeredStats.total || 0})
+              </button>
               <button
                 className={`tab ${activeTab === 'masterlist' ? 'active' : ''}`}
                 onClick={() => setActiveTab('masterlist')}
@@ -839,7 +837,7 @@ export default function AdminDashboard() {
             )}
 
             {/* Registered Tab */}
-            {!isRegistryAdmin && activeTab === 'registered' && (
+            {activeTab === 'registered' && (
               <RegisteredTab
                 isSuperAdmin={isSuperAdmin}
                 isRegistryAdmin={isRegistryAdmin}
