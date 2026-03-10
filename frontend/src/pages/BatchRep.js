@@ -524,12 +524,16 @@ export default function BatchRep() {
                   </div>
                   <div className="batchrep-nominee-roles">
                     <div className="batchrep-nominee-role">
-                      <span className="batchrep-role-badge">2026–2027</span>
-                      <span>Batch 2003 Representative to the USLS Alumni Association Board</span>
+                      <span className="batchrep-role-badge">SY 2026–2027</span>
+                      <span>Batch 2003 Rep to Alumni Board</span>
+                    </div>
+                    <div className="batchrep-nominee-role">
+                      <span className="batchrep-role-badge">2027</span>
+                      <span>Alumni Association VP</span>
                     </div>
                     <div className="batchrep-nominee-role">
                       <span className="batchrep-role-badge">2028</span>
-                      <span>President of the USLS Alumni Association Bacolod, Inc.</span>
+                      <span>Alumni Association President</span>
                     </div>
                   </div>
 

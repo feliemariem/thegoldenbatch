@@ -1728,7 +1728,7 @@ END:VCALENDAR`;
                     <div className="batchrep-modal-nominee">
                       <div className="batchrep-modal-nominee-avatar initials">BJ</div>
                       <div className="batchrep-modal-nominee-info">
-                        <div className="batchrep-modal-nominee-label">Nominee · Alumni Association Representative</div>
+                        <div className="batchrep-modal-nominee-label">Nominee · Alumni Assoc. Representative</div>
                         <div className="batchrep-modal-nominee-name">Bianca Jison</div>
                       </div>
                     </div>
