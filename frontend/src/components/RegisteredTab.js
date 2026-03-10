@@ -150,44 +150,46 @@ export default function RegisteredTab({
 
   return (
     <div className="users-section" ref={registeredTableRef}>
-      {/* Grad RSVP Progress Tracker */}
-      <div className="grad-progress-tracker">
-        <div className="grad-progress-label">GRAD ATTENDANCE GOAL</div>
+      {/* Grad RSVP Progress Tracker - hidden for Registry Admins */}
+      {!isRegistryAdmin && (
+        <div className="grad-progress-tracker">
+          <div className="grad-progress-label">GRAD ATTENDANCE GOAL</div>
 
-        <div className="grad-progress-bar-labels">
-          <span>{currentPercent}%</span>
-          <span>Target: {GRAD_TARGET_PERCENT}%</span>
-        </div>
+          <div className="grad-progress-bar-labels">
+            <span>{currentPercent}%</span>
+            <span>Target: {GRAD_TARGET_PERCENT}%</span>
+          </div>
 
-        <div className="grad-progress-track">
-          <div
-            className="grad-progress-fill"
-            style={{ width: `${progressWidth}%` }}
-          />
-        </div>
+          <div className="grad-progress-track">
+            <div
+              className="grad-progress-fill"
+              style={{ width: `${progressWidth}%` }}
+            />
+          </div>
 
-        <div className="grad-progress-context">
-          {gradsGoing > 0 ? (
-            gradsGoing >= GRAD_TARGET_COUNT ? (
-              <>🎉 Target reached! {gradsGoing} grads going · avg ~₱{avgPerGrad.toLocaleString()} per grad to reach ₱{(FUNDING_TARGET / 1000000).toFixed(1)}M</>
+          <div className="grad-progress-context">
+            {gradsGoing > 0 ? (
+              gradsGoing >= GRAD_TARGET_COUNT ? (
+                <>🎉 Target reached! {gradsGoing} grads going · avg ~₱{avgPerGrad.toLocaleString()} per grad to reach ₱{(FUNDING_TARGET / 1000000).toFixed(1)}M</>
+              ) : (
+                <>{gradsGoing} grads going · {GRAD_TARGET_COUNT} needed ({GRAD_TARGET_PERCENT}% of {TOTAL_GRADS}) · avg ~₱{avgPerGrad.toLocaleString()} per grad to reach ₱{(FUNDING_TARGET / 1000000).toFixed(1)}M</>
+              )
             ) : (
-              <>{gradsGoing} grads going · {GRAD_TARGET_COUNT} needed ({GRAD_TARGET_PERCENT}% of {TOTAL_GRADS}) · avg ~₱{avgPerGrad.toLocaleString()} per grad to reach ₱{(FUNDING_TARGET / 1000000).toFixed(1)}M</>
-            )
-          ) : (
-            'No grads have RSVP\'d going yet'
+              'No grads have RSVP\'d going yet'
+            )}
+          </div>
+
+          <div className="grad-progress-caption">
+            This is a planning projection — the avg drops as more grads confirm. At {GRAD_TARGET_COUNT} grads, it's only ~₱{TARGET_AVG.toLocaleString()} each.
+          </div>
+
+          {nonGradsGoing > 0 && (
+            <div className="grad-progress-nongrads">
+              + {nonGradsGoing} non-grad{nonGradsGoing !== 1 ? 's' : ''} going
+            </div>
           )}
         </div>
-
-        <div className="grad-progress-caption">
-          This is a planning projection — the avg drops as more grads confirm. At {GRAD_TARGET_COUNT} grads, it's only ~₱{TARGET_AVG.toLocaleString()} each.
-        </div>
-
-        {nonGradsGoing > 0 && (
-          <div className="grad-progress-nongrads">
-            + {nonGradsGoing} non-grad{nonGradsGoing !== 1 ? 's' : ''} going
-          </div>
-        )}
-      </div>
+      )}
 
       <div className="section-header">
         <h3>Registered Alumni ({stats.total})</h3>
