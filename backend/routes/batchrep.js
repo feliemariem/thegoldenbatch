@@ -125,14 +125,15 @@ router.post('/willingness', authenticateToken, async (req, res) => {
     }
 
     // New format: two positions - upsert both columns in one query
+    // position1 = AA Rep, position2 = Batch Rep
     console.log('[batch-rep/willingness] New format detected, upserting both positions');
     try {
       await db.query(
-        `INSERT INTO batch_rep_willingness (user_id, willing_batch_rep, willing_aa_rep, updated_at)
+        `INSERT INTO batch_rep_willingness (user_id, willing_aa_rep, willing_batch_rep, updated_at)
          VALUES ($1, $2, $3, NOW())
          ON CONFLICT (user_id) DO UPDATE SET
-           willing_batch_rep = COALESCE($2, batch_rep_willingness.willing_batch_rep),
-           willing_aa_rep = COALESCE($3, batch_rep_willingness.willing_aa_rep),
+           willing_aa_rep = COALESCE($2, batch_rep_willingness.willing_aa_rep),
+           willing_batch_rep = COALESCE($3, batch_rep_willingness.willing_batch_rep),
            updated_at = NOW()`,
         [userId, position1, position2]
       );
