@@ -682,7 +682,7 @@ export default function BatchRep() {
                   <div style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--color-primary)', opacity: 0.8, marginBottom: '4px' }}>COMMITTEE NOMINEE</div>
                   <div className="batchrep-nominee-name">Felie Magbanua</div>
                   <div className="batchrep-nominee-blurb">
-                    Co-led the strategic planning and operations of the organizing committee since 2023. Formalized the committee structure, defined roles and scopes, onboarded additional committee members, and built the platform that keeps everything organized, moving, and transparent.
+                    Co-led the strategic planning and operations of the organizing committee since 2023. Formalized the committee structure, defined roles and scopes, onboarded additional members, and built the platform that keeps the batch's work organized, moving, and transparent.
                   </div>
                   <div className="batchrep-nominee-roles">
                     <div className="batchrep-nominee-role">
