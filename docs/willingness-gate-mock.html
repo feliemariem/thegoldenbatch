@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Willingness Gate Mock</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green: #006633;
+    --green-dark: #004d26;
+    --green-light: #e8f2ed;
+    --green-dim: rgba(0,102,51,0.07);
+    --green-border: rgba(0,102,51,0.2);
+    --text: #1a2e22;
+    --muted: #5a7262;
+    --border: rgba(0,102,51,0.12);
+    --card-bg: #ffffff;
+    --inner-bg: #f4f9f6;
+    --page-bg: #f0f7f3;
+  }
+
+  body {
+    font-family: 'Lato', sans-serif;
+    background: var(--page-bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 40px 16px 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .mock-label {
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--green); opacity: 0.5; align-self: flex-start; max-width: 520px; width: 100%;
+  }
+
+  .wrapper {
+    width: 100%; max-width: 520px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,102,51,0.07);
+  }
+
+  .card-header {
+    padding: 20px 24px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .eyebrow {
+    font-size: 10px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--green); opacity: 0.7;
+    margin-bottom: 6px;
+  }
+
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px; color: var(--green); line-height: 1.3;
+  }
+
+  .card-body {
+    padding: 20px 24px;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+
+  .subtitle {
+    font-size: 13px; color: var(--muted); line-height: 1.7;
+  }
+
+  /* Position block */
+  .position-block {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .position-top {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px;
+    background: var(--green-dim);
+    gap: 12px;
+  }
+
+  .position-info { flex: 1; }
+
+  .position-num {
+    font-size: 9px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--green); opacity: 0.7;
+    margin-bottom: 2px;
+  }
+
+  .position-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px; color: var(--green);
+  }
+
+  .roles-toggle {
+    display: flex; align-items: center; gap: 5px;
+    background: none; border: 1px solid var(--green-border);
+    border-radius: 20px; padding: 4px 10px;
+    font-family: 'Lato', sans-serif; font-size: 11px;
+    font-weight: 700; color: var(--green); cursor: pointer;
+    white-space: nowrap; flex-shrink: 0;
+    transition: background 0.15s;
+  }
+  .roles-toggle:hover { background: var(--green-dim); }
+  .roles-toggle .arrow { font-size: 8px; transition: transform 0.2s; }
+  .roles-toggle.open .arrow { transform: rotate(180deg); }
+
+  .roles-content {
+    display: none;
+    padding: 0 16px 12px;
+    border-top: 1px solid var(--border);
+    background: var(--inner-bg);
+  }
+  .roles-content.open { display: block; }
+  .roles-content ul {
+    list-style: none; padding: 0; margin: 10px 0 0;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .roles-content ul li {
+    font-size: 12px; color: var(--muted); line-height: 1.5;
+    padding-left: 14px; position: relative;
+  }
+  .roles-content ul li::before {
+    content: '·'; position: absolute; left: 4px;
+    color: var(--green); opacity: 0.6;
+  }
+
+  /* Willing question */
+  .willing-question {
+    padding: 14px 16px 16px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+
+  .willing-label {
+    font-size: 13px; font-weight: 700; color: var(--text);
+  }
+
+  .willing-btns {
+    display: flex; gap: 8px;
+  }
+
+  .willing-btn {
+    flex: 1; padding: 10px 12px;
+    border-radius: 8px; font-family: 'Lato', sans-serif;
+    font-size: 13px; font-weight: 700; cursor: pointer;
+    border: 1.5px solid var(--border);
+    background: var(--inner-bg); color: var(--muted);
+    transition: all 0.15s;
+  }
+  .willing-btn:hover { border-color: var(--green-border); color: var(--text); }
+  .willing-btn.yes.active { background: var(--green); color: #fff; border-color: var(--green); }
+  .willing-btn.no.active { background: var(--inner-bg); color: var(--text); border-color: var(--green-border); }
+
+  .hint {
+    font-size: 11px; color: var(--muted); text-align: center;
+  }
+
+  .btn-save {
+    width: 100%; background: var(--green); color: #fff;
+    border: none; border-radius: 8px; padding: 13px;
+    font-family: 'Lato', sans-serif; font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: background 0.2s;
+    opacity: 0.4; pointer-events: none;
+  }
+  .btn-save.active { opacity: 1; pointer-events: auto; }
+  .btn-save:hover { background: var(--green-dark); }
+</style>
+</head>
+<body>
+
+<p class="mock-label">Willingness Gate · Cleaner Layout · Mock</p>
+
+<div class="wrapper">
+  <div class="card-header">
+    <div class="eyebrow">Batch 2003 · Official Positions</div>
+    <h2 class="card-title">One quick question before you proceed</h2>
+  </div>
+
+  <div class="card-body">
+    <p class="subtitle">If nominated for either position, would you be willing to serve?</p>
+
+    <!-- Position 1 -->
+    <div class="position-block">
+      <div class="position-top">
+        <div class="position-info">
+          <div class="position-num">Position 1</div>
+          <div class="position-title">Alumni Association Representative</div>
+        </div>
+        <button class="roles-toggle" onclick="toggleRoles(this)">
+          Roles <span class="arrow">▼</span>
+        </button>
+      </div>
+      <div class="roles-content">
+        <ul>
+          <li>Serves as the batch's official representative within the Alumni Association structure</li>
+          <li>Attends alumni association meetings — local presence required (preferably Bacolod or nearby cities)</li>
+          <li>Follows the alumni leadership ladder: AA Rep → VP → Alumni Association President (during the Jubilee)</li>
+        </ul>
+      </div>
+      <div class="willing-question">
+        <div class="willing-label">Are you willing to serve if nominated?</div>
+        <div class="willing-btns">
+          <button class="willing-btn yes" onclick="selectWilling(this, 'p1', true)">Yes, I'm willing</button>
+          <button class="willing-btn no" onclick="selectWilling(this, 'p1', false)">Not at this time</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Position 2 -->
+    <div class="position-block">
+      <div class="position-top">
+        <div class="position-info">
+          <div class="position-num">Position 2</div>
+          <div class="position-title">Batch Representative</div>
+        </div>
+        <button class="roles-toggle" onclick="toggleRoles(this)">
+          Roles <span class="arrow">▼</span>
+        </button>
+      </div>
+      <div class="roles-content">
+        <ul>
+          <li>Serves as the primary point of contact between the batch and the organizing committee</li>
+          <li>Leads batch coordination and engagement leading up to the Jubilee</li>
+          <li>Remote participation accepted — no Bacolod presence required</li>
+        </ul>
+      </div>
+      <div class="willing-question">
+        <div class="willing-label">Are you willing to serve if nominated?</div>
+        <div class="willing-btns">
+          <button class="willing-btn yes" onclick="selectWilling(this, 'p2', true)">Yes, I'm willing</button>
+          <button class="willing-btn no" onclick="selectWilling(this, 'p2', false)">Not at this time</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="hint">You can change this anytime before the deadline.</p>
+
+    <button class="btn-save" id="save-btn">Save & Continue →</button>
+  </div>
+</div>
+
+<script>
+  var answers = {};
+
+  function toggleRoles(btn) {
+    const content = btn.closest('.position-top').nextElementSibling;
+    const isOpen = content.classList.contains('open');
+    content.classList.toggle('open');
+    btn.classList.toggle('open');
+  }
+
+  function selectWilling(btn, pos, willing) {
+    const btns = btn.closest('.willing-btns').querySelectorAll('.willing-btn');
+    btns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    answers[pos] = willing;
+    if (answers['p1'] !== undefined && answers['p2'] !== undefined) {
+      document.getElementById('save-btn').classList.add('active');
+    }
+  }
+</script>
+</body>
+</html>

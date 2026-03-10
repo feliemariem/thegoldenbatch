@@ -50,6 +50,7 @@ export default function BatchRep() {
   const { user } = useAuth();
 
   const [loading, setLoading] = useState(true);
+  const [willingnessLoading, setWillingnessLoading] = useState(true);
   const [status, setStatus] = useState(null);
   const [hasSubmittedPos1, setHasSubmittedPos1] = useState(false);
   const [hasSubmittedPos2, setHasSubmittedPos2] = useState(false);
@@ -59,6 +60,8 @@ export default function BatchRep() {
   const [showWillingnessModal, setShowWillingnessModal] = useState(false);
   const [willingnessPos1, setWillingnessPos1] = useState(null); // null | true | false
   const [willingnessPos2, setWillingnessPos2] = useState(null);
+  const [rolesOpen1, setRolesOpen1] = useState(false);
+  const [rolesOpen2, setRolesOpen2] = useState(false);
   const [willingnessSubmitting, setWillingnessSubmitting] = useState(false);
   const [roleOpen1, setRoleOpen1] = useState(false);
   const [roleOpen2, setRoleOpen2] = useState(false);
@@ -113,6 +116,7 @@ export default function BatchRep() {
         console.error('Error fetching batch-rep status:', err);
       } finally {
         setLoading(false);
+        setWillingnessLoading(false);
       }
     };
 
@@ -120,6 +124,7 @@ export default function BatchRep() {
       fetchStatus();
     } else {
       setLoading(false);
+      setWillingnessLoading(false);
     }
   }, [user]);
 
@@ -842,113 +847,105 @@ export default function BatchRep() {
           )}
 
           {/* Willingness Gate - show for grads who haven't answered yet */}
-          {isGrad && !hasAnsweredWillingness && (
-            <div className="batchrep-response-card" style={{ marginTop: '24px' }}>
-              <div className="batchrep-response-header">
-                <h3>One quick question before you proceed</h3>
+          {isGrad && !willingnessLoading && !hasAnsweredWillingness && (
+            <div className="batchrep-willingness-gate">
+              <div className="batchrep-willingness-gate-header">
+                <div className="batchrep-willingness-gate-eyebrow">Batch 2003 · Official Positions</div>
+                <h2 className="batchrep-willingness-gate-title">One quick question before you proceed</h2>
               </div>
-              <div className="batchrep-response-body">
-                <p style={{ marginBottom: '24px' }}>
-                  If nominated for either of the following positions, would you be willing to serve?
+              <div className="batchrep-willingness-gate-body">
+                <p className="batchrep-willingness-gate-subtitle">
+                  If nominated for either position, would you be willing to serve?
                 </p>
 
                 {/* Position 1 Block */}
-                <div className="batchrep-willingness-block">
-                  <div className="batchrep-willingness-position-label">POSITION 1</div>
-                  <div className="batchrep-willingness-position-title">Alumni Association Representative</div>
-
-                  <div className={`batchrep-collapsible ${roleOpen1 ? 'open' : ''}`} style={{ marginBottom: '16px' }}>
-                    <button className="batchrep-collapsible-trigger" onClick={() => setRoleOpen1(!roleOpen1)} style={{ padding: '12px 16px' }}>
-                      <span style={{ fontSize: '0.85rem' }}>Role & Responsibilities</span>
-                      <span className="batchrep-collapsible-arrow">▼</span>
-                    </button>
-                    <div className="batchrep-collapsible-body" style={{ fontSize: '0.85rem' }}>
-                      <ul>
-                        <li>Serves as the batch's official representative within the Alumni Association structure</li>
-                        <li>Attends alumni association meetings and represents the batch in alumni matters. Local presence required (preferably Bacolod or nearby cities)</li>
-                        <li>Coordinates directly with the Alumni Association board and alumni office</li>
-                        <li>Communicates alumni-level updates and requirements to the Batch Rep and organizing committee</li>
-                        <li>Represents the batch in official alumni events, ceremonies, and institutional activities</li>
-                        <li>Follows the alumni leadership ladder: AA Rep → Vice President → Alumni Association President (during the Jubilee)</li>
-                        <li>Helps ensure the batch fulfills its responsibilities as the Jubilee host batch</li>
-                      </ul>
-                      <p style={{ fontStyle: 'italic', marginTop: '12px', marginBottom: 0, color: 'var(--color-text-secondary)' }}>
-                        The Alumni Association Representative will not be starting from scratch. There is already an organizing committee in place that has been working since 2023, fully committed and ready to support whoever takes on this role.
-                      </p>
+                <div className="batchrep-position-block">
+                  <div className="batchrep-position-top">
+                    <div className="batchrep-position-info">
+                      <div className="batchrep-position-num">Position 1</div>
+                      <div className="batchrep-position-title">Alumni Association Representative</div>
                     </div>
+                    <button
+                      className={`batchrep-roles-toggle ${rolesOpen1 ? 'open' : ''}`}
+                      onClick={() => setRolesOpen1(!rolesOpen1)}
+                    >
+                      Roles <span className="arrow">▼</span>
+                    </button>
                   </div>
-
-                  <div className="batchrep-willingness-buttons">
-                    <button
-                      className={willingnessPos1 === true ? 'btn-primary' : 'btn-secondary'}
-                      onClick={() => setWillingnessPos1(true)}
-                    >
-                      Yes, I'm willing
-                    </button>
-                    <button
-                      className={willingnessPos1 === false ? 'btn-primary' : 'btn-secondary'}
-                      onClick={() => setWillingnessPos1(false)}
-                    >
-                      Not at this time
-                    </button>
+                  <div className={`batchrep-roles-content ${rolesOpen1 ? 'open' : ''}`}>
+                    <ul>
+                      <li>Serves as the batch's official representative within the Alumni Association structure</li>
+                      <li>Attends alumni association meetings — local presence required (preferably Bacolod or nearby cities)</li>
+                      <li>Follows the alumni leadership ladder: AA Rep → VP → Alumni Association President (during the Jubilee)</li>
+                    </ul>
+                  </div>
+                  <div className="batchrep-willing-question">
+                    <div className="batchrep-willing-label">Are you willing to serve if nominated?</div>
+                    <div className="batchrep-willing-btns">
+                      <button
+                        className={`batchrep-willing-btn yes ${willingnessPos1 === true ? 'active' : ''}`}
+                        onClick={() => setWillingnessPos1(true)}
+                      >
+                        Yes, I'm willing
+                      </button>
+                      <button
+                        className={`batchrep-willing-btn no ${willingnessPos1 === false ? 'active' : ''}`}
+                        onClick={() => setWillingnessPos1(false)}
+                      >
+                        Not at this time
+                      </button>
+                    </div>
                   </div>
                 </div>
 
                 {/* Position 2 Block */}
-                <div className="batchrep-willingness-block">
-                  <div className="batchrep-willingness-position-label">POSITION 2</div>
-                  <div className="batchrep-willingness-position-title">Batch Representative</div>
-
-                  <div className={`batchrep-collapsible ${roleOpen2 ? 'open' : ''}`} style={{ marginBottom: '16px' }}>
-                    <button className="batchrep-collapsible-trigger" onClick={() => setRoleOpen2(!roleOpen2)} style={{ padding: '12px 16px' }}>
-                      <span style={{ fontSize: '0.85rem' }}>Role & Responsibilities</span>
-                      <span className="batchrep-collapsible-arrow">▼</span>
-                    </button>
-                    <div className="batchrep-collapsible-body" style={{ fontSize: '0.85rem' }}>
-                      <ul>
-                        <li>Represents Batch 2003 to the batch itself and serves as the main point of contact for batchmates</li>
-                        <li>Leads batch coordination and engagement leading up to the Jubilee and other batch initiatives</li>
-                        <li>Works closely with the organizing committee to plan activities, gatherings, and participation</li>
-                        <li>Communicates updates, decisions, and announcements to the batch</li>
-                        <li>Mobilizes batch participation in alumni events, registration drives, and batch projects</li>
-                        <li>Coordinates with the AA Rep when alumni matters affect the batch</li>
-                        <li>Helps maintain unity and participation within the batch community</li>
-                        <li>Remote participation accepted. No Bacolod presence required</li>
-                      </ul>
-                      <p style={{ fontStyle: 'italic', marginTop: '12px', marginBottom: 0, color: 'var(--color-text-secondary)' }}>
-                        The Batch Representative will not be starting from scratch. There is already an organizing committee in place that has been working since 2023, fully committed and ready to support whoever takes on this role.
-                      </p>
+                <div className="batchrep-position-block">
+                  <div className="batchrep-position-top">
+                    <div className="batchrep-position-info">
+                      <div className="batchrep-position-num">Position 2</div>
+                      <div className="batchrep-position-title">Batch Representative</div>
                     </div>
+                    <button
+                      className={`batchrep-roles-toggle ${rolesOpen2 ? 'open' : ''}`}
+                      onClick={() => setRolesOpen2(!rolesOpen2)}
+                    >
+                      Roles <span className="arrow">▼</span>
+                    </button>
                   </div>
-
-                  <div className="batchrep-willingness-buttons">
-                    <button
-                      className={willingnessPos2 === true ? 'btn-primary' : 'btn-secondary'}
-                      onClick={() => setWillingnessPos2(true)}
-                    >
-                      Yes, I'm willing
-                    </button>
-                    <button
-                      className={willingnessPos2 === false ? 'btn-primary' : 'btn-secondary'}
-                      onClick={() => setWillingnessPos2(false)}
-                    >
-                      Not at this time
-                    </button>
+                  <div className={`batchrep-roles-content ${rolesOpen2 ? 'open' : ''}`}>
+                    <ul>
+                      <li>Serves as the primary point of contact between the batch and the organizing committee</li>
+                      <li>Leads batch coordination and engagement leading up to the Jubilee</li>
+                      <li>Remote participation accepted — no Bacolod presence required</li>
+                    </ul>
+                  </div>
+                  <div className="batchrep-willing-question">
+                    <div className="batchrep-willing-label">Are you willing to serve if nominated?</div>
+                    <div className="batchrep-willing-btns">
+                      <button
+                        className={`batchrep-willing-btn yes ${willingnessPos2 === true ? 'active' : ''}`}
+                        onClick={() => setWillingnessPos2(true)}
+                      >
+                        Yes, I'm willing
+                      </button>
+                      <button
+                        className={`batchrep-willing-btn no ${willingnessPos2 === false ? 'active' : ''}`}
+                        onClick={() => setWillingnessPos2(false)}
+                      >
+                        Not at this time
+                      </button>
+                    </div>
                   </div>
                 </div>
 
-                <p className="batchrep-willingness-hint">
-                  You can change this anytime.
+                <p className="batchrep-willingness-gate-hint">
+                  You can change this anytime before the deadline.
                 </p>
 
                 <button
-                  className="btn-primary"
+                  className={`batchrep-willingness-gate-btn ${willingnessPos1 !== null && willingnessPos2 !== null ? 'active' : ''}`}
                   onClick={handleWillingnessSave}
                   disabled={willingnessPos1 === null || willingnessPos2 === null || willingnessSubmitting}
-                  style={{
-                    opacity: (willingnessPos1 === null || willingnessPos2 === null) ? 0.4 : 1,
-                    pointerEvents: (willingnessPos1 === null || willingnessPos2 === null) ? 'none' : 'auto'
-                  }}
                 >
                   {willingnessSubmitting ? 'Saving...' : 'Save & Continue →'}
                 </button>
@@ -962,112 +959,105 @@ export default function BatchRep() {
       {/* Willingness Gate Modal (for editing answers) */}
       {showWillingnessModal && (
         <div className="batchrep-modal-overlay" onClick={() => setShowWillingnessModal(false)}>
-          <div className="batchrep-modal" style={{ maxWidth: '520px' }} onClick={(e) => e.stopPropagation()}>
-            <div className="batchrep-modal-bar"></div>
-            <div className="batchrep-modal-body">
-              <div className="batchrep-modal-badge">Batch 2003 · Official Positions</div>
-              <h2 className="batchrep-modal-title">One quick question before you proceed</h2>
-              <p className="batchrep-modal-desc">
-                If nominated for either of the following positions, would you be willing to serve?
+          <div className="batchrep-willingness-gate modal" onClick={(e) => e.stopPropagation()}>
+            <div className="batchrep-willingness-gate-bar"></div>
+            <div className="batchrep-willingness-gate-header">
+              <div className="batchrep-willingness-gate-eyebrow">Batch 2003 · Official Positions</div>
+              <h2 className="batchrep-willingness-gate-title">One quick question before you proceed</h2>
+            </div>
+            <div className="batchrep-willingness-gate-body">
+              <p className="batchrep-willingness-gate-subtitle">
+                If nominated for either position, would you be willing to serve?
               </p>
 
               {/* Position 1 Block */}
-              <div className="batchrep-willingness-block modal">
-                <div className="batchrep-willingness-position-label">POSITION 1</div>
-                <div className="batchrep-willingness-position-title modal">Alumni Association Representative</div>
-
-                <div className={`batchrep-collapsible ${roleOpen1 ? 'open' : ''}`} style={{ marginBottom: '12px' }}>
-                  <button className="batchrep-collapsible-trigger" onClick={() => setRoleOpen1(!roleOpen1)} style={{ padding: '10px 14px', fontSize: '0.85rem' }}>
-                    <span>Role & Responsibilities</span>
-                    <span className="batchrep-collapsible-arrow">▼</span>
-                  </button>
-                  <div className="batchrep-collapsible-body" style={{ fontSize: '0.8rem', padding: '0 14px 14px' }}>
-                    <ul style={{ margin: 0 }}>
-                      <li>Serves as the batch's official representative within the Alumni Association structure</li>
-                      <li>Attends alumni association meetings and represents the batch in alumni matters. Local presence required (preferably Bacolod or nearby cities)</li>
-                      <li>Coordinates directly with the Alumni Association board and alumni office</li>
-                      <li>Communicates alumni-level updates and requirements to the Batch Rep and organizing committee</li>
-                      <li>Represents the batch in official alumni events, ceremonies, and institutional activities</li>
-                      <li>Follows the alumni leadership ladder: AA Rep → Vice President → Alumni Association President (during the Jubilee)</li>
-                      <li>Helps ensure the batch fulfills its responsibilities as the Jubilee host batch</li>
-                    </ul>
-                    <p style={{ fontStyle: 'italic', marginTop: '12px', marginBottom: 0, color: 'var(--color-text-secondary)' }}>
-                      The Alumni Association Representative will not be starting from scratch. There is already an organizing committee in place that has been working since 2023, fully committed and ready to support whoever takes on this role.
-                    </p>
+              <div className="batchrep-position-block">
+                <div className="batchrep-position-top">
+                  <div className="batchrep-position-info">
+                    <div className="batchrep-position-num">Position 1</div>
+                    <div className="batchrep-position-title">Alumni Association Representative</div>
                   </div>
+                  <button
+                    className={`batchrep-roles-toggle ${rolesOpen1 ? 'open' : ''}`}
+                    onClick={() => setRolesOpen1(!rolesOpen1)}
+                  >
+                    Roles <span className="arrow">▼</span>
+                  </button>
                 </div>
-
-                <div className="batchrep-willingness-buttons modal">
-                  <button
-                    className={willingnessPos1 === true ? 'btn-primary' : 'btn-secondary'}
-                    onClick={() => setWillingnessPos1(true)}
-                  >
-                    Yes, I'm willing
-                  </button>
-                  <button
-                    className={willingnessPos1 === false ? 'btn-primary' : 'btn-secondary'}
-                    onClick={() => setWillingnessPos1(false)}
-                  >
-                    Not at this time
-                  </button>
+                <div className={`batchrep-roles-content ${rolesOpen1 ? 'open' : ''}`}>
+                  <ul>
+                    <li>Serves as the batch's official representative within the Alumni Association structure</li>
+                    <li>Attends alumni association meetings — local presence required (preferably Bacolod or nearby cities)</li>
+                    <li>Follows the alumni leadership ladder: AA Rep → VP → Alumni Association President (during the Jubilee)</li>
+                  </ul>
+                </div>
+                <div className="batchrep-willing-question">
+                  <div className="batchrep-willing-label">Are you willing to serve if nominated?</div>
+                  <div className="batchrep-willing-btns">
+                    <button
+                      className={`batchrep-willing-btn yes ${willingnessPos1 === true ? 'active' : ''}`}
+                      onClick={() => setWillingnessPos1(true)}
+                    >
+                      Yes, I'm willing
+                    </button>
+                    <button
+                      className={`batchrep-willing-btn no ${willingnessPos1 === false ? 'active' : ''}`}
+                      onClick={() => setWillingnessPos1(false)}
+                    >
+                      Not at this time
+                    </button>
+                  </div>
                 </div>
               </div>
 
               {/* Position 2 Block */}
-              <div className="batchrep-willingness-block modal">
-                <div className="batchrep-willingness-position-label">POSITION 2</div>
-                <div className="batchrep-willingness-position-title modal">Batch Representative</div>
-
-                <div className={`batchrep-collapsible ${roleOpen2 ? 'open' : ''}`} style={{ marginBottom: '12px' }}>
-                  <button className="batchrep-collapsible-trigger" onClick={() => setRoleOpen2(!roleOpen2)} style={{ padding: '10px 14px', fontSize: '0.85rem' }}>
-                    <span>Role & Responsibilities</span>
-                    <span className="batchrep-collapsible-arrow">▼</span>
-                  </button>
-                  <div className="batchrep-collapsible-body" style={{ fontSize: '0.8rem', padding: '0 14px 14px' }}>
-                    <ul style={{ margin: 0 }}>
-                      <li>Represents Batch 2003 to the batch itself and serves as the main point of contact for batchmates</li>
-                      <li>Leads batch coordination and engagement leading up to the Jubilee and other batch initiatives</li>
-                      <li>Works closely with the organizing committee to plan activities, gatherings, and participation</li>
-                      <li>Communicates updates, decisions, and announcements to the batch</li>
-                      <li>Mobilizes batch participation in alumni events, registration drives, and batch projects</li>
-                      <li>Coordinates with the AA Rep when alumni matters affect the batch</li>
-                      <li>Helps maintain unity and participation within the batch community</li>
-                      <li>Remote participation accepted. No Bacolod presence required</li>
-                    </ul>
-                    <p style={{ fontStyle: 'italic', marginTop: '12px', marginBottom: 0, color: 'var(--color-text-secondary)' }}>
-                      The Batch Representative will not be starting from scratch. There is already an organizing committee in place that has been working since 2023, fully committed and ready to support whoever takes on this role.
-                    </p>
+              <div className="batchrep-position-block">
+                <div className="batchrep-position-top">
+                  <div className="batchrep-position-info">
+                    <div className="batchrep-position-num">Position 2</div>
+                    <div className="batchrep-position-title">Batch Representative</div>
                   </div>
+                  <button
+                    className={`batchrep-roles-toggle ${rolesOpen2 ? 'open' : ''}`}
+                    onClick={() => setRolesOpen2(!rolesOpen2)}
+                  >
+                    Roles <span className="arrow">▼</span>
+                  </button>
                 </div>
-
-                <div className="batchrep-willingness-buttons modal">
-                  <button
-                    className={willingnessPos2 === true ? 'btn-primary' : 'btn-secondary'}
-                    onClick={() => setWillingnessPos2(true)}
-                  >
-                    Yes, I'm willing
-                  </button>
-                  <button
-                    className={willingnessPos2 === false ? 'btn-primary' : 'btn-secondary'}
-                    onClick={() => setWillingnessPos2(false)}
-                  >
-                    Not at this time
-                  </button>
+                <div className={`batchrep-roles-content ${rolesOpen2 ? 'open' : ''}`}>
+                  <ul>
+                    <li>Serves as the primary point of contact between the batch and the organizing committee</li>
+                    <li>Leads batch coordination and engagement leading up to the Jubilee</li>
+                    <li>Remote participation accepted — no Bacolod presence required</li>
+                  </ul>
+                </div>
+                <div className="batchrep-willing-question">
+                  <div className="batchrep-willing-label">Are you willing to serve if nominated?</div>
+                  <div className="batchrep-willing-btns">
+                    <button
+                      className={`batchrep-willing-btn yes ${willingnessPos2 === true ? 'active' : ''}`}
+                      onClick={() => setWillingnessPos2(true)}
+                    >
+                      Yes, I'm willing
+                    </button>
+                    <button
+                      className={`batchrep-willing-btn no ${willingnessPos2 === false ? 'active' : ''}`}
+                      onClick={() => setWillingnessPos2(false)}
+                    >
+                      Not at this time
+                    </button>
+                  </div>
                 </div>
               </div>
 
-              <p className="batchrep-willingness-hint">
-                You can change this anytime.
+              <p className="batchrep-willingness-gate-hint">
+                You can change this anytime before the deadline.
               </p>
 
               <button
-                className="batchrep-modal-btn"
+                className={`batchrep-willingness-gate-btn ${willingnessPos1 !== null && willingnessPos2 !== null ? 'active' : ''}`}
                 onClick={handleWillingnessSave}
                 disabled={willingnessPos1 === null || willingnessPos2 === null || willingnessSubmitting}
-                style={{
-                  opacity: (willingnessPos1 === null || willingnessPos2 === null) ? 0.4 : 1,
-                  pointerEvents: (willingnessPos1 === null || willingnessPos2 === null) ? 'none' : 'auto'
-                }}
               >
                 {willingnessSubmitting ? 'Saving...' : 'Save & Continue →'}
               </button>

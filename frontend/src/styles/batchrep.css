@@ -1171,74 +1171,357 @@
 }
 
 /* ========================================
-   WILLINGNESS GATE POSITION BLOCKS
+   WILLINGNESS GATE - NEW DESIGN
    ======================================== */
 
-.batchrep-willingness-block {
-  margin-bottom: 24px;
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+.batchrep-willingness-gate {
+  background: var(--color-bg-card);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+  margin-top: 24px;
 }
 
-[data-theme="light"] .batchrep-willingness-block {
-  background: rgba(0, 102, 51, 0.03);
+[data-theme="light"] .batchrep-willingness-gate {
+  background: #ffffff;
+  border-color: rgba(0, 102, 51, 0.12);
+  box-shadow: 0 2px 12px rgba(0, 102, 51, 0.07);
+}
+
+.batchrep-willingness-gate.modal {
+  max-width: 520px;
+  width: 100%;
+  margin: 0;
+  animation: batchrepSlideUp 0.35s ease;
+}
+
+.batchrep-willingness-gate-bar {
+  height: 5px;
+  background: linear-gradient(90deg, #006633 0%, var(--color-hover) 100%);
+}
+
+[data-theme="light"] .batchrep-willingness-gate-bar {
+  background: linear-gradient(90deg, #006633 0%, #CFB53B 100%);
+}
+
+.batchrep-willingness-gate-header {
+  padding: 20px 24px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="light"] .batchrep-willingness-gate-header {
   border-color: rgba(0, 102, 51, 0.12);
 }
 
-.batchrep-willingness-block.modal {
-  margin-bottom: 20px;
-}
-
-.batchrep-willingness-position-label {
-  font-size: 0.7rem;
+.batchrep-willingness-gate-eyebrow {
+  font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.1em;
-  color: var(--color-text-secondary);
-  margin-bottom: 4px;
+  letter-spacing: 2px;
   text-transform: uppercase;
-}
-
-.batchrep-willingness-position-title {
-  font-size: 1.1rem;
-  font-weight: 600;
   color: var(--color-hover);
-  margin-bottom: 12px;
+  opacity: 0.7;
+  margin-bottom: 6px;
 }
 
-.batchrep-willingness-position-title.modal {
-  font-size: 1rem;
-}
-
-[data-theme="light"] .batchrep-willingness-position-title {
+[data-theme="light"] .batchrep-willingness-gate-eyebrow {
   color: #006633;
 }
 
-.batchrep-willingness-buttons {
+.batchrep-willingness-gate-title {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  color: var(--color-hover);
+  line-height: 1.3;
+  margin: 0;
+}
+
+[data-theme="light"] .batchrep-willingness-gate-title {
+  color: #006633;
+}
+
+.batchrep-willingness-gate-body {
+  padding: 20px 24px;
   display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.batchrep-willingness-gate-subtitle {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* Position Block */
+.batchrep-position-block {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+[data-theme="light"] .batchrep-position-block {
+  border-color: rgba(0, 102, 51, 0.12);
+}
+
+.batchrep-position-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: rgba(207, 181, 59, 0.07);
   gap: 12px;
 }
 
-.batchrep-willingness-buttons.modal {
+[data-theme="light"] .batchrep-position-top {
+  background: rgba(0, 102, 51, 0.07);
+}
+
+.batchrep-position-info {
+  flex: 1;
+}
+
+.batchrep-position-num {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--color-hover);
+  opacity: 0.7;
+  margin-bottom: 2px;
+}
+
+[data-theme="light"] .batchrep-position-num {
+  color: #006633;
+}
+
+.batchrep-position-title {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  color: var(--color-hover);
+}
+
+[data-theme="light"] .batchrep-position-title {
+  color: #006633;
+}
+
+/* Roles Toggle Pill Button */
+.batchrep-roles-toggle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: 1px solid rgba(207, 181, 59, 0.3);
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-hover);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+
+.batchrep-roles-toggle:hover {
+  background: rgba(207, 181, 59, 0.1);
+}
+
+[data-theme="light"] .batchrep-roles-toggle {
+  border-color: rgba(0, 102, 51, 0.2);
+  color: #006633;
+}
+
+[data-theme="light"] .batchrep-roles-toggle:hover {
+  background: rgba(0, 102, 51, 0.07);
+}
+
+.batchrep-roles-toggle .arrow {
+  font-size: 8px;
+  transition: transform 0.2s;
+}
+
+.batchrep-roles-toggle.open .arrow {
+  transform: rotate(180deg);
+}
+
+/* Roles Content Collapsible */
+.batchrep-roles-content {
+  display: none;
+  padding: 0 16px 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.batchrep-roles-content.open {
+  display: block;
+}
+
+[data-theme="light"] .batchrep-roles-content {
+  border-top-color: rgba(0, 102, 51, 0.1);
+  background: rgba(0, 102, 51, 0.03);
+}
+
+.batchrep-roles-content ul {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.batchrep-roles-content ul li {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  padding-left: 14px;
+  position: relative;
+}
+
+.batchrep-roles-content ul li::before {
+  content: '·';
+  position: absolute;
+  left: 4px;
+  color: var(--color-hover);
+  opacity: 0.6;
+}
+
+[data-theme="light"] .batchrep-roles-content ul li::before {
+  color: #006633;
+}
+
+/* Willing Question */
+.batchrep-willing-question {
+  padding: 14px 16px 16px;
+  display: flex;
+  flex-direction: column;
   gap: 10px;
 }
 
-.batchrep-willingness-buttons button {
+.batchrep-willing-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.batchrep-willing-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.batchrep-willing-btn {
   flex: 1;
-  padding: 10px 16px;
-  font-size: 0.9rem;
-}
-
-.batchrep-willingness-buttons.modal button {
-  padding: 8px 12px;
-  font-size: 0.85rem;
-}
-
-.batchrep-willingness-hint {
-  font-size: 0.8rem;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.03);
   color: var(--color-text-secondary);
-  margin-bottom: 16px;
+  transition: all 0.15s;
+}
+
+.batchrep-willing-btn:hover {
+  border-color: rgba(207, 181, 59, 0.3);
+  color: var(--color-text-primary);
+}
+
+[data-theme="light"] .batchrep-willing-btn {
+  border-color: rgba(0, 102, 51, 0.15);
+  background: rgba(0, 102, 51, 0.03);
+}
+
+[data-theme="light"] .batchrep-willing-btn:hover {
+  border-color: rgba(0, 102, 51, 0.25);
+  color: var(--color-text-primary);
+}
+
+.batchrep-willing-btn.yes.active {
+  background: #006633;
+  color: #ffffff;
+  border-color: #006633;
+}
+
+.batchrep-willing-btn.no.active {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-text-primary);
+  border-color: rgba(207, 181, 59, 0.3);
+}
+
+[data-theme="light"] .batchrep-willing-btn.no.active {
+  background: rgba(0, 102, 51, 0.05);
+  border-color: rgba(0, 102, 51, 0.25);
+}
+
+/* Hint Text */
+.batchrep-willingness-gate-hint {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  text-align: center;
+  margin: 0;
+}
+
+/* Save Button */
+.batchrep-willingness-gate-btn {
+  width: 100%;
+  background: #006633;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 13px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.batchrep-willingness-gate-btn.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.batchrep-willingness-gate-btn:hover {
+  background: #004d26;
+}
+
+/* Mobile adjustments for willingness gate */
+@media (max-width: 480px) {
+  .batchrep-willingness-gate-header {
+    padding: 16px 20px 14px;
+  }
+
+  .batchrep-willingness-gate-title {
+    font-size: 18px;
+  }
+
+  .batchrep-willingness-gate-body {
+    padding: 16px 20px;
+  }
+
+  .batchrep-position-top {
+    padding: 12px 14px;
+  }
+
+  .batchrep-position-title {
+    font-size: 14px;
+  }
+
+  .batchrep-willing-question {
+    padding: 12px 14px 14px;
+  }
+
+  .batchrep-willing-btn {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
 }
 
 /* Remote participation hint in Position 2 */
