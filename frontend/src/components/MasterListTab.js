@@ -9,6 +9,7 @@ const MASTER_LIST_PAGE_SIZE = 45;
 export default function MasterListTab({
   isSuperAdmin,
   isSystemAdmin,
+  isRegistryAdmin,
   permissions,
   onShowAdminRoleError,
   onRefreshReady,
@@ -288,28 +289,32 @@ export default function MasterListTab({
               <span><strong className="status-card-value">{masterListStats.unreachable || 0}</strong> Unreachable</span>
             </div>
           </div>
-          <div className="status-card">
-            <div className="status-card-header">Builder Tiers</div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
-              <span><strong style={{ color: '#CFB53B' }}>{parseInt(masterListStats.cornerstone_count) || 0}</strong> Cornerstone</span>
-              <span><strong style={{ color: '#C0C0C0' }}>{parseInt(masterListStats.pillar_count) || 0}</strong> Pillar</span>
-              <span><strong style={{ color: '#CD7F32' }}>{parseInt(masterListStats.anchor_count) || 0}</strong> Anchor</span>
-              <span><strong style={{ color: 'var(--color-status-positive)' }}>{parseInt(masterListStats.root_count) || 0}</strong> Root</span>
-              <span><strong style={{ color: 'var(--color-text-secondary)' }}>{parseInt(masterListStats.no_tier) || 0}</strong> No Tier</span>
+          {!isRegistryAdmin && (
+            <div className="status-card">
+              <div className="status-card-header">Builder Tiers</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
+                <span><strong style={{ color: '#CFB53B' }}>{parseInt(masterListStats.cornerstone_count) || 0}</strong> Cornerstone</span>
+                <span><strong style={{ color: '#C0C0C0' }}>{parseInt(masterListStats.pillar_count) || 0}</strong> Pillar</span>
+                <span><strong style={{ color: '#CD7F32' }}>{parseInt(masterListStats.anchor_count) || 0}</strong> Anchor</span>
+                <span><strong style={{ color: 'var(--color-status-positive)' }}>{parseInt(masterListStats.root_count) || 0}</strong> Root</span>
+                <span><strong style={{ color: 'var(--color-text-secondary)' }}>{parseInt(masterListStats.no_tier) || 0}</strong> No Tier</span>
+              </div>
+              <div style={{ marginTop: '4px', fontSize: '0.78rem', color: 'var(--color-text-secondary)' }}>
+                / {parseInt(masterListStats.total_builders) || 0} builders
+              </div>
             </div>
-            <div style={{ marginTop: '4px', fontSize: '0.78rem', color: 'var(--color-text-secondary)' }}>
-              / {parseInt(masterListStats.total_builders) || 0} builders
+          )}
+          {!isRegistryAdmin && (
+            <div className="status-card">
+              <div className="status-card-header">Payment Status (Builders)</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
+                <span><strong style={{ color: 'var(--color-status-positive)' }}>{parseInt(masterListStats.full_paid) || 0}</strong> Full</span>
+                <span><strong style={{ color: 'var(--color-status-warning)' }}>{parseInt(masterListStats.partial_paid) || 0}</strong> Partial</span>
+                <span><strong style={{ color: 'var(--color-status-negative)' }}>{parseInt(masterListStats.unpaid) || 0}</strong> Unpaid</span>
+                <span><strong style={{ color: 'var(--color-status-positive)' }}>{parseInt(masterListStats.root_count) || 0}</strong> Root</span>
+              </div>
             </div>
-          </div>
-          <div className="status-card">
-            <div className="status-card-header">Payment Status (Builders)</div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
-              <span><strong style={{ color: 'var(--color-status-positive)' }}>{parseInt(masterListStats.full_paid) || 0}</strong> Full</span>
-              <span><strong style={{ color: 'var(--color-status-warning)' }}>{parseInt(masterListStats.partial_paid) || 0}</strong> Partial</span>
-              <span><strong style={{ color: 'var(--color-status-negative)' }}>{parseInt(masterListStats.unpaid) || 0}</strong> Unpaid</span>
-              <span><strong style={{ color: 'var(--color-status-positive)' }}>{parseInt(masterListStats.root_count) || 0}</strong> Root</span>
-            </div>
-          </div>
+          )}
         </div>
       )}
 
@@ -390,28 +395,32 @@ export default function MasterListTab({
           <option value="in memoriam">In Memoriam</option>
           <option value="unreachable">Unreachable</option>
         </select>
-        <select
-          value={masterListTierFilter}
-          onChange={handleMasterListTierFilterChange}
-          style={{ width: '150px' }}
-        >
-          <option value="all">All Tiers</option>
-          <option value="cornerstone">Cornerstone</option>
-          <option value="pillar">Pillar</option>
-          <option value="anchor">Anchor</option>
-          <option value="root">Root</option>
-          <option value="none">No Tier</option>
-        </select>
-        <select
-          value={masterListPaymentFilter}
-          onChange={handleMasterListPaymentFilterChange}
-          style={{ width: '150px' }}
-        >
-          <option value="all">All Payment</option>
-          <option value="full">Full</option>
-          <option value="partial">Partial</option>
-          <option value="unpaid">Unpaid</option>
-        </select>
+        {!isRegistryAdmin && (
+          <select
+            value={masterListTierFilter}
+            onChange={handleMasterListTierFilterChange}
+            style={{ width: '150px' }}
+          >
+            <option value="all">All Tiers</option>
+            <option value="cornerstone">Cornerstone</option>
+            <option value="pillar">Pillar</option>
+            <option value="anchor">Anchor</option>
+            <option value="root">Root</option>
+            <option value="none">No Tier</option>
+          </select>
+        )}
+        {!isRegistryAdmin && (
+          <select
+            value={masterListPaymentFilter}
+            onChange={handleMasterListPaymentFilterChange}
+            style={{ width: '150px' }}
+          >
+            <option value="all">All Payment</option>
+            <option value="full">Full</option>
+            <option value="partial">Partial</option>
+            <option value="unpaid">Unpaid</option>
+          </select>
+        )}
         <input
           type="text"
           placeholder="Search by name..."
@@ -449,11 +458,11 @@ export default function MasterListTab({
                   <th>First Name</th>
                   <th>Current Name</th>
                   <th>Status</th>
-                  <th>Tier</th>
-                  <th>Pledge</th>
-                  <th>Paid</th>
-                  <th>Balance</th>
-                  <th title="Recognition Visibility">Vis</th>
+                  {!isRegistryAdmin && <th>Tier</th>}
+                  {!isRegistryAdmin && <th>Pledge</th>}
+                  {!isRegistryAdmin && <th>Paid</th>}
+                  {!isRegistryAdmin && <th>Balance</th>}
+                  {!isRegistryAdmin && <th title="Recognition Visibility">Vis</th>}
                   {(isSuperAdmin || permissions?.masterlist_edit) && <th>Actions</th>}
                 </tr>
               </thead>
@@ -526,60 +535,66 @@ export default function MasterListTab({
                             )}
                           </div>
                         </td>
-                        <td>
-                          {isSuperAdmin ? (
-                            <select
-                              value={editingTier}
-                              onChange={(e) => handleTierChange(e, entry.id)}
-                              id={`edit-tier-${entry.id}`}
-                              className="edit-tier-select"
-                            >
-                              <option value="">None</option>
-                              <option value="cornerstone">Cornerstone</option>
-                              <option value="pillar">Pillar</option>
-                              <option value="anchor">Anchor</option>
-                              <option value="root">Root</option>
-                            </select>
-                          ) : (
-                            <span style={{ color: '#666' }}>{formatTierName(entry.builder_tier) || '-'}</span>
-                          )}
-                        </td>
-                        <td>
-                          {isSuperAdmin ? (
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                        {!isRegistryAdmin && (
+                          <td>
+                            {isSuperAdmin ? (
+                              <select
+                                value={editingTier}
+                                onChange={(e) => handleTierChange(e, entry.id)}
+                                id={`edit-tier-${entry.id}`}
+                                className="edit-tier-select"
+                              >
+                                <option value="">None</option>
+                                <option value="cornerstone">Cornerstone</option>
+                                <option value="pillar">Pillar</option>
+                                <option value="anchor">Anchor</option>
+                                <option value="root">Root</option>
+                              </select>
+                            ) : (
+                              <span style={{ color: '#666' }}>{formatTierName(entry.builder_tier) || '-'}</span>
+                            )}
+                          </td>
+                        )}
+                        {!isRegistryAdmin && (
+                          <td>
+                            {isSuperAdmin ? (
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                                <input
+                                  type="number"
+                                  defaultValue={entry.pledge_amount || ''}
+                                  id={`edit-pledge-${entry.id}`}
+                                  placeholder={!editingTier ? '-' : 'Optional'}
+                                  disabled={!editingTier}
+                                  className={`edit-pledge-input ${!editingTier ? 'disabled' : ''}`}
+                                />
+                                {getTierRange(editingTier) && (
+                                  <span style={{ fontSize: '0.7rem', color: '#888' }}>
+                                    {getTierRange(editingTier).label}
+                                  </span>
+                                )}
+                              </div>
+                            ) : (
+                              <span style={{ color: '#666' }}>{entry.pledge_amount ? `₱${parseFloat(entry.pledge_amount).toLocaleString()}` : '-'}</span>
+                            )}
+                          </td>
+                        )}
+                        {!isRegistryAdmin && <td style={{ color: '#666', textAlign: 'center' }}>-</td>}
+                        {!isRegistryAdmin && <td style={{ color: '#666', textAlign: 'center' }}>-</td>}
+                        {!isRegistryAdmin && (
+                          <td style={{ textAlign: 'center' }}>
+                            {editingTier ? (
                               <input
-                                type="number"
-                                defaultValue={entry.pledge_amount || ''}
-                                id={`edit-pledge-${entry.id}`}
-                                placeholder={!editingTier ? '-' : 'Optional'}
-                                disabled={!editingTier}
-                                className={`edit-pledge-input ${!editingTier ? 'disabled' : ''}`}
+                                type="checkbox"
+                                defaultChecked={entry.recognition_public !== false}
+                                id={`edit-recognition-${entry.id}`}
+                                title="Public recognition visibility"
+                                style={{ width: '16px', height: '16px', cursor: 'pointer' }}
                               />
-                              {getTierRange(editingTier) && (
-                                <span style={{ fontSize: '0.7rem', color: '#888' }}>
-                                  {getTierRange(editingTier).label}
-                                </span>
-                              )}
-                            </div>
-                          ) : (
-                            <span style={{ color: '#666' }}>{entry.pledge_amount ? `₱${parseFloat(entry.pledge_amount).toLocaleString()}` : '-'}</span>
-                          )}
-                        </td>
-                        <td style={{ color: '#666', textAlign: 'center' }}>-</td>
-                        <td style={{ color: '#666', textAlign: 'center' }}>-</td>
-                        <td style={{ textAlign: 'center' }}>
-                          {editingTier ? (
-                            <input
-                              type="checkbox"
-                              defaultChecked={entry.recognition_public !== false}
-                              id={`edit-recognition-${entry.id}`}
-                              title="Public recognition visibility"
-                              style={{ width: '16px', height: '16px', cursor: 'pointer' }}
-                            />
-                          ) : (
-                            <span style={{ color: '#666' }}>-</span>
-                          )}
-                        </td>
+                            ) : (
+                              <span style={{ color: '#666' }}>-</span>
+                            )}
+                          </td>
+                        )}
                         {(isSuperAdmin || permissions?.masterlist_edit) && (
                           <td>
                             <div style={{ display: 'flex', gap: '8px', whiteSpace: 'nowrap' }}>
@@ -649,51 +664,61 @@ export default function MasterListTab({
                             {entry.status === 'In Memoriam' ? 'IN MEMORIAM' : entry.status === 'Unreachable' ? 'UNREACHABLE' : entry.status === 'Not Invited' ? 'NOT REGISTERED' : entry.status}
                           </span>
                         </td>
-                        <td>
-                          {entry.in_memoriam || entry.section === 'Non-Graduate' ? (
-                            <span style={{ color: '#666' }}>-</span>
-                          ) : entry.builder_tier ? (
-                            <span className={`tier-badge ${entry.builder_tier}`}>
-                              {formatTierName(entry.builder_tier)}
-                            </span>
-                          ) : (
-                            <span style={{ color: '#666' }}>-</span>
-                          )}
-                        </td>
-                        <td style={{ whiteSpace: 'nowrap' }}>
-                          {entry.in_memoriam || entry.section === 'Non-Graduate' || !entry.builder_tier || entry.builder_tier === 'root' ? (
-                            <span style={{ color: '#666' }}>-</span>
-                          ) : (
-                            <span>₱{parseFloat(entry.pledge_amount || 0).toLocaleString()}</span>
-                          )}
-                        </td>
-                        <td style={{ whiteSpace: 'nowrap' }}>
-                          {entry.in_memoriam || entry.section === 'Non-Graduate' || !entry.builder_tier ? (
-                            <span style={{ color: '#666' }}>-</span>
-                          ) : (
-                            <span style={{ color: 'var(--color-status-positive)' }}>₱{parseFloat(entry.total_paid || 0).toLocaleString()}</span>
-                          )}
-                        </td>
-                        <td style={{ whiteSpace: 'nowrap', fontSize: '0.9rem' }}>
-                          {entry.in_memoriam || entry.section === 'Non-Graduate' || !entry.builder_tier ? (
-                            <span style={{ color: '#666' }}>-</span>
-                          ) : entry.builder_tier === 'root' ? (
-                            <span style={{ color: 'var(--color-status-positive)', fontWeight: '600' }}>Root</span>
-                          ) : entry.payment_status === 'Full' ? (
-                            <span style={{ color: 'var(--color-status-positive)', fontWeight: '600' }}>Paid</span>
-                          ) : (
-                            <span style={{ color: 'var(--text-primary)' }}>₱{parseFloat(entry.balance || 0).toLocaleString()}</span>
-                          )}
-                        </td>
-                        <td style={{ textAlign: 'center' }} title={entry.builder_tier ? (entry.recognition_public !== false ? 'Public recognition enabled' : 'Public recognition disabled') : ''}>
-                          {!entry.builder_tier ? (
-                            <span style={{ color: '#666' }}>-</span>
-                          ) : entry.recognition_public !== false ? (
-                            <span style={{ fontSize: '1rem' }} title="Visible in public recognition">👁</span>
-                          ) : (
-                            <span style={{ fontSize: '1rem', opacity: 0.15 }} title="Hidden from public recognition">👁</span>
-                          )}
-                        </td>
+                        {!isRegistryAdmin && (
+                          <td>
+                            {entry.in_memoriam || entry.section === 'Non-Graduate' ? (
+                              <span style={{ color: '#666' }}>-</span>
+                            ) : entry.builder_tier ? (
+                              <span className={`tier-badge ${entry.builder_tier}`}>
+                                {formatTierName(entry.builder_tier)}
+                              </span>
+                            ) : (
+                              <span style={{ color: '#666' }}>-</span>
+                            )}
+                          </td>
+                        )}
+                        {!isRegistryAdmin && (
+                          <td style={{ whiteSpace: 'nowrap' }}>
+                            {entry.in_memoriam || entry.section === 'Non-Graduate' || !entry.builder_tier || entry.builder_tier === 'root' ? (
+                              <span style={{ color: '#666' }}>-</span>
+                            ) : (
+                              <span>₱{parseFloat(entry.pledge_amount || 0).toLocaleString()}</span>
+                            )}
+                          </td>
+                        )}
+                        {!isRegistryAdmin && (
+                          <td style={{ whiteSpace: 'nowrap' }}>
+                            {entry.in_memoriam || entry.section === 'Non-Graduate' || !entry.builder_tier ? (
+                              <span style={{ color: '#666' }}>-</span>
+                            ) : (
+                              <span style={{ color: 'var(--color-status-positive)' }}>₱{parseFloat(entry.total_paid || 0).toLocaleString()}</span>
+                            )}
+                          </td>
+                        )}
+                        {!isRegistryAdmin && (
+                          <td style={{ whiteSpace: 'nowrap', fontSize: '0.9rem' }}>
+                            {entry.in_memoriam || entry.section === 'Non-Graduate' || !entry.builder_tier ? (
+                              <span style={{ color: '#666' }}>-</span>
+                            ) : entry.builder_tier === 'root' ? (
+                              <span style={{ color: 'var(--color-status-positive)', fontWeight: '600' }}>Root</span>
+                            ) : entry.payment_status === 'Full' ? (
+                              <span style={{ color: 'var(--color-status-positive)', fontWeight: '600' }}>Paid</span>
+                            ) : (
+                              <span style={{ color: 'var(--text-primary)' }}>₱{parseFloat(entry.balance || 0).toLocaleString()}</span>
+                            )}
+                          </td>
+                        )}
+                        {!isRegistryAdmin && (
+                          <td style={{ textAlign: 'center' }} title={entry.builder_tier ? (entry.recognition_public !== false ? 'Public recognition enabled' : 'Public recognition disabled') : ''}>
+                            {!entry.builder_tier ? (
+                              <span style={{ color: '#666' }}>-</span>
+                            ) : entry.recognition_public !== false ? (
+                              <span style={{ fontSize: '1rem' }} title="Visible in public recognition">👁</span>
+                            ) : (
+                              <span style={{ fontSize: '1rem', opacity: 0.15 }} title="Hidden from public recognition">👁</span>
+                            )}
+                          </td>
+                        )}
                         {(isSuperAdmin || permissions?.masterlist_edit) && (
                           <td>
                             <button onClick={() => handleStartEditing(entry)} className="btn-link">

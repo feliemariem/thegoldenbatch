@@ -851,6 +851,7 @@ export default function AdminDashboard() {
               <MasterListTab
                 isSuperAdmin={isSuperAdmin}
                 isSystemAdmin={isSystemAdmin}
+                isRegistryAdmin={isRegistryAdmin}
                 permissions={permissions}
                 onShowAdminRoleError={() => setShowAdminRoleError(true)}
                 onRefreshReady={setMasterListRefresh}
