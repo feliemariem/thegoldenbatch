@@ -137,22 +137,18 @@ export default function BatchRep() {
   useEffect(() => {
     const autoSaveWillingness = async () => {
       if (willingnessPos1 !== null && willingnessPos2 !== null && !willingnessSaved && !willingnessSubmitting) {
-        console.log('[autoSaveWillingness] Both positions selected, auto-saving...');
         setWillingnessSubmitting(true);
         try {
-          const payload = {
+          const res = await apiPost('/api/batch-rep/willingness', {
             position1: willingnessPos1,
             position2: willingnessPos2
-          };
-          console.log('[autoSaveWillingness] Payload:', JSON.stringify(payload));
-          const res = await apiPost('/api/batch-rep/willingness', payload);
-          console.log('[autoSaveWillingness] Response:', res.status, res.ok);
+          });
           if (res.ok) {
             setWillingnessSaved(true);
             setShowWillingnessModal(false);
           }
         } catch (err) {
-          console.error('[autoSaveWillingness] Error:', err);
+          console.error('Error auto-saving willingness:', err);
         } finally {
           setWillingnessSubmitting(false);
         }
@@ -294,30 +290,20 @@ export default function BatchRep() {
   };
 
   const handleWillingnessSave = async () => {
-    console.log('[handleWillingnessSave] Called. willingnessPos1:', willingnessPos1, '| willingnessPos2:', willingnessPos2);
-
-    if (willingnessPos1 === null || willingnessPos2 === null) {
-      console.log('[handleWillingnessSave] Early return - one or both positions are null');
-      return;
-    }
+    if (willingnessPos1 === null || willingnessPos2 === null) return;
 
     setWillingnessSubmitting(true);
     try {
-      const payload = {
+      const res = await apiPost('/api/batch-rep/willingness', {
         position1: willingnessPos1,
         position2: willingnessPos2
-      };
-      console.log('[handleWillingnessSave] About to call apiPost with payload:', JSON.stringify(payload));
-
-      const res = await apiPost('/api/batch-rep/willingness', payload);
-      console.log('[handleWillingnessSave] apiPost response:', res.status, res.ok);
-
+      });
       if (res.ok) {
         setWillingnessSaved(true);
         setShowWillingnessModal(false);
       }
     } catch (err) {
-      console.error('[handleWillingnessSave] Error:', err);
+      console.error(err);
     } finally {
       setWillingnessSubmitting(false);
     }

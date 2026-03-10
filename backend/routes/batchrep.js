@@ -94,58 +94,39 @@ router.post('/willingness', authenticateToken, async (req, res) => {
     const userId = req.user.id;
     const { position1, position2, willing } = req.body;
 
-    // Debug logging
-    console.log('[batch-rep/willingness] req.body:', JSON.stringify(req.body));
-    console.log('[batch-rep/willingness] userId:', userId, '| position1:', position1, '| position2:', position2, '| willing:', willing);
-
     // Check user is a grad
     const isGrad = await checkIsGrad(userId);
     if (!isGrad) {
-      console.log('[batch-rep/willingness] User is not a grad, rejecting');
       return res.status(403).json({ error: 'Only graduates can submit willingness.' });
     }
 
     // Support both old single-willingness format and new two-position format
     if (typeof willing === 'boolean') {
       // Old format: single willingness (for backwards compatibility) - applies to batch rep position
-      console.log('[batch-rep/willingness] Old format detected, upserting willing_batch_rep');
-      try {
-        await db.query(
-          `INSERT INTO batch_rep_willingness (user_id, willing_batch_rep, updated_at)
-           VALUES ($1, $2, NOW())
-           ON CONFLICT (user_id) DO UPDATE SET willing_batch_rep = $2, updated_at = NOW()`,
-          [userId, willing]
-        );
-        console.log('[batch-rep/willingness] Old format upsert successful');
-      } catch (dbErr) {
-        console.error('[batch-rep/willingness] DB error (old format):', dbErr.message, '| code:', dbErr.code, '| detail:', dbErr.detail);
-        throw dbErr;
-      }
+      await db.query(
+        `INSERT INTO batch_rep_willingness (user_id, willing_batch_rep, updated_at)
+         VALUES ($1, $2, NOW())
+         ON CONFLICT (user_id) DO UPDATE SET willing_batch_rep = $2, updated_at = NOW()`,
+        [userId, willing]
+      );
       return res.json({ willing });
     }
 
     // New format: two positions - upsert both columns in one query
     // position1 = AA Rep, position2 = Batch Rep
-    console.log('[batch-rep/willingness] New format detected, upserting both positions');
-    try {
-      await db.query(
-        `INSERT INTO batch_rep_willingness (user_id, willing_aa_rep, willing_batch_rep, updated_at)
-         VALUES ($1, $2, $3, NOW())
-         ON CONFLICT (user_id) DO UPDATE SET
-           willing_aa_rep = COALESCE($2, batch_rep_willingness.willing_aa_rep),
-           willing_batch_rep = COALESCE($3, batch_rep_willingness.willing_batch_rep),
-           updated_at = NOW()`,
-        [userId, position1, position2]
-      );
-      console.log('[batch-rep/willingness] New format upsert successful');
-    } catch (dbErr) {
-      console.error('[batch-rep/willingness] DB error (new format):', dbErr.message, '| code:', dbErr.code, '| detail:', dbErr.detail);
-      throw dbErr;
-    }
+    await db.query(
+      `INSERT INTO batch_rep_willingness (user_id, willing_aa_rep, willing_batch_rep, updated_at)
+       VALUES ($1, $2, $3, NOW())
+       ON CONFLICT (user_id) DO UPDATE SET
+         willing_aa_rep = COALESCE($2, batch_rep_willingness.willing_aa_rep),
+         willing_batch_rep = COALESCE($3, batch_rep_willingness.willing_batch_rep),
+         updated_at = NOW()`,
+      [userId, position1, position2]
+    );
 
     res.json({ position1, position2 });
   } catch (err) {
-    console.error('[batch-rep/willingness] Error:', err.message, '| code:', err.code, '| detail:', err.detail);
+    console.error('Error submitting willingness:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
