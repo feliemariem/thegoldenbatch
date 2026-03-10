@@ -546,18 +546,16 @@ export default function BatchRep() {
                     </button>
                     <div className="batchrep-collapsible-body" style={{ fontSize: '0.85rem' }}>
                       <ul>
-                        <li>Represents Batch 2003 on the USLS Alumni Association Board of Directors for SY 2026-2027</li>
-                        <li>Attends board meetings and alumni events in person at the Alumni Office, USLS, Bacolod City</li>
-                        <li>Acts as the official liaison between the batch and the alumni office</li>
-                        <li>Coordinates with the USLS Alumni Association on batch-related concerns and updates</li>
-                        <li>Acts on behalf of the batch in all Alumni Association matters for the stated term</li>
-                        <li>Follows the succession ladder: Representative → Vice President → Alumni Association President (2028)</li>
-                        <li>Presides over the General Alumni Homecoming as Alumni Association President in December 2028</li>
-                        <li>Represents the batch in school and community engagements as needed</li>
-                        <li>Local presence required (preferably Bacolod or nearby cities)</li>
+                        <li>Serves as the batch's official representative within the Alumni Association structure</li>
+                        <li>Attends alumni association meetings and represents the batch in alumni matters. Local presence required (preferably Bacolod or nearby cities)</li>
+                        <li>Coordinates directly with the Alumni Association board and alumni office</li>
+                        <li>Communicates alumni-level updates and requirements to the Batch Rep and organizing committee</li>
+                        <li>Represents the batch in official alumni events, ceremonies, and institutional activities</li>
+                        <li>Follows the alumni leadership ladder: AA Rep → Vice President → Alumni Association President (during the Jubilee)</li>
+                        <li>Helps ensure the batch fulfills its responsibilities as the Jubilee host batch</li>
                       </ul>
                       <p style={{ fontStyle: 'italic', marginTop: '12px', marginBottom: 0, color: 'var(--color-text-secondary)' }}>
-                        The Alumni Association Representative will not be starting from scratch. There is already an organizing committee in place that has been working since 2023 — fully committed and ready to support whoever takes on this role.
+                        The Alumni Association Representative will not be starting from scratch. There is already an organizing committee in place that has been working since 2023, fully committed and ready to support whoever takes on this role.
                       </p>
                     </div>
                   </div>
@@ -701,16 +699,17 @@ export default function BatchRep() {
                     </button>
                     <div className="batchrep-collapsible-body" style={{ fontSize: '0.85rem' }}>
                       <ul>
-                        <li>Leads Batch 2003 as its official Batch President</li>
-                        <li>Drives batch engagement, participation, and fundraising toward the 25th Jubilee</li>
-                        <li>Coordinates the organizing committee and all sub-committees through to the homecoming</li>
-                        <li>Primary point of contact for batchmates on homecoming-related matters</li>
-                        <li>Works closely with the Alumni Association Representative on matters requiring both roles</li>
-                        <li>Helps drive participation, fundraising, and engagement among batchmates in the lead-up to 2028</li>
-                        <li>Remote participation accepted — no Bacolod presence required</li>
+                        <li>Represents Batch 2003 to the batch itself and serves as the main point of contact for batchmates</li>
+                        <li>Leads batch coordination and engagement leading up to the Jubilee and other batch initiatives</li>
+                        <li>Works closely with the organizing committee to plan activities, gatherings, and participation</li>
+                        <li>Communicates updates, decisions, and announcements to the batch</li>
+                        <li>Mobilizes batch participation in alumni events, registration drives, and batch projects</li>
+                        <li>Coordinates with the AA Rep when alumni matters affect the batch</li>
+                        <li>Helps maintain unity and participation within the batch community</li>
+                        <li>Remote participation accepted. No Bacolod presence required</li>
                       </ul>
                       <p style={{ fontStyle: 'italic', marginTop: '12px', marginBottom: 0, color: 'var(--color-text-secondary)' }}>
-                        The Batch Representative will not be starting from scratch. There is already an organizing committee in place that has been working since 2023 — fully committed and ready to support whoever takes on this role.
+                        The Batch Representative will not be starting from scratch. There is already an organizing committee in place that has been working since 2023, fully committed and ready to support whoever takes on this role.
                       </p>
                     </div>
                   </div>
@@ -862,16 +861,17 @@ export default function BatchRep() {
                     </button>
                     <div className="batchrep-collapsible-body" style={{ fontSize: '0.85rem' }}>
                       <ul>
-                        <li>Represents Batch 2003 on the USLS Alumni Association Board of Directors for SY 2026-2027</li>
-                        <li>Attends board meetings and alumni events in person at the Alumni Office, USLS, Bacolod City</li>
-                        <li>Acts as the official liaison between the batch and the alumni office</li>
-                        <li>Coordinates with the USLS Alumni Association on batch-related concerns and updates</li>
-                        <li>Acts on behalf of the batch in all Alumni Association matters for the stated term</li>
-                        <li>Follows the succession ladder: Representative → Vice President → Alumni Association President (2028)</li>
-                        <li>Presides over the General Alumni Homecoming as Alumni Association President in December 2028</li>
-                        <li>Represents the batch in school and community engagements as needed</li>
-                        <li>Local presence required (preferably Bacolod or nearby cities)</li>
+                        <li>Serves as the batch's official representative within the Alumni Association structure</li>
+                        <li>Attends alumni association meetings and represents the batch in alumni matters. Local presence required (preferably Bacolod or nearby cities)</li>
+                        <li>Coordinates directly with the Alumni Association board and alumni office</li>
+                        <li>Communicates alumni-level updates and requirements to the Batch Rep and organizing committee</li>
+                        <li>Represents the batch in official alumni events, ceremonies, and institutional activities</li>
+                        <li>Follows the alumni leadership ladder: AA Rep → Vice President → Alumni Association President (during the Jubilee)</li>
+                        <li>Helps ensure the batch fulfills its responsibilities as the Jubilee host batch</li>
                       </ul>
+                      <p style={{ fontStyle: 'italic', marginTop: '12px', marginBottom: 0, color: 'var(--color-text-secondary)' }}>
+                        The Alumni Association Representative will not be starting from scratch. There is already an organizing committee in place that has been working since 2023, fully committed and ready to support whoever takes on this role.
+                      </p>
                     </div>
                   </div>
 
@@ -903,14 +903,18 @@ export default function BatchRep() {
                     </button>
                     <div className="batchrep-collapsible-body" style={{ fontSize: '0.85rem' }}>
                       <ul>
-                        <li>Leads Batch 2003 as its official Batch President</li>
-                        <li>Drives batch engagement, participation, and fundraising toward the 25th Jubilee</li>
-                        <li>Coordinates the organizing committee and all sub-committees through to the homecoming</li>
-                        <li>Primary point of contact for batchmates on homecoming-related matters</li>
-                        <li>Works closely with the Alumni Association Representative on matters requiring both roles</li>
-                        <li>Helps drive participation, fundraising, and engagement among batchmates in the lead-up to 2028</li>
-                        <li>Remote participation accepted — no Bacolod presence required</li>
+                        <li>Represents Batch 2003 to the batch itself and serves as the main point of contact for batchmates</li>
+                        <li>Leads batch coordination and engagement leading up to the Jubilee and other batch initiatives</li>
+                        <li>Works closely with the organizing committee to plan activities, gatherings, and participation</li>
+                        <li>Communicates updates, decisions, and announcements to the batch</li>
+                        <li>Mobilizes batch participation in alumni events, registration drives, and batch projects</li>
+                        <li>Coordinates with the AA Rep when alumni matters affect the batch</li>
+                        <li>Helps maintain unity and participation within the batch community</li>
+                        <li>Remote participation accepted. No Bacolod presence required</li>
                       </ul>
+                      <p style={{ fontStyle: 'italic', marginTop: '12px', marginBottom: 0, color: 'var(--color-text-secondary)' }}>
+                        The Batch Representative will not be starting from scratch. There is already an organizing committee in place that has been working since 2023, fully committed and ready to support whoever takes on this role.
+                      </p>
                     </div>
                   </div>
 
@@ -976,16 +980,17 @@ export default function BatchRep() {
                   </button>
                   <div className="batchrep-collapsible-body" style={{ fontSize: '0.8rem', padding: '0 14px 14px' }}>
                     <ul style={{ margin: 0 }}>
-                      <li>Represents Batch 2003 on the USLS Alumni Association Board of Directors for SY 2026-2027</li>
-                      <li>Attends board meetings and alumni events in person at the Alumni Office, USLS, Bacolod City</li>
-                      <li>Acts as the official liaison between the batch and the alumni office</li>
-                      <li>Coordinates with the USLS Alumni Association on batch-related concerns and updates</li>
-                      <li>Acts on behalf of the batch in all Alumni Association matters for the stated term</li>
-                      <li>Follows the succession ladder: Representative → Vice President → Alumni Association President (2028)</li>
-                      <li>Presides over the General Alumni Homecoming as Alumni Association President in December 2028</li>
-                      <li>Represents the batch in school and community engagements as needed</li>
-                      <li>Local presence required (preferably Bacolod or nearby cities)</li>
+                      <li>Serves as the batch's official representative within the Alumni Association structure</li>
+                      <li>Attends alumni association meetings and represents the batch in alumni matters. Local presence required (preferably Bacolod or nearby cities)</li>
+                      <li>Coordinates directly with the Alumni Association board and alumni office</li>
+                      <li>Communicates alumni-level updates and requirements to the Batch Rep and organizing committee</li>
+                      <li>Represents the batch in official alumni events, ceremonies, and institutional activities</li>
+                      <li>Follows the alumni leadership ladder: AA Rep → Vice President → Alumni Association President (during the Jubilee)</li>
+                      <li>Helps ensure the batch fulfills its responsibilities as the Jubilee host batch</li>
                     </ul>
+                    <p style={{ fontStyle: 'italic', marginTop: '12px', marginBottom: 0, color: 'var(--color-text-secondary)' }}>
+                      The Alumni Association Representative will not be starting from scratch. There is already an organizing committee in place that has been working since 2023, fully committed and ready to support whoever takes on this role.
+                    </p>
                   </div>
                 </div>
 
@@ -1017,14 +1022,18 @@ export default function BatchRep() {
                   </button>
                   <div className="batchrep-collapsible-body" style={{ fontSize: '0.8rem', padding: '0 14px 14px' }}>
                     <ul style={{ margin: 0 }}>
-                      <li>Leads Batch 2003 as its official Batch President</li>
-                      <li>Drives batch engagement, participation, and fundraising toward the 25th Jubilee</li>
-                      <li>Coordinates the organizing committee and all sub-committees through to the homecoming</li>
-                      <li>Primary point of contact for batchmates on homecoming-related matters</li>
-                      <li>Works closely with the Alumni Association Representative on matters requiring both roles</li>
-                      <li>Helps drive participation, fundraising, and engagement among batchmates in the lead-up to 2028</li>
-                      <li>Remote participation accepted — no Bacolod presence required</li>
+                      <li>Represents Batch 2003 to the batch itself and serves as the main point of contact for batchmates</li>
+                      <li>Leads batch coordination and engagement leading up to the Jubilee and other batch initiatives</li>
+                      <li>Works closely with the organizing committee to plan activities, gatherings, and participation</li>
+                      <li>Communicates updates, decisions, and announcements to the batch</li>
+                      <li>Mobilizes batch participation in alumni events, registration drives, and batch projects</li>
+                      <li>Coordinates with the AA Rep when alumni matters affect the batch</li>
+                      <li>Helps maintain unity and participation within the batch community</li>
+                      <li>Remote participation accepted. No Bacolod presence required</li>
                     </ul>
+                    <p style={{ fontStyle: 'italic', marginTop: '12px', marginBottom: 0, color: 'var(--color-text-secondary)' }}>
+                      The Batch Representative will not be starting from scratch. There is already an organizing committee in place that has been working since 2023, fully committed and ready to support whoever takes on this role.
+                    </p>
                   </div>
                 </div>
 
