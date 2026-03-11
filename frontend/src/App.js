@@ -51,7 +51,7 @@ function ProtectedRoute({ children }) {
 function FullAdminOnly({ children }) {
   const { user } = useAuth();
 
-  if (!user?.hasNonRegistryPermissions) {
+  if (!user?.is_super_admin && !user?.hasNonRegistryPermissions) {
     return <Navigate to="/profile" replace />;
   }
 
