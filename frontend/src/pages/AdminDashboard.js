@@ -500,7 +500,7 @@ export default function AdminDashboard() {
                 {batchRepOpen && (
                   <div style={{ padding: '0 20px 20px' }}>
                     {batchRepLoading ? (
-                      <p style={{ color: 'var(--color-text-secondary)', fontStyle: 'italic' }}>Loading...</p>
+                      <p style={{ color: 'var(--color-text-secondary)', fontStyle: 'italic' }}>{['Hulat!', 'Dali lang gid ha?', 'Wait lang...'][Math.floor(Math.random() * 3)]}</p>
                     ) : batchRepResults ? (
                       <>
                         {batchRepLastUpdated && (

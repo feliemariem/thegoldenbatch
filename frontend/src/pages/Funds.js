@@ -100,7 +100,7 @@ export default function Funds() {
           <div className="funds-balance-card">
             <p className="funds-label">Current Balance</p>
             {loading ? (
-              <p className="funds-total-loading">Loading...</p>
+              <p className="funds-total-loading">{['Hulat!', 'Dali lang gid ha?', 'Wait lang...'][Math.floor(Math.random() * 3)]}</p>
             ) : (
               <>
                 <p className="funds-total-amount">

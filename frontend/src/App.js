@@ -37,7 +37,7 @@ function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <div className="container"><div className="card"><p>Loading...</p></div></div>;
+    return <div className="container"><div className="card"><p>{['Hulat!', 'Dali lang gid ha?', 'Wait lang...'][Math.floor(Math.random() * 3)]}</p></div></div>;
   }
 
   if (!user) {

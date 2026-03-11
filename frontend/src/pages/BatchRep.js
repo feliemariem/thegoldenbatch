@@ -410,7 +410,7 @@ export default function BatchRep() {
         <Navbar />
         <div className="container batchrep-page">
           <div className="card">
-            <p>Loading...</p>
+            <p>{['Hulat!', 'Dali lang gid ha?', 'Wait lang...'][Math.floor(Math.random() * 3)]}</p>
           </div>
         </div>
       </>
