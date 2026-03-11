@@ -61,6 +61,7 @@ export default function BatchRep() {
   const [willingnessPos1, setWillingnessPos1] = useState(null); // null | true | false
   const [willingnessPos2, setWillingnessPos2] = useState(null);
   const [willingnessSaved, setWillingnessSaved] = useState(true); // Track if current values are saved
+  const [isFirstTimeWillingness, setIsFirstTimeWillingness] = useState(false); // Track if user has no existing record
   const [rolesOpen1, setRolesOpen1] = useState(false);
   const [rolesOpen2, setRolesOpen2] = useState(false);
   const [willingnessSubmitting, setWillingnessSubmitting] = useState(false);
@@ -112,9 +113,13 @@ export default function BatchRep() {
           setIsGrad(data.isGrad);
           setWillingnessPos1(data.willingnessPos1 ?? null);
           setWillingnessPos2(data.willingnessPos2 ?? null);
-          // If both values exist from API, they're already saved
+          // If both values exist from API, they're already saved (returning user)
           if (data.willingnessPos1 !== null && data.willingnessPos2 !== null) {
             setWillingnessSaved(true);
+            setIsFirstTimeWillingness(false);
+          } else {
+            // First-time user - no existing willingness record
+            setIsFirstTimeWillingness(true);
           }
         }
       } catch (err) {
@@ -134,9 +139,10 @@ export default function BatchRep() {
   }, [user]);
 
   // Auto-save willingness when both positions are selected and not yet saved
+  // Only auto-save for first-time users; returning users must click Save & Continue
   useEffect(() => {
     const autoSaveWillingness = async () => {
-      if (willingnessPos1 !== null && willingnessPos2 !== null && !willingnessSaved && !willingnessSubmitting) {
+      if (isFirstTimeWillingness && willingnessPos1 !== null && willingnessPos2 !== null && !willingnessSaved && !willingnessSubmitting) {
         setWillingnessSubmitting(true);
         try {
           const res = await apiPost('/api/batch-rep/willingness', {
@@ -156,7 +162,7 @@ export default function BatchRep() {
     };
 
     autoSaveWillingness();
-  }, [willingnessPos1, willingnessPos2, willingnessSaved, willingnessSubmitting]);
+  }, [isFirstTimeWillingness, willingnessPos1, willingnessPos2, willingnessSaved, willingnessSubmitting]);
 
   // Handle hash navigation on mount
   useEffect(() => {
