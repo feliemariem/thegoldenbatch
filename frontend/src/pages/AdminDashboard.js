@@ -888,6 +888,7 @@ export default function AdminDashboard() {
             fullAdminsCount={data?.stats?.full_admins_count || 0}
             registryAdminsCount={data?.stats?.registry_admins_count || 0}
             graduatesCount={masterListStats.registered_graduates || 0}
+            user={user}
             canSend={isSuperAdmin || permissions?.announcements_send}
           />
         )}

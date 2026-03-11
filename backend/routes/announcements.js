@@ -44,7 +44,7 @@ router.post('/', authenticateToken, async (req, res) => {
       return res.status(403).json({ error: 'You do not have permission to send announcements' });
     }
 
-    const { audience, subject, message, sendEmail } = req.body;
+    const { audience, subject, message, sendEmail, template, testMode, testEmail } = req.body;
 
     // Validate audience - must be one of the allowed values
     const validAudiences = ['all', 'full_admins', 'registry_admins', 'graduates', 'going', 'maybe', 'not_going'];
@@ -55,6 +55,12 @@ router.post('/', authenticateToken, async (req, res) => {
 
     if (!subject || !message) {
       return res.status(400).json({ error: 'Subject and message are required' });
+    }
+
+    // Test mode validation (super admin only - id=1)
+    const isSuperAdmin = req.user.id === 1;
+    if (testMode && !isSuperAdmin) {
+      return res.status(403).json({ error: 'Test mode is only available for super admins' });
     }
 
     // Get recipients based on audience
@@ -125,9 +131,14 @@ router.post('/', authenticateToken, async (req, res) => {
       recipients = recipientsResult.rows;
     }
 
-    if (recipients.length === 0) {
+    if (recipients.length === 0 && !testMode) {
       return res.status(400).json({ error: 'No recipients found for selected audience' });
     }
+
+    // In test mode, override recipients with just the test email
+    const actualRecipients = testMode
+      ? [{ email: testEmail, first_name: 'Test' }]
+      : recipients;
 
     let emailsSent = 0;
     let emailsFailed = 0;
@@ -135,14 +146,111 @@ router.post('/', authenticateToken, async (req, res) => {
     if (sendEmail) {
       // Send emails via SendGrid
       const siteUrl = process.env.SITE_URL || 'https://the-golden-batch.onrender.com';
-      
-      for (const recipient of recipients) {
+
+      // Batch rep deadline (hardcoded - can be fetched from DB later)
+      const batchRepDeadline = new Date('2026-03-14T08:00:00+08:00');
+      const daysRemaining = Math.max(0, Math.ceil((batchRepDeadline - new Date()) / (1000 * 60 * 60 * 24)));
+      const deadlineFormatted = batchRepDeadline.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+      for (const recipient of actualRecipients) {
         try {
-          await sgMail.send({
-            to: recipient.email,
-            from: process.env.FROM_EMAIL || 'noreply@goldenbatch2003.com',
-            subject: `New message in your Inbox`,
-            html: `
+          let emailHtml, emailText, emailSubject;
+
+          if (template === 'batchrep') {
+            // Batch Rep Notification template
+            emailSubject = 'The batch needs to hear from you';
+            emailHtml = `
+              <div style="margin: 0; padding: 0; background: #ffffff;">
+                <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif; color: #1a1a1a;">
+
+                  <!-- Header -->
+                  <div style="background: #0d1a14; padding: 28px; text-align: center;">
+                    <img src="${siteUrl}/images/logo.png" alt="The Golden Batch Logo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 12px;" />
+                    <div style="color: #CFB53B; letter-spacing: 3px; font-weight: 700; font-size: 28px; font-family: Georgia, 'Times New Roman', serif; margin-bottom: 8px;">
+                      THE GOLDEN BATCH 2003
+                    </div>
+                    <div style="color: #ffffff; font-size: 16px; font-family: Georgia, 'Times New Roman', serif; letter-spacing: 2px; margin-bottom: 6px;">
+                      UNIVERSITY OF ST. LA SALLE - IS
+                    </div>
+                    <div style="color: #CFB53B; font-size: 14px; font-family: Arial, sans-serif;">
+                      25th Alumni Homecoming
+                    </div>
+                  </div>
+
+                  <!-- Body -->
+                  <div style="padding: 32px 28px; background: #ffffff;">
+                    <p style="font-size: 18px; margin: 0 0 20px; font-family: Arial, sans-serif; color: #1a1a1a;">
+                      Hi ${recipient.first_name || 'Batchmate'},
+                    </p>
+
+                    <p style="font-size: 15px; color: #444444; line-height: 1.6; margin: 0 0 20px 0;">
+                      The organizing committee has been working behind the scenes. Now it's time for the batch to choose who will represent Batch 2003 for <strong>two official positions</strong>.
+                    </p>
+
+                    <!-- Nominee 1 -->
+                    <div style="display: flex; align-items: center; background: #f0f9f4; border: 1px solid #c8e6d4; border-radius: 8px; padding: 12px 14px; margin-bottom: 10px;">
+                      <div style="width: 40px; height: 40px; border-radius: 50%; background: #006633; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: white; margin-right: 12px;">BJ</div>
+                      <div>
+                        <div style="font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #006633; margin-bottom: 2px;">Nominee · Alumni Assoc. Representative</div>
+                        <div style="font-size: 15px; font-weight: 700; color: #1a1a1a;">Bianca Jison</div>
+                      </div>
+                    </div>
+
+                    <!-- Nominee 2 -->
+                    <div style="display: flex; align-items: center; background: #f0f9f4; border: 1px solid #c8e6d4; border-radius: 8px; padding: 12px 14px; margin-bottom: 16px;">
+                      <div style="width: 40px; height: 40px; border-radius: 50%; background: #006633; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: white; margin-right: 12px;">FM</div>
+                      <div>
+                        <div style="font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #006633; margin-bottom: 2px;">Nominee · Batch Representative</div>
+                        <div style="font-size: 15px; font-weight: 700; color: #1a1a1a;">Felie Magbanua</div>
+                      </div>
+                    </div>
+
+                    <!-- Deadline -->
+                    <p style="font-size: 13px; color: #666666; margin: 0 0 20px 0;">
+                      ⏱ Feedback window closes <strong style="color: #c0392b;">${deadlineFormatted} at 8:00 AM PHT</strong>
+                      <span style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; padding: 2px 8px; font-size: 11px; font-weight: 700; color: #856404; margin-left: 6px;">${daysRemaining} day${daysRemaining !== 1 ? 's' : ''} left</span>
+                    </p>
+
+                    <!-- Button -->
+                    <div style="text-align: center; margin: 32px 0;">
+                      <a href="${siteUrl}/login?redirect=/profile&batchrep=1"
+                         style="
+                           background: #006633;
+                           color: #ffffff;
+                           padding: 16px 42px;
+                           font-size: 18px;
+                           font-weight: 700;
+                           text-decoration: none;
+                           border-radius: 8px;
+                           display: inline-block;
+                           font-family: Arial, sans-serif;
+                         ">
+                        Submit My Response →
+                      </a>
+                    </div>
+
+                    <p style="font-size: 12px; color: #999999; text-align: center; margin: 0;">
+                      You'll be asked to log in. The voting modal will open automatically.
+                    </p>
+                  </div>
+
+                  <!-- Footer -->
+                  <div style="background: #0d1a14; padding: 20px; text-align: center; font-size: 14px; font-family: Arial, sans-serif;">
+                    <span style="color: #CFB53B;">© USLS-IS Golden Batch 2003</span><br/>
+                    <span style="color: #ffffff;">Questions? Email us at</span>
+                    <a href="mailto:uslsis.batch2003@gmail.com" style="color: #CFB53B; text-decoration: none;">
+                      uslsis.batch2003@gmail.com
+                    </a>
+                  </div>
+
+                </div>
+              </div>
+            `;
+            emailText = `Hi ${recipient.first_name || 'Batchmate'},\n\nThe organizing committee has been working behind the scenes. Now it's time for the batch to choose who will represent Batch 2003 for two official positions.\n\nNominees:\n- Bianca Jison (Alumni Assoc. Representative)\n- Felie Magbanua (Batch Representative)\n\nFeedback window closes ${deadlineFormatted} at 8:00 AM PHT (${daysRemaining} days left)\n\nSubmit your response: ${siteUrl}/login?redirect=/profile&batchrep=1\n\n- The Organizing Committee\n\nUSLS-IS 2003\nQuestions? Email us at uslsis.batch2003@gmail.com`;
+          } else {
+            // Standard announcement template
+            emailSubject = 'New message in your Inbox';
+            emailHtml = `
               <div style="margin: 0; padding: 0; background: #ffffff;">
                 <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif; color: #1a1a1a;">
 
@@ -205,8 +313,16 @@ router.post('/', authenticateToken, async (req, res) => {
 
                 </div>
               </div>
-            `,
-            text: `Hi ${recipient.first_name || 'Batchmate'},\n\nYou have a new message in your Inbox!\n\nSubject: ${subject}\n\nView it here: ${siteUrl}/inbox\n\n- The Organizing Committee\n\nUSLS-IS 2003\nQuestions? Email us at uslsis.batch2003@gmail.com`
+            `;
+            emailText = `Hi ${recipient.first_name || 'Batchmate'},\n\nYou have a new message in your Inbox!\n\nSubject: ${subject}\n\nView it here: ${siteUrl}/inbox\n\n- The Organizing Committee\n\nUSLS-IS 2003\nQuestions? Email us at uslsis.batch2003@gmail.com`;
+          }
+
+          await sgMail.send({
+            to: recipient.email,
+            from: process.env.FROM_EMAIL || 'noreply@goldenbatch2003.com',
+            subject: emailSubject,
+            html: emailHtml,
+            text: emailText
           });
           emailsSent++;
         } catch (emailErr) {
@@ -216,19 +332,23 @@ router.post('/', authenticateToken, async (req, res) => {
       }
     }
 
-    // Log the announcement
-    await db.query(`
-      INSERT INTO announcements (subject, message, audience, recipients_count, emails_sent, emails_failed, sent_by)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
-    `, [subject, message, audience, recipients.length, emailsSent, emailsFailed, req.user.email]);
+    // Log the announcement (skip for test mode)
+    if (!testMode) {
+      await db.query(`
+        INSERT INTO announcements (subject, message, audience, recipients_count, emails_sent, emails_failed, sent_by)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
+      `, [subject, message, audience, recipients.length, emailsSent, emailsFailed, req.user.email]);
+    }
 
     res.json({
       success: true,
-      message: sendEmail 
-        ? `Announcement sent to ${emailsSent} recipient${emailsSent !== 1 ? 's' : ''}${emailsFailed > 0 ? ` (${emailsFailed} failed)` : ''}`
-        : `Announcement logged (${recipients.length} recipients, email not sent)`,
+      message: testMode
+        ? `Test email sent to ${testEmail}`
+        : sendEmail
+          ? `Announcement sent to ${emailsSent} recipient${emailsSent !== 1 ? 's' : ''}${emailsFailed > 0 ? ` (${emailsFailed} failed)` : ''}`
+          : `Announcement logged (${recipients.length} recipients, email not sent)`,
       stats: {
-        total: recipients.length,
+        total: testMode ? 1 : recipients.length,
         sent: emailsSent,
         failed: emailsFailed
       }

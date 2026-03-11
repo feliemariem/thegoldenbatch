@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Announcement Composer – Super Admin Mock</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --green-dark: #0d2b1a; --green: #006633; --green-light: #e8f5ee;
+    --green-border: #c8e6d4; --gold: #CFB53B; --gold-bg: #fffbea;
+    --surface: #f0f7f3; --card-bg: #e9f3ed; --white: #ffffff;
+    --border: #d0e8d8; --text: #1a1a1a; --muted: #6b7c73;
+    --red: #c0392b; --input-bg: #f7fbf8;
+  }
+  body { font-family: 'Open Sans', sans-serif; background: var(--surface); color: var(--text); min-height: 100vh; padding: 24px 16px; }
+  .dashboard-label { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--green-dark); margin-bottom: 16px; }
+  .tabs { display: flex; background: var(--white); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 24px; width: fit-content; }
+  .tab { padding: 10px 22px; font-size: 13px; font-weight: 600; color: var(--muted); border: none; background: transparent; font-family: 'Open Sans', sans-serif; border-right: 1px solid var(--border); }
+  .tab:last-child { border-right: none; }
+  .tab.active { background: var(--green); color: var(--white); }
+  .sim-bar { display: flex; align-items: center; gap: 10px; background: #fff8e1; border: 1px solid #f0d060; border-radius: 8px; padding: 10px 16px; margin-bottom: 20px; font-size: 12px; color: #7a5c00; font-weight: 600; }
+  .sim-bar select { padding: 4px 10px; border: 1px solid #f0d060; border-radius: 6px; font-size: 12px; font-family: 'Open Sans', sans-serif; background: white; color: var(--text); cursor: pointer; }
+  .composer-wrap { background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px; padding: 28px; }
+  .composer-title { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--green); margin-bottom: 4px; }
+  .composer-subtitle { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+  .form-col { display: flex; flex-direction: column; gap: 14px; }
+  .field-label { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  select, input[type="text"], input[type="email"], textarea { width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-family: 'Open Sans', sans-serif; font-size: 14px; color: var(--text); background: var(--input-bg); outline: none; transition: border 0.2s; appearance: none; }
+  select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23006633' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+  input:focus, select:focus, textarea:focus { border-color: var(--green); }
+  textarea { resize: vertical; min-height: 120px; }
+  .template-picker { background: var(--gold-bg); border: 1px solid #e8d060; border-radius: 10px; padding: 14px; }
+  .tp-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #9a7a00; margin-bottom: 8px; }
+  .template-picker select { background-color: white; }
+  .batchrep-card { background: var(--green-light); border: 1px solid var(--green-border); border-radius: 10px; padding: 16px; }
+  .bc-tag { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); background: var(--green-dark); display: inline-block; padding: 3px 8px; border-radius: 4px; margin-bottom: 10px; }
+  .bc-title { font-family: 'Playfair Display', serif; font-size: 15px; color: var(--green-dark); margin-bottom: 10px; line-height: 1.4; }
+  .nominee-row { display: flex; align-items: center; gap: 10px; background: white; border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
+  .nominee-row .av { width: 32px; height: 32px; border-radius: 50%; background: var(--green); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: white; flex-shrink: 0; }
+  .nominee-row .nrole { font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--green); margin-bottom: 2px; }
+  .nominee-row .nname { font-size: 13px; font-weight: 700; color: var(--text); }
+  .deadline-row { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+  .deadline-row .ddate { color: var(--red); font-weight: 700; }
+  .deadline-row .ddays { background: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; padding: 1px 7px; font-size: 10px; font-weight: 700; color: #856404; }
+  .locked-audience { display: flex; align-items: center; gap: 8px; background: #e8f5ee; border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 13px; color: var(--green); font-weight: 600; }
+  .test-row { background: #fff8e1; border: 1px solid #f0d060; border-radius: 8px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+  .test-row-top { display: flex; align-items: center; justify-content: space-between; }
+  .test-row-label { font-size: 12px; font-weight: 700; color: #7a5c00; }
+  .test-row-hint { font-size: 11px; color: #9a7a20; }
+  .toggle-wrap { display: flex; align-items: center; gap: 8px; }
+  .toggle { position: relative; width: 36px; height: 20px; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .slider { position: absolute; inset: 0; background: #ccc; border-radius: 20px; cursor: pointer; transition: background 0.2s; }
+  .slider::before { content: ''; position: absolute; width: 14px; height: 14px; left: 3px; top: 3px; background: white; border-radius: 50%; transition: transform 0.2s; }
+  .toggle input:checked + .slider { background: var(--gold); }
+  .toggle input:checked + .slider::before { transform: translateX(16px); }
+  .toggle-text { font-size: 12px; font-weight: 600; color: #7a5c00; }
+  .check-row { display: flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); cursor: pointer; }
+  .check-row input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--green); }
+  .divider { height: 1px; background: var(--border); }
+  .send-btn { width: 100%; padding: 14px; background: var(--green-dark); color: var(--white); border: none; border-radius: 10px; font-family: 'Open Sans', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+  .send-btn:hover { background: var(--green); }
+  .send-btn.test-active { background: #b8960c; }
+  .preview-col { display: flex; flex-direction: column; gap: 10px; }
+  .preview-header { display: flex; align-items: center; justify-content: space-between; }
+  .preview-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--green-dark); color: var(--gold); font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 4px 10px; border-radius: 4px; }
+  .preview-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .preview-hint { font-size: 11px; color: var(--muted); }
+  .email-shell { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: white; font-family: Arial, sans-serif; }
+  .em-header { background: #0d1a14; padding: 16px; text-align: center; }
+  .em-logo { width: 40px; height: 40px; border-radius: 50%; background: var(--gold); margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; font-family: Georgia, serif; font-size: 11px; font-weight: 700; color: #0d1a14; }
+  .em-title { color: var(--gold); font-size: 13px; font-weight: 700; letter-spacing: 2px; font-family: Georgia, serif; }
+  .em-sub { color: #fff; font-size: 10px; letter-spacing: 1px; margin-top: 3px; font-family: Georgia, serif; }
+  .em-body { padding: 18px 16px; background: white; }
+  .em-greeting { font-size: 14px; font-weight: 700; margin-bottom: 10px; color: #1a1a1a; }
+  .em-card { background: #fafafa; border-left: 3px solid var(--gold); border-radius: 6px; padding: 14px; margin-bottom: 14px; }
+  .em-card .new-msg { font-size: 13px; color: #1a1a1a; margin-bottom: 6px; font-weight: 600; }
+  .em-card .subject-line { font-size: 12px; color: #666; }
+  .em-card .subject-line strong { color: var(--green); }
+  .em-placeholder { color: #bbb; font-style: italic; }
+  .em-cta { display: block; background: var(--green); color: white; text-align: center; padding: 12px; border-radius: 6px; font-size: 13px; font-weight: 700; margin-bottom: 10px; text-decoration: none; }
+  .em-footnote { font-size: 10px; color: #999; text-align: center; }
+  .em-footer { background: #0d1a14; padding: 12px; text-align: center; font-size: 11px; color: var(--gold); }
+  .em-footer span { color: #fff; }
+  .em-batchrep-intro { font-size: 13px; color: #444; line-height: 1.6; margin-bottom: 14px; }
+  .em-nominee-row { display: flex; align-items: center; gap: 10px; background: #f0f9f4; border: 1px solid #c8e6d4; border-radius: 6px; padding: 8px 12px; margin-bottom: 6px; }
+  .em-nominee-row .nav { width: 30px; height: 30px; border-radius: 50%; background: var(--green); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: white; flex-shrink: 0; }
+  .em-nominee-row .nrole { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--green); }
+  .em-nominee-row .nname { font-size: 12px; font-weight: 700; color: #1a1a1a; }
+  .em-deadline { font-size: 11px; color: #666; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 10px 0 14px; }
+  .em-deadline .dd { color: var(--red); font-weight: 700; }
+  .em-deadline .dy { background: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; padding: 1px 6px; font-size: 10px; font-weight: 700; color: #856404; }
+  .inbox-preview { background: white; border: 1px solid var(--border); border-radius: 8px; padding: 14px; font-size: 13px; }
+  @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div style="max-width: 1100px; margin: 0 auto;">
+  <div class="dashboard-label">Admin Dashboard</div>
+  <div class="tabs">
+    <button class="tab">Registry</button><button class="tab">Accounting</button>
+    <button class="tab active">Announce</button><button class="tab">Meetings</button>
+    <button class="tab">Messages</button><button class="tab">Strategic</button>
+    <button class="tab">Permissions</button>
+  </div>
+
+  <div class="sim-bar">
+    👤 Simulating as:
+    <select id="sim-select">
+      <option value="superadmin">Felie Magbanua (id=1, Super Admin)</option>
+      <option value="fulladmin">Full Admin (e.g. Bia)</option>
+      <option value="registryadmin">Registry Admin</option>
+    </select>
+    <span style="color:#9a7a20; font-weight:400;">— switch to see how the composer changes per role</span>
+  </div>
+
+  <div class="composer-wrap">
+    <div class="composer-title">Send Announcement</div>
+    <div class="composer-subtitle">Send email announcements to registered batchmates.</div>
+    <div class="two-col">
+      <div class="form-col">
+
+        <!-- Template picker: id=1 only -->
+        <div class="template-picker" id="template-picker">
+          <div class="tp-label">⚡ Email Template <span style="font-size:9px; opacity:0.7;">(Super Admin only)</span></div>
+          <select id="template-select">
+            <option value="standard">✉️ Standard Announcement</option>
+            <option value="batchrep">🗳️ Batch Rep Notification</option>
+          </select>
+        </div>
+
+        <!-- Audience selector -->
+        <div id="audience-field">
+          <div class="field-label">To</div>
+          <select id="audience">
+            <option value="all">All Registered (129)</option>
+            <option value="graduates">Graduates Only (117)</option>
+            <option value="full_admins">Full Admins Only (10)</option>
+            <option value="registry_admins">Registry Admins Only (3)</option>
+            <option value="going">Going Only (79)</option>
+            <option value="maybe">Maybe Only (46)</option>
+            <option value="not_going">Not Going Only (4)</option>
+          </select>
+        </div>
+
+        <!-- Locked audience for batchrep -->
+        <div id="locked-audience-field" style="display:none;">
+          <div class="field-label">To</div>
+          <div class="locked-audience">🔒 Graduates Only (117) — locked for this template</div>
+        </div>
+
+        <!-- Standard fields -->
+        <div id="standard-fields">
+          <div style="margin-bottom:14px;">
+            <div class="field-label">Subject</div>
+            <input type="text" id="subject" placeholder="e.g., Event Reminder, Venue Update"/>
+          </div>
+          <div>
+            <div class="field-label">Message</div>
+            <textarea id="message" placeholder="Write your announcement here..."></textarea>
+          </div>
+        </div>
+
+        <!-- Batch rep card -->
+        <div id="batchrep-fields" style="display:none;">
+          <div class="batchrep-card">
+            <div class="bc-tag">⚡ Quick Batch Input</div>
+            <div class="bc-title">The batch needs to hear from you.</div>
+            <div class="nominee-row">
+              <div class="av">BJ</div>
+              <div><div class="nrole">Nominee · Alumni Assoc. Representative</div><div class="nname">Bianca Jison</div></div>
+            </div>
+            <div class="nominee-row">
+              <div class="av">FM</div>
+              <div><div class="nrole">Nominee · Batch Representative</div><div class="nname">Felie Magbanua</div></div>
+            </div>
+            <div class="deadline-row">
+              <span>⏱ Feedback window closes</span>
+              <span class="ddate">March 14, 2026 at 8:00 AM PHT</span>
+              <span class="ddays">3 days left</span>
+            </div>
+          </div>
+          <div style="font-size:12px; color: var(--muted); margin-top: 8px;">This template is pre-formatted. Recipients will see the nominee cards and a login CTA.</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Test mode: id=1 only -->
+        <div class="test-row" id="test-mode-row">
+          <div class="test-row-top">
+            <div>
+              <div class="test-row-label">🧪 Test Mode</div>
+              <div class="test-row-hint">Send to yourself before the full blast</div>
+            </div>
+            <div class="toggle-wrap">
+              <label class="toggle">
+                <input type="checkbox" id="test-toggle"/>
+                <span class="slider"></span>
+              </label>
+              <span class="toggle-text" id="toggle-label">Off</span>
+            </div>
+          </div>
+          <div id="test-email-field" style="display:none;">
+            <input type="email" id="test-email" value="felie@fnrcore.com"/>
+          </div>
+        </div>
+
+        <label class="check-row">
+          <input type="checkbox" id="send-email" checked/> Send Email to Recipients
+        </label>
+
+        <button class="send-btn" id="send-btn">Send to 129 recipients</button>
+      </div>
+
+      <!-- PREVIEW -->
+      <div class="preview-col">
+        <div class="preview-header">
+          <div class="preview-badge"><span class="dot"></span> Live Preview</div>
+          <div class="preview-hint">What recipients will receive</div>
+        </div>
+
+        <!-- Standard email preview -->
+        <div class="email-shell" id="preview-standard">
+          <div class="em-header">
+            <div class="em-logo">GB</div>
+            <div class="em-title">THE GOLDEN BATCH 2003</div>
+            <div class="em-sub">UNIVERSITY OF ST. LA SALLE - IS · 25th Alumni Homecoming</div>
+          </div>
+          <div class="em-body">
+            <div class="em-greeting">Hi [First Name],</div>
+            <div class="em-card">
+              <div class="new-msg">You have a new message in your Inbox!</div>
+              <div class="subject-line">Subject: <strong id="preview-subject" class="em-placeholder">your subject will appear here</strong></div>
+            </div>
+            <a class="em-cta">View Message →</a>
+            <div class="em-footnote">Log in to thegoldenbatch2003.com to read the full message.</div>
+          </div>
+          <div class="em-footer">© USLS-IS Golden Batch 2003 &nbsp;·&nbsp; <span>Questions? </span>uslsis.batch2003@gmail.com</div>
+        </div>
+
+        <!-- Batch rep email preview -->
+        <div class="email-shell" id="preview-batchrep" style="display:none;">
+          <div class="em-header">
+            <div class="em-logo">GB</div>
+            <div class="em-title">THE GOLDEN BATCH 2003</div>
+            <div class="em-sub">UNIVERSITY OF ST. LA SALLE - IS · 25th Alumni Homecoming</div>
+          </div>
+          <div class="em-body">
+            <div class="em-greeting">Hi [First Name],</div>
+            <div class="em-batchrep-intro">The organizing committee has been working behind the scenes. Now it's time for the batch to choose who will represent Batch 2003 for <strong>two official positions</strong>.</div>
+            <div class="em-nominee-row">
+              <div class="nav">BJ</div>
+              <div><div class="nrole">Nominee · Alumni Assoc. Representative</div><div class="nname">Bianca Jison</div></div>
+            </div>
+            <div class="em-nominee-row">
+              <div class="nav">FM</div>
+              <div><div class="nrole">Nominee · Batch Representative</div><div class="nname">Felie Magbanua</div></div>
+            </div>
+            <div class="em-deadline">
+              <span>⏱ Feedback window closes</span>
+              <span class="dd">March 14, 2026 at 8:00 AM PHT</span>
+              <span class="dy">3 days left</span>
+            </div>
+            <a class="em-cta">Submit My Response →</a>
+            <div class="em-footnote">You'll be asked to log in. The voting modal will open automatically.</div>
+          </div>
+          <div class="em-footer">© USLS-IS Golden Batch 2003 &nbsp;·&nbsp; <span>Questions? </span>uslsis.batch2003@gmail.com</div>
+        </div>
+
+        <!-- Inbox preview -->
+        <div>
+          <div class="field-label" style="margin-bottom: 8px;">What they see in their Inbox</div>
+          <div class="inbox-preview">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+              <span style="font-weight:700;" id="inbox-subject" class="em-placeholder">Subject will appear here</span>
+              <span style="font-size:11px; color: var(--muted);">just now</span>
+            </div>
+            <div style="font-size:12px; color: var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" id="inbox-message" class="em-placeholder">Your message will appear here...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var currentTemplate = 'standard';
+var audienceCounts = { all:129, graduates:117, full_admins:10, registry_admins:3, going:79, maybe:46, not_going:4 };
+
+function simulateUser(role) {
+  var isSuperAdmin = role === 'superadmin';
+  document.getElementById('template-picker').style.display = isSuperAdmin ? 'block' : 'none';
+  document.getElementById('test-mode-row').style.display = isSuperAdmin ? 'flex' : 'none';
+  document.getElementById('test-toggle').checked = false;
+  document.getElementById('test-email-field').style.display = 'none';
+  document.getElementById('toggle-label').textContent = 'Off';
+  setTemplate('standard');
+  document.getElementById('template-select').value = 'standard';
+}
+
+function setTemplate(t) {
+  currentTemplate = t;
+  var isStandard = t === 'standard';
+  document.getElementById('standard-fields').style.display = isStandard ? 'block' : 'none';
+  document.getElementById('batchrep-fields').style.display = isStandard ? 'none' : 'block';
+  document.getElementById('audience-field').style.display = isStandard ? 'block' : 'none';
+  document.getElementById('locked-audience-field').style.display = isStandard ? 'none' : 'block';
+  document.getElementById('preview-standard').style.display = isStandard ? 'block' : 'none';
+  document.getElementById('preview-batchrep').style.display = isStandard ? 'none' : 'block';
+  if (!isStandard) {
+    document.getElementById('inbox-subject').textContent = 'The batch needs to hear from you.';
+    document.getElementById('inbox-subject').className = '';
+    document.getElementById('inbox-message').textContent = 'Submit your response on the two official nominees for Batch 2003.';
+    document.getElementById('inbox-message').className = '';
+  } else {
+    updatePreview();
+  }
+  updateSendBtn();
+}
+
+function updatePreview() {
+  if (currentTemplate !== 'standard') return;
+  var subject = document.getElementById('subject').value.trim();
+  var message = document.getElementById('message').value.trim();
+  var ps = document.getElementById('preview-subject');
+  ps.textContent = subject || 'your subject will appear here';
+  ps.className = subject ? '' : 'em-placeholder';
+  var is = document.getElementById('inbox-subject');
+  is.textContent = subject || 'Subject will appear here';
+  is.className = subject ? '' : 'em-placeholder';
+  var im = document.getElementById('inbox-message');
+  im.textContent = message || 'Your message will appear here...';
+  im.className = message ? '' : 'em-placeholder';
+  updateSendBtn();
+}
+
+function toggleTestMode() {
+  var on = document.getElementById('test-toggle').checked;
+  document.getElementById('test-email-field').style.display = on ? 'block' : 'none';
+  document.getElementById('toggle-label').textContent = on ? 'On' : 'Off';
+  updateSendBtn();
+}
+
+function updateSendBtn() {
+  var isTest = document.getElementById('test-toggle').checked;
+  var testEmail = document.getElementById('test-email').value || 'felie@fnrcore.com';
+  var audience = document.getElementById('audience').value || 'all';
+  var count = audienceCounts[audience] || 0;
+  var btn = document.getElementById('send-btn');
+  if (isTest) {
+    btn.textContent = 'Send Test to ' + testEmail;
+    btn.className = 'send-btn test-active';
+  } else if (currentTemplate === 'batchrep') {
+    btn.textContent = 'Send Batch Rep Notification to 117 graduates';
+    btn.className = 'send-btn';
+  } else {
+    btn.textContent = 'Send to ' + count + ' recipients';
+    btn.className = 'send-btn';
+  }
+}
+
+function handleSend() {
+  var isTest = document.getElementById('test-toggle').checked;
+  var testEmail = document.getElementById('test-email').value;
+  if (isTest) {
+    alert('Test email would be sent to: ' + testEmail);
+  } else if (currentTemplate === 'batchrep') {
+    alert('Batch Rep Notification would be sent to 117 registered graduates.');
+  } else {
+    var audience = document.getElementById('audience').value;
+    alert('Announcement would be sent to ' + audienceCounts[audience] + ' recipients.');
+  }
+}
+
+document.getElementById('sim-select').addEventListener('change', function() { simulateUser(this.value); });
+document.getElementById('template-select').addEventListener('change', function() { setTemplate(this.value); });
+document.getElementById('audience').addEventListener('change', updateSendBtn);
+document.getElementById('subject').addEventListener('input', updatePreview);
+document.getElementById('message').addEventListener('input', updatePreview);
+document.getElementById('test-toggle').addEventListener('change', toggleTestMode);
+document.getElementById('test-email').addEventListener('input', updateSendBtn);
+document.getElementById('send-btn').addEventListener('click', handleSend);
+</script>
+</body>
+</html>
