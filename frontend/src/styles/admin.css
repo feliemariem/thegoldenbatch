@@ -1780,3 +1780,662 @@ body[data-theme="light"] .btn-new-meeting:hover {
     font-size: 0.9rem;
   }
 }
+
+/* ========================================
+   SUPER ADMIN ANNOUNCEMENT COMPOSER
+   Template Picker, Test Mode, Live Preview
+   ======================================== */
+
+/* Template Picker */
+.sa-template-picker {
+  background: linear-gradient(135deg, rgba(207, 181, 59, 0.15) 0%, rgba(207, 181, 59, 0.05) 100%);
+  border: 1px solid rgba(207, 181, 59, 0.3);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+
+[data-theme="light"] .sa-template-picker {
+  background: linear-gradient(135deg, rgba(184, 150, 12, 0.12) 0%, rgba(184, 150, 12, 0.04) 100%);
+  border-color: rgba(184, 150, 12, 0.35);
+}
+
+.sa-template-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #CFB53B;
+  margin-bottom: 8px;
+}
+
+[data-theme="light"] .sa-template-label {
+  color: #B8960C;
+}
+
+.sa-template-select {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(207, 181, 59, 0.3);
+  background: rgba(0,0,0,0.3);
+  color: #e0e0e0;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+[data-theme="light"] .sa-template-select {
+  background: rgba(235, 245, 238, 0.9);
+  border-color: rgba(184, 150, 12, 0.3);
+  color: #1a1a1a;
+}
+
+/* Batch Rep Card */
+.sa-batchrep-card {
+  background: linear-gradient(135deg, rgba(0, 102, 51, 0.2) 0%, rgba(0, 102, 51, 0.1) 100%);
+  border: 1px solid rgba(0, 102, 51, 0.3);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+[data-theme="light"] .sa-batchrep-card {
+  background: linear-gradient(135deg, rgba(0, 102, 51, 0.1) 0%, rgba(0, 102, 51, 0.05) 100%);
+  border-color: rgba(0, 102, 51, 0.25);
+}
+
+.sa-batchrep-tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #CFB53B;
+  background: #0d1a14;
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+[data-theme="light"] .sa-batchrep-tag {
+  color: #B8960C;
+  background: rgba(0, 102, 51, 0.1);
+}
+
+.sa-batchrep-title {
+  font-size: 15px;
+  color: #e0e0e0;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+[data-theme="light"] .sa-batchrep-title {
+  color: #1a1a1a;
+}
+
+/* Nominee Row */
+.sa-nominee-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+
+[data-theme="light"] .sa-nominee-row {
+  background: rgba(0, 102, 51, 0.06);
+  border-color: rgba(0, 102, 51, 0.15);
+}
+
+.sa-nominee-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #006633;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+}
+
+.sa-nominee-role {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #4CAF50;
+  margin-bottom: 2px;
+}
+
+[data-theme="light"] .sa-nominee-role {
+  color: #006633;
+}
+
+.sa-nominee-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #e0e0e0;
+}
+
+[data-theme="light"] .sa-nominee-name {
+  color: #1a1a1a;
+}
+
+/* Deadline Row */
+.sa-deadline-row {
+  font-size: 11px;
+  color: #888;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+[data-theme="light"] .sa-deadline-row {
+  color: #555;
+}
+
+.sa-deadline-date {
+  color: #e74c3c;
+  font-weight: 700;
+}
+
+[data-theme="light"] .sa-deadline-date {
+  color: #c0392b;
+}
+
+.sa-deadline-days {
+  background: rgba(255, 193, 7, 0.2);
+  border: 1px solid rgba(255, 193, 7, 0.5);
+  border-radius: 4px;
+  padding: 1px 7px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #ffc107;
+}
+
+[data-theme="light"] .sa-deadline-days {
+  background: rgba(184, 134, 11, 0.15);
+  border-color: rgba(184, 134, 11, 0.4);
+  color: #B8860B;
+}
+
+/* Locked Audience */
+.sa-locked-audience {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 102, 51, 0.15);
+  border: 1px solid rgba(0, 102, 51, 0.3);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #4CAF50;
+  font-weight: 600;
+}
+
+[data-theme="light"] .sa-locked-audience {
+  background: rgba(0, 102, 51, 0.08);
+  border-color: rgba(0, 102, 51, 0.25);
+  color: #006633;
+}
+
+/* Test Mode Row */
+.sa-test-row {
+  background: linear-gradient(135deg, rgba(207, 181, 59, 0.15) 0%, rgba(207, 181, 59, 0.05) 100%);
+  border: 1px solid rgba(207, 181, 59, 0.3);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+
+[data-theme="light"] .sa-test-row {
+  background: linear-gradient(135deg, rgba(184, 150, 12, 0.12) 0%, rgba(184, 150, 12, 0.04) 100%);
+  border-color: rgba(184, 150, 12, 0.35);
+}
+
+.sa-test-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #CFB53B;
+}
+
+[data-theme="light"] .sa-test-label {
+  color: #B8960C;
+}
+
+.sa-test-hint {
+  font-size: 11px;
+  color: rgba(207, 181, 59, 0.7);
+}
+
+[data-theme="light"] .sa-test-hint {
+  color: rgba(184, 150, 12, 0.8);
+}
+
+.sa-toggle-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: #CFB53B;
+}
+
+[data-theme="light"] .sa-toggle-text {
+  color: #B8960C;
+}
+
+.sa-toggle-track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255,255,255,0.2);
+  border-radius: 20px;
+  transition: background 0.2s;
+}
+
+.sa-toggle-track.active {
+  background: #CFB53B;
+}
+
+[data-theme="light"] .sa-toggle-track {
+  background: rgba(0, 102, 51, 0.2);
+}
+
+[data-theme="light"] .sa-toggle-track.active {
+  background: #B8960C;
+}
+
+.sa-test-email-input {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(207, 181, 59, 0.3);
+  background: rgba(0,0,0,0.3);
+  color: #e0e0e0;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+[data-theme="light"] .sa-test-email-input {
+  background: rgba(235, 245, 238, 0.9);
+  border-color: rgba(184, 150, 12, 0.3);
+  color: #1a1a1a;
+}
+
+/* Preview Column */
+.sa-preview-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #0d1a14;
+  color: #CFB53B;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+
+[data-theme="light"] .sa-preview-badge {
+  background: rgba(0, 102, 51, 0.1);
+  color: #006633;
+}
+
+.sa-preview-hint {
+  font-size: 11px;
+  color: #888;
+}
+
+[data-theme="light"] .sa-preview-hint {
+  color: #666;
+}
+
+/* Inbox Preview Card */
+.sa-inbox-preview {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 14px;
+  font-size: 13px;
+}
+
+[data-theme="light"] .sa-inbox-preview {
+  background: rgba(0, 102, 51, 0.04);
+  border-color: rgba(0, 102, 51, 0.15);
+}
+
+.sa-inbox-subject {
+  font-weight: 700;
+  color: #e0e0e0;
+}
+
+.sa-inbox-subject.placeholder {
+  color: #666;
+  font-style: italic;
+}
+
+[data-theme="light"] .sa-inbox-subject {
+  color: #1a1a1a;
+}
+
+[data-theme="light"] .sa-inbox-subject.placeholder {
+  color: #888;
+}
+
+.sa-inbox-message {
+  font-size: 12px;
+  color: #888;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sa-inbox-message.placeholder {
+  color: #666;
+  font-style: italic;
+}
+
+[data-theme="light"] .sa-inbox-message {
+  color: #555;
+}
+
+[data-theme="light"] .sa-inbox-message.placeholder {
+  color: #888;
+}
+
+.sa-inbox-time {
+  font-size: 11px;
+  color: #666;
+}
+
+[data-theme="light"] .sa-inbox-time {
+  color: #888;
+}
+
+/* Batch Rep Note */
+.sa-batchrep-note {
+  font-size: 12px;
+  color: #888;
+  margin-top: 12px;
+}
+
+[data-theme="light"] .sa-batchrep-note {
+  color: #666;
+}
+
+/* Section Label */
+.sa-section-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #888;
+  margin-bottom: 8px;
+}
+
+[data-theme="light"] .sa-section-label {
+  color: #666;
+}
+
+/* Email Preview Shell */
+.sa-email-shell {
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  background: white;
+  font-family: Arial, sans-serif;
+}
+
+[data-theme="light"] .sa-email-shell {
+  border-color: rgba(0, 102, 51, 0.2);
+}
+
+.sa-email-header {
+  background: #0d1a14;
+  padding: 16px;
+  text-align: center;
+}
+
+.sa-email-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #CFB53B;
+  margin: 0 auto 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Georgia, serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #0d1a14;
+}
+
+.sa-email-title {
+  color: #CFB53B;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  font-family: Georgia, serif;
+}
+
+.sa-email-sub {
+  color: #fff;
+  font-size: 10px;
+  letter-spacing: 1px;
+  margin-top: 3px;
+  font-family: Georgia, serif;
+}
+
+.sa-email-body {
+  padding: 18px 16px;
+  background: white;
+}
+
+.sa-email-greeting {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #1a1a1a;
+}
+
+.sa-email-card {
+  background: #fafafa;
+  border-left: 3px solid #CFB53B;
+  border-radius: 6px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+.sa-email-new-msg {
+  font-size: 13px;
+  color: #1a1a1a;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.sa-email-subject-line {
+  font-size: 12px;
+  color: #666;
+}
+
+.sa-email-subject-text {
+  color: #006633;
+}
+
+.sa-email-subject-text.placeholder {
+  color: #bbb;
+  font-style: italic;
+}
+
+.sa-email-cta {
+  display: block;
+  background: #006633;
+  color: white;
+  text-align: center;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  text-decoration: none;
+}
+
+.sa-email-footnote {
+  font-size: 10px;
+  color: #999;
+  text-align: center;
+}
+
+.sa-email-footer {
+  background: #0d1a14;
+  padding: 12px;
+  text-align: center;
+  font-size: 11px;
+  color: #CFB53B;
+}
+
+.sa-email-footer span {
+  color: #fff;
+}
+
+/* Batch Rep Email Styles */
+.sa-email-intro {
+  font-size: 13px;
+  color: #444;
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+
+.sa-email-nominee-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f0f9f4;
+  border: 1px solid #c8e6d4;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-bottom: 6px;
+}
+
+.sa-email-nominee-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #006633;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+}
+
+.sa-email-nominee-role {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #006633;
+}
+
+.sa-email-nominee-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.sa-email-deadline {
+  font-size: 11px;
+  color: #666;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 10px 0 14px;
+}
+
+.sa-email-deadline-date {
+  color: #c0392b;
+  font-weight: 700;
+}
+
+.sa-email-deadline-days {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #856404;
+}
+
+/* History Card */
+.sa-history-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+[data-theme="light"] .sa-history-card {
+  background: rgba(0, 102, 51, 0.03);
+  border-color: rgba(0, 102, 51, 0.1);
+}
+
+.sa-history-date {
+  color: #666;
+  font-size: 0.8rem;
+}
+
+[data-theme="light"] .sa-history-date {
+  color: #888;
+}
+
+.sa-history-message {
+  color: #999;
+  font-size: 0.85rem;
+  margin: 8px 0;
+}
+
+[data-theme="light"] .sa-history-message {
+  color: #555;
+}
+
+.sa-history-meta {
+  color: #666;
+}
+
+[data-theme="light"] .sa-history-meta {
+  color: #888;
+}
+
+/* Modal Message Box */
+.sa-modal-message-box {
+  padding: 16px;
+  background: rgba(0, 102, 51, 0.1);
+  border-radius: 12px;
+  border-left: 3px solid #006633;
+}
+
+[data-theme="light"] .sa-modal-message-box {
+  background: rgba(0, 102, 51, 0.06);
+}
+
+/* Test Send Button */
+.sa-test-send-btn {
+  background: linear-gradient(135deg, #B8960C 0%, #9a7a0a 100%) !important;
+}
+
+.sa-test-send-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #CFB53B 0%, #B8960C 100%) !important;
+}

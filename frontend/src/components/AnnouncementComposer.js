@@ -164,384 +164,74 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
     return `Send to ${getRecipientCount()} recipient${getRecipientCount() !== 1 ? 's' : ''}`;
   };
 
-  // Styles for super admin features
-  const superAdminStyles = {
-    templatePicker: {
-      background: 'linear-gradient(135deg, rgba(207, 181, 59, 0.15) 0%, rgba(207, 181, 59, 0.05) 100%)',
-      border: '1px solid rgba(207, 181, 59, 0.3)',
-      borderRadius: '10px',
-      padding: '14px',
-      marginBottom: '16px'
-    },
-    templateLabel: {
-      fontSize: '10px',
-      fontWeight: '700',
-      letterSpacing: '2px',
-      textTransform: 'uppercase',
-      color: '#CFB53B',
-      marginBottom: '8px'
-    },
-    templateSelect: {
-      width: '100%',
-      padding: '10px 14px',
-      borderRadius: '8px',
-      border: '1px solid rgba(207, 181, 59, 0.3)',
-      background: 'rgba(0,0,0,0.3)',
-      color: '#e0e0e0',
-      fontSize: '14px',
-      cursor: 'pointer'
-    },
-    batchRepCard: {
-      background: 'linear-gradient(135deg, rgba(0, 102, 51, 0.2) 0%, rgba(0, 102, 51, 0.1) 100%)',
-      border: '1px solid rgba(0, 102, 51, 0.3)',
-      borderRadius: '10px',
-      padding: '16px'
-    },
-    batchRepTag: {
-      fontSize: '10px',
-      fontWeight: '700',
-      letterSpacing: '2px',
-      textTransform: 'uppercase',
-      color: '#CFB53B',
-      background: '#0d1a14',
-      display: 'inline-block',
-      padding: '3px 8px',
-      borderRadius: '4px',
-      marginBottom: '10px'
-    },
-    batchRepTitle: {
-      fontSize: '15px',
-      color: '#e0e0e0',
-      marginBottom: '12px',
-      fontWeight: '600'
-    },
-    nomineeRow: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '10px',
-      background: 'rgba(255,255,255,0.05)',
-      border: '1px solid rgba(255,255,255,0.1)',
-      borderRadius: '8px',
-      padding: '10px 12px',
-      marginBottom: '8px'
-    },
-    nomineeAvatar: {
-      width: '32px',
-      height: '32px',
-      borderRadius: '50%',
-      background: '#006633',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      fontSize: '11px',
-      fontWeight: '700',
-      color: 'white',
-      flexShrink: 0
-    },
-    nomineeRole: {
-      fontSize: '9px',
-      fontWeight: '700',
-      letterSpacing: '1.5px',
-      textTransform: 'uppercase',
-      color: '#006633',
-      marginBottom: '2px'
-    },
-    nomineeName: {
-      fontSize: '13px',
-      fontWeight: '700',
-      color: '#e0e0e0'
-    },
-    deadlineRow: {
-      fontSize: '11px',
-      color: '#888',
-      display: 'flex',
-      alignItems: 'center',
-      gap: '6px',
-      flexWrap: 'wrap',
-      marginTop: '8px'
-    },
-    deadlineDate: {
-      color: '#c0392b',
-      fontWeight: '700'
-    },
-    deadlineDays: {
-      background: 'rgba(255, 193, 7, 0.2)',
-      border: '1px solid rgba(255, 193, 7, 0.5)',
-      borderRadius: '4px',
-      padding: '1px 7px',
-      fontSize: '10px',
-      fontWeight: '700',
-      color: '#ffc107'
-    },
-    lockedAudience: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '8px',
-      background: 'rgba(0, 102, 51, 0.15)',
-      border: '1px solid rgba(0, 102, 51, 0.3)',
-      borderRadius: '8px',
-      padding: '10px 14px',
-      fontSize: '13px',
-      color: '#4CAF50',
-      fontWeight: '600'
-    },
-    testRow: {
-      background: 'linear-gradient(135deg, rgba(207, 181, 59, 0.15) 0%, rgba(207, 181, 59, 0.05) 100%)',
-      border: '1px solid rgba(207, 181, 59, 0.3)',
-      borderRadius: '8px',
-      padding: '12px 14px',
-      marginBottom: '12px'
-    },
-    testRowTop: {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between'
-    },
-    testLabel: {
-      fontSize: '12px',
-      fontWeight: '700',
-      color: '#CFB53B'
-    },
-    testHint: {
-      fontSize: '11px',
-      color: 'rgba(207, 181, 59, 0.7)'
-    },
-    toggleWrap: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '8px'
-    },
-    toggle: {
-      position: 'relative',
-      width: '36px',
-      height: '20px',
-      cursor: 'pointer'
-    },
-    toggleTrack: (isOn) => ({
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      background: isOn ? '#CFB53B' : 'rgba(255,255,255,0.2)',
-      borderRadius: '20px',
-      transition: 'background 0.2s'
-    }),
-    toggleThumb: (isOn) => ({
-      position: 'absolute',
-      width: '14px',
-      height: '14px',
-      left: isOn ? '19px' : '3px',
-      top: '3px',
-      background: 'white',
-      borderRadius: '50%',
-      transition: 'left 0.2s'
-    }),
-    toggleText: {
-      fontSize: '12px',
-      fontWeight: '600',
-      color: '#CFB53B'
-    },
-    twoCol: {
-      display: 'grid',
-      gridTemplateColumns: '1fr 1fr',
-      gap: '28px',
-      alignItems: 'start'
-    },
-    previewCol: {
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '10px'
-    },
-    previewHeader: {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between'
-    },
-    previewBadge: {
-      display: 'inline-flex',
-      alignItems: 'center',
-      gap: '6px',
-      background: '#0d1a14',
-      color: '#CFB53B',
-      fontSize: '10px',
-      fontWeight: '700',
-      letterSpacing: '2px',
-      textTransform: 'uppercase',
-      padding: '4px 10px',
-      borderRadius: '4px'
-    },
-    previewDot: {
-      width: '6px',
-      height: '6px',
-      borderRadius: '50%',
-      background: '#CFB53B',
-      animation: 'pulse 1.5s infinite'
-    },
-    previewHint: {
-      fontSize: '11px',
-      color: '#888'
-    },
-    emailShell: {
-      border: '1px solid rgba(255,255,255,0.1)',
-      borderRadius: '10px',
-      overflow: 'hidden',
-      background: 'white',
-      fontFamily: 'Arial, sans-serif'
-    },
-    emailHeader: {
-      background: '#0d1a14',
-      padding: '16px',
-      textAlign: 'center'
-    },
-    emailLogo: {
-      width: '40px',
-      height: '40px',
-      borderRadius: '50%',
-      background: '#CFB53B',
-      margin: '0 auto 8px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      fontFamily: 'Georgia, serif',
-      fontSize: '11px',
-      fontWeight: '700',
-      color: '#0d1a14'
-    },
-    emailTitle: {
-      color: '#CFB53B',
-      fontSize: '13px',
-      fontWeight: '700',
-      letterSpacing: '2px',
-      fontFamily: 'Georgia, serif'
-    },
-    emailSub: {
-      color: '#fff',
-      fontSize: '10px',
-      letterSpacing: '1px',
-      marginTop: '3px',
-      fontFamily: 'Georgia, serif'
-    },
-    emailBody: {
-      padding: '18px 16px',
-      background: 'white'
-    },
-    emailGreeting: {
-      fontSize: '14px',
-      fontWeight: '700',
-      marginBottom: '10px',
-      color: '#1a1a1a'
-    },
-    emailCard: {
-      background: '#fafafa',
-      borderLeft: '3px solid #CFB53B',
-      borderRadius: '6px',
-      padding: '14px',
-      marginBottom: '14px'
-    },
-    emailCta: {
-      display: 'block',
-      background: '#006633',
-      color: 'white',
-      textAlign: 'center',
-      padding: '12px',
-      borderRadius: '6px',
-      fontSize: '13px',
-      fontWeight: '700',
-      marginBottom: '10px',
-      textDecoration: 'none'
-    },
-    emailFootnote: {
-      fontSize: '10px',
-      color: '#999',
-      textAlign: 'center'
-    },
-    emailFooter: {
-      background: '#0d1a14',
-      padding: '12px',
-      textAlign: 'center',
-      fontSize: '11px',
-      color: '#CFB53B'
-    },
-    inboxPreview: {
-      background: 'rgba(255,255,255,0.05)',
-      border: '1px solid rgba(255,255,255,0.1)',
-      borderRadius: '8px',
-      padding: '14px',
-      fontSize: '13px'
-    }
-  };
-
   // Email preview component for standard template
   const StandardEmailPreview = () => (
-    <div style={superAdminStyles.emailShell}>
-      <div style={superAdminStyles.emailHeader}>
-        <div style={superAdminStyles.emailLogo}>GB</div>
-        <div style={superAdminStyles.emailTitle}>THE GOLDEN BATCH 2003</div>
-        <div style={superAdminStyles.emailSub}>UNIVERSITY OF ST. LA SALLE - IS · 25th Alumni Homecoming</div>
+    <div className="sa-email-shell">
+      <div className="sa-email-header">
+        <div className="sa-email-logo">GB</div>
+        <div className="sa-email-title">THE GOLDEN BATCH 2003</div>
+        <div className="sa-email-sub">UNIVERSITY OF ST. LA SALLE - IS · 25th Alumni Homecoming</div>
       </div>
-      <div style={superAdminStyles.emailBody}>
-        <div style={superAdminStyles.emailGreeting}>Hi [First Name],</div>
-        <div style={superAdminStyles.emailCard}>
-          <div style={{ fontSize: '13px', color: '#1a1a1a', marginBottom: '6px', fontWeight: '600' }}>
-            You have a new message in your Inbox!
-          </div>
-          <div style={{ fontSize: '12px', color: '#666' }}>
-            Subject: <strong style={{ color: subject ? '#006633' : '#bbb', fontStyle: subject ? 'normal' : 'italic' }}>
+      <div className="sa-email-body">
+        <div className="sa-email-greeting">Hi [First Name],</div>
+        <div className="sa-email-card">
+          <div className="sa-email-new-msg">You have a new message in your Inbox!</div>
+          <div className="sa-email-subject-line">
+            Subject: <strong className={subject ? 'sa-email-subject-text' : 'sa-email-subject-text placeholder'}>
               {subject || 'your subject will appear here'}
             </strong>
           </div>
         </div>
-        <div style={superAdminStyles.emailCta}>View Message →</div>
-        <div style={superAdminStyles.emailFootnote}>Log in to thegoldenbatch2003.com to read the full message.</div>
+        <div className="sa-email-cta">View Message →</div>
+        <div className="sa-email-footnote">Log in to thegoldenbatch2003.com to read the full message.</div>
       </div>
-      <div style={superAdminStyles.emailFooter}>
-        © USLS-IS Golden Batch 2003 · <span style={{ color: '#fff' }}>Questions? </span>uslsis.batch2003@gmail.com
+      <div className="sa-email-footer">
+        © USLS-IS Golden Batch 2003 · <span>Questions? </span>uslsis.batch2003@gmail.com
       </div>
     </div>
   );
 
   // Email preview component for batch rep template
   const BatchRepEmailPreview = () => (
-    <div style={superAdminStyles.emailShell}>
-      <div style={superAdminStyles.emailHeader}>
-        <div style={superAdminStyles.emailLogo}>GB</div>
-        <div style={superAdminStyles.emailTitle}>THE GOLDEN BATCH 2003</div>
-        <div style={superAdminStyles.emailSub}>UNIVERSITY OF ST. LA SALLE - IS · 25th Alumni Homecoming</div>
+    <div className="sa-email-shell">
+      <div className="sa-email-header">
+        <div className="sa-email-logo">GB</div>
+        <div className="sa-email-title">THE GOLDEN BATCH 2003</div>
+        <div className="sa-email-sub">UNIVERSITY OF ST. LA SALLE - IS · 25th Alumni Homecoming</div>
       </div>
-      <div style={superAdminStyles.emailBody}>
-        <div style={superAdminStyles.emailGreeting}>Hi [First Name],</div>
-        <div style={{ fontSize: '13px', color: '#444', lineHeight: '1.6', marginBottom: '14px' }}>
+      <div className="sa-email-body">
+        <div className="sa-email-greeting">Hi [First Name],</div>
+        <div className="sa-email-intro">
           The organizing committee has been working behind the scenes. Now it's time for the batch to choose who will represent Batch 2003 for <strong>two official positions</strong>.
         </div>
-        <div style={{ ...superAdminStyles.nomineeRow, background: '#f0f9f4', border: '1px solid #c8e6d4' }}>
-          <div style={{ ...superAdminStyles.nomineeAvatar, width: '30px', height: '30px', fontSize: '10px' }}>BJ</div>
+        <div className="sa-email-nominee-row">
+          <div className="sa-email-nominee-avatar">BJ</div>
           <div>
-            <div style={{ ...superAdminStyles.nomineeRole, color: '#006633' }}>Nominee · Alumni Assoc. Representative</div>
-            <div style={{ ...superAdminStyles.nomineeName, color: '#1a1a1a', fontSize: '12px' }}>Bianca Jison</div>
+            <div className="sa-email-nominee-role">Nominee · Alumni Assoc. Representative</div>
+            <div className="sa-email-nominee-name">Bianca Jison</div>
           </div>
         </div>
-        <div style={{ ...superAdminStyles.nomineeRow, background: '#f0f9f4', border: '1px solid #c8e6d4' }}>
-          <div style={{ ...superAdminStyles.nomineeAvatar, width: '30px', height: '30px', fontSize: '10px' }}>FM</div>
+        <div className="sa-email-nominee-row">
+          <div className="sa-email-nominee-avatar">FM</div>
           <div>
-            <div style={{ ...superAdminStyles.nomineeRole, color: '#006633' }}>Nominee · Batch Representative</div>
-            <div style={{ ...superAdminStyles.nomineeName, color: '#1a1a1a', fontSize: '12px' }}>Felie Magbanua</div>
+            <div className="sa-email-nominee-role">Nominee · Batch Representative</div>
+            <div className="sa-email-nominee-name">Felie Magbanua</div>
           </div>
         </div>
-        <div style={{ fontSize: '11px', color: '#666', display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', margin: '10px 0 14px' }}>
+        <div className="sa-email-deadline">
           <span>⏱ Feedback window closes</span>
-          <span style={{ color: '#c0392b', fontWeight: '700' }}>
+          <span className="sa-email-deadline-date">
             {batchRepDeadline.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} at 8:00 AM PHT
           </span>
-          <span style={{ background: '#fff3cd', border: '1px solid #ffc107', borderRadius: '4px', padding: '1px 6px', fontSize: '10px', fontWeight: '700', color: '#856404' }}>
+          <span className="sa-email-deadline-days">
             {daysRemaining} day{daysRemaining !== 1 ? 's' : ''} left
           </span>
         </div>
-        <div style={superAdminStyles.emailCta}>Submit My Response →</div>
-        <div style={superAdminStyles.emailFootnote}>You'll be asked to log in. The voting modal will open automatically.</div>
+        <div className="sa-email-cta">Submit My Response →</div>
+        <div className="sa-email-footnote">You'll be asked to log in. The voting modal will open automatically.</div>
       </div>
-      <div style={superAdminStyles.emailFooter}>
-        © USLS-IS Golden Batch 2003 · <span style={{ color: '#fff' }}>Questions? </span>uslsis.batch2003@gmail.com
+      <div className="sa-email-footer">
+        © USLS-IS Golden Batch 2003 · <span>Questions? </span>uslsis.batch2003@gmail.com
       </div>
     </div>
   );
@@ -552,14 +242,14 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
     const previewMessage = template === 'batchrep' ? 'Submit your response on the two official nominees for Batch 2003.' : message;
 
     return (
-      <div style={superAdminStyles.inboxPreview}>
+      <div className="sa-inbox-preview">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-          <span style={{ fontWeight: '700', color: previewSubject ? '#e0e0e0' : '#666', fontStyle: previewSubject ? 'normal' : 'italic' }}>
+          <span className={`sa-inbox-subject ${!previewSubject ? 'placeholder' : ''}`}>
             {previewSubject || 'Subject will appear here'}
           </span>
-          <span style={{ fontSize: '11px', color: '#666' }}>just now</span>
+          <span className="sa-inbox-time">just now</span>
         </div>
-        <div style={{ fontSize: '12px', color: previewMessage ? '#888' : '#666', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontStyle: previewMessage ? 'normal' : 'italic' }}>
+        <div className={`sa-inbox-message ${!previewMessage ? 'placeholder' : ''}`}>
           {previewMessage || 'Your message will appear here...'}
         </div>
       </div>
@@ -571,12 +261,12 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
     <>
       {/* Template Picker - Super Admin Only */}
       {isSuperAdmin && (
-        <div style={superAdminStyles.templatePicker}>
-          <div style={superAdminStyles.templateLabel}>⚡ Email Template <span style={{ fontSize: '9px', opacity: 0.7 }}>(Super Admin only)</span></div>
+        <div className="sa-template-picker">
+          <div className="sa-template-label">⚡ Email Template <span style={{ fontSize: '9px', opacity: 0.7 }}>(Super Admin only)</span></div>
           <select
             value={template}
             onChange={(e) => setTemplate(e.target.value)}
-            style={superAdminStyles.templateSelect}
+            className="sa-template-select"
           >
             <option value="standard">✉️ Standard Announcement</option>
             <option value="batchrep">🗳️ Batch Rep Notification</option>
@@ -588,7 +278,7 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
       {template === 'batchrep' ? (
         <div className="form-group">
           <label>To:</label>
-          <div style={superAdminStyles.lockedAudience}>
+          <div className="sa-locked-audience">
             🔒 Graduates Only ({graduatesCount}) — locked for this template
           </div>
         </div>
@@ -638,31 +328,31 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
 
       {/* Standard Fields or Batch Rep Card */}
       {template === 'batchrep' ? (
-        <div style={superAdminStyles.batchRepCard}>
-          <div style={superAdminStyles.batchRepTag}>⚡ Quick Batch Input</div>
-          <div style={superAdminStyles.batchRepTitle}>The batch needs to hear from you.</div>
-          <div style={superAdminStyles.nomineeRow}>
-            <div style={superAdminStyles.nomineeAvatar}>BJ</div>
+        <div className="sa-batchrep-card">
+          <div className="sa-batchrep-tag">⚡ Quick Batch Input</div>
+          <div className="sa-batchrep-title">The batch needs to hear from you.</div>
+          <div className="sa-nominee-row">
+            <div className="sa-nominee-avatar">BJ</div>
             <div>
-              <div style={superAdminStyles.nomineeRole}>Nominee · Alumni Assoc. Representative</div>
-              <div style={superAdminStyles.nomineeName}>Bianca Jison</div>
+              <div className="sa-nominee-role">Nominee · Alumni Assoc. Representative</div>
+              <div className="sa-nominee-name">Bianca Jison</div>
             </div>
           </div>
-          <div style={superAdminStyles.nomineeRow}>
-            <div style={superAdminStyles.nomineeAvatar}>FM</div>
+          <div className="sa-nominee-row">
+            <div className="sa-nominee-avatar">FM</div>
             <div>
-              <div style={superAdminStyles.nomineeRole}>Nominee · Batch Representative</div>
-              <div style={superAdminStyles.nomineeName}>Felie Magbanua</div>
+              <div className="sa-nominee-role">Nominee · Batch Representative</div>
+              <div className="sa-nominee-name">Felie Magbanua</div>
             </div>
           </div>
-          <div style={superAdminStyles.deadlineRow}>
+          <div className="sa-deadline-row">
             <span>⏱ Feedback window closes</span>
-            <span style={superAdminStyles.deadlineDate}>
+            <span className="sa-deadline-date">
               {batchRepDeadline.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} at 8:00 AM PHT
             </span>
-            <span style={superAdminStyles.deadlineDays}>{daysRemaining} day{daysRemaining !== 1 ? 's' : ''} left</span>
+            <span className="sa-deadline-days">{daysRemaining} day{daysRemaining !== 1 ? 's' : ''} left</span>
           </div>
-          <div style={{ fontSize: '12px', color: '#888', marginTop: '12px' }}>
+          <div className="sa-batchrep-note">
             This template is pre-formatted. Recipients will see the nominee cards and a login CTA.
           </div>
         </div>
@@ -687,17 +377,6 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
               placeholder="Write your announcement here..."
               required
               rows={6}
-              style={{
-                width: '100%',
-                padding: '12px',
-                borderRadius: '8px',
-                border: '1px solid rgba(255,255,255,0.1)',
-                background: 'rgba(0,0,0,0.2)',
-                color: '#e0e0e0',
-                fontSize: '1rem',
-                resize: 'vertical',
-                fontFamily: 'inherit'
-              }}
             />
           </div>
         </>
@@ -705,40 +384,39 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
 
       {/* Test Mode - Super Admin Only */}
       {isSuperAdmin && (
-        <div style={superAdminStyles.testRow}>
-          <div style={superAdminStyles.testRowTop}>
+        <div className="sa-test-row">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>
-              <div style={superAdminStyles.testLabel}>🧪 Test Mode</div>
-              <div style={superAdminStyles.testHint}>Send to yourself before the full blast</div>
+              <div className="sa-test-label">🧪 Test Mode</div>
+              <div className="sa-test-hint">Send to yourself before the full blast</div>
             </div>
-            <div style={superAdminStyles.toggleWrap}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <div
-                style={superAdminStyles.toggle}
+                style={{ position: 'relative', width: '36px', height: '20px', cursor: 'pointer' }}
                 onClick={() => setTestMode(!testMode)}
               >
-                <div style={superAdminStyles.toggleTrack(testMode)} />
-                <div style={superAdminStyles.toggleThumb(testMode)} />
+                <div className={`sa-toggle-track ${testMode ? 'active' : ''}`} />
+                <div style={{
+                  position: 'absolute',
+                  width: '14px',
+                  height: '14px',
+                  left: testMode ? '19px' : '3px',
+                  top: '3px',
+                  background: 'white',
+                  borderRadius: '50%',
+                  transition: 'left 0.2s'
+                }} />
               </div>
-              <span style={superAdminStyles.toggleText}>{testMode ? 'On' : 'Off'}</span>
+              <span className="sa-toggle-text">{testMode ? 'On' : 'Off'}</span>
             </div>
           </div>
           {testMode && (
-            <div style={{ marginTop: '8px' }}>
-              <input
-                type="email"
-                value={testEmail}
-                onChange={(e) => setTestEmail(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '10px 14px',
-                  borderRadius: '8px',
-                  border: '1px solid rgba(207, 181, 59, 0.3)',
-                  background: 'rgba(0,0,0,0.3)',
-                  color: '#e0e0e0',
-                  fontSize: '14px'
-                }}
-              />
-            </div>
+            <input
+              type="email"
+              value={testEmail}
+              onChange={(e) => setTestEmail(e.target.value)}
+              className="sa-test-email-input"
+            />
           )}
         </div>
       )}
@@ -755,7 +433,7 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
         </label>
 
         {!sendEmail && (
-          <p style={{ color: '#888', fontSize: '0.85rem', marginTop: '4px' }}>
+          <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.85rem', marginTop: '4px' }}>
             (Announcement will be logged but no emails sent)
           </p>
         )}
@@ -771,14 +449,9 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
       <div style={{ position: 'relative', display: 'inline-block' }}>
         <button
           type="submit"
-          className="btn-primary"
+          className={`btn-primary ${testMode ? 'sa-test-send-btn' : ''}`}
           disabled={sending || getRecipientCount() === 0}
-          style={{
-            marginTop: '8px',
-            width: 'auto',
-            padding: '12px 24px',
-            background: testMode ? '#b8960c' : undefined
-          }}
+          style={{ marginTop: '8px', width: 'auto', padding: '12px 24px' }}
         >
           {getSendButtonLabel()}
         </button>
@@ -815,30 +488,28 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
     <div>
       <div className="invite-section">
         <h3>Send Announcement</h3>
-        <p style={{ color: '#888', marginBottom: '20px' }}>
+        <p style={{ color: 'var(--color-text-secondary)', marginBottom: '20px' }}>
           Send email announcements to registered batchmates.
         </p>
 
         <form onSubmit={handleSubmit}>
           {isSuperAdmin ? (
             // Two-column layout for super admin
-            <div style={superAdminStyles.twoCol}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '28px', alignItems: 'start' }}>
               <div className="form-col">
                 {renderFormContent()}
               </div>
-              <div style={superAdminStyles.previewCol}>
-                <div style={superAdminStyles.previewHeader}>
-                  <div style={superAdminStyles.previewBadge}>
-                    <span style={superAdminStyles.previewDot} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div className="sa-preview-badge">
+                    <span className="sa-preview-dot" />
                     Live Preview
                   </div>
-                  <div style={superAdminStyles.previewHint}>What recipients will receive</div>
+                  <div className="sa-preview-hint">What recipients will receive</div>
                 </div>
                 {template === 'batchrep' ? <BatchRepEmailPreview /> : <StandardEmailPreview />}
                 <div>
-                  <div style={{ fontSize: '11px', fontWeight: '700', letterSpacing: '1.5px', textTransform: 'uppercase', color: '#888', marginBottom: '8px' }}>
-                    What they see in their Inbox
-                  </div>
+                  <div className="sa-section-label">What they see in their Inbox</div>
                   <InboxPreviewCard />
                 </div>
               </div>
@@ -895,23 +566,18 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
               {history.map((ann) => (
                 <div
                   key={ann.id}
-                  style={{
-                    background: 'rgba(255,255,255,0.03)',
-                    border: '1px solid rgba(255,255,255,0.06)',
-                    borderRadius: '8px',
-                    padding: '16px'
-                  }}
+                  className="sa-history-card"
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
                     <h5 className="announcement-history-title">{ann.subject}</h5>
-                    <span style={{ color: '#666', fontSize: '0.8rem' }}>{formatDate(ann.created_at)}</span>
+                    <span className="sa-history-date">{formatDate(ann.created_at)}</span>
                   </div>
 
-                  <p style={{ color: '#999', fontSize: '0.85rem', margin: '8px 0' }}>
+                  <p className="sa-history-message">
                     {ann.message.length > 150 ? ann.message.substring(0, 150) + '...' : ann.message}
                   </p>
 
-                  <div style={{ display: 'flex', gap: '16px', fontSize: '0.8rem', color: '#666', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', gap: '16px', fontSize: '0.8rem', alignItems: 'center' }} className="sa-history-meta">
                     <span>To: {getAudienceLabel(ann.audience)}</span>
                     <span>Sent: {ann.emails_sent}/{ann.recipients_count}</span>
                     {ann.emails_failed > 0 && (
@@ -936,43 +602,22 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
       {/* View Announcement Modal */}
       {viewAnnouncement && (
         <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0,0,0,0.7)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000,
-            padding: '20px'
-          }}
+          className="modal-overlay"
           onClick={() => setViewAnnouncement(null)}
         >
           <div
-            style={{
-              background: 'linear-gradient(165deg, rgba(30, 40, 35, 0.98) 0%, rgba(20, 28, 24, 0.99) 100%)',
-              border: '1px solid rgba(207, 181, 59, 0.2)',
-              borderRadius: '16px',
-              maxWidth: '650px',
-              width: '100%',
-              maxHeight: '85vh',
-              overflow: 'auto',
-              boxShadow: '0 8px 32px rgba(0,0,0,0.5)'
-            }}
+            className="modal-content modal-large"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div style={{ padding: '24px 28px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+            <div style={{ padding: '24px 28px', borderBottom: '1px solid var(--color-border, rgba(255,255,255,0.1))' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div>
-                  <h3 style={{ margin: '0 0 8px 0', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <h3 style={{ margin: '0 0 8px 0', color: 'var(--color-text-primary)', display: 'flex', alignItems: 'center', gap: '10px' }}>
                     {viewAnnouncement.subject}
                   </h3>
-                  <p style={{ margin: 0, color: '#888', fontSize: '0.9rem' }}>
-                    Sent to <strong style={{ color: '#CFB53B' }}>{getAudienceLabel(viewAnnouncement.audience)}</strong>
+                  <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>
+                    Sent to <strong style={{ color: 'var(--color-accent)' }}>{getAudienceLabel(viewAnnouncement.audience)}</strong>
                     {viewAnnouncement.sent_by && (
                       <span> by {viewAnnouncement.sent_by}</span>
                     )}
@@ -980,14 +625,7 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
                 </div>
                 <button
                   onClick={() => setViewAnnouncement(null)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    fontSize: '24px',
-                    color: '#888',
-                    cursor: 'pointer',
-                    padding: '0 8px'
-                  }}
+                  className="modal-close"
                 >
                   &times;
                 </button>
@@ -996,32 +634,27 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
 
             {/* Body */}
             <div style={{ padding: '20px 28px' }}>
-              <div style={{
-                padding: '16px',
-                background: 'rgba(0, 102, 51, 0.1)',
-                borderRadius: '12px',
-                borderLeft: '3px solid #006633'
-              }}>
+              <div className="sa-modal-message-box">
                 {viewAnnouncement.message.split('\n').map((line, i) => (
-                  <p key={i} style={{ color: '#e0e0e0', lineHeight: '1.6', margin: i === 0 ? 0 : '8px 0 0 0', fontSize: '0.95rem' }}>
+                  <p key={i} style={{ color: 'var(--color-text-primary)', lineHeight: '1.6', margin: i === 0 ? 0 : '8px 0 0 0', fontSize: '0.95rem' }}>
                     {line || '\u00A0'}
                   </p>
                 ))}
               </div>
 
               {/* Meta info */}
-              <div style={{ marginTop: '16px', display: 'flex', flexWrap: 'wrap', gap: '16px', fontSize: '0.85rem', color: '#888' }}>
+              <div style={{ marginTop: '16px', display: 'flex', flexWrap: 'wrap', gap: '16px', fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
                 <span>
-                  <strong style={{ color: '#999' }}>Date:</strong> {formatDate(viewAnnouncement.created_at)}
+                  <strong>Date:</strong> {formatDate(viewAnnouncement.created_at)}
                 </span>
                 <span>
-                  <strong style={{ color: '#999' }}>Recipients:</strong> {viewAnnouncement.recipients_count}
+                  <strong>Recipients:</strong> {viewAnnouncement.recipients_count}
                 </span>
                 <span>
-                  <strong style={{ color: '#28a745' }}>Sent:</strong> {viewAnnouncement.emails_sent}
+                  <strong style={{ color: 'var(--color-status-positive)' }}>Sent:</strong> {viewAnnouncement.emails_sent}
                 </span>
                 {viewAnnouncement.emails_failed > 0 && (
-                  <span style={{ color: '#dc3545' }}>
+                  <span style={{ color: 'var(--color-status-negative)' }}>
                     <strong>Failed:</strong> {viewAnnouncement.emails_failed}
                   </span>
                 )}
@@ -1031,7 +664,7 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
             {/* Footer */}
             <div style={{
               padding: '16px 28px',
-              borderTop: '1px solid rgba(255,255,255,0.1)',
+              borderTop: '1px solid var(--color-border, rgba(255,255,255,0.1))',
               display: 'flex',
               justifyContent: 'flex-end'
             }}>
@@ -1052,6 +685,13 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
         @keyframes pulse {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.3; }
+        }
+        .sa-preview-dot {
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: currentColor;
+          animation: pulse 1.5s infinite;
         }
       `}</style>
     </div>
