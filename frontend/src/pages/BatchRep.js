@@ -182,7 +182,7 @@ export default function BatchRep() {
   }, [location.hash]);
 
   // Search graduates for typeahead
-  const searchGraduates = useCallback(async (query, setNominees, setShowDropdown) => {
+  const searchGraduates = useCallback(async (query, position, setNominees, setShowDropdown) => {
     if (query.length < 2) {
       setNominees([]);
       setShowDropdown(false);
@@ -190,7 +190,7 @@ export default function BatchRep() {
     }
 
     try {
-      const res = await apiGet(`/api/batch-rep/graduates/search?q=${encodeURIComponent(query)}`);
+      const res = await apiGet(`/api/batch-rep/graduates/search?q=${encodeURIComponent(query)}&position=${position}`);
       const data = await res.json();
       if (res.ok) {
         setNominees(data);
@@ -209,7 +209,7 @@ export default function BatchRep() {
 
     if (searchTimeoutRef1.current) clearTimeout(searchTimeoutRef1.current);
     searchTimeoutRef1.current = setTimeout(() => {
-      searchGraduates(value, setNominees1, setShowDropdown1);
+      searchGraduates(value, 1, setNominees1, setShowDropdown1);
     }, 200);
   };
 
@@ -221,7 +221,7 @@ export default function BatchRep() {
 
     if (searchTimeoutRef2.current) clearTimeout(searchTimeoutRef2.current);
     searchTimeoutRef2.current = setTimeout(() => {
-      searchGraduates(value, setNominees2, setShowDropdown2);
+      searchGraduates(value, 2, setNominees2, setShowDropdown2);
     }, 200);
   };
 

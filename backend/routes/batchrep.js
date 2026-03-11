@@ -373,9 +373,10 @@ router.patch('/status', authenticateAdmin, async (req, res) => {
 // GET /api/batch-rep/graduates/search
 // Typeahead search for graduates only (for nomination field)
 // Fuzzy partial name match - each token must appear somewhere in the name
+// Excludes committee nominees based on position parameter
 router.get('/graduates/search', authenticateToken, async (req, res) => {
   try {
-    const { q } = req.query;
+    const { q, position } = req.query;
 
     if (!q || q.trim().length < 2) {
       return res.json([]);
@@ -389,6 +390,16 @@ router.get('/graduates/search', authenticateToken, async (req, res) => {
       `LOWER(COALESCE(ml.current_name, '') || ' ' || ml.first_name || ' ' || ml.last_name) LIKE $${i + 1}`
     );
     const values = tokens.map(t => `%${t}%`);
+
+    // Exclude committee nominees based on position
+    // Position 1 (AA Rep): exclude Bianca Jison
+    // Position 2 (Batch Rep): exclude Felie Magbanua
+    let excludeCondition = '';
+    if (position === '1') {
+      excludeCondition = `AND NOT (LOWER(ml.first_name) = 'bianca' AND LOWER(ml.last_name) = 'jison')`;
+    } else if (position === '2') {
+      excludeCondition = `AND NOT (LOWER(ml.first_name) = 'felie' AND LOWER(ml.last_name) = 'magbanua')`;
+    }
 
     const result = await db.query(`
       SELECT
@@ -407,6 +418,7 @@ router.get('/graduates/search', authenticateToken, async (req, res) => {
         AND ml.in_memoriam = FALSE
         AND (ml.is_unreachable IS NULL OR ml.is_unreachable = FALSE)
         AND (${conditions.join(' AND ')})
+        ${excludeCondition}
       ORDER BY display_name
       LIMIT 10
     `, values);
