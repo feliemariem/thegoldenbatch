@@ -388,12 +388,12 @@ router.get('/graduates/search', authenticateToken, async (req, res) => {
     );
     const values = tokens.map(t => `%${t}%`);
 
-    // Exclude committee nominees based on position using master_list IDs
+    // Exclude committee nominees based on position using users.id
     let excludeCondition = '';
     if (position === '1') {
-      excludeCondition = `AND ml.id != 85`;  // Exclude AA Rep nominee
+      excludeCondition = `AND (u.id IS NULL OR u.id != 85)`;  // Exclude Bianca (AA Rep nominee)
     } else if (position === '2') {
-      excludeCondition = `AND ml.id != 71`;  // Exclude Batch Rep nominee
+      excludeCondition = `AND (u.id IS NULL OR u.id != 71)`;  // Exclude Felie (Batch Rep nominee)
     }
 
     const result = await db.query(`
