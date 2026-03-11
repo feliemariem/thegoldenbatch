@@ -48,10 +48,10 @@ function ProtectedRoute({ children }) {
 }
 
 // Admin-only route wrapper
-function AdminOnly({ children }) {
+function FullAdminOnly({ children }) {
   const { user } = useAuth();
 
-  if (!user?.isAdmin) {
+  if (!user?.hasNonRegistryPermissions) {
     return <Navigate to="/profile" replace />;
   }
 
@@ -115,9 +115,9 @@ function AppRoutes() {
         path="/funds"
         element={
           <ProtectedRoute>
-            <AdminOnly>
+            <FullAdminOnly>
               <Funds />
-            </AdminOnly>
+            </FullAdminOnly>
           </ProtectedRoute>
         }
       />
@@ -133,9 +133,9 @@ function AppRoutes() {
         path="/profile-preview"
         element={
           <ProtectedRoute>
-            <AdminOnly>
+            <FullAdminOnly>
               <ProfileNew />
-            </AdminOnly>
+            </FullAdminOnly>
           </ProtectedRoute>
         }
       />
@@ -143,9 +143,9 @@ function AppRoutes() {
         path="/admin"
         element={
           <ProtectedRoute>
-            <AdminOnly>
+            <FullAdminOnly>
               <AdminDashboard />
-            </AdminOnly>
+            </FullAdminOnly>
           </ProtectedRoute>
         }
       />
@@ -153,9 +153,9 @@ function AppRoutes() {
         path="/inbox"
         element={
           <ProtectedRoute>
-            <AdminOnly>
+            <FullAdminOnly>
               <Inbox />
-            </AdminOnly>
+            </FullAdminOnly>
           </ProtectedRoute>
         }
       />
@@ -163,9 +163,9 @@ function AppRoutes() {
         path="/events"
         element={
           <ProtectedRoute>
-            <AdminOnly>
+            <FullAdminOnly>
               <Events />
-            </AdminOnly>
+            </FullAdminOnly>
           </ProtectedRoute>
         }
       />
@@ -173,9 +173,9 @@ function AppRoutes() {
         path="/events/:id"
         element={
           <ProtectedRoute>
-            <AdminOnly>
+            <FullAdminOnly>
               <EventDetail />
-            </AdminOnly>
+            </FullAdminOnly>
           </ProtectedRoute>
         }
       />
@@ -183,9 +183,9 @@ function AppRoutes() {
         path="/media"
         element={
           <ProtectedRoute>
-            <AdminOnly>
+            <FullAdminOnly>
               <Media />
-            </AdminOnly>
+            </FullAdminOnly>
           </ProtectedRoute>
         }
       />
@@ -193,9 +193,9 @@ function AppRoutes() {
         path="/committee"
         element={
           <ProtectedRoute>
-            <AdminOnly>
+            <FullAdminOnly>
               <Committee />
-            </AdminOnly>
+            </FullAdminOnly>
           </ProtectedRoute>
         }
       />
@@ -203,9 +203,9 @@ function AppRoutes() {
         path="/directory"
         element={
           <ProtectedRoute>
-            <AdminOnly>
+            <FullAdminOnly>
               <Directory />
-            </AdminOnly>
+            </FullAdminOnly>
           </ProtectedRoute>
         }
       />
