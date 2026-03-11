@@ -37,9 +37,6 @@ router.get('/status', authenticateToken, async (req, res) => {
     );
     const status = statusResult.rows[0]?.value || 'active';
 
-    // Debug logging
-    console.log('[batch-rep/status] User:', userEmail, '| DB status row:', statusResult.rows[0], '| Resolved status:', status);
-
     // Check if user has submitted for each position
     const submissionResult = await db.query(
       'SELECT position FROM batch_rep_submissions WHERE voter_id = $1',
@@ -378,8 +375,6 @@ router.get('/graduates/search', authenticateToken, async (req, res) => {
   try {
     const { q, position } = req.query;
 
-    console.log('[graduates/search] q:', q, '| position:', position);
-
     if (!q || q.trim().length < 2) {
       return res.json([]);
     }
@@ -398,11 +393,9 @@ router.get('/graduates/search', authenticateToken, async (req, res) => {
     // Position 2 (Batch Rep): exclude Felie Magbanua (master_list id = 111)
     let excludeCondition = '';
     if (position === '1') {
-      excludeCondition = `AND ml.id != 88`;
-      console.log('[graduates/search] Excluding master_list id 88 (Bianca Jison) for position 1');
+      excludeCondition = `AND ml.id != 88`;  // Exclude Bianca Jison (AA Rep nominee)
     } else if (position === '2') {
-      excludeCondition = `AND ml.id != 111`;
-      console.log('[graduates/search] Excluding master_list id 111 (Felie Magbanua) for position 2');
+      excludeCondition = `AND ml.id != 111`; // Exclude Felie Magbanua (Batch Rep nominee)
     }
 
     const result = await db.query(`
@@ -426,8 +419,6 @@ router.get('/graduates/search', authenticateToken, async (req, res) => {
       ORDER BY display_name
       LIMIT 10
     `, values);
-
-    console.log('[graduates/search] Results count:', result.rows.length, '| Names:', result.rows.map(r => r.display_name).join(', '));
 
     res.json(result.rows);
   } catch (err) {
