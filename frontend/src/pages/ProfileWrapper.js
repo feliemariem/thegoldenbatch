@@ -5,15 +5,16 @@ import Profile from './Profile';
 import ProfileNew from './ProfileNew';
 
 // Feature flag wrapper - switches between old and new profile
-// Admins are redirected to ProfileNew (/profile-preview), except Registry Admins and Super Admins
+// Routing logic:
+// - Admin with non-registry permissions → ProfileNew
+// - Registry Admin (only registry perms) → old Profile
+// - Super Admin → old Profile
+// - Regular user → Profile (or ProfileNew if feature flag enabled)
 export default function ProfileWrapper() {
   const { user } = useAuth();
   const showNewProfile = process.env.REACT_APP_NEW_FEATURES === 'true';
 
-  // Registry Admin: admin with no super admin status and only registry permissions
-  const isRegistryAdmin = user?.isAdmin && !user?.is_super_admin && !user?.hasNonRegistryPermissions;
-
-  // Redirect admins with non-registry permissions to ProfileNew (not super admins, not registry admins)
+  // Redirect admins with non-registry permissions to ProfileNew (not super admins)
   if (user?.isAdmin && !user?.is_super_admin && user?.hasNonRegistryPermissions) {
     return <Navigate to="/profile-preview" replace />;
   }
