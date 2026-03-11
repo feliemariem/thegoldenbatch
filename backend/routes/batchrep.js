@@ -378,6 +378,8 @@ router.get('/graduates/search', authenticateToken, async (req, res) => {
   try {
     const { q, position } = req.query;
 
+    console.log('[graduates/search] q:', q, '| position:', position);
+
     if (!q || q.trim().length < 2) {
       return res.json([]);
     }
@@ -391,14 +393,16 @@ router.get('/graduates/search', authenticateToken, async (req, res) => {
     );
     const values = tokens.map(t => `%${t}%`);
 
-    // Exclude committee nominees based on position
-    // Position 1 (AA Rep): exclude Bianca Jison
-    // Position 2 (Batch Rep): exclude Felie Magbanua
+    // Exclude committee nominees based on position using master_list IDs
+    // Position 1 (AA Rep): exclude Bianca Jison (master_list id = 88)
+    // Position 2 (Batch Rep): exclude Felie Magbanua (master_list id = 111)
     let excludeCondition = '';
     if (position === '1') {
-      excludeCondition = `AND NOT (LOWER(ml.first_name) = 'bianca' AND LOWER(ml.last_name) = 'jison')`;
+      excludeCondition = `AND ml.id != 88`;
+      console.log('[graduates/search] Excluding master_list id 88 (Bianca Jison) for position 1');
     } else if (position === '2') {
-      excludeCondition = `AND NOT (LOWER(ml.first_name) = 'felie' AND LOWER(ml.last_name) = 'magbanua')`;
+      excludeCondition = `AND ml.id != 111`;
+      console.log('[graduates/search] Excluding master_list id 111 (Felie Magbanua) for position 2');
     }
 
     const result = await db.query(`
@@ -422,6 +426,8 @@ router.get('/graduates/search', authenticateToken, async (req, res) => {
       ORDER BY display_name
       LIMIT 10
     `, values);
+
+    console.log('[graduates/search] Results count:', result.rows.length, '| Names:', result.rows.map(r => r.display_name).join(', '));
 
     res.json(result.rows);
   } catch (err) {
