@@ -627,7 +627,7 @@ export default function AdminDashboard() {
                                 <div style={{
                                   height: '100%',
                                   width: `${nominee.pct}%`,
-                                  background: nominee.willing === true ? '#CFB53B' : 'rgba(255, 255, 255, 0.3)',
+                                  background: '#CFB53B',
                                   borderRadius: '4px'
                                 }} />
                               </div>
@@ -722,7 +722,7 @@ export default function AdminDashboard() {
                                 <div style={{
                                   height: '100%',
                                   width: `${nominee.pct}%`,
-                                  background: nominee.willing === true ? '#CFB53B' : 'rgba(255, 255, 255, 0.3)',
+                                  background: '#CFB53B',
                                   borderRadius: '4px'
                                 }} />
                               </div>
