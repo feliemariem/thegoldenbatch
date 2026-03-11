@@ -230,7 +230,7 @@ export default function AdminDashboard() {
     return (
       <div className="container">
         <div className="card">
-          <p>Loading dashboard...</p>
+          <p>{['Dali lang gid ha?', 'Hulat!'][Math.floor(Math.random() * 2)]}</p>
         </div>
         <Footer />
       </div>
