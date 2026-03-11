@@ -76,6 +76,7 @@ router.get('/', authenticateToken, async (req, res) => {
       // Check if this user is also an admin and get their admin details
       let isSuperAdmin = false;
       let hasPermissions = false;
+      let hasNonRegistryPermissions = false;
       if (req.user.isAdmin) {
         const adminCheck = await db.query(
           `SELECT id, is_super_admin FROM admins WHERE LOWER(email) = LOWER($1)`,
@@ -90,6 +91,17 @@ router.get('/', authenticateToken, async (req, res) => {
             [adminData.id]
           );
           hasPermissions = permsCheck.rows.length > 0;
+
+          // Check for non-registry permissions (anything not invites_*, registered_*, masterlist_*)
+          const nonRegistryCheck = await db.query(
+            `SELECT 1 FROM permissions WHERE admin_id = $1 AND enabled = true
+             AND permission NOT LIKE 'invites_%'
+             AND permission NOT LIKE 'registered_%'
+             AND permission NOT LIKE 'masterlist_%'
+             LIMIT 1`,
+            [adminData.id]
+          );
+          hasNonRegistryPermissions = nonRegistryCheck.rows.length > 0;
         }
       }
 
@@ -105,7 +117,8 @@ router.get('/', authenticateToken, async (req, res) => {
         is_graduate: user.section && user.section !== 'Non-Graduate',
         isAdmin: req.user.isAdmin || false,
         is_super_admin: isSuperAdmin,
-        hasPermissions: hasPermissions
+        hasPermissions: hasPermissions,
+        hasNonRegistryPermissions: hasNonRegistryPermissions
       });
     }
 
@@ -125,6 +138,17 @@ router.get('/', authenticateToken, async (req, res) => {
       );
       const hasPermissions = permsCheck.rows.length > 0;
 
+      // Check for non-registry permissions (anything not invites_*, registered_*, masterlist_*)
+      const nonRegistryCheck = await db.query(
+        `SELECT 1 FROM permissions WHERE admin_id = $1 AND enabled = true
+         AND permission NOT LIKE 'invites_%'
+         AND permission NOT LIKE 'registered_%'
+         AND permission NOT LIKE 'masterlist_%'
+         LIMIT 1`,
+        [admin.id]
+      );
+      const hasNonRegistryPermissions = nonRegistryCheck.rows.length > 0;
+
       return res.json({
         id: admin.id,
         email: admin.email,
@@ -133,6 +157,7 @@ router.get('/', authenticateToken, async (req, res) => {
         role_title: admin.role_title,
         is_super_admin: admin.is_super_admin || false,
         hasPermissions: hasPermissions,
+        hasNonRegistryPermissions: hasNonRegistryPermissions,
         isAdmin: true
       });
     }
