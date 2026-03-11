@@ -46,6 +46,16 @@ router.post('/', authenticateToken, async (req, res) => {
 
     const { audience, subject, message, sendEmail, template, testMode, testEmail } = req.body;
 
+    // Debug: log incoming request
+    console.log('📩 Announcement request:', {
+      audience,
+      subject: subject?.substring(0, 30),
+      sendEmail,
+      template: template || 'standard',
+      testMode,
+      testEmail
+    });
+
     // Validate audience - must be one of the allowed values
     const validAudiences = ['all', 'full_admins', 'registry_admins', 'graduates', 'going', 'maybe', 'not_going'];
     if (!audience || !validAudiences.includes(audience)) {
@@ -61,6 +71,18 @@ router.post('/', authenticateToken, async (req, res) => {
     const isSuperAdmin = req.user.id === 1;
     if (testMode && !isSuperAdmin) {
       return res.status(403).json({ error: 'Test mode is only available for super admins' });
+    }
+
+    // Test mode: validate testEmail and force sendEmail to true
+    let actualSendEmail = sendEmail;
+    if (testMode) {
+      // Validate testEmail is provided and is a valid email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!testEmail || !emailRegex.test(testEmail)) {
+        return res.status(400).json({ error: 'A valid test email address is required for test mode' });
+      }
+      // Always send email in test mode
+      actualSendEmail = true;
     }
 
     // Get recipients based on audience
@@ -143,7 +165,7 @@ router.post('/', authenticateToken, async (req, res) => {
     let emailsSent = 0;
     let emailsFailed = 0;
 
-    if (sendEmail) {
+    if (actualSendEmail) {
       // Send emails via SendGrid
       const siteUrl = process.env.SITE_URL || 'https://the-golden-batch.onrender.com';
 
@@ -317,6 +339,15 @@ router.post('/', authenticateToken, async (req, res) => {
             emailText = `Hi ${recipient.first_name || 'Batchmate'},\n\nYou have a new message in your Inbox!\n\nSubject: ${subject}\n\nView it here: ${siteUrl}/inbox\n\n- The Organizing Committee\n\nUSLS-IS 2003\nQuestions? Email us at uslsis.batch2003@gmail.com`;
           }
 
+          // Debug: confirm SendGrid call is reached
+          console.log('📧 SendGrid send attempt:', {
+            testMode,
+            testEmail,
+            template: template || 'standard',
+            recipientEmail: recipient.email,
+            subject: emailSubject
+          });
+
           await sgMail.send({
             to: recipient.email,
             from: process.env.FROM_EMAIL || 'noreply@goldenbatch2003.com',
@@ -344,7 +375,7 @@ router.post('/', authenticateToken, async (req, res) => {
       success: true,
       message: testMode
         ? `Test email sent to ${testEmail}`
-        : sendEmail
+        : actualSendEmail
           ? `Announcement sent to ${emailsSent} recipient${emailsSent !== 1 ? 's' : ''}${emailsFailed > 0 ? ` (${emailsFailed} failed)` : ''}`
           : `Announcement logged (${recipients.length} recipients, email not sent)`,
       stats: {
