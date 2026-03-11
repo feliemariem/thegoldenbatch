@@ -41,6 +41,9 @@ app.use(express.static(path.join(__dirname, '../frontend/build')));
 // Webhooks (public endpoint - no auth required)
 app.use('/api/webhooks', webhookRoutes);
 
+// Health check
+app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/invites', inviteRoutes);
