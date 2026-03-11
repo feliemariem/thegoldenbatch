@@ -47,7 +47,7 @@ router.post('/', authenticateToken, async (req, res) => {
     const { audience, subject, message, sendEmail } = req.body;
 
     // Validate audience - must be one of the allowed values
-    const validAudiences = ['all', 'full_admins', 'registry_admins', 'going', 'maybe', 'not_going'];
+    const validAudiences = ['all', 'full_admins', 'registry_admins', 'graduates', 'going', 'maybe', 'not_going'];
     if (!audience || !validAudiences.includes(audience)) {
       console.error('Invalid audience received:', audience, 'Full body:', req.body);
       return res.status(400).json({ error: 'Invalid audience selection. Please select a valid audience.' });
@@ -89,6 +89,19 @@ router.post('/', authenticateToken, async (req, res) => {
             AND p.permission NOT LIKE 'registered_%'
             AND p.permission NOT LIKE 'masterlist_%'
         )
+      `;
+      const recipientsResult = await db.query(query);
+      recipients = recipientsResult.rows;
+    } else if (audience === 'graduates') {
+      // Get registered graduates only
+      query = `
+        SELECT u.email, u.first_name, u.last_name
+        FROM users u
+        JOIN invites i ON i.id = u.invite_id
+        JOIN master_list m ON m.id = i.master_list_id
+        WHERE m.section != 'Non-Graduate'
+          AND (m.in_memoriam IS NULL OR m.in_memoriam = false)
+          AND (m.is_unreachable IS NULL OR m.is_unreachable = false)
       `;
       const recipientsResult = await db.query(query);
       recipients = recipientsResult.rows;

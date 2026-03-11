@@ -887,6 +887,7 @@ export default function AdminDashboard() {
             notGoingCount={registeredStats.not_going || 0}
             fullAdminsCount={data?.stats?.full_admins_count || 0}
             registryAdminsCount={data?.stats?.registry_admins_count || 0}
+            graduatesCount={masterListStats.registered_graduates || 0}
             canSend={isSuperAdmin || permissions?.announcements_send}
           />
         )}

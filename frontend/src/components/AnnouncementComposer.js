@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { apiGet, apiPost } from '../api';
 
-export default function AnnouncementComposer({ registeredCount = 0, goingCount = 0, maybeCount = 0, notGoingCount = 0, fullAdminsCount = 0, registryAdminsCount = 0 }) {
+export default function AnnouncementComposer({ registeredCount = 0, goingCount = 0, maybeCount = 0, notGoingCount = 0, fullAdminsCount = 0, registryAdminsCount = 0, graduatesCount = 0 }) {
   const [audience, setAudience] = useState('all');
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
@@ -30,6 +30,7 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
     { value: 'all', label: `All Registered (${registeredCount})`, isAdmin: false },
     { value: 'full_admins', label: `Full Admins Only (${fullAdminsCount})`, isAdmin: true },
     { value: 'registry_admins', label: `Registry Admins Only (${registryAdminsCount})`, isAdmin: true },
+    { value: 'graduates', label: `Graduates Only (${graduatesCount})`, isAdmin: false },
     { value: 'going', label: `Going Only (${goingCount})`, isAdmin: false },
     { value: 'maybe', label: `Maybe Only (${maybeCount})`, isAdmin: false },
     { value: 'not_going', label: `Not Going Only (${notGoingCount})`, isAdmin: false },
@@ -63,6 +64,7 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
       case 'all': return registeredCount;
       case 'full_admins': return fullAdminsCount;
       case 'registry_admins': return registryAdminsCount;
+      case 'graduates': return graduatesCount;
       case 'going': return goingCount;
       case 'maybe': return maybeCount;
       case 'not_going': return notGoingCount;
@@ -117,6 +119,7 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
       case 'full_admins': return 'Full Admins Only';
       case 'registry_admins': return 'Registry Admins Only';
       case 'admins': return 'Admins Only'; // Legacy support
+      case 'graduates': return 'Graduates Only';
       case 'going': return 'Going Only';
       case 'maybe': return 'Maybe Only';
       case 'not_going': return 'Not Going Only';
