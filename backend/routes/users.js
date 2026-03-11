@@ -93,6 +93,7 @@ router.get('/', authenticateToken, async (req, res) => {
           hasPermissions = permsCheck.rows.length > 0;
 
           // Check for non-registry permissions (anything not invites_*, registered_*, masterlist_*)
+          // Returns false if admin has no permission rows at all
           const nonRegistryCheck = await db.query(
             `SELECT 1 FROM permissions WHERE admin_id = $1 AND enabled = true
              AND permission NOT LIKE 'invites_%'
@@ -101,7 +102,7 @@ router.get('/', authenticateToken, async (req, res) => {
              LIMIT 1`,
             [adminData.id]
           );
-          hasNonRegistryPermissions = nonRegistryCheck.rows.length > 0;
+          hasNonRegistryPermissions = nonRegistryCheck.rows && nonRegistryCheck.rows.length > 0 ? true : false;
         }
       }
 
@@ -139,6 +140,7 @@ router.get('/', authenticateToken, async (req, res) => {
       const hasPermissions = permsCheck.rows.length > 0;
 
       // Check for non-registry permissions (anything not invites_*, registered_*, masterlist_*)
+      // Returns false if admin has no permission rows at all
       const nonRegistryCheck = await db.query(
         `SELECT 1 FROM permissions WHERE admin_id = $1 AND enabled = true
          AND permission NOT LIKE 'invites_%'
@@ -147,7 +149,7 @@ router.get('/', authenticateToken, async (req, res) => {
          LIMIT 1`,
         [admin.id]
       );
-      const hasNonRegistryPermissions = nonRegistryCheck.rows.length > 0;
+      const hasNonRegistryPermissions = nonRegistryCheck.rows && nonRegistryCheck.rows.length > 0 ? true : false;
 
       return res.json({
         id: admin.id,
