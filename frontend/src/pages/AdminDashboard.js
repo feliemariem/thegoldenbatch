@@ -881,11 +881,12 @@ export default function AdminDashboard() {
         {/* ANNOUNCEMENTS MODE */}
         {dashboardMode === 'announcements' && (
           <AnnouncementComposer
-                        registeredCount={registeredStats.total || 0}
+            registeredCount={registeredStats.total || 0}
             goingCount={registeredStats.going || 0}
             maybeCount={registeredStats.maybe || 0}
             notGoingCount={registeredStats.not_going || 0}
-            adminsCount={data?.stats?.admins_count || 0}
+            fullAdminsCount={data?.stats?.full_admins_count || 0}
+            registryAdminsCount={data?.stats?.registry_admins_count || 0}
             canSend={isSuperAdmin || permissions?.announcements_send}
           />
         )}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { apiGet, apiPost } from '../api';
 
-export default function AnnouncementComposer({ registeredCount = 0, goingCount = 0, maybeCount = 0, notGoingCount = 0, adminsCount = 0 }) {
+export default function AnnouncementComposer({ registeredCount = 0, goingCount = 0, maybeCount = 0, notGoingCount = 0, fullAdminsCount = 0, registryAdminsCount = 0 }) {
   const [audience, setAudience] = useState('all');
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
@@ -28,7 +28,8 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
 
   const audienceOptions = [
     { value: 'all', label: `All Registered (${registeredCount})`, isAdmin: false },
-    { value: 'admins', label: `ADMINS ONLY (${adminsCount})`, isAdmin: true },
+    { value: 'full_admins', label: `Full Admins Only (${fullAdminsCount})`, isAdmin: true },
+    { value: 'registry_admins', label: `Registry Admins Only (${registryAdminsCount})`, isAdmin: true },
     { value: 'going', label: `Going Only (${goingCount})`, isAdmin: false },
     { value: 'maybe', label: `Maybe Only (${maybeCount})`, isAdmin: false },
     { value: 'not_going', label: `Not Going Only (${notGoingCount})`, isAdmin: false },
@@ -60,7 +61,8 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
   const getRecipientCount = () => {
     switch (audience) {
       case 'all': return registeredCount;
-      case 'admins': return adminsCount;
+      case 'full_admins': return fullAdminsCount;
+      case 'registry_admins': return registryAdminsCount;
       case 'going': return goingCount;
       case 'maybe': return maybeCount;
       case 'not_going': return notGoingCount;
@@ -112,7 +114,9 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
   const getAudienceLabel = (aud) => {
     switch (aud) {
       case 'all': return 'All Registered';
-      case 'admins': return 'Admins Only';
+      case 'full_admins': return 'Full Admins Only';
+      case 'registry_admins': return 'Registry Admins Only';
+      case 'admins': return 'Admins Only'; // Legacy support
       case 'going': return 'Going Only';
       case 'maybe': return 'Maybe Only';
       case 'not_going': return 'Not Going Only';
@@ -145,36 +149,43 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
               {/* Dropdown menu */}
               {dropdownOpen && (
                 <div className="announce-dropdown-menu">
-                  {audienceOptions.map((option) => (
-                    <React.Fragment key={option.value}>
-                      {/* Separator line before ADMINS ONLY */}
-                      {option.isAdmin && (
+                  {audienceOptions.map((option, index) => {
+                    const prevOption = audienceOptions[index - 1];
+                    const nextOption = audienceOptions[index + 1];
+                    const isFirstAdmin = option.isAdmin && (!prevOption || !prevOption.isAdmin);
+                    const isLastAdmin = option.isAdmin && (!nextOption || !nextOption.isAdmin);
+
+                    return (
+                      <React.Fragment key={option.value}>
+                        {/* Separator line before first admin option */}
+                        {isFirstAdmin && (
+                          <div
+                            style={{
+                              height: '1px',
+                              background: 'linear-gradient(to right, transparent, rgba(255, 107, 107, 0.5), transparent)',
+                              margin: '4px 0'
+                            }}
+                          />
+                        )}
                         <div
-                          style={{
-                            height: '1px',
-                            background: 'linear-gradient(to right, transparent, rgba(255, 107, 107, 0.5), transparent)',
-                            margin: '4px 0'
-                          }}
-                        />
-                      )}
-                      <div
-                        onClick={() => handleSelectAudience(option.value)}
-                        className={`announce-dropdown-item ${audience === option.value ? 'selected' : ''} ${option.isAdmin ? 'admin-option' : ''}`}
-                      >
-                        {option.label}
-                      </div>
-                      {/* Separator line after ADMINS ONLY */}
-                      {option.isAdmin && (
-                        <div
-                          style={{
-                            height: '1px',
-                            background: 'linear-gradient(to right, transparent, rgba(255, 107, 107, 0.5), transparent)',
-                            margin: '4px 0'
-                          }}
-                        />
-                      )}
-                    </React.Fragment>
-                  ))}
+                          onClick={() => handleSelectAudience(option.value)}
+                          className={`announce-dropdown-item ${audience === option.value ? 'selected' : ''} ${option.isAdmin ? 'admin-option' : ''}`}
+                        >
+                          {option.label}
+                        </div>
+                        {/* Separator line after last admin option */}
+                        {isLastAdmin && (
+                          <div
+                            style={{
+                              height: '1px',
+                              background: 'linear-gradient(to right, transparent, rgba(255, 107, 107, 0.5), transparent)',
+                              margin: '4px 0'
+                            }}
+                          />
+                        )}
+                      </React.Fragment>
+                    );
+                  })}
                 </div>
               )}
             </div>

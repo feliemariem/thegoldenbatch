@@ -47,7 +47,7 @@ router.post('/', authenticateToken, async (req, res) => {
     const { audience, subject, message, sendEmail } = req.body;
 
     // Validate audience - must be one of the allowed values
-    const validAudiences = ['all', 'admins', 'going', 'maybe', 'not_going'];
+    const validAudiences = ['all', 'full_admins', 'registry_admins', 'going', 'maybe', 'not_going'];
     if (!audience || !validAudiences.includes(audience)) {
       console.error('Invalid audience received:', audience, 'Full body:', req.body);
       return res.status(400).json({ error: 'Invalid audience selection. Please select a valid audience.' });
@@ -61,12 +61,34 @@ router.post('/', authenticateToken, async (req, res) => {
     let query;
     let recipients;
 
-    if (audience === 'admins') {
-      // Get users who are also admins (their email exists in both users and admins tables)
+    if (audience === 'full_admins') {
+      // Get users who are full admins (have non-registry permissions)
       query = `
-        SELECT u.email, u.first_name, u.last_name
+        SELECT DISTINCT u.email, u.first_name, u.last_name
         FROM users u
         INNER JOIN admins a ON LOWER(u.email) = LOWER(a.email)
+        INNER JOIN permissions p ON p.admin_id = a.id
+        WHERE p.enabled = true
+          AND p.permission NOT LIKE 'invites_%'
+          AND p.permission NOT LIKE 'registered_%'
+          AND p.permission NOT LIKE 'masterlist_%'
+      `;
+      const recipientsResult = await db.query(query);
+      recipients = recipientsResult.rows;
+    } else if (audience === 'registry_admins') {
+      // Get users who are registry admins (no non-registry permissions)
+      query = `
+        SELECT DISTINCT u.email, u.first_name, u.last_name
+        FROM users u
+        INNER JOIN admins a ON LOWER(u.email) = LOWER(a.email)
+        WHERE NOT EXISTS (
+          SELECT 1 FROM permissions p
+          WHERE p.admin_id = a.id
+            AND p.enabled = true
+            AND p.permission NOT LIKE 'invites_%'
+            AND p.permission NOT LIKE 'registered_%'
+            AND p.permission NOT LIKE 'masterlist_%'
+        )
       `;
       const recipientsResult = await db.query(query);
       recipients = recipientsResult.rows;
@@ -249,30 +271,57 @@ router.get('/inbox', authenticateToken, async (req, res) => {
 
     // Get announcements that apply to this user
     // 'all' audience applies to everyone
-    // 'admins' audience only applies to admin users
+    // 'full_admins'/'registry_admins' audience only applies to matching admin users
     // specific audience only if it matches user's RSVP
     let result;
     if (isAdmin) {
-      // Admins can see 'all', 'admins', and their RSVP-matched announcements
-      result = await db.query(`
-        SELECT a.id, a.subject, a.message, a.audience, a.created_at, a.sent_by,
-               ar.read_at IS NOT NULL as is_read
-        FROM announcements a
-        LEFT JOIN announcement_reads ar ON a.id = ar.announcement_id AND ar.user_id = $1
-        WHERE a.audience = 'all'
-           OR a.audience = 'admins'
-           OR a.audience = $2
-        ORDER BY a.created_at DESC
-      `, [req.user.id, rsvpStatus]);
+      // Check if user is a full admin or registry admin
+      const adminData = adminCheck.rows[0];
+      const nonRegistryCheck = await db.query(`
+        SELECT 1 FROM permissions p
+        WHERE p.admin_id = $1
+          AND p.enabled = true
+          AND p.permission NOT LIKE 'invites_%'
+          AND p.permission NOT LIKE 'registered_%'
+          AND p.permission NOT LIKE 'masterlist_%'
+        LIMIT 1
+      `, [adminData.id]);
+      const isFullAdmin = nonRegistryCheck.rows.length > 0;
+
+      if (isFullAdmin) {
+        // Full admins see 'all', 'full_admins', and their RSVP-matched announcements
+        result = await db.query(`
+          SELECT a.id, a.subject, a.message, a.audience, a.created_at, a.sent_by,
+                 ar.read_at IS NOT NULL as is_read
+          FROM announcements a
+          LEFT JOIN announcement_reads ar ON a.id = ar.announcement_id AND ar.user_id = $1
+          WHERE a.audience = 'all'
+             OR a.audience = 'full_admins'
+             OR a.audience = $2
+          ORDER BY a.created_at DESC
+        `, [req.user.id, rsvpStatus]);
+      } else {
+        // Registry admins see 'all', 'registry_admins', and their RSVP-matched announcements
+        result = await db.query(`
+          SELECT a.id, a.subject, a.message, a.audience, a.created_at, a.sent_by,
+                 ar.read_at IS NOT NULL as is_read
+          FROM announcements a
+          LEFT JOIN announcement_reads ar ON a.id = ar.announcement_id AND ar.user_id = $1
+          WHERE a.audience = 'all'
+             OR a.audience = 'registry_admins'
+             OR a.audience = $2
+          ORDER BY a.created_at DESC
+        `, [req.user.id, rsvpStatus]);
+      }
     } else {
-      // Non-admins see 'all' and their RSVP-matched announcements (not 'admins')
+      // Non-admins see 'all' and their RSVP-matched announcements (not admin-only)
       result = await db.query(`
         SELECT a.id, a.subject, a.message, a.audience, a.created_at, a.sent_by,
                ar.read_at IS NOT NULL as is_read
         FROM announcements a
         LEFT JOIN announcement_reads ar ON a.id = ar.announcement_id AND ar.user_id = $1
         WHERE (a.audience = 'all' OR a.audience = $2)
-           AND a.audience != 'admins'
+           AND a.audience NOT IN ('full_admins', 'registry_admins')
         ORDER BY a.created_at DESC
       `, [req.user.id, rsvpStatus]);
     }
@@ -323,26 +372,53 @@ router.get('/preview-inbox/:userId', authenticateToken, async (req, res) => {
     // Get announcements that would apply to this user
     let result;
     if (isAdmin) {
-      // Admins can see 'all', 'admins', and their RSVP-matched announcements
-      result = await db.query(`
-        SELECT a.id, a.subject, a.message, a.audience, a.created_at, a.sent_by,
-               ar.read_at IS NOT NULL as is_read
-        FROM announcements a
-        LEFT JOIN announcement_reads ar ON a.id = ar.announcement_id AND ar.user_id = $1
-        WHERE a.audience = 'all'
-           OR a.audience = 'admins'
-           OR a.audience = $2
-        ORDER BY a.created_at DESC
-      `, [userId, rsvpStatus]);
+      // Check if user is a full admin or registry admin
+      const adminData = adminCheck.rows[0];
+      const nonRegistryCheck = await db.query(`
+        SELECT 1 FROM permissions p
+        WHERE p.admin_id = $1
+          AND p.enabled = true
+          AND p.permission NOT LIKE 'invites_%'
+          AND p.permission NOT LIKE 'registered_%'
+          AND p.permission NOT LIKE 'masterlist_%'
+        LIMIT 1
+      `, [adminData.id]);
+      const isFullAdmin = nonRegistryCheck.rows.length > 0;
+
+      if (isFullAdmin) {
+        // Full admins see 'all', 'full_admins', and their RSVP-matched announcements
+        result = await db.query(`
+          SELECT a.id, a.subject, a.message, a.audience, a.created_at, a.sent_by,
+                 ar.read_at IS NOT NULL as is_read
+          FROM announcements a
+          LEFT JOIN announcement_reads ar ON a.id = ar.announcement_id AND ar.user_id = $1
+          WHERE a.audience = 'all'
+             OR a.audience = 'full_admins'
+             OR a.audience = $2
+          ORDER BY a.created_at DESC
+        `, [userId, rsvpStatus]);
+      } else {
+        // Registry admins see 'all', 'registry_admins', and their RSVP-matched announcements
+        result = await db.query(`
+          SELECT a.id, a.subject, a.message, a.audience, a.created_at, a.sent_by,
+                 ar.read_at IS NOT NULL as is_read
+          FROM announcements a
+          LEFT JOIN announcement_reads ar ON a.id = ar.announcement_id AND ar.user_id = $1
+          WHERE a.audience = 'all'
+             OR a.audience = 'registry_admins'
+             OR a.audience = $2
+          ORDER BY a.created_at DESC
+        `, [userId, rsvpStatus]);
+      }
     } else {
-      // Non-admins see 'all' and their RSVP-matched announcements (not 'admins')
+      // Non-admins see 'all' and their RSVP-matched announcements (not admin-only)
       result = await db.query(`
         SELECT a.id, a.subject, a.message, a.audience, a.created_at, a.sent_by,
                ar.read_at IS NOT NULL as is_read
         FROM announcements a
         LEFT JOIN announcement_reads ar ON a.id = ar.announcement_id AND ar.user_id = $1
         WHERE (a.audience = 'all' OR a.audience = $2)
-           AND a.audience != 'admins'
+           AND a.audience NOT IN ('full_admins', 'registry_admins')
         ORDER BY a.created_at DESC
       `, [userId, rsvpStatus]);
     }

@@ -26,11 +26,31 @@ router.get('/dashboard', authenticateAdmin, async (req, res) => {
       FROM invites
     `);
 
-    // Get count of admins who are also registered users (for admin-only announcements)
-    const adminsCountResult = await db.query(`
-      SELECT COUNT(*) as admin_count
+    // Get count of full admins (have non-registry permissions) who are also registered users
+    const fullAdminsCountResult = await db.query(`
+      SELECT COUNT(DISTINCT u.id) as admin_count
       FROM users u
       INNER JOIN admins a ON LOWER(u.email) = LOWER(a.email)
+      INNER JOIN permissions p ON p.admin_id = a.id
+      WHERE p.enabled = true
+        AND p.permission NOT LIKE 'invites_%'
+        AND p.permission NOT LIKE 'registered_%'
+        AND p.permission NOT LIKE 'masterlist_%'
+    `);
+
+    // Get count of registry admins (no non-registry permissions) who are also registered users
+    const registryAdminsCountResult = await db.query(`
+      SELECT COUNT(DISTINCT u.id) as admin_count
+      FROM users u
+      INNER JOIN admins a ON LOWER(u.email) = LOWER(a.email)
+      WHERE NOT EXISTS (
+        SELECT 1 FROM permissions p
+        WHERE p.admin_id = a.id
+          AND p.enabled = true
+          AND p.permission NOT LIKE 'invites_%'
+          AND p.permission NOT LIKE 'registered_%'
+          AND p.permission NOT LIKE 'masterlist_%'
+      )
     `);
 
     // Parse stats from strings to integers (PostgreSQL COUNT returns strings)
@@ -47,7 +67,8 @@ router.get('/dashboard', authenticateAdmin, async (req, res) => {
       stats: {
         ...stats,
         invites: inviteStats.rows[0],
-        admins_count: parseInt(adminsCountResult.rows[0].admin_count) || 0,
+        full_admins_count: parseInt(fullAdminsCountResult.rows[0].admin_count) || 0,
+        registry_admins_count: parseInt(registryAdminsCountResult.rows[0].admin_count) || 0,
       },
     });
   } catch (err) {
