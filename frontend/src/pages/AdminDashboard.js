@@ -354,7 +354,7 @@ export default function AdminDashboard() {
           >
             Registry
           </button>
-          {(isSuperAdmin || permissions?.accounting_view) && (
+          {user?.hasNonRegistryPermissions && (isSuperAdmin || permissions?.accounting_view) && (
             <button
               onClick={() => setDashboardMode('accounting')}
               className={dashboardMode === 'accounting' ? 'active' : ''}
@@ -362,7 +362,7 @@ export default function AdminDashboard() {
               Accounting
             </button>
           )}
-          {(isSuperAdmin || permissions?.announcements_view) && (
+          {user?.hasNonRegistryPermissions && (isSuperAdmin || permissions?.announcements_view) && (
             <button
               onClick={() => setDashboardMode('announcements')}
               className={dashboardMode === 'announcements' ? 'active' : ''}
@@ -370,7 +370,7 @@ export default function AdminDashboard() {
               Announce
             </button>
           )}
-          {(isSuperAdmin || permissions?.minutes_view) && (
+          {user?.hasNonRegistryPermissions && (isSuperAdmin || permissions?.minutes_view) && (
             <button
               onClick={() => setDashboardMode('minutes')}
               className={dashboardMode === 'minutes' ? 'active' : ''}
@@ -378,7 +378,7 @@ export default function AdminDashboard() {
               Meetings
             </button>
           )}
-          {(isSuperAdmin || permissions?.messages_view) && (
+          {user?.hasNonRegistryPermissions && (isSuperAdmin || permissions?.messages_view) && (
             <button
               onClick={() => setDashboardMode('messages')}
               className={dashboardMode === 'messages' ? 'active has-badge' : 'has-badge'}
@@ -393,7 +393,7 @@ export default function AdminDashboard() {
               )}
             </button>
           )}
-          {(isSuperAdmin || permissions?.strategic_view) && (
+          {user?.hasNonRegistryPermissions && (isSuperAdmin || permissions?.strategic_view) && (
             <button
               onClick={() => setDashboardMode('strategic')}
               className={dashboardMode === 'strategic' ? 'active' : ''}
@@ -401,7 +401,7 @@ export default function AdminDashboard() {
               Strategic
             </button>
           )}
-          {isSuperAdmin && (
+          {user?.hasNonRegistryPermissions && isSuperAdmin && (
             <button
               onClick={() => setDashboardMode('permissions')}
               className={dashboardMode === 'permissions' ? 'active' : ''}
@@ -409,7 +409,7 @@ export default function AdminDashboard() {
               Permissions
             </button>
           )}
-          {isSystemAdmin && (
+          {user?.hasNonRegistryPermissions && isSystemAdmin && (
             <button
               onClick={() => setDashboardMode('emailLog')}
               className={dashboardMode === 'emailLog' ? 'active has-badge' : 'has-badge'}
@@ -422,7 +422,7 @@ export default function AdminDashboard() {
               )}
             </button>
           )}
-          {user?.email?.toLowerCase() === 'uslsis.batch2003@gmail.com' && (
+          {user?.hasNonRegistryPermissions && user?.email?.toLowerCase() === 'uslsis.batch2003@gmail.com' && (
             <button
               onClick={() => setDashboardMode('systemTest')}
               className={dashboardMode === 'systemTest' ? 'active' : ''}

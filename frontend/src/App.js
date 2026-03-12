@@ -47,7 +47,7 @@ function ProtectedRoute({ children }) {
   return children;
 }
 
-// Admin-only route wrapper
+// Admin-only route wrapper (requires full admin or non-registry permissions)
 function FullAdminOnly({ children }) {
   const { user } = useAuth();
 
@@ -55,6 +55,15 @@ function FullAdminOnly({ children }) {
     return <Navigate to="/profile" replace />;
   }
 
+  return children;
+}
+
+// Admin route wrapper (only checks isAdmin flag)
+function AdminRoute({ children }) {
+  const { user } = useAuth();
+  if (!user?.isAdmin) {
+    return <Navigate to="/profile" replace />;
+  }
   return children;
 }
 
@@ -143,9 +152,9 @@ function AppRoutes() {
         path="/admin"
         element={
           <ProtectedRoute>
-            <FullAdminOnly>
+            <AdminRoute>
               <AdminDashboard />
-            </FullAdminOnly>
+            </AdminRoute>
           </ProtectedRoute>
         }
       />
