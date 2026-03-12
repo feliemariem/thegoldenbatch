@@ -10,7 +10,6 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
   const [result, setResult] = useState(null);
   const [history, setHistory] = useState([]);
   const [showHistory, setShowHistory] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
   const [viewAnnouncement, setViewAnnouncement] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = React.useRef(null);
@@ -91,13 +90,42 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
     }
   };
 
+  const getAudienceLabelForConfirm = () => {
+    if (template === 'batchrep') return 'graduates';
+    switch (audience) {
+      case 'all': return 'registered batchmates';
+      case 'full_admins': return 'full admins';
+      case 'registry_admins': return 'registry admins';
+      case 'graduates': return 'graduates';
+      case 'going': return 'people going';
+      case 'maybe': return 'people marked as maybe';
+      case 'not_going': return 'people not going';
+      default: return 'recipients';
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    setShowConfirm(true);
+
+    // Skip confirmation in test mode
+    if (testMode) {
+      handleConfirmSend();
+      return;
+    }
+
+    // Show native confirm dialog when test mode is off
+    const count = getRecipientCount();
+    const audienceLabel = getAudienceLabelForConfirm();
+    const confirmed = window.confirm(
+      `You're about to send to ${count} ${audienceLabel}. This cannot be undone. Are you sure?`
+    );
+
+    if (confirmed) {
+      handleConfirmSend();
+    }
   };
 
   const handleConfirmSend = async () => {
-    setShowConfirm(false);
     setSending(true);
     setResult(null);
 
@@ -445,42 +473,14 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
         </div>
       )}
 
-      {/* Send Button + Confirm Popup */}
-      <div style={{ position: 'relative', display: 'inline-block' }}>
-        <button
-          type="submit"
-          className={`btn-primary ${testMode ? 'sa-test-send-btn' : ''}`}
-          disabled={sending || getRecipientCount() === 0}
-          style={{ marginTop: '8px', width: 'auto', padding: '12px 24px' }}
-        >
-          {getSendButtonLabel()}
-        </button>
-
-        {showConfirm && (
-          <div className="announce-confirm">
-            <p className="announce-confirm__text">
-              {testMode ? (
-                <>Send test email to <strong>{testEmail}</strong>?</>
-              ) : template === 'batchrep' ? (
-                <>Send Batch Rep Notification to <strong>{graduatesCount}</strong> graduates?</>
-              ) : (
-                <>Send this announcement to <strong>{getRecipientCount()}</strong> recipient{getRecipientCount() !== 1 ? 's' : ''}?</>
-              )}
-            </p>
-
-            <div className="announce-confirm__actions">
-              <button type="button" onClick={handleConfirmSend} className="announce-confirm__yes">
-                Yes, Send
-              </button>
-              <button type="button" onClick={() => setShowConfirm(false)} className="announce-confirm__no">
-                Cancel
-              </button>
-            </div>
-
-            <div className="announce-confirm__arrow" />
-          </div>
-        )}
-      </div>
+      <button
+        type="submit"
+        className={`btn-primary ${testMode ? 'sa-test-send-btn' : ''}`}
+        disabled={sending || getRecipientCount() === 0}
+        style={{ marginTop: '8px', width: 'auto', padding: '12px 24px' }}
+      >
+        {getSendButtonLabel()}
+      </button>
     </>
   );
 
