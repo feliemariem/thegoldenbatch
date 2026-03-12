@@ -187,7 +187,7 @@ router.post('/', authenticateToken, async (req, res) => {
 
                   <!-- Header -->
                   <div style="background: #0d1a14; padding: 28px; text-align: center;">
-                    <img src="${siteUrl}/images/logo.png" alt="The Golden Batch Logo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 12px;" />
+                    <img src="${siteUrl}/images/lasalle.jpg" alt="The Golden Batch Logo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 12px;" />
                     <div style="color: #CFB53B; letter-spacing: 3px; font-weight: 700; font-size: 28px; font-family: Georgia, 'Times New Roman', serif; margin-bottom: 8px;">
                       THE GOLDEN BATCH 2003
                     </div>
@@ -211,7 +211,7 @@ router.post('/', authenticateToken, async (req, res) => {
 
                     <!-- Nominee 1 -->
                     <div style="display: flex; align-items: center; background: #f0f9f4; border: 1px solid #c8e6d4; border-radius: 8px; padding: 12px 14px; margin-bottom: 10px;">
-                      <div style="width: 40px; height: 40px; border-radius: 50%; background: #006633; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: white; margin-right: 12px;">BJ</div>
+                      <img src="${siteUrl}/images/logo.png" alt="Nominee" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-right: 12px;" />
                       <div>
                         <div style="font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #006633; margin-bottom: 2px;">Nominee · Alumni Assoc. Representative</div>
                         <div style="font-size: 15px; font-weight: 700; color: #1a1a1a;">Bianca Jison</div>
@@ -220,7 +220,7 @@ router.post('/', authenticateToken, async (req, res) => {
 
                     <!-- Nominee 2 -->
                     <div style="display: flex; align-items: center; background: #f0f9f4; border: 1px solid #c8e6d4; border-radius: 8px; padding: 12px 14px; margin-bottom: 16px;">
-                      <div style="width: 40px; height: 40px; border-radius: 50%; background: #006633; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: white; margin-right: 12px;">FM</div>
+                      <img src="${siteUrl}/images/logo.png" alt="Nominee" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; margin-right: 12px;" />
                       <div>
                         <div style="font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #006633; margin-bottom: 2px;">Nominee · Batch Representative</div>
                         <div style="font-size: 15px; font-weight: 700; color: #1a1a1a;">Felie Magbanua</div>
@@ -278,7 +278,7 @@ router.post('/', authenticateToken, async (req, res) => {
 
                   <!-- Header -->
                   <div style="background: #0d1a14; padding: 28px; text-align: center;">
-                    <img src="${siteUrl}/images/logo.png" alt="The Golden Batch Logo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 12px;" />
+                    <img src="${siteUrl}/images/lasalle.jpg" alt="The Golden Batch Logo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 12px;" />
                     <div style="color: #CFB53B; letter-spacing: 3px; font-weight: 700; font-size: 28px; font-family: Georgia, 'Times New Roman', serif; margin-bottom: 8px;">
                       THE GOLDEN BATCH 2003
                     </div>
