@@ -1,4 +1,5 @@
 const sgMail = require('@sendgrid/mail');
+const db = require('../db');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const sendInviteEmail = async (to, firstName, registrationUrl) => {
@@ -93,6 +94,14 @@ const sendInviteEmail = async (to, firstName, registrationUrl) => {
 
   try {
     await sgMail.send(msg);
+
+    // Log to email_log table
+    await db.query(
+      `INSERT INTO email_log (recipient_email, recipient_name, subject, email_type, status)
+       VALUES ($1, $2, $3, $4, $5)`,
+      [to, firstName || null, msg.subject, 'invite', 'sent']
+    );
+
     return { success: true };
   } catch (error) {
     console.error('Email error:', error.response?.body || error);

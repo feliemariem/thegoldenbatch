@@ -355,6 +355,14 @@ router.post('/', authenticateToken, async (req, res) => {
             html: emailHtml,
             text: emailText
           });
+
+          // Log to email_log table
+          await db.query(
+            `INSERT INTO email_log (recipient_email, recipient_name, subject, email_type, status)
+             VALUES ($1, $2, $3, $4, $5)`,
+            [recipient.email, recipient.first_name || null, emailSubject, template === 'batchrep' ? 'batchrep' : 'announcement', 'sent']
+          );
+
           emailsSent++;
         } catch (emailErr) {
           console.error(`Failed to send to ${recipient.email}:`, emailErr.message);
@@ -619,6 +627,51 @@ router.post('/:id/read', authenticateToken, async (req, res) => {
   } catch (err) {
     console.error('Failed to mark as read:', err);
     res.status(500).json({ error: 'Failed to mark as read' });
+  }
+});
+
+// Get email log (deferred/failed emails in last 7 days) - super admin only (id=1)
+router.get('/email-log', authenticateToken, async (req, res) => {
+  try {
+    // Only allow super admin (id=1)
+    if (req.user.id !== 1) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    const result = await db.query(`
+      SELECT id, recipient_email, recipient_name, subject, email_type, status, created_at, updated_at
+      FROM email_log
+      WHERE status IN ('deferred', 'failed')
+        AND created_at >= NOW() - INTERVAL '7 days'
+      ORDER BY created_at DESC
+    `);
+
+    res.json({ emails: result.rows });
+  } catch (err) {
+    console.error('Failed to fetch email log:', err);
+    res.status(500).json({ error: 'Failed to fetch email log' });
+  }
+});
+
+// Get email log count (for badge) - super admin only (id=1)
+router.get('/email-log/count', authenticateToken, async (req, res) => {
+  try {
+    // Only allow super admin (id=1)
+    if (req.user.id !== 1) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    const result = await db.query(`
+      SELECT COUNT(*) as count
+      FROM email_log
+      WHERE status IN ('deferred', 'failed')
+        AND created_at >= NOW() - INTERVAL '7 days'
+    `);
+
+    res.json({ count: parseInt(result.rows[0].count) || 0 });
+  } catch (err) {
+    console.error('Failed to fetch email log count:', err);
+    res.status(500).json({ error: 'Failed to fetch email log count' });
   }
 });
 

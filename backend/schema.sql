@@ -2,6 +2,7 @@
 -- The Golden Batch - USLS IS Batch 2003
 
 -- Drop tables in correct order (respecting foreign keys)
+DROP TABLE IF EXISTS email_log;
 DROP TABLE IF EXISTS batch_rep_submissions;
 DROP TABLE IF EXISTS site_config;
 DROP TABLE IF EXISTS action_items;
@@ -331,6 +332,21 @@ CREATE TABLE batch_rep_willingness (
 );
 
 -- ============================================================
+-- Email Log table
+-- Tracks all outgoing emails for status monitoring
+-- ============================================================
+CREATE TABLE email_log (
+    id SERIAL PRIMARY KEY,
+    recipient_email VARCHAR(255) NOT NULL,
+    recipient_name VARCHAR(255),
+    subject VARCHAR(500),
+    email_type VARCHAR(50) DEFAULT 'announcement',
+    status VARCHAR(50) DEFAULT 'sent',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ============================================================
 -- Indexes
 -- ============================================================
 CREATE INDEX idx_messages_to_user ON messages(to_user_id);
@@ -345,6 +361,9 @@ CREATE INDEX idx_invite_token ON invites(invite_token);
 CREATE INDEX idx_invites_email ON invites(email);
 CREATE INDEX idx_invites_master_list ON invites(master_list_id);
 CREATE INDEX idx_invites_email_status ON invites(email_status);
+CREATE INDEX idx_email_log_recipient ON email_log(recipient_email);
+CREATE INDEX idx_email_log_status ON email_log(status);
+CREATE INDEX idx_email_log_created ON email_log(created_at);
 CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_master_list_email ON master_list(email);
 CREATE INDEX idx_master_list_section ON master_list(section);

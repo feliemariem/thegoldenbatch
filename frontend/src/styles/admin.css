@@ -258,6 +258,19 @@
   color: var(--color-hover);
 }
 
+/* Email Log badge - gold text on dark, green bg on light */
+.dashboard-mode-tabs .email-log-badge {
+  background: transparent;
+  color: var(--color-hover);
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 10px;
+  min-width: 16px;
+  text-align: center;
+  border: 1px solid var(--color-hover);
+}
+
 /* Table */
 .users-section {
   border-top: 1px solid rgba(255, 255, 255, 0.05);
@@ -465,6 +478,12 @@ tr:last-child td {
 [data-theme="light"] .dashboard-mode-tabs .active-badge {
   background: #ffffff;
   color: #006633;
+}
+
+[data-theme="light"] .dashboard-mode-tabs .email-log-badge {
+  background: #27ae60;
+  color: #ffffff;
+  border-color: #27ae60;
 }
 
 /* Stats cards in light mode - clean white background */

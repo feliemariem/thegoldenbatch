@@ -58,7 +58,20 @@ router.post('/sendgrid', async (req, res) => {
           'UPDATE invites SET email_status = $1 WHERE LOWER(email) = LOWER($2)',
           [newStatus, email]
         );
-        console.log(`[SendGrid Webhook] Updated ${email}: ${currentStatus} -> ${newStatus}`);
+        console.log(`[SendGrid Webhook] Updated invites ${email}: ${currentStatus} -> ${newStatus}`);
+      }
+
+      // Also update email_log table for matching recipient
+      const logResult = await db.query(
+        `UPDATE email_log
+         SET status = $1, updated_at = NOW()
+         WHERE LOWER(recipient_email) = LOWER($2)
+           AND status NOT IN ('delivered', 'bounced', 'failed')
+         RETURNING id`,
+        [newStatus, email]
+      );
+      if (logResult.rows.length > 0) {
+        console.log(`[SendGrid Webhook] Updated email_log ${email}: -> ${newStatus}`);
       }
     }
 

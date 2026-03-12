@@ -13,6 +13,7 @@ import MeetingMinutes from '../components/MeetingMinutes';
 import StrategicPlanning from '../components/StrategicPlanning';
 import AdminRoleErrorToast from "../components/AdminRoleErrorToast";
 import AdminMessages from '../components/AdminMessages';
+import EmailLog from '../components/EmailLog';
 import Footer from '../components/Footer';
 import { apiGet } from '../api';
 
@@ -70,6 +71,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [showAdminRoleError, setShowAdminRoleError] = useState(false);
   const [adminUnreadCount, setAdminUnreadCount] = useState(0);
+  const [emailLogCount, setEmailLogCount] = useState(0);
 
   // Batch Rep Results state (System Admin only)
   const [batchRepResults, setBatchRepResults] = useState(null);
@@ -127,6 +129,13 @@ export default function AdminDashboard() {
     fetchDashboardStats();
   }, [user]);
 
+  // Fetch email log count for system admin (id=1)
+  useEffect(() => {
+    if (isSystemAdmin) {
+      fetchEmailLogCount();
+    }
+  }, [isSystemAdmin]);
+
   const fetchAdminUnreadCount = async () => {
     try {
       const res = await apiGet('/api/messages/admin-inbox/unread-count');
@@ -136,6 +145,18 @@ export default function AdminDashboard() {
       }
     } catch (err) {
       console.error('Failed to fetch admin unread count:', err);
+    }
+  };
+
+  const fetchEmailLogCount = async () => {
+    try {
+      const res = await apiGet('/api/announcements/email-log/count');
+      if (res.ok) {
+        const data = await res.json();
+        setEmailLogCount(data.count || 0);
+      }
+    } catch (err) {
+      console.error('Failed to fetch email log count:', err);
     }
   };
 
@@ -386,6 +407,19 @@ export default function AdminDashboard() {
               className={dashboardMode === 'permissions' ? 'active' : ''}
             >
               Permissions
+            </button>
+          )}
+          {isSystemAdmin && (
+            <button
+              onClick={() => setDashboardMode('emailLog')}
+              className={dashboardMode === 'emailLog' ? 'active has-badge' : 'has-badge'}
+            >
+              Email Log
+              {emailLogCount > 0 && (
+                <span className="email-log-badge">
+                  {emailLogCount}
+                </span>
+              )}
             </button>
           )}
           {user?.email?.toLowerCase() === 'uslsis.batch2003@gmail.com' && (
@@ -924,6 +958,14 @@ export default function AdminDashboard() {
         {/* PERMISSIONS MODE - Super Admin Only */}
         {dashboardMode === 'permissions' && isSuperAdmin && (
           <PermissionsManager />
+        )}
+
+        {/* EMAIL LOG MODE - System Admin (id=1) Only */}
+        {dashboardMode === 'emailLog' && isSystemAdmin && (
+          <div className="invite-section">
+            <h3>Email Log</h3>
+            <EmailLog />
+          </div>
         )}
 
         {/* SYSTEM TEST MODE - Super Admin (uslsis.batch2003@gmail.com) Only */}
