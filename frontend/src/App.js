@@ -112,14 +112,27 @@ function AppRoutes() {
 
   return (
     <Routes>
+      {/* Landing: Public marketing page. Access: Anyone. */}
       <Route path="/" element={<Landing />} />
-      {/* Messenger-safe entry point — /i/:token rewrites to index.html via Render,
-          then React Router redirects to /register/:token client-side */}
+
+      {/* Invite redirect: Messenger-safe short link that redirects to /register/:token.
+          Access: Anyone. Render rewrites /i/:token to index.html, React handles redirect. */}
       <Route path="/i/:token" element={<InviteRedirect />} />
+
+      {/* Register: New user signup with invite token. Access: Anyone with valid token. */}
       <Route path="/register/:token" element={<Register />} />
+
+      {/* Login: User authentication. Access: Unauthenticated only. If logged in → /profile. */}
       <Route path="/login" element={user ? <Navigate to="/profile" replace /> : <Login />} />
+
+      {/* Forgot password: Request password reset email. Access: Anyone. */}
       <Route path="/forgot-password" element={<ForgotPassword />} />
+
+      {/* Reset password: Set new password with reset token. Access: Anyone with valid token. */}
       <Route path="/reset-password/:token" element={<ResetPassword />} />
+
+      {/* Funds: Contribution tracking and builder tiers. Access: Super admin OR full admin.
+          If unauthorized (registry admin or regular user) → /profile. If not logged in → /login. */}
       <Route
         path="/funds"
         element={
@@ -130,6 +143,10 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+
+      {/* Profile: User profile via ProfileWrapper. Access: Any logged-in user. If not logged in → /login.
+          ProfileWrapper then routes: Super admin/full admin → /profile-preview (ProfileNew).
+          Registry admin/regular user → stays on Profile (old). */}
       <Route
         path="/profile"
         element={
@@ -138,6 +155,9 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+
+      {/* Profile Preview (ProfileNew): Enhanced profile with admin features, contribution card, batch rep.
+          Access: Super admin OR full admin. If unauthorized → /profile. If not logged in → /login. */}
       <Route
         path="/profile-preview"
         element={
@@ -148,6 +168,9 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+
+      {/* Admin Dashboard: Invites, registered users, master list, system tools.
+          Access: Any admin (isAdmin flag — includes registry admins). If not admin → /profile. If not logged in → /login. */}
       <Route
         path="/admin"
         element={
@@ -158,6 +181,9 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+
+      {/* Inbox: Announcements and notifications. Access: Super admin OR full admin.
+          If unauthorized → /profile. If not logged in → /login. */}
       <Route
         path="/inbox"
         element={
@@ -168,6 +194,9 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+
+      {/* Events: Upcoming and past events list. Access: Super admin OR full admin.
+          If unauthorized → /profile. If not logged in → /login. */}
       <Route
         path="/events"
         element={
@@ -178,6 +207,9 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+
+      {/* Event Detail: Single event view. Access: Super admin OR full admin.
+          If unauthorized → /profile. If not logged in → /login. */}
       <Route
         path="/events/:id"
         element={
@@ -188,6 +220,9 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+
+      {/* Media: Photo galleries. Access: Super admin OR full admin.
+          If unauthorized → /profile. If not logged in → /login. */}
       <Route
         path="/media"
         element={
@@ -198,6 +233,9 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+
+      {/* Committee: Organizing committee members. Access: Super admin OR full admin.
+          If unauthorized → /profile. If not logged in → /login. */}
       <Route
         path="/committee"
         element={
@@ -208,6 +246,9 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+
+      {/* Directory: Batchmate search and profiles. Access: Super admin OR full admin.
+          If unauthorized → /profile. If not logged in → /login. */}
       <Route
         path="/directory"
         element={
@@ -218,7 +259,12 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
-      <Route path="/preview" element={<Navigate to="/" replace />} /> {/* Redirect old /preview URL to new landing page for backwards compatibility */}
+
+      {/* Legacy redirect: Old /preview URL redirects to landing for backwards compatibility. */}
+      <Route path="/preview" element={<Navigate to="/" replace />} />
+
+      {/* Batch Rep: Batch representative selection. Access: Any logged-in user.
+          If not logged in → /login. Phase-based access is controlled within the component. */}
       <Route
         path="/batch-rep"
         element={

@@ -96,23 +96,26 @@ export default function UserProfilePreview() {
     const goesToNewProfile = isSuperAdmin || (isAdmin && hasNonRegistryPerms);
     const hasBatchRepAccess = checkBatchRepAccess(p.email, isAdmin, isGrad);
 
+    // Registry Admin: isAdmin but no non-registry permissions
+    const isRegistryAdmin = isAdmin && !hasNonRegistryPerms && !isSuperAdmin;
+
     return {
       profilePage: goesToNewProfile ? 'New Profile (ProfileNew.js)' : 'Old Profile (Profile.js)',
       navLinks: {
-        home: true,
+        home: !isRegistryAdmin,
         profile: true,
-        inbox: true,
-        batchmates: true,
-        committee: true,
-        funds: isGrad,
+        inbox: !isRegistryAdmin,
+        batchmates: !isRegistryAdmin,
+        committee: !isRegistryAdmin,
+        funds: !isRegistryAdmin && isGrad,
         admin: isAdmin
       },
       features: {
-        contributionCard: isGrad,
+        contributionCard: !isRegistryAdmin && isGrad,
         committeeMemo: isAdmin,
-        batchRepModal: hasBatchRepAccess,
+        batchRepModal: !isRegistryAdmin && hasBatchRepAccess,
         myTasks: isAdmin,
-        alumniCardNudge: isGrad && !p.has_alumni_card
+        alumniCardNudge: !isRegistryAdmin && isGrad && !p.has_alumni_card
       }
     };
   };
