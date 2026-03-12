@@ -123,38 +123,61 @@ router.post('/auto', authenticateApiKey, async (req, res) => {
 router.post('/', authenticateAdmin, async (req, res) => {
   try {
     const { email, first_name, last_name } = req.body;
-    
+
     if (!email) {
       return res.status(400).json({ error: 'Email is required' });
     }
 
+    const normalizedEmail = email.toLowerCase().trim();
+
     const result = await db.query(
       'INSERT INTO invites (email, first_name, last_name) VALUES ($1, $2, $3) RETURNING id, email, first_name, last_name, invite_token, created_at',
-      [email.toLowerCase(), first_name || null, last_name || null]
+      [normalizedEmail, first_name || null, last_name || null]
     );
 
     const invite = result.rows[0];
-    
+
     // Return the full registration URL
     const registrationUrl = `${getFrontendUrl()}/register/${invite.invite_token}`;
 
-    // Send email
-    const emailResult = await sendInviteEmail(email, first_name, registrationUrl);
-    
-    // Update email_sent status
-    if (emailResult.success) {
-      await db.query('UPDATE invites SET email_sent = true WHERE id = $1', [invite.id]);
+    // Send email with proper error handling
+    let emailSent = false;
+    let emailStatus = 'pending';
+
+    try {
+      const emailResult = await sendInviteEmail(normalizedEmail, first_name, registrationUrl);
+      if (emailResult.success) {
+        emailSent = true;
+        emailStatus = 'sent';
+        console.log(`[SINGLE-INVITE] Email sent successfully to ${normalizedEmail}`);
+      } else {
+        emailStatus = 'failed';
+        console.error(`[SINGLE-INVITE] Email failed for ${normalizedEmail}:`, emailResult.error);
+      }
+    } catch (emailErr) {
+      emailStatus = 'failed';
+      console.error(`[SINGLE-INVITE] Email error for ${normalizedEmail}:`, emailErr.message);
     }
-    
+
+    // Update email status in DB
+    await db.query(
+      'UPDATE invites SET email_sent = $1, email_status = $2 WHERE id = $3',
+      [emailSent, emailStatus, invite.id]
+    );
+
+    console.log(`[SINGLE-INVITE] Created invite for ${normalizedEmail} (email_status: ${emailStatus})`);
+
     res.status(201).json({
       ...invite,
       registrationUrl,
+      emailSent,
+      emailStatus,
     });
   } catch (err) {
     if (err.code === '23505') { // Unique violation
       return res.status(400).json({ error: 'Email already invited' });
     }
-    console.error(err);
+    console.error('[SINGLE-INVITE] Error:', err.message);
     res.status(500).json({ error: 'Server error' });
   }
 });
