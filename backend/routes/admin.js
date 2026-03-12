@@ -209,4 +209,93 @@ router.get('/users', authenticateAdmin, async (req, res) => {
   }
 });
 
+// Get user profile by ID (System Admin only - id=1)
+router.get('/users/:id/profile', authenticateAdmin, async (req, res) => {
+  try {
+    // Restrict to system admin (id=1)
+    if (req.user.id !== 1) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    const { id } = req.params;
+
+    const result = await db.query(`
+      SELECT
+        u.id,
+        u.email,
+        u.first_name,
+        u.last_name,
+        u.birthday,
+        u.mobile,
+        u.address,
+        u.city,
+        u.country,
+        u.occupation,
+        u.company,
+        u.profile_photo,
+        u.shirt_size,
+        u.jacket_size,
+        u.has_alumni_card,
+        u.created_at,
+        u.last_login,
+        r.status as rsvp_status,
+        m.section,
+        m.builder_tier,
+        m.pledge_amount,
+        m.recognition_public,
+        CASE WHEN m.section != 'Non-Graduate' THEN true ELSE false END as is_graduate,
+        COALESCE(
+          (SELECT SUM(l.amount) FROM ledger l WHERE l.master_list_id = m.id AND l.type = 'deposit' AND l.status = 'OK'),
+          0
+        ) as total_paid
+      FROM users u
+      LEFT JOIN rsvps r ON u.id = r.user_id
+      LEFT JOIN invites i ON u.invite_id = i.id
+      LEFT JOIN master_list m ON i.master_list_id = m.id
+      WHERE u.id = $1
+    `, [id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('Error fetching user profile:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Get engagement stats (System Admin only - id=1)
+router.get('/engagement', authenticateAdmin, async (req, res) => {
+  try {
+    // Restrict to system admin (id=1)
+    if (req.user.id !== 1) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    const result = await db.query(`
+      SELECT
+        COUNT(*) as total_registered,
+        COUNT(CASE WHEN last_login >= NOW() - INTERVAL '30 days' THEN 1 END) as active_30d
+      FROM users
+    `);
+
+    const totalRegistered = parseInt(result.rows[0].total_registered) || 0;
+    const active30d = parseInt(result.rows[0].active_30d) || 0;
+    const active30dPct = totalRegistered > 0
+      ? Math.round((active30d / totalRegistered) * 1000) / 10
+      : 0;
+
+    res.json({
+      total_registered: totalRegistered,
+      active_30d: active30d,
+      active_30d_pct: active30dPct
+    });
+  } catch (err) {
+    console.error('Error fetching engagement stats:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 module.exports = router;

@@ -97,6 +97,7 @@ CREATE TABLE users (
     shirt_size VARCHAR(10),
     jacket_size VARCHAR(10),
     has_alumni_card BOOLEAN DEFAULT false,
+    last_login TIMESTAMPTZ,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

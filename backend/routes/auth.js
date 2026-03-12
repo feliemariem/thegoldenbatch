@@ -184,6 +184,9 @@ router.post('/login', authLimiter, async (req, res) => {
       );
       const isAdmin = adminCheck.rows.length > 0;
 
+      // Update last_login timestamp
+      await db.query('UPDATE users SET last_login = NOW() WHERE id = $1', [user.id]);
+
       const token = jwt.sign(
         { id: user.id, email: user.email, isAdmin },
         process.env.JWT_SECRET,

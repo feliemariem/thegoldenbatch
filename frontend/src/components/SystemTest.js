@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import PreviewInbox from './PreviewInbox';
 import PreviewNonGradProfile from './PreviewNonGradProfile';
+import UserProfilePreview from './UserProfilePreview';
+import EngagementStats from './EngagementStats';
 
 /**
  * SystemTest - Super Admin testing panel
@@ -8,6 +10,8 @@ import PreviewNonGradProfile from './PreviewNonGradProfile';
  *
  * This component provides various testing features for the super admin:
  * - User Inbox Preview: See what announcements any user would see
+ * - User Profile Preview: View any user's profile data
+ * - Engagement Stats: View user activity metrics
  * - (More features can be added here in the future)
  */
 export default function SystemTest() {
@@ -16,6 +20,8 @@ export default function SystemTest() {
   const features = [
     { id: 'inbox-preview', label: 'User Inbox Preview', description: 'Preview what any user sees in their inbox' },
     { id: 'nongrad-preview', label: 'Non-Grad Profile Preview', description: 'Preview what non-graduate users see on their profile' },
+    { id: 'profile-preview', label: 'User Profile Preview', description: 'View any user\'s profile data' },
+    { id: 'engagement', label: 'Engagement Stats', description: 'View user activity metrics' },
   ];
 
   return (
@@ -90,12 +96,13 @@ export default function SystemTest() {
         <PreviewNonGradProfile />
       )}
 
-      {/* Placeholder for future features */}
-      {/*
-      {activeFeature === 'another-feature' && (
-        <AnotherTestFeature token={token} />
+      {activeFeature === 'profile-preview' && (
+        <UserProfilePreview />
       )}
-      */}
+
+      {activeFeature === 'engagement' && (
+        <EngagementStats />
+      )}
     </div>
   );
 }
