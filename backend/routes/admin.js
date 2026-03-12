@@ -219,47 +219,57 @@ router.get('/users/:id/profile', authenticateAdmin, async (req, res) => {
 
     const { id } = req.params;
 
-    const result = await db.query(`
-      SELECT
-        u.id,
-        u.email,
-        u.first_name,
-        u.last_name,
-        u.birthday,
-        u.mobile,
-        u.address,
-        u.city,
-        u.country,
-        u.occupation,
-        u.company,
-        u.profile_photo,
-        u.shirt_size,
-        u.jacket_size,
-        u.has_alumni_card,
-        u.created_at,
-        u.last_login,
-        r.status as rsvp_status,
-        m.section,
-        m.builder_tier,
-        m.pledge_amount,
-        m.recognition_public,
-        CASE WHEN m.section != 'Non-Graduate' THEN true ELSE false END as is_graduate,
-        COALESCE(
-          (SELECT SUM(l.amount) FROM ledger l WHERE l.master_list_id = m.id AND l.type = 'deposit' AND l.status = 'OK'),
-          0
-        ) as total_paid
-      FROM users u
-      LEFT JOIN rsvps r ON u.id = r.user_id
-      LEFT JOIN invites i ON u.invite_id = i.id
-      LEFT JOIN master_list m ON i.master_list_id = m.id
-      WHERE u.id = $1
-    `, [id]);
+    const userResult = await db.query(
+      `SELECT u.id, u.email, u.first_name, u.last_name, u.birthday,
+              u.mobile, u.address, u.city, u.country, u.occupation, u.company,
+              u.profile_photo, u.facebook_url, u.linkedin_url, u.instagram_url,
+              u.shirt_size, u.jacket_size, u.has_alumni_card,
+              u.created_at, u.last_login,
+              r.status as rsvp_status,
+              m.id as master_list_id,
+              m.section,
+              m.current_name,
+              m.builder_tier,
+              m.pledge_amount,
+              m.builder_tier_set_at,
+              m.recognition_public
+       FROM users u
+       LEFT JOIN rsvps r ON u.id = r.user_id
+       LEFT JOIN invites i ON u.invite_id = i.id
+       LEFT JOIN master_list m ON i.master_list_id = m.id
+       WHERE u.id = $1`,
+      [id]
+    );
 
-    if (result.rows.length === 0) {
+    if (userResult.rows.length === 0) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    res.json(result.rows[0]);
+    const user = userResult.rows[0];
+
+    // Get payment totals if user is linked to master_list
+    // Only verified (OK) deposits count toward pledge; pending shown separately
+    let totalPaid = 0;
+    let pendingPaid = 0;
+    if (user.master_list_id) {
+      const paymentResult = await db.query(
+        `SELECT
+          COALESCE(SUM(CASE WHEN verified = 'OK' THEN deposit ELSE 0 END), 0) as total_paid,
+          COALESCE(SUM(CASE WHEN verified != 'OK' OR verified IS NULL THEN deposit ELSE 0 END), 0) as pending_paid
+         FROM ledger
+         WHERE master_list_id = $1 AND deposit > 0`,
+        [user.master_list_id]
+      );
+      totalPaid = parseFloat(paymentResult.rows[0].total_paid) || 0;
+      pendingPaid = parseFloat(paymentResult.rows[0].pending_paid) || 0;
+    }
+
+    res.json({
+      ...user,
+      total_paid: totalPaid,
+      pending_paid: pendingPaid,
+      is_graduate: user.section && user.section !== 'Non-Graduate'
+    });
   } catch (err) {
     console.error('Error fetching user profile:', err);
     res.status(500).json({ error: 'Server error' });
