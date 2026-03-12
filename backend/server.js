@@ -1,5 +1,4 @@
 const express = require('express');
-const path = require('path');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
@@ -34,9 +33,6 @@ app.use(cors({
 }));
 app.use(cookieParser());
 app.use(express.json());
-
-// Serve static files from React build
-app.use(express.static(path.join(__dirname, '../frontend/build')));
 
 // Webhooks (public endpoint - no auth required)
 app.use('/api/webhooks', webhookRoutes);
@@ -102,9 +98,9 @@ app.get('/api/debug/routes', (req, res) => {
   });
 });
 
-// Catch-all route for SPA - serve index.html for non-API requests
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
+// 404 handler for unmatched routes
+app.use((req, res) => {
+  res.status(404).json({ error: 'Not found' });
 });
 
 // Error handling middleware
