@@ -517,7 +517,7 @@ export default function BatchRep() {
                     The USLS Alumni Association has asked our batch to put forward an official representative. After clarifying with the alumni office, we learned that the responsibilities may be structured into two roles — an <strong>Alumni Association Representative</strong> (school-facing) and a <strong>Batch Representative</strong> (batch-facing).
                   </p>
                   <p>
-                    The organizing committee is putting forward its two co-chairs as nominees for these roles.
+                    The organizing committee is presenting its two co-chairs as nominees for these roles.
                   </p>
                   <p>
                     While the Organizing Committee believes our nominees are well-suited for their respective roles, we recognize and value every batchmate's voice. If you have someone else in mind who you feel is equally capable and willing to take this on, we encourage you to put their name forward. This is ultimately the batch's decision.
