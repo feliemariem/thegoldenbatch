@@ -245,7 +245,7 @@ router.get('/users/:id/profile', authenticateAdmin, async (req, res) => {
         m.recognition_public,
         CASE WHEN m.section != 'Non-Graduate' THEN true ELSE false END as is_graduate,
         COALESCE(
-          (SELECT SUM(l.deposit) FROM ledger l WHERE l.master_list_id = m.id AND l.verified = 'OK'),
+          (SELECT SUM(l.amount) FROM ledger l WHERE l.master_list_id = m.id AND l.type = 'deposit' AND l.status = 'OK'),
           0
         ) as total_paid
       FROM users u
