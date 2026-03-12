@@ -1,6 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import { apiGet } from '../api';
 
+// Batch Rep Phase 1 allowed emails (must match ProfileNew.js)
+const BATCH_REP_PHASE = 1;
+const BATCH_REP_PHASE1_EMAILS = [
+  'felie@fnrcore.com',
+  'emvjanklow@gmail.com',
+  'nqa.attynea@gmail.com',
+  'jmrnv07@gmail.com',
+  'chayamalonso@gmail.com',
+  'eckkee03@gmail.com',
+  'coycoy.cordova@gmail.com',
+  'johannajison@gmail.com',
+  'pngolez@gmail.com',
+  'narcisojavelosa@yahoo.com',
+  'willkramer27@gmail.com'
+];
+
+const checkBatchRepAccess = (email, isAdmin, isGrad) => {
+  const userEmail = email?.toLowerCase();
+  switch (BATCH_REP_PHASE) {
+    case 1:
+      return BATCH_REP_PHASE1_EMAILS.includes(userEmail);
+    case 2:
+      return isAdmin === true;
+    case 3:
+      return isGrad === true;
+    default:
+      return false;
+  }
+};
+
 export default function UserProfilePreview() {
   const [users, setUsers] = useState([]);
   const [selectedUserId, setSelectedUserId] = useState('');
@@ -8,7 +38,6 @@ export default function UserProfilePreview() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Fetch users for dropdown
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -56,30 +85,66 @@ export default function UserProfilePreview() {
     }
   };
 
-  const formatDate = (dateStr) => {
-    if (!dateStr) return '—';
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  // Derive access context from profile
+  const getAccessContext = (p) => {
+    if (!p) return null;
+
+    const isGrad = p.is_graduate;
+    const isAdmin = p.isAdmin;
+    const isSuperAdmin = p.is_super_admin;
+    const hasNonRegistryPerms = p.hasNonRegistryPermissions;
+    const goesToNewProfile = isSuperAdmin || (isAdmin && hasNonRegistryPerms);
+    const hasBatchRepAccess = checkBatchRepAccess(p.email, isAdmin, isGrad);
+
+    return {
+      profilePage: goesToNewProfile ? 'New Profile (ProfileNew.js)' : 'Old Profile (Profile.js)',
+      navLinks: {
+        home: true,
+        profile: true,
+        inbox: true,
+        batchmates: true,
+        committee: true,
+        funds: isGrad,
+        admin: isAdmin
+      },
+      features: {
+        contributionCard: isGrad,
+        committeeMemo: isAdmin,
+        batchRepModal: hasBatchRepAccess,
+        myTasks: isAdmin,
+        alumniCardNudge: isGrad && !p.has_alumni_card
+      }
+    };
   };
 
-  const formatDateTime = (dateStr) => {
-    if (!dateStr) return 'Never';
-    const date = new Date(dateStr);
-    return date.toLocaleString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
-    });
-  };
+  const CheckItem = ({ label, enabled }) => (
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: '10px',
+      padding: '8px 0',
+      borderBottom: '1px solid rgba(255, 255, 255, 0.05)'
+    }}>
+      <span style={{
+        width: '20px',
+        height: '20px',
+        borderRadius: '50%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '0.8rem',
+        background: enabled ? 'rgba(40, 167, 69, 0.15)' : 'rgba(108, 117, 125, 0.1)',
+        color: enabled ? '#28a745' : '#666'
+      }}>
+        {enabled ? '✓' : '—'}
+      </span>
+      <span style={{ color: enabled ? 'var(--text-primary)' : '#666' }}>
+        {label}
+      </span>
+    </div>
+  );
 
-  const formatPeso = (amount) => {
-    const num = parseFloat(amount);
-    if (isNaN(num)) return '₱0';
-    return `₱${num.toLocaleString('en-PH')}`;
-  };
+  const access = getAccessContext(profile);
 
   return (
     <div className="user-profile-preview">
@@ -91,10 +156,10 @@ export default function UserProfilePreview() {
         borderRadius: '12px'
       }}>
         <h3 style={{ color: '#006633', margin: '0 0 8px 0', fontSize: '1rem' }}>
-          User Profile Preview
+          User Access Preview
         </h3>
         <p style={{ color: '#666', margin: '0 0 16px 0', fontSize: '0.85rem' }}>
-          Select a registered user to view their profile data as they see it.
+          See routing and feature access for any registered user.
         </p>
 
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
@@ -142,7 +207,7 @@ export default function UserProfilePreview() {
 
       {loading && (
         <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
-          Loading profile...
+          Loading...
         </div>
       )}
 
@@ -159,162 +224,120 @@ export default function UserProfilePreview() {
         </div>
       )}
 
-      {profile && !loading && (
+      {profile && access && !loading && (
         <div style={{
           background: 'var(--card-bg)',
           border: '1px solid var(--border-color)',
           borderRadius: '12px',
           overflow: 'hidden'
         }}>
-          {/* Header */}
+          {/* User Header */}
           <div style={{
-            padding: '20px',
+            padding: '16px 20px',
             borderBottom: '1px solid var(--border-color)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '16px'
+            background: 'rgba(255, 255, 255, 0.02)'
           }}>
-            {profile.profile_photo ? (
-              <img
-                src={profile.profile_photo}
-                alt={`${profile.first_name}'s photo`}
-                style={{
-                  width: '64px',
-                  height: '64px',
-                  borderRadius: '50%',
-                  objectFit: 'cover',
-                  border: '2px solid var(--color-hover)'
-                }}
-              />
-            ) : (
-              <div style={{
-                width: '64px',
-                height: '64px',
-                borderRadius: '50%',
-                background: 'linear-gradient(135deg, var(--color-hover) 0%, #b8a033 100%)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#fff',
-                fontSize: '1.5rem',
-                fontWeight: '600'
-              }}>
-                {profile.first_name?.[0]}{profile.last_name?.[0]}
-              </div>
-            )}
-            <div>
-              <h4 style={{ margin: '0 0 4px 0', color: 'var(--text-primary)' }}>
-                {profile.first_name} {profile.last_name}
-              </h4>
-              <p style={{ margin: 0, color: '#666', fontSize: '0.9rem' }}>
-                {profile.email}
-              </p>
+            <div style={{ fontWeight: '600', color: 'var(--text-primary)' }}>
+              {profile.first_name} {profile.last_name}
+            </div>
+            <div style={{ fontSize: '0.85rem', color: '#666', marginTop: '4px' }}>
+              {profile.email}
             </div>
           </div>
 
-          {/* Profile Details */}
+          {/* Profile Page Routing */}
+          <div style={{ padding: '20px', borderBottom: '1px solid var(--border-color)' }}>
+            <div style={{
+              fontSize: '0.75rem',
+              color: '#888',
+              textTransform: 'uppercase',
+              marginBottom: '8px',
+              letterSpacing: '0.5px'
+            }}>
+              Profile Page
+            </div>
+            <div style={{
+              padding: '12px 16px',
+              background: 'rgba(207, 181, 59, 0.1)',
+              border: '1px solid rgba(207, 181, 59, 0.2)',
+              borderRadius: '8px',
+              color: '#CFB53B',
+              fontWeight: '600'
+            }}>
+              {access.profilePage}
+            </div>
+          </div>
+
+          {/* Nav Links */}
+          <div style={{ padding: '20px', borderBottom: '1px solid var(--border-color)' }}>
+            <div style={{
+              fontSize: '0.75rem',
+              color: '#888',
+              textTransform: 'uppercase',
+              marginBottom: '12px',
+              letterSpacing: '0.5px'
+            }}>
+              Nav Links Visible
+            </div>
+            <CheckItem label="Home" enabled={access.navLinks.home} />
+            <CheckItem label="Profile" enabled={access.navLinks.profile} />
+            <CheckItem label="Inbox" enabled={access.navLinks.inbox} />
+            <CheckItem label="Batchmates" enabled={access.navLinks.batchmates} />
+            <CheckItem label="Committee" enabled={access.navLinks.committee} />
+            <CheckItem label="Funds (graduates only)" enabled={access.navLinks.funds} />
+            <CheckItem label="Admin Dashboard" enabled={access.navLinks.admin} />
+          </div>
+
+          {/* Profile Features */}
           <div style={{ padding: '20px' }}>
             <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-              gap: '16px'
+              fontSize: '0.75rem',
+              color: '#888',
+              textTransform: 'uppercase',
+              marginBottom: '12px',
+              letterSpacing: '0.5px'
             }}>
-              <div>
-                <label style={{ fontSize: '0.75rem', color: '#888', textTransform: 'uppercase' }}>RSVP Status</label>
-                <p style={{ margin: '4px 0 0', color: 'var(--text-primary)' }}>
-                  {profile.rsvp_status ? profile.rsvp_status.replace('_', ' ') : 'No Response'}
-                </p>
-              </div>
-
-              <div>
-                <label style={{ fontSize: '0.75rem', color: '#888', textTransform: 'uppercase' }}>Location</label>
-                <p style={{ margin: '4px 0 0', color: 'var(--text-primary)' }}>
-                  {[profile.city, profile.country].filter(Boolean).join(', ') || '—'}
-                </p>
-              </div>
-
-              <div>
-                <label style={{ fontSize: '0.75rem', color: '#888', textTransform: 'uppercase' }}>Occupation</label>
-                <p style={{ margin: '4px 0 0', color: 'var(--text-primary)' }}>
-                  {profile.occupation || '—'}
-                </p>
-              </div>
-
-              <div>
-                <label style={{ fontSize: '0.75rem', color: '#888', textTransform: 'uppercase' }}>Company</label>
-                <p style={{ margin: '4px 0 0', color: 'var(--text-primary)' }}>
-                  {profile.company || '—'}
-                </p>
-              </div>
-
-              <div>
-                <label style={{ fontSize: '0.75rem', color: '#888', textTransform: 'uppercase' }}>Section</label>
-                <p style={{ margin: '4px 0 0', color: 'var(--text-primary)' }}>
-                  {profile.section || '—'}
-                </p>
-              </div>
-
-              <div>
-                <label style={{ fontSize: '0.75rem', color: '#888', textTransform: 'uppercase' }}>Registered</label>
-                <p style={{ margin: '4px 0 0', color: 'var(--text-primary)' }}>
-                  {formatDate(profile.created_at)}
-                </p>
-              </div>
-
-              <div>
-                <label style={{ fontSize: '0.75rem', color: '#888', textTransform: 'uppercase' }}>Last Login</label>
-                <p style={{ margin: '4px 0 0', color: 'var(--text-primary)' }}>
-                  {formatDateTime(profile.last_login)}
-                </p>
-              </div>
-
-              {profile.is_graduate && (
-                <>
-                  <div>
-                    <label style={{ fontSize: '0.75rem', color: '#888', textTransform: 'uppercase' }}>Builder Tier</label>
-                    <p style={{ margin: '4px 0 0', color: 'var(--text-primary)' }}>
-                      {profile.builder_tier ? profile.builder_tier.charAt(0).toUpperCase() + profile.builder_tier.slice(1) : 'Not set'}
-                    </p>
-                  </div>
-
-                  {profile.builder_tier && profile.builder_tier !== 'root' && profile.pledge_amount && (
-                    <div>
-                      <label style={{ fontSize: '0.75rem', color: '#888', textTransform: 'uppercase' }}>Pledge / Paid</label>
-                      <p style={{ margin: '4px 0 0', color: 'var(--text-primary)' }}>
-                        {formatPeso(profile.pledge_amount)} / {formatPeso(profile.total_paid)}
-                      </p>
-                    </div>
-                  )}
-                </>
-              )}
+              Profile Features
             </div>
+            <CheckItem label="Contribution Card (graduates only)" enabled={access.features.contributionCard} />
+            <CheckItem label="Committee Memo (admins only)" enabled={access.features.committeeMemo} />
+            <CheckItem label={`Batch Rep Modal (Phase ${BATCH_REP_PHASE})`} enabled={access.features.batchRepModal} />
+            <CheckItem label="My Tasks Section (admins only)" enabled={access.features.myTasks} />
+            <CheckItem label="Alumni Card Nudge (grads without card)" enabled={access.features.alumniCardNudge} />
+          </div>
 
-            {/* Tags */}
-            <div style={{ marginTop: '20px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          {/* User Type Tags */}
+          <div style={{
+            padding: '16px 20px',
+            borderTop: '1px solid var(--border-color)',
+            background: 'rgba(255, 255, 255, 0.02)',
+            display: 'flex',
+            gap: '8px',
+            flexWrap: 'wrap'
+          }}>
+            <span style={{
+              padding: '4px 10px',
+              borderRadius: '12px',
+              fontSize: '0.75rem',
+              fontWeight: '600',
+              background: profile.is_graduate ? 'rgba(40, 167, 69, 0.15)' : 'rgba(108, 117, 125, 0.15)',
+              color: profile.is_graduate ? '#28a745' : '#6c757d'
+            }}>
+              {profile.is_graduate ? 'Graduate' : 'Non-Graduate'}
+            </span>
+
+            {profile.isAdmin && (
               <span style={{
                 padding: '4px 10px',
                 borderRadius: '12px',
                 fontSize: '0.75rem',
                 fontWeight: '600',
-                background: profile.is_graduate ? 'rgba(40, 167, 69, 0.15)' : 'rgba(108, 117, 125, 0.15)',
-                color: profile.is_graduate ? '#28a745' : '#6c757d'
+                background: 'rgba(207, 181, 59, 0.15)',
+                color: '#CFB53B'
               }}>
-                {profile.is_graduate ? 'Graduate' : 'Non-Graduate'}
+                {profile.is_super_admin ? 'Super Admin' : profile.hasNonRegistryPermissions ? 'Full Admin' : 'Registry Admin'}
               </span>
-
-              {profile.has_alumni_card && (
-                <span style={{
-                  padding: '4px 10px',
-                  borderRadius: '12px',
-                  fontSize: '0.75rem',
-                  fontWeight: '600',
-                  background: 'rgba(0, 102, 51, 0.15)',
-                  color: '#006633'
-                }}>
-                  Alumni Card Holder
-                </span>
-              )}
-            </div>
+            )}
           </div>
         </div>
       )}

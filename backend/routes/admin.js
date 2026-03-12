@@ -247,28 +247,39 @@ router.get('/users/:id/profile', authenticateAdmin, async (req, res) => {
 
     const user = userResult.rows[0];
 
-    // Get payment totals if user is linked to master_list
-    // Only verified (OK) deposits count toward pledge; pending shown separately
-    let totalPaid = 0;
-    let pendingPaid = 0;
-    if (user.master_list_id) {
-      const paymentResult = await db.query(
-        `SELECT
-          COALESCE(SUM(CASE WHEN verified = 'OK' THEN deposit ELSE 0 END), 0) as total_paid,
-          COALESCE(SUM(CASE WHEN verified != 'OK' OR verified IS NULL THEN deposit ELSE 0 END), 0) as pending_paid
-         FROM ledger
-         WHERE master_list_id = $1 AND deposit > 0`,
-        [user.master_list_id]
+    // Check if this user is also an admin
+    let isAdmin = false;
+    let isSuperAdmin = false;
+    let hasNonRegistryPermissions = false;
+
+    const adminCheck = await db.query(
+      `SELECT id, is_super_admin FROM admins WHERE LOWER(email) = LOWER($1)`,
+      [user.email]
+    );
+
+    if (adminCheck.rows.length > 0) {
+      isAdmin = true;
+      const adminData = adminCheck.rows[0];
+      isSuperAdmin = adminData.is_super_admin || false;
+
+      // Check for non-registry permissions
+      const nonRegistryCheck = await db.query(
+        `SELECT 1 FROM permissions WHERE admin_id = $1 AND enabled = true
+         AND permission NOT LIKE 'invites_%'
+         AND permission NOT LIKE 'registered_%'
+         AND permission NOT LIKE 'masterlist_%'
+         LIMIT 1`,
+        [adminData.id]
       );
-      totalPaid = parseFloat(paymentResult.rows[0].total_paid) || 0;
-      pendingPaid = parseFloat(paymentResult.rows[0].pending_paid) || 0;
+      hasNonRegistryPermissions = nonRegistryCheck.rows.length > 0;
     }
 
     res.json({
       ...user,
-      total_paid: totalPaid,
-      pending_paid: pendingPaid,
-      is_graduate: user.section && user.section !== 'Non-Graduate'
+      is_graduate: user.section && user.section !== 'Non-Graduate',
+      isAdmin,
+      is_super_admin: isSuperAdmin,
+      hasNonRegistryPermissions
     });
   } catch (err) {
     console.error('Error fetching user profile:', err);
