@@ -134,6 +134,10 @@ body[data-theme="light"] .committee-toast.info {
   flex-shrink: 0;
 }
 
+.committee-grid-centered {
+  justify-content: center;
+}
+
 /* Committee Cards */
 .committee-card {
   background: var(--card-bg, #fff);

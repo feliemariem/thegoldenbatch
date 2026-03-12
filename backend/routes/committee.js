@@ -17,14 +17,14 @@ const result = await db.query(`
     a.role_title,
     a.sub_committees,
     a.is_core_leader,
+    a.display_order,
     m.current_name,
-    u.profile_photo,
-    (SELECT MIN(display_order) FROM permissions WHERE admin_id = a.id) as display_order
+    u.profile_photo
   FROM admins a
   LEFT JOIN master_list m ON LOWER(a.email) = LOWER(m.email)
   LEFT JOIN users u ON LOWER(a.email) = LOWER(u.email)
   WHERE a.role_title IS NOT NULL AND a.role_title != ''
-  ORDER BY display_order ASC
+  ORDER BY a.is_core_leader DESC, a.display_order ASC
 `);
 
     res.json(result.rows);

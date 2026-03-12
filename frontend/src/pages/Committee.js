@@ -243,32 +243,68 @@ export default function Committee() {
         {otherMembers.length > 0 && (
           <section className="committee-section">
             <h3 className="committee-section-title">Committee Members</h3>
-            <div className="committee-grid members">
-              {otherMembers.map(member => (
-                <div key={member.id} className="committee-card member" data-member-email={member.email?.toLowerCase()}>
-                  <div className="committee-card-photo small">
-                    {member.profile_photo ? (
-                      <img src={member.profile_photo} alt={getDisplayName(member)} />
-                    ) : (
-                      <div className="committee-card-placeholder">
-                        {(member.first_name?.[0] || member.email?.[0] || '?').toUpperCase()}
+            {(() => {
+              const isOdd = otherMembers.length % 2 === 1;
+              const gridMembers = isOdd ? otherMembers.slice(0, -1) : otherMembers;
+              const lastMember = isOdd ? otherMembers[otherMembers.length - 1] : null;
+
+              return (
+                <>
+                  <div className="committee-grid members">
+                    {gridMembers.map(member => (
+                      <div key={member.id} className="committee-card member" data-member-email={member.email?.toLowerCase()}>
+                        <div className="committee-card-photo small">
+                          {member.profile_photo ? (
+                            <img src={member.profile_photo} alt={getDisplayName(member)} />
+                          ) : (
+                            <div className="committee-card-placeholder">
+                              {(member.first_name?.[0] || member.email?.[0] || '?').toUpperCase()}
+                            </div>
+                          )}
+                        </div>
+                        <div className="committee-card-info">
+                          <h4 className="committee-card-name">{getDisplayName(member)}</h4>
+                          <p className="committee-card-role">{member.role_title}</p>
+                          {parseSubCommittees(member.sub_committees).length > 0 && (
+                            <ul className="committee-card-subcommittees">
+                              {parseSubCommittees(member.sub_committees).map((sub, idx) => (
+                                <li key={idx}>{sub}</li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
                       </div>
-                    )}
+                    ))}
                   </div>
-                  <div className="committee-card-info">
-                    <h4 className="committee-card-name">{getDisplayName(member)}</h4>
-                    <p className="committee-card-role">{member.role_title}</p>
-                    {parseSubCommittees(member.sub_committees).length > 0 && (
-                      <ul className="committee-card-subcommittees">
-                        {parseSubCommittees(member.sub_committees).map((sub, idx) => (
-                          <li key={idx}>{sub}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
+                  {lastMember && (
+                    <div className="committee-grid members committee-grid-centered">
+                      <div key={lastMember.id} className="committee-card member" data-member-email={lastMember.email?.toLowerCase()}>
+                        <div className="committee-card-photo small">
+                          {lastMember.profile_photo ? (
+                            <img src={lastMember.profile_photo} alt={getDisplayName(lastMember)} />
+                          ) : (
+                            <div className="committee-card-placeholder">
+                              {(lastMember.first_name?.[0] || lastMember.email?.[0] || '?').toUpperCase()}
+                            </div>
+                          )}
+                        </div>
+                        <div className="committee-card-info">
+                          <h4 className="committee-card-name">{getDisplayName(lastMember)}</h4>
+                          <p className="committee-card-role">{lastMember.role_title}</p>
+                          {parseSubCommittees(lastMember.sub_committees).length > 0 && (
+                            <ul className="committee-card-subcommittees">
+                              {parseSubCommittees(lastMember.sub_committees).map((sub, idx) => (
+                                <li key={idx}>{sub}</li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </>
+              );
+            })()}
           </section>
         )}
 
