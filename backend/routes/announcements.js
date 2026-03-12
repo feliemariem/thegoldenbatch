@@ -632,12 +632,15 @@ router.post('/:id/read', authenticateToken, async (req, res) => {
 
 // Get email log (deferred/failed emails in last 7 days) - super admin only (id=1)
 router.get('/email-log', authenticateToken, async (req, res) => {
+  console.log('[EmailLog] GET /email-log called by user:', req.user?.id, req.user?.email);
   try {
     // Only allow super admin (id=1)
     if (req.user.id !== 1) {
+      console.log('[EmailLog] Access denied - user id:', req.user.id);
       return res.status(403).json({ error: 'Access denied' });
     }
 
+    console.log('[EmailLog] Querying email_log table...');
     const result = await db.query(`
       SELECT id, recipient_email, recipient_name, subject, email_type, status, created_at, updated_at
       FROM email_log
@@ -646,15 +649,22 @@ router.get('/email-log', authenticateToken, async (req, res) => {
       ORDER BY created_at DESC
     `);
 
+    console.log('[EmailLog] Query successful, rows:', result.rows.length);
     res.json({ emails: result.rows });
   } catch (err) {
-    console.error('Failed to fetch email log:', err);
-    res.status(500).json({ error: 'Failed to fetch email log' });
+    console.error('[EmailLog] Error fetching email log:', {
+      message: err.message,
+      code: err.code,
+      detail: err.detail,
+      stack: err.stack
+    });
+    res.status(500).json({ error: 'Failed to fetch email log', detail: err.message });
   }
 });
 
 // Get email log count (for badge) - super admin only (id=1)
 router.get('/email-log/count', authenticateToken, async (req, res) => {
+  console.log('[EmailLog] GET /email-log/count called by user:', req.user?.id);
   try {
     // Only allow super admin (id=1)
     if (req.user.id !== 1) {
@@ -668,10 +678,16 @@ router.get('/email-log/count', authenticateToken, async (req, res) => {
         AND created_at >= NOW() - INTERVAL '7 days'
     `);
 
+    console.log('[EmailLog] Count result:', result.rows[0].count);
     res.json({ count: parseInt(result.rows[0].count) || 0 });
   } catch (err) {
-    console.error('Failed to fetch email log count:', err);
-    res.status(500).json({ error: 'Failed to fetch email log count' });
+    console.error('[EmailLog] Error fetching email log count:', {
+      message: err.message,
+      code: err.code,
+      detail: err.detail,
+      stack: err.stack
+    });
+    res.status(500).json({ error: 'Failed to fetch email log count', detail: err.message });
   }
 });
 
