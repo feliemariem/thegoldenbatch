@@ -346,91 +346,95 @@ export default function AdminDashboard() {
         )}
 
         {/* Dashboard Mode Toggle */}
-        <div className="dashboard-mode-tabs">
-
-          <button
-            onClick={() => setDashboardMode('registry')}
-            className={dashboardMode === 'registry' ? 'active' : ''}
-          >
-            Registry
-          </button>
-          {user?.hasNonRegistryPermissions && (isSuperAdmin || permissions?.accounting_view) && (
-            <button
-              onClick={() => setDashboardMode('accounting')}
-              className={dashboardMode === 'accounting' ? 'active' : ''}
-            >
-              Accounting
-            </button>
-          )}
-          {user?.hasNonRegistryPermissions && (isSuperAdmin || permissions?.announcements_view) && (
-            <button
-              onClick={() => setDashboardMode('announcements')}
-              className={dashboardMode === 'announcements' ? 'active' : ''}
-            >
-              Announce
-            </button>
-          )}
-          {user?.hasNonRegistryPermissions && (isSuperAdmin || permissions?.minutes_view) && (
-            <button
-              onClick={() => setDashboardMode('minutes')}
-              className={dashboardMode === 'minutes' ? 'active' : ''}
-            >
-              Meetings
-            </button>
-          )}
-          {user?.hasNonRegistryPermissions && (isSuperAdmin || permissions?.messages_view) && (
-            <button
-              onClick={() => setDashboardMode('messages')}
-              className={dashboardMode === 'messages' ? 'active has-badge' : 'has-badge'}
-            >
-              Messages
-              {adminUnreadCount > 0 && (
-                <span
-                  className={dashboardMode === 'messages' ? 'unread-badge active-badge' : 'unread-badge'}
+        {(() => {
+          const showAllTabs = user?.is_super_admin || user?.hasNonRegistryPermissions;
+          return (
+            <div className="dashboard-mode-tabs">
+              <button
+                onClick={() => setDashboardMode('registry')}
+                className={dashboardMode === 'registry' ? 'active' : ''}
+              >
+                Registry
+              </button>
+              {showAllTabs && (isSuperAdmin || permissions?.accounting_view) && (
+                <button
+                  onClick={() => setDashboardMode('accounting')}
+                  className={dashboardMode === 'accounting' ? 'active' : ''}
                 >
-                  {adminUnreadCount}
-                </span>
+                  Accounting
+                </button>
               )}
-            </button>
-          )}
-          {user?.hasNonRegistryPermissions && (isSuperAdmin || permissions?.strategic_view) && (
-            <button
-              onClick={() => setDashboardMode('strategic')}
-              className={dashboardMode === 'strategic' ? 'active' : ''}
-            >
-              Strategic
-            </button>
-          )}
-          {user?.hasNonRegistryPermissions && isSuperAdmin && (
-            <button
-              onClick={() => setDashboardMode('permissions')}
-              className={dashboardMode === 'permissions' ? 'active' : ''}
-            >
-              Permissions
-            </button>
-          )}
-          {user?.hasNonRegistryPermissions && isSystemAdmin && (
-            <button
-              onClick={() => setDashboardMode('emailLog')}
-              className={dashboardMode === 'emailLog' ? 'active has-badge' : 'has-badge'}
-            >
-              Email Log
-              {emailLogCount > 0 && (
-                <span className="email-log-badge">
-                  {emailLogCount}
-                </span>
+              {showAllTabs && (isSuperAdmin || permissions?.announcements_view) && (
+                <button
+                  onClick={() => setDashboardMode('announcements')}
+                  className={dashboardMode === 'announcements' ? 'active' : ''}
+                >
+                  Announce
+                </button>
               )}
-            </button>
-          )}
-          {user?.hasNonRegistryPermissions && user?.email?.toLowerCase() === 'uslsis.batch2003@gmail.com' && (
-            <button
-              onClick={() => setDashboardMode('systemTest')}
-              className={dashboardMode === 'systemTest' ? 'active' : ''}
-            >
-              System Test
-            </button>
-          )}
-        </div>
+              {showAllTabs && (isSuperAdmin || permissions?.minutes_view) && (
+                <button
+                  onClick={() => setDashboardMode('minutes')}
+                  className={dashboardMode === 'minutes' ? 'active' : ''}
+                >
+                  Meetings
+                </button>
+              )}
+              {showAllTabs && (isSuperAdmin || permissions?.messages_view) && (
+                <button
+                  onClick={() => setDashboardMode('messages')}
+                  className={dashboardMode === 'messages' ? 'active has-badge' : 'has-badge'}
+                >
+                  Messages
+                  {adminUnreadCount > 0 && (
+                    <span
+                      className={dashboardMode === 'messages' ? 'unread-badge active-badge' : 'unread-badge'}
+                    >
+                      {adminUnreadCount}
+                    </span>
+                  )}
+                </button>
+              )}
+              {showAllTabs && (isSuperAdmin || permissions?.strategic_view) && (
+                <button
+                  onClick={() => setDashboardMode('strategic')}
+                  className={dashboardMode === 'strategic' ? 'active' : ''}
+                >
+                  Strategic
+                </button>
+              )}
+              {showAllTabs && isSuperAdmin && (
+                <button
+                  onClick={() => setDashboardMode('permissions')}
+                  className={dashboardMode === 'permissions' ? 'active' : ''}
+                >
+                  Permissions
+                </button>
+              )}
+              {showAllTabs && isSystemAdmin && (
+                <button
+                  onClick={() => setDashboardMode('emailLog')}
+                  className={dashboardMode === 'emailLog' ? 'active has-badge' : 'has-badge'}
+                >
+                  Email Log
+                  {emailLogCount > 0 && (
+                    <span className="email-log-badge">
+                      {emailLogCount}
+                    </span>
+                  )}
+                </button>
+              )}
+              {showAllTabs && user?.email?.toLowerCase() === 'uslsis.batch2003@gmail.com' && (
+                <button
+                  onClick={() => setDashboardMode('systemTest')}
+                  className={dashboardMode === 'systemTest' ? 'active' : ''}
+                >
+                  System Test
+                </button>
+              )}
+            </div>
+          );
+        })()}
 
         {/* REGISTRY MODE */}
         {dashboardMode === 'registry' && (
