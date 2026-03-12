@@ -206,7 +206,7 @@ router.post('/', authenticateToken, async (req, res) => {
                     </p>
 
                     <p style="font-size: 15px; color: #444444; line-height: 1.6; margin: 0 0 20px 0;">
-                      The organizing committee has been working behind the scenes. Now it's time for the batch to choose who will represent Batch 2003 for <strong>two official positions</strong>.
+                      The organizing committee has been working behind the scenes to lay the groundwork. Now it's time for the batch to choose who will represent Batch 2003 for <strong>two official positions</strong>.
                     </p>
 
                     <!-- Nominee 1 -->
