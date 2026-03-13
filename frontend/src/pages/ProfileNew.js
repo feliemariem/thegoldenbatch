@@ -188,6 +188,11 @@ export default function ProfileNew() {
     }
   };
 
+  const handleOpenMerchModal = () => {
+    setMerchForm({ shirt_size: profile.shirt_size || '', jacket_size: profile.jacket_size || '' });
+    setShowMerchModal(true);
+  };
+
   const handleMerchSave = async () => {
     setMerchSaving(true);
     try {
@@ -346,8 +351,35 @@ export default function ProfileNew() {
                 onSaved={(updated) => setProfile(prev => ({ ...prev, ...updated }))}
                 onPhotoChange={(photo) => setProfile(prev => ({ ...prev, profile_photo: photo }))}
                 onMessage={(msg) => { setMessage(msg); setTimeout(() => setMessage(''), 3000); }}
-                onOpenMerchModal={() => { setMerchForm({ shirt_size: profile.shirt_size || '', jacket_size: profile.jacket_size || '' }); setShowMerchModal(true); }}
+                onOpenMerchModal={handleOpenMerchModal}
               />
+
+              {/* Merch Sizes Card */}
+              <div className="profile-card merch-card">
+                <div className="merch-card-header">
+                  <span className="merch-card-title">Merch sizes</span>
+                  <button className="btn-merch-edit" onClick={handleOpenMerchModal}>
+                    {profile.shirt_size || profile.jacket_size ? 'Edit sizes' : 'Set sizes'}
+                  </button>
+                </div>
+                <p className="merch-card-note">
+                  We're planning exclusive batch merch for the reunion. Save your sizes so we have them ready when orders open.
+                </p>
+                <div className="merch-inline-display">
+                  <div className="merch-inline-item">
+                    <span className="merch-label">Shirt</span>
+                    <span className={`merch-value ${!profile.shirt_size ? 'empty' : ''}`}>
+                      {profile.shirt_size || 'Not set'}
+                    </span>
+                  </div>
+                  <div className="merch-inline-item">
+                    <span className="merch-label">Jacket</span>
+                    <span className={`merch-value ${!profile.jacket_size ? 'empty' : ''}`}>
+                      {profile.jacket_size || 'Not set'}
+                    </span>
+                  </div>
+                </div>
+              </div>
 
               {/* Your Upcoming Events */}
               {myEvents.length > 0 && (

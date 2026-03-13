@@ -2311,6 +2311,19 @@
   margin-bottom: 14px;
 }
 
+.merch-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.merch-card-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
 .merch-inline-display {
   display: flex;
   align-items: center;
