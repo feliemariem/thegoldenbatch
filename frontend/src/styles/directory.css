@@ -117,7 +117,64 @@
   background: rgba(136, 136, 136, 0.1);
 }
 
-/* Filter Dropdowns */
+/* Filter Row */
+.dir-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+  align-items: center;
+}
+
+.dir-search {
+  flex: 1;
+  min-width: 160px;
+  font-size: 13px;
+  padding: 7px 12px;
+  border-radius: 8px;
+  border: 0.5px solid var(--color-border, rgba(255, 255, 255, 0.15));
+  background: var(--color-bg-card, rgba(26, 42, 31, 0.6));
+  color: var(--color-text-primary, #fff);
+}
+
+.dir-search::placeholder {
+  color: var(--color-text-muted, #888);
+}
+
+.dir-search:focus {
+  outline: none;
+  border-color: var(--color-gold, rgba(207, 181, 59, 0.5));
+}
+
+.dir-select {
+  font-size: 13px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: 0.5px solid var(--color-border, rgba(255, 255, 255, 0.15));
+  background: var(--color-bg-card, rgba(26, 42, 31, 0.6));
+  color: var(--color-text-primary, #fff);
+  cursor: pointer;
+}
+
+.dir-select:focus {
+  outline: none;
+  border-color: var(--color-gold, rgba(207, 181, 59, 0.5));
+}
+
+.dir-select option {
+  background: var(--color-bg-card, #1a2a1f);
+  color: var(--color-text-primary, #fff);
+}
+
+/* Loading */
+.dir-loading {
+  text-align: center;
+  color: var(--color-text-secondary, #aaa);
+  font-size: 14px;
+  padding: 40px 0;
+}
+
+/* Filter Dropdowns (legacy) */
 .directory-filter-row {
   display: flex;
   gap: 12px;
@@ -380,6 +437,27 @@ body[data-theme="light"] .dir-filter-btn.memoriam.active {
   background: rgba(136, 136, 136, 0.08);
 }
 
+body[data-theme="light"] .dir-search {
+  background: var(--color-bg-card, #fff);
+  border-color: var(--color-border, rgba(0, 0, 0, 0.1));
+  color: var(--color-text-primary, #1a1a1a);
+}
+
+body[data-theme="light"] .dir-search:focus {
+  border-color: var(--color-primary, #006633);
+}
+
+body[data-theme="light"] .dir-select {
+  background: var(--color-bg-card, #fff);
+  border-color: var(--color-border, rgba(0, 0, 0, 0.1));
+  color: var(--color-text-primary, #1a1a1a);
+}
+
+body[data-theme="light"] .dir-select option {
+  background: var(--color-bg-card, #fff);
+  color: var(--color-text-primary, #1a1a1a);
+}
+
 body[data-theme="light"] .directory-filter-select {
   background: var(--color-bg-card, #fff);
   border-color: var(--color-border, rgba(0, 0, 0, 0.1));
@@ -463,11 +541,17 @@ body[data-theme="light"] .directory-back .btn-link {
     gap: 8px;
   }
 
-  .directory-filter-row {
+  .directory-filter-row,
+  .dir-filter-row {
     flex-direction: column;
   }
 
-  .directory-filter-select {
+  .directory-filter-select,
+  .dir-select {
+    width: 100%;
+  }
+
+  .dir-search {
     width: 100%;
   }
 

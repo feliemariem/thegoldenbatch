@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
-const { authenticateAdmin } = require('../middleware/auth');
+const { authenticateAdmin, authenticateToken } = require('../middleware/auth');
 
 // Helper function for text normalization
 const toTitleCase = (str) => {
@@ -624,6 +624,36 @@ router.delete('/', authenticateAdmin, async (req, res) => {
     // Then clear master list
     await db.query('DELETE FROM master_list');
     res.json({ message: 'Master list cleared' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Public directory for logged-in users
+router.get('/directory', authenticateToken, async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT
+        m.id,
+        m.section,
+        m.last_name,
+        m.first_name,
+        m.current_name,
+        m.in_memoriam,
+        m.status,
+        u.city,
+        u.country,
+        u.profile_photo,
+        u.facebook_url,
+        u.linkedin_url,
+        u.instagram_url
+      FROM master_list m
+      LEFT JOIN invites i ON i.master_list_id = m.id
+      LEFT JOIN users u ON u.invite_id = i.id
+      ORDER BY m.last_name, m.first_name
+    `);
+    res.json({ entries: result.rows });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
