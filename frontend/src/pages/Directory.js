@@ -18,7 +18,7 @@ const DirectoryCard = ({ entry }) => {
 
   return (
     <div className={`directory-card ${!registered && !memoriam ? 'not-registered' : ''} ${memoriam ? 'memoriam' : ''}`}>
-      <div className={`dir-avatar ${memoriam ? 'memoriam-av' : ''}`}>
+      <div className={`dir-avatar ${registered ? 'reg' : ''} ${memoriam ? 'memoriam-av' : ''}`}>
         {registered && entry.profile_photo
           ? <img src={entry.profile_photo} alt={displayName} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
           : <span>{initials}</span>

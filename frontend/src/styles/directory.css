@@ -276,15 +276,15 @@
 }
 
 .dir-avatar.reg {
-  background: var(--color-primary);
-  color: #ffffff;
-  border: none;
+  background: var(--color-gold) !important;
+  color: #000000 !important;
+  border: none !important;
 }
 
-[data-theme="dark"] .dir-avatar.reg {
-  background: var(--color-gold);
-  color: #000000;
-  border: none;
+body[data-theme="light"] .dir-avatar.reg {
+  background: var(--color-primary) !important;
+  color: #ffffff !important;
+  border: none !important;
 }
 
 /* Card Content */
