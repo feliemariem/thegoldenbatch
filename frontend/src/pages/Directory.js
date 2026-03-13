@@ -12,7 +12,8 @@ const DirectoryCard = ({ entry }) => {
   const registered = entry.status === 'Registered';
   const memoriam = entry.in_memoriam;
   const friend = entry.section === 'Non-Graduate';
-  const displayName = entry.current_name || `${entry.first_name} ${entry.last_name}`;
+  const toTitleCase = (str) => str ? str.replace(/\b\w/g, c => c.toUpperCase()) : '';
+  const displayName = toTitleCase(entry.current_name || `${entry.first_name} ${entry.last_name}`);
   const initials = `${entry.first_name?.charAt(0) || ''}${entry.last_name?.charAt(0) || ''}`;
   const hasSocials = entry.facebook_url || entry.linkedin_url || entry.instagram_url;
 
