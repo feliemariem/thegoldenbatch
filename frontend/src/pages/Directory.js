@@ -91,8 +91,9 @@ export default function Directory() {
     .filter(e => {
       if (groupFilter === 'graduates') return e.section !== 'Non-Graduate' && !e.in_memoriam;
       if (groupFilter === 'friends') return e.section === 'Non-Graduate' && !e.in_memoriam;
+      if (groupFilter === 'memoriam') return e.in_memoriam;
       if (['11A', '11B', '11C', '11D', '11E'].includes(groupFilter)) return e.section === groupFilter && !e.in_memoriam;
-      return !e.in_memoriam; // 'all' excludes in memoriam from default view
+      return true; // 'all' shows everyone including in memoriam
     })
     .filter(e => {
       if (!searchTerm) return true;
@@ -134,6 +135,7 @@ export default function Directory() {
                 <option value="11D">11D</option>
                 <option value="11E">11E</option>
                 <option value="friends">Friends of Batch</option>
+                <option value="memoriam">In memoriam</option>
               </select>
               <select value={countryFilter} onChange={e => setCountryFilter(e.target.value)} className="dir-select">
                 <option value="">All countries</option>
