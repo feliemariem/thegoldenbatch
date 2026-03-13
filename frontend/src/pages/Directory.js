@@ -58,7 +58,6 @@ export default function Directory() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [groupFilter, setGroupFilter] = useState('all');
-  const [sectionFilter, setSectionFilter] = useState('');
   const [countryFilter, setCountryFilter] = useState('');
   const [sortBy, setSortBy] = useState('lastName');
 
@@ -85,19 +84,15 @@ export default function Directory() {
   }, [entries]);
 
   // Derived values
-  const isGraduate = (e) => e.section !== 'Non-Graduate' && !e.in_memoriam;
-  const isFriend = (e) => e.section === 'Non-Graduate' && !e.in_memoriam;
-
   const countries = [...new Set(entries.filter(e => e.country).map(e => e.country))].sort();
-  const sections = [...new Set(entries.filter(e => isGraduate(e) && e.section).map(e => e.section))].sort();
 
   // Filtering + sorting
   const filtered = shuffled
     .filter(e => {
-      if (groupFilter === 'graduates') return isGraduate(e);
-      if (groupFilter === 'friends') return isFriend(e);
-      if (groupFilter === 'memoriam') return e.in_memoriam;
-      return true;
+      if (groupFilter === 'graduates') return e.section !== 'Non-Graduate' && !e.in_memoriam;
+      if (groupFilter === 'friends') return e.section === 'Non-Graduate' && !e.in_memoriam;
+      if (['11A', '11B', '11C', '11D', '11E'].includes(groupFilter)) return e.section === groupFilter && !e.in_memoriam;
+      return !e.in_memoriam; // 'all' excludes in memoriam from default view
     })
     .filter(e => {
       if (!searchTerm) return true;
@@ -105,7 +100,6 @@ export default function Directory() {
       return name.includes(searchTerm.toLowerCase());
     })
     .filter(e => !countryFilter || e.country === countryFilter)
-    .filter(e => !sectionFilter || e.section === sectionFilter)
     .sort((a, b) => {
       if (sortBy === 'firstName') return (a.first_name || '').localeCompare(b.first_name || '');
       if (sortBy === 'location') return (a.country || '').localeCompare(b.country || '');
@@ -123,20 +117,6 @@ export default function Directory() {
           </div>
 
           <section className="directory-filters">
-            {/* Group filter buttons */}
-            <div className="dir-filter-btns">
-              {['all', 'graduates', 'friends', 'memoriam'].map(g => (
-                <button
-                  key={g}
-                  className={`dir-filter-btn ${groupFilter === g ? 'active' : ''} ${g === 'memoriam' ? 'memoriam' : ''}`}
-                  onClick={() => { setGroupFilter(g); setSectionFilter(''); }}
-                >
-                  {g === 'all' ? 'All' : g === 'graduates' ? 'Graduates' : g === 'friends' ? 'Friends of Batch 2003' : 'In memoriam'}
-                </button>
-              ))}
-            </div>
-
-            {/* Search + dropdowns */}
             <div className="dir-filter-row">
               <input
                 className="dir-search"
@@ -145,12 +125,16 @@ export default function Directory() {
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
               />
-              {groupFilter === 'graduates' && (
-                <select value={sectionFilter} onChange={e => setSectionFilter(e.target.value)} className="dir-select">
-                  <option value="">All sections</option>
-                  {sections.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
-              )}
+              <select value={groupFilter} onChange={e => setGroupFilter(e.target.value)} className="dir-select">
+                <option value="all">All</option>
+                <option value="graduates">Graduates</option>
+                <option value="11A">11A</option>
+                <option value="11B">11B</option>
+                <option value="11C">11C</option>
+                <option value="11D">11D</option>
+                <option value="11E">11E</option>
+                <option value="friends">Friends of Batch</option>
+              </select>
               <select value={countryFilter} onChange={e => setCountryFilter(e.target.value)} className="dir-select">
                 <option value="">All countries</option>
                 {countries.map(c => <option key={c} value={c}>{c}</option>)}
@@ -184,7 +168,6 @@ export default function Directory() {
                   setSearchTerm('');
                   setGroupFilter('all');
                   setCountryFilter('');
-                  setSectionFilter('');
                 }}
                 className="directory-clear-filters"
               >
