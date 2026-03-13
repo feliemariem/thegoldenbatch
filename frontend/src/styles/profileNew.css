@@ -4216,12 +4216,13 @@ button.receipt-thumb {
 }
 
 .section-classmates-link {
-  color: var(--color-primary);
+  color: var(--color-primary-light);
   font-size: 13px;
   text-decoration: none;
-  border-bottom: 1px dashed rgba(0, 102, 51, 0.4);
+  border-bottom: 1px dashed currentColor;
   cursor: pointer;
   transition: opacity 0.2s ease;
+  opacity: 0.9;
 }
 
 .section-classmates-link:hover {

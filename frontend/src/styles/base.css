@@ -30,6 +30,7 @@
 
   /* Primary colors */
   --color-primary: #006633;
+  --color-primary-light: #5dba88;
   --color-gold: #B8960C;
   --color-border: rgba(255, 255, 255, 0.1);
   --color-text-muted: #888888;
@@ -65,6 +66,7 @@ body[data-theme="light"] {
 
   /* Primary colors */
   --color-primary: #006633;
+  --color-primary-light: #006633;
   --color-gold: #B8960C;
   --color-border: rgba(0, 0, 0, 0.1);
   --color-text-muted: #888888;
