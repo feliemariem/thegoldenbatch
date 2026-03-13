@@ -64,7 +64,7 @@ export default function Directory() {
 
   // Fetch on mount
   useEffect(() => {
-    apiGet('/api/masterlist/directory')
+    apiGet('/api/master-list/directory')
       .then(res => res.json())
       .then(data => {
         setEntries(data.entries || []);
