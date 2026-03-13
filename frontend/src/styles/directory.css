@@ -275,6 +275,18 @@
   background: var(--color-text-muted, #555);
 }
 
+.dir-avatar.reg {
+  background: var(--color-primary);
+  color: #ffffff;
+  border: none;
+}
+
+[data-theme="dark"] .dir-avatar.reg {
+  background: var(--color-gold);
+  color: #000000;
+  border: none;
+}
+
 /* Card Content */
 .dir-card-name {
   font-size: 13px;
