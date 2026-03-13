@@ -4135,3 +4135,146 @@ button.receipt-thumb {
     height: 450px;
   }
 }
+
+/* ========================================
+   INFO CARD - Compact Layout
+   ======================================== */
+
+/* Compact header row with avatar and name */
+.info-header-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.info-avatar-wrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.info-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--color-gold);
+}
+
+.info-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.info-avatar-initials {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(0, 102, 51, 0.4) 0%, rgba(0, 102, 51, 0.2) 100%);
+  color: var(--color-gold);
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.avatar-edit-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--color-gold);
+  border: 2px solid var(--color-bg-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 10px;
+  color: var(--color-bg-card);
+  transition: transform 0.2s ease;
+}
+
+.avatar-edit-btn:hover {
+  transform: scale(1.1);
+}
+
+.info-name-section {
+  flex: 1;
+  min-width: 0;
+}
+
+.info-name-section h2 {
+  margin: 0 0 4px 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: 1.2;
+}
+
+.section-classmates-link {
+  color: var(--color-primary);
+  font-size: 13px;
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(0, 102, 51, 0.4);
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.section-classmates-link:hover {
+  opacity: 0.8;
+}
+
+/* Social icons row - always visible below header */
+.info-social-row {
+  margin-bottom: 12px;
+}
+
+/* Collapse toggle button */
+.info-collapse-toggle {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: none;
+  border: none;
+  border-top: 0.5px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: 13px;
+  padding: 12px 0 0 0;
+  margin-top: 12px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.info-collapse-toggle:hover {
+  color: var(--color-text-secondary);
+}
+
+.info-collapse-arrow {
+  font-size: 10px;
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+.info-collapse-arrow.open {
+  transform: rotate(180deg);
+}
+
+/* Collapsible content */
+.info-collapsible {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease;
+}
+
+.info-collapsible.open {
+  max-height: 600px;
+}
+
+.info-collapsible-content {
+  padding-top: 16px;
+}

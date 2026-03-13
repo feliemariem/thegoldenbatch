@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { FaFacebook, FaLinkedin, FaInstagram } from 'react-icons/fa';
 import { apiPut, apiUpload, apiDelete } from '../api';
 import { formatBirthday } from '../utils/profileUtils';
@@ -7,6 +8,7 @@ export default function InfoCard({ profile, user, onSaved, onPhotoChange, onMess
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const fileInputRef = useRef(null);
 
   const [form, setForm] = useState({
@@ -101,6 +103,49 @@ export default function InfoCard({ profile, user, onSaved, onPhotoChange, onMess
     }
   };
 
+  const showSectionLink = profile.section && profile.section !== 'Non-Graduate';
+
+  // Social icons component (reused in both states)
+  const socialIcons = (profile.facebook_url || profile.linkedin_url || profile.instagram_url) && (
+    <div className="info-social-row">
+      <div className="social-icons-row">
+        {profile.facebook_url && (
+          <a
+            href={`https://facebook.com/${profile.facebook_url}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="social-icon-link facebook"
+            title="Facebook"
+          >
+            <FaFacebook />
+          </a>
+        )}
+        {profile.linkedin_url && (
+          <a
+            href={`https://linkedin.com/in/${profile.linkedin_url}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="social-icon-link linkedin"
+            title="LinkedIn"
+          >
+            <FaLinkedin />
+          </a>
+        )}
+        {profile.instagram_url && (
+          <a
+            href={`https://instagram.com/${profile.instagram_url}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="social-icon-link instagram"
+            title="Instagram"
+          >
+            <FaInstagram />
+          </a>
+        )}
+      </div>
+    </div>
+  );
+
   return (
     <div className="profile-card info-card">
       <div className="card-header">
@@ -112,52 +157,72 @@ export default function InfoCard({ profile, user, onSaved, onPhotoChange, onMess
         )}
       </div>
 
-      {/* Profile Photo Section */}
-      <div className="profile-photo-section">
-        <div className="profile-photo-container">
-          {profile.profile_photo ? (
-            <img
-              src={profile.profile_photo}
-              alt={`${profile.first_name}'s photo`}
-              className="profile-photo-img"
-            />
-          ) : (
-            <div className="profile-photo-initials">
-              {profile.first_name?.charAt(0)}{profile.last_name?.charAt(0)}
-            </div>
-          )}
-        </div>
-        <div className="profile-photo-actions">
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handlePhotoUpload}
-            ref={fileInputRef}
-            style={{ display: 'none' }}
-            id="photo-upload"
-          />
+      {/* Hidden file input */}
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handlePhotoUpload}
+        ref={fileInputRef}
+        style={{ display: 'none' }}
+        id="photo-upload"
+      />
+
+      {/* Compact header row with avatar and name */}
+      <div className="info-header-row">
+        <div className="info-avatar-wrapper">
+          <div className="info-avatar">
+            {profile.profile_photo ? (
+              <img
+                src={profile.profile_photo}
+                alt={`${profile.first_name}'s photo`}
+              />
+            ) : (
+              <div className="info-avatar-initials">
+                {profile.first_name?.charAt(0)}{profile.last_name?.charAt(0)}
+              </div>
+            )}
+          </div>
           <button
             type="button"
+            className="avatar-edit-btn"
             onClick={() => fileInputRef.current?.click()}
-            className="btn-photo-upload"
             disabled={uploadingPhoto}
+            title={uploadingPhoto ? 'Uploading...' : 'Change photo'}
           >
-            {uploadingPhoto ? 'Uploading...' : profile.profile_photo ? 'Change Photo' : 'Upload Photo'}
+            ✎
           </button>
-          {profile.profile_photo && (
-            <button
-              type="button"
-              onClick={handleRemovePhoto}
-              className="btn-photo-remove"
+        </div>
+        <div className="info-name-section">
+          <h2>{profile.first_name} {profile.last_name}</h2>
+          {showSectionLink && (
+            <Link
+              to={`/directory?section=${encodeURIComponent(profile.section)}`}
+              className="section-classmates-link"
             >
-              Remove
-            </button>
+              {profile.section} · See your classmates →
+            </Link>
           )}
         </div>
       </div>
 
+      {/* Social icons - always visible */}
+      {socialIcons}
+
       {editing ? (
         <form onSubmit={handleSave} className="edit-form">
+          {/* Remove photo button - only in edit mode */}
+          {profile.profile_photo && (
+            <div style={{ marginBottom: '16px' }}>
+              <button
+                type="button"
+                onClick={handleRemovePhoto}
+                className="btn-photo-remove"
+              >
+                Remove Photo
+              </button>
+            </div>
+          )}
+
           <div className="form-grid">
             <div className="form-group">
               <label>First Name</label>
@@ -291,125 +356,67 @@ export default function InfoCard({ profile, user, onSaved, onPhotoChange, onMess
         </form>
       ) : (
         <div className="info-display">
-          <div className="info-grid">
-            {(profile.first_name || profile.last_name) && (
-              <div className="info-item">
-                <span className="info-label">Name</span>
-                <span className="info-value">{profile.first_name} {profile.last_name}</span>
-              </div>
-            )}
-            {profile.email && (
-              <div className="info-item">
-                <span className="info-label">Email</span>
-                <span className="info-value">{profile.email}</span>
-              </div>
-            )}
-            {profile.birthday && (
-              <div className="info-item">
-                <span className="info-label">Birthday</span>
-                <span className="info-value">{formatBirthday(profile.birthday)}</span>
-              </div>
-            )}
-            {profile.mobile && (
-              <div className="info-item">
-                <span className="info-label">Mobile</span>
-                <span className="info-value">{profile.mobile}</span>
-              </div>
-            )}
-            {profile.address && (
-              <div className="info-item full-width">
-                <span className="info-label">Address</span>
-                <span className="info-value">{profile.address}</span>
-              </div>
-            )}
-            {(profile.city || profile.country) && (
-              <div className="info-item">
-                <span className="info-label">Location</span>
-                <span className="info-value">
-                  {profile.city && profile.country
-                    ? `${profile.city}, ${profile.country}`
-                    : profile.city || profile.country}
-                </span>
-              </div>
-            )}
-            {profile.occupation && (
-              <div className="info-item">
-                <span className="info-label">Occupation</span>
-                <span className="info-value">{profile.occupation}</span>
-              </div>
-            )}
-            {profile.company && (
-              <div className="info-item">
-                <span className="info-label">Company</span>
-                <span className="info-value">{profile.company}</span>
-              </div>
-            )}
-          </div>
-          {(profile.facebook_url || profile.linkedin_url || profile.instagram_url) && (
-            <div className="social-icons-row">
-              {profile.facebook_url && (
-                <a
-                  href={`https://facebook.com/${profile.facebook_url}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="social-icon-link facebook"
-                  title="Facebook"
-                >
-                  <FaFacebook />
-                </a>
-              )}
-              {profile.linkedin_url && (
-                <a
-                  href={`https://linkedin.com/in/${profile.linkedin_url}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="social-icon-link linkedin"
-                  title="LinkedIn"
-                >
-                  <FaLinkedin />
-                </a>
-              )}
-              {profile.instagram_url && (
-                <a
-                  href={`https://instagram.com/${profile.instagram_url}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="social-icon-link instagram"
-                  title="Instagram"
-                >
-                  <FaInstagram />
-                </a>
-              )}
-            </div>
-          )}
+          {/* Collapsible details toggle */}
+          <button
+            type="button"
+            className="info-collapse-toggle"
+            onClick={() => setDetailsOpen(!detailsOpen)}
+          >
+            <span>{detailsOpen ? 'Hide details' : 'View details'}</span>
+            <span className={`info-collapse-arrow ${detailsOpen ? 'open' : ''}`}>▼</span>
+          </button>
 
-          {/* Merch Sizes Section */}
-          <div className="merch-section">
-            <div className="merch-section-divider">
-              <span>Merch Sizes</span>
-            </div>
-            <p className="merch-section-note">
-              We're planning exclusive batch merch for the reunion! Save your sizes so we have them ready when orders open.
-            </p>
-            <div className="merch-inline-display">
-              <div className="merch-inline-item">
-                <span className="merch-label">Shirt</span>
-                <span className={`merch-value ${!profile.shirt_size ? 'empty' : ''}`}>
-                  {profile.shirt_size || 'Not set'}
-                </span>
+          {/* Collapsible content */}
+          <div className={`info-collapsible ${detailsOpen ? 'open' : ''}`}>
+            <div className="info-collapsible-content">
+              <div className="info-grid">
+                {profile.email && (
+                  <div className="info-item">
+                    <span className="info-label">Email</span>
+                    <span className="info-value">{profile.email}</span>
+                  </div>
+                )}
+                {profile.birthday && (
+                  <div className="info-item">
+                    <span className="info-label">Birthday</span>
+                    <span className="info-value">{formatBirthday(profile.birthday)}</span>
+                  </div>
+                )}
+                {profile.mobile && (
+                  <div className="info-item">
+                    <span className="info-label">Mobile</span>
+                    <span className="info-value">{profile.mobile}</span>
+                  </div>
+                )}
+                {profile.address && (
+                  <div className="info-item full-width">
+                    <span className="info-label">Address</span>
+                    <span className="info-value">{profile.address}</span>
+                  </div>
+                )}
+                {(profile.city || profile.country) && (
+                  <div className="info-item">
+                    <span className="info-label">Location</span>
+                    <span className="info-value">
+                      {profile.city && profile.country
+                        ? `${profile.city}, ${profile.country}`
+                        : profile.city || profile.country}
+                    </span>
+                  </div>
+                )}
+                {profile.occupation && (
+                  <div className="info-item">
+                    <span className="info-label">Occupation</span>
+                    <span className="info-value">{profile.occupation}</span>
+                  </div>
+                )}
+                {profile.company && (
+                  <div className="info-item">
+                    <span className="info-label">Company</span>
+                    <span className="info-value">{profile.company}</span>
+                  </div>
+                )}
               </div>
-              <div className="merch-inline-item">
-                <span className="merch-label">Jacket</span>
-                <span className={`merch-value ${!profile.jacket_size ? 'empty' : ''}`}>
-                  {profile.jacket_size || 'Not set'}
-                </span>
-              </div>
-              <button
-                className="btn-merch-edit"
-                onClick={onOpenMerchModal}
-              >
-                {profile.shirt_size || profile.jacket_size ? 'Edit Sizes' : 'Set Sizes'}
-              </button>
             </div>
           </div>
         </div>

@@ -28,6 +28,12 @@
   --color-bg-primary: #0d1a14;
   --color-bg-card: #1a2520;
 
+  /* Primary colors */
+  --color-primary: #006633;
+  --color-gold: #B8960C;
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-text-muted: #888888;
+
   /* Status Colors - Dark Mode (default) */
   --color-status-positive: #4a9d6d;
   --color-status-positive-bg: rgba(34, 87, 60, 0.3);
@@ -56,6 +62,12 @@ body[data-theme="light"] {
   --color-hover: #006633;
   --color-bg-primary: #f5f5f3;
   --color-bg-card: #ffffff;
+
+  /* Primary colors */
+  --color-primary: #006633;
+  --color-gold: #B8960C;
+  --color-border: rgba(0, 0, 0, 0.1);
+  --color-text-muted: #888888;
 
   /* Status Colors - Light Mode */
   --color-status-positive: #2d6a4f;
