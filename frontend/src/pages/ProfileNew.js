@@ -6,63 +6,16 @@ import MyTasks from '../components/MyTasks';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import SystemAdminProfile from '../components/SystemAdminProfile';
-import ContributionPlan from '../components/ContributionPlan';
+import BatchRepModal from '../components/BatchRepModal';
+import MerchModal from '../components/MerchModal';
+import RSVPCard from '../components/RSVPCard';
+import AlumniCardNudge from '../components/AlumniCardNudge';
+import BuilderCard from '../components/BuilderCard';
 import '../styles/profileNew.css';
 import '../styles/batchrep.css';
 import { apiGet, apiPut, apiUpload, apiDelete } from '../api';
-import siteLogo from '../images/logo.png';
-
-// Access control phases for batch-rep feature:
-// Phase 1: Only felie@fnrcore.com
-// Phase 2: All admins
-// Phase 3: All registered graduates
-const BATCH_REP_PHASE = 1;
-
-// Check if user has access based on current phase
-const checkPhaseAccess = (user, isGrad) => {
-  if (!user) return false;
-
-  const userEmail = user.email?.toLowerCase();
-
-  switch (BATCH_REP_PHASE) {
-    case 1:
-      // Phase 1: Only specific emails
-      const allowedEmails = [
-        'felie@fnrcore.com',
-        'emvjanklow@gmail.com',
-        'nqa.attynea@gmail.com',
-        'jmrnv07@gmail.com',
-        'chayamalonso@gmail.com',
-        'eckkee03@gmail.com',
-        'coycoy.cordova@gmail.com',
-        'johannajison@gmail.com',
-        'pngolez@gmail.com',
-        'narcisojavelosa@yahoo.com',
-        'willkramer27@gmail.com'
-      ];
-      return allowedEmails.includes(userEmail);
-    case 2:
-      return user.isAdmin === true;
-    case 3:
-      return isGrad === true;
-    default:
-      return false;
-  }
-};
-
-// Batch-rep deadline: March 23, 2026 at 11:59 PM PHT (UTC+8)
-const BATCH_REP_DEADLINE = new Date('2026-03-23T23:59:00+08:00');
-
-const isDeadlinePassed = () => {
-  return new Date() > BATCH_REP_DEADLINE;
-};
-
-const getDaysUntilBatchRepDeadline = () => {
-  const now = new Date();
-  const diffTime = BATCH_REP_DEADLINE - now;
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  return diffDays;
-};
+import { checkPhaseAccess, isDeadlinePassed } from '../config/batchRepConfig';
+import { formatEventDate, formatBirthday } from '../utils/profileUtils';
 
 export default function ProfileNew() {
   const { user } = useAuth();
@@ -83,25 +36,11 @@ export default function ProfileNew() {
   const [merchForm, setMerchForm] = useState({ shirt_size: '', jacket_size: '' });
   const [merchSaving, setMerchSaving] = useState(false);
   const [alumniCardSaving, setAlumniCardSaving] = useState(false);
-  const [calendarDropdownOpen, setCalendarDropdownOpen] = useState(false);
-  const [showContributionPlan, setShowContributionPlan] = useState(false);
-  const [scrollToTiers, setScrollToTiers] = useState(false);
-  const [receipts, setReceipts] = useState([]);
-  const [receiptUploading, setReceiptUploading] = useState(false);
-  const [paymentMethodsOpen, setPaymentMethodsOpen] = useState(false);
-  const [dragActive, setDragActive] = useState(false);
-  const [receiptPreview, setReceiptPreview] = useState(null);
-  const [receiptModalImage, setReceiptModalImage] = useState(null);
-  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
-  const [deleting, setDeleting] = useState(false);
-  const [showFullPaidDetails, setShowFullPaidDetails] = useState(false);
   const [showStrategy, setShowStrategy] = useState(false);
   const [showBatchRepModal, setShowBatchRepModal] = useState(false);
   const [batchRepChecked, setBatchRepChecked] = useState(false);
   const [batchRepHasSubmitted, setBatchRepHasSubmitted] = useState(false);
   const fileInputRef = useRef(null);
-  const receiptFileInputRef = useRef(null);
-  const calendarDropdownRef = useRef(null);
 
   const [form, setForm] = useState({
     first_name: '',
@@ -118,55 +57,6 @@ export default function ProfileNew() {
     instagram_url: '',
   });
 
-  // Feature flag for new pages (Events, Directory, etc.)
-  const showNewPages = process.env.REACT_APP_NEW_FEATURES === 'true';
-
-  // Helper function to safely format event dates
-  const formatEventDate = (dateStr) => {
-    if (!dateStr) return { day: '?', month: '???' };
-
-    const dateOnly = dateStr.split('T')[0];
-    const date = new Date(dateOnly + 'T00:00:00');
-
-    if (isNaN(date.getTime())) {
-      return { day: '?', month: '???' };
-    }
-
-    return {
-      day: date.getDate(),
-      month: date.toLocaleString('en-US', { month: 'short' }).toUpperCase()
-    };
-  };
-
-  // Helper function to format peso amounts (handles cents)
-  function formatPeso(amount) {
-    const num = parseFloat(amount);
-    if (Number.isNaN(num)) return '₱0';
-    return num % 1 === 0
-      ? `₱${num.toLocaleString('en-PH', { minimumFractionDigits: 0 })}`
-      : `₱${num.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-  }
-
-  // Helper function to get milestone message based on payment percentage
-  function getMilestoneMessage(percentage) {
-    if (percentage === 0) return "Your pledge is set! Make your first payment to get started.";
-    if (percentage < 25) return "Great start! Every peso counts.";
-    if (percentage < 50) return "You're on your way!";
-    if (percentage < 75) return "Halfway there — keep it up!";
-    if (percentage < 100) return "Almost there — the finish line is in sight!";
-    return "Pledge complete! Thank you for stepping up for our batch.";
-  }
-
-  // Helper function to format birthday without timezone conversion
-  const formatBirthday = (dateStr) => {
-    if (!dateStr) return '';
-    // Extract just the date portion (YYYY-MM-DD) and parse at local midnight
-    const dateOnly = dateStr.split('T')[0];
-    const date = new Date(dateOnly + 'T00:00:00');
-    if (isNaN(date.getTime())) return '';
-    return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-  };
-
   // Reset batchRepChecked on every mount so status is re-fetched fresh
   useEffect(() => {
     setBatchRepChecked(false);
@@ -176,7 +66,6 @@ export default function ProfileNew() {
     if (user) {
       fetchProfile();
       fetchMyEvents();
-      fetchReceipts();
       checkSystemAdmin();
     } else {
       // Reset batch rep state on logout
@@ -218,15 +107,6 @@ export default function ProfileNew() {
     checkBatchRepStatus();
   }, [profile, user, batchRepChecked]);
 
-  // Calculate days remaining until the reunion (Dec 16, 2028)
-  const getDaysUntilReunion = () => {
-    const reunionDate = new Date('2028-12-16');  // Reunion date
-    const today = new Date();                     // Current date
-    const diffTime = reunionDate - today;         // Difference in milliseconds
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));  // Convert ms to days
-    return diffDays;  // Positive = days left, 0 = today, negative = past
-  };
-
   // Check if current user is System Admin (admin id=1)
   const checkSystemAdmin = async () => {
     try {
@@ -267,53 +147,6 @@ export default function ProfileNew() {
     }
   }, [location.state]);
 
-  // Check for openPlan URL parameter to auto-open ContributionPlan modal
-  useEffect(() => {
-    if (profile && profile.is_graduate) {
-      const params = new URLSearchParams(location.search);
-      if (params.get('openPlan') === 'true') {
-        setShowContributionPlan(true);
-        // Clear the param from URL to prevent re-opening on refresh
-        window.history.replaceState({}, document.title, location.pathname);
-      }
-    }
-  }, [profile, location.search, location.pathname]);
-
-  // Close calendar dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (calendarDropdownRef.current && !calendarDropdownRef.current.contains(event.target)) {
-        setCalendarDropdownOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  // Generate .ics file for Apple Calendar
-  const downloadICS = () => {
-    const icsContent = `BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//USLS-IS Batch 2003//EN
-BEGIN:VEVENT
-DTSTART:20281216T090000
-DTEND:20281217T000000
-SUMMARY:USLS-IS Batch 2003 - 25th Alumni Homecoming
-LOCATION:Santuario de La Salle, USLS, Bacolod City
-DESCRIPTION:25th Alumni Homecoming of USLS-IS Batch 2003. The Golden Batch.
-END:VEVENT
-END:VCALENDAR`;
-    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = 'USLS-IS-2003-Reunion.ics';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(link.href);
-    setCalendarDropdownOpen(false);
-  };
-
   const fetchMyEvents = async () => {
     try {
       const res = await apiGet('/api/events/my-rsvps');
@@ -323,127 +156,6 @@ END:VCALENDAR`;
       }
     } catch (err) {
       console.error('Failed to fetch my events');
-    }
-  };
-
-  const fetchReceipts = async () => {
-    try {
-      const res = await apiGet('/api/receipts/my');
-      if (res.ok) {
-        const data = await res.json();
-        setReceipts(data.receipts || []);
-      }
-    } catch (err) {
-      console.error('Failed to fetch receipts');
-    }
-  };
-
-  // Drag and drop handlers
-  const handleDrag = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
-      setDragActive(true);
-    } else if (e.type === 'dragleave') {
-      setDragActive(false);
-    }
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      const file = e.dataTransfer.files[0];
-      handleFileSelect(file);
-    }
-  };
-
-  const handleFileSelect = (file) => {
-    if (!file.type.startsWith('image/')) {
-      setMessage('Please select an image file');
-      setTimeout(() => setMessage(''), 3000);
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      setMessage('Image must be less than 5MB');
-      setTimeout(() => setMessage(''), 3000);
-      return;
-    }
-
-    // Create preview
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setReceiptPreview({ file, previewUrl: e.target.result });
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleReceiptFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      handleFileSelect(file);
-    }
-  };
-
-  const confirmUpload = async () => {
-    if (!receiptPreview) return;
-
-    setReceiptUploading(true);
-    const formData = new FormData();
-    formData.append('receipt', receiptPreview.file);
-
-    try {
-      const res = await apiUpload('/api/receipts', formData);
-
-      if (res.ok) {
-        fetchReceipts();
-        setMessage('Receipt uploaded! We will verify it within 48 hours.');
-        setTimeout(() => setMessage(''), 4000);
-      } else {
-        setMessage('Failed to upload receipt');
-        setTimeout(() => setMessage(''), 3000);
-      }
-    } catch (err) {
-      setMessage('Failed to upload receipt');
-      setTimeout(() => setMessage(''), 3000);
-    } finally {
-      setReceiptUploading(false);
-      setReceiptPreview(null);
-      if (receiptFileInputRef.current) {
-        receiptFileInputRef.current.value = '';
-      }
-    }
-  };
-
-  const cancelUpload = () => {
-    setReceiptPreview(null);
-    if (receiptFileInputRef.current) {
-      receiptFileInputRef.current.value = '';
-    }
-  };
-
-  const handleDeleteReceipt = async (receiptId) => {
-    setDeleting(true);
-    try {
-      const res = await apiDelete(`/api/receipts/${receiptId}`);
-      if (res.ok) {
-        fetchReceipts();
-        setMessage('Receipt deleted');
-        setTimeout(() => setMessage(''), 3000);
-      } else {
-        const data = await res.json();
-        setMessage(data.error || 'Failed to delete receipt');
-        setTimeout(() => setMessage(''), 3000);
-      }
-    } catch (err) {
-      setMessage('Failed to delete receipt');
-      setTimeout(() => setMessage(''), 3000);
-    } finally {
-      setDeleting(false);
-      setDeleteConfirmId(null);
     }
   };
 
@@ -629,16 +341,6 @@ END:VCALENDAR`;
     return <SystemAdminProfile />;
   }
 
-  const paymentProgress = profile.amount_due > 0
-    ? Math.min((profile.total_paid / profile.amount_due) * 100, 100)
-    : 0;
-
-  const paymentStatus = profile.total_paid >= profile.amount_due
-    ? 'Full'
-    : profile.total_paid > 0
-      ? 'Partial'
-      : 'Unpaid';
-
   return (
     <div className="container admin-container">
       <Navbar />
@@ -793,272 +495,15 @@ END:VCALENDAR`;
 
               {/* Builder Card - My Contribution */}
               {profile.is_graduate ? (
-              !profile.builder_tier ? (
-                <div className="profile-card builder-card">
-                  <div className="card-header">
-                    <h3>My Contribution</h3>
-                  </div>
-                  <p className="builder-intro-text">
-                    <span className="builder-intro-name">{profile.first_name}</span>, this is our 25-year milestone. It belongs to all of us. Every contribution, big or small, helps us build something worthy of where we started and how far we've come.
-                  </p>
-                  <button className="btn-view-plan" onClick={() => { setShowContributionPlan(true); setScrollToTiers(false); }}>
-                    View Contribution Plan
-                  </button>
-                </div>
-              ) : (
-                <div className="profile-card builder-card has-tier">
-                  <div className="card-header">
-                    <h3>My Contribution</h3>
-                  </div>
-                  <div className={`builder-tier-badge ${profile.builder_tier}`}>
-                    {profile.builder_tier.charAt(0).toUpperCase() + profile.builder_tier.slice(1)}
-                    {profile.builder_tier !== 'root' && profile.pledge_amount && (
-                      <span className="badge-amount">· {formatPeso(profile.pledge_amount)}</span>
-                    )}
-                  </div>
-
-                  {profile.builder_tier !== 'root' && profile.pledge_amount ? (
-                    <>
-                      <div className="builder-progress">
-                        <div className="builder-progress-bar">
-                          <div
-                            className="builder-progress-fill"
-                            style={{ width: `${Math.min(((profile.total_paid || 0) / profile.pledge_amount) * 100, 100)}%` }}
-                          ></div>
-                        </div>
-                        <div className="builder-progress-text">
-                          <span className="builder-paid">{formatPeso(profile.total_paid || 0)}</span>
-                          <span className="builder-total">/ {formatPeso(profile.pledge_amount)}</span>
-                          <span className="builder-pct">({Math.min(Math.round(((profile.total_paid || 0) / profile.pledge_amount) * 100), 100)}%)</span>
-                        </div>
-                        {(profile.pending_paid || 0) > 0 && (
-                          <div className="builder-pending">
-                            +{formatPeso(profile.pending_paid)} pending verification
-                          </div>
-                        )}
-                        {(profile.total_paid || 0) < (profile.pledge_amount || 0) && (
-                          <div className="builder-remaining">
-                            Remaining: <strong>{formatPeso((profile.pledge_amount || 0) - (profile.total_paid || 0))}</strong>
-                          </div>
-                        )}
-                        <div className="builder-milestone-message">
-                          {getMilestoneMessage(Math.round(((profile.total_paid || 0) / profile.pledge_amount) * 100))}
-                        </div>
-                      </div>
-                    </>
-                  ) : (
-                    <div className="builder-root-status">
-                      <span className="root-message">{formatPeso(profile.total_paid || 0)} contributed. Every peso counts — thank you!</span>
-                      {(profile.pending_paid || 0) > 0 && (
-                        <div className="builder-pending" style={{ marginTop: '8px' }}>
-                          +{formatPeso(profile.pending_paid)} pending verification
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Check if fully paid (non-root tier) */}
-                  {(() => {
-                    const isFullyPaid = profile.builder_tier !== 'root' &&
-                      profile.pledge_amount &&
-                      parseFloat(profile.total_paid || 0) >= parseFloat(profile.pledge_amount);
-
-                    // Content for receipt upload, payment methods, and receipt history
-                    const detailsContent = (
-                      <>
-                        {/* Receipt Upload - Drag & Drop Zone */}
-                        {/* Show upload zone for root tier OR when not fully paid */}
-                        {(profile.builder_tier === 'root' ||
-                          !profile.pledge_amount ||
-                          (profile.total_paid || 0) < profile.pledge_amount) && (
-                          <>
-                            <input
-                              type="file"
-                              accept="image/*"
-                              onChange={handleReceiptFileChange}
-                              ref={receiptFileInputRef}
-                              style={{ display: 'none' }}
-                              id="receipt-upload"
-                            />
-                            {!receiptPreview ? (
-                              <div
-                                className={`receipt-dropzone ${dragActive ? 'drag-active' : ''}`}
-                                onDragEnter={handleDrag}
-                                onDragLeave={handleDrag}
-                                onDragOver={handleDrag}
-                                onDrop={handleDrop}
-                                onClick={() => receiptFileInputRef.current?.click()}
-                              >
-                                <div className="dropzone-icon">📤</div>
-                                <div className="dropzone-text">
-                                  <span className="dropzone-primary">Drop receipt image here</span>
-                                  <span className="dropzone-secondary">or click to browse</span>
-                                </div>
-                              </div>
-                            ) : (
-                              <div className="receipt-preview-zone">
-                                <img src={receiptPreview.previewUrl} alt="Preview" className="preview-image" />
-                                <div className="preview-actions">
-                                  <button
-                                    className="btn-preview-confirm"
-                                    onClick={confirmUpload}
-                                    disabled={receiptUploading}
-                                  >
-                                    {receiptUploading ? 'Uploading...' : 'Upload'}
-                                  </button>
-                                  <button
-                                    className="btn-preview-cancel"
-                                    onClick={cancelUpload}
-                                    disabled={receiptUploading}
-                                  >
-                                    Cancel
-                                  </button>
-                                </div>
-                              </div>
-                            )}
-                          </>
-                        )}
-
-                        {/* Payment Methods Toggle */}
-                        <div className="payment-methods-toggle">
-                          <button
-                            className={`toggle-btn ${paymentMethodsOpen ? 'open' : ''}`}
-                            onClick={() => setPaymentMethodsOpen(!paymentMethodsOpen)}
-                          >
-                            Payment Methods <span className="toggle-arrow">{paymentMethodsOpen ? '▲' : '▼'}</span>
-                          </button>
-                          {paymentMethodsOpen && (
-                            <div className="payment-methods-content">
-                              <div className="payment-method-item">
-                                <div className="method-label">Bank Deposit</div>
-                                <div className="method-detail"><span>Bank:</span> Philippine National Bank (PNB)</div>
-                                <div className="method-detail"><span>Account Names:</span> Narciso Javelosa III or Mary Rose Frances Uy</div>
-                                <div className="method-detail"><span>Account Number:</span> 307770014898</div>
-                              </div>
-                              <div className="payment-method-item">
-                                <div className="method-label">International Transfers (Swift)</div>
-                                <div className="method-detail"><span>Bank:</span> PNB Bacolod Lacson Branch</div>
-                                <div className="method-detail"><span>Address:</span> 10th Lacson Street, Bacolod City, Negros Occidental 6100</div>
-                                <div className="method-detail"><span>Tel:</span> (63) (034) 432-0605 / 434-8007</div>
-                                <div className="method-detail"><span>SWIFT Code:</span> PNBMPHMM</div>
-                                <div className="method-detail"><span>Routing No.:</span> 040080019</div>
-                                <div className="method-detail"><span>Email:</span> bacolod_lacson@pnb.com.ph</div>
-                                <div className="method-detail"><span>Website:</span> pnb.com.ph</div>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Receipt History */}
-                        {receipts.length > 0 && (
-                          <div className="builder-receipt-list">
-                            <h4>Receipt History</h4>
-                            <div className="receipt-list-scroll">
-                              {receipts.map(receipt => (
-                                <div key={receipt.id} className="receipt-row">
-                                  <button
-                                    className="receipt-thumb"
-                                    onClick={() => setReceiptModalImage(receipt.image_url)}
-                                    type="button"
-                                  >
-                                    <img src={receipt.image_url} alt="Receipt" />
-                                  </button>
-                                  <div className="receipt-info">
-                                    <span className="receipt-date">
-                                      {new Date(receipt.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                                    </span>
-                                    <span className={`receipt-source-badge ${receipt.source}`}>
-                                      {receipt.source === 'user' ? 'You' : 'Committee'}
-                                    </span>
-                                  </div>
-                                  <span className={`receipt-status-badge ${receipt.status}`}>
-                                    {receipt.status === 'submitted'
-                                      ? 'Submitted'
-                                      : receipt.status === 'verified'
-                                        ? 'Verified'
-                                        : 'Pending Verification'}
-                                  </span>
-                                  {receipt.ledger_id && (
-                                    <span className={`receipt-verified-badge ${receipt.ledger_status === 'OK' ? 'verified' : 'pending'}`}>
-                                      {receipt.ledger_status === 'OK' ? '✓ Verified' : 'Pending'}
-                                      {receipt.ledger_amount && ` · ₱${parseFloat(receipt.ledger_amount).toLocaleString()}`}
-                                    </span>
-                                  )}
-                                  {receipt.status === 'submitted' && receipt.source === 'user' && (
-                                    deleteConfirmId === receipt.id ? (
-                                      <div className="receipt-delete-confirm">
-                                        <span>Delete this receipt? You can upload a new one after.</span>
-                                        <button
-                                          className="btn-delete-yes"
-                                          onClick={() => handleDeleteReceipt(receipt.id)}
-                                          disabled={deleting}
-                                        >
-                                          Delete
-                                        </button>
-                                        <button
-                                          className="btn-delete-no"
-                                          onClick={() => setDeleteConfirmId(null)}
-                                          disabled={deleting}
-                                        >
-                                          Cancel
-                                        </button>
-                                      </div>
-                                    ) : (
-                                      <button
-                                        className="btn-delete-receipt"
-                                        onClick={() => setDeleteConfirmId(receipt.id)}
-                                        title="Delete this receipt"
-                                      >
-                                        ✕
-                                      </button>
-                                    )
-                                  )}
-                                </div>
-                              ))}
-                            </div>
-                            {receipts.some(r => r.status === 'submitted') && (
-                              <p className="receipt-pending-note">
-                                Your receipt has been submitted. The committee will verify and credit your account within 48 hours.
-                              </p>
-                            )}
-                          </div>
-                        )}
-                        {receipts.length === 0 && !isFullyPaid && (
-                          <p className="no-receipts-text">No receipts yet. Upload a receipt after making a payment.</p>
-                        )}
-                      </>
-                    );
-
-                    return isFullyPaid ? (
-                      <>
-                        {/* Toggle link for fully paid users */}
-                        <button
-                          className="btn-show-details"
-                          onClick={() => setShowFullPaidDetails(!showFullPaidDetails)}
-                        >
-                          {showFullPaidDetails ? 'Hide Details' : 'Show Details'} <span className="toggle-arrow">{showFullPaidDetails ? '▲' : '▼'}</span>
-                        </button>
-
-                        {/* Collapsible details section */}
-                        {showFullPaidDetails && (
-                          <div className="full-paid-details">
-                            {detailsContent}
-                          </div>
-                        )}
-                      </>
-                    ) : (
-                      // Show everything expanded when not fully paid
-                      detailsContent
-                    );
-                  })()}
-
-                  <div className="builder-links">
-                    <button className="btn-link-text" onClick={() => { setShowContributionPlan(true); setScrollToTiers(true); }}>Change Tier</button>
-                    <span className="link-separator">·</span>
-                    <button className="btn-link-text" onClick={() => { setShowContributionPlan(true); setScrollToTiers(false); }}>View Full Plan</button>
-                  </div>
-                </div>
-              )
+                <BuilderCard
+                  profile={profile}
+                  onProfileUpdate={(updates) => {
+                    setProfile(prev => ({ ...prev, ...updates }));
+                    setMessage('Builder tier saved!');
+                    setTimeout(() => setMessage(''), 3000);
+                  }}
+                  user={user}
+                />
               ) : (
                 <div className="profile-card donate-card">
                   <div className="card-header">
@@ -1078,167 +523,18 @@ END:VCALENDAR`;
               )}
 
               {/* RSVP Card - Main Event */}
-              <div className="profile-card rsvp-card">
-                <div className="card-header">
-                  <h3>Main Event</h3>
-                </div>
-                <div className="event-details">
-                  <div className="event-date">
-                    <span className="event-day">16</span>
-                    <span className="event-month">DEC</span>
-                    <span className="event-year">2028</span>
-                  </div>
-                  <div className="event-info">
-                    <p className="event-name">25th Alumni Homecoming</p>
-                    <p className="event-location">Santuario de La Salle, USLS, Bacolod City</p>
-                    <div className="calendar-dropdown" ref={calendarDropdownRef}>
-                      <button
-                        className="calendar-dropdown-btn"
-                        onClick={() => setCalendarDropdownOpen(!calendarDropdownOpen)}
-                      >
-                        📅 Add to Calendar <span className={`dropdown-arrow ${calendarDropdownOpen ? 'open' : ''}`}>▼</span>
-                      </button>
-                      {calendarDropdownOpen && (
-                        <div className="calendar-dropdown-menu">
-                          <a
-                            href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=USLS-IS+Batch+2003+25th+Alumni+Homecoming&dates=20281216T090000/20281217T000000&location=Santuario+de+La+Salle,+USLS,+Bacolod+City&details=25th+Alumni+Homecoming+of+USLS-IS+Batch+2003.+The+Golden+Batch."
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="calendar-option"
-                            onClick={() => setCalendarDropdownOpen(false)}
-                          >
-                            Google Calendar
-                          </a>
-                          <button className="calendar-option" onClick={downloadICS}>
-                            Apple Calendar
-                          </button>
-                          <a
-                            href="https://outlook.live.com/calendar/0/action/compose?subject=USLS-IS+Batch+2003+25th+Alumni+Homecoming&startdt=2028-12-16T09:00:00&enddt=2028-12-17T00:00:00&location=Santuario+de+La+Salle,+USLS,+Bacolod+City&body=25th+Alumni+Homecoming+of+USLS-IS+Batch+2003.+The+Golden+Batch."
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="calendar-option"
-                            onClick={() => setCalendarDropdownOpen(false)}
-                          >
-                            Outlook
-                          </a>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                <p className="rsvp-label">Update RSVP</p>
-                <div className="rsvp-row">
-                  <div className="countdown-box">
-                    {getDaysUntilReunion() > 0 ? (
-                      <>
-                        <span className="countdown-days">{getDaysUntilReunion()}</span>
-                        <span className="countdown-label">Days Left!</span>
-                      </>
-                    ) : getDaysUntilReunion() === 0 ? (
-                      <span className="countdown-label countdown-today">Today is the day!</span>
-                    ) : (
-                      <span className="countdown-label countdown-passed">The reunion has happened!</span>
-                    )}
-                  </div>
-                  <div className="rsvp-buttons">
-                    <button
-                      className={`btn-rsvp ${profile.rsvp_status === 'going' ? 'active going' : ''}`}
-                      onClick={() => handleRsvp('going')}
-                      disabled={rsvpSaving}
-                    >
-                      Going
-                    </button>
-                    <button
-                      className={`btn-rsvp ${profile.rsvp_status === 'maybe' ? 'active maybe' : ''}`}
-                      onClick={() => handleRsvp('maybe')}
-                      disabled={rsvpSaving}
-                    >
-                      Maybe
-                    </button>
-                    <button
-                      className={`btn-rsvp ${profile.rsvp_status === 'not_going' ? 'active not-going' : ''}`}
-                      onClick={() => handleRsvp('not_going')}
-                      disabled={rsvpSaving}
-                    >
-                      Can't Make It
-                    </button>
-                  </div>
-                </div>
-                <Link to="/events" className="rsvp-card-events-link">View All Events →</Link>
-              </div>
+              <RSVPCard
+                profile={profile}
+                rsvpSaving={rsvpSaving}
+                onRsvp={handleRsvp}
+              />
 
               {/* Alumni Card Nudge - Only show for graduates */}
-              {profile.section && profile.section !== 'Non-Graduate' && (
-              <div className="profile-card alumni-card-nudge">
-                <div className="card-header">
-                  <h3>🎓 USLS Alumni Card</h3>
-                </div>
-                {!profile.has_alumni_card ? (
-                  <div className="alumni-card-row">
-                    <div className="alumni-card-mini">
-                      <div className="alumni-card-header">
-                        <img src={require('../images/usls-seal.jpg')} alt="USLS Seal" className="alumni-card-seal" />
-                        <div className="alumni-card-header-text">
-                          <span>University of St. La Salle</span>
-                          <span>Alumni Association</span>
-                        </div>
-                      </div>
-                      <div className="alumni-card-name">
-                        {(profile.first_name && profile.last_name)
-                          ? `${profile.first_name} ${profile.last_name}`.toUpperCase()
-                          : 'YOUR NAME HERE'}
-                      </div>
-                      <div className="alumni-card-bottom-right">
-                        <div className="alumni-card-photo-placeholder"></div>
-                        <div className="alumni-card-batch">
-                          <span>HS Batch 2003</span>
-                          <span>GS Batch 1999</span>
-                        </div>
-                      </div>
-                      <div className="alumni-card-stripe">Lifetime Membership</div>
-                    </div>
-                    <div className="alumni-card-cta">
-                      <p className="alumni-card-message">
-                        <strong>{profile.first_name || 'Batchmate'}</strong>, make it official. Become a lifetime USLSAA member and enjoy alumni benefits and privileges.
-                      </p>
-                      <a
-                        href="https://sites.google.com/usls.edu.ph/uslscare/alumni-card"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn-apply-card"
-                      >
-                        Apply Now →
-                      </a>
-                      <button
-                        className="btn-have-card"
-                        onClick={() => handleAlumniCard(true)}
-                        disabled={alumniCardSaving}
-                      >
-                        I already have mine
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="alumni-card-holder">
-                    <div className="alumni-card-check">
-                      <span className="check-icon">✓</span>
-                    </div>
-                    <div className="alumni-card-holder-text">
-                      <strong>Alumni Card Holder</strong>
-                      <span>You're a lifetime USLSAA member!</span>
-                    </div>
-                    <button
-                      className="btn-undo-card"
-                      onClick={() => handleAlumniCard(false)}
-                      disabled={alumniCardSaving}
-                    >
-                      Undo
-                    </button>
-                  </div>
-                )}
-              </div>
-              )}
+              <AlumniCardNudge
+                profile={profile}
+                alumniCardSaving={alumniCardSaving}
+                onAlumniCard={handleAlumniCard}
+              />
             </div>
 
             {/* Right Column */}
@@ -1597,176 +893,22 @@ END:VCALENDAR`;
       </div>
       <Footer />
 
-      {showMerchModal && (
-        <div className="modal-overlay" onClick={(e) => {
-          if (e.target === e.currentTarget) setShowMerchModal(false);
-        }}>
-          <div className="merch-modal">
-            <div className="merch-modal-header">
-              <h3>Merch Preferences</h3>
-              <button className="merch-modal-close" onClick={() => setShowMerchModal(false)}>✕</button>
-            </div>
+      <MerchModal
+        show={showMerchModal}
+        merchForm={merchForm}
+        onChange={setMerchForm}
+        onSave={handleMerchSave}
+        onClose={() => setShowMerchModal(false)}
+        saving={merchSaving}
+      />
 
-            <p className="merch-modal-note">
-              We're planning exclusive batch merch for the reunion! Save your sizes now so we have them ready when orders open.
-            </p>
-
-            <div className="merch-modal-form">
-              <div className="merch-form-group">
-                <label>Shirt Size</label>
-                <select
-                  value={merchForm.shirt_size}
-                  onChange={(e) => setMerchForm({ ...merchForm, shirt_size: e.target.value })}
-                >
-                  <option value="">— Select —</option>
-                  <option value="XS">XS</option>
-                  <option value="S">Small</option>
-                  <option value="M">Medium</option>
-                  <option value="L">Large</option>
-                  <option value="XL">XL</option>
-                  <option value="2XL">2XL</option>
-                  <option value="3XL">3XL</option>
-                </select>
-              </div>
-
-              <div className="merch-form-group">
-                <label>Jacket Size</label>
-                <select
-                  value={merchForm.jacket_size}
-                  onChange={(e) => setMerchForm({ ...merchForm, jacket_size: e.target.value })}
-                >
-                  <option value="">— Select —</option>
-                  <option value="XS">XS</option>
-                  <option value="S">Small</option>
-                  <option value="M">Medium</option>
-                  <option value="L">Large</option>
-                  <option value="XL">XL</option>
-                  <option value="2XL">2XL</option>
-                  <option value="3XL">3XL</option>
-                </select>
-              </div>
-
-              <p className="merch-form-hint">You can always update this later.</p>
-
-              <div className="merch-form-actions">
-                <button
-                  className="btn-save"
-                  onClick={handleMerchSave}
-                  disabled={merchSaving}
-                >
-                  {merchSaving ? 'Saving...' : 'Save'}
-                </button>
-                <button
-                  className="btn-cancel"
-                  onClick={() => setShowMerchModal(false)}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {profile.is_graduate && showContributionPlan && (
-        <ContributionPlan
-          isOpen={showContributionPlan}
-          onClose={() => { setShowContributionPlan(false); setScrollToTiers(false); }}
-          scrollToTiers={scrollToTiers}
-          onTierSaved={(tier, pledge) => {
-            setProfile(prev => ({
-              ...prev,
-              builder_tier: tier,
-              pledge_amount: pledge,
-              builder_tier_set_at: new Date().toISOString()
-            }));
-            setShowContributionPlan(false);
-            setMessage('Builder tier saved!');
-            setTimeout(() => setMessage(''), 3000);
-          }}
-          currentTier={profile.builder_tier}
-          currentPledge={profile.pledge_amount}
-          user={user}
-        />
-      )}
-
-      {/* Receipt Image Modal */}
-      {receiptModalImage && (
-        <div className="receipt-modal-overlay" onClick={() => setReceiptModalImage(null)}>
-          <div className="receipt-modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="receipt-modal-close" onClick={() => setReceiptModalImage(null)}>✕</button>
-            <img src={receiptModalImage} alt="Receipt" />
-          </div>
-        </div>
-      )}
-
-      {/* Batch Rep Announcement Modal - blocks profile until user responds */}
-      {showBatchRepModal && (
-        <div className="batchrep-modal-overlay">
-          <div className="batchrep-modal">
-            <div className="batchrep-modal-bar"></div>
-            <div className="batchrep-modal-body">
-              {batchRepHasSubmitted ? (
-                <>
-                  <div className="batchrep-modal-badge submitted">✓ Response Recorded</div>
-                  <h2 className="batchrep-modal-title">Hi {profile?.first_name || 'there'}, you've already responded.</h2>
-                  <p className="batchrep-modal-desc">
-                    Changed your mind? You can update your response anytime before the deadline.
-                  </p>
-                  <button
-                    className="batchrep-modal-btn"
-                    onClick={() => navigate('/batch-rep')}
-                  >
-                    Update My Response →
-                  </button>
-                  <button
-                    className="batchrep-modal-dismiss"
-                    onClick={() => setShowBatchRepModal(false)}
-                  >
-                    Dismiss
-                  </button>
-                </>
-              ) : (
-                <>
-                  <div className="batchrep-modal-badge">⚡ Quick Batch Input</div>
-                  <h2 className="batchrep-modal-title">Hi {profile?.first_name || 'there'}, the batch needs to hear from you.</h2>
-                  <p className="batchrep-modal-desc">
-                    The organizing committee has been working behind the scenes to lay the groundwork. Now it's time for the batch to choose who will represent Batch 2003 for <strong>two official positions</strong>.
-                  </p>
-                  <div className="batchrep-modal-nominees">
-                    <div className="batchrep-modal-nominee">
-                      <div className="batchrep-modal-nominee-avatar initials">BJ</div>
-                      <div className="batchrep-modal-nominee-info">
-                        <div className="batchrep-modal-nominee-label">Nominee · Alumni Assoc. Representative</div>
-                        <div className="batchrep-modal-nominee-name">Bianca Jison</div>
-                      </div>
-                    </div>
-                    <div className="batchrep-modal-nominee">
-                      <div className="batchrep-modal-nominee-avatar initials">FM</div>
-                      <div className="batchrep-modal-nominee-info">
-                        <div className="batchrep-modal-nominee-label">Nominee · Batch Representative</div>
-                        <div className="batchrep-modal-nominee-name">Felie Magbanua</div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="batchrep-modal-deadline">
-                    🕐 Feedback window closes <span className="deadline-date">March 14, 2026 at 8:00 AM PHT</span>
-                    {getDaysUntilBatchRepDeadline() > 0 && (
-                      <span className="deadline-countdown"> · {getDaysUntilBatchRepDeadline()} day{getDaysUntilBatchRepDeadline() !== 1 ? 's' : ''} left</span>
-                    )}
-                  </div>
-                  <button
-                    className="batchrep-modal-btn"
-                    onClick={() => navigate('/batch-rep')}
-                  >
-                    Submit My Response →
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      <BatchRepModal
+        show={showBatchRepModal}
+        profile={profile}
+        batchRepHasSubmitted={batchRepHasSubmitted}
+        onDismiss={() => setShowBatchRepModal(false)}
+        onNavigate={() => navigate('/batch-rep')}
+      />
     </div>
   );
 }
