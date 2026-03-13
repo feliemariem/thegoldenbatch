@@ -44,8 +44,8 @@ const checkPhaseAccess = (user, isGrad) => {
   }
 };
 
-// Batch-rep deadline: March 23, 2026 at 11:59 PM PHT (UTC+8)
-const BATCH_REP_DEADLINE = new Date('2026-03-23T23:59:00+08:00');
+// Batch-rep deadline: March 21, 2026 at 11:59 PM PHT (UTC+8)
+const BATCH_REP_DEADLINE = new Date('2026-03-21T23:59:00+08:00');
 
 const getDaysUntilDeadline = () => {
   const now = new Date();
@@ -546,7 +546,7 @@ export default function BatchRep() {
                   </div>
 
                   <div className="batchrep-deadline-notice">
-                    Deadline: <strong>March 14, 2026 · closes 11:59 PM PHT</strong>. If no other willing nominations are raised by this date and the majority confirms, both nominees will be confirmed for their respective positions.
+                    Deadline: <strong>March 21, 2026 · closes 11:59 PM PHT</strong>. If no other willing nominations are raised by this date and the majority confirms, both nominees will be confirmed for their respective positions.
                   </div>
                 </div>
               </div>

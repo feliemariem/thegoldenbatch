@@ -170,7 +170,7 @@ router.post('/', authenticateToken, async (req, res) => {
       const siteUrl = process.env.SITE_URL || 'https://the-golden-batch.onrender.com';
 
       // Batch rep deadline (hardcoded - can be fetched from DB later)
-      const batchRepDeadline = new Date('2026-03-14T08:00:00+08:00');
+      const batchRepDeadline = new Date('2026-03-21T23:59:00+08:00');
       const daysRemaining = Math.max(0, Math.ceil((batchRepDeadline - new Date()) / (1000 * 60 * 60 * 24)));
       const deadlineFormatted = batchRepDeadline.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 
@@ -229,7 +229,7 @@ router.post('/', authenticateToken, async (req, res) => {
 
                     <!-- Deadline -->
                     <p style="font-size: 13px; color: #666666; margin: 0 0 20px 0;">
-                      ⏱ Feedback window closes <strong style="color: #c0392b;">${deadlineFormatted} at 8:00 AM PHT</strong>
+                      ⏱ Feedback window closes <strong style="color: #c0392b;">${deadlineFormatted} at 11:59 PM PHT</strong>
                       <span style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; padding: 2px 8px; font-size: 11px; font-weight: 700; color: #856404; margin-left: 6px;">${daysRemaining} day${daysRemaining !== 1 ? 's' : ''} left</span>
                     </p>
 
@@ -268,7 +268,7 @@ router.post('/', authenticateToken, async (req, res) => {
                 </div>
               </div>
             `;
-            emailText = `Hi ${recipient.first_name || 'Batchmate'},\n\nThe organizing committee has been working behind the scenes. Now it's time for the batch to choose who will represent Batch 2003 for two official positions.\n\nNominees:\n- Bianca Jison (Alumni Assoc. Representative)\n- Felie Magbanua (Batch Representative)\n\nFeedback window closes ${deadlineFormatted} at 8:00 AM PHT (${daysRemaining} days left)\n\nSubmit your response: ${siteUrl}/login?redirect=/profile&batchrep=1\n\n- The Organizing Committee\n\nUSLS-IS 2003\nQuestions? Email us at uslsis.batch2003@gmail.com`;
+            emailText = `Hi ${recipient.first_name || 'Batchmate'},\n\nThe organizing committee has been working behind the scenes. Now it's time for the batch to choose who will represent Batch 2003 for two official positions.\n\nNominees:\n- Bianca Jison (Alumni Assoc. Representative)\n- Felie Magbanua (Batch Representative)\n\nFeedback window closes ${deadlineFormatted} at 11:59 PM PHT (${daysRemaining} days left)\n\nSubmit your response: ${siteUrl}/login?redirect=/profile&batchrep=1\n\n- The Organizing Committee\n\nUSLS-IS 2003\nQuestions? Email us at uslsis.batch2003@gmail.com`;
           } else {
             // Standard announcement template
             emailSubject = 'New message in your Inbox';

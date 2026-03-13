@@ -45,8 +45,8 @@ const checkPhaseAccess = (user, isGrad) => {
   }
 };
 
-// Batch-rep deadline: March 23, 2026 at 11:59 PM PHT (UTC+8)
-const BATCH_REP_DEADLINE = new Date('2026-03-23T23:59:00+08:00');
+// Batch-rep deadline: March 21, 2026 at 11:59 PM PHT (UTC+8)
+const BATCH_REP_DEADLINE = new Date('2026-03-21T23:59:00+08:00');
 
 const isDeadlinePassed = () => {
   return new Date() > BATCH_REP_DEADLINE;
@@ -486,7 +486,7 @@ export default function Profile() {
                     </div>
                   </div>
                   <div className="batchrep-modal-deadline">
-                    🕐 Feedback window closes <span className="deadline-date">March 14, 2026 at 8:00 AM PHT</span>
+                    🕐 Feedback window closes <span className="deadline-date">March 21, 2026 at 11:59 PM PHT</span>
                     {getDaysUntilBatchRepDeadline() > 0 && (
                       <span className="deadline-countdown"> · {getDaysUntilBatchRepDeadline()} day{getDaysUntilBatchRepDeadline() !== 1 ? 's' : ''} left</span>
                     )}

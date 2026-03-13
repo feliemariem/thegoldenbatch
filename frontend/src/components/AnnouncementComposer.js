@@ -21,7 +21,7 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
   const [testEmail, setTestEmail] = useState('felie@fnrcore.com');
 
   // Batch rep deadline (hardcoded for now - can be fetched from DB later)
-  const batchRepDeadline = new Date('2026-03-14T08:00:00+08:00');
+  const batchRepDeadline = new Date('2026-03-21T23:59:00+08:00');
   const daysRemaining = Math.max(0, Math.ceil((batchRepDeadline - new Date()) / (1000 * 60 * 60 * 24)));
 
   // Close dropdown when clicking outside
@@ -249,7 +249,7 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
         <div className="sa-email-deadline">
           <span>⏱ Feedback window closes</span>
           <span className="sa-email-deadline-date">
-            {batchRepDeadline.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} at 8:00 AM PHT
+            {batchRepDeadline.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} at 11:59 PM PHT
           </span>
           <span className="sa-email-deadline-days">
             {daysRemaining} day{daysRemaining !== 1 ? 's' : ''} left
@@ -376,7 +376,7 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
           <div className="sa-deadline-row">
             <span>⏱ Feedback window closes</span>
             <span className="sa-deadline-date">
-              {batchRepDeadline.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} at 8:00 AM PHT
+              {batchRepDeadline.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} at 11:59 PM PHT
             </span>
             <span className="sa-deadline-days">{daysRemaining} day{daysRemaining !== 1 ? 's' : ''} left</span>
           </div>

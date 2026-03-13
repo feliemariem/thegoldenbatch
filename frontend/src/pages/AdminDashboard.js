@@ -17,8 +17,8 @@ import EmailLog from '../components/EmailLog';
 import Footer from '../components/Footer';
 import { apiGet } from '../api';
 
-// Batch-rep deadline: March 14, 2026 at 8:00 AM PHT (UTC+8)
-const BATCH_REP_DEADLINE = new Date('2026-03-14T08:00:00+08:00');
+// Batch-rep deadline: March 21, 2026 at 11:59 PM PHT (UTC+8)
+const BATCH_REP_DEADLINE = new Date('2026-03-21T23:59:00+08:00');
 
 const getDaysUntilBatchRepDeadline = () => {
   const now = new Date();

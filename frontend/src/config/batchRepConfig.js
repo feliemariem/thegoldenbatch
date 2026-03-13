@@ -18,8 +18,8 @@ export const allowedEmails = [
   'willkramer27@gmail.com'
 ];
 
-// Batch-rep deadline: March 23, 2026 at 11:59 PM PHT (UTC+8)
-export const BATCH_REP_DEADLINE = new Date('2026-03-23T23:59:00+08:00');
+// Batch-rep deadline: March 21, 2026 at 11:59 PM PHT (UTC+8)
+export const BATCH_REP_DEADLINE = new Date('2026-03-21T23:59:00+08:00');
 
 // Check if user has access based on current phase
 export const checkPhaseAccess = (user, isGrad) => {

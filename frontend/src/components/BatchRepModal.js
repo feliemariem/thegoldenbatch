@@ -54,7 +54,7 @@ export default function BatchRepModal({ show, profile, batchRepHasSubmitted, onD
                 </div>
               </div>
               <div className="batchrep-modal-deadline">
-                🕐 Feedback window closes <span className="deadline-date">March 14, 2026 at 8:00 AM PHT</span>
+                🕐 Feedback window closes <span className="deadline-date">March 21, 2026 at 11:59 PM PHT</span>
                 {getDaysUntilBatchRepDeadline() > 0 && (
                   <span className="deadline-countdown"> · {getDaysUntilBatchRepDeadline()} day{getDaysUntilBatchRepDeadline() !== 1 ? 's' : ''} left</span>
                 )}
