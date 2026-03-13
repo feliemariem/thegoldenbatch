@@ -50,8 +50,8 @@ const checkPhaseAccess = (user, isGrad) => {
   }
 };
 
-// Batch-rep deadline: March 14, 2026 at 8:00 AM PHT (UTC+8)
-const BATCH_REP_DEADLINE = new Date('2026-03-14T08:00:00+08:00');
+// Batch-rep deadline: March 23, 2026 at 11:59 PM PHT (UTC+8)
+const BATCH_REP_DEADLINE = new Date('2026-03-23T23:59:00+08:00');
 
 const isDeadlinePassed = () => {
   return new Date() > BATCH_REP_DEADLINE;
