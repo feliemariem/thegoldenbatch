@@ -11,7 +11,7 @@ import '../styles/batchrep.css';
 // Phase 1: Only specific emails
 // Phase 2: All admins
 // Phase 3: All registered graduates
-const BATCH_REP_PHASE = 1;
+const BATCH_REP_PHASE = 3;
 
 // Check if user has access based on current phase
 const checkPhaseAccess = (user, isGrad) => {

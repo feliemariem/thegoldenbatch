@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { apiGet } from '../api';
 
 // Batch Rep Phase 1 allowed emails (must match ProfileNew.js)
-const BATCH_REP_PHASE = 1;
+const BATCH_REP_PHASE = 3;
 const BATCH_REP_PHASE1_EMAILS = [
   'felie@fnrcore.com',
   'emvjanklow@gmail.com',

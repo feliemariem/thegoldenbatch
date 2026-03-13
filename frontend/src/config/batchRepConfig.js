@@ -2,7 +2,7 @@
 // Phase 1: Only felie@fnrcore.com
 // Phase 2: All admins
 // Phase 3: All registered graduates
-export const BATCH_REP_PHASE = 1;
+export const BATCH_REP_PHASE = 3;
 
 export const allowedEmails = [
   'felie@fnrcore.com',
