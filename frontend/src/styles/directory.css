@@ -315,14 +315,14 @@
 }
 
 .dir-badge-reg {
-  background: var(--color-primary) !important;
-  color: #ffffff !important;
+  background: var(--color-gold) !important;
+  color: #000000 !important;
   border: none !important;
 }
 
-[data-theme="dark"] .dir-badge-reg {
-  background: var(--color-gold) !important;
-  color: #000000 !important;
+body[data-theme="light"] .dir-badge-reg {
+  background: var(--color-primary) !important;
+  color: #ffffff !important;
   border: none !important;
 }
 
