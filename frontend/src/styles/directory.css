@@ -6,47 +6,42 @@
   padding-bottom: 60px;
 }
 
-/* Hero Banner */
-.directory-hero {
-  background: var(--color-primary, #006633);
-  border-radius: 12px;
-  padding: 24px 20px;
+/* Page Header */
+.directory-header {
   text-align: center;
   margin-bottom: 24px;
+  padding-top: 8px;
 }
 
-.directory-hero h1 {
-  font-size: 20px;
-  font-weight: 500;
-  color: #fff;
-  margin: 0 0 4px 0;
+.directory-title {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 6px;
 }
 
-.directory-hero p {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.7);
+.directory-subtitle {
+  font-size: 14px;
+  color: var(--color-text-secondary);
   margin: 0;
 }
 
-/* Page Header (legacy) */
-.directory-header {
-  text-align: center;
-  margin-bottom: 32px;
-  padding: 0 20px;
-}
-
-.directory-header h2 {
-  font-size: 2.2rem;
-  color: var(--color-hover);
+/* Clear Filters */
+.dir-clear-filters {
+  background: none;
+  border: none;
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
   margin-bottom: 12px;
-  font-weight: 600;
+  display: block;
 }
 
-.directory-header p {
-  color: var(--color-text-secondary, #aaa);
-  font-size: 1.1rem;
-  max-width: 600px;
-  margin: 0 auto;
+.dir-clear-filters:hover {
+  color: var(--color-text-secondary);
 }
 
 /* Filters Section */
@@ -405,10 +400,6 @@
    LIGHT MODE STYLES
    =========================================== */
 
-body[data-theme="light"] .directory-hero {
-  background: var(--color-primary, #006633);
-}
-
 body[data-theme="light"] .directory-search-input {
   background: var(--color-bg-card, #fff);
   border-color: var(--color-border, rgba(0, 0, 0, 0.1));
@@ -532,8 +523,8 @@ body[data-theme="light"] .directory-back .btn-link {
    =========================================== */
 
 @media (max-width: 768px) {
-  .directory-hero h1 {
-    font-size: 18px;
+  .directory-title {
+    font-size: 1.6rem;
   }
 
   .directory-grid {

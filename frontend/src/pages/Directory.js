@@ -111,9 +111,9 @@ export default function Directory() {
       <Navbar />
       <div className="card">
         <main className="profile-main directory-main">
-          <div className="directory-hero">
-            <h1>Batch Directory</h1>
-            <p>USLS-IS 2003 · The Golden Batch</p>
+          <div className="directory-header">
+            <h1 className="directory-title">Batch Directory</h1>
+            <p className="directory-subtitle">USLS-IS 2003 · The Golden Batch</p>
           </div>
 
           <section className="directory-filters">
@@ -145,6 +145,17 @@ export default function Directory() {
                 <option value="location">Location</option>
               </select>
             </div>
+
+            {(searchTerm || groupFilter !== 'all' || countryFilter || sortBy !== 'lastName') && (
+              <button className="dir-clear-filters" onClick={() => {
+                setSearchTerm('');
+                setGroupFilter('all');
+                setCountryFilter('');
+                setSortBy('lastName');
+              }}>
+                Clear filters
+              </button>
+            )}
 
             <div className="directory-results-count">
               Showing {filtered.length} of {entries.length} batchmates
