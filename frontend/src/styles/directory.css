@@ -14,8 +14,8 @@
 }
 
 .directory-title {
-  font-family: var(--font-serif);
-  font-size: 2rem;
+  font-family: 'Playfair Display', Georgia, serif !important;
+  font-size: 2.2rem;
   font-weight: 700;
   color: var(--color-primary);
   margin: 0 0 6px;
@@ -315,8 +315,15 @@
 }
 
 .dir-badge-reg {
-  background: rgba(0, 102, 51, 0.15);
-  color: var(--color-primary-light, #5dba88);
+  background: var(--color-primary);
+  color: #ffffff;
+  border: none;
+}
+
+[data-theme="dark"] .dir-badge-reg {
+  background: var(--color-gold);
+  color: #000000;
+  border: none;
 }
 
 .dir-badge-not {
@@ -483,11 +490,6 @@ body[data-theme="light"] .directory-card:hover {
 
 body[data-theme="light"] .dir-avatar {
   border-color: var(--color-border, rgba(0, 0, 0, 0.1));
-}
-
-body[data-theme="light"] .dir-badge-reg {
-  background: rgba(0, 102, 51, 0.1);
-  color: var(--color-primary, #006633);
 }
 
 body[data-theme="light"] .dir-badge-not {
