@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { FaFacebook, FaLinkedin, FaInstagram } from 'react-icons/fa';
 import { apiGet } from '../api';
@@ -51,6 +51,7 @@ const DirectoryCard = ({ entry }) => {
 
 export default function Directory() {
   const { user } = useAuth();
+  const location = useLocation();
   const isAdmin = user?.isAdmin;
 
   const [entries, setEntries] = useState([]);
@@ -60,6 +61,15 @@ export default function Directory() {
   const [groupFilter, setGroupFilter] = useState('all');
   const [countryFilter, setCountryFilter] = useState('');
   const [sortBy, setSortBy] = useState('lastName');
+
+  // Read section query param on mount
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const section = params.get('section');
+    if (section) {
+      setGroupFilter(section);
+    }
+  }, [location.search]);
 
   // Fetch on mount
   useEffect(() => {
