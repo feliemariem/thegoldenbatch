@@ -1,6 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { apiGet } from '../api';
+import React, { useState } from 'react';
 import PreviewInbox from './PreviewInbox';
 import PreviewNonGradProfile from './PreviewNonGradProfile';
 import UserProfilePreview from './UserProfilePreview';
@@ -18,10 +16,7 @@ import NameChangeRequests from './NameChangeRequests';
  * - (More features can be added here in the future)
  */
 export default function SystemTest() {
-  const { user } = useAuth();
   const [activeFeature, setActiveFeature] = useState('inbox-preview');
-  const [batchRepResponses, setBatchRepResponses] = useState([]);
-  const [batchRepLoading, setBatchRepLoading] = useState(false);
 
   const features = [
     { id: 'inbox-preview', label: 'User Inbox Preview', description: 'Preview what any user sees in their inbox' },
@@ -29,31 +24,7 @@ export default function SystemTest() {
     { id: 'profile-preview', label: 'User Profile Preview', description: 'View any user\'s profile data' },
     { id: 'engagement', label: 'Engagement Stats', description: 'View user activity metrics' },
     { id: 'name-changes', label: 'Name Change Requests', description: 'Review and approve name change requests' },
-    ...(user?.id === 1 ? [{ id: 'batch-rep-responses', label: 'Batch Rep Responses', description: 'View all batch rep voting responses' }] : []),
   ];
-
-  useEffect(() => {
-    const fetchBatchRepResponses = async () => {
-      setBatchRepLoading(true);
-      try {
-        const res = await apiGet('/api/batch-rep/admin-responses');
-        if (res.ok) {
-          const data = await res.json();
-          if (Array.isArray(data)) {
-            setBatchRepResponses(data);
-          }
-        }
-      } catch (err) {
-        console.error('Error fetching batch rep responses:', err);
-      } finally {
-        setBatchRepLoading(false);
-      }
-    };
-
-    if (user?.id === 1) {
-      fetchBatchRepResponses();
-    }
-  }, [user?.id]);
 
   return (
     <div className="system-test">
@@ -138,137 +109,6 @@ export default function SystemTest() {
       {activeFeature === 'name-changes' && (
         <NameChangeRequests />
       )}
-
-      {activeFeature === 'batch-rep-responses' && user?.id === 1 && (
-        <div style={{
-          padding: '20px',
-          background: 'var(--card-bg, rgba(255,255,255,0.03))',
-          border: '1px solid var(--border-color, rgba(255,255,255,0.1))',
-          borderRadius: '12px'
-        }}>
-          <h3 style={{ color: 'var(--text-primary, #fff)', margin: '0 0 16px 0', fontSize: '1.1rem' }}>
-            Batch Rep Responses
-          </h3>
-          {batchRepLoading ? (
-            <p style={{ color: 'var(--text-secondary, #888)' }}>Loading...</p>
-          ) : batchRepResponses.length === 0 ? (
-            <p style={{ color: 'var(--text-secondary, #888)' }}>No responses yet.</p>
-          ) : (
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{
-                width: '100%',
-                borderCollapse: 'collapse',
-                fontSize: '0.9rem'
-              }}>
-                <thead>
-                  <tr style={{ borderBottom: '1px solid var(--border-color, rgba(255,255,255,0.1))' }}>
-                    <th style={{ textAlign: 'left', padding: '12px 8px', color: 'var(--text-secondary, #888)', fontWeight: '600' }}>Name</th>
-                    <th style={{ textAlign: 'left', padding: '12px 8px', color: 'var(--text-secondary, #888)', fontWeight: '600' }}>Position 1 · AA Rep</th>
-                    <th style={{ textAlign: 'left', padding: '12px 8px', color: 'var(--text-secondary, #888)', fontWeight: '600' }}>Position 2 · Batch Rep</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {batchRepResponses.map((row, idx) => (
-                    <tr key={idx} style={{ borderBottom: '1px solid var(--border-color, rgba(255,255,255,0.05))' }}>
-                      <td style={{ padding: '12px 8px', color: 'var(--text-primary, #fff)' }}>
-                        {row.first_name} {row.last_name}
-                      </td>
-                      <td style={{ padding: '12px 8px' }}>
-                        <ResponseCell
-                          selection={row.pos1_selection}
-                          nominee={row.pos1_nominee}
-                          willing={row.pos1_willing}
-                        />
-                      </td>
-                      <td style={{ padding: '12px 8px' }}>
-                        <ResponseCell
-                          selection={row.pos2_selection}
-                          nominee={row.pos2_nominee}
-                          willing={row.pos2_willing}
-                        />
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-      )}
     </div>
   );
-}
-
-function ResponseCell({ selection, nominee, willing }) {
-  if (!selection) {
-    return (
-      <span style={{
-        display: 'inline-block',
-        padding: '4px 10px',
-        borderRadius: '6px',
-        fontSize: '0.8rem',
-        fontWeight: '500',
-        background: 'var(--muted-bg, rgba(128,128,128,0.15))',
-        color: 'var(--text-muted, #666)'
-      }}>
-        No response
-      </span>
-    );
-  }
-
-  if (selection === 'confirm') {
-    return (
-      <div>
-        <span style={{
-          display: 'inline-block',
-          padding: '4px 10px',
-          borderRadius: '6px',
-          fontSize: '0.8rem',
-          fontWeight: '500',
-          background: 'rgba(34, 197, 94, 0.15)',
-          color: '#22c55e'
-        }}>
-          Confirm
-        </span>
-        {willing === true && (
-          <div style={{
-            marginTop: '4px',
-            fontSize: '0.75rem',
-            color: '#22c55e'
-          }}>
-            Willing to serve
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  if (selection === 'nominate') {
-    return (
-      <div>
-        <span style={{
-          display: 'inline-block',
-          padding: '4px 10px',
-          borderRadius: '6px',
-          fontSize: '0.8rem',
-          fontWeight: '500',
-          background: 'rgba(245, 158, 11, 0.15)',
-          color: '#f59e0b'
-        }}>
-          Nominate
-        </span>
-        {nominee && (
-          <div style={{
-            marginTop: '4px',
-            fontSize: '0.8rem',
-            color: 'var(--text-secondary, #888)'
-          }}>
-            → {nominee}
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  return null;
 }

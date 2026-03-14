@@ -369,36 +369,6 @@ router.patch('/status', authenticateAdmin, async (req, res) => {
   }
 });
 
-// GET /api/batch-rep/admin-responses
-// System admin (id=1) only - returns all submissions grouped by voter with both positions per row
-router.get('/admin-responses', authenticateToken, async (req, res) => {
-  try {
-    if (req.user.id !== 1) {
-      return res.status(403).json({ error: 'Access denied.' });
-    }
-
-    const result = await db.query(`
-      SELECT
-        u.first_name, u.last_name,
-        MAX(CASE WHEN s.position = 1 THEN s.selection END) as pos1_selection,
-        MAX(CASE WHEN s.position = 1 THEN s.nominee_name END) as pos1_nominee,
-        MAX(CASE WHEN s.position = 2 THEN s.selection END) as pos2_selection,
-        MAX(CASE WHEN s.position = 2 THEN s.nominee_name END) as pos2_nominee,
-        MAX(CASE WHEN s.position = 1 THEN s.willing_to_serve END) as pos1_willing,
-        MAX(CASE WHEN s.position = 2 THEN s.willing_to_serve END) as pos2_willing
-      FROM batch_rep_submissions s
-      JOIN users u ON s.voter_id = u.id
-      GROUP BY u.id, u.first_name, u.last_name
-      ORDER BY MIN(s.created_at) ASC
-    `);
-
-    res.json(result.rows);
-  } catch (err) {
-    console.error('Error fetching admin responses:', err);
-    res.status(500).json({ error: 'Server error' });
-  }
-});
-
 // GET /api/batch-rep/graduates/search
 // Typeahead search for graduates only (for nomination field)
 // Fuzzy partial name match - each token must appear somewhere in the name
