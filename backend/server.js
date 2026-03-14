@@ -18,6 +18,7 @@ const messageRoutes = require('./routes/messages');
 const receiptsRoutes = require('./routes/receipts');
 const webhookRoutes = require('./routes/webhooks');
 const batchRepRoutes = require('./routes/batchrep');
+const nameChangeRequestRoutes = require('./routes/nameChangeRequests');
 const { initializeSummaryEmails } = require('./utils/summaryEmails');
 
 const app = express();
@@ -57,6 +58,7 @@ app.use('/api/events', require('./routes/events'));
 app.use('/api/committee', require('./routes/committee'));
 app.use('/api/receipts', receiptsRoutes);
 app.use('/api/batch-rep', batchRepRoutes);
+app.use('/api/name-change-requests', nameChangeRequestRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

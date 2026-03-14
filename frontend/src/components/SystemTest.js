@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PreviewInbox from './PreviewInbox';
 import PreviewNonGradProfile from './PreviewNonGradProfile';
 import UserProfilePreview from './UserProfilePreview';
 import EngagementStats from './EngagementStats';
+import NameChangeRequests from './NameChangeRequests';
 
 /**
  * SystemTest - Super Admin testing panel
@@ -22,6 +23,7 @@ export default function SystemTest() {
     { id: 'nongrad-preview', label: 'Non-Grad Profile Preview', description: 'Preview what non-graduate users see on their profile' },
     { id: 'profile-preview', label: 'User Profile Preview', description: 'View any user\'s profile data' },
     { id: 'engagement', label: 'Engagement Stats', description: 'View user activity metrics' },
+    { id: 'name-changes', label: 'Name Change Requests', description: 'Review and approve name change requests' },
   ];
 
   return (
@@ -102,6 +104,10 @@ export default function SystemTest() {
 
       {activeFeature === 'engagement' && (
         <EngagementStats />
+      )}
+
+      {activeFeature === 'name-changes' && (
+        <NameChangeRequests />
       )}
     </div>
   );

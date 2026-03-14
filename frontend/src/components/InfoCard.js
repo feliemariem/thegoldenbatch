@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { FaFacebook, FaLinkedin, FaInstagram } from 'react-icons/fa';
-import { apiPut, apiUpload, apiDelete } from '../api';
+import { apiPut, apiPost, apiUpload, apiDelete } from '../api';
 import { formatBirthday } from '../utils/profileUtils';
 
 export default function InfoCard({ profile, user, onSaved, onPhotoChange, onMessage, onOpenMerchModal }) {
@@ -35,13 +35,36 @@ export default function InfoCard({ profile, user, onSaved, onPhotoChange, onMess
     setSaving(true);
 
     try {
-      const res = await apiPut('/api/me', form);
+      // Check if name has changed
+      const nameChanged = form.first_name !== profile.first_name || form.last_name !== profile.last_name;
 
-      if (res.ok) {
-        const data = await res.json();
-        onSaved(data);
-        setEditing(false);
-        onMessage('Profile updated!');
+      if (nameChanged) {
+        // Submit name change request separately
+        await apiPost('/api/name-change-requests', {
+          requested_first_name: form.first_name,
+          requested_last_name: form.last_name
+        });
+
+        // Strip name fields from the form and save other fields
+        const { first_name, last_name, ...otherFields } = form;
+        const res = await apiPut('/api/me', otherFields);
+
+        if (res.ok) {
+          const data = await res.json();
+          onSaved(data);
+          setEditing(false);
+          onMessage('Your name change is pending review by the admin. Other changes have been saved.');
+        }
+      } else {
+        // No name change, save normally
+        const res = await apiPut('/api/me', form);
+
+        if (res.ok) {
+          const data = await res.json();
+          onSaved(data);
+          setEditing(false);
+          onMessage('Profile updated!');
+        }
       }
     } catch (err) {
       onMessage('Failed to save');
@@ -224,6 +247,12 @@ export default function InfoCard({ profile, user, onSaved, onPhotoChange, onMess
           )}
 
           <div className="form-grid">
+            {/* Name change warning */}
+            <div className="form-group full-width" style={{ marginBottom: '8px' }}>
+              <div className="name-change-warning">
+                Note: Name changes require admin approval. Use of fake names or profanity will result in your submission being rejected.
+              </div>
+            </div>
             <div className="form-group">
               <label>First Name</label>
               <input

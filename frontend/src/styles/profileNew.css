@@ -4296,3 +4296,20 @@ button.receipt-thumb {
 .info-collapsible-content {
   padding-top: 16px;
 }
+
+/* Name change warning */
+.name-change-warning {
+  background: rgba(251, 191, 36, 0.1);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.8rem;
+  color: #fbbf24;
+  line-height: 1.4;
+}
+
+body[data-theme="light"] .name-change-warning {
+  background: #fef3c7;
+  border-color: #f59e0b;
+  color: #92400e;
+}
