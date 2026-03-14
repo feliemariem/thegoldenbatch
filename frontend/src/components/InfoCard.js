@@ -4,6 +4,9 @@ import { FaFacebook, FaLinkedin, FaInstagram } from 'react-icons/fa';
 import { apiPut, apiPost, apiUpload, apiDelete } from '../api';
 import { formatBirthday } from '../utils/profileUtils';
 
+// Default visibility settings
+const defaultVisibility = { location: true, occupation: false, company: false, social: false };
+
 export default function InfoCard({ profile, user, onSaved, onPhotoChange, onMessage, onOpenMerchModal }) {
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -26,6 +29,8 @@ export default function InfoCard({ profile, user, onSaved, onPhotoChange, onMess
     instagram_url: profile.instagram_url || '',
   });
 
+  const [visibility, setVisibility] = useState(profile.visibility || defaultVisibility);
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -37,6 +42,9 @@ export default function InfoCard({ profile, user, onSaved, onPhotoChange, onMess
     try {
       // Check if name has changed
       const nameChanged = form.first_name !== profile.first_name || form.last_name !== profile.last_name;
+
+      // Save visibility settings
+      await apiPut('/api/me/visibility', { visibility });
 
       if (nameChanged) {
         // Submit name change request separately
@@ -51,7 +59,7 @@ export default function InfoCard({ profile, user, onSaved, onPhotoChange, onMess
 
         if (res.ok) {
           const data = await res.json();
-          onSaved(data);
+          onSaved({ ...data, visibility });
           onMessage('Your name change is pending review by the admin. Other changes have been saved.');
           setTimeout(() => setEditing(false), 3000);
         }
@@ -61,7 +69,7 @@ export default function InfoCard({ profile, user, onSaved, onPhotoChange, onMess
 
         if (res.ok) {
           const data = await res.json();
-          onSaved(data);
+          onSaved({ ...data, visibility });
           onMessage('Profile updated!');
           setTimeout(() => setEditing(false), 3000);
         }
@@ -128,11 +136,11 @@ export default function InfoCard({ profile, user, onSaved, onPhotoChange, onMess
 
   const showSectionLink = profile.section && profile.section !== 'Non-Graduate';
 
-  // Social icons component (reused in both states)
-  const socialIcons = (profile.facebook_url || profile.linkedin_url || profile.instagram_url) && (
+  // Social icons component - always show all 3 (faded if no URL)
+  const socialIcons = (
     <div className="info-social-row">
       <div className="social-icons-row">
-        {profile.facebook_url && (
+        {profile.facebook_url ? (
           <a
             href={`https://facebook.com/${profile.facebook_url}`}
             target="_blank"
@@ -142,8 +150,12 @@ export default function InfoCard({ profile, user, onSaved, onPhotoChange, onMess
           >
             <FaFacebook />
           </a>
+        ) : (
+          <span className="social-icon-link facebook faded" title="Facebook not set">
+            <FaFacebook />
+          </span>
         )}
-        {profile.linkedin_url && (
+        {profile.linkedin_url ? (
           <a
             href={`https://linkedin.com/in/${profile.linkedin_url}`}
             target="_blank"
@@ -153,8 +165,12 @@ export default function InfoCard({ profile, user, onSaved, onPhotoChange, onMess
           >
             <FaLinkedin />
           </a>
+        ) : (
+          <span className="social-icon-link linkedin faded" title="LinkedIn not set">
+            <FaLinkedin />
+          </span>
         )}
-        {profile.instagram_url && (
+        {profile.instagram_url ? (
           <a
             href={`https://instagram.com/${profile.instagram_url}`}
             target="_blank"
@@ -164,6 +180,10 @@ export default function InfoCard({ profile, user, onSaved, onPhotoChange, onMess
           >
             <FaInstagram />
           </a>
+        ) : (
+          <span className="social-icon-link instagram faded" title="Instagram not set">
+            <FaInstagram />
+          </span>
         )}
       </div>
     </div>
@@ -368,6 +388,51 @@ export default function InfoCard({ profile, user, onSaved, onPhotoChange, onMess
               </div>
             </div>
           </div>
+
+          {/* Directory Visibility Section */}
+          <div className="visibility-section">
+            <label className="visibility-section-label">Directory Visibility</label>
+            <p className="visibility-description">Choose what information appears in the batch directory.</p>
+            <div className="visibility-toggles">
+              <label className="visibility-toggle">
+                <input
+                  type="checkbox"
+                  checked={visibility.location}
+                  onChange={(e) => setVisibility({ ...visibility, location: e.target.checked })}
+                />
+                <span className="toggle-slider"></span>
+                <span className="toggle-label">Show location (city, country)</span>
+              </label>
+              <label className="visibility-toggle">
+                <input
+                  type="checkbox"
+                  checked={visibility.occupation}
+                  onChange={(e) => setVisibility({ ...visibility, occupation: e.target.checked })}
+                />
+                <span className="toggle-slider"></span>
+                <span className="toggle-label">Show occupation</span>
+              </label>
+              <label className="visibility-toggle">
+                <input
+                  type="checkbox"
+                  checked={visibility.company}
+                  onChange={(e) => setVisibility({ ...visibility, company: e.target.checked })}
+                />
+                <span className="toggle-slider"></span>
+                <span className="toggle-label">Show company</span>
+              </label>
+              <label className="visibility-toggle">
+                <input
+                  type="checkbox"
+                  checked={visibility.social}
+                  onChange={(e) => setVisibility({ ...visibility, social: e.target.checked })}
+                />
+                <span className="toggle-slider"></span>
+                <span className="toggle-label">Show social media links</span>
+              </label>
+            </div>
+          </div>
+
           {/* Name change warning - above save buttons */}
           <div className="name-change-warning" style={{ marginTop: '16px', marginBottom: '16px' }}>
             Note: Name changes require admin approval. Use of fake names or profanity will result in your submission being rejected.

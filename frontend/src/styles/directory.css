@@ -305,6 +305,18 @@ body[data-theme="light"] .dir-avatar.reg {
   color: var(--color-text-secondary, #aaa);
 }
 
+.dir-card-occupation {
+  font-size: 11px;
+  color: var(--color-text-muted, #888);
+  margin-top: 2px;
+}
+
+.dir-card-company {
+  font-size: 11px;
+  color: var(--color-text-muted, #888);
+  font-style: italic;
+}
+
 /* Badges */
 .dir-badge {
   font-size: 11px;

@@ -26,7 +26,7 @@ router.get('/', authenticateToken, async (req, res) => {
       `SELECT u.id, u.email, u.first_name, u.last_name, u.birthday,
               u.mobile, u.address, u.city, u.country, u.occupation, u.company,
               u.profile_photo, u.facebook_url, u.linkedin_url, u.instagram_url,
-              u.shirt_size, u.jacket_size, u.has_alumni_card,
+              u.shirt_size, u.jacket_size, u.has_alumni_card, u.visibility,
               r.status as rsvp_status,
               m.id as master_list_id,
               m.section,
@@ -106,6 +106,10 @@ router.get('/', authenticateToken, async (req, res) => {
         }
       }
 
+      // Default visibility settings
+      const defaultVisibility = { location: true, occupation: false, company: false, social: false };
+      const visibility = user.visibility || defaultVisibility;
+
       return res.json({
         ...user,
         total_paid: totalPaid,
@@ -119,7 +123,8 @@ router.get('/', authenticateToken, async (req, res) => {
         isAdmin: req.user.isAdmin || false,
         is_super_admin: isSuperAdmin,
         hasPermissions: hasPermissions,
-        hasNonRegistryPermissions: hasNonRegistryPermissions
+        hasNonRegistryPermissions: hasNonRegistryPermissions,
+        visibility: visibility
       });
     }
 
@@ -399,6 +404,34 @@ router.put('/', authenticateToken, async (req, res) => {
     }
 
     res.json({ ...result.rows[0], rsvp_status });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Update visibility settings
+router.put('/visibility', authenticateToken, async (req, res) => {
+  try {
+    const { visibility } = req.body;
+
+    if (!visibility || typeof visibility !== 'object') {
+      return res.status(400).json({ error: 'visibility must be an object' });
+    }
+
+    // Validate visibility keys
+    const validKeys = ['location', 'occupation', 'company', 'social'];
+    const sanitized = {};
+    for (const key of validKeys) {
+      sanitized[key] = visibility[key] === true;
+    }
+
+    const result = await db.query(
+      `UPDATE users SET visibility = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING visibility`,
+      [JSON.stringify(sanitized), req.user.id]
+    );
+
+    res.json({ visibility: result.rows[0].visibility });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });

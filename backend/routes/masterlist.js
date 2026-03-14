@@ -645,15 +645,43 @@ router.get('/directory', authenticateToken, async (req, res) => {
         u.city,
         u.country,
         u.profile_photo,
+        u.occupation,
+        u.company,
         u.facebook_url,
         u.linkedin_url,
-        u.instagram_url
+        u.instagram_url,
+        u.visibility
       FROM master_list m
       LEFT JOIN invites i ON i.master_list_id = m.id
       LEFT JOIN users u ON u.invite_id = i.id
       ORDER BY m.last_name, m.first_name
     `);
-    res.json({ entries: result.rows });
+
+    // Apply visibility filtering - name and section always shown
+    const defaultVisibility = { location: true, occupation: false, company: false, social: false };
+    const entries = result.rows.map(row => {
+      const vis = row.visibility || defaultVisibility;
+      return {
+        id: row.id,
+        section: row.section,
+        last_name: row.last_name,
+        first_name: row.first_name,
+        current_name: row.current_name,
+        in_memoriam: row.in_memoriam,
+        status: row.status,
+        profile_photo: row.profile_photo,
+        // Apply visibility rules
+        city: vis.location ? row.city : null,
+        country: vis.location ? row.country : null,
+        occupation: vis.occupation ? row.occupation : null,
+        company: vis.company ? row.company : null,
+        facebook_url: vis.social ? row.facebook_url : null,
+        linkedin_url: vis.social ? row.linkedin_url : null,
+        instagram_url: vis.social ? row.instagram_url : null
+      };
+    });
+
+    res.json({ entries });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });

@@ -36,6 +36,12 @@ const DirectoryCard = ({ entry }) => {
           {[entry.city, entry.country].filter(Boolean).join(', ')}
         </p>
       )}
+      {registered && entry.occupation && (
+        <p className="dir-card-occupation">{entry.occupation}</p>
+      )}
+      {registered && entry.company && (
+        <p className="dir-card-company">{entry.company}</p>
+      )}
       <span className={`dir-badge ${memoriam ? 'dir-badge-mem' : registered ? 'dir-badge-reg' : 'dir-badge-not'}`}>
         {memoriam ? 'In memoriam' : registered ? 'Registered' : 'Not registered'}
       </span>
