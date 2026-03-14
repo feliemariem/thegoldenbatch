@@ -591,15 +591,14 @@ export default function AdminDashboard() {
 
                         <div style={{
                           display: 'grid',
-                          gridTemplateColumns: 'repeat(4, 1fr)',
+                          gridTemplateColumns: 'repeat(3, 1fr)',
                           gap: '12px',
                           marginBottom: '24px'
                         }}>
                           {[
-                            { label: 'Responses', value: batchRepResults.totalUniqueVoters },
-                            { label: 'AA Rep Confirms', value: batchRepResults.confirmationsPos1 },
-                            { label: 'Batch Rep Confirms', value: batchRepResults.confirmationsPos2 },
-                            { label: 'Willing to Serve', value: batchRepResults.willingnessYes }
+                            { label: 'AA Rep Confirms', value: `${batchRepResults.aa_rep_confirms}/${batchRepResults.aa_rep_total_voters}` },
+                            { label: 'Batch Rep Confirms', value: `${batchRepResults.batch_rep_confirms}/${batchRepResults.batch_rep_total_voters}` },
+                            { label: 'Willing to Serve', value: batchRepResults.willing_to_serve_unique }
                           ].map((stat, i) => (
                             <div key={i} style={{
                               background: 'rgba(255, 255, 255, 0.03)',
@@ -809,7 +808,7 @@ export default function AdminDashboard() {
 
                         <div>
                           <h4 style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-text-primary)', marginBottom: '12px' }}>
-                            Willingness Summary · {batchRepResults.willingnessTotal} responded
+                            Willingness Summary
                           </h4>
 
                           {/* AA Rep Willingness */}

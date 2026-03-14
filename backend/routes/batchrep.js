@@ -286,6 +286,17 @@ router.get('/results', authenticateAdmin, async (req, res) => {
       };
     });
 
+    // Get unique voters per position
+    const votersPos1Result = await db.query(
+      "SELECT COUNT(DISTINCT voter_id) as count FROM batch_rep_submissions WHERE position = 1"
+    );
+    const aaRepTotalVoters = parseInt(votersPos1Result.rows[0].count);
+
+    const votersPos2Result = await db.query(
+      "SELECT COUNT(DISTINCT voter_id) as count FROM batch_rep_submissions WHERE position = 2"
+    );
+    const batchRepTotalVoters = parseInt(votersPos2Result.rows[0].count);
+
     // Get willingness stats per position
     const willingnessResult = await db.query(`
       SELECT
@@ -293,7 +304,8 @@ router.get('/results', authenticateAdmin, async (req, res) => {
         COUNT(*) FILTER (WHERE willing_aa_rep = true) as aa_rep_yes,
         COUNT(*) FILTER (WHERE willing_aa_rep = false) as aa_rep_no,
         COUNT(*) FILTER (WHERE willing_batch_rep = true) as batch_rep_yes,
-        COUNT(*) FILTER (WHERE willing_batch_rep = false) as batch_rep_no
+        COUNT(*) FILTER (WHERE willing_batch_rep = false) as batch_rep_no,
+        COUNT(*) FILTER (WHERE willing_aa_rep = true OR willing_batch_rep = true) as willing_to_serve_unique
       FROM batch_rep_willingness
     `);
 
@@ -302,6 +314,7 @@ router.get('/results', authenticateAdmin, async (req, res) => {
     const willingnessPos1No = parseInt(willingnessResult.rows[0].aa_rep_no);
     const willingnessPos2Yes = parseInt(willingnessResult.rows[0].batch_rep_yes);
     const willingnessPos2No = parseInt(willingnessResult.rows[0].batch_rep_no);
+    const willingToServeUnique = parseInt(willingnessResult.rows[0].willing_to_serve_unique);
 
     // Total willing (at least one yes)
     const willingnessYes = willingnessPos1Yes + willingnessPos2Yes;
@@ -331,7 +344,13 @@ router.get('/results', authenticateAdmin, async (req, res) => {
         : 0,
       willingnessNoPct: willingnessTotal > 0
         ? Math.round((willingnessNo / (willingnessTotal * 2)) * 100 * 10) / 10
-        : 0
+        : 0,
+      // New fields for stat cards
+      aa_rep_confirms: confirmationsPos1,
+      aa_rep_total_voters: aaRepTotalVoters,
+      batch_rep_confirms: confirmationsPos2,
+      batch_rep_total_voters: batchRepTotalVoters,
+      willing_to_serve_unique: willingToServeUnique
     });
   } catch (err) {
     console.error('Error fetching batch-rep results:', err);
