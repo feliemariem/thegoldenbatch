@@ -188,7 +188,7 @@ export default function Profile() {
           const data = await res.json();
           setProfile({ ...profile, ...data });
           setMessage('Your name change is pending review by the admin. Other changes have been saved.');
-          setTimeout(() => setEditing(false), 100);
+          setTimeout(() => setEditing(false), 3000);
         }
       } else {
         // No name change, save normally
@@ -198,7 +198,7 @@ export default function Profile() {
           const data = await res.json();
           setProfile({ ...profile, ...data });
           setMessage('Profile updated!');
-          setTimeout(() => setEditing(false), 100);
+          setTimeout(() => setEditing(false), 3000);
         }
       }
     } catch (err) {
@@ -304,10 +304,6 @@ export default function Profile() {
 
           {editing ? (
             <form onSubmit={handleSave}>
-              {/* Name change warning */}
-              <div className="name-change-warning" style={{ marginBottom: '16px' }}>
-                Note: Name changes require admin approval. Use of fake names or profanity will result in your submission being rejected.
-              </div>
               <div className="form-row">
                 <div className="form-group">
                   <label>First Name *</label>
@@ -431,6 +427,11 @@ export default function Profile() {
                     ✗ Not Going
                   </button>
                 </div>
+              </div>
+
+              {/* Name change warning - above save buttons */}
+              <div className="name-change-warning" style={{ marginBottom: '16px' }}>
+                Note: Name changes require admin approval. Use of fake names or profanity will result in your submission being rejected.
               </div>
 
               <div className="button-row">

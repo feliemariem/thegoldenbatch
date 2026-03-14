@@ -53,7 +53,7 @@ export default function InfoCard({ profile, user, onSaved, onPhotoChange, onMess
           const data = await res.json();
           onSaved(data);
           onMessage('Your name change is pending review by the admin. Other changes have been saved.');
-          setTimeout(() => setEditing(false), 100);
+          setTimeout(() => setEditing(false), 3000);
         }
       } else {
         // No name change, save normally
@@ -63,7 +63,7 @@ export default function InfoCard({ profile, user, onSaved, onPhotoChange, onMess
           const data = await res.json();
           onSaved(data);
           onMessage('Profile updated!');
-          setTimeout(() => setEditing(false), 100);
+          setTimeout(() => setEditing(false), 3000);
         }
       }
     } catch (err) {
@@ -247,12 +247,6 @@ export default function InfoCard({ profile, user, onSaved, onPhotoChange, onMess
           )}
 
           <div className="form-grid">
-            {/* Name change warning */}
-            <div className="form-group full-width" style={{ marginBottom: '8px' }}>
-              <div className="name-change-warning">
-                Note: Name changes require admin approval. Use of fake names or profanity will result in your submission being rejected.
-              </div>
-            </div>
             <div className="form-group">
               <label>First Name</label>
               <input
@@ -373,6 +367,10 @@ export default function InfoCard({ profile, user, onSaved, onPhotoChange, onMess
                 </div>
               </div>
             </div>
+          </div>
+          {/* Name change warning - above save buttons */}
+          <div className="name-change-warning" style={{ marginTop: '16px', marginBottom: '16px' }}>
+            Note: Name changes require admin approval. Use of fake names or profanity will result in your submission being rejected.
           </div>
           <div className="form-actions">
             <button type="submit" className="btn-save" disabled={saving}>
