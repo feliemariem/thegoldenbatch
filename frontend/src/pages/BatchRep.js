@@ -92,6 +92,8 @@ export default function BatchRep() {
   const [submitting1, setSubmitting1] = useState(false);
   const [submitError1, setSubmitError1] = useState('');
   const [submitSuccess1, setSubmitSuccess1] = useState(false);
+  const [showWillingFollowup1, setShowWillingFollowup1] = useState(false);
+  const [willingSubmitting1, setWillingSubmitting1] = useState(false);
 
   // Position 2 form state
   const [selection2, setSelection2] = useState('confirm');
@@ -104,6 +106,8 @@ export default function BatchRep() {
   const [submitting2, setSubmitting2] = useState(false);
   const [submitError2, setSubmitError2] = useState('');
   const [submitSuccess2, setSubmitSuccess2] = useState(false);
+  const [showWillingFollowup2, setShowWillingFollowup2] = useState(false);
+  const [willingSubmitting2, setWillingSubmitting2] = useState(false);
 
   const dropdownRef1 = useRef(null);
   const dropdownRef2 = useRef(null);
@@ -355,9 +359,28 @@ export default function BatchRep() {
         throw new Error(data.error || 'Submission failed');
       }
 
-      setSubmitSuccess1(true);
       setHasSubmittedPos1(true);
+      setShowWillingFollowup1(true);
+    } catch (err) {
+      setSubmitError1(err.message);
+    } finally {
+      setSubmitting1(false);
+    }
+  };
 
+  const handleWillingResponse1 = async (willing) => {
+    setWillingSubmitting1(true);
+    try {
+      await apiPost('/api/batch-rep/submit', {
+        position: 1,
+        selection: selection1,
+        nominee_name: selection1 === 'nominate' ? nomineeName1 : null,
+        nominee_master_list_id: selection1 === 'nominate' ? nomineeMasterListId1 : null,
+        comments: selection1 === 'nominate' ? (nomineeRationale1.trim() || null) : null,
+        willing_to_serve: willing
+      });
+      setShowWillingFollowup1(false);
+      setSubmitSuccess1(true);
       // Auto-scroll to Position 2 after successful submission
       setTimeout(() => {
         const pos2Element = document.getElementById('position-2');
@@ -366,9 +389,11 @@ export default function BatchRep() {
         }
       }, 300);
     } catch (err) {
-      setSubmitError1(err.message);
+      console.error('Error saving willingness:', err);
+      setShowWillingFollowup1(false);
+      setSubmitSuccess1(true);
     } finally {
-      setSubmitting1(false);
+      setWillingSubmitting1(false);
     }
   };
 
@@ -402,12 +427,34 @@ export default function BatchRep() {
         throw new Error(data.error || 'Submission failed');
       }
 
-      setSubmitSuccess2(true);
       setHasSubmittedPos2(true);
+      setShowWillingFollowup2(true);
     } catch (err) {
       setSubmitError2(err.message);
     } finally {
       setSubmitting2(false);
+    }
+  };
+
+  const handleWillingResponse2 = async (willing) => {
+    setWillingSubmitting2(true);
+    try {
+      await apiPost('/api/batch-rep/submit', {
+        position: 2,
+        selection: selection2,
+        nominee_name: selection2 === 'nominate' ? nomineeName2 : null,
+        nominee_master_list_id: selection2 === 'nominate' ? nomineeMasterListId2 : null,
+        comments: selection2 === 'nominate' ? (nomineeRationale2.trim() || null) : null,
+        willing_to_serve: willing
+      });
+      setShowWillingFollowup2(false);
+      setSubmitSuccess2(true);
+    } catch (err) {
+      console.error('Error saving willingness:', err);
+      setShowWillingFollowup2(false);
+      setSubmitSuccess2(true);
+    } finally {
+      setWillingSubmitting2(false);
     }
   };
 
@@ -614,14 +661,40 @@ export default function BatchRep() {
 
                   {/* Response Form for Position 1 */}
                   <div className="batchrep-form-section">
-                    {submitSuccess1 || hasSubmittedPos1 ? (
+                    {showWillingFollowup1 ? (
+                      <div className="batchrep-willing-followup" style={{ padding: '16px 0', textAlign: 'center' }}>
+                        <div className="batchrep-success-icon" style={{ width: '40px', height: '40px', fontSize: '1.2rem', margin: '0 auto 12px' }}>✓</div>
+                        <p style={{ marginBottom: '16px', fontWeight: '500' }}>Response recorded!</p>
+                        <p style={{ marginBottom: '16px', color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>
+                          Are you willing to serve in this role if called upon?
+                        </p>
+                        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+                          <button
+                            className="btn-primary"
+                            onClick={() => handleWillingResponse1(true)}
+                            disabled={willingSubmitting1}
+                            style={{ minWidth: '100px' }}
+                          >
+                            {willingSubmitting1 ? '...' : 'Yes'}
+                          </button>
+                          <button
+                            className="btn-secondary"
+                            onClick={() => handleWillingResponse1(false)}
+                            disabled={willingSubmitting1}
+                            style={{ minWidth: '100px' }}
+                          >
+                            {willingSubmitting1 ? '...' : 'No'}
+                          </button>
+                        </div>
+                      </div>
+                    ) : submitSuccess1 || hasSubmittedPos1 ? (
                       <div className="batchrep-success" style={{ padding: '16px 0' }}>
                         <div className="batchrep-success-icon" style={{ width: '40px', height: '40px', fontSize: '1.2rem' }}>✓</div>
                         <p style={{ marginBottom: '12px' }}>Response recorded for Position 1.</p>
                         {status === 'active' && (
                           <button
                             className="btn-secondary"
-                            onClick={() => { setSubmitSuccess1(false); setHasSubmittedPos1(false); }}
+                            onClick={() => { setSubmitSuccess1(false); setHasSubmittedPos1(false); setShowWillingFollowup1(false); }}
                             style={{ fontSize: '0.85rem', padding: '8px 16px' }}
                           >
                             Edit my response
@@ -785,14 +858,40 @@ export default function BatchRep() {
 
                   {/* Response Form for Position 2 */}
                   <div className="batchrep-form-section">
-                    {submitSuccess2 || hasSubmittedPos2 ? (
+                    {showWillingFollowup2 ? (
+                      <div className="batchrep-willing-followup" style={{ padding: '16px 0', textAlign: 'center' }}>
+                        <div className="batchrep-success-icon" style={{ width: '40px', height: '40px', fontSize: '1.2rem', margin: '0 auto 12px' }}>✓</div>
+                        <p style={{ marginBottom: '16px', fontWeight: '500' }}>Response recorded!</p>
+                        <p style={{ marginBottom: '16px', color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>
+                          Are you willing to serve in this role if called upon?
+                        </p>
+                        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+                          <button
+                            className="btn-primary"
+                            onClick={() => handleWillingResponse2(true)}
+                            disabled={willingSubmitting2}
+                            style={{ minWidth: '100px' }}
+                          >
+                            {willingSubmitting2 ? '...' : 'Yes'}
+                          </button>
+                          <button
+                            className="btn-secondary"
+                            onClick={() => handleWillingResponse2(false)}
+                            disabled={willingSubmitting2}
+                            style={{ minWidth: '100px' }}
+                          >
+                            {willingSubmitting2 ? '...' : 'No'}
+                          </button>
+                        </div>
+                      </div>
+                    ) : submitSuccess2 || hasSubmittedPos2 ? (
                       <div className="batchrep-success" style={{ padding: '16px 0' }}>
                         <div className="batchrep-success-icon" style={{ width: '40px', height: '40px', fontSize: '1.2rem' }}>✓</div>
                         <p style={{ marginBottom: '12px' }}>Response recorded for Position 2.</p>
                         {status === 'active' && (
                           <button
                             className="btn-secondary"
-                            onClick={() => { setSubmitSuccess2(false); setHasSubmittedPos2(false); }}
+                            onClick={() => { setSubmitSuccess2(false); setHasSubmittedPos2(false); setShowWillingFollowup2(false); }}
                             style={{ fontSize: '0.85rem', padding: '8px 16px' }}
                           >
                             Edit my response

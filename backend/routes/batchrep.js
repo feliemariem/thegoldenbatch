@@ -133,7 +133,7 @@ router.post('/willingness', authenticateToken, async (req, res) => {
 router.post('/submit', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;
-    const { position, selection, nominee_name, nominee_master_list_id, comments } = req.body;
+    const { position, selection, nominee_name, nominee_master_list_id, comments, willing_to_serve } = req.body;
 
     // Validate position
     const positionNum = parseInt(position) || 1;
@@ -165,22 +165,24 @@ router.post('/submit', authenticateToken, async (req, res) => {
       return res.status(400).json({ error: 'Submissions are currently closed.' });
     }
 
-    // Upsert submission (insert or update) - now with position
+    // Upsert submission (insert or update) - now with position and willing_to_serve
     await db.query(
-      `INSERT INTO batch_rep_submissions (voter_id, position, selection, nominee_name, nominee_master_list_id, comments)
-       VALUES ($1, $2, $3, $4, $5, $6)
+      `INSERT INTO batch_rep_submissions (voter_id, position, selection, nominee_name, nominee_master_list_id, comments, willing_to_serve)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
        ON CONFLICT (voter_id, position) DO UPDATE SET
          selection = $3,
          nominee_name = $4,
          nominee_master_list_id = $5,
-         comments = $6`,
+         comments = $6,
+         willing_to_serve = COALESCE($7, batch_rep_submissions.willing_to_serve)`,
       [
         userId,
         positionNum,
         selection,
         selection === 'nominate' ? nominee_name.trim() : null,
         selection === 'nominate' ? nominee_master_list_id : null,
-        comments?.trim() || null
+        comments?.trim() || null,
+        typeof willing_to_serve === 'boolean' ? willing_to_serve : null
       ]
     );
 
@@ -381,14 +383,15 @@ router.get('/admin-responses', authenticateToken, async (req, res) => {
         MAX(CASE WHEN s.position = 1 THEN s.selection END) as pos1_selection,
         MAX(CASE WHEN s.position = 1 THEN s.nominee_name END) as pos1_nominee,
         MAX(CASE WHEN s.position = 2 THEN s.selection END) as pos2_selection,
-        MAX(CASE WHEN s.position = 2 THEN s.nominee_name END) as pos2_nominee
+        MAX(CASE WHEN s.position = 2 THEN s.nominee_name END) as pos2_nominee,
+        MAX(CASE WHEN s.position = 1 THEN s.willing_to_serve END) as pos1_willing,
+        MAX(CASE WHEN s.position = 2 THEN s.willing_to_serve END) as pos2_willing
       FROM batch_rep_submissions s
       JOIN users u ON s.voter_id = u.id
       GROUP BY u.id, u.first_name, u.last_name
       ORDER BY MIN(s.created_at) ASC
     `);
 
-    console.log('admin-responses query result:', result.rows.length, 'rows');
     res.json(result.rows);
   } catch (err) {
     console.error('Error fetching admin responses:', err);

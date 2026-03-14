@@ -177,12 +177,14 @@ export default function SystemTest() {
                         <ResponseCell
                           selection={row.pos1_selection}
                           nominee={row.pos1_nominee}
+                          willing={row.pos1_willing}
                         />
                       </td>
                       <td style={{ padding: '12px 8px' }}>
                         <ResponseCell
                           selection={row.pos2_selection}
                           nominee={row.pos2_nominee}
+                          willing={row.pos2_willing}
                         />
                       </td>
                     </tr>
@@ -197,7 +199,7 @@ export default function SystemTest() {
   );
 }
 
-function ResponseCell({ selection, nominee }) {
+function ResponseCell({ selection, nominee, willing }) {
   if (!selection) {
     return (
       <span style={{
@@ -216,17 +218,28 @@ function ResponseCell({ selection, nominee }) {
 
   if (selection === 'confirm') {
     return (
-      <span style={{
-        display: 'inline-block',
-        padding: '4px 10px',
-        borderRadius: '6px',
-        fontSize: '0.8rem',
-        fontWeight: '500',
-        background: 'rgba(34, 197, 94, 0.15)',
-        color: '#22c55e'
-      }}>
-        Confirm
-      </span>
+      <div>
+        <span style={{
+          display: 'inline-block',
+          padding: '4px 10px',
+          borderRadius: '6px',
+          fontSize: '0.8rem',
+          fontWeight: '500',
+          background: 'rgba(34, 197, 94, 0.15)',
+          color: '#22c55e'
+        }}>
+          Confirm
+        </span>
+        {willing === true && (
+          <div style={{
+            marginTop: '4px',
+            fontSize: '0.75rem',
+            color: '#22c55e'
+          }}>
+            Willing to serve
+          </div>
+        )}
+      </div>
     );
   }
 
