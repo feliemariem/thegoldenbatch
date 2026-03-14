@@ -43,9 +43,8 @@ export default function AdminDashboard() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Parse URL parameters for tab navigation (e.g., /admin?tab=meetings&meetingId=5)
+  // Parse URL parameters for meeting deep linking (e.g., /admin?tab=minutes&meetingId=5)
   const urlParams = new URLSearchParams(location.search);
-  const urlTab = urlParams.get('tab');
   const urlMeetingId = urlParams.get('meetingId');
 
   const [activeTab, setActiveTab] = useState(() => {
