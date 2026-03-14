@@ -380,4 +380,36 @@ router.get('/engagement', authenticateAdmin, async (req, res) => {
   }
 });
 
+// Get batch-rep full submissions view (System Admin only - id=1)
+router.get('/system-test/batch-rep-submissions', authenticateAdmin, async (req, res) => {
+  try {
+    if (req.user.id !== 1) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    const result = await db.query(`
+      SELECT
+        u.first_name,
+        u.last_name,
+        MAX(CASE WHEN s.position = 1 THEN s.selection END) as p1_selection,
+        MAX(CASE WHEN s.position = 2 THEN s.selection END) as p2_selection,
+        MAX(CASE WHEN s.position = 1 AND s.selection = 'nominate' THEN s.nominee_name END) as p1_nominee_name,
+        MAX(CASE WHEN s.position = 2 AND s.selection = 'nominate' THEN s.nominee_name END) as p2_nominee_name,
+        w.willing_aa_rep,
+        w.willing_batch_rep,
+        MIN(s.created_at) as response_time
+      FROM batch_rep_submissions s
+      JOIN users u ON u.id = s.voter_id
+      LEFT JOIN batch_rep_willingness w ON w.user_id = s.voter_id
+      GROUP BY u.id, u.first_name, u.last_name, w.willing_aa_rep, w.willing_batch_rep
+      ORDER BY MIN(s.created_at) ASC
+    `);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error fetching batch-rep submissions:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 module.exports = router;
