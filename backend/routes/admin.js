@@ -337,10 +337,22 @@ router.get('/batch-rep/response-stats', authenticateAdmin, async (req, res) => {
     const totalResponded = sectionStats.reduce((sum, s) => sum + s.responded, 0);
     const totalGrads = sectionStats.reduce((sum, s) => sum + s.total, 0);
 
+    // Get count of registered grads (users with accounts linked to grad master_list entries)
+    const registeredGradsResult = await db.query(`
+      SELECT COUNT(DISTINCT u.id) as count
+      FROM users u
+      JOIN invites i ON i.id = u.invite_id
+      JOIN master_list m ON m.id = i.master_list_id
+      WHERE m.section IN ('11A', '11B', '11C', '11D', '11E')
+        AND m.in_memoriam = false
+    `);
+    const registeredGradsCount = parseInt(registeredGradsResult.rows[0].count) || 0;
+
     res.json({
       sections: sectionStats,
       totalResponded,
-      totalGrads
+      totalGrads,
+      registeredGradsCount
     });
   } catch (err) {
     console.error('Error fetching batch-rep response stats:', err);

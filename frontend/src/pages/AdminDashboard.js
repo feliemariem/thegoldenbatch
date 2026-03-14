@@ -1112,15 +1112,15 @@ export default function AdminDashboard() {
                       fontSize: '0.85rem',
                       color: 'var(--color-text-secondary)'
                     }}>
-                      {batchRepResponseStats.totalResponded} of {batchRepResponseStats.totalGrads} grads
+                      {batchRepResponseStats.totalResponded} of {batchRepResponseStats.registeredGradsCount} grads
                     </span>
                     <span style={{
                       fontSize: '0.85rem',
                       fontWeight: 600,
                       color: 'var(--color-text-primary)'
                     }}>
-                      {batchRepResponseStats.totalGrads > 0
-                        ? Math.round((batchRepResponseStats.totalResponded / batchRepResponseStats.totalGrads) * 100)
+                      {batchRepResponseStats.registeredGradsCount > 0
+                        ? Math.round((batchRepResponseStats.totalResponded / batchRepResponseStats.registeredGradsCount) * 100)
                         : 0}%
                     </span>
                   </div>
