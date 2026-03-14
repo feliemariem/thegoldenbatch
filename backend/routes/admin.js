@@ -310,6 +310,7 @@ router.get('/batch-rep/response-stats', authenticateAdmin, async (req, res) => {
       SELECT section, COUNT(*) as total
       FROM master_list
       WHERE section IN ('11A', '11B', '11C', '11D', '11E')
+        AND in_memoriam = false
       GROUP BY section
     `);
 
