@@ -22,6 +22,7 @@ export default function SystemTest() {
   const [activeFeature, setActiveFeature] = useState('inbox-preview');
   const [batchRepData, setBatchRepData] = useState([]);
   const [batchRepLoading, setBatchRepLoading] = useState(false);
+  const [batchRepVisibleRows, setBatchRepVisibleRows] = useState(10);
 
   const features = [
     { id: 'inbox-preview', label: 'User Inbox Preview', description: 'Preview what any user sees in their inbox' },
@@ -181,7 +182,7 @@ export default function SystemTest() {
                   </tr>
                 </thead>
                 <tbody>
-                  {batchRepData.map((row, idx) => (
+                  {batchRepData.slice(0, batchRepVisibleRows).map((row, idx) => (
                     <tr key={idx} style={{ borderBottom: '1px solid var(--border-color, rgba(255,255,255,0.05))' }}>
                       <td style={{ padding: '12px 8px', color: 'var(--text-primary, #fff)' }}>
                         {row.first_name} {row.last_name}
@@ -197,8 +198,8 @@ export default function SystemTest() {
                               borderRadius: '4px',
                               fontWeight: '700',
                               fontSize: '0.8rem',
-                              background: row.p1_selection === 'confirm' ? 'rgba(34, 197, 94, 0.15)' : 'rgba(245, 158, 11, 0.15)',
-                              color: row.p1_selection === 'confirm' ? '#22c55e' : '#f59e0b'
+                              background: row.p1_selection === 'confirm' ? '#6B7280' : 'rgba(245, 158, 11, 0.15)',
+                              color: row.p1_selection === 'confirm' ? '#fff' : '#f59e0b'
                             }}>
                               {row.p1_selection === 'confirm' ? 'C' : 'N'}
                             </span>
@@ -228,8 +229,8 @@ export default function SystemTest() {
                               borderRadius: '4px',
                               fontWeight: '700',
                               fontSize: '0.8rem',
-                              background: row.p2_selection === 'confirm' ? 'rgba(34, 197, 94, 0.15)' : 'rgba(245, 158, 11, 0.15)',
-                              color: row.p2_selection === 'confirm' ? '#22c55e' : '#f59e0b'
+                              background: row.p2_selection === 'confirm' ? '#6B7280' : 'rgba(245, 158, 11, 0.15)',
+                              color: row.p2_selection === 'confirm' ? '#fff' : '#f59e0b'
                             }}>
                               {row.p2_selection === 'confirm' ? 'C' : 'N'}
                             </span>
@@ -261,6 +262,25 @@ export default function SystemTest() {
                   ))}
                 </tbody>
               </table>
+              {batchRepVisibleRows < batchRepData.length && (
+                <div style={{ textAlign: 'center', marginTop: '16px' }}>
+                  <button
+                    onClick={() => setBatchRepVisibleRows(prev => prev + 10)}
+                    style={{
+                      padding: '10px 24px',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      borderRadius: '8px',
+                      color: 'var(--text-secondary, #888)',
+                      cursor: 'pointer',
+                      fontSize: '0.85rem',
+                      fontWeight: '500'
+                    }}
+                  >
+                    Load more ({batchRepData.length - batchRepVisibleRows} remaining)
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>
