@@ -287,6 +287,67 @@ router.get('/users/:id/profile', authenticateAdmin, async (req, res) => {
   }
 });
 
+// Get batch-rep response stats by section (System Admin only - id=1)
+router.get('/batch-rep/response-stats', authenticateAdmin, async (req, res) => {
+  try {
+    if (req.user.id !== 1) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    // Get distinct respondents by section (1 person = 1 response regardless of positions)
+    const respondedResult = await db.query(`
+      SELECT m.section, COUNT(DISTINCT b.voter_id) as responded
+      FROM batch_rep_submissions b
+      JOIN users u ON u.id = b.voter_id
+      JOIN invites i ON u.invite_id = i.id
+      JOIN master_list m ON i.master_list_id = m.id
+      WHERE m.section IN ('11-A', '11-B', '11-C', '11-D', '11-E')
+      GROUP BY m.section
+    `);
+
+    // Get total grads per section
+    const totalResult = await db.query(`
+      SELECT section, COUNT(*) as total
+      FROM master_list
+      WHERE section IN ('11-A', '11-B', '11-C', '11-D', '11-E')
+        AND in_memoriam = false
+      GROUP BY section
+    `);
+
+    // Build section map
+    const sections = ['11-A', '11-B', '11-C', '11-D', '11-E'];
+    const respondedMap = {};
+    const totalMap = {};
+
+    respondedResult.rows.forEach(row => {
+      respondedMap[row.section] = parseInt(row.responded) || 0;
+    });
+
+    totalResult.rows.forEach(row => {
+      totalMap[row.section] = parseInt(row.total) || 0;
+    });
+
+    const sectionStats = sections.map(section => ({
+      section,
+      responded: respondedMap[section] || 0,
+      total: totalMap[section] || 0
+    }));
+
+    // Calculate totals
+    const totalResponded = sectionStats.reduce((sum, s) => sum + s.responded, 0);
+    const totalGrads = sectionStats.reduce((sum, s) => sum + s.total, 0);
+
+    res.json({
+      sections: sectionStats,
+      totalResponded,
+      totalGrads
+    });
+  } catch (err) {
+    console.error('Error fetching batch-rep response stats:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // Get engagement stats (System Admin only - id=1)
 router.get('/engagement', authenticateAdmin, async (req, res) => {
   try {

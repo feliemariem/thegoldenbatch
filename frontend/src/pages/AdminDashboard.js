@@ -79,6 +79,9 @@ export default function AdminDashboard() {
   const [batchRepLoading, setBatchRepLoading] = useState(false);
   const [batchRepLastUpdated, setBatchRepLastUpdated] = useState(null);
 
+  // Batch Rep Response Stats by Section (user.id === 1 only)
+  const [batchRepResponseStats, setBatchRepResponseStats] = useState(null);
+
   // Confirm modal state
   const [confirmModal, setConfirmModal] = useState({ show: false, message: '', onConfirm: null });
 
@@ -181,6 +184,25 @@ export default function AdminDashboard() {
       fetchBatchRepResults();
     }
   }, [batchRepOpen, batchRepResults, isSystemAdmin]);
+
+  // Fetch batch rep response stats for System tab (user.id === 1 only)
+  useEffect(() => {
+    const fetchBatchRepResponseStats = async () => {
+      try {
+        const res = await apiGet('/api/admin/batch-rep/response-stats');
+        if (res.ok) {
+          const data = await res.json();
+          setBatchRepResponseStats(data);
+        }
+      } catch (err) {
+        console.error('Error fetching batch rep response stats:', err);
+      }
+    };
+
+    if (user?.id === 1 && dashboardMode === 'systemTest') {
+      fetchBatchRepResponseStats();
+    }
+  }, [user?.id, dashboardMode]);
 
   // Handle URL parameter changes for deep linking (e.g., /admin?tab=meetings&meetingId=5)
   useEffect(() => {
@@ -974,7 +996,134 @@ export default function AdminDashboard() {
 
         {/* SYSTEM TEST MODE - Super Admin (uslsis.batch2003@gmail.com) Only */}
         {dashboardMode === 'systemTest' && user?.email?.toLowerCase() === 'uslsis.batch2003@gmail.com' && (
-          <SystemTest />
+          <>
+            {/* Batch Rep Response Rate Card - user.id === 1 only */}
+            {user?.id === 1 && batchRepResponseStats && (
+              <div style={{
+                marginBottom: '24px',
+                padding: '20px',
+                background: 'var(--color-bg-card)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '12px'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+                  <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: 'var(--color-text-primary)' }}>
+                    Batch rep response rate
+                  </h3>
+                  <span style={{
+                    fontSize: '0.65rem',
+                    fontWeight: 600,
+                    padding: '4px 10px',
+                    borderRadius: '12px',
+                    background: '#0d2b1a',
+                    color: '#CFB53B'
+                  }}>
+                    Admin only
+                  </span>
+                </div>
+
+                {/* Section columns */}
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(5, 1fr)',
+                  gap: '16px',
+                  marginBottom: '20px'
+                }}>
+                  {batchRepResponseStats.sections.map((section) => {
+                    const pct = section.total > 0 ? Math.round((section.responded / section.total) * 100) : 0;
+                    return (
+                      <div key={section.section} style={{ textAlign: 'center' }}>
+                        <div style={{
+                          fontSize: '0.75rem',
+                          fontWeight: 600,
+                          color: 'var(--color-text-secondary)',
+                          marginBottom: '8px',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.5px'
+                        }}>
+                          {section.section}
+                        </div>
+                        <div style={{
+                          fontSize: '1.25rem',
+                          fontWeight: 700,
+                          color: 'var(--color-text-primary)'
+                        }}>
+                          {section.responded}
+                        </div>
+                        <div style={{
+                          fontSize: '0.75rem',
+                          color: 'var(--color-text-secondary)',
+                          marginBottom: '8px'
+                        }}>
+                          of {section.total}
+                        </div>
+                        <div style={{
+                          height: '4px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          borderRadius: '2px',
+                          overflow: 'hidden',
+                          marginBottom: '6px'
+                        }}>
+                          <div style={{
+                            height: '100%',
+                            width: `${pct}%`,
+                            background: '#006633',
+                            borderRadius: '2px'
+                          }} />
+                        </div>
+                        <div style={{
+                          fontSize: '0.7rem',
+                          color: 'var(--color-text-secondary)'
+                        }}>
+                          {pct}%
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Divider */}
+                <div style={{
+                  height: '1px',
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  margin: '16px 0'
+                }} />
+
+                {/* Total row */}
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
+                }}>
+                  <span style={{
+                    fontSize: '0.85rem',
+                    fontWeight: 600,
+                    color: 'var(--color-text-primary)'
+                  }}>
+                    Total respondents
+                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <span style={{
+                      fontSize: '0.85rem',
+                      color: 'var(--color-text-secondary)'
+                    }}>
+                      {batchRepResponseStats.totalResponded} of {batchRepResponseStats.totalGrads} grads
+                    </span>
+                    <span style={{
+                      fontSize: '0.85rem',
+                      fontWeight: 600,
+                      color: 'var(--color-text-primary)'
+                    }}>
+                      {batchRepResponseStats.totalGrads > 0
+                        ? Math.round((batchRepResponseStats.totalResponded / batchRepResponseStats.totalGrads) * 100)
+                        : 0}%
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+            <SystemTest />
+          </>
         )}
       </div>
 
