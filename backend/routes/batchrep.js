@@ -390,6 +390,7 @@ router.get('/admin-responses', authenticateToken, async (req, res) => {
       ORDER BY MIN(s.created_at) ASC
     `);
 
+    console.log('admin-responses query result:', result.rows.length, 'rows');
     res.json(result.rows);
   } catch (err) {
     console.error('Error fetching admin responses:', err);
