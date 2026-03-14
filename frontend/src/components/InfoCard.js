@@ -52,8 +52,8 @@ export default function InfoCard({ profile, user, onSaved, onPhotoChange, onMess
         if (res.ok) {
           const data = await res.json();
           onSaved(data);
-          setEditing(false);
           onMessage('Your name change is pending review by the admin. Other changes have been saved.');
+          setTimeout(() => setEditing(false), 100);
         }
       } else {
         // No name change, save normally
@@ -62,8 +62,8 @@ export default function InfoCard({ profile, user, onSaved, onPhotoChange, onMess
         if (res.ok) {
           const data = await res.json();
           onSaved(data);
-          setEditing(false);
           onMessage('Profile updated!');
+          setTimeout(() => setEditing(false), 100);
         }
       }
     } catch (err) {

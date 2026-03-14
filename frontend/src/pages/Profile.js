@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import Footer from '../components/Footer';
 import logo from '../images/lasalle.jpg';
-import { apiGet, apiPut } from '../api';
+import { apiGet, apiPost, apiPut } from '../api';
 import '../styles/batchrep.css';
 
 // Access control phases for batch-rep feature:
@@ -170,13 +170,36 @@ export default function Profile() {
     setMessage('');
 
     try {
-      const res = await apiPut('/api/me', form);
+      // Check if name has changed
+      const nameChanged = form.first_name !== profile.first_name || form.last_name !== profile.last_name;
 
-      if (res.ok) {
-        const data = await res.json();
-        setProfile({ ...profile, ...data });
-        setEditing(false);
-        setMessage('Profile updated!');
+      if (nameChanged) {
+        // Submit name change request separately
+        await apiPost('/api/name-change-requests', {
+          requested_first_name: form.first_name,
+          requested_last_name: form.last_name
+        });
+
+        // Strip name fields from the form and save other fields
+        const { first_name, last_name, ...otherFields } = form;
+        const res = await apiPut('/api/me', otherFields);
+
+        if (res.ok) {
+          const data = await res.json();
+          setProfile({ ...profile, ...data });
+          setMessage('Your name change is pending review by the admin. Other changes have been saved.');
+          setTimeout(() => setEditing(false), 100);
+        }
+      } else {
+        // No name change, save normally
+        const res = await apiPut('/api/me', form);
+
+        if (res.ok) {
+          const data = await res.json();
+          setProfile({ ...profile, ...data });
+          setMessage('Profile updated!');
+          setTimeout(() => setEditing(false), 100);
+        }
       }
     } catch (err) {
       setMessage('Failed to save');
@@ -281,6 +304,10 @@ export default function Profile() {
 
           {editing ? (
             <form onSubmit={handleSave}>
+              {/* Name change warning */}
+              <div className="name-change-warning" style={{ marginBottom: '16px' }}>
+                Note: Name changes require admin approval. Use of fake names or profanity will result in your submission being rejected.
+              </div>
               <div className="form-row">
                 <div className="form-group">
                   <label>First Name *</label>
