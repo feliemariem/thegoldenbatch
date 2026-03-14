@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { apiGet } from '../api';
 import PreviewInbox from './PreviewInbox';
 import PreviewNonGradProfile from './PreviewNonGradProfile';
 import UserProfilePreview from './UserProfilePreview';
@@ -32,19 +33,25 @@ export default function SystemTest() {
   ];
 
   useEffect(() => {
-    if (user?.id === 1) {
+    const fetchBatchRepResponses = async () => {
       setBatchRepLoading(true);
-      fetch('/api/batch-rep/admin-responses', {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      })
-        .then(res => res.json())
-        .then(data => {
+      try {
+        const res = await apiGet('/api/batch-rep/admin-responses');
+        if (res.ok) {
+          const data = await res.json();
           if (Array.isArray(data)) {
             setBatchRepResponses(data);
           }
-        })
-        .catch(err => console.error('Error fetching batch rep responses:', err))
-        .finally(() => setBatchRepLoading(false));
+        }
+      } catch (err) {
+        console.error('Error fetching batch rep responses:', err);
+      } finally {
+        setBatchRepLoading(false);
+      }
+    };
+
+    if (user?.id === 1) {
+      fetchBatchRepResponses();
     }
   }, [user?.id]);
 
