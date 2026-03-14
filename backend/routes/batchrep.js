@@ -381,9 +381,7 @@ router.get('/admin-responses', authenticateToken, async (req, res) => {
         MAX(CASE WHEN s.position = 1 THEN s.selection END) as pos1_selection,
         MAX(CASE WHEN s.position = 1 THEN s.nominee_name END) as pos1_nominee,
         MAX(CASE WHEN s.position = 2 THEN s.selection END) as pos2_selection,
-        MAX(CASE WHEN s.position = 2 THEN s.nominee_name END) as pos2_nominee,
-        MAX(CASE WHEN s.position = 1 THEN s.willing_to_serve END) as pos1_willing,
-        MAX(CASE WHEN s.position = 2 THEN s.willing_to_serve END) as pos2_willing
+        MAX(CASE WHEN s.position = 2 THEN s.nominee_name END) as pos2_nominee
       FROM batch_rep_submissions s
       JOIN users u ON s.voter_id = u.id
       GROUP BY u.id, u.first_name, u.last_name
