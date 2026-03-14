@@ -51,11 +51,19 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState(() => {
     return localStorage.getItem('adminActiveTab') || 'invites';
   });
-  const [dashboardMode, setDashboardMode] = useState(() => {
-    // If URL has tab=meetings, start in minutes mode
-    if (urlTab === 'meetings') return 'minutes';
+  const validTabs = ['registry', 'accounting', 'announcements', 'minutes', 'messages', 'strategic', 'permissions', 'emailLog', 'systemTest'];
+  const [dashboardMode, setDashboardModeState] = useState(() => {
+    const tabFromUrl = new URLSearchParams(window.location.search).get('tab');
+    // Handle legacy 'meetings' param
+    if (tabFromUrl === 'meetings') return 'minutes';
+    if (tabFromUrl && validTabs.includes(tabFromUrl)) return tabFromUrl;
     return 'registry';
   });
+
+  const setDashboardMode = (tab) => {
+    setDashboardModeState(tab);
+    window.history.replaceState(null, '', `?tab=${tab}`);
+  };
   // Store the meeting ID from URL before it gets cleared
   const [selectedMeetingIdFromUrl, setSelectedMeetingIdFromUrl] = useState(() => {
     return urlMeetingId ? parseInt(urlMeetingId) : null;
@@ -204,14 +212,13 @@ export default function AdminDashboard() {
     }
   }, [user?.id, dashboardMode]);
 
-  // Handle URL parameter changes for deep linking (e.g., /admin?tab=meetings&meetingId=5)
+  // Handle legacy URL parameter (meetings → minutes) and set URL if not present
   useEffect(() => {
-    if (urlTab === 'meetings') {
-      setDashboardMode('minutes');
-      // Clear URL params after processing to keep URL clean
-      navigate('/admin', { replace: true });
+    const currentTab = new URLSearchParams(window.location.search).get('tab');
+    if (!currentTab) {
+      window.history.replaceState(null, '', `?tab=${dashboardMode}`);
     }
-  }, [urlTab, urlMeetingId, navigate]);
+  }, []);
 
   // Save active tab to localStorage (skip for Registry Admins)
   useEffect(() => {
