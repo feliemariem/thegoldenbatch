@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
 import { apiGet, apiPut } from '../api';
 
 export default function NameChangeRequests() {
+  const { user } = useAuth();
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(null);
   const [message, setMessage] = useState(null);
+
+  // Only user id 1 can access this feature
+  if (user?.id !== 1) {
+    return null;
+  }
 
   const fetchRequests = async () => {
     try {

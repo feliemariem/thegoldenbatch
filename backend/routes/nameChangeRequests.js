@@ -57,17 +57,12 @@ router.post('/', authenticateToken, async (req, res) => {
   }
 });
 
-// GET /api/name-change-requests - Get all pending requests (super admin only)
+// GET /api/name-change-requests - Get all pending requests (user id 1 only)
 router.get('/', authenticateToken, async (req, res) => {
   try {
-    // Check if user is super admin
-    const adminResult = await db.query(
-      'SELECT is_super_admin FROM admins WHERE email = $1',
-      [req.user.email]
-    );
-
-    if (adminResult.rows.length === 0 || !adminResult.rows[0].is_super_admin) {
-      return res.status(403).json({ error: 'Access denied. Super admin only.' });
+    // Check if user is system admin (user id 1)
+    if (req.user.id !== 1) {
+      return res.status(403).json({ error: 'Access denied. System admin only.' });
     }
 
     // Get all pending requests with user email
@@ -88,19 +83,14 @@ router.get('/', authenticateToken, async (req, res) => {
   }
 });
 
-// PUT /api/name-change-requests/:id/approve - Approve a request (super admin only)
+// PUT /api/name-change-requests/:id/approve - Approve a request (user id 1 only)
 router.put('/:id/approve', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Check if user is super admin
-    const adminResult = await db.query(
-      'SELECT is_super_admin FROM admins WHERE email = $1',
-      [req.user.email]
-    );
-
-    if (adminResult.rows.length === 0 || !adminResult.rows[0].is_super_admin) {
-      return res.status(403).json({ error: 'Access denied. Super admin only.' });
+    // Check if user is system admin (user id 1)
+    if (req.user.id !== 1) {
+      return res.status(403).json({ error: 'Access denied. System admin only.' });
     }
 
     // Get the request
@@ -134,19 +124,14 @@ router.put('/:id/approve', authenticateToken, async (req, res) => {
   }
 });
 
-// PUT /api/name-change-requests/:id/reject - Reject a request (super admin only)
+// PUT /api/name-change-requests/:id/reject - Reject a request (user id 1 only)
 router.put('/:id/reject', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Check if user is super admin
-    const adminResult = await db.query(
-      'SELECT is_super_admin FROM admins WHERE email = $1',
-      [req.user.email]
-    );
-
-    if (adminResult.rows.length === 0 || !adminResult.rows[0].is_super_admin) {
-      return res.status(403).json({ error: 'Access denied. Super admin only.' });
+    // Check if user is system admin (user id 1)
+    if (req.user.id !== 1) {
+      return res.status(403).json({ error: 'Access denied. System admin only.' });
     }
 
     // Check if request exists and is pending
