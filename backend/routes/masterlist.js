@@ -642,6 +642,9 @@ router.get('/directory', authenticateToken, async (req, res) => {
         m.current_name,
         m.in_memoriam,
         m.status,
+        u.birthday,
+        u.mobile,
+        u.address,
         u.city,
         u.country,
         u.profile_photo,
@@ -657,8 +660,8 @@ router.get('/directory', authenticateToken, async (req, res) => {
       ORDER BY m.last_name, m.first_name
     `);
 
-    // Apply visibility filtering - name and section always shown
-    const defaultVisibility = { location: true, occupation: false, company: false, social: false };
+    // Apply visibility filtering - name, section, city, country always shown
+    const defaultVisibility = { birthday: false, mobile: false, address: false, occupation: false, company: false, social: false };
     const entries = result.rows.map(row => {
       const vis = row.visibility || defaultVisibility;
       return {
@@ -670,9 +673,13 @@ router.get('/directory', authenticateToken, async (req, res) => {
         in_memoriam: row.in_memoriam,
         status: row.status,
         profile_photo: row.profile_photo,
-        // Apply visibility rules
-        city: vis.location ? row.city : null,
-        country: vis.location ? row.country : null,
+        // City and country always shown
+        city: row.city,
+        country: row.country,
+        // Apply visibility rules for other fields
+        birthday: vis.birthday ? row.birthday : null,
+        mobile: vis.mobile ? row.mobile : null,
+        address: vis.address ? row.address : null,
         occupation: vis.occupation ? row.occupation : null,
         company: vis.company ? row.company : null,
         facebook_url: vis.social ? row.facebook_url : null,

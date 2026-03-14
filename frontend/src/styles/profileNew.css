@@ -2268,91 +2268,32 @@
 }
 
 /* ========================================
-   VISIBILITY TOGGLES SECTION
+   INLINE VISIBILITY CHECKBOX
    ======================================== */
-.visibility-section {
-  margin-top: 20px;
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
-}
-
-[data-theme="light"] .visibility-section {
-  background: rgba(0, 0, 0, 0.02);
-  border-color: rgba(0, 0, 0, 0.08);
-}
-
-.visibility-section-label {
-  display: block;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--color-hover);
-  margin-bottom: 4px;
-}
-
-.visibility-description {
-  font-size: 0.78rem;
-  color: var(--color-text-secondary);
-  margin: 0 0 12px 0;
-}
-
-.visibility-toggles {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.visibility-toggle {
+.visibility-inline {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
+  margin-top: 4px;
   cursor: pointer;
-  font-size: 0.85rem;
-  color: var(--color-text-primary);
+  font-size: 12px;
+  color: var(--color-text-secondary);
 }
 
-.visibility-toggle input[type="checkbox"] {
-  display: none;
+.visibility-inline input[type="checkbox"] {
+  width: 12px;
+  height: 12px;
+  margin: 0;
+  cursor: pointer;
+  accent-color: var(--color-hover);
 }
 
-.toggle-slider {
-  position: relative;
-  width: 36px;
-  height: 20px;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 20px;
-  transition: background 0.2s ease;
-  flex-shrink: 0;
+.visibility-inline span {
+  user-select: none;
 }
 
-[data-theme="light"] .toggle-slider {
-  background: rgba(0, 0, 0, 0.15);
-}
-
-.toggle-slider::after {
-  content: '';
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 16px;
-  height: 16px;
-  background: #fff;
-  border-radius: 50%;
-  transition: transform 0.2s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-}
-
-.visibility-toggle input:checked + .toggle-slider {
-  background: var(--color-hover);
-}
-
-.visibility-toggle input:checked + .toggle-slider::after {
-  transform: translateX(16px);
-}
-
-.toggle-label {
-  flex: 1;
+[data-theme="light"] .visibility-inline {
+  color: var(--color-text-secondary);
 }
 
 /* Mobile Responsive - Social Media */

@@ -4,8 +4,8 @@ import { FaFacebook, FaLinkedin, FaInstagram } from 'react-icons/fa';
 import { apiPut, apiPost, apiUpload, apiDelete } from '../api';
 import { formatBirthday } from '../utils/profileUtils';
 
-// Default visibility settings
-const defaultVisibility = { location: true, occupation: false, company: false, social: false };
+// Default visibility settings (city/country always shown, others off by default)
+const defaultVisibility = { birthday: false, mobile: false, address: false, occupation: false, company: false, social: false };
 
 export default function InfoCard({ profile, user, onSaved, onPhotoChange, onMessage, onOpenMerchModal }) {
   const [editing, setEditing] = useState(false);
@@ -295,6 +295,14 @@ export default function InfoCard({ profile, user, onSaved, onPhotoChange, onMess
                 value={form.birthday}
                 onChange={handleChange}
               />
+              <label className="visibility-inline">
+                <input
+                  type="checkbox"
+                  checked={visibility.birthday}
+                  onChange={(e) => setVisibility({ ...visibility, birthday: e.target.checked })}
+                />
+                <span>Show in directory</span>
+              </label>
             </div>
             <div className="form-group">
               <label>Mobile</label>
@@ -304,6 +312,14 @@ export default function InfoCard({ profile, user, onSaved, onPhotoChange, onMess
                 value={form.mobile}
                 onChange={handleChange}
               />
+              <label className="visibility-inline">
+                <input
+                  type="checkbox"
+                  checked={visibility.mobile}
+                  onChange={(e) => setVisibility({ ...visibility, mobile: e.target.checked })}
+                />
+                <span>Show in directory</span>
+              </label>
             </div>
             <div className="form-group full-width">
               <label>Address</label>
@@ -313,6 +329,14 @@ export default function InfoCard({ profile, user, onSaved, onPhotoChange, onMess
                 value={form.address}
                 onChange={handleChange}
               />
+              <label className="visibility-inline">
+                <input
+                  type="checkbox"
+                  checked={visibility.address}
+                  onChange={(e) => setVisibility({ ...visibility, address: e.target.checked })}
+                />
+                <span>Show in directory</span>
+              </label>
             </div>
             <div className="form-group">
               <label>City</label>
@@ -342,6 +366,14 @@ export default function InfoCard({ profile, user, onSaved, onPhotoChange, onMess
                 value={form.occupation}
                 onChange={handleChange}
               />
+              <label className="visibility-inline">
+                <input
+                  type="checkbox"
+                  checked={visibility.occupation}
+                  onChange={(e) => setVisibility({ ...visibility, occupation: e.target.checked })}
+                />
+                <span>Show in directory</span>
+              </label>
             </div>
             <div className="form-group">
               <label>Company</label>
@@ -351,6 +383,14 @@ export default function InfoCard({ profile, user, onSaved, onPhotoChange, onMess
                 value={form.company}
                 onChange={handleChange}
               />
+              <label className="visibility-inline">
+                <input
+                  type="checkbox"
+                  checked={visibility.company}
+                  onChange={(e) => setVisibility({ ...visibility, company: e.target.checked })}
+                />
+                <span>Show in directory</span>
+              </label>
             </div>
             <div className="form-group full-width social-media-section">
               <label className="social-media-label">Social Media</label>
@@ -386,49 +426,13 @@ export default function InfoCard({ profile, user, onSaved, onPhotoChange, onMess
                   />
                 </div>
               </div>
-            </div>
-          </div>
-
-          {/* Directory Visibility Section */}
-          <div className="visibility-section">
-            <label className="visibility-section-label">Directory Visibility</label>
-            <p className="visibility-description">Choose what information appears in the batch directory.</p>
-            <div className="visibility-toggles">
-              <label className="visibility-toggle">
-                <input
-                  type="checkbox"
-                  checked={visibility.location}
-                  onChange={(e) => setVisibility({ ...visibility, location: e.target.checked })}
-                />
-                <span className="toggle-slider"></span>
-                <span className="toggle-label">Show location (city, country)</span>
-              </label>
-              <label className="visibility-toggle">
-                <input
-                  type="checkbox"
-                  checked={visibility.occupation}
-                  onChange={(e) => setVisibility({ ...visibility, occupation: e.target.checked })}
-                />
-                <span className="toggle-slider"></span>
-                <span className="toggle-label">Show occupation</span>
-              </label>
-              <label className="visibility-toggle">
-                <input
-                  type="checkbox"
-                  checked={visibility.company}
-                  onChange={(e) => setVisibility({ ...visibility, company: e.target.checked })}
-                />
-                <span className="toggle-slider"></span>
-                <span className="toggle-label">Show company</span>
-              </label>
-              <label className="visibility-toggle">
+              <label className="visibility-inline">
                 <input
                   type="checkbox"
                   checked={visibility.social}
                   onChange={(e) => setVisibility({ ...visibility, social: e.target.checked })}
                 />
-                <span className="toggle-slider"></span>
-                <span className="toggle-label">Show social media links</span>
+                <span>Show in directory</span>
               </label>
             </div>
           </div>

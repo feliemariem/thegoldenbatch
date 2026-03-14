@@ -96,7 +96,7 @@ CREATE TABLE users (
     shirt_size VARCHAR(10),
     jacket_size VARCHAR(10),
     has_alumni_card BOOLEAN DEFAULT false,
-    visibility JSONB DEFAULT '{"location": true, "occupation": false, "company": false, "social": false}'::jsonb,
+    visibility JSONB DEFAULT '{"birthday": false, "mobile": false, "address": false, "occupation": false, "company": false, "social": false}'::jsonb,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

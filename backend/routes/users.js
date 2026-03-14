@@ -106,8 +106,8 @@ router.get('/', authenticateToken, async (req, res) => {
         }
       }
 
-      // Default visibility settings
-      const defaultVisibility = { location: true, occupation: false, company: false, social: false };
+      // Default visibility settings (city/country always shown, others off by default)
+      const defaultVisibility = { birthday: false, mobile: false, address: false, occupation: false, company: false, social: false };
       const visibility = user.visibility || defaultVisibility;
 
       return res.json({
@@ -419,8 +419,8 @@ router.put('/visibility', authenticateToken, async (req, res) => {
       return res.status(400).json({ error: 'visibility must be an object' });
     }
 
-    // Validate visibility keys
-    const validKeys = ['location', 'occupation', 'company', 'social'];
+    // Validate visibility keys (city/country always shown, no toggle needed)
+    const validKeys = ['birthday', 'mobile', 'address', 'occupation', 'company', 'social'];
     const sanitized = {};
     for (const key of validKeys) {
       sanitized[key] = visibility[key] === true;
