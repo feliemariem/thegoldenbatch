@@ -23,6 +23,7 @@ import Media from './pages/Media';
 import Committee from './pages/Committee';
 import Directory from './pages/Directory';
 import BatchRep from './pages/BatchRep';
+import BatchRepVoting from './pages/BatchRepVoting';
 import './styles/base.css';
 import './styles/components.css';
 import './styles/auth.css';
@@ -270,6 +271,17 @@ function AppRoutes() {
         element={
           <ProtectedRoute>
             <BatchRep />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Batch Rep Voting: Round 2 voting page. Access: Any logged-in user.
+          If not logged in → /login. Phase-based access + user.id === 71 guard in component. */}
+      <Route
+        path="/batch-rep-voting"
+        element={
+          <ProtectedRoute>
+            <BatchRepVoting />
           </ProtectedRoute>
         }
       />

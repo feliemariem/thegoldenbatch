@@ -388,6 +388,74 @@ router.patch('/status', authenticateAdmin, async (req, res) => {
   }
 });
 
+// GET /api/batch-rep/round2/status
+// Returns round 2 voting status for the current user (restricted to user.id === 71)
+router.get('/round2/status', authenticateToken, async (req, res) => {
+  try {
+    // Guard: only user.id === 71 can access
+    if (req.user.id !== 71) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    // Check if user has voted
+    const voteResult = await db.query(
+      'SELECT candidate_name, created_at FROM batch_rep_round2_votes WHERE voter_id = $1',
+      [req.user.id]
+    );
+
+    const hasVoted = voteResult.rows.length > 0;
+    const vote = hasVoted ? voteResult.rows[0] : null;
+
+    res.json({
+      hasVoted,
+      vote
+    });
+  } catch (err) {
+    console.error('Error fetching round2 status:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// POST /api/batch-rep/round2/vote
+// Submit round 2 vote (restricted to user.id === 71)
+router.post('/round2/vote', authenticateToken, async (req, res) => {
+  try {
+    // Guard: only user.id === 71 can vote
+    if (req.user.id !== 71) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    const { candidate_name } = req.body;
+
+    // Validate candidate_name
+    const validCandidates = ['Bianca Jison', 'Mel Andrea Rivero'];
+    if (!candidate_name || !validCandidates.includes(candidate_name)) {
+      return res.status(400).json({ error: 'Invalid candidate selection' });
+    }
+
+    // Check if already voted
+    const existingVote = await db.query(
+      'SELECT id FROM batch_rep_round2_votes WHERE voter_id = $1',
+      [req.user.id]
+    );
+
+    if (existingVote.rows.length > 0) {
+      return res.status(400).json({ error: 'You have already voted. Votes cannot be changed.' });
+    }
+
+    // Insert vote
+    await db.query(
+      'INSERT INTO batch_rep_round2_votes (voter_id, position, candidate_name) VALUES ($1, $2, $3)',
+      [req.user.id, 1, candidate_name]
+    );
+
+    res.json({ success: true, message: 'Your vote has been recorded.' });
+  } catch (err) {
+    console.error('Error submitting round2 vote:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // GET /api/batch-rep/graduates/search
 // Typeahead search for graduates only (for nomination field)
 // Fuzzy partial name match - each token must appear somewhere in the name
