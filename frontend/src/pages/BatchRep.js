@@ -728,6 +728,20 @@ export default function BatchRep() {
                 </div>
               </div>
 
+              {/* Nudge message between positions when exactly one is submitted */}
+              {((submitSuccess1 || hasSubmittedPos1) && !(submitSuccess2 || hasSubmittedPos2)) && (
+                <div className="batchrep-nudge">
+                  <span>↓</span>
+                  <span>One more — you still need to respond to <strong>Position 2 (Batch Representative)</strong>.</span>
+                </div>
+              )}
+              {((submitSuccess2 || hasSubmittedPos2) && !(submitSuccess1 || hasSubmittedPos1)) && (
+                <div className="batchrep-nudge">
+                  <span>↑</span>
+                  <span>One more — you still need to respond to <strong>Position 1 (Alumni Association Representative)</strong>.</span>
+                </div>
+              )}
+
               {/* Position 2: Batch Representative */}
               <div className="batchrep-nominee-card" id="position-2">
                 <div className="batchrep-nominee-header">

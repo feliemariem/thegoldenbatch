@@ -1704,3 +1704,30 @@
   color: var(--color-text-primary);
 }
 
+/* Nudge message for incomplete submissions */
+.batchrep-nudge {
+  border-radius: var(--border-radius-md, 8px);
+  padding: 10px 14px;
+  margin: 16px 0;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.batchrep-nudge strong {
+  color: inherit;
+}
+
+[data-theme="light"] .batchrep-nudge {
+  background: #faeeda;
+  border: 0.5px solid #FAC775;
+  color: #633806;
+}
+
+[data-theme="dark"] .batchrep-nudge {
+  background: #412402;
+  border: 0.5px solid #854F0B;
+  color: #FAC775;
+}
+
