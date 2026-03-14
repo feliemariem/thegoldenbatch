@@ -2,6 +2,7 @@
 -- The Golden Batch - USLS IS Batch 2003
 
 -- Drop tables in correct order (respecting foreign keys)
+DROP TABLE IF EXISTS batch_rep_round2_votes;
 DROP TABLE IF EXISTS batch_rep_submissions;
 DROP TABLE IF EXISTS site_config;
 DROP TABLE IF EXISTS action_items;
@@ -331,6 +332,18 @@ CREATE TABLE batch_rep_willingness (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- ============================================================
+-- NEW: Batch Rep Round 2 Votes table
+-- For runoff/second round voting when needed
+-- ============================================================
+CREATE TABLE batch_rep_round2_votes (
+    id SERIAL PRIMARY KEY,
+    voter_id INTEGER UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+    position INTEGER NOT NULL,
+    candidate_name VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE email_log (
   id SERIAL PRIMARY KEY,
   recipient_email TEXT,
@@ -380,6 +393,7 @@ CREATE INDEX idx_batch_rep_submissions_voter ON batch_rep_submissions(voter_id);
 CREATE INDEX idx_batch_rep_willingness_user ON batch_rep_willingness(user_id);
 CREATE INDEX idx_batch_rep_willingness_batch_rep ON batch_rep_willingness(willing_batch_rep);
 CREATE INDEX idx_batch_rep_willingness_aa_rep ON batch_rep_willingness(willing_aa_rep);
+CREATE INDEX idx_batch_rep_round2_votes_voter ON batch_rep_round2_votes(voter_id);
 
 CREATE UNIQUE INDEX idx_ledger_reference_no_unique 
   ON ledger(reference_no) 
