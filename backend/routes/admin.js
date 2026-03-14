@@ -299,9 +299,9 @@ router.get('/batch-rep/response-stats', authenticateAdmin, async (req, res) => {
       SELECT m.section, COUNT(DISTINCT b.voter_id) as responded
       FROM batch_rep_submissions b
       JOIN users u ON u.id = b.voter_id
-      JOIN invites i ON u.invite_id = i.id
-      JOIN master_list m ON i.master_list_id = m.id
-      WHERE m.section IN ('11-A', '11-B', '11-C', '11-D', '11-E')
+      JOIN invites i ON i.id = u.invite_id
+      JOIN master_list m ON m.id = i.master_list_id
+      WHERE m.section IN ('11A', '11B', '11C', '11D', '11E')
       GROUP BY m.section
     `);
 
@@ -309,13 +309,12 @@ router.get('/batch-rep/response-stats', authenticateAdmin, async (req, res) => {
     const totalResult = await db.query(`
       SELECT section, COUNT(*) as total
       FROM master_list
-      WHERE section IN ('11-A', '11-B', '11-C', '11-D', '11-E')
-        AND in_memoriam = false
+      WHERE section IN ('11A', '11B', '11C', '11D', '11E')
       GROUP BY section
     `);
 
     // Build section map
-    const sections = ['11-A', '11-B', '11-C', '11-D', '11-E'];
+    const sections = ['11A', '11B', '11C', '11D', '11E'];
     const respondedMap = {};
     const totalMap = {};
 
