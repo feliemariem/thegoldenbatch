@@ -31,6 +31,17 @@ const checkPhaseAccess = (user) => {
   }
 };
 
+// ─── Upload permission gate ───────────────────────────────────────────────────
+const MEDIA_UPLOAD_ALLOWED_EMAILS = [
+  'felie@fnrcore.com',
+  // Add more uploaders here when ready
+];
+
+const canUploadMedia = (user) => {
+  if (!user) return false;
+  return MEDIA_UPLOAD_ALLOWED_EMAILS.includes(user.email?.toLowerCase());
+};
+
 // ─── Mock data ────────────────────────────────────────────────────────────────
 // Replace with real API calls (GET /api/media/albums, /api/media/videos, etc.)
 
@@ -113,9 +124,9 @@ const MOCK_ARTICLES = [
   },
 ];
 
-// ─── Coming Soon Screen ───────────────────────────────────────────────────────
+// ─── PhotoUploadForm (shared component) ───────────────────────────────────────
 
-function ComingSoon({ user }) {
+function PhotoUploadForm({ user, onUploadSuccess }) {
   const [files, setFiles] = useState([]); // array of { file, preview, status: 'pending'|'uploading'|'done'|'error' }
   const [overallStatus, setOverallStatus] = useState('idle'); // idle | uploading | success | error
   const [errorMsg, setErrorMsg] = useState('');
@@ -196,7 +207,12 @@ function ComingSoon({ user }) {
       }
     }
 
-    setOverallStatus(results.every(r => r === 'done') ? 'success' : 'error');
+    const allSuccess = results.every(r => r === 'done');
+    setOverallStatus(allSuccess ? 'success' : 'error');
+
+    if (allSuccess && onUploadSuccess) {
+      onUploadSuccess();
+    }
   };
 
   const handleReset = () => {
@@ -233,31 +249,7 @@ function ComingSoon({ user }) {
   };
 
   return (
-    <div style={{ padding: '48px 24px', maxWidth: '560px', margin: '0 auto' }}>
-
-      {/* Header */}
-      <div style={{ textAlign: 'center', marginBottom: '36px' }}>
-        <div style={{
-          width: '72px', height: '72px', borderRadius: '50%',
-          background: 'rgba(207,181,59,0.1)', border: '2px solid rgba(207,181,59,0.25)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: '2rem', margin: '0 auto 16px',
-        }}>
-          🎬
-        </div>
-        <h2 style={{ fontSize: '1.6rem', fontWeight: '400', color: '#CFB53B', margin: '0 0 10px', letterSpacing: '0.02em' }}>
-          Media Hub
-        </h2>
-        <div style={{ width: '40px', height: '2px', background: '#CFB53B', opacity: 0.4, margin: '0 auto 14px' }} />
-        <p style={{ color: '#9a9a9a', fontSize: '1rem', lineHeight: 1.7, margin: 0 }}>
-          Your photos, videos, batch news, and memories -- all in one place.
-          We're putting the finishing touches on this. It's going to be good.
-        </p>
-        <p style={{ color: '#B8960C', fontSize: '0.88rem', margin: '8px 0 0', fontStyle: 'italic' }}>
-          Opening very soon, Golden Batch!
-        </p>
-      </div>
-
+    <>
       {/* Upload card */}
       <div style={{
         background: 'rgba(255,255,255,0.03)',
@@ -429,13 +421,47 @@ function ComingSoon({ user }) {
           )}
         </div>
       )}
+    </>
+  );
+}
+
+// ─── Coming Soon Screen ───────────────────────────────────────────────────────
+
+function ComingSoon({ user }) {
+  return (
+    <div style={{ padding: '48px 24px', maxWidth: '560px', margin: '0 auto' }}>
+
+      {/* Header */}
+      <div style={{ textAlign: 'center', marginBottom: '36px' }}>
+        <div style={{
+          width: '72px', height: '72px', borderRadius: '50%',
+          background: 'rgba(207,181,59,0.1)', border: '2px solid rgba(207,181,59,0.25)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: '2rem', margin: '0 auto 16px',
+        }}>
+          🎬
+        </div>
+        <h2 style={{ fontSize: '1.6rem', fontWeight: '400', color: '#CFB53B', margin: '0 0 10px', letterSpacing: '0.02em' }}>
+          Media Hub
+        </h2>
+        <div style={{ width: '40px', height: '2px', background: '#CFB53B', opacity: 0.4, margin: '0 auto 14px' }} />
+        <p style={{ color: '#9a9a9a', fontSize: '1rem', lineHeight: 1.7, margin: 0 }}>
+          Your photos, videos, batch news, and memories -- all in one place.
+          We're putting the finishing touches on this. It's going to be good.
+        </p>
+        <p style={{ color: '#B8960C', fontSize: '0.88rem', margin: '8px 0 0', fontStyle: 'italic' }}>
+          Opening very soon, Golden Batch!
+        </p>
+      </div>
+
+      <PhotoUploadForm user={user} />
     </div>
   );
 }
 
 // ─── Lightbox ─────────────────────────────────────────────────────────────────
 
-function Lightbox({ media, album, index, onClose, onNavigate }) {
+function Lightbox({ media, album, onClose, onNavigate }) {
   if (!media) return null;
   return (
     <div
@@ -465,11 +491,14 @@ function Lightbox({ media, album, index, onClose, onNavigate }) {
 
 // ─── Tab: Photos ──────────────────────────────────────────────────────────────
 
-function PhotosTab() {
+function PhotosTab({ user }) {
   const [selectedAlbum, setSelectedAlbum] = useState(null);
   const [lightboxMedia, setLightboxMedia] = useState(null);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [layoutMode, setLayoutMode] = useState('grid');
+  const [showUploadForm, setShowUploadForm] = useState(false);
+
+  const canUpload = canUploadMedia(user);
 
   const openLightbox = (item, index) => { setLightboxMedia(item); setLightboxIndex(index); };
   const navigateLightbox = (dir) => {
@@ -497,7 +526,7 @@ function PhotosTab() {
             </div>
           ))}
         </div>
-        <Lightbox media={lightboxMedia} album={selectedAlbum} index={lightboxIndex} onClose={() => setLightboxMedia(null)} onNavigate={navigateLightbox} />
+        <Lightbox media={lightboxMedia} album={selectedAlbum} onClose={() => setLightboxMedia(null)} onNavigate={navigateLightbox} />
       </div>
     );
   }
@@ -506,11 +535,25 @@ function PhotosTab() {
     <div>
       <div className="media-toolbar">
         <span className="media-count-badge">{MOCK_ALBUMS.length} albums</span>
-        <div className="media-layout-toggle">
-          <button className={`layout-btn${layoutMode === 'grid' ? ' active' : ''}`} onClick={() => setLayoutMode('grid')}>Grid</button>
-          <button className={`layout-btn${layoutMode === 'masonry' ? ' active' : ''}`} onClick={() => setLayoutMode('masonry')}>Masonry</button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {canUpload && (
+            <button onClick={() => setShowUploadForm(p => !p)} className="media-add-btn">
+              {showUploadForm ? 'Cancel' : '+ Share a photo'}
+            </button>
+          )}
+          <div className="media-layout-toggle">
+            <button className={`layout-btn${layoutMode === 'grid' ? ' active' : ''}`} onClick={() => setLayoutMode('grid')}>Grid</button>
+            <button className={`layout-btn${layoutMode === 'masonry' ? ' active' : ''}`} onClick={() => setLayoutMode('masonry')}>Masonry</button>
+          </div>
         </div>
       </div>
+
+      {canUpload && showUploadForm && (
+        <div className="media-article-form" style={{ marginBottom: '20px' }}>
+          <PhotoUploadForm user={user} onUploadSuccess={() => setShowUploadForm(false)} />
+        </div>
+      )}
+
       <div style={layoutMode === 'masonry' ? { columns: 3, gap: '12px' } : { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '12px' }}>
         {MOCK_ALBUMS.map(album => (
           <div key={album.id} onClick={() => setSelectedAlbum(album)} className="album-card" style={{ breakInside: layoutMode === 'masonry' ? 'avoid' : undefined, marginBottom: layoutMode === 'masonry' ? '12px' : undefined }}>
@@ -762,7 +805,7 @@ export default function Media() {
                 ))}
               </div>
 
-              {activeTab === 'photos' && <PhotosTab />}
+              {activeTab === 'photos' && <PhotosTab user={user} />}
               {activeTab === 'videos' && <VideosTab />}
               {activeTab === 'press' && <PressTab canWrite={canWrite} />}
               {activeTab === 'highlights' && <HighlightsTab />}
