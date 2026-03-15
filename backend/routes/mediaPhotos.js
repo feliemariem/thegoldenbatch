@@ -342,7 +342,36 @@ router.patch('/:id/status', authenticateToken, async (req, res) => {
       return res.status(404).json({ error: 'Photo not found' });
     }
 
-    res.json(result.rows[0]);
+    const photo = result.rows[0];
+
+    // Send inbox notification when photo is published
+    if (status === 'published' && photo.uploaded_by) {
+      try {
+        // Get admin ID for the from_admin_id field
+        const adminResult = await db.query(
+          'SELECT id FROM admins WHERE LOWER(email) = $1',
+          [req.user.email.toLowerCase()]
+        );
+        const adminId = adminResult.rows.length > 0 ? adminResult.rows[0].id : null;
+
+        const frontendUrl = process.env.FRONTEND_URL || 'https://thegoldenbatch2003.com';
+        const mediaLink = `${frontendUrl}/media?tab=photos`;
+
+        const subject = "Your photo is now live in the Throwback Vault!";
+        const message = `Hi ${photo.credit_name}! Your photo is now live! Head over to the Media page and check it out in the Throwback Vault -- your memory is now part of the batch collection. Thank you gid for sharing! Keep them coming -- the more photos we have, the more we can relive together.\n\n${mediaLink}`;
+
+        await db.query(
+          `INSERT INTO messages (from_admin_id, to_user_id, subject, message)
+           VALUES ($1, $2, $3, $4)`,
+          [adminId, photo.uploaded_by, subject, message]
+        );
+      } catch (msgErr) {
+        // Log but don't fail the request if notification fails
+        console.error('Failed to send photo published notification:', msgErr);
+      }
+    }
+
+    res.json(photo);
   } catch (err) {
     console.error('Error updating photo status:', err);
     res.status(500).json({ error: 'Failed to update photo status' });

@@ -194,7 +194,7 @@ function PhotoUploadForm({ user, onUploadSuccess }) {
       try {
         const formData = new FormData();
         formData.append('photo', files[i].file);
-        formData.append('album', 'memory_lane');
+        formData.append('album', 'throwback_vault');
 
         const res = await apiUpload('/api/media/photos', formData);
 
@@ -257,7 +257,7 @@ function PhotoUploadForm({ user, onUploadSuccess }) {
             Share your HS photos
           </p>
           <p className="media-upload-desc">
-            Got old Grade School or High School photos? Submit them here and we'll add them to the Memory Lane album once reviewed.
+            Got old Grade School or High School photos? Submit them here and we'll add them to the Throwback Vault album once reviewed.
           </p>
           <p style={{ color: 'rgba(207,181,59,0.6)', fontSize: '0.78rem', margin: 0 }}>
             Photos will be credited as <span style={{ color: '#CFB53B', fontWeight: '600' }}>Photo by {user?.current_name || `${user?.first_name} ${user?.last_name}`}</span>
@@ -271,7 +271,7 @@ function PhotoUploadForm({ user, onUploadSuccess }) {
               {files.length === 1 ? 'Photo submitted!' : `${files.length} photos submitted!`}
             </p>
             <p className="media-upload-desc" style={{ margin: '0 0 16px' }}>
-              We'll review and add them to Memory Lane soon.
+              We'll review and add them to Throwback Vault soon.
             </p>
             <button onClick={handleReset} className="media-reset-btn">
               Submit more
