@@ -264,7 +264,7 @@ export default function BatchRepVoting() {
           <div className="batchrep-response-header">
             <h3>Why we're voting</h3>
           </div>
-          <div className="batchrep-response-body" style={{ padding: '16px 20px' }}>
+          <div className="batchrep-response-body" style={{ padding: '20px' }}>
             <p style={{ marginBottom: '12px' }}>
               In Round 1, the organizing committee put forward its two co-chairs as nominees —
               <strong> Bianca Jison</strong> for Alumni Association Representative and{' '}
@@ -312,7 +312,7 @@ export default function BatchRepVoting() {
             </p>
           </div>
 
-          <div className="batchrep-response-body" style={{ padding: '16px 20px' }}>
+          <div className="batchrep-response-body" style={{ padding: '20px' }}>
             <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginBottom: '16px' }}>
               Two candidates — select one to cast your vote
             </p>
