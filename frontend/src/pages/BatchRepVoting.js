@@ -139,6 +139,15 @@ export default function BatchRepVoting() {
     return () => clearInterval(timer);
   }, []);
 
+  // Poll results every 30 seconds when viewing results
+  useEffect(() => {
+    if (!hasVoted && !isDeadlinePassed) return;
+
+    fetchResults();
+    const interval = setInterval(fetchResults, 30000);
+    return () => clearInterval(interval);
+  }, [hasVoted, isDeadlinePassed]);
+
   // Handle vote submission
   const handleSubmit = async () => {
     if (!selectedCandidate || submitting) return;
@@ -375,8 +384,16 @@ export default function BatchRepVoting() {
                 {/* Results board */}
                 {results ? (
                   <div>
-                    <div style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '1.5px', color: 'var(--color-text-secondary)', marginBottom: '16px' }}>
-                      Live Results · Position 1
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+                      <span style={{
+                        width: '8px', height: '8px', borderRadius: '50%',
+                        background: isDeadlinePassed ? 'var(--color-text-secondary)' : 'var(--color-status-positive)',
+                        display: 'inline-block',
+                        animation: isDeadlinePassed ? 'none' : 'batchrepPulse 1.5s ease-in-out infinite'
+                      }} />
+                      <span style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '1.5px', color: 'var(--color-text-secondary)' }}>
+                        {isDeadlinePassed ? 'Final Results · Position 1' : 'Live Results · Position 1'}
+                      </span>
                     </div>
 
                     {['Bianca Jison', 'Mel Andrea Rivero'].map((name) => {
@@ -414,7 +431,10 @@ export default function BatchRepVoting() {
                     })}
 
                     <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginTop: '12px', textAlign: 'center' }}>
-                      {results.total} {results.total === 1 ? 'vote' : 'votes'} cast · Updates when others vote
+                      {results.total} {results.total === 1 ? 'vote' : 'votes'} cast
+                      {!isDeadlinePassed && (
+                        <span style={{ marginLeft: '6px', opacity: 0.7 }}>· refreshes every 30s</span>
+                      )}
                     </div>
                   </div>
                 ) : (

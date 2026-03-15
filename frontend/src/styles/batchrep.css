@@ -690,6 +690,11 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes batchrepPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.75); }
+}
+
 .batchrep-modal {
   background: var(--color-bg-card);
   border-radius: 16px;
