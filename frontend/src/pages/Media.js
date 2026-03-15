@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { apiUpload, apiGet, apiDelete } from '../api';
 import '../styles/profileNew.css';
 
 // ─── Access gate ──────────────────────────────────────────────────────────────
@@ -182,13 +183,9 @@ function ComingSoon({ user }) {
       try {
         const formData = new FormData();
         formData.append('photo', files[i].file);
-          formData.append('album', 'memory_lane');
+        formData.append('album', 'memory_lane');
 
-        const res = await fetch('/api/media/photos', {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-          body: formData,
-        });
+        const res = await apiUpload('/api/media/photos', formData);
 
         if (!res.ok) throw new Error('Upload failed');
         setFiles(prev => prev.map((f, idx) => idx === i ? { ...f, status: 'done' } : f));
@@ -214,12 +211,10 @@ function ComingSoon({ user }) {
 
   const fetchMySubmissions = async () => {
     try {
-      const res = await fetch('/api/media/photos/mine', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-      });
+      const res = await apiGet('/api/media/photos/mine');
       if (!res.ok) return;
       const data = await res.json();
-      setMySubmissions(data);
+      setMySubmissions(data.photos || []);
     } catch (_) {}
     finally { setLoadingSubmissions(false); }
   };
@@ -229,10 +224,7 @@ function ComingSoon({ user }) {
   const handleWithdraw = async (id) => {
     if (!window.confirm('Withdraw this photo? This cannot be undone.')) return;
     try {
-      const res = await fetch(`/api/media/photos/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-      });
+      const res = await apiDelete(`/api/media/photos/${id}`);
       if (!res.ok) throw new Error();
       setMySubmissions(prev => prev.filter(p => p.id !== id));
     } catch (_) {
