@@ -59,6 +59,7 @@ app.use('/api/committee', require('./routes/committee'));
 app.use('/api/receipts', receiptsRoutes);
 app.use('/api/batch-rep', batchRepRoutes);
 app.use('/api/name-change-requests', nameChangeRequestRoutes);
+app.use('/api/media/photos', require('./routes/mediaPhotos'));
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -132,6 +133,7 @@ app.listen(PORT, async () => {
   console.log('  /api/committee');
   console.log('  /api/receipts');
   console.log('  /api/webhooks');
+  console.log('  /api/media/photos');
   console.log('  /api/health');
   console.log('  /api/debug/routes');
 

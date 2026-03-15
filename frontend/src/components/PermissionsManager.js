@@ -33,7 +33,8 @@ export default function PermissionsManager() {
     'minutes_edit',
     'messages_view',
     'strategic_view',
-    'funding_view'
+    'funding_view',
+    'can_approve_media'
   ];
 
   const permissionLabels = {
@@ -54,7 +55,8 @@ export default function PermissionsManager() {
     minutes_edit: 'Create/Edit Minutes',
     messages_view: 'Show Messages tab',
     strategic_view: 'Show Strategic Planning tab',
-    funding_view: 'View Funding Progress & Reality Engine'
+    funding_view: 'View Funding Progress & Reality Engine',
+    can_approve_media: 'Media: Review & Approve Photos'
   };
 
   useEffect(() => {
@@ -347,6 +349,24 @@ export default function PermissionsManager() {
                 <h4 className="perm-section-title">FUNDING</h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingLeft: '12px' }}>
                   {['funding_view'].map(perm => (
+                    <label key={perm} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+                      <input
+                        type="checkbox"
+                        checked={permissions[perm] || false}
+                        onChange={() => handlePermissionChange(perm)}
+                        style={{ width: '16px', height: '16px' }}
+                      />
+                      <span className="perm-label">{permissionLabels[perm]}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Media Permissions */}
+              <div style={{ marginBottom: '20px' }}>
+                <h4 className="perm-section-title">MEDIA</h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingLeft: '12px' }}>
+                  {['can_approve_media'].map(perm => (
                     <label key={perm} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
                       <input
                         type="checkbox"

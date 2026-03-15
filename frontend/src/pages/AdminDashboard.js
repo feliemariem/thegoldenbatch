@@ -14,6 +14,7 @@ import StrategicPlanning from '../components/StrategicPlanning';
 import AdminRoleErrorToast from "../components/AdminRoleErrorToast";
 import AdminMessages from '../components/AdminMessages';
 import EmailLog from '../components/EmailLog';
+import MediaTab from '../components/admin/MediaTab';
 import Footer from '../components/Footer';
 import { apiGet } from '../api';
 
@@ -50,7 +51,7 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState(() => {
     return localStorage.getItem('adminActiveTab') || 'invites';
   });
-  const validTabs = ['registry', 'accounting', 'announcements', 'minutes', 'messages', 'strategic', 'permissions', 'emailLog', 'systemTest'];
+  const validTabs = ['registry', 'accounting', 'announcements', 'minutes', 'messages', 'strategic', 'permissions', 'emailLog', 'systemTest', 'media'];
   const [dashboardMode, setDashboardModeState] = useState(() => {
     const tabFromUrl = new URLSearchParams(window.location.search).get('tab');
     // Handle legacy 'meetings' param
@@ -79,6 +80,7 @@ export default function AdminDashboard() {
   const [showAdminRoleError, setShowAdminRoleError] = useState(false);
   const [adminUnreadCount, setAdminUnreadCount] = useState(0);
   const [emailLogCount, setEmailLogCount] = useState(0);
+  const [mediaPendingCount, setMediaPendingCount] = useState(0);
 
   // Batch Rep Results state (System Admin only)
   const [batchRepResults, setBatchRepResults] = useState(null);
@@ -145,6 +147,25 @@ export default function AdminDashboard() {
       fetchEmailLogCount();
     }
   }, [isSystemAdmin]);
+
+  // Fetch media pending count for users with media access
+  useEffect(() => {
+    const fetchMediaPendingCount = async () => {
+      try {
+        const res = await apiGet('/api/media/photos?status=pending');
+        if (res.ok) {
+          const data = await res.json();
+          setMediaPendingCount(data.photos?.length || 0);
+        }
+      } catch (err) {
+        // User may not have media access, ignore error
+      }
+    };
+
+    if (isSuperAdmin || permissions?.can_approve_media) {
+      fetchMediaPendingCount();
+    }
+  }, [isSuperAdmin, permissions]);
 
   const fetchAdminUnreadCount = async () => {
     try {
@@ -429,6 +450,21 @@ export default function AdminDashboard() {
                   className={dashboardMode === 'strategic' ? 'active' : ''}
                 >
                   Strategic
+                </button>
+              )}
+              {showAllTabs && (isSuperAdmin || permissions?.can_approve_media) && (
+                <button
+                  onClick={() => setDashboardMode('media')}
+                  className={dashboardMode === 'media' ? 'active has-badge' : 'has-badge'}
+                >
+                  Media
+                  {mediaPendingCount > 0 && (
+                    <span
+                      className={dashboardMode === 'media' ? 'unread-badge active-badge' : 'unread-badge'}
+                    >
+                      {mediaPendingCount}
+                    </span>
+                  )}
                 </button>
               )}
               {showAllTabs && isSuperAdmin && (
@@ -984,6 +1020,11 @@ export default function AdminDashboard() {
         {/* STRATEGIC PLANNING MODE */}
         {dashboardMode === 'strategic' && (
           <StrategicPlanning />
+        )}
+
+        {/* MEDIA MODE */}
+        {dashboardMode === 'media' && (isSuperAdmin || permissions?.can_approve_media) && (
+          <MediaTab onPendingCountChange={setMediaPendingCount} />
         )}
 
         {/* PERMISSIONS MODE - Super Admin Only */}

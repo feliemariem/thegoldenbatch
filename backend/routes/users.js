@@ -77,6 +77,7 @@ router.get('/', authenticateToken, async (req, res) => {
       let isSuperAdmin = false;
       let hasPermissions = false;
       let hasNonRegistryPermissions = false;
+      let canApproveMedia = false;
       if (req.user.isAdmin) {
         const adminCheck = await db.query(
           `SELECT id, is_super_admin FROM admins WHERE LOWER(email) = LOWER($1)`,
@@ -103,6 +104,13 @@ router.get('/', authenticateToken, async (req, res) => {
             [adminData.id]
           );
           hasNonRegistryPermissions = nonRegistryCheck.rows && nonRegistryCheck.rows.length > 0 ? true : false;
+
+          // Check for can_approve_media permission
+          const mediaPermCheck = await db.query(
+            `SELECT enabled FROM permissions WHERE admin_id = $1 AND permission = 'can_approve_media'`,
+            [adminData.id]
+          );
+          canApproveMedia = mediaPermCheck.rows.length > 0 && mediaPermCheck.rows[0].enabled;
         }
       }
 
@@ -124,6 +132,7 @@ router.get('/', authenticateToken, async (req, res) => {
         is_super_admin: isSuperAdmin,
         hasPermissions: hasPermissions,
         hasNonRegistryPermissions: hasNonRegistryPermissions,
+        can_approve_media: isSuperAdmin || canApproveMedia,
         visibility: visibility
       });
     }
@@ -156,6 +165,16 @@ router.get('/', authenticateToken, async (req, res) => {
       );
       const hasNonRegistryPermissions = nonRegistryCheck.rows && nonRegistryCheck.rows.length > 0 ? true : false;
 
+      // Check for can_approve_media permission
+      let canApproveMedia = false;
+      if (!admin.is_super_admin) {
+        const mediaPermCheck = await db.query(
+          `SELECT enabled FROM permissions WHERE admin_id = $1 AND permission = 'can_approve_media'`,
+          [admin.id]
+        );
+        canApproveMedia = mediaPermCheck.rows.length > 0 && mediaPermCheck.rows[0].enabled;
+      }
+
       return res.json({
         id: admin.id,
         email: admin.email,
@@ -165,6 +184,7 @@ router.get('/', authenticateToken, async (req, res) => {
         is_super_admin: admin.is_super_admin || false,
         hasPermissions: hasPermissions,
         hasNonRegistryPermissions: hasNonRegistryPermissions,
+        can_approve_media: admin.is_super_admin || canApproveMedia,
         isAdmin: true
       });
     }
