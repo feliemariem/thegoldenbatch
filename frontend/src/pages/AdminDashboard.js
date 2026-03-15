@@ -632,8 +632,8 @@ export default function AdminDashboard() {
                           marginBottom: '24px'
                         }}>
                           {[
-                            { label: 'AA Rep Confirms', value: `${batchRepResults.aa_rep_confirms}/${batchRepResults.aa_rep_total_voters}` },
-                            { label: 'Batch Rep Confirms', value: `${batchRepResults.batch_rep_confirms}/${batchRepResults.batch_rep_total_voters}` },
+                            { label: 'AA Rep Confirms', value: batchRepResults.aa_rep_confirms },
+                            { label: 'Batch Rep Confirms', value: batchRepResults.batch_rep_confirms },
                             { label: 'Willing to Serve', value: batchRepResults.willing_to_serve_unique }
                           ].map((stat, i) => (
                             <div key={i} style={{
@@ -673,7 +673,7 @@ export default function AdminDashboard() {
                                 </span>
                               </div>
                               <span style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
-                                {batchRepResults.confirmationsPos1} / {batchRepResults.totalResponsesPos1} ({batchRepResults.confirmationPos1Pct}%)
+                                {batchRepResults.confirmationsPos1} ({batchRepResults.confirmationPos1Pct}%)
                               </span>
                             </div>
                             <div style={{
@@ -768,7 +768,7 @@ export default function AdminDashboard() {
                                 </span>
                               </div>
                               <span style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
-                                {batchRepResults.confirmationsPos2} / {batchRepResults.totalResponsesPos2} ({batchRepResults.confirmationPos2Pct}%)
+                                {batchRepResults.confirmationsPos2} ({batchRepResults.confirmationPos2Pct}%)
                               </span>
                             </div>
                             <div style={{
