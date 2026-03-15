@@ -47,6 +47,8 @@ export default function BatchRepVoting() {
   const [rolesOpen1, setRolesOpen1] = useState(false);
   const [aboutOpenBianca, setAboutOpenBianca] = useState(false);
   const [aboutOpenMel, setAboutOpenMel] = useState(false);
+  const [rolesOpen2, setRolesOpen2] = useState(false);
+  const [aboutOpenFelie, setAboutOpenFelie] = useState(false);
 
   // Countdown state
   const [timeRemaining, setTimeRemaining] = useState({
@@ -442,23 +444,71 @@ export default function BatchRepVoting() {
           <div className="batchrep-nominee-header">
             <span>Position 2 · Batch Representative</span>
           </div>
+
+          {/* Position header with Roles toggle */}
+          <div className="batchrep-position-top" style={{ borderRadius: '0' }}>
+            <div className="batchrep-position-info">
+              <div className="batchrep-position-num">Position 2</div>
+              <div className="batchrep-position-title">Batch Representative</div>
+            </div>
+            <button
+              className={`batchrep-roles-toggle ${rolesOpen2 ? 'open' : ''}`}
+              onClick={() => setRolesOpen2(!rolesOpen2)}
+            >
+              Roles <span className="arrow">▼</span>
+            </button>
+          </div>
+
+          {/* Roles & Responsibilities */}
+          <div className={`batchrep-roles-content ${rolesOpen2 ? 'open' : ''}`}>
+            <ul>
+              <li>Represents Batch 2003 to the batch itself and serves as the main point of contact for batchmates</li>
+              <li>Leads batch coordination and engagement leading up to the Jubilee and other batch initiatives</li>
+              <li>Works closely with the organizing committee to plan activities, gatherings, and participation</li>
+              <li>Communicates updates, decisions, and announcements to the batch</li>
+              <li>Mobilizes batch participation in alumni events, registration drives, and batch projects</li>
+              <li>Coordinates with the AA Rep when alumni matters affect the batch</li>
+              <li>Helps maintain unity and participation within the batch community</li>
+              <li>Remote participation accepted. No Bacolod presence required</li>
+            </ul>
+            <p className="batchrep-roles-note">
+              The Batch Representative will not be starting from scratch. There is already an organizing committee in place that has been working since 2023, fully committed and ready to support whoever takes on this role.
+            </p>
+          </div>
+
           <div className="batchrep-nominee-body">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-              <div style={{
-                width: '40px', height: '40px', borderRadius: '50%',
-                background: 'var(--color-status-positive)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: '#fff', fontSize: '1.25rem', flexShrink: '0'
-              }}>
-                ✓
-              </div>
-              <div>
-                <div className="batchrep-nominee-name" style={{ marginBottom: '2px' }}>Felie Magbanua</div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--color-status-positive)', fontWeight: '600' }}>
-                  Confirmed — Uncontested
+            {/* Confirmed uncontested header */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{
+                  width: '40px', height: '40px', borderRadius: '50%',
+                  background: 'var(--color-status-positive)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: '#fff', fontSize: '1.25rem', flexShrink: '0'
+                }}>
+                  ✓
+                </div>
+                <div>
+                  <div className="batchrep-nominee-name" style={{ marginBottom: '2px' }}>Felie Magbanua</div>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--color-status-positive)', fontWeight: '600' }}>
+                    Confirmed — Uncontested
+                  </div>
                 </div>
               </div>
+              <button
+                className={`batchrep-roles-toggle ${aboutOpenFelie ? 'open' : ''}`}
+                onClick={() => setAboutOpenFelie(!aboutOpenFelie)}
+              >
+                About <span className="arrow">▼</span>
+              </button>
             </div>
+
+            {aboutOpenFelie && (
+              <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', lineHeight: '1.6', marginBottom: '12px', fontStyle: 'italic', marginLeft: '52px' }}>
+                Co-led the strategic planning and operations of the organizing committee since 2023. Formalized the committee structure, defined roles and scopes, onboarded additional members, and built the platform that keeps the batch's work organized, moving, and transparent.
+              </p>
+            )}
+
             <p style={{ fontSize: '0.9rem', color: 'var(--color-text-secondary)', lineHeight: '1.6', margin: 0 }}>
               The position is uncontested, confirmed, and does not require a vote.
             </p>
