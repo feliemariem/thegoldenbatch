@@ -152,7 +152,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchMediaPendingCount = async () => {
       try {
-        const res = await apiGet('/api/media/photos?status=pending');
+        const res = await apiGet(`/api/media/photos?status=pending&_t=${Date.now()}`);
         if (res.ok) {
           const data = await res.json();
           setMediaPendingCount(data.photos?.length || 0);
