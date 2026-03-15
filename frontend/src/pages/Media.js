@@ -229,13 +229,13 @@ function PhotoUploadForm({ user, onUploadSuccess }) {
         {overallStatus === 'success' ? (
           <div style={{ textAlign: 'center', padding: '24px 0' }}>
             <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>🎉</div>
-            <p className="media-success-text">
+            <p style={{ fontWeight: '600', fontSize: '1rem', margin: '0 0 8px', color: '#CFB53B' }}>
               Thank you for sharing your memories!
             </p>
-            <p className="media-upload-desc" style={{ margin: '0 0 16px' }}>
-              Your photo{files.length !== 1 ? 's have' : ' has'} been submitted for review. Once approved by the admin, {files.length !== 1 ? 'they' : 'it'} will appear in the Throwback Vault.
+            <p style={{ fontSize: '0.85rem', color: '#9a9a9a', margin: '0 0 20px', lineHeight: 1.6 }}>
+              Your photo(s) have been submitted for review. Once approved by the admin, they will appear in the Throwback Vault.
             </p>
-            <button onClick={handleReset} className="media-reset-btn">
+            <button onClick={handleReset} style={{ background: 'none', border: '1px solid rgba(255,255,255,0.12)', color: '#9a9a9a', borderRadius: '6px', padding: '6px 16px', fontSize: '0.82rem', cursor: 'pointer' }}>
               Submit more
             </button>
           </div>
