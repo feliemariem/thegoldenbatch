@@ -147,7 +147,6 @@ function PhotoUploadForm({ user, onUploadSuccess }) {
   };
 
   const handleSubmit = async () => {
-    console.log('handleSubmit fired, files:', files.length);
     if (!files.length) return;
     setOverallStatus('uploading');
 
@@ -160,22 +159,18 @@ function PhotoUploadForm({ user, onUploadSuccess }) {
         formData.append('album', 'throwback_vault');
 
         const res = await apiUpload('/api/media/photos', formData);
-        console.log('upload response status:', res.status);
 
         if (!res.ok) throw new Error('Upload failed');
         setFiles(prev => prev.map((f, idx) => idx === i ? { ...f, status: 'done' } : f));
         results.push('done');
       } catch (err) {
-        console.log('upload error:', err);
         setFiles(prev => prev.map((f, idx) => idx === i ? { ...f, status: 'error' } : f));
         results.push('error');
       }
     }
 
     const allSuccess = results.every(r => r === 'done');
-    console.log('allSuccess:', allSuccess, 'setting overallStatus to:', allSuccess ? 'success' : 'error');
     setOverallStatus(allSuccess ? 'success' : 'error');
-    console.log('status set to success');
 
     if (allSuccess && onUploadSuccess) {
       onUploadSuccess();
