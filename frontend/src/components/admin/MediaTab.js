@@ -25,6 +25,25 @@ const formatDate = (dateStr) => {
   });
 };
 
+// Group photos by uploader and day
+const groupPhotosByUploaderAndDay = (photos) => {
+  const groups = {};
+  photos.forEach(photo => {
+    const date = new Date(photo.created_at).toDateString();
+    const key = `${photo.uploaded_by}-${date}`;
+    if (!groups[key]) {
+      groups[key] = {
+        uploaded_by: photo.uploaded_by,
+        credit_name: photo.credit_name,
+        date,
+        photos: []
+      };
+    }
+    groups[key].photos.push(photo);
+  });
+  return Object.values(groups);
+};
+
 export default function MediaTab({ onPendingCountChange, isSuperAdmin }) {
   const [pendingPhotos, setPendingPhotos] = useState([]);
   const [publishedPhotos, setPublishedPhotos] = useState([]);
@@ -34,6 +53,7 @@ export default function MediaTab({ onPendingCountChange, isSuperAdmin }) {
   const [enhancedStates, setEnhancedStates] = useState({}); // { photoId: boolean }
   const [actionLoading, setActionLoading] = useState({}); // { photoId: 'approve' | 'reject' | 'delete' }
   const [downloadAllLoading, setDownloadAllLoading] = useState(false);
+  const [activePhotoInGroup, setActivePhotoInGroup] = useState({}); // { groupKey: photoId }
 
   const fetchPendingPhotos = useCallback(async () => {
     try {
@@ -122,7 +142,7 @@ export default function MediaTab({ onPendingCountChange, isSuperAdmin }) {
   const handleDownloadAll = async () => {
     setDownloadAllLoading(true);
     try {
-      const res = await fetch(`${API_URL}/api/media/photos/download/album/memory_lane`, {
+      const res = await fetch(`${API_URL}/api/media/photos/download/album/throwback_vault`, {
         credentials: 'include'
       });
 
@@ -214,145 +234,195 @@ export default function MediaTab({ onPendingCountChange, isSuperAdmin }) {
               {pendingPhotos.length} photo{pendingPhotos.length !== 1 ? 's' : ''} pending review
             </p>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              {pendingPhotos.map(photo => (
-                <div
-                  key={photo.id}
-                  style={{
-                    background: 'var(--color-bg-card)',
-                    borderRadius: '12px',
-                    overflow: 'hidden',
-                    border: '1px solid rgba(255, 255, 255, 0.08)'
-                  }}
-                >
-                  {/* Enhancement Toggle */}
-                  <div style={{
-                    display: 'flex',
-                    gap: '4px',
-                    padding: '12px 16px',
-                    borderBottom: '1px solid rgba(255, 255, 255, 0.08)'
-                  }}>
-                    <button
-                      onClick={() => !enhancedStates[photo.id] || toggleEnhanced(photo.id)}
-                      style={{
-                        padding: '6px 12px',
-                        fontSize: '0.75rem',
-                        fontWeight: 600,
-                        borderRadius: '16px',
-                        border: 'none',
-                        cursor: 'pointer',
-                        background: !enhancedStates[photo.id] ? 'var(--color-hover)' : 'rgba(255, 255, 255, 0.1)',
-                        color: !enhancedStates[photo.id] ? 'var(--color-bg-primary)' : 'var(--color-text-secondary)'
-                      }}
-                    >
-                      Original
-                    </button>
-                    <button
-                      onClick={() => enhancedStates[photo.id] || toggleEnhanced(photo.id)}
-                      style={{
-                        padding: '6px 12px',
-                        fontSize: '0.75rem',
-                        fontWeight: 600,
-                        borderRadius: '16px',
-                        border: 'none',
-                        cursor: 'pointer',
-                        background: enhancedStates[photo.id] ? 'var(--color-hover)' : 'rgba(255, 255, 255, 0.1)',
-                        color: enhancedStates[photo.id] ? 'var(--color-bg-primary)' : 'var(--color-text-secondary)'
-                      }}
-                    >
-                      Enhanced
-                    </button>
-                  </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              {groupPhotosByUploaderAndDay(pendingPhotos).map(group => {
+                const groupKey = `${group.uploaded_by}-${group.date}`;
+                const activePhotoId = activePhotoInGroup[groupKey] || group.photos[0]?.id;
+                const activePhoto = group.photos.find(p => p.id === activePhotoId) || group.photos[0];
 
-                  {/* Photo */}
-                  <div style={{ width: '100%', maxHeight: '400px', overflow: 'hidden' }}>
-                    <img
-                      src={enhancedStates[photo.id] ? getEnhancedUrl(photo.cloudinary_url) : photo.cloudinary_url}
-                      alt="Pending review"
-                      style={{
-                        width: '100%',
-                        height: 'auto',
-                        display: 'block',
-                        objectFit: 'contain'
-                      }}
-                    />
-                  </div>
-
-                  {/* Info & Actions */}
-                  <div style={{ padding: '16px' }}>
+                return (
+                  <div
+                    key={groupKey}
+                    style={{
+                      background: 'var(--color-bg-card)',
+                      borderRadius: '12px',
+                      overflow: 'hidden',
+                      border: '1px solid rgba(255, 255, 255, 0.08)'
+                    }}
+                  >
+                    {/* Header with uploader info */}
                     <div style={{
+                      padding: '12px 16px',
+                      borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
                       display: 'flex',
                       justifyContent: 'space-between',
-                      alignItems: 'center',
-                      marginBottom: '12px'
+                      alignItems: 'center'
                     }}>
                       <div>
-                        <p style={{ fontWeight: 600, marginBottom: '4px' }}>{photo.credit_name}</p>
+                        <p style={{ fontWeight: 600, marginBottom: '2px' }}>{group.credit_name}</p>
                         <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
-                          {formatDate(photo.created_at)}
+                          {group.photos.length} photo{group.photos.length !== 1 ? 's' : ''} &middot; {group.date}
                         </p>
+                      </div>
+                      {/* Enhancement Toggle for active photo */}
+                      <div style={{ display: 'flex', gap: '4px' }}>
+                        <button
+                          onClick={() => !enhancedStates[activePhoto.id] || toggleEnhanced(activePhoto.id)}
+                          style={{
+                            padding: '6px 12px',
+                            fontSize: '0.75rem',
+                            fontWeight: 600,
+                            borderRadius: '16px',
+                            border: 'none',
+                            cursor: 'pointer',
+                            background: !enhancedStates[activePhoto.id] ? 'var(--color-hover)' : 'rgba(255, 255, 255, 0.1)',
+                            color: !enhancedStates[activePhoto.id] ? 'var(--color-bg-primary)' : 'var(--color-text-secondary)'
+                          }}
+                        >
+                          Original
+                        </button>
+                        <button
+                          onClick={() => enhancedStates[activePhoto.id] || toggleEnhanced(activePhoto.id)}
+                          style={{
+                            padding: '6px 12px',
+                            fontSize: '0.75rem',
+                            fontWeight: 600,
+                            borderRadius: '16px',
+                            border: 'none',
+                            cursor: 'pointer',
+                            background: enhancedStates[activePhoto.id] ? 'var(--color-hover)' : 'rgba(255, 255, 255, 0.1)',
+                            color: enhancedStates[activePhoto.id] ? 'var(--color-bg-primary)' : 'var(--color-text-secondary)'
+                          }}
+                        >
+                          Enhanced
+                        </button>
                       </div>
                     </div>
 
-                    {/* Action Buttons */}
-                    <div style={{ display: 'flex', gap: '8px' }}>
-                      <button
-                        onClick={() => handleStatusChange(photo.id, 'published')}
-                        disabled={actionLoading[photo.id]}
+                    {/* Filmstrip - only show if multiple photos */}
+                    {group.photos.length > 1 && (
+                      <div style={{
+                        display: 'flex',
+                        gap: '8px',
+                        padding: '12px 16px',
+                        overflowX: 'auto',
+                        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                        background: 'rgba(0, 0, 0, 0.2)'
+                      }}>
+                        {group.photos.map(photo => (
+                          <div
+                            key={photo.id}
+                            onClick={() => setActivePhotoInGroup(prev => ({ ...prev, [groupKey]: photo.id }))}
+                            style={{
+                              flexShrink: 0,
+                              width: '60px',
+                              height: '60px',
+                              borderRadius: '6px',
+                              overflow: 'hidden',
+                              cursor: 'pointer',
+                              border: photo.id === activePhotoId ? '2px solid var(--color-hover)' : '2px solid transparent',
+                              opacity: photo.id === activePhotoId ? 1 : 0.6,
+                              transition: 'all 0.15s'
+                            }}
+                          >
+                            <img
+                              src={photo.cloudinary_url}
+                              alt=""
+                              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Active Photo Preview */}
+                    <div style={{
+                      width: '100%',
+                      height: '320px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      background: 'rgba(0, 0, 0, 0.3)'
+                    }}>
+                      <img
+                        src={enhancedStates[activePhoto.id] ? getEnhancedUrl(activePhoto.cloudinary_url) : activePhoto.cloudinary_url}
+                        alt="Pending review"
                         style={{
-                          flex: 1,
-                          padding: '10px 16px',
-                          fontSize: '0.85rem',
-                          fontWeight: 600,
-                          borderRadius: '8px',
-                          border: 'none',
-                          cursor: actionLoading[photo.id] ? 'not-allowed' : 'pointer',
-                          background: '#27ae60',
-                          color: '#fff',
-                          opacity: actionLoading[photo.id] ? 0.6 : 1
+                          maxWidth: '100%',
+                          maxHeight: '320px',
+                          objectFit: 'contain',
+                          display: 'block'
                         }}
-                      >
-                        {actionLoading[photo.id] === 'approve' ? 'Approving...' : 'Approve'}
-                      </button>
-                      <button
-                        onClick={() => handleStatusChange(photo.id, 'rejected')}
-                        disabled={actionLoading[photo.id]}
-                        style={{
-                          flex: 1,
-                          padding: '10px 16px',
-                          fontSize: '0.85rem',
-                          fontWeight: 600,
-                          borderRadius: '8px',
-                          border: 'none',
-                          cursor: actionLoading[photo.id] ? 'not-allowed' : 'pointer',
-                          background: 'rgba(255, 255, 255, 0.1)',
-                          color: 'var(--color-text-secondary)',
-                          opacity: actionLoading[photo.id] ? 0.6 : 1
-                        }}
-                      >
-                        {actionLoading[photo.id] === 'reject' ? 'Rejecting...' : 'Reject'}
-                      </button>
-                      <button
-                        onClick={() => handleDelete(photo.id, true)}
-                        disabled={actionLoading[photo.id]}
-                        style={{
-                          padding: '10px 16px',
-                          fontSize: '0.85rem',
-                          fontWeight: 600,
-                          borderRadius: '8px',
-                          border: 'none',
-                          cursor: actionLoading[photo.id] ? 'not-allowed' : 'pointer',
-                          background: '#c0392b',
-                          color: '#fff',
-                          opacity: actionLoading[photo.id] ? 0.6 : 1
-                        }}
-                      >
-                        {actionLoading[photo.id] === 'delete' ? '...' : 'Delete'}
-                      </button>
+                      />
+                    </div>
+
+                    {/* Action Buttons - apply to active photo only */}
+                    <div style={{ padding: '16px' }}>
+                      <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginBottom: '12px' }}>
+                        {group.photos.length > 1
+                          ? `Reviewing photo ${group.photos.findIndex(p => p.id === activePhotoId) + 1} of ${group.photos.length}`
+                          : formatDate(activePhoto.created_at)
+                        }
+                      </p>
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <button
+                          onClick={() => handleStatusChange(activePhoto.id, 'published')}
+                          disabled={actionLoading[activePhoto.id]}
+                          style={{
+                            flex: 1,
+                            padding: '10px 16px',
+                            fontSize: '0.85rem',
+                            fontWeight: 600,
+                            borderRadius: '8px',
+                            border: 'none',
+                            cursor: actionLoading[activePhoto.id] ? 'not-allowed' : 'pointer',
+                            background: '#27ae60',
+                            color: '#fff',
+                            opacity: actionLoading[activePhoto.id] ? 0.6 : 1
+                          }}
+                        >
+                          {actionLoading[activePhoto.id] === 'approve' ? 'Approving...' : 'Approve'}
+                        </button>
+                        <button
+                          onClick={() => handleStatusChange(activePhoto.id, 'rejected')}
+                          disabled={actionLoading[activePhoto.id]}
+                          style={{
+                            flex: 1,
+                            padding: '10px 16px',
+                            fontSize: '0.85rem',
+                            fontWeight: 600,
+                            borderRadius: '8px',
+                            border: 'none',
+                            cursor: actionLoading[activePhoto.id] ? 'not-allowed' : 'pointer',
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            color: 'var(--color-text-secondary)',
+                            opacity: actionLoading[activePhoto.id] ? 0.6 : 1
+                          }}
+                        >
+                          {actionLoading[activePhoto.id] === 'reject' ? 'Rejecting...' : 'Reject'}
+                        </button>
+                        <button
+                          onClick={() => handleDelete(activePhoto.id, true)}
+                          disabled={actionLoading[activePhoto.id]}
+                          style={{
+                            padding: '10px 16px',
+                            fontSize: '0.85rem',
+                            fontWeight: 600,
+                            borderRadius: '8px',
+                            border: 'none',
+                            cursor: actionLoading[activePhoto.id] ? 'not-allowed' : 'pointer',
+                            background: '#c0392b',
+                            color: '#fff',
+                            opacity: actionLoading[activePhoto.id] ? 0.6 : 1
+                          }}
+                        >
+                          {actionLoading[activePhoto.id] === 'delete' ? '...' : 'Delete'}
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </>
         )}
@@ -366,7 +436,7 @@ export default function MediaTab({ onPendingCountChange, isSuperAdmin }) {
           alignItems: 'center',
           marginBottom: '16px'
         }}>
-          <h3 style={{ margin: 0 }}>Published Photos (Memory Lane)</h3>
+          <h3 style={{ margin: 0 }}>Published Photos (Throwback Vault)</h3>
           {isSuperAdmin && publishedPhotos.length > 0 && (
             <button
               onClick={handleDownloadAll}
