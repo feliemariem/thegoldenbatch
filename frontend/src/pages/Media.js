@@ -115,35 +115,57 @@ const MOCK_ARTICLES = [
 // ─── Coming Soon Screen ───────────────────────────────────────────────────────
 
 function ComingSoon({ user }) {
-  const [creditName, setCreditName] = useState('');
   const [files, setFiles] = useState([]); // array of { file, preview, status: 'pending'|'uploading'|'done'|'error' }
   const [overallStatus, setOverallStatus] = useState('idle'); // idle | uploading | success | error
   const [errorMsg, setErrorMsg] = useState('');
+  const [isDragging, setIsDragging] = useState(false);
 
   const MAX_FILES = 10;
   const MAX_SIZE = 8 * 1024 * 1024; // 8MB
 
-  const handleFileChange = (e) => {
-    const selected = Array.from(e.target.files);
+  const processFiles = (selected) => {
     const valid = [];
     let err = '';
-
     selected.forEach(f => {
-      if (f.size > MAX_SIZE) {
+      if (!f.type.startsWith('image/')) {
+        err = `${f.name} is not an image and was skipped.`;
+      } else if (f.size > MAX_SIZE) {
         err = `${f.name} exceeds 8MB and was skipped.`;
       } else {
         valid.push({ file: f, preview: URL.createObjectURL(f), status: 'pending' });
       }
     });
-
-    if (files.length + valid.length > MAX_FILES) {
-      err = `Maximum ${MAX_FILES} photos per submission.`;
-      valid.splice(MAX_FILES - files.length);
-    }
-
+    setFiles(prev => {
+      const combined = [...prev, ...valid];
+      if (combined.length > MAX_FILES) {
+        err = `Maximum ${MAX_FILES} photos per submission. Some were skipped.`;
+        return combined.slice(0, MAX_FILES);
+      }
+      return combined;
+    });
     setErrorMsg(err);
-    setFiles(prev => [...prev, ...valid]);
-    e.target.value = ''; // reset input so same file can be re-added after removal
+  };
+
+  const handleFileChange = (e) => {
+    processFiles(Array.from(e.target.files));
+    e.target.value = '';
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const dropped = Array.from(e.dataTransfer.files);
+    processFiles(dropped);
   };
 
   const removeFile = (index) => {
@@ -151,7 +173,7 @@ function ComingSoon({ user }) {
   };
 
   const handleSubmit = async () => {
-    if (!files.length || !creditName.trim()) return;
+    if (!files.length) return;
     setOverallStatus('uploading');
 
     const results = [];
@@ -160,8 +182,7 @@ function ComingSoon({ user }) {
       try {
         const formData = new FormData();
         formData.append('photo', files[i].file);
-        formData.append('credit_name', creditName.trim());
-        formData.append('album', 'memory_lane');
+          formData.append('album', 'memory_lane');
 
         const res = await fetch('/api/media/photos', {
           method: 'POST',
@@ -183,7 +204,6 @@ function ComingSoon({ user }) {
 
   const handleReset = () => {
     setFiles([]);
-    setCreditName('');
     setOverallStatus('idle');
     setErrorMsg('');
   };
@@ -225,8 +245,11 @@ function ComingSoon({ user }) {
           <p style={{ color: '#CFB53B', fontSize: '0.95rem', fontWeight: '600', margin: '0 0 4px' }}>
             Share your HS photos
           </p>
-          <p style={{ color: '#9a9a9a', fontSize: '0.82rem', margin: 0, lineHeight: 1.5 }}>
+          <p style={{ color: '#9a9a9a', fontSize: '0.82rem', margin: '0 0 8px', lineHeight: 1.5 }}>
             Got old Grade School or High School photos? Submit them here and we'll add them to the Memory Lane album once reviewed.
+          </p>
+          <p style={{ color: 'rgba(207,181,59,0.6)', fontSize: '0.78rem', margin: 0 }}>
+            Photos will be credited as <span style={{ color: '#CFB53B', fontWeight: '600' }}>Photo by {user?.current_name || `${user?.first_name} ${user?.last_name}`}</span>
           </p>
         </div>
 
@@ -246,36 +269,37 @@ function ComingSoon({ user }) {
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
 
-            {/* Name field */}
-            <div>
-              <label style={{ fontSize: '0.78rem', color: '#9a9a9a', display: 'block', marginBottom: '5px', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
-                Your name (for photo credit)
-              </label>
-              <input
-                type="text"
-                placeholder="e.g. Juan dela Cruz"
-                value={creditName}
-                onChange={e => setCreditName(e.target.value)}
-                className="media-form-input"
-              />
-            </div>
-
             {/* File upload drop zone */}
             <div>
               <label style={{ fontSize: '0.78rem', color: '#9a9a9a', display: 'block', marginBottom: '5px', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
                 Photos (JPG or PNG, max 8MB each, up to 10)
               </label>
-              <label style={{
-                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                gap: '6px', padding: '18px', borderRadius: '8px', cursor: 'pointer',
-                border: '1px dashed rgba(207,181,59,0.3)',
-                background: 'rgba(207,181,59,0.04)',
-                minHeight: '80px',
-              }}>
-                <span style={{ fontSize: '1.5rem' }}>📷</span>
-                <span style={{ color: '#9a9a9a', fontSize: '0.82rem' }}>
-                  {files.length === 0 ? 'Tap to choose photos' : `Add more (${files.length}/${MAX_FILES} selected)`}
+              <label
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                style={{
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                  gap: '6px', padding: '22px 18px', borderRadius: '8px', cursor: 'pointer',
+                  border: isDragging ? '1px dashed #CFB53B' : '1px dashed rgba(207,181,59,0.3)',
+                  background: isDragging ? 'rgba(207,181,59,0.1)' : 'rgba(207,181,59,0.04)',
+                  minHeight: '90px',
+                  transition: 'all 0.15s',
+                }}>
+                <span style={{ fontSize: '1.5rem' }}>{isDragging ? '⬇️' : '📷'}</span>
+                <span style={{ color: isDragging ? '#CFB53B' : '#9a9a9a', fontSize: '0.82rem', fontWeight: isDragging ? '500' : '400' }}>
+                  {isDragging
+                    ? 'Drop photos here'
+                    : files.length === 0
+                      ? 'Drag & drop photos here, or tap to choose'
+                      : `Add more (${files.length}/${MAX_FILES} selected)`
+                  }
                 </span>
+                {!isDragging && (
+                  <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '0.72rem' }}>
+                    JPG or PNG
+                  </span>
+                )}
                 <input
                   type="file"
                   accept="image/jpeg,image/png,image/jpg"
@@ -323,9 +347,9 @@ function ComingSoon({ user }) {
 
             <button
               onClick={handleSubmit}
-              disabled={!files.length || !creditName.trim() || overallStatus === 'uploading'}
+              disabled={!files.length || overallStatus === 'uploading'}
               className="media-submit-btn"
-              style={{ opacity: (!files.length || !creditName.trim()) ? 0.5 : 1, marginTop: '4px' }}
+              style={{ opacity: !files.length ? 0.5 : 1, marginTop: '4px' }}
             >
               {overallStatus === 'uploading'
                 ? `Uploading ${files.filter(f => f.status === 'done').length + 1} of ${files.length}...`
