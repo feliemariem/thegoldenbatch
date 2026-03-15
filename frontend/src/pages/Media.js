@@ -400,7 +400,7 @@ function ComingSoon({ user }) {
         </p>
       </div>
 
-      <PhotoUploadForm user={user} />
+      <PhotoUploadForm key="coming-soon-upload" user={user} />
     </div>
   );
 }
@@ -448,8 +448,8 @@ function PhotosTab({ user }) {
   };
 
   const handleUploadSuccess = () => {
-    setShowUploadForm(false);
-    // Optionally refresh, but new uploads are pending so won't appear in published list
+    // Don't close the form - let the success message show
+    // User can click "Submit more" or "Cancel" to dismiss
   };
 
   return (
@@ -473,7 +473,7 @@ function PhotosTab({ user }) {
 
       {canUpload && showUploadForm && (
         <div style={{ marginBottom: '20px' }}>
-          <PhotoUploadForm user={user} onUploadSuccess={handleUploadSuccess} />
+          <PhotoUploadForm key="photos-tab-upload" user={user} onUploadSuccess={handleUploadSuccess} />
         </div>
       )}
 

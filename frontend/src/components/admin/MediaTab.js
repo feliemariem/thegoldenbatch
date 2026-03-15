@@ -58,7 +58,7 @@ export default function MediaTab({ onPendingCountChange, isSuperAdmin }) {
   const fetchPendingPhotos = useCallback(async () => {
     try {
       setLoadingPending(true);
-      const res = await apiGet('/api/media/photos?status=pending');
+      const res = await apiGet(`/api/media/photos?status=pending&_t=${Date.now()}`);
       if (res.ok) {
         const data = await res.json();
         setPendingPhotos(data.photos || []);
@@ -75,7 +75,7 @@ export default function MediaTab({ onPendingCountChange, isSuperAdmin }) {
   const fetchPublishedPhotos = useCallback(async () => {
     try {
       setLoadingPublished(true);
-      const res = await apiGet('/api/media/photos?status=published');
+      const res = await apiGet(`/api/media/photos?status=published&_t=${Date.now()}`);
       if (res.ok) {
         const data = await res.json();
         setPublishedPhotos(data.photos || []);
