@@ -447,10 +447,10 @@ function ComingSoon({ user }) {
         <div style={{ width: '40px', height: '2px', background: '#CFB53B', opacity: 0.4, margin: '0 auto 14px' }} />
         <p style={{ color: '#9a9a9a', fontSize: '1rem', lineHeight: 1.7, margin: 0 }}>
           Your photos, videos, batch news, and memories -- all in one place.
-          We're putting the finishing touches on this. It's going to be good.
+          We're putting the finishing touches on this.
         </p>
         <p style={{ color: '#B8960C', fontSize: '0.88rem', margin: '8px 0 0', fontStyle: 'italic' }}>
-          Opening very soon, Golden Batch!
+          Opening very soon, Batchmates!
         </p>
       </div>
 
