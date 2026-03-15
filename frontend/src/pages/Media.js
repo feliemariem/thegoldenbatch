@@ -251,17 +251,12 @@ function PhotoUploadForm({ user, onUploadSuccess }) {
   return (
     <>
       {/* Upload card */}
-      <div style={{
-        background: 'rgba(255,255,255,0.03)',
-        border: '1px solid rgba(207,181,59,0.2)',
-        borderRadius: '14px',
-        padding: '24px',
-      }}>
+      <div className="media-upload-card">
         <div style={{ marginBottom: '16px' }}>
-          <p style={{ color: '#CFB53B', fontSize: '0.95rem', fontWeight: '600', margin: '0 0 4px' }}>
+          <p className="media-upload-title">
             Share your HS photos
           </p>
-          <p style={{ color: '#9a9a9a', fontSize: '0.82rem', margin: '0 0 8px', lineHeight: 1.5 }}>
+          <p className="media-upload-desc">
             Got old Grade School or High School photos? Submit them here and we'll add them to the Memory Lane album once reviewed.
           </p>
           <p style={{ color: 'rgba(207,181,59,0.6)', fontSize: '0.78rem', margin: 0 }}>
@@ -272,13 +267,13 @@ function PhotoUploadForm({ user, onUploadSuccess }) {
         {overallStatus === 'success' ? (
           <div style={{ textAlign: 'center', padding: '24px 0' }}>
             <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>🎉</div>
-            <p style={{ color: '#4caf50', fontWeight: '600', fontSize: '0.95rem', margin: '0 0 6px' }}>
+            <p className="media-success-text">
               {files.length === 1 ? 'Photo submitted!' : `${files.length} photos submitted!`}
             </p>
-            <p style={{ color: '#9a9a9a', fontSize: '0.82rem', margin: '0 0 16px' }}>
+            <p className="media-upload-desc" style={{ margin: '0 0 16px' }}>
               We'll review and add them to Memory Lane soon.
             </p>
-            <button onClick={handleReset} style={{ background: 'none', border: '1px solid rgba(255,255,255,0.12)', color: '#9a9a9a', borderRadius: '6px', padding: '6px 16px', fontSize: '0.82rem', cursor: 'pointer' }}>
+            <button onClick={handleReset} className="media-reset-btn">
               Submit more
             </button>
           </div>
@@ -287,23 +282,17 @@ function PhotoUploadForm({ user, onUploadSuccess }) {
 
             {/* File upload drop zone */}
             <div>
-              <label style={{ fontSize: '0.78rem', color: '#9a9a9a', display: 'block', marginBottom: '5px', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+              <label className="media-label">
                 Photos (JPG or PNG, max 8MB each, up to 10)
               </label>
               <label
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
-                style={{
-                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                  gap: '6px', padding: '22px 18px', borderRadius: '8px', cursor: 'pointer',
-                  border: isDragging ? '1px dashed #CFB53B' : '1px dashed rgba(207,181,59,0.3)',
-                  background: isDragging ? 'rgba(207,181,59,0.1)' : 'rgba(207,181,59,0.04)',
-                  minHeight: '90px',
-                  transition: 'all 0.15s',
-                }}>
+                className={`media-dropzone ${isDragging ? 'dragging' : ''}`}
+              >
                 <span style={{ fontSize: '1.5rem' }}>{isDragging ? '⬇️' : '📷'}</span>
-                <span style={{ color: isDragging ? '#CFB53B' : '#9a9a9a', fontSize: '0.82rem', fontWeight: isDragging ? '500' : '400' }}>
+                <span className="media-dropzone-text">
                   {isDragging
                     ? 'Drop photos here'
                     : files.length === 0
@@ -312,7 +301,7 @@ function PhotoUploadForm({ user, onUploadSuccess }) {
                   }
                 </span>
                 {!isDragging && (
-                  <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '0.72rem' }}>
+                  <span className="media-dropzone-hint">
                     JPG or PNG
                   </span>
                 )}
@@ -329,25 +318,25 @@ function PhotoUploadForm({ user, onUploadSuccess }) {
 
             {/* Preview grid */}
             {files.length > 0 && (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', gap: '8px' }}>
+              <div className="media-preview-grid">
                 {files.map((f, i) => (
-                  <div key={i} style={{ position: 'relative', aspectRatio: '1/1', borderRadius: '6px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
+                  <div key={i} className="media-preview-item">
                     <img src={f.preview} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     {/* Status overlay */}
                     {f.status === 'uploading' && (
-                      <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem' }}>⏳</div>
+                      <div className="media-preview-overlay">⏳</div>
                     )}
                     {f.status === 'done' && (
-                      <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem' }}>✅</div>
+                      <div className="media-preview-overlay done">✅</div>
                     )}
                     {f.status === 'error' && (
-                      <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem' }}>❌</div>
+                      <div className="media-preview-overlay">❌</div>
                     )}
                     {/* Remove button -- only show when idle */}
                     {overallStatus === 'idle' && f.status === 'pending' && (
                       <button
                         onClick={() => removeFile(i)}
-                        style={{ position: 'absolute', top: '3px', right: '3px', width: '18px', height: '18px', borderRadius: '50%', background: 'rgba(0,0,0,0.7)', border: 'none', color: '#fff', fontSize: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1 }}
+                        className="media-preview-remove"
                       >
                         &times;
                       </button>
@@ -358,7 +347,7 @@ function PhotoUploadForm({ user, onUploadSuccess }) {
             )}
 
             {errorMsg && (
-              <p style={{ color: '#e57373', fontSize: '0.8rem', margin: 0 }}>{errorMsg}</p>
+              <p className="media-error">{errorMsg}</p>
             )}
 
             <button
@@ -379,24 +368,18 @@ function PhotoUploadForm({ user, onUploadSuccess }) {
       {/* My Submissions */}
       {(loadingSubmissions || mySubmissions.length > 0) && (
         <div style={{ marginTop: '28px' }}>
-          <p style={{ color: '#9a9a9a', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '12px', fontWeight: '600' }}>
+          <p className="media-label" style={{ marginBottom: '12px', fontWeight: '600' }}>
             Your submissions
           </p>
           {loadingSubmissions ? (
-            <p style={{ color: '#666', fontSize: '0.82rem' }}>Loading...</p>
+            <p className="media-upload-desc">Loading...</p>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))', gap: '8px' }}>
+            <div className="media-submissions-grid">
               {mySubmissions.map(photo => (
-                <div key={photo.id} style={{ position: 'relative', aspectRatio: '1/1', borderRadius: '8px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <div key={photo.id} className="media-submission-item">
                   <img src={photo.cloudinary_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   {/* Status badge */}
-                  <div style={{
-                    position: 'absolute', bottom: '4px', left: '4px',
-                    fontSize: '9px', fontWeight: '700', textTransform: 'uppercase',
-                    letterSpacing: '0.06em', padding: '2px 6px', borderRadius: '4px',
-                    background: photo.status === 'published' ? 'rgba(0,102,51,0.9)' : photo.status === 'rejected' ? 'rgba(180,50,50,0.9)' : 'rgba(0,0,0,0.7)',
-                    color: '#fff',
-                  }}>
+                  <div className={`media-status-badge ${photo.status}`}>
                     {photo.status === 'published' ? 'Live' : photo.status === 'rejected' ? 'Rejected' : 'Pending'}
                   </div>
                   {/* Withdraw button -- only on pending */}
@@ -404,13 +387,8 @@ function PhotoUploadForm({ user, onUploadSuccess }) {
                     <button
                       onClick={() => handleWithdraw(photo.id)}
                       title="Withdraw photo"
-                      style={{
-                        position: 'absolute', top: '3px', right: '3px',
-                        width: '20px', height: '20px', borderRadius: '50%',
-                        background: 'rgba(0,0,0,0.75)', border: 'none',
-                        color: '#fff', fontSize: '11px', cursor: 'pointer',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      }}
+                      className="media-preview-remove"
+                      style={{ width: '20px', height: '20px', fontSize: '11px' }}
                     >
                       &times;
                     </button>
@@ -549,7 +527,7 @@ function PhotosTab({ user }) {
       </div>
 
       {canUpload && showUploadForm && (
-        <div className="media-article-form" style={{ marginBottom: '20px' }}>
+        <div style={{ marginBottom: '20px' }}>
           <PhotoUploadForm user={user} onUploadSuccess={() => setShowUploadForm(false)} />
         </div>
       )}
@@ -820,44 +798,70 @@ export default function Media() {
       <Footer />
 
       <style>{`
-        .album-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; overflow: hidden; cursor: pointer; transition: all 0.2s ease; }
+        .album-card { background: var(--color-bg-card); border: 1px solid var(--color-border, rgba(255,255,255,0.08)); border-radius: 10px; overflow: hidden; cursor: pointer; transition: all 0.2s ease; }
         .album-card:hover { border-color: rgba(207,181,59,0.3); transform: translateY(-2px); }
         .album-card:hover img { transform: scale(1.04); }
-        .album-card-title { font-size: 0.85rem; color: #e0e0e0; font-weight: 600; margin: 0 0 3px; }
-        .album-card-desc { font-size: 0.75rem; color: #9a9a9a; margin: 0; line-height: 1.4; }
-        .album-detail-title { font-size: 1.2rem; color: #CFB53B; font-weight: 400; margin: 0 0 6px; }
-        .album-detail-desc { font-size: 0.875rem; color: #9a9a9a; margin: 0 0 20px; }
-        .media-back-btn { background: none; border: none; color: #CFB53B; font-size: 0.85rem; cursor: pointer; padding: 0; margin-bottom: 16px; }
+        .album-card-title { font-size: 0.85rem; color: var(--color-text-primary); font-weight: 600; margin: 0 0 3px; }
+        .album-card-desc { font-size: 0.75rem; color: var(--color-text-secondary); margin: 0; line-height: 1.4; }
+        .album-detail-title { font-size: 1.2rem; color: var(--color-hover); font-weight: 400; margin: 0 0 6px; }
+        .album-detail-desc { font-size: 0.875rem; color: var(--color-text-secondary); margin: 0 0 20px; }
+        .media-back-btn { background: none; border: none; color: var(--color-hover); font-size: 0.85rem; cursor: pointer; padding: 0; margin-bottom: 16px; }
         .media-back-btn:hover { text-decoration: underline; }
         .media-item { transition: border-color 0.15s; }
         .media-item:hover { border-color: rgba(207,181,59,0.4) !important; }
-        .video-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; overflow: hidden; cursor: pointer; transition: all 0.2s ease; }
+        .video-card { background: var(--color-bg-card); border: 1px solid var(--color-border, rgba(255,255,255,0.08)); border-radius: 10px; overflow: hidden; cursor: pointer; transition: all 0.2s ease; }
         .video-card:hover { border-color: rgba(207,181,59,0.3); transform: translateY(-2px); }
-        .media-tab { padding: 10px 18px; background: none; border: none; border-bottom: 2px solid transparent; color: #9a9a9a; font-size: 0.85rem; cursor: pointer; white-space: nowrap; letter-spacing: 0.03em; transition: all 0.15s; margin-bottom: -1px; }
-        .media-tab:hover { color: #e0e0e0; }
-        .media-tab.active { color: #CFB53B; border-bottom-color: #CFB53B; }
+        .media-tab { padding: 10px 18px; background: none; border: none; border-bottom: 2px solid transparent; color: var(--color-text-secondary); font-size: 0.85rem; cursor: pointer; white-space: nowrap; letter-spacing: 0.03em; transition: all 0.15s; margin-bottom: -1px; }
+        .media-tab:hover { color: var(--color-text-primary); }
+        .media-tab.active { color: var(--color-hover); border-bottom-color: var(--color-hover); }
         .media-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
-        .media-count-badge { font-size: 0.8rem; color: #9a9a9a; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 999px; padding: 4px 12px; }
-        .media-layout-toggle { display: flex; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; overflow: hidden; }
-        .layout-btn { padding: 5px 12px; font-size: 0.75rem; background: transparent; border: none; color: #9a9a9a; cursor: pointer; transition: all 0.15s; }
+        .media-count-badge { font-size: 0.8rem; color: var(--color-text-secondary); background: var(--color-bg-card); border: 1px solid var(--color-border, rgba(255,255,255,0.08)); border-radius: 999px; padding: 4px 12px; }
+        .media-layout-toggle { display: flex; border: 1px solid var(--color-border, rgba(255,255,255,0.1)); border-radius: 6px; overflow: hidden; }
+        .layout-btn { padding: 5px 12px; font-size: 0.75rem; background: transparent; border: none; color: var(--color-text-secondary); cursor: pointer; transition: all 0.15s; }
         .layout-btn.active { background: #006633; color: #fff; }
-        .news-item-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 10px; padding: 14px 16px; transition: border-color 0.15s; }
+        .news-item-card { background: var(--color-bg-card); border: 1px solid var(--color-border, rgba(255,255,255,0.07)); border-radius: 10px; padding: 14px 16px; transition: border-color 0.15s; }
         .news-item-card:hover { border-color: rgba(207,181,59,0.2); }
         .news-item-label { display: inline-block; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; padding: 3px 8px; border-radius: 4px; }
-        .news-item-label.gold { background: rgba(207,181,59,0.12); color: #CFB53B; }
+        .news-item-label.gold { background: rgba(207,181,59,0.12); color: var(--color-hover); }
         .news-item-label.green { background: rgba(0,102,51,0.2); color: #4caf50; }
-        .news-item-title { font-size: 0.9rem; color: #e0e0e0; font-weight: 600; margin: 6px 0 4px; line-height: 1.35; }
-        .news-item-desc { font-size: 0.82rem; color: #9a9a9a; line-height: 1.5; margin: 0; }
-        .media-read-link { font-size: 0.78rem; color: #CFB53B; text-decoration: none; }
+        .news-item-title { font-size: 0.9rem; color: var(--color-text-primary); font-weight: 600; margin: 6px 0 4px; line-height: 1.35; }
+        .news-item-desc { font-size: 0.82rem; color: var(--color-text-secondary); line-height: 1.5; margin: 0; }
+        .media-read-link { font-size: 0.78rem; color: var(--color-hover); text-decoration: none; }
         .media-read-link:hover { text-decoration: underline; }
-        .media-add-btn { padding: 6px 16px; background: rgba(207,181,59,0.1); border: 1px solid rgba(207,181,59,0.3); color: #CFB53B; border-radius: 6px; font-size: 0.82rem; cursor: pointer; transition: all 0.15s; }
+        .media-add-btn { padding: 6px 16px; background: rgba(207,181,59,0.1); border: 1px solid rgba(207,181,59,0.3); color: var(--color-hover); border-radius: 6px; font-size: 0.82rem; cursor: pointer; transition: all 0.15s; }
         .media-add-btn:hover { background: rgba(207,181,59,0.18); }
-        .media-article-form { background: rgba(255,255,255,0.03); border: 1px solid rgba(207,181,59,0.15); border-radius: 10px; padding: 18px; margin-bottom: 20px; }
-        .media-form-input { width: 100%; padding: 8px 12px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #e0e0e0; font-size: 0.875rem; outline: none; font-family: inherit; transition: border-color 0.15s; box-sizing: border-box; }
+        .media-article-form { background: var(--color-bg-card); border: 1px solid rgba(207,181,59,0.15); border-radius: 10px; padding: 18px; margin-bottom: 20px; }
+        .media-form-input { width: 100%; padding: 8px 12px; background: var(--color-bg-secondary, rgba(0,0,0,0.1)); border: 1px solid var(--color-border, rgba(255,255,255,0.1)); border-radius: 6px; color: var(--color-text-primary); font-size: 0.875rem; outline: none; font-family: inherit; transition: border-color 0.15s; box-sizing: border-box; }
         .media-form-input:focus { border-color: rgba(207,181,59,0.4); }
-        .media-form-input::placeholder { color: #555; }
+        .media-form-input::placeholder { color: var(--color-text-secondary); }
         .media-submit-btn { padding: 8px 24px; background: #006633; border: none; color: #fff; border-radius: 6px; font-size: 0.875rem; cursor: pointer; transition: background 0.15s; }
         .media-submit-btn:hover { background: #00522a; }
+
+        /* Upload form styles */
+        .media-upload-card { background: var(--color-bg-card); border: 1px solid rgba(207,181,59,0.15); border-radius: 14px; padding: 24px; }
+        .media-upload-title { color: var(--color-hover); font-size: 0.95rem; font-weight: 600; margin: 0 0 4px; }
+        .media-upload-desc { color: var(--color-text-secondary); font-size: 0.82rem; margin: 0 0 8px; line-height: 1.5; }
+        .media-success-text { color: var(--color-status-positive, #4caf50); font-weight: 600; font-size: 0.95rem; margin: 0 0 6px; }
+        .media-reset-btn { background: none; border: 1px solid var(--color-border, rgba(255,255,255,0.12)); color: var(--color-text-secondary); border-radius: 6px; padding: 6px 16px; font-size: 0.82rem; cursor: pointer; }
+        .media-reset-btn:hover { border-color: var(--color-hover); color: var(--color-hover); }
+        .media-label { font-size: 0.78rem; color: var(--color-text-secondary); display: block; margin-bottom: 5px; letter-spacing: 0.04em; text-transform: uppercase; }
+        .media-dropzone { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 22px 18px; border-radius: 8px; cursor: pointer; border: 1px dashed rgba(207,181,59,0.3); background: rgba(207,181,59,0.04); min-height: 90px; transition: all 0.15s; }
+        .media-dropzone.dragging { border-color: var(--color-hover); background: rgba(207,181,59,0.1); }
+        .media-dropzone-text { color: var(--color-text-secondary); font-size: 0.82rem; font-weight: 400; }
+        .media-dropzone.dragging .media-dropzone-text { color: var(--color-hover); font-weight: 500; }
+        .media-dropzone-hint { color: var(--color-text-secondary); opacity: 0.5; font-size: 0.72rem; }
+        .media-preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; }
+        .media-preview-item { position: relative; aspect-ratio: 1/1; border-radius: 6px; overflow: hidden; border: 1px solid var(--color-border, rgba(255,255,255,0.1)); }
+        .media-preview-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+        .media-preview-overlay.done { background: rgba(0,0,0,0.4); font-size: 1.2rem; }
+        .media-preview-remove { position: absolute; top: 3px; right: 3px; width: 18px; height: 18px; border-radius: 50%; background: rgba(0,0,0,0.7); border: none; color: #fff; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; }
+        .media-error { color: var(--color-status-negative, #e57373); font-size: 0.8rem; margin: 0; }
+        .media-submissions-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 8px; }
+        .media-submission-item { position: relative; aspect-ratio: 1/1; border-radius: 8px; overflow: hidden; border: 1px solid var(--color-border, rgba(255,255,255,0.08)); }
+        .media-status-badge { position: absolute; bottom: 4px; left: 4px; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding: 2px 6px; border-radius: 4px; background: rgba(0,0,0,0.7); color: #fff; }
+        .media-status-badge.published { background: rgba(0,102,51,0.9); }
+        .media-status-badge.rejected { background: rgba(180,50,50,0.9); }
+
         @media (max-width: 640px) {
           .media-tab { padding: 8px 12px; font-size: 0.78rem; }
         }
