@@ -257,7 +257,6 @@ export default function BatchRepVoting() {
               <strong>Voting has ended.</strong> The deadline was March 30, 2026 at 11:59 PM PHT.
             </div>
           )}
-        </div>
 
         {/* Why we're voting overview */}
         <div className="batchrep-response-card">
@@ -512,7 +511,8 @@ export default function BatchRepVoting() {
           USLSIS Batch 2003 · Round 2 Voting
         </div>
       </div>
-      <Footer />
+    </div>
+    <Footer />
     </>
   );
 }
