@@ -1024,7 +1024,7 @@ export default function AdminDashboard() {
 
         {/* MEDIA MODE */}
         {dashboardMode === 'media' && (isSuperAdmin || permissions?.can_approve_media) && (
-          <MediaTab onPendingCountChange={setMediaPendingCount} />
+          <MediaTab onPendingCountChange={setMediaPendingCount} isSuperAdmin={isSuperAdmin} />
         )}
 
         {/* PERMISSIONS MODE - Super Admin Only */}

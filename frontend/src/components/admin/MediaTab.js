@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { apiGet, apiPatch, apiDelete } from '../../api';
+import { API_URL } from '../../config';
 
 // Helper: insert Cloudinary enhancements into URL
 const getEnhancedUrl = (url) => {
@@ -24,7 +25,7 @@ const formatDate = (dateStr) => {
   });
 };
 
-export default function MediaTab({ onPendingCountChange }) {
+export default function MediaTab({ onPendingCountChange, isSuperAdmin }) {
   const [pendingPhotos, setPendingPhotos] = useState([]);
   const [publishedPhotos, setPublishedPhotos] = useState([]);
   const [loadingPending, setLoadingPending] = useState(true);
@@ -32,6 +33,7 @@ export default function MediaTab({ onPendingCountChange }) {
   const [error, setError] = useState(null);
   const [enhancedStates, setEnhancedStates] = useState({}); // { photoId: boolean }
   const [actionLoading, setActionLoading] = useState({}); // { photoId: 'approve' | 'reject' | 'delete' }
+  const [downloadAllLoading, setDownloadAllLoading] = useState(false);
 
   const fetchPendingPhotos = useCallback(async () => {
     try {
@@ -115,6 +117,73 @@ export default function MediaTab({ onPendingCountChange }) {
 
   const toggleEnhanced = (photoId) => {
     setEnhancedStates(prev => ({ ...prev, [photoId]: !prev[photoId] }));
+  };
+
+  const handleDownloadAll = async () => {
+    setDownloadAllLoading(true);
+    try {
+      const res = await fetch(`${API_URL}/api/media/photos/download/album/memory_lane`, {
+        credentials: 'include'
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        alert(data.message || data.error || 'Failed to download');
+        return;
+      }
+
+      // Get filename from Content-Disposition header or use default
+      const disposition = res.headers.get('Content-Disposition');
+      const filenameMatch = disposition && disposition.match(/filename="(.+)"/);
+      const filename = filenameMatch ? filenameMatch[1] : 'memorylane-photos.zip';
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Download failed:', err);
+      alert('Failed to download photos');
+    } finally {
+      setDownloadAllLoading(false);
+    }
+  };
+
+  const handleDownloadSingle = async (photoId) => {
+    try {
+      const res = await fetch(`${API_URL}/api/media/photos/${photoId}/download`, {
+        credentials: 'include'
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || 'Failed to download');
+        return;
+      }
+
+      // Get filename from Content-Disposition header
+      const disposition = res.headers.get('Content-Disposition');
+      const filenameMatch = disposition && disposition.match(/filename="(.+)"/);
+      const filename = filenameMatch ? filenameMatch[1] : `photo-${photoId}.jpg`;
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Download failed:', err);
+      alert('Failed to download photo');
+    }
   };
 
   if (error) {
@@ -291,7 +360,36 @@ export default function MediaTab({ onPendingCountChange }) {
 
       {/* SECTION B: Published Photos (Memory Lane) */}
       <div>
-        <h3 style={{ marginBottom: '16px' }}>Published Photos (Memory Lane)</h3>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '16px'
+        }}>
+          <h3 style={{ margin: 0 }}>Published Photos (Memory Lane)</h3>
+          {isSuperAdmin && publishedPhotos.length > 0 && (
+            <button
+              onClick={handleDownloadAll}
+              disabled={downloadAllLoading}
+              style={{
+                padding: '8px 16px',
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                borderRadius: '8px',
+                border: 'none',
+                cursor: downloadAllLoading ? 'not-allowed' : 'pointer',
+                background: 'var(--color-hover)',
+                color: 'var(--color-bg-primary)',
+                opacity: downloadAllLoading ? 0.7 : 1,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+            >
+              {downloadAllLoading ? 'Preparing ZIP...' : 'Download All'}
+            </button>
+          )}
+        </div>
 
         {loadingPublished ? (
           <p style={{ color: 'var(--color-text-secondary)', fontStyle: 'italic' }}>Loading...</p>
@@ -339,24 +437,50 @@ export default function MediaTab({ onPendingCountChange }) {
                   <p style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginBottom: '8px' }}>
                     {formatDate(photo.created_at)}
                   </p>
-                  <button
-                    onClick={() => handleDelete(photo.id, false)}
-                    disabled={actionLoading[photo.id]}
-                    style={{
-                      width: '100%',
-                      padding: '8px',
-                      fontSize: '0.75rem',
-                      fontWeight: 600,
-                      borderRadius: '6px',
-                      border: 'none',
-                      cursor: actionLoading[photo.id] ? 'not-allowed' : 'pointer',
-                      background: 'rgba(192, 57, 43, 0.2)',
-                      color: '#e74c3c',
-                      opacity: actionLoading[photo.id] ? 0.6 : 1
-                    }}
-                  >
-                    {actionLoading[photo.id] === 'delete' ? 'Deleting...' : 'Delete'}
-                  </button>
+                  <div style={{ display: 'flex', gap: '6px' }}>
+                    {isSuperAdmin && (
+                      <button
+                        onClick={() => handleDownloadSingle(photo.id)}
+                        title="Download"
+                        style={{
+                          padding: '8px',
+                          fontSize: '0.75rem',
+                          borderRadius: '6px',
+                          border: 'none',
+                          cursor: 'pointer',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          color: 'var(--color-text-secondary)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                          <polyline points="7 10 12 15 17 10" />
+                          <line x1="12" y1="15" x2="12" y2="3" />
+                        </svg>
+                      </button>
+                    )}
+                    <button
+                      onClick={() => handleDelete(photo.id, false)}
+                      disabled={actionLoading[photo.id]}
+                      style={{
+                        flex: 1,
+                        padding: '8px',
+                        fontSize: '0.75rem',
+                        fontWeight: 600,
+                        borderRadius: '6px',
+                        border: 'none',
+                        cursor: actionLoading[photo.id] ? 'not-allowed' : 'pointer',
+                        background: 'rgba(192, 57, 43, 0.2)',
+                        color: '#e74c3c',
+                        opacity: actionLoading[photo.id] ? 0.6 : 1
+                      }}
+                    >
+                      {actionLoading[photo.id] === 'delete' ? 'Deleting...' : 'Delete'}
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}

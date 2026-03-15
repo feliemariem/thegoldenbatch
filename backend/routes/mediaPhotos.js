@@ -1,9 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
+const archiver = require('archiver');
 const db = require('../db');
 const { authenticateToken } = require('../middleware/auth');
 const { cloudinary } = require('../utils/cloudinary');
+
+// Helper: slugify a string for filenames
+const slugify = (str) => str.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
 
 // Custom multer config for photos: 8MB, jpeg/png only
 const photoUpload = multer({
@@ -17,6 +21,15 @@ const photoUpload = multer({
     }
   }
 });
+
+// Helper: check if user is super admin
+const isSuperAdmin = async (email) => {
+  const result = await db.query(
+    'SELECT is_super_admin FROM admins WHERE LOWER(email) = $1',
+    [email.toLowerCase()]
+  );
+  return result.rows.length > 0 && result.rows[0].is_super_admin === true;
+};
 
 // Helper: check if user can approve media (super admin OR has can_approve_media permission)
 const canApproveMedia = async (email) => {
@@ -167,6 +180,141 @@ router.get('/mine', authenticateToken, async (req, res) => {
   } catch (err) {
     console.error('Error fetching user photos:', err);
     res.status(500).json({ error: 'Failed to fetch photos' });
+  }
+});
+
+// =============================================================================
+// GET /api/media/photos/download/album/:album - Download all photos in album as ZIP
+// =============================================================================
+router.get('/download/album/:album', authenticateToken, async (req, res) => {
+  try {
+    const isAdmin = await isSuperAdmin(req.user.email);
+    if (!isAdmin) {
+      return res.status(403).json({ error: 'Super admin access required' });
+    }
+
+    const { album } = req.params;
+    const status = req.query.status || 'published';
+
+    // Fetch all photos matching album and status
+    const result = await db.query(
+      `SELECT * FROM media_photos
+       WHERE album = $1 AND status = $2
+       ORDER BY created_at ASC`,
+      [album, status]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'No photos found' });
+    }
+
+    const photos = result.rows;
+
+    // Set response headers for ZIP download
+    const dateStr = new Date().toISOString().split('T')[0];
+    const filename = `memorylane-${status}-${dateStr}.zip`;
+    res.setHeader('Content-Type', 'application/zip');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+
+    // Create archive
+    const archive = archiver('zip', { zlib: { level: 5 } });
+
+    archive.on('error', (err) => {
+      console.error('Archiver error:', err);
+      if (!res.headersSent) {
+        res.status(500).json({ error: 'Failed to create ZIP archive' });
+      }
+    });
+
+    archive.pipe(res);
+
+    // Fetch images with concurrency limit of 5
+    const concurrencyLimit = 5;
+    for (let i = 0; i < photos.length; i += concurrencyLimit) {
+      const batch = photos.slice(i, i + concurrencyLimit);
+
+      const fetchPromises = batch.map(async (photo, batchIndex) => {
+        const index = i + batchIndex + 1;
+        const sluggedName = slugify(photo.credit_name);
+        const ext = photo.cloudinary_url.toLowerCase().includes('.png') ? 'png' : 'jpg';
+        const entryName = `${index}-${sluggedName}-${photo.id}.${ext}`;
+
+        try {
+          const response = await fetch(photo.cloudinary_url);
+          if (!response.ok) {
+            console.error(`Failed to fetch photo ${photo.id}: ${response.status}`);
+            return null;
+          }
+          const buffer = Buffer.from(await response.arrayBuffer());
+          return { entryName, buffer };
+        } catch (err) {
+          console.error(`Failed to fetch photo ${photo.id}:`, err);
+          return null;
+        }
+      });
+
+      const results = await Promise.all(fetchPromises);
+
+      for (const result of results) {
+        if (result) {
+          archive.append(result.buffer, { name: result.entryName });
+        }
+      }
+    }
+
+    await archive.finalize();
+  } catch (err) {
+    console.error('Error creating ZIP download:', err);
+    if (!res.headersSent) {
+      res.status(500).json({ error: 'Failed to create download' });
+    }
+  }
+});
+
+// =============================================================================
+// GET /api/media/photos/:id/download - Download single photo
+// =============================================================================
+router.get('/:id/download', authenticateToken, async (req, res) => {
+  try {
+    const isAdmin = await isSuperAdmin(req.user.email);
+    if (!isAdmin) {
+      return res.status(403).json({ error: 'Super admin access required' });
+    }
+
+    const { id } = req.params;
+
+    // Fetch the photo
+    const result = await db.query(
+      'SELECT * FROM media_photos WHERE id = $1',
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Photo not found' });
+    }
+
+    const photo = result.rows[0];
+    const sluggedName = slugify(photo.credit_name);
+    const ext = photo.cloudinary_url.toLowerCase().includes('.png') ? 'png' : 'jpg';
+    const contentType = ext === 'png' ? 'image/png' : 'image/jpeg';
+    const filename = `memorylane-${sluggedName}-${photo.id}.${ext}`;
+
+    // Fetch the image from Cloudinary
+    const response = await fetch(photo.cloudinary_url);
+    if (!response.ok) {
+      return res.status(500).json({ error: 'Failed to fetch image from storage' });
+    }
+
+    // Set response headers
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+
+    // Stream the response body to the client
+    const buffer = Buffer.from(await response.arrayBuffer());
+    res.send(buffer);
+  } catch (err) {
+    console.error('Error downloading photo:', err);
+    res.status(500).json({ error: 'Failed to download photo' });
   }
 });
 
