@@ -265,8 +265,9 @@ export default function BatchRepVoting() {
           </div>
           <div className="batchrep-response-body" style={{ padding: '20px' }}>
             <p style={{ marginBottom: '12px' }}>
-              In Round 1, the organizing committee put forward its two co-chairs as nominees —
-              <strong> Bianca Jison</strong> for Alumni Association Representative and{' '}
+              The USLS Alumni Association has asked our batch to put forward an official representative.
+              In Round 1, the organizing committee presented its two co-chairs as nominees —{' '}
+              <strong>Bianca Jison</strong> for Alumni Association Representative and{' '}
               <strong>Felie Magbanua</strong> for Batch Representative.
             </p>
             <p style={{ marginBottom: '12px' }}>
@@ -275,7 +276,7 @@ export default function BatchRepVoting() {
             </p>
             <p style={{ marginBottom: '0' }}>
               For <strong>Position 1 (Alumni Association Representative)</strong>, a batchmate stepped
-              forward, confirmed their willingness to serve, and is being put forward as an alternative
+              forward, confirmed their willingness to serve, and is now on the ballot as an alternative
               nominee. That triggers a batch vote — and this is ultimately the batch's decision.
             </p>
           </div>
