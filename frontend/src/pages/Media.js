@@ -147,7 +147,6 @@ function PhotoUploadForm({ user, onUploadSuccess }) {
   };
 
   const handleSubmit = async () => {
-    console.log('handleSubmit fired', files.length);
     if (!files.length) return;
     setOverallStatus('uploading');
 
