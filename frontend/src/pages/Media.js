@@ -114,43 +114,227 @@ const MOCK_ARTICLES = [
 
 // ─── Coming Soon Screen ───────────────────────────────────────────────────────
 
-function ComingSoon() {
+function ComingSoon({ user }) {
+  const [creditName, setCreditName] = useState('');
+  const [files, setFiles] = useState([]); // array of { file, preview, status: 'pending'|'uploading'|'done'|'error' }
+  const [overallStatus, setOverallStatus] = useState('idle'); // idle | uploading | success | error
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const MAX_FILES = 10;
+  const MAX_SIZE = 8 * 1024 * 1024; // 8MB
+
+  const handleFileChange = (e) => {
+    const selected = Array.from(e.target.files);
+    const valid = [];
+    let err = '';
+
+    selected.forEach(f => {
+      if (f.size > MAX_SIZE) {
+        err = `${f.name} exceeds 8MB and was skipped.`;
+      } else {
+        valid.push({ file: f, preview: URL.createObjectURL(f), status: 'pending' });
+      }
+    });
+
+    if (files.length + valid.length > MAX_FILES) {
+      err = `Maximum ${MAX_FILES} photos per submission.`;
+      valid.splice(MAX_FILES - files.length);
+    }
+
+    setErrorMsg(err);
+    setFiles(prev => [...prev, ...valid]);
+    e.target.value = ''; // reset input so same file can be re-added after removal
+  };
+
+  const removeFile = (index) => {
+    setFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleSubmit = async () => {
+    if (!files.length || !creditName.trim()) return;
+    setOverallStatus('uploading');
+
+    const results = [];
+    for (let i = 0; i < files.length; i++) {
+      setFiles(prev => prev.map((f, idx) => idx === i ? { ...f, status: 'uploading' } : f));
+      try {
+        const formData = new FormData();
+        formData.append('photo', files[i].file);
+        formData.append('credit_name', creditName.trim());
+        formData.append('album', 'memory_lane');
+
+        const res = await fetch('/api/media/photos', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+          body: formData,
+        });
+
+        if (!res.ok) throw new Error('Upload failed');
+        setFiles(prev => prev.map((f, idx) => idx === i ? { ...f, status: 'done' } : f));
+        results.push('done');
+      } catch (err) {
+        setFiles(prev => prev.map((f, idx) => idx === i ? { ...f, status: 'error' } : f));
+        results.push('error');
+      }
+    }
+
+    setOverallStatus(results.every(r => r === 'done') ? 'success' : 'error');
+  };
+
+  const handleReset = () => {
+    setFiles([]);
+    setCreditName('');
+    setOverallStatus('idle');
+    setErrorMsg('');
+  };
+
   return (
-    <div style={{
-      minHeight: '60vh',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      textAlign: 'center',
-      padding: '60px 24px',
-      gap: '16px',
-    }}>
-      <div style={{
-        width: '72px',
-        height: '72px',
-        borderRadius: '50%',
-        background: 'rgba(207,181,59,0.1)',
-        border: '2px solid rgba(207,181,59,0.25)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '2rem',
-        marginBottom: '8px',
-      }}>
-        🎬
+    <div style={{ padding: '48px 24px', maxWidth: '560px', margin: '0 auto' }}>
+
+      {/* Header */}
+      <div style={{ textAlign: 'center', marginBottom: '36px' }}>
+        <div style={{
+          width: '72px', height: '72px', borderRadius: '50%',
+          background: 'rgba(207,181,59,0.1)', border: '2px solid rgba(207,181,59,0.25)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: '2rem', margin: '0 auto 16px',
+        }}>
+          🎬
+        </div>
+        <h2 style={{ fontSize: '1.6rem', fontWeight: '400', color: '#CFB53B', margin: '0 0 10px', letterSpacing: '0.02em' }}>
+          Media Hub
+        </h2>
+        <div style={{ width: '40px', height: '2px', background: '#CFB53B', opacity: 0.4, margin: '0 auto 14px' }} />
+        <p style={{ color: '#9a9a9a', fontSize: '1rem', lineHeight: 1.7, margin: 0 }}>
+          Your photos, videos, batch news, and memories -- all in one place.
+          We're putting the finishing touches on this. It's going to be good.
+        </p>
+        <p style={{ color: '#B8960C', fontSize: '0.88rem', margin: '8px 0 0', fontStyle: 'italic' }}>
+          Opening very soon, Golden Batch!
+        </p>
       </div>
-      <h2 style={{ fontSize: '1.6rem', fontWeight: '400', color: '#CFB53B', margin: 0, letterSpacing: '0.02em' }}>
-        Media Hub
-      </h2>
-      <div style={{ width: '40px', height: '2px', background: '#CFB53B', opacity: 0.4 }} />
-      <p style={{ color: '#9a9a9a', fontSize: '1rem', maxWidth: '400px', lineHeight: 1.7, margin: 0 }}>
-        Your photos, videos, batch news, and memories -- all in one place.
-        We're putting the finishing touches on this.
-      </p>
-      <p style={{ color: '#B8960C', fontSize: '0.88rem', margin: '4px 0 0', letterSpacing: '0.05em', fontStyle: 'italic' }}>
-        Opening very soon, Batchmates!
-      </p>
+
+      {/* Upload card */}
+      <div style={{
+        background: 'rgba(255,255,255,0.03)',
+        border: '1px solid rgba(207,181,59,0.2)',
+        borderRadius: '14px',
+        padding: '24px',
+      }}>
+        <div style={{ marginBottom: '16px' }}>
+          <p style={{ color: '#CFB53B', fontSize: '0.95rem', fontWeight: '600', margin: '0 0 4px' }}>
+            Share your HS photos
+          </p>
+          <p style={{ color: '#9a9a9a', fontSize: '0.82rem', margin: 0, lineHeight: 1.5 }}>
+            Got old Grade School or High School photos? Submit them here and we'll add them to the Memory Lane album once reviewed.
+          </p>
+        </div>
+
+        {overallStatus === 'success' ? (
+          <div style={{ textAlign: 'center', padding: '24px 0' }}>
+            <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>🎉</div>
+            <p style={{ color: '#4caf50', fontWeight: '600', fontSize: '0.95rem', margin: '0 0 6px' }}>
+              {files.length === 1 ? 'Photo submitted!' : `${files.length} photos submitted!`}
+            </p>
+            <p style={{ color: '#9a9a9a', fontSize: '0.82rem', margin: '0 0 16px' }}>
+              We'll review and add them to Memory Lane soon.
+            </p>
+            <button onClick={handleReset} style={{ background: 'none', border: '1px solid rgba(255,255,255,0.12)', color: '#9a9a9a', borderRadius: '6px', padding: '6px 16px', fontSize: '0.82rem', cursor: 'pointer' }}>
+              Submit more
+            </button>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+
+            {/* Name field */}
+            <div>
+              <label style={{ fontSize: '0.78rem', color: '#9a9a9a', display: 'block', marginBottom: '5px', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+                Your name (for photo credit)
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. Juan dela Cruz"
+                value={creditName}
+                onChange={e => setCreditName(e.target.value)}
+                className="media-form-input"
+              />
+            </div>
+
+            {/* File upload drop zone */}
+            <div>
+              <label style={{ fontSize: '0.78rem', color: '#9a9a9a', display: 'block', marginBottom: '5px', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+                Photos (JPG or PNG, max 8MB each, up to 10)
+              </label>
+              <label style={{
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                gap: '6px', padding: '18px', borderRadius: '8px', cursor: 'pointer',
+                border: '1px dashed rgba(207,181,59,0.3)',
+                background: 'rgba(207,181,59,0.04)',
+                minHeight: '80px',
+              }}>
+                <span style={{ fontSize: '1.5rem' }}>📷</span>
+                <span style={{ color: '#9a9a9a', fontSize: '0.82rem' }}>
+                  {files.length === 0 ? 'Tap to choose photos' : `Add more (${files.length}/${MAX_FILES} selected)`}
+                </span>
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/jpg"
+                  multiple
+                  onChange={handleFileChange}
+                  disabled={files.length >= MAX_FILES}
+                  style={{ display: 'none' }}
+                />
+              </label>
+            </div>
+
+            {/* Preview grid */}
+            {files.length > 0 && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', gap: '8px' }}>
+                {files.map((f, i) => (
+                  <div key={i} style={{ position: 'relative', aspectRatio: '1/1', borderRadius: '6px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
+                    <img src={f.preview} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    {/* Status overlay */}
+                    {f.status === 'uploading' && (
+                      <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem' }}>⏳</div>
+                    )}
+                    {f.status === 'done' && (
+                      <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem' }}>✅</div>
+                    )}
+                    {f.status === 'error' && (
+                      <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem' }}>❌</div>
+                    )}
+                    {/* Remove button -- only show when idle */}
+                    {overallStatus === 'idle' && f.status === 'pending' && (
+                      <button
+                        onClick={() => removeFile(i)}
+                        style={{ position: 'absolute', top: '3px', right: '3px', width: '18px', height: '18px', borderRadius: '50%', background: 'rgba(0,0,0,0.7)', border: 'none', color: '#fff', fontSize: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', lineHeight: 1 }}
+                      >
+                        &times;
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {errorMsg && (
+              <p style={{ color: '#e57373', fontSize: '0.8rem', margin: 0 }}>{errorMsg}</p>
+            )}
+
+            <button
+              onClick={handleSubmit}
+              disabled={!files.length || !creditName.trim() || overallStatus === 'uploading'}
+              className="media-submit-btn"
+              style={{ opacity: (!files.length || !creditName.trim()) ? 0.5 : 1, marginTop: '4px' }}
+            >
+              {overallStatus === 'uploading'
+                ? `Uploading ${files.filter(f => f.status === 'done').length + 1} of ${files.length}...`
+                : `Submit ${files.length > 0 ? `${files.length} ` : ''}photo${files.length !== 1 ? 's' : ''}`
+              }
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -468,7 +652,7 @@ export default function Media() {
       <div className="card">
         <main className="profile-main">
           {!hasAccess ? (
-            <ComingSoon />
+            <ComingSoon user={user} />
           ) : (
             <>
               <div style={{ marginBottom: '28px' }}>
