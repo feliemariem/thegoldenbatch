@@ -405,10 +405,18 @@ export default function BatchRepVoting() {
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                               <span style={{ fontWeight: '600', color: 'var(--color-text-primary)', fontSize: '0.95rem' }}>{name}</span>
-                              {isWinner && results.total > 0 && (
-                                <span style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--color-status-positive)', background: 'rgba(39,174,96,0.15)', padding: '2px 8px', borderRadius: '4px' }}>
-                                  Leading
-                                </span>
+                              {isDeadlinePassed ? (
+                                isWinner && results.total > 0 && (
+                                  <span style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--color-status-positive)', background: 'rgba(39,174,96,0.15)', padding: '2px 8px', borderRadius: '4px' }}>
+                                    Confirmed
+                                  </span>
+                                )
+                              ) : (
+                                isWinner && results.total > 0 && (
+                                  <span style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--color-status-positive)', background: 'rgba(39,174,96,0.15)', padding: '2px 8px', borderRadius: '4px' }}>
+                                    Leading
+                                  </span>
+                                )
                               )}
                             </div>
                             <span style={{ fontSize: '0.9rem', fontWeight: '700', color: 'var(--color-hover)' }}>
@@ -431,10 +439,10 @@ export default function BatchRepVoting() {
                     })}
 
                     <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginTop: '12px', textAlign: 'center' }}>
-                      {results.total} {results.total === 1 ? 'vote' : 'votes'} cast
-                      {!isDeadlinePassed && (
-                        <span style={{ marginLeft: '6px', opacity: 0.7 }}>· refreshes every 30s</span>
-                      )}
+                      {isDeadlinePassed
+                        ? `Voting closed · March 30, 2026 · 11:59 PM PHT · ${results.total} ${results.total === 1 ? 'vote' : 'votes'} cast`
+                        : `${results.total} ${results.total === 1 ? 'vote' : 'votes'} cast · refreshes every 30s`
+                      }
                     </div>
                   </div>
                 ) : (
@@ -461,10 +469,18 @@ export default function BatchRepVoting() {
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                               <span style={{ fontWeight: '600', color: 'var(--color-text-primary)', fontSize: '0.95rem' }}>{name}</span>
-                              {isWinner && results.total > 0 && (
-                                <span style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--color-status-positive)', background: 'rgba(39,174,96,0.15)', padding: '2px 8px', borderRadius: '4px' }}>
-                                  Winner
-                                </span>
+                              {isDeadlinePassed ? (
+                                isWinner && results.total > 0 && (
+                                  <span style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--color-status-positive)', background: 'rgba(39,174,96,0.15)', padding: '2px 8px', borderRadius: '4px' }}>
+                                    Confirmed
+                                  </span>
+                                )
+                              ) : (
+                                isWinner && results.total > 0 && (
+                                  <span style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--color-status-positive)', background: 'rgba(39,174,96,0.15)', padding: '2px 8px', borderRadius: '4px' }}>
+                                    Leading
+                                  </span>
+                                )
                               )}
                             </div>
                             <span style={{ fontSize: '0.9rem', fontWeight: '700', color: 'var(--color-hover)' }}>
@@ -487,7 +503,7 @@ export default function BatchRepVoting() {
                     })}
 
                     <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginTop: '12px', textAlign: 'center' }}>
-                      {results.total} {results.total === 1 ? 'vote' : 'votes'} cast
+                      {`Voting closed · March 30, 2026 · 11:59 PM PHT · ${results.total} ${results.total === 1 ? 'vote' : 'votes'} cast`}
                     </div>
                   </div>
                 ) : (
