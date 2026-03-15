@@ -351,6 +351,17 @@ body[data-theme="light"] .dir-badge-reg {
   font-style: italic;
 }
 
+.dir-badge-going {
+  background: transparent;
+  color: var(--color-primary);
+  border: 0.5px solid var(--color-primary);
+}
+
+[data-theme="dark"] .dir-badge-going {
+  color: var(--color-gold);
+  border-color: var(--color-gold);
+}
+
 /* Social Icons */
 .dir-card-socials {
   display: flex;

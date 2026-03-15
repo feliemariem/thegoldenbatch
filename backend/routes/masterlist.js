@@ -653,10 +653,12 @@ router.get('/directory', authenticateToken, async (req, res) => {
         u.facebook_url,
         u.linkedin_url,
         u.instagram_url,
-        u.visibility
+        u.visibility,
+        r.status as rsvp_status
       FROM master_list m
       LEFT JOIN invites i ON i.master_list_id = m.id
       LEFT JOIN users u ON u.invite_id = i.id
+      LEFT JOIN rsvps r ON r.user_id = u.id
       ORDER BY m.last_name, m.first_name
     `);
 
@@ -684,7 +686,8 @@ router.get('/directory', authenticateToken, async (req, res) => {
         company: vis.company ? row.company : null,
         facebook_url: vis.social ? row.facebook_url : null,
         linkedin_url: vis.social ? row.linkedin_url : null,
-        instagram_url: vis.social ? row.instagram_url : null
+        instagram_url: vis.social ? row.instagram_url : null,
+        rsvp_status: row.rsvp_status
       };
     });
 

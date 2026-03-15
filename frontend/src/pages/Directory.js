@@ -45,6 +45,9 @@ const DirectoryCard = ({ entry }) => {
       <span className={`dir-badge ${memoriam ? 'dir-badge-mem' : registered ? 'dir-badge-reg' : 'dir-badge-not'}`}>
         {memoriam ? 'In memoriam' : registered ? 'Registered' : 'Not registered'}
       </span>
+      {registered && entry.rsvp_status === 'going' && (
+        <span className="dir-badge dir-badge-going">Going</span>
+      )}
       {registered && hasSocials && (
         <div className="dir-card-socials">
           {entry.facebook_url && <a href={`https://facebook.com/${entry.facebook_url}`} target="_blank" rel="noopener noreferrer" className="dir-social-link"><FaFacebook size={12} /></a>}
