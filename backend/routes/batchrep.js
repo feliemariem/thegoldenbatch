@@ -456,6 +456,26 @@ router.post('/round2/vote', authenticateToken, async (req, res) => {
   }
 });
 
+// GET /api/batch-rep/round2/results
+router.get('/round2/results', authenticateToken, async (_req, res) => {
+  try {
+    const result = await db.query(
+      `SELECT candidate_name, COUNT(*) as votes
+       FROM batch_rep_round2_votes
+       GROUP BY candidate_name`
+    );
+    const total = result.rows.reduce((sum, r) => sum + parseInt(r.votes), 0);
+    const counts = {};
+    result.rows.forEach(r => {
+      counts[r.candidate_name] = parseInt(r.votes);
+    });
+    res.json({ counts, total });
+  } catch (err) {
+    console.error('Error fetching round2 results:', err);
+    res.status(500).json({ error: 'Failed to fetch results' });
+  }
+});
+
 // GET /api/batch-rep/graduates/search
 // Typeahead search for graduates only (for nomination field)
 // Fuzzy partial name match - each token must appear somewhere in the name

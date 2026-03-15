@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { apiGet, apiPost } from '../api';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import letterImage from '../images/batch-rep-letter.jpg';
 import '../styles/batchrep.css';
 
 // Access control phases:
@@ -49,6 +50,8 @@ export default function BatchRepVoting() {
   const [aboutOpenMel, setAboutOpenMel] = useState(false);
   const [rolesOpen2, setRolesOpen2] = useState(false);
   const [aboutOpenFelie, setAboutOpenFelie] = useState(false);
+  const [letterOpen, setLetterOpen] = useState(false);
+  const [results, setResults] = useState(null); // { counts: {}, total: 0 }
 
   // Countdown state
   const [timeRemaining, setTimeRemaining] = useState({
@@ -60,6 +63,22 @@ export default function BatchRepVoting() {
 
   // Check access - both phase access AND user.id === 71
   const hasAccess = checkPhaseAccess(user) && user?.id === 71;
+
+  // Check if deadline has passed
+  const isDeadlinePassed = new Date() > VOTING_DEADLINE;
+
+  // Fetch results
+  const fetchResults = async () => {
+    try {
+      const res = await apiGet('/api/batch-rep/round2/results');
+      if (res.ok) {
+        const data = await res.json();
+        setResults(data);
+      }
+    } catch (err) {
+      console.error('Error fetching results:', err);
+    }
+  };
 
   // Fetch voting status
   useEffect(() => {
@@ -75,6 +94,13 @@ export default function BatchRepVoting() {
           const data = await res.json();
           setHasVoted(data.hasVoted);
           setExistingVote(data.vote);
+          if (data.hasVoted) {
+            fetchResults();
+          }
+        }
+        // Also fetch results if deadline passed (for non-voters to see final results)
+        if (isDeadlinePassed) {
+          fetchResults();
         }
       } catch (err) {
         console.error('Error fetching round2 status:', err);
@@ -84,7 +110,7 @@ export default function BatchRepVoting() {
     };
 
     fetchStatus();
-  }, [user, hasAccess]);
+  }, [user, hasAccess, isDeadlinePassed]);
 
   // Countdown timer
   useEffect(() => {
@@ -128,6 +154,7 @@ export default function BatchRepVoting() {
       if (res.ok) {
         setHasVoted(true);
         setExistingVote({ candidate_name: selectedCandidate });
+        fetchResults();
       } else {
         const data = await res.json();
         setError(data.error || 'Failed to submit vote');
@@ -139,9 +166,6 @@ export default function BatchRepVoting() {
       setSubmitting(false);
     }
   };
-
-  // Check if deadline has passed
-  const isDeadlinePassed = new Date() > VOTING_DEADLINE;
 
   // Render loading state
   if (loading) {
@@ -280,6 +304,28 @@ export default function BatchRepVoting() {
               nomination goes to a batch vote, which brings us here. This is ultimately the batch's
               decision.
             </p>
+            <div className="batchrep-overview-divider batchrep-overview-footer" style={{ marginTop: '16px', paddingTop: '16px' }}>
+              <a
+                href="#official-letter"
+                onClick={(e) => { e.preventDefault(); setLetterOpen(true); }}
+                className="batchrep-overview-letter-link"
+              >
+                📄 See Official Letter →
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Official Letter Collapsible */}
+        <div className={`batchrep-collapsible ${letterOpen ? 'open' : ''}`}>
+          <button className="batchrep-collapsible-trigger" onClick={() => setLetterOpen(!letterOpen)}>
+            <span>Official Letter - USLS Alumni Association Bacolod, Inc.</span>
+            <span className="batchrep-collapsible-arrow">▼</span>
+          </button>
+          <div className="batchrep-collapsible-body">
+            <div className="batchrep-letter-wrap">
+              <img src={letterImage} alt="Official letter from USLS Alumni Association Bacolod, Inc." />
+            </div>
           </div>
         </div>
 
@@ -319,20 +365,114 @@ export default function BatchRepVoting() {
             </p>
 
             {hasVoted ? (
-              <div className="batchrep-success">
-                <div className="batchrep-success-icon">✓</div>
-                <h3 style={{ color: 'var(--color-text-primary)', marginBottom: '8px', fontFamily: 'var(--font-heading)' }}>
-                  Vote Submitted
-                </h3>
-                <p>
-                  You voted for <strong style={{ color: 'var(--color-hover)' }}>{existingVote?.candidate_name}</strong>.
-                  <br />
-                  Your vote has been recorded and cannot be changed.
-                </p>
+              <div>
+                {/* Voted confirmation */}
+                <div className="batchrep-notice" style={{ marginBottom: '20px', background: 'var(--color-status-positive-bg)', borderColor: 'var(--color-status-positive)' }}>
+                  <span style={{ color: 'var(--color-status-positive)' }}>✓</span>{' '}
+                  You voted for <strong>{existingVote?.candidate_name}</strong>. Your vote has been recorded.
+                </div>
+
+                {/* Results board */}
+                {results ? (
+                  <div>
+                    <div style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '1.5px', color: 'var(--color-text-secondary)', marginBottom: '16px' }}>
+                      Live Results · Position 1
+                    </div>
+
+                    {['Bianca Jison', 'Mel Andrea Rivero'].map((name) => {
+                      const count = results.counts[name] || 0;
+                      const pct = results.total > 0 ? Math.round((count / results.total) * 100) : 0;
+                      const isWinner = count === Math.max(...Object.values(results.counts));
+                      return (
+                        <div key={name} style={{ marginBottom: '16px' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <span style={{ fontWeight: '600', color: 'var(--color-text-primary)', fontSize: '0.95rem' }}>{name}</span>
+                              {isWinner && results.total > 0 && (
+                                <span style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--color-status-positive)', background: 'rgba(39,174,96,0.15)', padding: '2px 8px', borderRadius: '4px' }}>
+                                  Leading
+                                </span>
+                              )}
+                            </div>
+                            <span style={{ fontSize: '0.9rem', fontWeight: '700', color: 'var(--color-hover)' }}>
+                              {count} {count === 1 ? 'vote' : 'votes'} · {pct}%
+                            </span>
+                          </div>
+                          <div style={{ height: '8px', background: 'rgba(255,255,255,0.08)', borderRadius: '4px', overflow: 'hidden' }}>
+                            <div style={{
+                              height: '100%',
+                              width: `${pct}%`,
+                              background: name === 'Bianca Jison'
+                                ? 'linear-gradient(90deg, var(--color-title-gradient-start), var(--color-title-gradient-end))'
+                                : 'var(--color-status-positive)',
+                              borderRadius: '4px',
+                              transition: 'width 0.6s ease'
+                            }} />
+                          </div>
+                        </div>
+                      );
+                    })}
+
+                    <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginTop: '12px', textAlign: 'center' }}>
+                      {results.total} {results.total === 1 ? 'vote' : 'votes'} cast · Updates when others vote
+                    </div>
+                  </div>
+                ) : (
+                  <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>Loading results...</p>
+                )}
               </div>
             ) : isDeadlinePassed ? (
-              <div className="batchrep-message">
-                <p>You did not cast a vote before the deadline.</p>
+              <div>
+                <div className="batchrep-deadline" style={{ marginBottom: '20px' }}>
+                  <strong>Voting is Now Closed.</strong> The deadline was March 30, 2026 at 11:59 PM PHT.
+                </div>
+                {results ? (
+                  <div>
+                    <div style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '1.5px', color: 'var(--color-text-secondary)', marginBottom: '16px' }}>
+                      Final Results · Position 1
+                    </div>
+
+                    {['Bianca Jison', 'Mel Andrea Rivero'].map((name) => {
+                      const count = results.counts[name] || 0;
+                      const pct = results.total > 0 ? Math.round((count / results.total) * 100) : 0;
+                      const isWinner = count === Math.max(...Object.values(results.counts));
+                      return (
+                        <div key={name} style={{ marginBottom: '16px' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <span style={{ fontWeight: '600', color: 'var(--color-text-primary)', fontSize: '0.95rem' }}>{name}</span>
+                              {isWinner && results.total > 0 && (
+                                <span style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--color-status-positive)', background: 'rgba(39,174,96,0.15)', padding: '2px 8px', borderRadius: '4px' }}>
+                                  Winner
+                                </span>
+                              )}
+                            </div>
+                            <span style={{ fontSize: '0.9rem', fontWeight: '700', color: 'var(--color-hover)' }}>
+                              {count} {count === 1 ? 'vote' : 'votes'} · {pct}%
+                            </span>
+                          </div>
+                          <div style={{ height: '8px', background: 'rgba(255,255,255,0.08)', borderRadius: '4px', overflow: 'hidden' }}>
+                            <div style={{
+                              height: '100%',
+                              width: `${pct}%`,
+                              background: name === 'Bianca Jison'
+                                ? 'linear-gradient(90deg, var(--color-title-gradient-start), var(--color-title-gradient-end))'
+                                : 'var(--color-status-positive)',
+                              borderRadius: '4px',
+                              transition: 'width 0.6s ease'
+                            }} />
+                          </div>
+                        </div>
+                      );
+                    })}
+
+                    <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginTop: '12px', textAlign: 'center' }}>
+                      {results.total} {results.total === 1 ? 'vote' : 'votes'} cast
+                    </div>
+                  </div>
+                ) : (
+                  <div className="batchrep-message"><p>You did not cast a vote before the deadline.</p></div>
+                )}
               </div>
             ) : (
               <>
@@ -404,9 +544,9 @@ export default function BatchRepVoting() {
                   </div>
                 </div>
 
-                <div className="batchrep-confidential" style={{ marginTop: '20px', marginBottom: '20px' }}>
-                  <span>🔒</span>
-                  <span>Your vote is anonymous and cannot be changed after submission.</span>
+                <div className="batchrep-deadline-notice" style={{ marginTop: '20px', marginBottom: '20px' }}>
+                  All votes are final and cannot be changed. Majority wins by deadline:{' '}
+                  <strong>March 30, 2026 · 11:59 PM PHT</strong>.
                 </div>
 
                 {error && (
