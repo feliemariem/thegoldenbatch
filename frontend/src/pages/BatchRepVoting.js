@@ -350,7 +350,7 @@ export default function BatchRepVoting() {
                         onChange={() => setSelectedCandidate('Bianca Jison')}
                         onClick={(e) => e.stopPropagation()}
                       />
-                      <span className="batchrep-confirm-text" style={{ fontSize: '1.1rem' }}>Bianca Jison</span>
+                      <div className="batchrep-nominee-name" style={{ marginBottom: 0 }}>Bianca Jison</div>
                     </div>
                     <button
                       className={`batchrep-roles-toggle ${aboutOpenBianca ? 'open' : ''}`}
@@ -359,18 +359,14 @@ export default function BatchRepVoting() {
                       About <span className="arrow">▼</span>
                     </button>
                   </div>
-                  <span style={{
-                    fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px',
-                    color: 'var(--color-hover)', background: 'rgba(207, 181, 59, 0.15)',
-                    padding: '4px 10px', borderRadius: '4px', marginLeft: '30px'
-                  }}>
-                    Committee Nominee
-                  </span>
-                  {aboutOpenBianca && (
-                    <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', lineHeight: '1.6', marginTop: '12px', marginBottom: '0', fontStyle: 'italic', marginLeft: '30px' }}>
-                      Initiated the formation of the organizing committee in 2023 and has co-led its planning and operations since. Has served as the batch's local anchor, attending events, building connections on the ground, and acting as the direct line to the USLS Alumni Association, including attending meetings on behalf of the batch.
-                    </p>
-                  )}
+                  <div style={{ marginLeft: '30px' }}>
+                    <span className="batchrep-role-badge" style={{ marginBottom: '8px', display: 'inline-block' }}>Committee Nominee</span>
+                    {aboutOpenBianca && (
+                      <div className="batchrep-nominee-blurb" style={{ marginTop: '8px', marginBottom: 0 }}>
+                        Initiated the formation of the organizing committee in 2023 and has co-led its planning and operations since. Has served as the batch's local anchor, attending events, building connections on the ground, and acting as the direct line to the USLS Alumni Association, including attending meetings on behalf of the batch.
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Mel Andrea Rivero */}
@@ -388,7 +384,7 @@ export default function BatchRepVoting() {
                         onChange={() => setSelectedCandidate('Mel Andrea Rivero')}
                         onClick={(e) => e.stopPropagation()}
                       />
-                      <span className="batchrep-confirm-text" style={{ fontSize: '1.1rem' }}>Mel Andrea Rivero</span>
+                      <div className="batchrep-nominee-name" style={{ marginBottom: 0 }}>Mel Andrea Rivero</div>
                     </div>
                     <button
                       className={`batchrep-roles-toggle ${aboutOpenMel ? 'open' : ''}`}
@@ -397,18 +393,14 @@ export default function BatchRepVoting() {
                       About <span className="arrow">▼</span>
                     </button>
                   </div>
-                  <span style={{
-                    fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px',
-                    color: 'var(--color-status-positive)', background: 'rgba(39, 174, 96, 0.15)',
-                    padding: '4px 10px', borderRadius: '4px', marginLeft: '30px'
-                  }}>
-                    Willing / Contested
-                  </span>
-                  {aboutOpenMel && (
-                    <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', lineHeight: '1.6', marginTop: '12px', marginBottom: '0', fontStyle: 'italic', marginLeft: '30px' }}>
-                      Confirmed willingness to serve as Alumni Association Representative.
-                    </p>
-                  )}
+                  <div style={{ marginLeft: '30px' }}>
+                    <span className="batchrep-role-badge" style={{ marginBottom: '8px', display: 'inline-block', color: 'var(--color-status-positive)', background: 'rgba(39, 174, 96, 0.15)' }}>Willing / Contested</span>
+                    {aboutOpenMel && (
+                      <div className="batchrep-nominee-blurb" style={{ marginTop: '8px', marginBottom: 0 }}>
+                        Confirmed willingness to serve as Alumni Association Representative.
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div className="batchrep-confidential" style={{ marginTop: '20px', marginBottom: '20px' }}>
@@ -489,7 +481,7 @@ export default function BatchRepVoting() {
                   ✓
                 </div>
                 <div>
-                  <div className="batchrep-nominee-name" style={{ marginBottom: '2px' }}>Felie Magbanua</div>
+                  <div className="batchrep-nominee-name">Felie Magbanua</div>
                   <div style={{ fontSize: '0.8rem', color: 'var(--color-status-positive)', fontWeight: '600' }}>
                     Confirmed — Uncontested
                   </div>
