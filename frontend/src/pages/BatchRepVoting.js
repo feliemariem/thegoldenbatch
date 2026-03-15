@@ -281,8 +281,8 @@ export default function BatchRepVoting() {
         </div>
 
         {/* Position 1: Alumni Association Representative - Voting */}
-        <div className="batchrep-response-card">
-          <div className="batchrep-position-top" style={{ borderRadius: '0' }}>
+        <div className="batchrep-nominee-card">
+          <div className="batchrep-position-top" style={{ borderRadius: '14px 14px 0 0' }}>
             <div className="batchrep-position-info">
               <div className="batchrep-position-num">Position 1</div>
               <div className="batchrep-position-title">Alumni Association Representative</div>
