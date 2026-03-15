@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
@@ -208,6 +208,38 @@ function ComingSoon({ user }) {
     setErrorMsg('');
   };
 
+  // My submissions -- pending photos this user uploaded
+  const [mySubmissions, setMySubmissions] = useState([]);
+  const [loadingSubmissions, setLoadingSubmissions] = useState(true);
+
+  const fetchMySubmissions = async () => {
+    try {
+      const res = await fetch('/api/media/photos/mine', {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      setMySubmissions(data);
+    } catch (_) {}
+    finally { setLoadingSubmissions(false); }
+  };
+
+  useEffect(() => { fetchMySubmissions(); }, []);
+
+  const handleWithdraw = async (id) => {
+    if (!window.confirm('Withdraw this photo? This cannot be undone.')) return;
+    try {
+      const res = await fetch(`/api/media/photos/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      });
+      if (!res.ok) throw new Error();
+      setMySubmissions(prev => prev.filter(p => p.id !== id));
+    } catch (_) {
+      alert('Could not withdraw photo. Please try again.');
+    }
+  };
+
   return (
     <div style={{ padding: '48px 24px', maxWidth: '560px', margin: '0 auto' }}>
 
@@ -359,6 +391,52 @@ function ComingSoon({ user }) {
           </div>
         )}
       </div>
+
+      {/* My Submissions */}
+      {(loadingSubmissions || mySubmissions.length > 0) && (
+        <div style={{ marginTop: '28px' }}>
+          <p style={{ color: '#9a9a9a', fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '12px', fontWeight: '600' }}>
+            Your submissions
+          </p>
+          {loadingSubmissions ? (
+            <p style={{ color: '#666', fontSize: '0.82rem' }}>Loading...</p>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))', gap: '8px' }}>
+              {mySubmissions.map(photo => (
+                <div key={photo.id} style={{ position: 'relative', aspectRatio: '1/1', borderRadius: '8px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)' }}>
+                  <img src={photo.cloudinary_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  {/* Status badge */}
+                  <div style={{
+                    position: 'absolute', bottom: '4px', left: '4px',
+                    fontSize: '9px', fontWeight: '700', textTransform: 'uppercase',
+                    letterSpacing: '0.06em', padding: '2px 6px', borderRadius: '4px',
+                    background: photo.status === 'published' ? 'rgba(0,102,51,0.9)' : photo.status === 'rejected' ? 'rgba(180,50,50,0.9)' : 'rgba(0,0,0,0.7)',
+                    color: '#fff',
+                  }}>
+                    {photo.status === 'published' ? 'Live' : photo.status === 'rejected' ? 'Rejected' : 'Pending'}
+                  </div>
+                  {/* Withdraw button -- only on pending */}
+                  {photo.status === 'pending' && (
+                    <button
+                      onClick={() => handleWithdraw(photo.id)}
+                      title="Withdraw photo"
+                      style={{
+                        position: 'absolute', top: '3px', right: '3px',
+                        width: '20px', height: '20px', borderRadius: '50%',
+                        background: 'rgba(0,0,0,0.75)', border: 'none',
+                        color: '#fff', fontSize: '11px', cursor: 'pointer',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      }}
+                    >
+                      &times;
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

@@ -2,6 +2,7 @@
 -- The Golden Batch - USLS IS Batch 2003
 
 -- Drop tables in correct order (respecting foreign keys)
+DROP TABLE IF EXISTS media_photos;
 DROP TABLE IF EXISTS batch_rep_round2_votes;
 DROP TABLE IF EXISTS batch_rep_submissions;
 DROP TABLE IF EXISTS site_config;
@@ -353,6 +354,21 @@ CREATE TABLE email_log (
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- ============================================================
+-- Media Photos table (Memory Lane & Albums)
+-- ============================================================
+CREATE TABLE media_photos (
+  id                  SERIAL PRIMARY KEY,
+  album               TEXT NOT NULL DEFAULT 'memory_lane',
+  cloudinary_url      TEXT NOT NULL,
+  cloudinary_public_id TEXT NOT NULL,
+  credit_name         TEXT NOT NULL,
+  uploaded_by         INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  status              TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'published', 'rejected')),
+  created_at          TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- ============================================================
 -- Indexes
 -- ============================================================
@@ -394,6 +410,9 @@ CREATE INDEX idx_batch_rep_willingness_user ON batch_rep_willingness(user_id);
 CREATE INDEX idx_batch_rep_willingness_batch_rep ON batch_rep_willingness(willing_batch_rep);
 CREATE INDEX idx_batch_rep_willingness_aa_rep ON batch_rep_willingness(willing_aa_rep);
 CREATE INDEX idx_batch_rep_round2_votes_voter ON batch_rep_round2_votes(voter_id);
+CREATE INDEX idx_media_photos_album_status ON media_photos(album, status);
+CREATE INDEX idx_media_photos_status ON media_photos(status);
+CREATE INDEX idx_media_photos_uploaded_by ON media_photos(uploaded_by);
 
 CREATE UNIQUE INDEX idx_ledger_reference_no_unique 
   ON ledger(reference_no) 
