@@ -341,35 +341,32 @@ export default function BatchRepVoting() {
 
         {/* Position 1: Alumni Association Representative - Voting */}
         <div className="batchrep-nominee-card">
-          <div className="batchrep-position-top" style={{ borderRadius: '14px 14px 0 0' }}>
-            <div className="batchrep-position-info">
-              <div className="batchrep-position-num">Position 1</div>
-              <div className="batchrep-position-title">Alumni Association Representative</div>
+          <div className="batchrep-nominee-header">
+            <span>Position 1 · Alumni Association Representative</span>
+          </div>
+          <div className="batchrep-nominee-body">
+            <div className={`batchrep-collapsible ${rolesOpen1 ? 'open' : ''}`} style={{ marginBottom: '8px' }}>
+              <button className="batchrep-collapsible-trigger" onClick={() => setRolesOpen1(!rolesOpen1)} style={{ padding: '12px 16px' }}>
+                <span style={{ fontSize: '0.85rem' }}>Role & Responsibilities</span>
+                <span className="batchrep-collapsible-arrow">▼</span>
+              </button>
+              <div className="batchrep-collapsible-body" style={{ fontSize: '0.85rem' }}>
+                <ul>
+                  <li>Serves as the batch's official representative within the Alumni Association structure</li>
+                  <li>Attends alumni association meetings and represents the batch in alumni matters. Local presence required (preferably Bacolod or nearby cities)</li>
+                  <li>Coordinates directly with the Alumni Association board and alumni office</li>
+                  <li>Communicates alumni-level updates and requirements to the Batch Rep and organizing committee</li>
+                  <li>Represents the batch in official alumni events, ceremonies, and institutional activities</li>
+                  <li>Follows the alumni leadership ladder: AA Rep → Vice President → Alumni Association President (during the Jubilee)</li>
+                  <li>Helps ensure the batch fulfills its responsibilities as the Jubilee host batch</li>
+                </ul>
+                <p style={{ fontStyle: 'italic', marginTop: '12px', marginBottom: 0, color: 'var(--color-text-secondary)' }}>
+                  The Alumni Association Representative will not be starting from scratch. There is already an organizing committee in place that has been working since 2023, fully committed and ready to support whoever takes on this role.
+                </p>
+              </div>
             </div>
-            <button
-              className={`batchrep-roles-toggle ${rolesOpen1 ? 'open' : ''}`}
-              onClick={() => setRolesOpen1(!rolesOpen1)}
-            >
-              Roles <span className="arrow">▼</span>
-            </button>
-          </div>
 
-          <div className={`batchrep-roles-content ${rolesOpen1 ? 'open' : ''}`}>
-            <ul>
-              <li>Serves as the batch's official representative within the Alumni Association structure</li>
-              <li>Attends alumni association meetings and represents the batch in alumni matters. Local presence required (preferably Bacolod or nearby cities)</li>
-              <li>Coordinates directly with the Alumni Association board and alumni office</li>
-              <li>Communicates alumni-level updates and requirements to the Batch Rep and organizing committee</li>
-              <li>Represents the batch in official alumni events, ceremonies, and institutional activities</li>
-              <li>Follows the alumni leadership ladder: AA Rep → Vice President → Alumni Association President (during the Jubilee)</li>
-              <li>Helps ensure the batch fulfills its responsibilities as the Jubilee host batch</li>
-            </ul>
-            <p className="batchrep-roles-note">
-              The Alumni Association Representative will not be starting from scratch. There is already an organizing committee in place that has been working since 2023, fully committed and ready to support whoever takes on this role.
-            </p>
-          </div>
-
-          <div className="batchrep-response-body" style={{ padding: '20px' }}>
+            <div style={{ padding: '20px' }}>
             <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginBottom: '16px' }}>
               Two candidates — select one to cast your vote
             </p>
@@ -606,6 +603,7 @@ export default function BatchRepVoting() {
                 </button>
               </>
             )}
+            </div>
           </div>
         </div>
 
@@ -615,38 +613,28 @@ export default function BatchRepVoting() {
             <span>Position 2 · Batch Representative</span>
           </div>
 
-          {/* Position header with Roles toggle */}
-          <div className="batchrep-position-top" style={{ borderRadius: '0' }}>
-            <div className="batchrep-position-info">
-              <div className="batchrep-position-num">Position 2</div>
-              <div className="batchrep-position-title">Batch Representative</div>
-            </div>
-            <button
-              className={`batchrep-roles-toggle ${rolesOpen2 ? 'open' : ''}`}
-              onClick={() => setRolesOpen2(!rolesOpen2)}
-            >
-              Roles <span className="arrow">▼</span>
-            </button>
-          </div>
-
-          {/* Roles & Responsibilities */}
-          <div className={`batchrep-roles-content ${rolesOpen2 ? 'open' : ''}`}>
-            <ul>
-              <li>Represents Batch 2003 to the batch itself and serves as the main point of contact for batchmates</li>
-              <li>Leads batch coordination and engagement leading up to the Jubilee and other batch initiatives</li>
-              <li>Works closely with the organizing committee to plan activities, gatherings, and participation</li>
-              <li>Communicates updates, decisions, and announcements to the batch</li>
-              <li>Mobilizes batch participation in alumni events, registration drives, and batch projects</li>
-              <li>Coordinates with the AA Rep when alumni matters affect the batch</li>
-              <li>Helps maintain unity and participation within the batch community</li>
-              <li>Remote participation accepted. No Bacolod presence required</li>
-            </ul>
-            <p className="batchrep-roles-note">
-              The Batch Representative will not be starting from scratch. There is already an organizing committee in place that has been working since 2023, fully committed and ready to support whoever takes on this role.
-            </p>
-          </div>
-
           <div className="batchrep-nominee-body">
+            <div className={`batchrep-collapsible ${rolesOpen2 ? 'open' : ''}`} style={{ marginBottom: '8px' }}>
+              <button className="batchrep-collapsible-trigger" onClick={() => setRolesOpen2(!rolesOpen2)} style={{ padding: '12px 16px' }}>
+                <span style={{ fontSize: '0.85rem' }}>Role & Responsibilities</span>
+                <span className="batchrep-collapsible-arrow">▼</span>
+              </button>
+              <div className="batchrep-collapsible-body" style={{ fontSize: '0.85rem' }}>
+                <ul>
+                  <li>Represents Batch 2003 to the batch itself and serves as the main point of contact for batchmates</li>
+                  <li>Leads batch coordination and engagement leading up to the Jubilee and other batch initiatives</li>
+                  <li>Works closely with the organizing committee to plan activities, gatherings, and participation</li>
+                  <li>Communicates updates, decisions, and announcements to the batch</li>
+                  <li>Mobilizes batch participation in alumni events, registration drives, and batch projects</li>
+                  <li>Coordinates with the AA Rep when alumni matters affect the batch</li>
+                  <li>Helps maintain unity and participation within the batch community</li>
+                  <li>Remote participation accepted. No Bacolod presence required</li>
+                </ul>
+                <p style={{ fontStyle: 'italic', marginTop: '12px', marginBottom: 0, color: 'var(--color-text-secondary)' }}>
+                  The Batch Representative will not be starting from scratch. There is already an organizing committee in place that has been working since 2023, fully committed and ready to support whoever takes on this role.
+                </p>
+              </div>
+            </div>
             {/* Confirmed uncontested header */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
