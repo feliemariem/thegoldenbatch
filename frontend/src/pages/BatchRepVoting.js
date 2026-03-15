@@ -236,7 +236,8 @@ export default function BatchRepVoting() {
               border: '1px solid rgba(207, 181, 59, 0.25)',
               borderRadius: '12px',
               padding: '20px',
-              textAlign: 'center'
+              textAlign: 'center',
+              marginBottom: '24px'
             }}>
               <div style={{
                 fontSize: '0.75rem',
