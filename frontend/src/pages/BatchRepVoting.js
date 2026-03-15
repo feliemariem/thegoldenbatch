@@ -276,8 +276,9 @@ export default function BatchRepVoting() {
             </p>
             <p style={{ marginBottom: '0' }}>
               For <strong>Position 1 (Alumni Association Representative)</strong>, a batchmate stepped
-              forward, confirmed their willingness to serve, and is now on the ballot as an alternative
-              nominee. That triggers a batch vote — and this is ultimately the batch's decision.
+              forward and confirmed their willingness to serve. Per the Round 1 process, a willing
+              nomination goes to a batch vote, which brings us here. This is ultimately the batch's
+              decision.
             </p>
           </div>
         </div>
