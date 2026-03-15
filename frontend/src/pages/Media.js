@@ -43,45 +43,7 @@ const canUploadMedia = (user) => {
 };
 
 // ─── Mock data ────────────────────────────────────────────────────────────────
-// Replace with real API calls (GET /api/media/albums, /api/media/videos, etc.)
-
-const MOCK_ALBUMS = [
-  {
-    id: 1,
-    title: 'High School Days',
-    description: 'Memories from our time at USLS-IS',
-    coverUrl: 'https://placehold.co/400x300/062614/CFB53B?text=HS+Days',
-    itemCount: 24,
-    items: [
-      { id: 1, type: 'photo', url: 'https://placehold.co/800x600/062614/CFB53B?text=Class+Photo', caption: 'Class photo 2003' },
-      { id: 2, type: 'photo', url: 'https://placehold.co/800x600/062614/CFB53B?text=Graduation', caption: 'Graduation day' },
-      { id: 3, type: 'photo', url: 'https://placehold.co/800x600/062614/CFB53B?text=Sports+Fest', caption: 'Sports fest' },
-      { id: 4, type: 'photo', url: 'https://placehold.co/800x600/062614/CFB53B?text=Field+Trip', caption: 'Field trip' },
-    ],
-  },
-  {
-    id: 2,
-    title: '10th Year Reunion (2013)',
-    description: 'Our first major reunion gathering',
-    coverUrl: 'https://placehold.co/400x300/062614/006633?text=10th+Reunion',
-    itemCount: 56,
-    items: [
-      { id: 1, type: 'photo', url: 'https://placehold.co/800x600/062614/006633?text=Group+Photo', caption: 'Group photo' },
-      { id: 2, type: 'video', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', thumbnail: 'https://placehold.co/800x450/062614/006633?text=Video', caption: 'Reunion highlights' },
-    ],
-  },
-  {
-    id: 3,
-    title: '20th Year Reunion (2023)',
-    description: 'Celebrating two decades of friendship',
-    coverUrl: 'https://placehold.co/400x300/062614/CFB53B?text=20th+Reunion',
-    itemCount: 89,
-    items: [
-      { id: 1, type: 'photo', url: 'https://placehold.co/800x600/062614/CFB53B?text=20th+Photo', caption: 'The gang back together' },
-      { id: 2, type: 'video', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', thumbnail: 'https://placehold.co/800x450/062614/CFB53B?text=Video', caption: 'Anniversary video' },
-    ],
-  },
-];
+// Replace with real API calls (GET /api/media/videos, /api/media/articles, etc.)
 
 const MOCK_VIDEOS = [
   { id: 1, title: 'Official Homecoming Announcement', duration: '2:14', date: 'Dec 2024', thumbnail: 'https://placehold.co/640x360/062614/CFB53B?text=Announcement', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ' },
@@ -437,82 +399,59 @@ function ComingSoon({ user }) {
   );
 }
 
-// ─── Lightbox ─────────────────────────────────────────────────────────────────
-
-function Lightbox({ media, album, onClose, onNavigate }) {
-  if (!media) return null;
-  return (
-    <div
-      onClick={onClose}
-      style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.95)', zIndex: 1000, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px' }}
-    >
-      <button onClick={onClose} style={{ position: 'absolute', top: '20px', right: '20px', width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: '1.2rem', cursor: 'pointer' }}>
-        &times;
-      </button>
-      {album && album.items.length > 1 && (
-        <>
-          <button onClick={(e) => { e.stopPropagation(); onNavigate(-1); }} style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)', width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: '1.5rem', cursor: 'pointer' }}>&#8249;</button>
-          <button onClick={(e) => { e.stopPropagation(); onNavigate(1); }} style={{ position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)', width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: '1.5rem', cursor: 'pointer' }}>&#8250;</button>
-        </>
-      )}
-      <div onClick={(e) => e.stopPropagation()} style={{ maxWidth: '90vw', maxHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        {media.type === 'video' ? (
-          <iframe src={media.url} style={{ width: '80vw', maxWidth: '900px', height: '50.625vw', maxHeight: '506px', border: 'none', borderRadius: '12px' }} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen title={media.caption} />
-        ) : (
-          <img src={media.url} alt={media.caption} style={{ maxWidth: '100%', maxHeight: '75vh', borderRadius: '12px' }} />
-        )}
-        {media.caption && <p style={{ color: '#ccc', marginTop: '14px', fontSize: '0.9rem', textAlign: 'center' }}>{media.caption}</p>}
-      </div>
-    </div>
-  );
-}
-
 // ─── Tab: Photos ──────────────────────────────────────────────────────────────
 
 function PhotosTab({ user }) {
-  const [selectedAlbum, setSelectedAlbum] = useState(null);
-  const [lightboxMedia, setLightboxMedia] = useState(null);
+  const [photos, setPhotos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [lightboxPhoto, setLightboxPhoto] = useState(null);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [layoutMode, setLayoutMode] = useState('grid');
   const [showUploadForm, setShowUploadForm] = useState(false);
 
   const canUpload = canUploadMedia(user);
 
-  const openLightbox = (item, index) => { setLightboxMedia(item); setLightboxIndex(index); };
-  const navigateLightbox = (dir) => {
-    if (!selectedAlbum) return;
-    const next = (lightboxIndex + dir + selectedAlbum.items.length) % selectedAlbum.items.length;
-    setLightboxIndex(next);
-    setLightboxMedia(selectedAlbum.items[next]);
+  const fetchPhotos = async () => {
+    try {
+      const res = await apiGet('/api/media/photos?album=throwback_vault&status=published');
+      if (res.ok) {
+        const data = await res.json();
+        setPhotos(data.photos || []);
+      }
+    } catch (err) {
+      console.error('Failed to fetch photos:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  if (selectedAlbum) {
-    return (
-      <div>
-        <button onClick={() => setSelectedAlbum(null)} className="media-back-btn">&larr; Back to Albums</button>
-        <h3 className="album-detail-title">{selectedAlbum.title}</h3>
-        <p className="album-detail-desc">{selectedAlbum.description}</p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '10px' }}>
-          {selectedAlbum.items.map((item, index) => (
-            <div key={item.id} onClick={() => openLightbox(item, index)} className="media-item" style={{ position: 'relative', paddingTop: '100%', borderRadius: '8px', overflow: 'hidden', cursor: 'pointer', border: '1px solid rgba(255,255,255,0.08)' }}>
-              <img src={item.type === 'video' ? item.thumbnail : item.url} alt={item.caption} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-              {item.type === 'video' && (
-                <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: '36px', height: '36px', background: 'rgba(0,102,51,0.9)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <span style={{ color: '#fff', fontSize: '0.8rem', marginLeft: '3px' }}>&#9654;</span>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-        <Lightbox media={lightboxMedia} album={selectedAlbum} onClose={() => setLightboxMedia(null)} onNavigate={navigateLightbox} />
-      </div>
-    );
-  }
+  useEffect(() => { fetchPhotos(); }, []);
+
+  const openLightbox = (photo, index) => {
+    setLightboxPhoto(photo);
+    setLightboxIndex(index);
+  };
+
+  const closeLightbox = () => setLightboxPhoto(null);
+
+  const navigateLightbox = (dir) => {
+    if (photos.length === 0) return;
+    const next = (lightboxIndex + dir + photos.length) % photos.length;
+    setLightboxIndex(next);
+    setLightboxPhoto(photos[next]);
+  };
+
+  const handleUploadSuccess = () => {
+    setShowUploadForm(false);
+    // Optionally refresh, but new uploads are pending so won't appear in published list
+  };
 
   return (
     <div>
       <div className="media-toolbar">
-        <span className="media-count-badge">{MOCK_ALBUMS.length} albums</span>
+        <span className="media-count-badge">
+          {loading ? '...' : `${photos.length} photo${photos.length !== 1 ? 's' : ''}`}
+        </span>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           {canUpload && (
             <button onClick={() => setShowUploadForm(p => !p)} className="media-add-btn">
@@ -528,24 +467,73 @@ function PhotosTab({ user }) {
 
       {canUpload && showUploadForm && (
         <div style={{ marginBottom: '20px' }}>
-          <PhotoUploadForm user={user} onUploadSuccess={() => setShowUploadForm(false)} />
+          <PhotoUploadForm user={user} onUploadSuccess={handleUploadSuccess} />
         </div>
       )}
 
-      <div style={layoutMode === 'masonry' ? { columns: 3, gap: '12px' } : { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '12px' }}>
-        {MOCK_ALBUMS.map(album => (
-          <div key={album.id} onClick={() => setSelectedAlbum(album)} className="album-card" style={{ breakInside: layoutMode === 'masonry' ? 'avoid' : undefined, marginBottom: layoutMode === 'masonry' ? '12px' : undefined }}>
-            <div style={{ position: 'relative', paddingTop: '66.67%', overflow: 'hidden' }}>
-              <img src={album.coverUrl} alt={album.title} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.3s ease' }} />
-              <div style={{ position: 'absolute', bottom: '8px', left: '8px', background: 'rgba(0,0,0,0.7)', color: '#fff', padding: '2px 8px', borderRadius: '10px', fontSize: '0.7rem' }}>{album.itemCount} items</div>
+      {loading ? (
+        <p style={{ color: 'var(--color-text-secondary)', textAlign: 'center', padding: '40px 0' }}>Loading photos...</p>
+      ) : photos.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '48px 20px' }}>
+          <div style={{ fontSize: '2.5rem', marginBottom: '12px', opacity: 0.5 }}>📷</div>
+          <p style={{ color: 'var(--color-text-secondary)', margin: 0 }}>
+            No photos yet. Be the first to share a memory!
+          </p>
+        </div>
+      ) : (
+        <div style={layoutMode === 'masonry' ? { columns: 3, gap: '10px' } : { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '10px' }}>
+          {photos.map((photo, index) => (
+            <div
+              key={photo.id}
+              onClick={() => openLightbox(photo, index)}
+              className="media-item"
+              style={{
+                position: 'relative',
+                paddingTop: layoutMode === 'masonry' ? undefined : '100%',
+                borderRadius: '8px',
+                overflow: 'hidden',
+                cursor: 'pointer',
+                border: '1px solid rgba(255,255,255,0.08)',
+                breakInside: layoutMode === 'masonry' ? 'avoid' : undefined,
+                marginBottom: layoutMode === 'masonry' ? '10px' : undefined,
+              }}
+            >
+              <img
+                src={photo.cloudinary_url}
+                alt={`Photo by ${photo.credit_name}`}
+                style={layoutMode === 'masonry'
+                  ? { width: '100%', display: 'block', borderRadius: '8px' }
+                  : { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }
+                }
+              />
             </div>
-            <div style={{ padding: '10px 12px' }}>
-              <h4 className="album-card-title">{album.title}</h4>
-              <p className="album-card-desc">{album.description}</p>
-            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Lightbox */}
+      {lightboxPhoto && (
+        <div
+          onClick={closeLightbox}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.95)', zIndex: 1000, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px' }}
+        >
+          <button onClick={closeLightbox} style={{ position: 'absolute', top: '20px', right: '20px', width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: '1.2rem', cursor: 'pointer' }}>
+            &times;
+          </button>
+          {photos.length > 1 && (
+            <>
+              <button onClick={(e) => { e.stopPropagation(); navigateLightbox(-1); }} style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)', width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: '1.5rem', cursor: 'pointer' }}>&#8249;</button>
+              <button onClick={(e) => { e.stopPropagation(); navigateLightbox(1); }} style={{ position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)', width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: '1.5rem', cursor: 'pointer' }}>&#8250;</button>
+            </>
+          )}
+          <div onClick={(e) => e.stopPropagation()} style={{ maxWidth: '90vw', maxHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <img src={lightboxPhoto.cloudinary_url} alt={`Photo by ${lightboxPhoto.credit_name}`} style={{ maxWidth: '100%', maxHeight: '75vh', borderRadius: '12px' }} />
+            <p style={{ color: '#ccc', marginTop: '14px', fontSize: '0.9rem', textAlign: 'center' }}>
+              Photo by {lightboxPhoto.credit_name}
+            </p>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
