@@ -335,6 +335,15 @@
   color: #006633;
 }
 
+/* Voting page variant - white in dark mode, green in light mode */
+.batchrep-nominee-name.voting {
+  color: #ffffff;
+}
+
+[data-theme="light"] .batchrep-nominee-name.voting {
+  color: #006633;
+}
+
 .batchrep-nominee-sub {
   font-size: 0.9rem;
   color: var(--color-text-secondary);

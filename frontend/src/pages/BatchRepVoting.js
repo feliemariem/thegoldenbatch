@@ -491,7 +491,7 @@ export default function BatchRepVoting() {
                         onChange={() => setSelectedCandidate('Bianca Jison')}
                         onClick={(e) => e.stopPropagation()}
                       />
-                      <div className="batchrep-nominee-name" style={{ marginBottom: 0 }}>Bianca Jison</div>
+                      <div className="batchrep-nominee-name voting" style={{ marginBottom: 0 }}>Bianca Jison</div>
                     </div>
                     <button
                       className={`batchrep-roles-toggle ${aboutOpenBianca ? 'open' : ''}`}
@@ -525,7 +525,7 @@ export default function BatchRepVoting() {
                         onChange={() => setSelectedCandidate('Mel Andrea Rivero')}
                         onClick={(e) => e.stopPropagation()}
                       />
-                      <div className="batchrep-nominee-name" style={{ marginBottom: 0 }}>Mel Andrea Rivero</div>
+                      <div className="batchrep-nominee-name voting" style={{ marginBottom: 0 }}>Mel Andrea Rivero</div>
                     </div>
                     <button
                       className={`batchrep-roles-toggle ${aboutOpenMel ? 'open' : ''}`}
@@ -622,7 +622,7 @@ export default function BatchRepVoting() {
                   ✓
                 </div>
                 <div>
-                  <div className="batchrep-nominee-name">Felie Magbanua</div>
+                  <div className="batchrep-nominee-name voting">Felie Magbanua</div>
                   <div style={{ fontSize: '0.8rem', color: 'var(--color-status-positive)', fontWeight: '600' }}>
                     Confirmed — Uncontested
                   </div>
