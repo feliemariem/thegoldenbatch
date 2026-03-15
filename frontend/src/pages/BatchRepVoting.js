@@ -687,7 +687,7 @@ export default function BatchRepVoting() {
 
         {/* Footer */}
         <div className="batchrep-page-footer">
-          USLSIS Batch 2003 · Round 2 Voting
+          USLS-IS · 25th Alumni Homecoming · December 16, 2028
         </div>
       </div>
     </div>
