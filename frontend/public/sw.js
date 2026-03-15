@@ -1,4 +1,4 @@
-const CACHE_NAME = 'golden-batch-v1';
+const CACHE_NAME = 'golden-batch-v2';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -14,6 +14,11 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  // Skip API requests - never cache them
+  if (event.request.url.includes('/api/')) {
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request)
       .then((response) => response || fetch(event.request))
