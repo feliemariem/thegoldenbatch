@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import '../styles/profileNew.css';
+import '../styles/committee.css';
 import { api } from '../api';
 
 export default function Funds() {
@@ -99,7 +100,7 @@ export default function Funds() {
       <div className="card">
       <main className="profile-main">
         <div className="card funds-content funds-card">
-          <p className="committee-header-subtitle">25th Alumni Homecoming Fund</p>
+          <h2 className="committee-header-title">25th Alumni Homecoming Fund</h2>
 
           {/* Total Funds Display */}
           <div className="funds-balance-card">
