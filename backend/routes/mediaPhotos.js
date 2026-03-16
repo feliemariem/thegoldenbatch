@@ -86,7 +86,7 @@ router.post('/', authenticateToken, photoUpload.single('photo'), async (req, res
     }
 
     // Upload to Cloudinary
-    uploadResult = await uploadToCloudinary(req.file.buffer, 'media/memory_lane');
+    uploadResult = await uploadToCloudinary(req.file.buffer, 'media/throwback_vault');
 
     // Get uploader's name: prefer master_list.current_name, else users first_name + last_name
     const userResult = await db.query(
@@ -106,15 +106,22 @@ router.post('/', authenticateToken, photoUpload.single('photo'), async (req, res
     }
 
     const creditName = userResult.rows[0].credit_name;
-    const album = req.body.album || 'memory_lane';
+    const album = req.body.album || 'throwback_vault';
 
     // Insert into media_photos
-    const result = await db.query(
-      `INSERT INTO media_photos (album, cloudinary_url, cloudinary_public_id, credit_name, uploaded_by, status)
-       VALUES ($1, $2, $3, $4, $5, 'pending')
-       RETURNING id`,
-      [album, uploadResult.secure_url, uploadResult.public_id, creditName, req.user.id]
-    );
+    let result;
+    try {
+      result = await db.query(
+        `INSERT INTO media_photos (album, cloudinary_url, cloudinary_public_id, credit_name, uploaded_by, status)
+         VALUES ($1, $2, $3, $4, $5, 'pending')
+         RETURNING id`,
+        [album, uploadResult.secure_url, uploadResult.public_id, creditName, req.user.id]
+      );
+    } catch (dbErr) {
+      console.error('DB insert failed:', dbErr.message);
+      console.error('DB insert params:', { album, url: uploadResult.secure_url, public_id: uploadResult.public_id, creditName, userId: req.user.id });
+      throw dbErr;
+    }
 
     res.status(201).json({
       message: 'Photo submitted successfully',
@@ -139,7 +146,7 @@ router.post('/', authenticateToken, photoUpload.single('photo'), async (req, res
 // =============================================================================
 router.get('/', authenticateToken, async (req, res) => {
   try {
-    const album = req.query.album || 'memory_lane';
+    const album = req.query.album || 'throwback_vault';
     const status = req.query.status || 'published';
 
     // Non-published statuses require super admin
