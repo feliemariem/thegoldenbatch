@@ -106,7 +106,7 @@ router.post('/', authenticateToken, photoUpload.single('photo'), async (req, res
     }
 
     const creditName = userResult.rows[0].credit_name;
-    const album = req.body.album || 'throwback_vault';
+    const album = 'unassigned';
 
     // Insert into media_photos
     let result;
@@ -146,7 +146,7 @@ router.post('/', authenticateToken, photoUpload.single('photo'), async (req, res
 // =============================================================================
 router.get('/', authenticateToken, async (req, res) => {
   try {
-    const album = req.query.album || 'throwback_vault';
+    const album = req.query.album;
     const status = req.query.status || 'published';
 
     // Non-published statuses require super admin
@@ -157,12 +157,24 @@ router.get('/', authenticateToken, async (req, res) => {
       }
     }
 
-    const result = await db.query(
-      `SELECT * FROM media_photos
-       WHERE album = $1 AND status = $2
-       ORDER BY created_at DESC`,
-      [album, status]
-    );
+    let result;
+    if (album) {
+      // Filter by specific album
+      result = await db.query(
+        `SELECT * FROM media_photos
+         WHERE album = $1 AND status = $2
+         ORDER BY created_at DESC`,
+        [album, status]
+      );
+    } else {
+      // No album filter - return all photos with the given status
+      result = await db.query(
+        `SELECT * FROM media_photos
+         WHERE status = $1
+         ORDER BY created_at DESC`,
+        [status]
+      );
+    }
 
     res.json({ photos: result.rows });
   } catch (err) {
@@ -335,15 +347,28 @@ router.patch('/:id/status', authenticateToken, async (req, res) => {
       return res.status(403).json({ error: 'Admin access required' });
     }
 
-    const { status } = req.body;
+    const { status, album } = req.body;
     if (!['published', 'rejected'].includes(status)) {
       return res.status(400).json({ error: 'Invalid status. Must be "published" or "rejected"' });
     }
 
-    const result = await db.query(
-      `UPDATE media_photos SET status = $1 WHERE id = $2 RETURNING *`,
-      [status, req.params.id]
-    );
+    // Require album assignment when publishing
+    if (status === 'published' && !album) {
+      return res.status(400).json({ error: 'Please assign a photo to an album before publishing' });
+    }
+
+    let result;
+    if (status === 'published' && album) {
+      result = await db.query(
+        `UPDATE media_photos SET status = $1, album = $2 WHERE id = $3 RETURNING *`,
+        [status, album, req.params.id]
+      );
+    } else {
+      result = await db.query(
+        `UPDATE media_photos SET status = $1 WHERE id = $2 RETURNING *`,
+        [status, req.params.id]
+      );
+    }
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Photo not found' });
@@ -369,10 +394,10 @@ router.patch('/:id/status', authenticateToken, async (req, res) => {
         const firstName = userResult.rows.length > 0 ? userResult.rows[0].first_name : photo.credit_name.split(' ')[0];
 
         const frontendUrl = process.env.FRONTEND_URL || 'https://thegoldenbatch2003.com';
-        const mediaLink = `${frontendUrl}/media?tab=photos&album=throwback_vault`;
+        const mediaLink = `${frontendUrl}/media?tab=photos&album=${photo.album}`;
 
-        const subject = "Your photo is now live in the Throwback Vault!";
-        const message = `Hi ${firstName}! Your photo is now live! Head over to the Media page and check it out in the Throwback Vault -- your memory is now part of the batch collection. Thank you gid for sharing! Keep them coming -- the more photos we have, the more we can relive together.\n\n${mediaLink}`;
+        const subject = "Your photo is now live!";
+        const message = `Hi ${firstName}! Your photo is now live! Head over to the Media page and check it out -- your memory is now part of the batch collection. Thank you gid for sharing! Keep them coming -- the more photos we have, the more we can relive together.\n\n${mediaLink}`;
 
         await db.query(
           `INSERT INTO messages (from_admin_id, to_user_id, subject, message)
@@ -389,6 +414,23 @@ router.patch('/:id/status', authenticateToken, async (req, res) => {
   } catch (err) {
     console.error('Error updating photo status:', err);
     res.status(500).json({ error: 'Failed to update photo status' });
+  }
+});
+
+// =============================================================================
+// GET /api/media/albums - Get all active albums
+// =============================================================================
+router.get('/albums', authenticateToken, async (req, res) => {
+  try {
+    const result = await db.query(
+      `SELECT * FROM media_albums
+       WHERE is_active = true
+       ORDER BY display_order ASC`
+    );
+    res.json({ albums: result.rows });
+  } catch (err) {
+    console.error('Error fetching albums:', err);
+    res.status(500).json({ error: 'Failed to fetch albums' });
   }
 });
 

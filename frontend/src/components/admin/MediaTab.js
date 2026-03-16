@@ -54,6 +54,8 @@ export default function MediaTab({ onPendingCountChange, isSuperAdmin }) {
   const [actionLoading, setActionLoading] = useState({}); // { photoId: 'approve' | 'reject' | 'delete' }
   const [downloadAllLoading, setDownloadAllLoading] = useState(false);
   const [activePhotoInGroup, setActivePhotoInGroup] = useState({}); // { groupKey: photoId }
+  const [albums, setAlbums] = useState([]);
+  const [selectedAlbums, setSelectedAlbums] = useState({}); // { photoId: albumSlug }
 
   const fetchPendingPhotos = useCallback(async () => {
     try {
@@ -87,15 +89,32 @@ export default function MediaTab({ onPendingCountChange, isSuperAdmin }) {
     }
   }, []);
 
+  const fetchAlbums = useCallback(async () => {
+    try {
+      const res = await apiGet('/api/media/photos/albums');
+      if (res.ok) {
+        const data = await res.json();
+        setAlbums(data.albums || []);
+      }
+    } catch (err) {
+      console.error('Failed to fetch albums:', err);
+    }
+  }, []);
+
   useEffect(() => {
     fetchPendingPhotos();
     fetchPublishedPhotos();
-  }, [fetchPendingPhotos, fetchPublishedPhotos]);
+    fetchAlbums();
+  }, [fetchPendingPhotos, fetchPublishedPhotos, fetchAlbums]);
 
   const handleStatusChange = async (photoId, newStatus) => {
     setActionLoading(prev => ({ ...prev, [photoId]: newStatus === 'published' ? 'approve' : 'reject' }));
     try {
-      const res = await apiPatch(`/api/media/photos/${photoId}/status`, { status: newStatus });
+      const body = { status: newStatus };
+      if (newStatus === 'published') {
+        body.album = selectedAlbums[photoId];
+      }
+      const res = await apiPatch(`/api/media/photos/${photoId}/status`, body);
       if (res.ok) {
         // Remove from pending
         setPendingPhotos(prev => prev.filter(p => p.id !== photoId));
@@ -106,6 +125,13 @@ export default function MediaTab({ onPendingCountChange, isSuperAdmin }) {
           const updatedPhoto = await res.json();
           setPublishedPhotos(prev => [updatedPhoto, ...prev]);
         }
+
+        // Clear the selected album for this photo
+        setSelectedAlbums(prev => {
+          const next = { ...prev };
+          delete next[photoId];
+          return next;
+        });
       }
     } catch (err) {
       console.error('Failed to update photo status:', err);
@@ -364,10 +390,38 @@ export default function MediaTab({ onPendingCountChange, isSuperAdmin }) {
                           : formatDate(activePhoto.created_at)
                         }
                       </p>
+
+                      {/* Album Selection Dropdown */}
+                      <div style={{ marginBottom: '12px' }}>
+                        <select
+                          value={selectedAlbums[activePhoto.id] || ''}
+                          onChange={(e) => setSelectedAlbums(prev => ({ ...prev, [activePhoto.id]: e.target.value }))}
+                          style={{
+                            width: '100%',
+                            padding: '10px 12px',
+                            fontSize: '0.85rem',
+                            borderRadius: '8px',
+                            border: '1px solid rgba(255, 255, 255, 0.15)',
+                            background: 'rgba(255, 255, 255, 0.08)',
+                            color: selectedAlbums[activePhoto.id] ? 'var(--color-text-primary)' : 'var(--color-text-secondary)',
+                            cursor: 'pointer',
+                            appearance: 'none',
+                            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
+                            backgroundRepeat: 'no-repeat',
+                            backgroundPosition: 'right 12px center'
+                          }}
+                        >
+                          <option value="">Assign to album...</option>
+                          {albums.map(album => (
+                            <option key={album.slug} value={album.slug}>{album.title}</option>
+                          ))}
+                        </select>
+                      </div>
+
                       <div style={{ display: 'flex', gap: '8px' }}>
                         <button
                           onClick={() => handleStatusChange(activePhoto.id, 'published')}
-                          disabled={actionLoading[activePhoto.id]}
+                          disabled={actionLoading[activePhoto.id] || !selectedAlbums[activePhoto.id]}
                           style={{
                             flex: 1,
                             padding: '10px 16px',
@@ -375,10 +429,10 @@ export default function MediaTab({ onPendingCountChange, isSuperAdmin }) {
                             fontWeight: 600,
                             borderRadius: '8px',
                             border: 'none',
-                            cursor: actionLoading[activePhoto.id] ? 'not-allowed' : 'pointer',
+                            cursor: (actionLoading[activePhoto.id] || !selectedAlbums[activePhoto.id]) ? 'not-allowed' : 'pointer',
                             background: '#27ae60',
                             color: '#fff',
-                            opacity: actionLoading[activePhoto.id] ? 0.6 : 1
+                            opacity: (actionLoading[activePhoto.id] || !selectedAlbums[activePhoto.id]) ? 0.5 : 1
                           }}
                         >
                           {actionLoading[activePhoto.id] === 'approve' ? 'Approving...' : 'Approve'}
