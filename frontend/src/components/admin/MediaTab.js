@@ -56,6 +56,7 @@ export default function MediaTab({ onPendingCountChange, isSuperAdmin }) {
   const [activePhotoInGroup, setActivePhotoInGroup] = useState({}); // { groupKey: photoId }
   const [albums, setAlbums] = useState([]);
   const [selectedAlbums, setSelectedAlbums] = useState({}); // { photoId: albumSlug }
+  const [showPublished, setShowPublished] = useState(false);
 
   const fetchPendingPhotos = useCallback(async () => {
     try {
@@ -490,32 +491,58 @@ export default function MediaTab({ onPendingCountChange, isSuperAdmin }) {
           alignItems: 'center',
           marginBottom: '16px'
         }}>
-          <h3 style={{ margin: 0 }}>Published Photos (Throwback Vault)</h3>
-          {isSuperAdmin && publishedPhotos.length > 0 && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <h3 style={{ margin: 0 }}>Published Photos</h3>
+            <span style={{
+              fontSize: '0.85rem',
+              color: 'var(--color-text-secondary)',
+              fontWeight: 400
+            }}>
+              ({publishedPhotos.length})
+            </span>
+          </div>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
             <button
-              onClick={handleDownloadAll}
-              disabled={downloadAllLoading}
+              onClick={() => setShowPublished(!showPublished)}
               style={{
-                padding: '8px 16px',
+                padding: '8px 12px',
                 fontSize: '0.8rem',
-                fontWeight: 600,
+                fontWeight: 500,
                 borderRadius: '8px',
                 border: 'none',
-                cursor: downloadAllLoading ? 'not-allowed' : 'pointer',
-                background: 'var(--color-hover)',
-                color: 'var(--color-bg-primary)',
-                opacity: downloadAllLoading ? 0.7 : 1,
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px'
+                cursor: 'pointer',
+                background: 'transparent',
+                color: 'var(--color-text-secondary)'
               }}
             >
-              {downloadAllLoading ? 'Preparing ZIP...' : 'Download All'}
+              {showPublished ? 'Hide Published' : `Show Published`}
             </button>
-          )}
+            {isSuperAdmin && publishedPhotos.length > 0 && showPublished && (
+              <button
+                onClick={handleDownloadAll}
+                disabled={downloadAllLoading}
+                style={{
+                  padding: '8px 16px',
+                  fontSize: '0.8rem',
+                  fontWeight: 600,
+                  borderRadius: '8px',
+                  border: 'none',
+                  cursor: downloadAllLoading ? 'not-allowed' : 'pointer',
+                  background: 'var(--color-hover)',
+                  color: 'var(--color-bg-primary)',
+                  opacity: downloadAllLoading ? 0.7 : 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}
+              >
+                {downloadAllLoading ? 'Preparing ZIP...' : 'Download All'}
+              </button>
+            )}
+          </div>
         </div>
 
-        {loadingPublished ? (
+        {!showPublished ? null : loadingPublished ? (
           <p style={{ color: 'var(--color-text-secondary)', fontStyle: 'italic' }}>Loading...</p>
         ) : publishedPhotos.length === 0 ? (
           <div style={{
