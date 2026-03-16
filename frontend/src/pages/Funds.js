@@ -37,7 +37,13 @@ export default function Funds() {
     try {
       const res = await api('/api/ledger/donors');
       const data = await res.json();
-      setDonors(data.donors || []);
+      setDonors(
+        (data.donors || []).slice().sort((a, b) => {
+          const lastA = a.trim().split(' ').pop();
+          const lastB = b.trim().split(' ').pop();
+          return lastA.localeCompare(lastB);
+        })
+      );
     } catch (err) {
       console.error('Failed to fetch donors');
     }
