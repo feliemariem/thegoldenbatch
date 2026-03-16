@@ -65,6 +65,7 @@ router.get('/user-inbox', authenticateToken, async (req, res) => {
         m.subject,
         m.message,
         m.is_read,
+        m.is_deletable,
         m.created_at,
         m.parent_id,
         m.from_admin_id,
@@ -412,6 +413,32 @@ router.get('/debug-inbox', authenticateToken, async (req, res) => {
   } catch (err) {
     console.error('Debug endpoint error:', err);
     res.status(500).json({ error: err.message });
+  }
+});
+
+// Delete a deletable message (user can only delete their own deletable messages)
+router.delete('/:id', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Only allow deleting messages that:
+    // 1. Belong to the logged-in user (to_user_id matches)
+    // 2. Are marked as deletable (is_deletable = true)
+    const result = await db.query(
+      `DELETE FROM messages
+       WHERE id = $1 AND to_user_id = $2 AND is_deletable = true
+       RETURNING id`,
+      [id, req.user.id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Message not found or cannot be deleted' });
+    }
+
+    res.json({ success: true, message: 'Message deleted' });
+  } catch (err) {
+    console.error('Failed to delete message:', err);
+    res.status(500).json({ error: 'Failed to delete message' });
   }
 });
 

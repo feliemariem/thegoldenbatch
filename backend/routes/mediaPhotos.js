@@ -400,8 +400,8 @@ router.patch('/:id/status', authenticateToken, async (req, res) => {
         const message = `Hi ${firstName}! Your photo is now live! Head over to the Media page and check it out -- your memory is now part of the batch collection. Thank you gid for sharing! Keep them coming -- the more photos we have, the more we can relive together.\n\n${mediaLink}`;
 
         await db.query(
-          `INSERT INTO messages (from_admin_id, to_user_id, subject, message)
-           VALUES ($1, $2, $3, $4)`,
+          `INSERT INTO messages (from_admin_id, to_user_id, subject, message, is_deletable)
+           VALUES ($1, $2, $3, $4, true)`,
           [adminId, photo.uploaded_by, subject, message]
         );
       } catch (msgErr) {

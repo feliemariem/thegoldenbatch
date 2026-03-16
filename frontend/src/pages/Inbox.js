@@ -5,7 +5,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import '../styles/profileNew.css';
 import '../styles/inbox.css';
-import { apiGet, apiPost } from '../api';
+import { apiGet, apiPost, apiDelete } from '../api';
 
 export default function Inbox() {
   const { user } = useAuth();
@@ -105,6 +105,18 @@ export default function Inbox() {
       decrementUnreadCount();
     } catch (err) {
       console.error('Failed to mark message as read');
+    }
+  };
+
+  const handleDeleteMessage = async (e, id) => {
+    e.stopPropagation(); // Prevent opening the message
+    try {
+      const res = await apiDelete(`/api/messages/${id}`);
+      if (res.ok) {
+        setMessages(prev => prev.filter(m => m.id !== id));
+      }
+    } catch (err) {
+      console.error('Failed to delete message:', err);
     }
   };
 
@@ -320,7 +332,35 @@ export default function Inbox() {
                           </span>
                         )}
                       </span>
-                      <span className="message-date">{formatDate(item.created_at)}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span className="message-date">{formatDate(item.created_at)}</span>
+                        {item.type === 'message' && item.is_deletable && (
+                          <button
+                            onClick={(e) => handleDeleteMessage(e, item.id)}
+                            title="Delete notification"
+                            style={{
+                              padding: '4px',
+                              background: 'transparent',
+                              border: 'none',
+                              cursor: 'pointer',
+                              color: 'var(--text-muted)',
+                              opacity: 0.6,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              borderRadius: '4px',
+                              transition: 'opacity 0.15s, color 0.15s'
+                            }}
+                            onMouseEnter={(e) => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.color = '#dc3545'; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.opacity = '0.6'; e.currentTarget.style.color = 'var(--text-muted)'; }}
+                          >
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <line x1="18" y1="6" x2="6" y2="18"></line>
+                              <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                          </button>
+                        )}
+                      </div>
                     </div>
                     <p className="message-snippet">
                       {item.type === 'message' && <span className="inbox-committee-prefix">Committee: </span>}
