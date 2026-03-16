@@ -51,6 +51,7 @@ export default function BatchRepVoting() {
   const [rolesOpen2, setRolesOpen2] = useState(false);
   const [aboutOpenFelie, setAboutOpenFelie] = useState(false);
   const [letterOpen, setLetterOpen] = useState(false);
+  const [whyVotingOpen, setWhyVotingOpen] = useState(false);
   const [results, setResults] = useState(null); // { counts: {}, total: 0 }
 
   // Countdown state
@@ -292,12 +293,13 @@ export default function BatchRepVoting() {
             </div>
           )}
 
-        {/* Why we're voting overview */}
-        <div className="batchrep-response-card">
-          <div className="batchrep-response-header">
-            <h3>Why we're voting</h3>
-          </div>
-          <div className="batchrep-response-body" style={{ padding: '20px' }}>
+        {/* Why we're voting overview - Collapsible */}
+        <div className={`batchrep-collapsible ${whyVotingOpen ? 'open' : ''}`}>
+          <button className="batchrep-collapsible-trigger" onClick={() => setWhyVotingOpen(!whyVotingOpen)}>
+            <span>Why we're voting</span>
+            <span className="batchrep-collapsible-arrow">▼</span>
+          </button>
+          <div className="batchrep-collapsible-body">
             <p style={{ marginBottom: '12px' }}>
               The USLS Alumni Association has asked our batch to put forward an official representative.
               In Round 1, the organizing committee presented its two co-chairs as nominees —{' '}
