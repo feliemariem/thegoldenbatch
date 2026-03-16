@@ -412,6 +412,8 @@
 
 .detail-body {
   margin-bottom: 24px;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .detail-body p {

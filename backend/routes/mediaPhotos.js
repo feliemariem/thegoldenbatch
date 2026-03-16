@@ -361,11 +361,18 @@ router.patch('/:id/status', authenticateToken, async (req, res) => {
         );
         const adminId = adminResult.rows.length > 0 ? adminResult.rows[0].id : null;
 
+        // Get user's first_name for the greeting
+        const userResult = await db.query(
+          'SELECT first_name FROM users WHERE id = $1',
+          [photo.uploaded_by]
+        );
+        const firstName = userResult.rows.length > 0 ? userResult.rows[0].first_name : photo.credit_name.split(' ')[0];
+
         const frontendUrl = process.env.FRONTEND_URL || 'https://thegoldenbatch2003.com';
-        const mediaLink = `${frontendUrl}/media?tab=photos`;
+        const mediaLink = `${frontendUrl}/media?tab=photos&album=throwback_vault`;
 
         const subject = "Your photo is now live in the Throwback Vault!";
-        const message = `Hi ${photo.credit_name}! Your photo is now live! Head over to the Media page and check it out in the Throwback Vault -- your memory is now part of the batch collection. Thank you gid for sharing! Keep them coming -- the more photos we have, the more we can relive together.\n\n${mediaLink}`;
+        const message = `Hi ${firstName}! Your photo is now live! Head over to the Media page and check it out in the Throwback Vault -- your memory is now part of the batch collection. Thank you gid for sharing! Keep them coming -- the more photos we have, the more we can relive together.\n\n${mediaLink}`;
 
         await db.query(
           `INSERT INTO messages (from_admin_id, to_user_id, subject, message)

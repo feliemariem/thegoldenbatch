@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -403,6 +403,7 @@ function ComingSoon({ user }) {
 // ─── Tab: Photos ──────────────────────────────────────────────────────────────
 
 function PhotosTab({ user }) {
+  const location = useLocation();
   const [photos, setPhotos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedAlbum, setSelectedAlbum] = useState(null);
@@ -445,6 +446,19 @@ function PhotosTab({ user }) {
       }))
     });
   }
+
+  // Deep link: auto-open album if ?album=xxx is in URL
+  useEffect(() => {
+    if (loading || albums.length === 0) return;
+    const params = new URLSearchParams(location.search);
+    const albumId = params.get('album');
+    if (albumId && !selectedAlbum) {
+      const matchedAlbum = albums.find(a => a.id === albumId);
+      if (matchedAlbum) {
+        setSelectedAlbum(matchedAlbum);
+      }
+    }
+  }, [loading, albums, location.search, selectedAlbum]);
 
   const openLightbox = (item, index) => {
     setLightboxItem(item);
