@@ -5,8 +5,16 @@ const { authenticateToken, authenticateAdmin } = require('../middleware/auth');
 
 // Helper: Check if user is a grad (has invite_id)
 const checkIsGrad = async (userId) => {
-  const result = await db.query('SELECT invite_id FROM users WHERE id = $1', [userId]);
-  return result.rows[0]?.invite_id != null;
+  const result = await db.query(
+    `SELECT m.section
+     FROM users u
+     JOIN invites i ON u.invite_id = i.id
+     JOIN master_list m ON i.master_list_id = m.id
+     WHERE u.id = $1`,
+    [userId]
+  );
+  const section = result.rows[0]?.section;
+  return section != null && section !== 'Non-Graduate';
 };
 
 // Helper: Check if email has access to batch-rep feature
