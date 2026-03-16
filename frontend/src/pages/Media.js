@@ -405,9 +405,9 @@ function ComingSoon({ user }) {
 function PhotosTab({ user }) {
   const [photos, setPhotos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [lightboxPhoto, setLightboxPhoto] = useState(null);
+  const [selectedAlbum, setSelectedAlbum] = useState(null);
+  const [lightboxItem, setLightboxItem] = useState(null);
   const [lightboxIndex, setLightboxIndex] = useState(0);
-  const [layoutMode, setLayoutMode] = useState('grid');
   const [showUploadForm, setShowUploadForm] = useState(false);
 
   const canUpload = canUploadMedia(user);
@@ -428,18 +428,37 @@ function PhotosTab({ user }) {
 
   useEffect(() => { fetchPhotos(); }, []);
 
-  const openLightbox = (photo, index) => {
-    setLightboxPhoto(photo);
+  // Build albums array from fetched photos
+  const albums = [];
+  if (photos.length > 0) {
+    albums.push({
+      id: 'throwback_vault',
+      title: 'Throwback Vault',
+      description: 'Grade School and High School memories from Batch 2003',
+      coverUrl: photos[0].cloudinary_url,
+      itemCount: photos.length,
+      items: photos.map(p => ({
+        id: p.id,
+        type: 'photo',
+        url: p.cloudinary_url,
+        caption: `Photo by ${p.credit_name}`
+      }))
+    });
+  }
+
+  const openLightbox = (item, index) => {
+    setLightboxItem(item);
     setLightboxIndex(index);
   };
 
-  const closeLightbox = () => setLightboxPhoto(null);
+  const closeLightbox = () => setLightboxItem(null);
 
   const navigateLightbox = (dir) => {
-    if (photos.length === 0) return;
-    const next = (lightboxIndex + dir + photos.length) % photos.length;
+    if (!selectedAlbum) return;
+    const items = selectedAlbum.items;
+    const next = (lightboxIndex + dir + items.length) % items.length;
     setLightboxIndex(next);
-    setLightboxPhoto(photos[next]);
+    setLightboxItem(items[next]);
   };
 
   const handleUploadSuccess = () => {
@@ -447,11 +466,57 @@ function PhotosTab({ user }) {
     // User can click "Submit more" or "Cancel" to dismiss
   };
 
+  // Album detail view
+  if (selectedAlbum) {
+    return (
+      <div>
+        <button onClick={() => setSelectedAlbum(null)} className="media-back-btn">&larr; Back to Albums</button>
+        <h3 className="album-detail-title">{selectedAlbum.title}</h3>
+        <p className="album-detail-desc">{selectedAlbum.description}</p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '10px' }}>
+          {selectedAlbum.items.map((item, index) => (
+            <div
+              key={item.id}
+              onClick={() => openLightbox(item, index)}
+              className="media-item"
+              style={{ position: 'relative', paddingTop: '100%', borderRadius: '8px', overflow: 'hidden', cursor: 'pointer', border: '1px solid rgba(255,255,255,0.08)' }}
+            >
+              <img src={item.url} alt={item.caption} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+            </div>
+          ))}
+        </div>
+
+        {/* Lightbox */}
+        {lightboxItem && (
+          <div
+            onClick={closeLightbox}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.95)', zIndex: 1000, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px' }}
+          >
+            <button onClick={closeLightbox} style={{ position: 'absolute', top: '20px', right: '20px', width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: '1.2rem', cursor: 'pointer' }}>
+              &times;
+            </button>
+            {selectedAlbum.items.length > 1 && (
+              <>
+                <button onClick={(e) => { e.stopPropagation(); navigateLightbox(-1); }} style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)', width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: '1.5rem', cursor: 'pointer' }}>&#8249;</button>
+                <button onClick={(e) => { e.stopPropagation(); navigateLightbox(1); }} style={{ position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)', width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: '1.5rem', cursor: 'pointer' }}>&#8250;</button>
+              </>
+            )}
+            <div onClick={(e) => e.stopPropagation()} style={{ maxWidth: '90vw', maxHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <img src={lightboxItem.url} alt={lightboxItem.caption} style={{ maxWidth: '100%', maxHeight: '75vh', borderRadius: '12px' }} />
+              <p style={{ color: '#ccc', marginTop: '14px', fontSize: '0.9rem', textAlign: 'center' }}>{lightboxItem.caption}</p>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Albums grid view
   return (
     <div>
       <div className="media-toolbar">
         <span className="media-count-badge">
-          {loading ? '...' : `${photos.length} photo${photos.length !== 1 ? 's' : ''}`}
+          {loading ? '...' : `${albums.length} album${albums.length !== 1 ? 's' : ''}`}
         </span>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           {canUpload && (
@@ -459,10 +524,6 @@ function PhotosTab({ user }) {
               {showUploadForm ? 'Cancel' : '+ Share a photo'}
             </button>
           )}
-          <div className="media-layout-toggle">
-            <button className={`layout-btn${layoutMode === 'grid' ? ' active' : ''}`} onClick={() => setLayoutMode('grid')}>Grid</button>
-            <button className={`layout-btn${layoutMode === 'masonry' ? ' active' : ''}`} onClick={() => setLayoutMode('masonry')}>Masonry</button>
-          </div>
         </div>
       </div>
 
@@ -473,8 +534,8 @@ function PhotosTab({ user }) {
       )}
 
       {loading ? (
-        <p style={{ color: 'var(--color-text-secondary)', textAlign: 'center', padding: '40px 0' }}>Loading photos...</p>
-      ) : photos.length === 0 ? (
+        <p style={{ color: 'var(--color-text-secondary)', textAlign: 'center', padding: '40px 0' }}>Loading albums...</p>
+      ) : albums.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '48px 20px' }}>
           <div style={{ fontSize: '2.5rem', marginBottom: '12px', opacity: 0.5 }}>📷</div>
           <p style={{ color: 'var(--color-text-secondary)', margin: 0 }}>
@@ -482,57 +543,19 @@ function PhotosTab({ user }) {
           </p>
         </div>
       ) : (
-        <div style={layoutMode === 'masonry' ? { columns: 3, gap: '10px' } : { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '10px' }}>
-          {photos.map((photo, index) => (
-            <div
-              key={photo.id}
-              onClick={() => openLightbox(photo, index)}
-              className="media-item"
-              style={{
-                position: 'relative',
-                paddingTop: layoutMode === 'masonry' ? undefined : '100%',
-                borderRadius: '8px',
-                overflow: 'hidden',
-                cursor: 'pointer',
-                border: '1px solid rgba(255,255,255,0.08)',
-                breakInside: layoutMode === 'masonry' ? 'avoid' : undefined,
-                marginBottom: layoutMode === 'masonry' ? '10px' : undefined,
-              }}
-            >
-              <img
-                src={photo.cloudinary_url}
-                alt={`Photo by ${photo.credit_name}`}
-                style={layoutMode === 'masonry'
-                  ? { width: '100%', display: 'block', borderRadius: '8px' }
-                  : { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }
-                }
-              />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px' }}>
+          {albums.map(album => (
+            <div key={album.id} onClick={() => setSelectedAlbum(album)} className="album-card">
+              <div style={{ position: 'relative', paddingTop: '66.67%', overflow: 'hidden' }}>
+                <img src={album.coverUrl} alt={album.title} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.3s ease' }} />
+                <div style={{ position: 'absolute', bottom: '8px', left: '8px', background: 'rgba(0,0,0,0.7)', color: '#fff', padding: '2px 8px', borderRadius: '10px', fontSize: '0.7rem' }}>{album.itemCount} photos</div>
+              </div>
+              <div style={{ padding: '10px 12px' }}>
+                <h4 className="album-card-title">{album.title}</h4>
+                <p className="album-card-desc">{album.description}</p>
+              </div>
             </div>
           ))}
-        </div>
-      )}
-
-      {/* Lightbox */}
-      {lightboxPhoto && (
-        <div
-          onClick={closeLightbox}
-          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.95)', zIndex: 1000, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px' }}
-        >
-          <button onClick={closeLightbox} style={{ position: 'absolute', top: '20px', right: '20px', width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: '1.2rem', cursor: 'pointer' }}>
-            &times;
-          </button>
-          {photos.length > 1 && (
-            <>
-              <button onClick={(e) => { e.stopPropagation(); navigateLightbox(-1); }} style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)', width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: '1.5rem', cursor: 'pointer' }}>&#8249;</button>
-              <button onClick={(e) => { e.stopPropagation(); navigateLightbox(1); }} style={{ position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)', width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: '1.5rem', cursor: 'pointer' }}>&#8250;</button>
-            </>
-          )}
-          <div onClick={(e) => e.stopPropagation()} style={{ maxWidth: '90vw', maxHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <img src={lightboxPhoto.cloudinary_url} alt={`Photo by ${lightboxPhoto.credit_name}`} style={{ maxWidth: '100%', maxHeight: '75vh', borderRadius: '12px' }} />
-            <p style={{ color: '#ccc', marginTop: '14px', fontSize: '0.9rem', textAlign: 'center' }}>
-              Photo by {lightboxPhoto.credit_name}
-            </p>
-          </div>
         </div>
       )}
     </div>
@@ -744,7 +767,7 @@ export default function Media() {
   const canWrite = hasAccess; // same gate for now; widen separately when ready
 
   const tabs = [
-    { id: 'photos', label: 'Photo Gallery' },
+    { id: 'photos', label: 'Albums' },
     { id: 'videos', label: 'Videos' },
     { id: 'press', label: 'Press & Articles' },
     { id: 'highlights', label: 'Event Highlights' },
