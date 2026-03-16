@@ -99,8 +99,7 @@ export default function Funds() {
       <div className="card">
       <main className="profile-main">
         <div className="card funds-content funds-card">
-          <h2 className="funds-page-title">USLS-IS 2003</h2>
-          <p className="funds-page-subtitle">25th Alumni Homecoming Fund</p>
+          <p className="committee-header-subtitle">25th Alumni Homecoming Fund</p>
 
           {/* Total Funds Display */}
           <div className="funds-balance-card">
