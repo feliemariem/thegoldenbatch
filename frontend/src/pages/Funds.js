@@ -100,7 +100,9 @@ export default function Funds() {
       <div className="card">
       <main className="profile-main">
         <div className="card funds-content funds-card">
-          <h2 className="committee-header-title">25th Alumni Homecoming Fund</h2>
+          <div className="committee-header" style={{ marginBottom: '0' }}>
+            <h2>25th Alumni Homecoming Fund</h2>
+          </div>
 
           {/* Total Funds Display */}
           <div className="funds-balance-card">
