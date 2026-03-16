@@ -340,7 +340,15 @@ export default function Funds() {
                       <div className="funds-alloc-name">In Memoriam Football Cup</div>
                       <div className="funds-alloc-desc">A tribute to the batchmates we've lost, played in their honor.</div>
                     </div>
-                    <span className="funds-alloc-pct gold">4%</span>
+                    <span className="funds-alloc-pct gold">2%</span>
+                  </div>
+                  <div className="funds-alloc-item">
+                    <span className="funds-alloc-icon">🏀</span>
+                    <div className="funds-alloc-details">
+                      <div className="funds-alloc-name">In Memoriam Basketball Cup</div>
+                      <div className="funds-alloc-desc">A tribute to a batchmate we lost, played in their honor.</div>
+                    </div>
+                    <span className="funds-alloc-pct gold">2%</span>
                   </div>
                 </div>
                 <div className="funds-alloc-big-pct gold-block">
