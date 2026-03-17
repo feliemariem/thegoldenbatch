@@ -52,7 +52,7 @@
   margin-bottom: 24px;
 }
 
-/* Section Divider */
+/* Section Divider - gold label with extending line */
 .committee-section-divider {
   display: flex;
   align-items: center;
@@ -64,7 +64,7 @@
   content: '';
   flex: 1;
   height: 1px;
-  background: rgba(207, 181, 59, 0.3);
+  background: rgba(207, 181, 59, 0.4);
   margin-left: 16px;
 }
 
@@ -180,7 +180,7 @@
 }
 
 .committee-card-role {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -216,7 +216,12 @@
 
 .committee-see-role-arrow {
   font-size: 0.65rem;
-  transition: transform 0.2s ease;
+  transition: transform 0.3s ease;
+  display: inline-block;
+}
+
+.committee-see-role-arrow.rotated {
+  transform: rotate(180deg);
 }
 
 /* Role Collapsible */
@@ -227,7 +232,7 @@
 }
 
 .committee-role-collapsible.expanded {
-  max-height: 400px;
+  max-height: 500px;
 }
 
 .committee-role-content {
@@ -241,11 +246,13 @@
   font-style: italic;
   color: var(--color-text-secondary);
   margin: 0 0 12px 0;
-  padding-left: 12px;
+  padding: 10px 12px;
   border-left: 2px solid var(--color-hover);
+  background: var(--color-bg-secondary);
+  border-radius: 0 6px 6px 0;
 }
 
-/* Role Bullets */
+/* Role Bullets - using em dash */
 .committee-role-bullets {
   list-style: none;
   padding: 0;
@@ -254,7 +261,7 @@
 
 .committee-role-bullets li {
   position: relative;
-  padding-left: 16px;
+  padding-left: 20px;
   margin-bottom: 8px;
   font-size: 0.85rem;
   color: var(--color-text-secondary);
@@ -262,7 +269,7 @@
 }
 
 .committee-role-bullets li::before {
-  content: '•';
+  content: '—';
   position: absolute;
   left: 0;
   color: var(--color-hover);
@@ -686,6 +693,15 @@ body[data-theme="light"] .committee-section-divider::after {
 }
 
 body[data-theme="light"] .committee-section-label {
+  color: #006633;
+}
+
+/* Light mode role focus */
+body[data-theme="light"] .committee-role-focus {
+  border-left-color: #006633;
+}
+
+body[data-theme="light"] .committee-role-bullets li::before {
   color: #006633;
 }
 

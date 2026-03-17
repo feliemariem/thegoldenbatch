@@ -7,42 +7,25 @@ import '../styles/profileNew.css';
 import '../styles/committee.css';
 import { apiGet, apiPost } from '../api';
 
-// ============================================================
-// SECTION_MAP - Update these IDs from production database query:
-// SELECT id, first_name, last_name, role_title, email
-// FROM admins WHERE role_title IS NOT NULL AND role_title != ''
-// ORDER BY display_order ASC;
-// ============================================================
-const ID_BIANCA = 2;
-const ID_FELIE = 3;
-const ID_MARY = 4;
-const ID_CHAYA = 5;
-const ID_COYCOY = 6;
-const ID_NEA = 7;
-const ID_NARCISO = 8;
-const ID_APOL = 9;
-const ID_NIKKI = 10;
-const ID_CEDRIC = 11;
-const ID_WILL = 12;
-const ID_JR = 13;
-
+// Section mapping by admin ID
 const SECTION_MAP = {
-  [ID_BIANCA]: 'leadership',
-  [ID_FELIE]: 'leadership',
-  [ID_MARY]: 'admin',
-  [ID_CHAYA]: 'admin',
-  [ID_COYCOY]: 'admin',
-  [ID_NEA]: 'legal',
-  [ID_NARCISO]: 'legal',
-  [ID_APOL]: 'functions',
-  [ID_NIKKI]: 'functions',
-  [ID_CEDRIC]: 'functions',
-  [ID_WILL]: 'operations',
-  [ID_JR]: 'operations',
+  60: 'leadership',  // Bianca
+  75: 'leadership',  // Felie
+  76: 'admin',       // Mary Rose
+  63: 'admin',       // Chaya
+  53: 'admin',       // Coycoy
+  58: 'legal',       // Nea
+  64: 'legal',       // Narciso
+  61: 'functions',   // Apol
+  73: 'functions',   // Nikki
+  65: 'functions',   // Cedric
+  62: 'operations',  // William
+  54: 'operations',  // JR
 };
 
+// Role bullets by admin ID
 const ROLE_BULLETS = {
-  [ID_BIANCA]: {
+  60: {
     focus: 'Focus: Vision, networking, external relationships, and on-the-ground coordination',
     bullets: [
       'Leads on-the-ground logistics and represents the batch in local networks',
@@ -51,7 +34,7 @@ const ROLE_BULLETS = {
       'Drives the vision behind batch initiatives',
     ]
   },
-  [ID_FELIE]: {
+  75: {
     focus: 'Focus: Systems, platform development, and committee operations',
     bullets: [
       'Oversees internal operations and committee structure',
@@ -60,7 +43,7 @@ const ROLE_BULLETS = {
       'Develops systems and tools that keep the batch organized, informed, and transparent',
     ]
   },
-  [ID_MARY]: {
+  76: {
     bullets: [
       'Custodian of batch funds',
       'Manages the official batch bank account',
@@ -68,7 +51,7 @@ const ROLE_BULLETS = {
       'Oversees financial reporting and transparency with the committee',
     ]
   },
-  [ID_CHAYA]: {
+  63: {
     bullets: [
       "Keeps the batch's financial records and digital ledger up to date",
       'Records contributions, deposits, and expenses',
@@ -76,56 +59,56 @@ const ROLE_BULLETS = {
       'Ensures transparent financial reporting across the committee',
     ]
   },
-  [ID_COYCOY]: {
+  53: {
     bullets: [
       'Records and maintains minutes of committee meetings',
       'Documents discussions, decisions, and action items',
       'Keeps internal documentation organized and accessible for committee reference',
     ]
   },
-  [ID_NEA]: {
+  58: {
     bullets: [
       'Provides legal perspective during committee discussions',
       'Helps draft and refine formal communications and agreements',
       'Advises on consent, privacy, and responsible handling of batch information',
     ]
   },
-  [ID_NARCISO]: {
+  64: {
     bullets: [
       'Provides legal guidance when needed',
       'Serves as co-signatory to the batch bank account',
       'Reviews agreements and formal documents',
     ]
   },
-  [ID_APOL]: {
+  61: {
     bullets: [
       'Leads the planning and execution of batch events and gatherings',
       'Works with the committee on program development and activities',
       'Oversees event preparations as the Jubilee approaches',
     ]
   },
-  [ID_NIKKI]: {
+  73: {
     bullets: [
       'Develops official communications to the batch',
       'Drafts announcements and updates for the batch website',
       "Ensures clear and consistent messaging around the batch's work",
     ]
   },
-  [ID_CEDRIC]: {
+  65: {
     bullets: [
       'Leads outreach to batchmates who have not yet registered',
       'Grows and manages the batch contact database',
       'Engages with batchmates and brings feedback to the committee',
     ]
   },
-  [ID_WILL]: {
+  62: {
     bullets: [
       'Helps design and refine operational processes for the committee',
       'Drives implementation of systems and workflows used by the committee',
       'Reviews documents and processes for clarity and alignment',
     ]
   },
-  [ID_JR]: {
+  54: {
     bullets: [
       'Assists committee efforts and batch activities as needed',
       'Handles logistical execution of tasks',
@@ -134,14 +117,17 @@ const ROLE_BULLETS = {
   },
 };
 
-// Section configuration
+// Section configuration - uppercase labels
 const SECTIONS = [
-  { key: 'leadership', title: 'Committee Leadership', columns: 2 },
-  { key: 'admin', title: 'Administrative & Financial', columns: 3 },
-  { key: 'legal', title: 'Legal', columns: 2 },
-  { key: 'functions', title: 'Committee Functions', columns: 3 },
-  { key: 'operations', title: 'Operations & Implementation', columns: 2 },
+  { key: 'leadership', label: 'COMMITTEE LEADERSHIP' },
+  { key: 'admin', label: 'ADMINISTRATIVE & FINANCIAL' },
+  { key: 'legal', label: 'LEGAL' },
+  { key: 'functions', label: 'COMMITTEE FUNCTIONS' },
+  { key: 'operations', label: 'OPERATIONS & IMPLEMENTATION' },
 ];
+
+// IDs that get "Atty." prefix
+const ATTY_IDS = [58, 64];
 
 // Role descriptions for additional volunteer positions
 const VOLUNTEER_ROLES = [
@@ -194,7 +180,7 @@ export default function Committee() {
   const [savingInterest, setSavingInterest] = useState(null);
   const [toast, setToast] = useState(null);
   const [showMissionModal, setShowMissionModal] = useState(false);
-  const [expandedCards, setExpandedCards] = useState({});
+  const [openRoles, setOpenRoles] = useState({});
 
   useEffect(() => {
     if (user) {
@@ -284,16 +270,15 @@ export default function Committee() {
     }
   };
 
-  const toggleCardExpanded = (memberId) => {
-    setExpandedCards(prev => ({
-      ...prev,
-      [memberId]: !prev[memberId]
-    }));
-  };
-
   // Helper to get display name
   const getDisplayName = (member) => {
     return member.current_name || `${member.first_name || ''} ${member.last_name || ''}`.trim() || 'Unknown';
+  };
+
+  // Helper to parse sub-committees into array
+  const parseSubCommittees = (subCommittees) => {
+    if (!subCommittees) return [];
+    return subCommittees.split(',').map(s => s.trim()).filter(Boolean);
   };
 
   // Get section for a member
@@ -313,7 +298,12 @@ export default function Committee() {
   const renderMemberCard = (member, isLeadership = false) => {
     const roleBullets = ROLE_BULLETS[member.id];
     const hasRoleInfo = roleBullets && roleBullets.bullets && roleBullets.bullets.length > 0;
-    const isExpanded = expandedCards[member.id];
+    const isOpen = openRoles[member.id];
+
+    // Add "Atty." prefix for legal members
+    const displayName = ATTY_IDS.includes(member.id)
+      ? `Atty. ${getDisplayName(member)}`
+      : getDisplayName(member);
 
     return (
       <div
@@ -323,7 +313,7 @@ export default function Committee() {
       >
         <div className="committee-card-avatar">
           {member.profile_photo ? (
-            <img src={member.profile_photo} alt={getDisplayName(member)} />
+            <img src={member.profile_photo} alt={displayName} />
           ) : (
             <div className="committee-card-placeholder">
               {(member.first_name?.[0] || member.email?.[0] || '?').toUpperCase()}
@@ -331,20 +321,20 @@ export default function Committee() {
           )}
         </div>
         <div className="committee-card-content">
-          <h4 className="committee-card-name">{getDisplayName(member)}</h4>
+          <h4 className="committee-card-name">{displayName}</h4>
           <p className="committee-card-role">{member.role_title}</p>
 
           {hasRoleInfo && (
             <>
               <button
-                className={`committee-see-role-btn ${isExpanded ? 'expanded' : ''}`}
-                onClick={() => toggleCardExpanded(member.id)}
+                className={`committee-see-role-btn ${isOpen ? 'expanded' : ''}`}
+                onClick={() => setOpenRoles(prev => ({ ...prev, [member.id]: !prev[member.id] }))}
               >
-                {isExpanded ? 'Hide role' : 'See role'}
-                <span className="committee-see-role-arrow">{isExpanded ? '▲' : '▼'}</span>
+                {isOpen ? 'Hide role' : 'See role'}
+                <span className={`committee-see-role-arrow ${isOpen ? 'rotated' : ''}`}>▼</span>
               </button>
 
-              <div className={`committee-role-collapsible ${isExpanded ? 'expanded' : ''}`}>
+              <div className={`committee-role-collapsible ${isOpen ? 'expanded' : ''}`}>
                 <div className="committee-role-content">
                   {roleBullets.focus && (
                     <p className="committee-role-focus">{roleBullets.focus}</p>
@@ -410,7 +400,7 @@ export default function Committee() {
           return (
             <section key={section.key} className="committee-section">
               <div className="committee-section-divider">
-                <span className="committee-section-label">{section.title}</span>
+                <span className="committee-section-label">{section.label}</span>
               </div>
               <div className={`committee-grid committee-grid-${section.key}`}>
                 {sectionMembers.map(member => renderMemberCard(member, section.key === 'leadership'))}
@@ -423,7 +413,7 @@ export default function Committee() {
         {groupedMembers.additional && groupedMembers.additional.length > 0 && (
           <section className="committee-section">
             <div className="committee-section-divider">
-              <span className="committee-section-label">Additional Members</span>
+              <span className="committee-section-label">ADDITIONAL MEMBERS</span>
             </div>
             <div className="committee-grid committee-grid-additional">
               {groupedMembers.additional.map(member => renderMemberCard(member))}
