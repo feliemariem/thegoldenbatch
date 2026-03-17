@@ -36,7 +36,10 @@ export default function BirthdayWidget() {
 
     const fetchBirthdays = async () => {
       try {
-        const response = await apiGet('/api/me/birthdays/today');
+        const today = new Date();
+        const month = today.getMonth() + 1;
+        const day = today.getDate();
+        const response = await apiGet(`/api/me/birthdays/today?month=${month}&day=${day}`);
         if (response.ok) {
           const data = await response.json();
           setBirthdays(data);

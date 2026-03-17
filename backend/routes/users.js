@@ -586,12 +586,17 @@ router.delete('/photo', authenticateToken, async (req, res) => {
 // Get today's birthdays
 router.get('/birthdays/today', authenticateToken, async (req, res) => {
   try {
+    const { month, day } = req.query;
+    const m = parseInt(month) || new Date().getMonth() + 1;
+    const d = parseInt(day) || new Date().getDate();
+
     const result = await db.query(
       `SELECT id, first_name, last_name, profile_photo, birthday
        FROM users
-       WHERE EXTRACT(MONTH FROM birthday) = EXTRACT(MONTH FROM CURRENT_DATE)
-         AND EXTRACT(DAY FROM birthday) = EXTRACT(DAY FROM CURRENT_DATE)
-       ORDER BY first_name, last_name`
+       WHERE EXTRACT(MONTH FROM birthday) = $1
+         AND EXTRACT(DAY FROM birthday) = $2
+       ORDER BY first_name, last_name`,
+      [m, d]
     );
 
     res.json(result.rows);
