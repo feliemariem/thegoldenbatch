@@ -1,11 +1,147 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import '../styles/profileNew.css';
 import '../styles/committee.css';
 import { apiGet, apiPost } from '../api';
+
+// ============================================================
+// SECTION_MAP - Update these IDs from production database query:
+// SELECT id, first_name, last_name, role_title, email
+// FROM admins WHERE role_title IS NOT NULL AND role_title != ''
+// ORDER BY display_order ASC;
+// ============================================================
+const ID_BIANCA = 2;
+const ID_FELIE = 3;
+const ID_MARY = 4;
+const ID_CHAYA = 5;
+const ID_COYCOY = 6;
+const ID_NEA = 7;
+const ID_NARCISO = 8;
+const ID_APOL = 9;
+const ID_NIKKI = 10;
+const ID_CEDRIC = 11;
+const ID_WILL = 12;
+const ID_JR = 13;
+
+const SECTION_MAP = {
+  [ID_BIANCA]: 'leadership',
+  [ID_FELIE]: 'leadership',
+  [ID_MARY]: 'admin',
+  [ID_CHAYA]: 'admin',
+  [ID_COYCOY]: 'admin',
+  [ID_NEA]: 'legal',
+  [ID_NARCISO]: 'legal',
+  [ID_APOL]: 'functions',
+  [ID_NIKKI]: 'functions',
+  [ID_CEDRIC]: 'functions',
+  [ID_WILL]: 'operations',
+  [ID_JR]: 'operations',
+};
+
+const ROLE_BULLETS = {
+  [ID_BIANCA]: {
+    focus: 'Focus: Vision, networking, external relationships, and on-the-ground coordination',
+    bullets: [
+      'Leads on-the-ground logistics and represents the batch in local networks',
+      'Builds relationships with alumni groups, school networks, and related communities',
+      "Attends alumni and community events to build connections that strengthen the batch's network and presence",
+      'Drives the vision behind batch initiatives',
+    ]
+  },
+  [ID_FELIE]: {
+    focus: 'Focus: Systems, platform development, and committee operations',
+    bullets: [
+      'Oversees internal operations and committee structure',
+      'Facilitates committee discussions and collaborative decision-making',
+      "Designed and maintains the batch's centralized digital platform",
+      'Develops systems and tools that keep the batch organized, informed, and transparent',
+    ]
+  },
+  [ID_MARY]: {
+    bullets: [
+      'Custodian of batch funds',
+      'Manages the official batch bank account',
+      'Handles deposits and financial transactions',
+      'Oversees financial reporting and transparency with the committee',
+    ]
+  },
+  [ID_CHAYA]: {
+    bullets: [
+      "Keeps the batch's financial records and digital ledger up to date",
+      'Records contributions, deposits, and expenses',
+      'Verifies and reconciles transactions with the Treasurer',
+      'Ensures transparent financial reporting across the committee',
+    ]
+  },
+  [ID_COYCOY]: {
+    bullets: [
+      'Records and maintains minutes of committee meetings',
+      'Documents discussions, decisions, and action items',
+      'Keeps internal documentation organized and accessible for committee reference',
+    ]
+  },
+  [ID_NEA]: {
+    bullets: [
+      'Provides legal perspective during committee discussions',
+      'Helps draft and refine formal communications and agreements',
+      'Advises on consent, privacy, and responsible handling of batch information',
+    ]
+  },
+  [ID_NARCISO]: {
+    bullets: [
+      'Provides legal guidance when needed',
+      'Serves as co-signatory to the batch bank account',
+      'Reviews agreements and formal documents',
+    ]
+  },
+  [ID_APOL]: {
+    bullets: [
+      'Leads the planning and execution of batch events and gatherings',
+      'Works with the committee on program development and activities',
+      'Oversees event preparations as the Jubilee approaches',
+    ]
+  },
+  [ID_NIKKI]: {
+    bullets: [
+      'Develops official communications to the batch',
+      'Drafts announcements and updates for the batch website',
+      "Ensures clear and consistent messaging around the batch's work",
+    ]
+  },
+  [ID_CEDRIC]: {
+    bullets: [
+      'Leads outreach to batchmates who have not yet registered',
+      'Grows and manages the batch contact database',
+      'Engages with batchmates and brings feedback to the committee',
+    ]
+  },
+  [ID_WILL]: {
+    bullets: [
+      'Helps design and refine operational processes for the committee',
+      'Drives implementation of systems and workflows used by the committee',
+      'Reviews documents and processes for clarity and alignment',
+    ]
+  },
+  [ID_JR]: {
+    bullets: [
+      'Assists committee efforts and batch activities as needed',
+      'Handles logistical execution of tasks',
+      'Helps ensure action items from committee discussions move forward',
+    ]
+  },
+};
+
+// Section configuration
+const SECTIONS = [
+  { key: 'leadership', title: 'Committee Leadership', columns: 2 },
+  { key: 'admin', title: 'Administrative & Financial', columns: 3 },
+  { key: 'legal', title: 'Legal', columns: 2 },
+  { key: 'functions', title: 'Committee Functions', columns: 3 },
+  { key: 'operations', title: 'Operations & Implementation', columns: 2 },
+];
 
 // Role descriptions for additional volunteer positions
 const VOLUNTEER_ROLES = [
@@ -49,7 +185,7 @@ const VOLUNTEER_ROLES = [
 
 export default function Committee() {
   const { user } = useAuth();
-  const navigate = useNavigate();
+  const location = useLocation();
   const isAdmin = user?.isAdmin;
 
   const [members, setMembers] = useState([]);
@@ -58,6 +194,7 @@ export default function Committee() {
   const [savingInterest, setSavingInterest] = useState(null);
   const [toast, setToast] = useState(null);
   const [showMissionModal, setShowMissionModal] = useState(false);
+  const [expandedCards, setExpandedCards] = useState({});
 
   useEffect(() => {
     if (user) {
@@ -122,11 +259,6 @@ export default function Committee() {
     }
   };
 
-  const handleLogout = async () => {
-    await logout();
-    navigate('/login');
-  };
-
   const handleExpressInterest = async (role) => {
     if (userInterests.includes(role)) return;
 
@@ -152,19 +284,83 @@ export default function Committee() {
     }
   };
 
-  // Separate core leaders from regular committee members
-  const coreLeaders = members.filter(m => m.is_core_leader);
-  const otherMembers = members.filter(m => !m.is_core_leader);
+  const toggleCardExpanded = (memberId) => {
+    setExpandedCards(prev => ({
+      ...prev,
+      [memberId]: !prev[memberId]
+    }));
+  };
 
   // Helper to get display name
   const getDisplayName = (member) => {
     return member.current_name || `${member.first_name || ''} ${member.last_name || ''}`.trim() || 'Unknown';
   };
 
-  // Helper to parse sub-committees into array
-  const parseSubCommittees = (subCommittees) => {
-    if (!subCommittees) return [];
-    return subCommittees.split(',').map(s => s.trim()).filter(Boolean);
+  // Get section for a member
+  const getMemberSection = (member) => {
+    return SECTION_MAP[member.id] || 'additional';
+  };
+
+  // Group members by section
+  const groupedMembers = members.reduce((acc, member) => {
+    const section = getMemberSection(member);
+    if (!acc[section]) acc[section] = [];
+    acc[section].push(member);
+    return acc;
+  }, {});
+
+  // Render a member card
+  const renderMemberCard = (member, isLeadership = false) => {
+    const roleBullets = ROLE_BULLETS[member.id];
+    const hasRoleInfo = roleBullets && roleBullets.bullets && roleBullets.bullets.length > 0;
+    const isExpanded = expandedCards[member.id];
+
+    return (
+      <div
+        key={member.id}
+        className={`committee-card ${isLeadership ? 'leadership' : ''}`}
+        data-member-email={member.email?.toLowerCase()}
+      >
+        <div className="committee-card-avatar">
+          {member.profile_photo ? (
+            <img src={member.profile_photo} alt={getDisplayName(member)} />
+          ) : (
+            <div className="committee-card-placeholder">
+              {(member.first_name?.[0] || member.email?.[0] || '?').toUpperCase()}
+            </div>
+          )}
+        </div>
+        <div className="committee-card-content">
+          <h4 className="committee-card-name">{getDisplayName(member)}</h4>
+          <p className="committee-card-role">{member.role_title}</p>
+
+          {hasRoleInfo && (
+            <>
+              <button
+                className={`committee-see-role-btn ${isExpanded ? 'expanded' : ''}`}
+                onClick={() => toggleCardExpanded(member.id)}
+              >
+                {isExpanded ? 'Hide role' : 'See role'}
+                <span className="committee-see-role-arrow">{isExpanded ? '▲' : '▼'}</span>
+              </button>
+
+              <div className={`committee-role-collapsible ${isExpanded ? 'expanded' : ''}`}>
+                <div className="committee-role-content">
+                  {roleBullets.focus && (
+                    <p className="committee-role-focus">{roleBullets.focus}</p>
+                  )}
+                  <ul className="committee-role-bullets">
+                    {roleBullets.bullets.map((bullet, idx) => (
+                      <li key={idx}>{bullet}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    );
   };
 
   if (loading) {
@@ -206,68 +402,31 @@ export default function Committee() {
           </div>
         )}
 
-        {/* Core Leaders Section */}
-        {coreLeaders.length > 0 && (
-          <section className="committee-section">
-            <h3 className="committee-section-title">Our Organizers</h3>
-            <div className="committee-grid core-leaders">
-              {coreLeaders.map(member => (
-                <div key={member.id} className="committee-card core" data-member-email={member.email?.toLowerCase()}>
-                  <div className="committee-card-photo">
-                    {member.profile_photo ? (
-                      <img src={member.profile_photo} alt={getDisplayName(member)} />
-                    ) : (
-                      <div className="committee-card-placeholder">
-                        {(member.first_name?.[0] || member.email?.[0] || '?').toUpperCase()}
-                      </div>
-                    )}
-                  </div>
-                  <div className="committee-card-info">
-                    <h4 className="committee-card-name">{getDisplayName(member)}</h4>
-                    <p className="committee-card-role">{member.role_title}</p>
-                    {parseSubCommittees(member.sub_committees).length > 0 && (
-                      <ul className="committee-card-subcommittees">
-                        {parseSubCommittees(member.sub_committees).map((sub, idx) => (
-                          <li key={idx}>{sub}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
+        {/* Render sections in order */}
+        {SECTIONS.map(section => {
+          const sectionMembers = groupedMembers[section.key] || [];
+          if (sectionMembers.length === 0) return null;
 
-        {/* Other Committee Members Section */}
-        {otherMembers.length > 0 && (
+          return (
+            <section key={section.key} className="committee-section">
+              <div className="committee-section-divider">
+                <span className="committee-section-label">{section.title}</span>
+              </div>
+              <div className={`committee-grid committee-grid-${section.key}`}>
+                {sectionMembers.map(member => renderMemberCard(member, section.key === 'leadership'))}
+              </div>
+            </section>
+          );
+        })}
+
+        {/* Additional Members (catch-all for unmapped members) */}
+        {groupedMembers.additional && groupedMembers.additional.length > 0 && (
           <section className="committee-section">
-            <h3 className="committee-section-title">Committee Members</h3>
-            <div className="committee-grid members">
-              {otherMembers.map(member => (
-                <div key={member.id} className="committee-card member" data-member-email={member.email?.toLowerCase()}>
-                  <div className="committee-card-photo small">
-                    {member.profile_photo ? (
-                      <img src={member.profile_photo} alt={getDisplayName(member)} />
-                    ) : (
-                      <div className="committee-card-placeholder">
-                        {(member.first_name?.[0] || member.email?.[0] || '?').toUpperCase()}
-                      </div>
-                    )}
-                  </div>
-                  <div className="committee-card-info">
-                    <h4 className="committee-card-name">{getDisplayName(member)}</h4>
-                    <p className="committee-card-role">{member.role_title}</p>
-                    {parseSubCommittees(member.sub_committees).length > 0 && (
-                      <ul className="committee-card-subcommittees">
-                        {parseSubCommittees(member.sub_committees).map((sub, idx) => (
-                          <li key={idx}>{sub}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                </div>
-              ))}
+            <div className="committee-section-divider">
+              <span className="committee-section-label">Additional Members</span>
+            </div>
+            <div className="committee-grid committee-grid-additional">
+              {groupedMembers.additional.map(member => renderMemberCard(member))}
             </div>
           </section>
         )}
@@ -288,7 +447,7 @@ export default function Committee() {
 
         {/* Additional Roles Section */}
         <section className="committee-section volunteer-section">
-          <h3 className="committee-section-title">Additional Roles with Scope</h3>
+          <h3 className="committee-section-title">Additional Ways to Help</h3>
           <p className="committee-section-subtitle">
             Want to help? Express your interest and the committee will reach out to you.
           </p>
