@@ -517,7 +517,7 @@ export default function BatchRepVoting() {
             )}
 
             <p style={{ fontSize: '0.9rem', color: 'var(--color-text-secondary)', lineHeight: '1.6', margin: 0 }}>
-              The position is uncontested, confirmed, and does not require a vote.
+              The position is uncontested and confirmed.
             </p>
           </div>
         </div>
