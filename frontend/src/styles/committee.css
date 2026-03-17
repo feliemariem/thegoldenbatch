@@ -700,6 +700,10 @@ body[data-theme="light"] .committee-see-role-btn.expanded {
   color: #006633;
 }
 
+body[data-theme="light"] .volunteer-section {
+  background: transparent;
+}
+
 body[data-theme="light"] .committee-role-focus {
   border-left-color: #006633;
 }
