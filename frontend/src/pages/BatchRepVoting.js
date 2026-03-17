@@ -52,8 +52,6 @@ export default function BatchRepVoting() {
   const [aboutOpenFelie, setAboutOpenFelie] = useState(false);
   const [letterOpen, setLetterOpen] = useState(false);
   const [whyVotingOpen, setWhyVotingOpen] = useState(false);
-  const [results, setResults] = useState(null); // { counts: {}, total: 0 }
-
   // Countdown state
   const [timeRemaining, setTimeRemaining] = useState({
     days: 0,
@@ -67,19 +65,6 @@ export default function BatchRepVoting() {
 
   // Check if deadline has passed
   const isDeadlinePassed = new Date() > VOTING_DEADLINE;
-
-  // Fetch results
-  const fetchResults = async () => {
-    try {
-      const res = await apiGet('/api/batch-rep/round2/results');
-      if (res.ok) {
-        const data = await res.json();
-        setResults(data);
-      }
-    } catch (err) {
-      console.error('Error fetching results:', err);
-    }
-  };
 
   // Fetch voting status
   useEffect(() => {
@@ -95,13 +80,6 @@ export default function BatchRepVoting() {
           const data = await res.json();
           setHasVoted(data.hasVoted);
           setExistingVote(data.vote);
-          if (data.hasVoted) {
-            fetchResults();
-          }
-        }
-        // Also fetch results if deadline passed (for non-voters to see final results)
-        if (isDeadlinePassed) {
-          fetchResults();
         }
       } catch (err) {
         console.error('Error fetching round2 status:', err);
@@ -111,7 +89,7 @@ export default function BatchRepVoting() {
     };
 
     fetchStatus();
-  }, [user, hasAccess, isDeadlinePassed]);
+  }, [user, hasAccess]);
 
   // Countdown timer
   useEffect(() => {
@@ -140,15 +118,6 @@ export default function BatchRepVoting() {
     return () => clearInterval(timer);
   }, []);
 
-  // Poll results every 30 seconds when viewing results
-  useEffect(() => {
-    if (!hasVoted && !isDeadlinePassed) return;
-
-    fetchResults();
-    const interval = setInterval(fetchResults, 30000);
-    return () => clearInterval(interval);
-  }, [hasVoted, isDeadlinePassed]);
-
   // Handle vote submission
   const handleSubmit = async () => {
     if (!selectedCandidate || submitting) return;
@@ -164,7 +133,6 @@ export default function BatchRepVoting() {
       if (res.ok) {
         setHasVoted(true);
         setExistingVote({ candidate_name: selectedCandidate });
-        fetchResults();
       } else {
         const data = await res.json();
         setError(data.error || 'Failed to submit vote');
@@ -374,141 +342,20 @@ export default function BatchRepVoting() {
             </p>
 
             {hasVoted ? (
-              <div>
-                {/* Voted confirmation */}
-                <div className="batchrep-notice" style={{ marginBottom: '20px', background: 'var(--color-status-positive-bg)', borderColor: 'var(--color-status-positive)' }}>
-                  <span style={{ color: 'var(--color-status-positive)' }}>✓</span>{' '}
-                  You voted for <strong>{existingVote?.candidate_name}</strong>. Your vote has been recorded.
-                </div>
-
-                {/* Results board */}
-                {results ? (
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-                      <span style={{
-                        width: '8px', height: '8px', borderRadius: '50%',
-                        background: isDeadlinePassed ? 'var(--color-text-secondary)' : 'var(--color-status-positive)',
-                        display: 'inline-block',
-                        animation: isDeadlinePassed ? 'none' : 'batchrepPulse 1.5s ease-in-out infinite'
-                      }} />
-                      <span style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '1.5px', color: 'var(--color-text-secondary)' }}>
-                        {isDeadlinePassed ? 'Final Results · Position 1' : 'Live Results · Position 1'}
-                      </span>
-                    </div>
-
-                    {['Bianca Jison', 'Mel Andrea Rivero'].map((name) => {
-                      const count = results.counts[name] || 0;
-                      const pct = results.total > 0 ? Math.round((count / results.total) * 100) : 0;
-                      const isWinner = count === Math.max(...Object.values(results.counts));
-                      return (
-                        <div key={name} style={{ marginBottom: '16px' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                              <span style={{ fontWeight: '600', color: 'var(--color-text-primary)', fontSize: '0.95rem' }}>{name}</span>
-                              {isDeadlinePassed ? (
-                                isWinner && results.total > 0 && (
-                                  <span style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--color-status-positive)', background: 'rgba(39,174,96,0.15)', padding: '2px 8px', borderRadius: '4px' }}>
-                                    Confirmed
-                                  </span>
-                                )
-                              ) : (
-                                isWinner && results.total > 0 && (
-                                  <span style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--color-status-positive)', background: 'rgba(39,174,96,0.15)', padding: '2px 8px', borderRadius: '4px' }}>
-                                    Leading
-                                  </span>
-                                )
-                              )}
-                            </div>
-                            <span style={{ fontSize: '0.9rem', fontWeight: '700', color: 'var(--color-hover)' }}>
-                              {count} {count === 1 ? 'vote' : 'votes'} · {pct}%
-                            </span>
-                          </div>
-                          <div style={{ height: '8px', background: 'rgba(255,255,255,0.08)', borderRadius: '4px', overflow: 'hidden' }}>
-                            <div style={{
-                              height: '100%',
-                              width: `${pct}%`,
-                              background: name === 'Bianca Jison'
-                                ? 'linear-gradient(90deg, var(--color-title-gradient-start), var(--color-title-gradient-end))'
-                                : 'var(--color-status-positive)',
-                              borderRadius: '4px',
-                              transition: 'width 0.6s ease'
-                            }} />
-                          </div>
-                        </div>
-                      );
-                    })}
-
-                    <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginTop: '12px', textAlign: 'center' }}>
-                      {isDeadlinePassed
-                        ? `Voting closed · March 30, 2026 · 11:59 PM PHT · ${results.total} ${results.total === 1 ? 'vote' : 'votes'} cast`
-                        : `${results.total} ${results.total === 1 ? 'vote' : 'votes'} cast · refreshes every 30s`
-                      }
-                    </div>
-                  </div>
-                ) : (
-                  <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem' }}>Loading results...</p>
-                )}
+              <div className="batchrep-success">
+                <div className="batchrep-success-icon">✓</div>
+                <p style={{ marginBottom: '8px', fontWeight: '600', color: 'var(--color-text-primary)' }}>
+                  Vote submitted.
+                </p>
+                <p style={{ marginBottom: '0' }}>
+                  You voted for <strong style={{ color: 'var(--color-hover)' }}>{existingVote?.candidate_name}</strong>.
+                  Your vote has been recorded and cannot be changed. Results will be announced after the deadline.
+                </p>
               </div>
             ) : isDeadlinePassed ? (
-              <div>
-                <div className="batchrep-deadline" style={{ marginBottom: '20px' }}>
-                  <strong>Voting is Now Closed.</strong> The deadline was March 30, 2026 at 11:59 PM PHT.
-                </div>
-                {results ? (
-                  <div>
-                    <div style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '1.5px', color: 'var(--color-text-secondary)', marginBottom: '16px' }}>
-                      Final Results · Position 1
-                    </div>
-
-                    {['Bianca Jison', 'Mel Andrea Rivero'].map((name) => {
-                      const count = results.counts[name] || 0;
-                      const pct = results.total > 0 ? Math.round((count / results.total) * 100) : 0;
-                      const isWinner = count === Math.max(...Object.values(results.counts));
-                      return (
-                        <div key={name} style={{ marginBottom: '16px' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                              <span style={{ fontWeight: '600', color: 'var(--color-text-primary)', fontSize: '0.95rem' }}>{name}</span>
-                              {isDeadlinePassed ? (
-                                isWinner && results.total > 0 && (
-                                  <span style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--color-status-positive)', background: 'rgba(39,174,96,0.15)', padding: '2px 8px', borderRadius: '4px' }}>
-                                    Confirmed
-                                  </span>
-                                )
-                              ) : (
-                                isWinner && results.total > 0 && (
-                                  <span style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--color-status-positive)', background: 'rgba(39,174,96,0.15)', padding: '2px 8px', borderRadius: '4px' }}>
-                                    Leading
-                                  </span>
-                                )
-                              )}
-                            </div>
-                            <span style={{ fontSize: '0.9rem', fontWeight: '700', color: 'var(--color-hover)' }}>
-                              {count} {count === 1 ? 'vote' : 'votes'} · {pct}%
-                            </span>
-                          </div>
-                          <div style={{ height: '8px', background: 'rgba(255,255,255,0.08)', borderRadius: '4px', overflow: 'hidden' }}>
-                            <div style={{
-                              height: '100%',
-                              width: `${pct}%`,
-                              background: name === 'Bianca Jison'
-                                ? 'linear-gradient(90deg, var(--color-title-gradient-start), var(--color-title-gradient-end))'
-                                : 'var(--color-status-positive)',
-                              borderRadius: '4px',
-                              transition: 'width 0.6s ease'
-                            }} />
-                          </div>
-                        </div>
-                      );
-                    })}
-
-                    <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginTop: '12px', textAlign: 'center' }}>
-                      {`Voting closed · March 30, 2026 · 11:59 PM PHT · ${results.total} ${results.total === 1 ? 'vote' : 'votes'} cast`}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="batchrep-message"><p>You did not cast a vote before the deadline.</p></div>
-                )}
+              <div className="batchrep-message">
+                <p><strong>Voting is Now Closed.</strong> The deadline was March 30, 2026 at 11:59 PM PHT.</p>
+                <p>Results will be announced by the organizing committee.</p>
               </div>
             ) : (
               <>
