@@ -498,7 +498,7 @@ export default function BatchRepVoting() {
                 <div>
                   <div className="batchrep-nominee-name voting">Felie Magbanua</div>
                   <div style={{ fontSize: '0.8rem', color: 'var(--color-status-positive)', fontWeight: '600' }}>
-                    Confirmed — Uncontested
+                    Confirmed
                   </div>
                 </div>
               </div>
@@ -517,7 +517,7 @@ export default function BatchRepVoting() {
             )}
 
             <p style={{ fontSize: '0.9rem', color: 'var(--color-text-secondary)', lineHeight: '1.6', margin: 0 }}>
-              The position is uncontested and confirmed.
+              The position is uncontested and therefore confirmed.
             </p>
           </div>
         </div>
