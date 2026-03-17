@@ -380,7 +380,7 @@ export default function Committee() {
               Our Mission
             </button>
           </div>
-          <p>Meet the dedicated batchmates working to make our 25th reunion unforgettable</p>
+          <p>Meet the team making our 25th reunion happen</p>
         </section>
 
         {/* Global Toast Notification (for non-button related toasts) */}
