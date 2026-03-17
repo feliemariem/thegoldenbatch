@@ -330,8 +330,8 @@ export default function Committee() {
                 className={`committee-see-role-btn ${isOpen ? 'expanded' : ''}`}
                 onClick={() => setOpenRoles(prev => ({ ...prev, [member.id]: !prev[member.id] }))}
               >
-                {isOpen ? 'Hide role' : 'See role'}
-                <span className={`committee-see-role-arrow ${isOpen ? 'rotated' : ''}`}>▼</span>
+                <span>Role & Responsibilities</span>
+                <span className="committee-see-role-arrow">{isOpen ? '▲' : '▼'}</span>
               </button>
 
               <div className={`committee-role-collapsible ${isOpen ? 'expanded' : ''}`}>

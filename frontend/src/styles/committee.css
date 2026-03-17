@@ -190,34 +190,36 @@
 
 /* See Role Button */
 .committee-see-role-btn {
-  display: inline-flex;
+  width: 100%;
+  display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 0.8rem;
-  font-weight: 500;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  border: 1px solid var(--color-border, rgba(45, 70, 52, 0.6));
+  border: 1px solid var(--color-hover);
   background: transparent;
-  color: var(--color-text-secondary);
+  color: var(--color-hover);
 }
 
 .committee-see-role-btn:hover {
-  border-color: var(--color-hover);
-  color: var(--color-hover);
+  background: rgba(207, 181, 59, 0.08);
 }
 
 .committee-see-role-btn.expanded {
-  border-color: var(--color-hover);
-  color: var(--color-hover);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-color: transparent;
 }
 
 .committee-see-role-arrow {
-  font-size: 0.65rem;
-  transition: transform 0.3s ease;
+  font-size: 0.7rem;
+  transition: transform 0.2s ease;
   display: inline-block;
+  color: var(--color-text-secondary);
 }
 
 .committee-see-role-arrow.rotated {
@@ -236,8 +238,12 @@
 }
 
 .committee-role-content {
-  padding-top: 16px;
+  padding: 16px;
   text-align: left;
+  background: var(--color-bg-secondary, rgba(0, 0, 0, 0.2));
+  border: 1px solid var(--color-hover);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
 }
 
 /* Focus line (for leadership) */
@@ -248,11 +254,11 @@
   margin: 0 0 12px 0;
   padding: 10px 12px;
   border-left: 2px solid var(--color-hover);
-  background: var(--color-bg-secondary);
+  background: rgba(207, 181, 59, 0.08);
   border-radius: 0 6px 6px 0;
 }
 
-/* Role Bullets - using em dash */
+/* Role Bullets - gold triangle */
 .committee-role-bullets {
   list-style: none;
   padding: 0;
@@ -261,23 +267,24 @@
 
 .committee-role-bullets li {
   position: relative;
-  padding-left: 20px;
-  margin-bottom: 8px;
+  padding: 10px 0 10px 20px;
   font-size: 0.85rem;
   color: var(--color-text-secondary);
   line-height: 1.5;
+  border-bottom: 1px solid rgba(207, 181, 59, 0.15);
 }
 
 .committee-role-bullets li::before {
-  content: '—';
+  content: '▸';
   position: absolute;
   left: 0;
   color: var(--color-hover);
-  font-weight: bold;
+  font-size: 0.8rem;
 }
 
 .committee-role-bullets li:last-child {
-  margin-bottom: 0;
+  border-bottom: none;
+  padding-bottom: 0;
 }
 
 /* Empty State */
@@ -696,9 +703,27 @@ body[data-theme="light"] .committee-section-label {
   color: #006633;
 }
 
-/* Light mode role focus */
+/* Light mode role styles */
+body[data-theme="light"] .committee-see-role-btn {
+  border-color: #006633;
+  color: #006633;
+}
+
+body[data-theme="light"] .committee-see-role-btn:hover {
+  background: rgba(0, 102, 51, 0.08);
+}
+
+body[data-theme="light"] .committee-role-content {
+  border-color: #006633;
+}
+
 body[data-theme="light"] .committee-role-focus {
   border-left-color: #006633;
+  background: rgba(0, 102, 51, 0.08);
+}
+
+body[data-theme="light"] .committee-role-bullets li {
+  border-color: rgba(0, 102, 51, 0.15);
 }
 
 body[data-theme="light"] .committee-role-bullets li::before {
