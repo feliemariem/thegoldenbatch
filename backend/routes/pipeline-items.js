@@ -63,8 +63,8 @@ router.get('/', authenticateToken, async (req, res) => {
       LEFT JOIN users u ON LOWER(a.email) = LOWER(u.email)
       WHERE ai.show_in_pipeline = true
       ORDER BY
-        (ai.status = 'done') ASC,
-        CASE WHEN ai.status = 'done' THEN ai.updated_at END DESC,
+        CASE WHEN ai.status = 'done' THEN 1 ELSE 0 END ASC,
+        CASE WHEN ai.status = 'done' THEN ai.due_date END DESC,
         ai.due_date ASC NULLS LAST
     `);
 
