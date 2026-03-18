@@ -19,7 +19,7 @@ export default function InvitesTab({
   const [uploading, setUploading] = useState(false);
   const [uploadResult, setUploadResult] = useState(null);
   const [inviteSearch, setInviteSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('pending');
   const [copiedId, setCopiedId] = useState(null);
   const [editingInvite, setEditingInvite] = useState(null);
   const [masterList, setMasterList] = useState([]);
@@ -427,7 +427,6 @@ export default function InvitesTab({
           >
             <option value="all">All Status</option>
             <option value="pending">Pending ({stats.pending})</option>
-            <option value="registered">Registered ({stats.registered})</option>
           </select>
           {(inviteSearch || statusFilter !== 'all') && (
             <span className="search-count">

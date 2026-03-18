@@ -334,13 +334,14 @@ router.get('/', authenticateAdmin, async (req, res) => {
       paramIndex++;
     }
 
-    // Status filter
-    if (status && status !== 'all') {
-      if (status === 'registered') {
-        conditions.push(`i.used = true`);
-      } else if (status === 'pending') {
-        conditions.push(`i.used = false`);
-      }
+    // Status filter - default to pending (used = false) unless 'all' is explicitly passed
+    if (status === 'all') {
+      // No filter - show all invites
+    } else if (status === 'registered') {
+      conditions.push(`i.used = true`);
+    } else {
+      // Default to pending (used = false)
+      conditions.push(`i.used = false`);
     }
 
     const whereClause = conditions.length > 0 ? ` WHERE ${conditions.join(' AND ')}` : '';
