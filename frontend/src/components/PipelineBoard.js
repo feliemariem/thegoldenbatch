@@ -37,6 +37,13 @@ export default function PipelineBoard({ readOnly = true }) {
     }
   }, [readOnly]);
 
+  // Listen for pipeline-refresh events from other components (e.g., MeetingMinutes pin toggle)
+  useEffect(() => {
+    const handleRefresh = () => fetchPipelineItems();
+    window.addEventListener('pipeline-refresh', handleRefresh);
+    return () => window.removeEventListener('pipeline-refresh', handleRefresh);
+  }, []);
+
   const fetchPipelineItems = async () => {
     try {
       const res = await apiGet('/api/pipeline-items');
