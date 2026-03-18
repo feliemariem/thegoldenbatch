@@ -19,6 +19,7 @@ const receiptsRoutes = require('./routes/receipts');
 const webhookRoutes = require('./routes/webhooks');
 const batchRepRoutes = require('./routes/batchrep');
 const nameChangeRequestRoutes = require('./routes/nameChangeRequests');
+const pipelineItemRoutes = require('./routes/pipeline-items');
 const { initializeSummaryEmails } = require('./utils/summaryEmails');
 
 const app = express();
@@ -59,6 +60,7 @@ app.use('/api/committee', require('./routes/committee'));
 app.use('/api/receipts', receiptsRoutes);
 app.use('/api/batch-rep', batchRepRoutes);
 app.use('/api/name-change-requests', nameChangeRequestRoutes);
+app.use('/api/pipeline-items', pipelineItemRoutes);
 app.use('/api/media/photos', require('./routes/mediaPhotos'));
 
 // Health check
@@ -134,6 +136,7 @@ app.listen(PORT, async () => {
   console.log('  /api/receipts');
   console.log('  /api/webhooks');
   console.log('  /api/media/photos');
+  console.log('  /api/pipeline-items');
   console.log('  /api/health');
   console.log('  /api/debug/routes');
 
