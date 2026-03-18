@@ -2,6 +2,31 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 const { authenticateToken } = require('../middleware/auth');
+const cloudinary = require('cloudinary').v2;
+const multer = require('multer');
+const { uploadRawFileToCloudinary } = require('../utils/cloudinary');
+
+// Configure multer for file uploads
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage,
+  limits: { fileSize: 15 * 1024 * 1024 }, // 15MB limit
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = [
+      'application/pdf',
+      'image/jpeg',
+      'image/png',
+      'image/gif',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    ];
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid file type'), false);
+    }
+  }
+});
 
 // Helper to check minutes_view permission
 const checkMinutesViewPermission = async (userEmail) => {
@@ -302,6 +327,87 @@ router.delete('/:id', authenticateToken, async (req, res) => {
   } catch (err) {
     console.error('Failed to delete action item:', err);
     res.status(500).json({ error: 'Failed to delete action item' });
+  }
+});
+
+// =====================
+// ATTACHMENT ROUTES
+// =====================
+
+// POST /api/action-items/:id/attachments - Upload attachment
+router.post('/:id/attachments', authenticateToken, upload.single('file'), async (req, res) => {
+  try {
+    const hasPermission = await checkMinutesEditPermission(req.user.email);
+    if (!hasPermission) {
+      return res.status(403).json({ error: 'You do not have permission to upload attachments' });
+    }
+
+    const { id } = req.params;
+
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    // Check action item exists
+    const actionItem = await db.query('SELECT id FROM action_items WHERE id = $1', [id]);
+    if (actionItem.rows.length === 0) {
+      return res.status(404).json({ error: 'Action item not found' });
+    }
+
+    // Upload to Cloudinary
+    const result = await uploadRawFileToCloudinary(req.file.buffer, 'action-item-attachments');
+
+    // Save to database
+    const attachment = await db.query(`
+      INSERT INTO action_item_attachments (action_item_id, file_name, file_url, file_type)
+      VALUES ($1, $2, $3, $4)
+      RETURNING *
+    `, [id, req.file.originalname, result.secure_url, req.file.mimetype]);
+
+    res.status(201).json(attachment.rows[0]);
+  } catch (err) {
+    console.error('Failed to upload attachment:', err);
+    res.status(500).json({ error: 'Failed to upload attachment' });
+  }
+});
+
+// DELETE /api/action-items/:id/attachments/:attachmentId - Delete attachment
+router.delete('/:id/attachments/:attachmentId', authenticateToken, async (req, res) => {
+  try {
+    const hasPermission = await checkMinutesEditPermission(req.user.email);
+    if (!hasPermission) {
+      return res.status(403).json({ error: 'You do not have permission to delete attachments' });
+    }
+
+    const { id, attachmentId } = req.params;
+
+    // Get attachment
+    const attachment = await db.query(
+      'SELECT * FROM action_item_attachments WHERE id = $1 AND action_item_id = $2',
+      [attachmentId, id]
+    );
+
+    if (attachment.rows.length === 0) {
+      return res.status(404).json({ error: 'Attachment not found' });
+    }
+
+    // Delete from Cloudinary
+    try {
+      const urlParts = attachment.rows[0].file_url.split('/');
+      const publicIdWithExt = urlParts.slice(-2).join('/');
+      const publicId = publicIdWithExt.replace(/\.[^/.]+$/, '');
+      await cloudinary.uploader.destroy(publicId, { resource_type: 'raw' });
+    } catch (cloudErr) {
+      console.error('Failed to delete from Cloudinary:', cloudErr);
+    }
+
+    // Delete from database
+    await db.query('DELETE FROM action_item_attachments WHERE id = $1', [attachmentId]);
+
+    res.json({ message: 'Attachment deleted' });
+  } catch (err) {
+    console.error('Failed to delete attachment:', err);
+    res.status(500).json({ error: 'Failed to delete attachment' });
   }
 });
 

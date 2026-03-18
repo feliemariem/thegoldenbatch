@@ -391,13 +391,29 @@ router.get('/:meetingId/action-items', authenticateToken, async (req, res) => {
     const { meetingId } = req.params;
 
     const result = await db.query(`
-      SELECT ai.*,
+      SELECT ai.id, ai.meeting_id, ai.task, ai.assignee_id, ai.due_date,
+             ai.status, ai.priority, ai.show_in_pipeline, ai.created_at,
              a.email as assignee_email,
-             COALESCE(u.first_name || ' ' || u.last_name, a.first_name || ' ' || COALESCE(a.last_name, '')) as assignee_name
+             COALESCE(u.first_name || ' ' || u.last_name, a.first_name || ' ' || COALESCE(a.last_name, '')) as assignee_name,
+             COALESCE(
+               json_agg(
+                 json_build_object(
+                   'id', aia.id,
+                   'file_name', aia.file_name,
+                   'file_url', aia.file_url,
+                   'file_type', aia.file_type
+                 )
+               ) FILTER (WHERE aia.id IS NOT NULL),
+               '[]'
+             ) as attachments
       FROM action_items ai
       LEFT JOIN admins a ON ai.assignee_id = a.id
       LEFT JOIN users u ON LOWER(a.email) = LOWER(u.email)
+      LEFT JOIN action_item_attachments aia ON ai.id = aia.action_item_id
       WHERE ai.meeting_id = $1
+      GROUP BY ai.id, ai.meeting_id, ai.task, ai.assignee_id, ai.due_date,
+               ai.status, ai.priority, ai.show_in_pipeline, ai.created_at,
+               a.email, u.first_name, u.last_name, a.first_name, a.last_name
       ORDER BY
         CASE ai.priority
           WHEN 'critical' THEN 1
