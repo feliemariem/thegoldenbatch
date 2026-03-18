@@ -177,8 +177,8 @@ export default function BatchRepVotingModal() {
           {/* Countdown Timer */}
           {!isDeadlinePassed && (
             <div style={{
-              background: 'linear-gradient(135deg, rgba(139, 105, 20, 0.12) 0%, rgba(207, 181, 59, 0.08) 100%)',
-              border: '1px solid rgba(207, 181, 59, 0.25)',
+              background: 'var(--color-card-alt-bg, rgba(139, 105, 20, 0.08))',
+              border: '1px solid var(--color-border)',
               borderRadius: '12px',
               padding: '20px',
               textAlign: 'center',
