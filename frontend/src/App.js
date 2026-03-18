@@ -24,6 +24,7 @@ import Committee from './pages/Committee';
 import Directory from './pages/Directory';
 import BatchRep from './pages/BatchRep';
 import BatchRepVoting from './pages/BatchRepVoting';
+import BatchRepVotingModal from './components/BatchRepVotingModal';
 import './styles/base.css';
 import './styles/components.css';
 import './styles/auth.css';
@@ -108,11 +109,22 @@ function InviteRedirect() {
   return <Navigate to={`/register/${token}`} replace />;
 }
 
+// Renders the voting modal for eligible users on any page load.
+// BatchRepVotingModal is self-contained — it decides internally whether to show.
+function VotingModalCheck() {
+  const { user } = useAuth();
+  // Only mount for logged-in users — modal handles all further access checks
+  if (!user) return null;
+  return <BatchRepVotingModal />;
+}
+
 function AppRoutes() {
   const { user } = useAuth();
 
   return (
-    <Routes>
+    <>
+      <VotingModalCheck />
+      <Routes>
       {/* Landing: Public marketing page. Access: Anyone. */}
       <Route path="/" element={<Landing />} />
 
@@ -285,7 +297,8 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
-    </Routes>
+      </Routes>
+    </>
   );
 }
 

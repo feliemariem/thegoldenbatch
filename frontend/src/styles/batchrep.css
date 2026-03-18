@@ -1745,3 +1745,34 @@
   color: #FAC775;
 }
 
+/* Voting modal — full-screen overlay, centered card, scrollable body */
+.batchrep-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow-y: auto;
+  padding: 24px 16px;
+}
+
+.batchrep-voting-modal {
+  background: var(--color-card-bg);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 600px;
+  margin: 24px auto;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
+  position: relative;
+}
+
+.batchrep-voting-modal-body {
+  overflow-y: auto;
+  max-height: 85vh;
+  padding: 24px;
+}
+
