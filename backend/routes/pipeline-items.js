@@ -129,7 +129,8 @@ router.patch('/:id/toggle-pin', authenticateToken, async (req, res) => {
 
     const result = await db.query(`
       UPDATE action_items
-      SET show_in_pipeline = NOT show_in_pipeline
+      SET show_in_pipeline = NOT show_in_pipeline,
+          updated_at = NOW()
       WHERE id = $1
       RETURNING *
     `, [id]);
