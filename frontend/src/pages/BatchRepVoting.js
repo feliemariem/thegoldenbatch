@@ -8,25 +8,34 @@ import letterImage from '../images/batch-rep-letter.jpg';
 import '../styles/batchrep.css';
 
 // Access control phases:
-// Phase 1: Only specific emails
-// Phase 2: All admins
-// Phase 3: All registered graduates
+// Phase 1: Only specific emails (super-admin override via user?.id === 71 AND required)
+// Phase 2: Non-registry admins only (committee members with enabled non-registry permissions)
+//          Registry-only admins do NOT qualify — they must not see this page at their level
+// Phase 3: All registered GRADUATES only — non-graduate registrants are excluded
 const BATCH_REP_PHASE = 1;
 
-// Check if user has access based on current phase
-const checkPhaseAccess = (user) => {
+// isGrad — derived from master_list section check on the backend
+// hasNonRegistryPermissions — already on user object from AuthContext,
+//   true only if admin has at least one enabled non-registry permission
+//   (excludes invites_export, masterlist_edit, masterlist_upload, masterlist_export, registered_export)
+const checkPhaseAccess = (user, isGrad) => {
   if (!user) return false;
-
   const userEmail = user.email?.toLowerCase();
 
   switch (BATCH_REP_PHASE) {
     case 1:
+      // Phase 1: email allowlist
       const allowedEmails = ['felie@fnrcore.com'];
       return allowedEmails.includes(userEmail);
     case 2:
-      return user.isAdmin === true;
+      // Phase 2: non-registry admins only
+      // user.isAdmin must be true AND must have non-registry permissions enabled
+      // registry-only admins (invites, masterlist, export) are excluded
+      return user.isAdmin === true && user.hasNonRegistryPermissions === true;
     case 3:
-      return true; // All registered users
+      // Phase 3: graduates only
+      // non-graduate registrants (section IS NULL or 'Non-Graduate') return false
+      return isGrad === true;
     default:
       return false;
   }
@@ -52,6 +61,8 @@ export default function BatchRepVoting() {
   const [aboutOpenFelie, setAboutOpenFelie] = useState(false);
   const [letterOpen, setLetterOpen] = useState(false);
   const [whyVotingOpen, setWhyVotingOpen] = useState(false);
+  // true only if backend confirms master_list section is non-null and not 'Non-Graduate'
+  const [isGrad, setIsGrad] = useState(false);
   // Countdown state
   const [timeRemaining, setTimeRemaining] = useState({
     days: 0,
@@ -60,8 +71,10 @@ export default function BatchRepVoting() {
     seconds: 0
   });
 
-  // Check access - both phase access AND user.id === 71
-  const hasAccess = checkPhaseAccess(user) && user?.id === 71;
+  // Phase 1: BOTH checkPhaseAccess AND user?.id === 71 must pass
+  // When advancing to Phase 2: remove `&& user?.id === 71`
+  // When advancing to Phase 3: remove `&& user?.id === 71`, ensure isGrad is populated
+  const hasAccess = checkPhaseAccess(user, isGrad) && user?.id === 71;
 
   // Check if deadline has passed
   const isDeadlinePassed = new Date() > VOTING_DEADLINE;
@@ -69,17 +82,13 @@ export default function BatchRepVoting() {
   // Fetch voting status
   useEffect(() => {
     const fetchStatus = async () => {
-      if (!user || !hasAccess) {
-        setLoading(false);
-        return;
-      }
-
       try {
         const res = await apiGet('/api/batch-rep/round2/status');
         if (res.ok) {
           const data = await res.json();
           setHasVoted(data.hasVoted);
           setExistingVote(data.vote);
+          setIsGrad(data.isGrad ?? false); // set for Phase 3 graduate-only gate
         }
       } catch (err) {
         console.error('Error fetching round2 status:', err);
@@ -88,7 +97,11 @@ export default function BatchRepVoting() {
       }
     };
 
-    fetchStatus();
+    if (user) {
+      fetchStatus();
+    } else {
+      setLoading(false);
+    }
   }, [user, hasAccess]);
 
   // Countdown timer

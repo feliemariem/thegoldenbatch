@@ -414,9 +414,13 @@ router.get('/round2/status', authenticateToken, async (req, res) => {
     const hasVoted = voteResult.rows.length > 0;
     const vote = hasVoted ? voteResult.rows[0] : null;
 
+    // Add isGrad using shared helper — needed by frontend for Phase 3 graduate-only gate
+    const isGrad = await checkIsGrad(req.user.id);
+
     res.json({
       hasVoted,
-      vote
+      vote,
+      isGrad  // true only if master_list section is non-null and not 'Non-Graduate'
     });
   } catch (err) {
     console.error('Error fetching round2 status:', err);
