@@ -4,6 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import { useAuth } from '../context/AuthContext';
 import { useActionItems } from '../context/ActionItemsContext';
 import { apiGet, apiPost, apiPut, apiDelete, apiUpload } from '../api';
+import ActionItemModal from './ActionItemModal';
 
 export default function MeetingMinutes({ canEdit = false, initialMeetingId = null, onMeetingSelected = null }) {
   const { user } = useAuth();
@@ -34,15 +35,7 @@ export default function MeetingMinutes({ canEdit = false, initialMeetingId = nul
   const [showActionItems, setShowActionItems] = useState(true);
   const [showActionItemModal, setShowActionItemModal] = useState(false);
   const [editingActionItem, setEditingActionItem] = useState(null);
-  const [savingActionItem, setSavingActionItem] = useState(false);
   const [confirmDeleteActionItem, setConfirmDeleteActionItem] = useState(null);
-  const [actionItemForm, setActionItemForm] = useState({
-    task: '',
-    assignee_id: '',
-    due_date: '',
-    status: 'not_started',
-    priority: 'medium'
-  });
 
   useEffect(() => {
     fetchMeetings();
@@ -133,48 +126,31 @@ export default function MeetingMinutes({ canEdit = false, initialMeetingId = nul
 
   // Action item handlers
   const handleCreateActionItem = () => {
-    setActionItemForm({
-      task: '',
-      assignee_id: '',
-      due_date: '',
-      status: 'not_started',
-      priority: 'medium'
-    });
     setEditingActionItem(null);
     setShowActionItemModal(true);
   };
 
   const handleEditActionItem = (item) => {
-    setActionItemForm({
-      task: item.task,
-      assignee_id: item.assignee_id || '',
-      due_date: item.due_date ? item.due_date.split('T')[0] : '',
-      status: item.status,
-      priority: item.priority || 'medium'
-    });
     setEditingActionItem(item);
     setShowActionItemModal(true);
   };
 
-  const handleSaveActionItem = async () => {
-    setSavingActionItem(true);
+  const handleSaveActionItem = async (formData, editingItem) => {
     try {
-      const res = editingActionItem
-        ? await apiPut(`/api/meetings/${selectedMeeting.id}/action-items/${editingActionItem.id}`, actionItemForm)
-        : await apiPost(`/api/meetings/${selectedMeeting.id}/action-items`, actionItemForm);
+      const res = editingItem
+        ? await apiPut(`/api/meetings/${selectedMeeting.id}/action-items/${editingItem.id}`, formData)
+        : await apiPost(`/api/meetings/${selectedMeeting.id}/action-items`, formData);
 
       if (res.ok) {
         setShowActionItemModal(false);
         fetchActionItems(selectedMeeting.id);
         // Notify other components (like MyTasks) about the update
-        if (editingActionItem) {
-          notifyActionItemUpdate(editingActionItem.id, actionItemForm.status);
+        if (editingItem) {
+          notifyActionItemUpdate(editingItem.id, formData.status);
         }
       }
     } catch (err) {
       console.error('Failed to save action item:', err);
-    } finally {
-      setSavingActionItem(false);
     }
   };
 
@@ -1551,168 +1527,15 @@ Tip: Use ## for headers, - for bullet points"
       )}
 
       {/* Action Item Modal */}
-      {showActionItemModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0,0,0,0.7)',
-          display: 'flex',
-          alignItems: 'flex-start',
-          justifyContent: 'center',
-          paddingTop: isMobile ? '20px' : '80px',
-          zIndex: 1000,
-          overflowY: 'auto'
-        }}>
-          <div style={{
-            background: 'linear-gradient(165deg, rgba(30, 40, 35, 0.98) 0%, rgba(20, 28, 24, 0.99) 100%)',
-            border: '1px solid rgba(255,255,255,0.1)',
-            borderRadius: '16px',
-            padding: isMobile ? '20px' : '28px',
-            width: isMobile ? '95%' : '450px',
-            maxWidth: '450px'
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h2 style={{ margin: 0, color: 'var(--color-hover)', fontSize: '1.1rem' }}>
-                {editingActionItem ? 'Edit Action Item' : 'New Action Item'}
-              </h2>
-              <button
-                onClick={() => setShowActionItemModal(false)}
-                style={{ background: 'none', border: 'none', color: '#888', fontSize: '1.5rem', cursor: 'pointer' }}
-              >
-                ×
-              </button>
-            </div>
-
-            <div className="form-group">
-              <label>Task Description *</label>
-              <textarea
-                value={actionItemForm.task}
-                onChange={(e) => setActionItemForm({ ...actionItemForm, task: e.target.value })}
-                placeholder="What needs to be done?"
-                rows={3}
-                style={{
-                  width: '100%',
-                  padding: '12px 14px',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  borderRadius: '12px',
-                  fontSize: '0.9rem',
-                  background: 'rgba(0, 0, 0, 0.3)',
-                  color: '#ffffff',
-                  resize: 'vertical'
-                }}
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Assignee</label>
-              <select
-                value={actionItemForm.assignee_id}
-                onChange={(e) => setActionItemForm({ ...actionItemForm, assignee_id: e.target.value })}
-                style={{
-                  width: '100%',
-                  padding: '12px 14px',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  borderRadius: '12px',
-                  fontSize: '0.9rem',
-                  background: 'rgba(0, 0, 0, 0.3)',
-                  color: '#ffffff'
-                }}
-              >
-                <option value="">Unassigned</option>
-                {admins.map(admin => (
-                  <option key={admin.id} value={admin.id}>
-                    {admin.display_name || `${admin.first_name || ''} ${admin.last_name || ''}`.trim() || admin.email}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div style={{ display: 'flex', gap: '12px' }}>
-              <div className="form-group" style={{ flex: 1 }}>
-                <label>Due Date</label>
-                <input
-                  type="date"
-                  value={actionItemForm.due_date}
-                  onChange={(e) => setActionItemForm({ ...actionItemForm, due_date: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '12px 14px',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    borderRadius: '12px',
-                    fontSize: '0.9rem',
-                    background: 'rgba(0, 0, 0, 0.3)',
-                    color: '#ffffff'
-                  }}
-                />
-              </div>
-
-              <div className="form-group" style={{ flex: 1 }}>
-                <label>Priority</label>
-                <select
-                  value={actionItemForm.priority}
-                  onChange={(e) => setActionItemForm({ ...actionItemForm, priority: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '12px 14px',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    borderRadius: '12px',
-                    fontSize: '0.9rem',
-                    background: 'rgba(0, 0, 0, 0.3)',
-                    color: '#ffffff'
-                  }}
-                >
-                  <option value="low">Low</option>
-                  <option value="medium">Medium</option>
-                  <option value="high">High</option>
-                  <option value="critical">Critical</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label>Status</label>
-              <select
-                value={actionItemForm.status}
-                onChange={(e) => setActionItemForm({ ...actionItemForm, status: e.target.value })}
-                style={{
-                  width: '100%',
-                  padding: '12px 14px',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  borderRadius: '12px',
-                  fontSize: '0.9rem',
-                  background: 'rgba(0, 0, 0, 0.3)',
-                  color: '#ffffff'
-                }}
-              >
-                <option value="not_started">Not Started</option>
-                <option value="in_progress">In Progress</option>
-                <option value="done">Done</option>
-              </select>
-            </div>
-
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '20px' }}>
-              <button
-                onClick={() => setShowActionItemModal(false)}
-                className="btn-secondary"
-                style={{ padding: '10px 20px' }}
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSaveActionItem}
-                className="btn-primary"
-                style={{ width: 'auto', padding: '10px 24px', marginTop: 0 }}
-                disabled={savingActionItem || !actionItemForm.task}
-              >
-                {savingActionItem ? 'Saving...' : editingActionItem ? 'Save' : 'Add Item'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ActionItemModal
+        isOpen={showActionItemModal}
+        onClose={() => setShowActionItemModal(false)}
+        onSave={handleSaveActionItem}
+        editingItem={editingActionItem}
+        admins={admins}
+        meetingId={selectedMeeting?.id}
+        defaultPinned={false}
+      />
 
       {/* Confirm Delete Action Item Modal */}
       {confirmDeleteActionItem && (
