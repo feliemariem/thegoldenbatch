@@ -10,9 +10,20 @@ export default function PipelineBoard({ readOnly = true }) {
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [admins, setAdmins] = useState([]);
+  const [expanded, setExpanded] = useState(() => {
+    const saved = localStorage.getItem('pipelineBoardExpanded');
+    return saved === 'true'; // Default to collapsed (false)
+  });
 
   // Permission check
   const canEdit = user?.is_super_admin || user?.pipeline_edit;
+
+  // Save expanded state to localStorage
+  const toggleExpanded = () => {
+    const newState = !expanded;
+    setExpanded(newState);
+    localStorage.setItem('pipelineBoardExpanded', String(newState));
+  };
 
   // Don't render if user doesn't have permission
   if (!user?.is_super_admin && !user?.pipeline_edit) {
@@ -155,45 +166,24 @@ export default function PipelineBoard({ readOnly = true }) {
     return null;
   }
 
-  // If no active items and user can't edit → hide completely
+  // If no items and user can't edit → hide completely
   if (activeItems.length === 0 && doneItems.length === 0 && !canEdit) {
     return null;
   }
 
-  // If no items at all but user can edit → show only add button
-  if (activeItems.length === 0 && doneItems.length === 0 && canEdit) {
-    return (
-      <div>
-        <button
-          onClick={() => { setEditingItem(null); setShowModal(true); }}
-          className="btn-secondary"
-          style={{ padding: '8px 16px', fontSize: '0.85rem' }}
-        >
-          + Add Pipeline Item
-        </button>
-
-        <ActionItemModal
-          isOpen={showModal}
-          onClose={() => { setShowModal(false); setEditingItem(null); }}
-          onSave={handleSaveItem}
-          editingItem={editingItem}
-          admins={admins}
-          meetingId={null}
-          defaultPinned={true}
-        />
-      </div>
-    );
-  }
-
   return (
     <div>
-      {/* Header */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: '16px'
-      }}>
+      {/* Collapsible Header */}
+      <div
+        onClick={toggleExpanded}
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          cursor: 'pointer',
+          marginBottom: expanded ? '16px' : 0
+        }}
+      >
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           {/* Green dot */}
           <span style={{
@@ -217,19 +207,29 @@ export default function PipelineBoard({ readOnly = true }) {
           </span>
         </div>
 
-        {/* Add button - only if canEdit */}
-        {canEdit && (
-          <button
-            onClick={() => { setEditingItem(null); setShowModal(true); }}
-            className="btn-secondary"
-            style={{ padding: '6px 14px', fontSize: '0.8rem' }}
-          >
-            + Add Item
-          </button>
-        )}
+        {/* Chevron */}
+        <span style={{ color: 'var(--color-text-secondary)', fontSize: '0.85rem' }}>
+          {expanded ? '▼' : '▶'}
+        </span>
       </div>
 
-      {/* Active Items list */}
+      {/* Expanded Content */}
+      {expanded && (
+        <>
+          {/* Add button - only if canEdit */}
+          {canEdit && (
+            <div style={{ marginBottom: '16px' }}>
+              <button
+                onClick={(e) => { e.stopPropagation(); setEditingItem(null); setShowModal(true); }}
+                className="btn-secondary"
+                style={{ padding: '6px 14px', fontSize: '0.8rem' }}
+              >
+                + Add Item
+              </button>
+            </div>
+          )}
+
+          {/* Active Items list */}
       {activeItems.length > 0 && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           {activeItems.map(item => (
@@ -487,6 +487,8 @@ export default function PipelineBoard({ readOnly = true }) {
             ))}
           </div>
         </div>
+      )}
+        </>
       )}
 
       {/* Action Item Modal */}
