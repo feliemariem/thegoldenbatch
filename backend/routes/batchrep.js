@@ -469,8 +469,16 @@ router.post('/round2/vote', authenticateToken, async (req, res) => {
 });
 
 // GET /api/batch-rep/round2/results
-router.get('/round2/results', authenticateToken, async (_req, res) => {
+// Full results: user.id === 1 (uslsis.batch2003@gmail.com) ONLY
+// user.id === 71 does NOT have access here — that user only gets hasVoted via round2/status
+router.get('/round2/results', authenticateToken, async (req, res) => {
   try {
+    // Strict guard — system admin only
+    if (req.user.id !== 1) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    // Total votes and counts per candidate
     const result = await db.query(
       `SELECT candidate_name, COUNT(*) as votes
        FROM batch_rep_round2_votes
@@ -481,7 +489,53 @@ router.get('/round2/results', authenticateToken, async (_req, res) => {
     result.rows.forEach(r => {
       counts[r.candidate_name] = parseInt(r.votes);
     });
-    res.json({ counts, total });
+
+    // Total registered grads — excludes in_memoriam
+    const gradsResult = await db.query(
+      `SELECT COUNT(DISTINCT u.id) as total
+       FROM users u
+       JOIN invites i ON u.invite_id = i.id
+       JOIN master_list m ON i.master_list_id = m.id
+       WHERE m.section IS NOT NULL
+         AND m.section != 'Non-Graduate'
+         AND m.in_memoriam = FALSE`
+    );
+    const totalRegisteredGrads = parseInt(gradsResult.rows[0].total);
+
+    // Votes by section — excludes in_memoriam
+    const sectionResult = await db.query(
+      `SELECT
+         m.section,
+         v.candidate_name,
+         COUNT(*) as count
+       FROM batch_rep_round2_votes v
+       JOIN users u ON u.id = v.voter_id
+       JOIN invites i ON u.invite_id = i.id
+       JOIN master_list m ON i.master_list_id = m.id
+       WHERE m.in_memoriam = FALSE
+       GROUP BY m.section, v.candidate_name
+       ORDER BY m.section ASC`
+    );
+    const votesBySection = sectionResult.rows;
+
+    // Individual voter list sorted by time — excludes in_memoriam
+    const voterResult = await db.query(
+      `SELECT
+         u.first_name,
+         u.last_name,
+         v.candidate_name,
+         v.created_at,
+         m.section
+       FROM batch_rep_round2_votes v
+       JOIN users u ON u.id = v.voter_id
+       JOIN invites i ON u.invite_id = i.id
+       JOIN master_list m ON i.master_list_id = m.id
+       WHERE m.in_memoriam = FALSE
+       ORDER BY v.created_at ASC`
+    );
+    const voterList = voterResult.rows;
+
+    res.json({ counts, total, totalRegisteredGrads, votesBySection, voterList });
   } catch (err) {
     console.error('Error fetching round2 results:', err);
     res.status(500).json({ error: 'Failed to fetch results' });

@@ -23,6 +23,8 @@ export default function SystemTest() {
   const [batchRepData, setBatchRepData] = useState([]);
   const [batchRepLoading, setBatchRepLoading] = useState(false);
   const [batchRepVisibleRows, setBatchRepVisibleRows] = useState(10);
+  const [round2Data, setRound2Data] = useState(null);
+  const [round2Loading, setRound2Loading] = useState(false);
 
   const features = [
     { id: 'inbox-preview', label: 'User Inbox Preview', description: 'Preview what any user sees in their inbox' },
@@ -30,7 +32,10 @@ export default function SystemTest() {
     { id: 'profile-preview', label: 'User Profile Preview', description: 'View any user\'s profile data' },
     { id: 'engagement', label: 'Engagement Stats', description: 'View user activity metrics' },
     { id: 'name-changes', label: 'Name Change Requests', description: 'Review and approve name change requests' },
-    ...(user?.id === 1 ? [{ id: 'batch-rep-full', label: 'Batch Rep Full View', description: 'View all batch rep submissions' }] : []),
+    ...(user?.id === 1 ? [
+      { id: 'batch-rep-full', label: 'Batch Rep Full View', description: 'View all batch rep submissions' },
+      { id: 'round2-election', label: 'Round 2 Election', description: 'Individual votes and section breakdown' }
+    ] : []),
   ];
 
   useEffect(() => {
@@ -51,6 +56,27 @@ export default function SystemTest() {
 
     if (user?.id === 1 && activeFeature === 'batch-rep-full') {
       fetchBatchRepData();
+    }
+  }, [user?.id, activeFeature]);
+
+  useEffect(() => {
+    const fetchRound2Data = async () => {
+      setRound2Loading(true);
+      try {
+        const res = await apiGet('/api/batch-rep/round2/results');
+        if (res.ok) {
+          const data = await res.json();
+          setRound2Data(data);
+        }
+      } catch (err) {
+        console.error('Error fetching round2 election data:', err);
+      } finally {
+        setRound2Loading(false);
+      }
+    };
+
+    if (user?.id === 1 && activeFeature === 'round2-election') {
+      fetchRound2Data();
     }
   }, [user?.id, activeFeature]);
 
@@ -282,6 +308,141 @@ export default function SystemTest() {
                 </div>
               )}
             </div>
+          )}
+        </div>
+      )}
+
+      {activeFeature === 'round2-election' && user?.id === 1 && (
+        <div style={{
+          padding: '20px',
+          background: 'var(--color-bg-card, rgba(255,255,255,0.03))',
+          border: '1px solid rgba(255,255,255,0.1)',
+          borderRadius: '12px'
+        }}>
+          <h3 style={{ color: 'var(--color-text-primary)', margin: '0 0 20px 0', fontSize: '1.1rem' }}>
+            Round 2 · AA Rep Election Results
+          </h3>
+
+          {round2Loading ? (
+            <p style={{ color: 'var(--color-text-secondary)' }}>Loading...</p>
+          ) : !round2Data ? (
+            <p style={{ color: 'var(--color-text-secondary)' }}>No data yet.</p>
+          ) : (
+            <>
+              {/* Votes by Section */}
+              <div style={{ marginBottom: '28px' }}>
+                <h4 style={{
+                  fontSize: '0.75rem', fontWeight: 600,
+                  color: 'var(--color-text-secondary)',
+                  textTransform: 'uppercase', letterSpacing: '0.5px',
+                  marginBottom: '12px'
+                }}>
+                  Votes by Section
+                </h4>
+                {(() => {
+                  // Group votesBySection rows into { section: { candidateName: count } }
+                  const sections = {};
+                  (round2Data.votesBySection || []).forEach(row => {
+                    if (!sections[row.section]) sections[row.section] = {};
+                    sections[row.section][row.candidate_name] = parseInt(row.count);
+                  });
+                  return Object.entries(sections).map(([section, votes]) => {
+                    const bianca = votes['Bianca Jison'] || 0;
+                    const mel = votes['Mel Andrea Rivero'] || 0;
+                    const total = bianca + mel;
+                    return (
+                      <div key={section} style={{ marginBottom: '12px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', alignItems: 'center' }}>
+                          <span style={{
+                            fontSize: '0.8rem', fontWeight: 600,
+                            color: 'var(--color-text-secondary)',
+                            textTransform: 'uppercase', letterSpacing: '0.5px'
+                          }}>
+                            {section}
+                          </span>
+                          <div style={{ display: 'flex', gap: '16px', fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
+                            <span>Bianca: {total > 0 ? Math.round((bianca / total) * 100) : 0}%</span>
+                            <span>Mel: {total > 0 ? Math.round((mel / total) * 100) : 0}%</span>
+                          </div>
+                        </div>
+                        <div style={{ height: '6px', background: 'rgba(255,255,255,0.08)', borderRadius: '3px', overflow: 'hidden' }}>
+                          <div style={{
+                            height: '100%',
+                            width: total > 0 ? `${Math.round((bianca / total) * 100)}%` : '0%',
+                            background: '#006633',
+                            borderRadius: '3px'
+                          }} />
+                        </div>
+                      </div>
+                    );
+                  });
+                })()}
+              </div>
+
+              {/* Individual voter list — sorted by time of vote */}
+              <div>
+                <h4 style={{
+                  fontSize: '0.75rem', fontWeight: 600,
+                  color: 'var(--color-text-secondary)',
+                  textTransform: 'uppercase', letterSpacing: '0.5px',
+                  marginBottom: '12px'
+                }}>
+                  Individual Votes · sorted by time
+                </h4>
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
+                    <thead>
+                      <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+                        <th style={{ textAlign: 'left', padding: '10px 8px', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Name</th>
+                        <th style={{ textAlign: 'left', padding: '10px 8px', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Section</th>
+                        {/* One column per candidate — checkmark shows who they voted for */}
+                        <th style={{ textAlign: 'center', padding: '10px 8px', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Bianca</th>
+                        <th style={{ textAlign: 'center', padding: '10px 8px', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Mel</th>
+                        <th style={{ textAlign: 'left', padding: '10px 8px', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Time (PHT)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {(round2Data.voterList || []).map((row, idx) => (
+                        <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                          <td style={{ padding: '10px 8px', color: 'var(--color-text-primary)' }}>
+                            {row.first_name} {row.last_name}
+                          </td>
+                          <td style={{ padding: '10px 8px', color: 'var(--color-text-secondary)', fontSize: '0.8rem' }}>
+                            {row.section}
+                          </td>
+                          {/* ✓ appears only in the column matching their vote */}
+                          <td style={{ padding: '10px 8px', textAlign: 'center' }}>
+                            {row.candidate_name === 'Bianca Jison' && (
+                              <span style={{ color: 'var(--color-status-positive)', fontWeight: 700 }}>✓</span>
+                            )}
+                          </td>
+                          <td style={{ padding: '10px 8px', textAlign: 'center' }}>
+                            {row.candidate_name === 'Mel Andrea Rivero' && (
+                              <span style={{ color: 'var(--color-status-positive)', fontWeight: 700 }}>✓</span>
+                            )}
+                          </td>
+                          <td style={{ padding: '10px 8px', color: 'var(--color-text-secondary)', fontSize: '0.8rem' }}>
+                            {new Date(row.created_at).toLocaleString('en-PH', {
+                              timeZone: 'Asia/Manila',
+                              month: 'short',
+                              day: 'numeric',
+                              hour: 'numeric',
+                              minute: '2-digit',
+                              hour12: true
+                            })}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  {(!round2Data.voterList || round2Data.voterList.length === 0) && (
+                    <p style={{ color: 'var(--color-text-secondary)', textAlign: 'center', padding: '20px' }}>
+                      No votes cast yet.
+                    </p>
+                  )}
+                </div>
+              </div>
+            </>
           )}
         </div>
       )}

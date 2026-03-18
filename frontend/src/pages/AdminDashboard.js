@@ -92,6 +92,12 @@ export default function AdminDashboard() {
   // Batch Rep Response Stats by Section (user.id === 1 only)
   const [batchRepResponseStats, setBatchRepResponseStats] = useState(null);
 
+  // Round 2 Voting Results — user.id === 1 only
+  const [round2Results, setRound2Results] = useState(null);
+  const [round2Open, setRound2Open] = useState(false);
+  const [round2Loading, setRound2Loading] = useState(false);
+  const [round2LastUpdated, setRound2LastUpdated] = useState(null);
+
   // Confirm modal state
   const [confirmModal, setConfirmModal] = useState({ show: false, message: '', onConfirm: null });
 
@@ -208,11 +214,35 @@ export default function AdminDashboard() {
     }
   };
 
+  // Fetch Round 2 voting results — user.id === 1 only
+  const fetchRound2Results = async () => {
+    setRound2Loading(true);
+    try {
+      const res = await apiGet('/api/batch-rep/round2/results');
+      if (res.ok) {
+        const data = await res.json();
+        setRound2Results(data);
+        setRound2LastUpdated(new Date());
+      }
+    } catch (err) {
+      console.error('Error fetching round2 results:', err);
+    } finally {
+      setRound2Loading(false);
+    }
+  };
+
   useEffect(() => {
     if (batchRepOpen && !batchRepResults && isSystemAdmin) {
       fetchBatchRepResults();
     }
   }, [batchRepOpen, batchRepResults, isSystemAdmin]);
+
+  // Fetch round2 results on open — user.id === 1 only
+  useEffect(() => {
+    if (round2Open && !round2Results && user?.id === 1) {
+      fetchRound2Results();
+    }
+  }, [round2Open, round2Results, user?.id]);
 
   // Fetch batch rep response stats for System tab (user.id === 1 only)
   useEffect(() => {
@@ -917,6 +947,143 @@ export default function AdminDashboard() {
                             </div>
                           </div>
                         </div>
+                      </>
+                    ) : (
+                      <p style={{ color: 'var(--color-text-secondary)' }}>Failed to load results.</p>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Round 2 Voting Results — user.id === 1 only */}
+            {user?.id === 1 && (
+              <div style={{
+                marginBottom: '24px',
+                border: '1px solid rgba(255,255,255,0.08)',
+                borderRadius: '12px',
+                overflow: 'hidden',
+                background: 'var(--color-bg-card)'
+              }}>
+                {/* Collapsible trigger */}
+                <button
+                  onClick={() => setRound2Open(!round2Open)}
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '16px 20px',
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    textAlign: 'left'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <span style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--color-hover)' }}>
+                      🗳️ Round 2 · AA Rep Vote Results
+                    </span>
+                    {/* Live badge — deadline March 30 2026 */}
+                    {new Date() < new Date('2026-03-30T23:59:00+08:00') && (
+                      <span style={{
+                        fontSize: '0.7rem',
+                        fontWeight: 600,
+                        padding: '4px 10px',
+                        borderRadius: '12px',
+                        background: 'rgba(39, 174, 96, 0.15)',
+                        color: 'var(--color-status-positive)'
+                      }}>
+                        Live
+                      </span>
+                    )}
+                  </div>
+                  <span style={{ color: 'var(--color-text-secondary)', fontSize: '0.8rem' }}>
+                    {round2Open ? '▲' : '▼'}
+                  </span>
+                </button>
+
+                {round2Open && (
+                  <div style={{ padding: '0 20px 20px' }}>
+                    {round2Loading ? (
+                      <p style={{ color: 'var(--color-text-secondary)', fontStyle: 'italic' }}>
+                        {['Hulat!', 'Dali lang gid ha?', 'Wait lang...'][Math.floor(Math.random() * 3)]}
+                      </p>
+                    ) : round2Results ? (
+                      <>
+                        {/* Last updated + manual refresh */}
+                        {round2LastUpdated && (
+                          <p style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginBottom: '16px' }}>
+                            Last updated: {formatPHT(round2LastUpdated)}
+                            <button
+                              onClick={fetchRound2Results}
+                              style={{
+                                marginLeft: '8px',
+                                background: 'none',
+                                border: 'none',
+                                color: 'var(--color-hover)',
+                                cursor: 'pointer',
+                                fontSize: '0.75rem',
+                                textDecoration: 'underline'
+                              }}
+                            >
+                              Refresh
+                            </button>
+                          </p>
+                        )}
+
+                        {/* Voter turnout — X% of X registered grads */}
+                        <div style={{
+                          padding: '14px 16px',
+                          background: 'rgba(255,255,255,0.03)',
+                          borderRadius: '8px',
+                          marginBottom: '20px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between'
+                        }}>
+                          <span style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>
+                            Voter turnout
+                          </span>
+                          <span style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--color-text-primary)' }}>
+                            {round2Results.totalRegisteredGrads > 0
+                              ? Math.round((round2Results.total / round2Results.totalRegisteredGrads) * 100)
+                              : 0}% · {round2Results.total} of {round2Results.totalRegisteredGrads} registered grads
+                          </span>
+                        </div>
+
+                        {/* Results bars — percentages only, no raw counts */}
+                        <h4 style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-text-primary)', marginBottom: '12px' }}>
+                          Position 1 · Alumni Association Representative
+                        </h4>
+                        {['Bianca Jison', 'Mel Andrea Rivero'].map((name) => {
+                          const votes = round2Results.counts[name] || 0;
+                          const pct = round2Results.total > 0
+                            ? Math.round((votes / round2Results.total) * 100 * 10) / 10
+                            : 0;
+                          return (
+                            <div key={name} style={{ marginBottom: '12px' }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                                <span style={{ fontSize: '0.9rem', color: 'var(--color-text-primary)' }}>{name}</span>
+                                {/* Percentages only — no raw vote counts */}
+                                <span style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>{pct}%</span>
+                              </div>
+                              <div style={{
+                                height: '8px',
+                                background: 'rgba(255,255,255,0.1)',
+                                borderRadius: '4px',
+                                overflow: 'hidden'
+                              }}>
+                                <div style={{
+                                  height: '100%',
+                                  width: `${pct}%`,
+                                  background: '#006633',
+                                  borderRadius: '4px'
+                                }} />
+                              </div>
+                            </div>
+                          );
+                        })}
                       </>
                     ) : (
                       <p style={{ color: 'var(--color-text-secondary)' }}>Failed to load results.</p>
