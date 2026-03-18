@@ -224,21 +224,27 @@ export default function MyTasks() {
               </div>
 
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'center', fontSize: '0.8rem' }}>
-                <button
-                  className="task-meeting-link"
-                  onClick={() => navigateToMeeting(task.meeting_id)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: 'var(--color-hover)',
-                    cursor: 'pointer',
-                    padding: 0,
-                    fontSize: '0.8rem',
-                    textDecoration: 'underline'
-                  }}
-                >
-                  {task.meeting_title}
-                </button>
+                {task.meeting_id ? (
+                  <button
+                    className="task-meeting-link"
+                    onClick={() => navigateToMeeting(task.meeting_id)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: 'var(--color-hover)',
+                      cursor: 'pointer',
+                      padding: 0,
+                      fontSize: '0.8rem',
+                      textDecoration: 'underline'
+                    }}
+                  >
+                    {task.meeting_title}
+                  </button>
+                ) : (
+                  <span style={{ color: '#666', fontStyle: 'italic', fontSize: '0.8rem' }}>
+                    Standalone
+                  </span>
+                )}
 
                 {task.due_date && formatDueDate(task.due_date)}
 

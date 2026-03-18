@@ -108,22 +108,12 @@ router.get('/my-tasks', authenticateToken, async (req, res) => {
 
     const result = await db.query(`
       SELECT ai.*,
-             m.title as meeting_title,
-             m.meeting_date,
-             m.id as meeting_id
+             m.title as meeting_title
       FROM action_items ai
-      JOIN meeting_minutes m ON ai.meeting_id = m.id
+      LEFT JOIN meetings m ON ai.meeting_id = m.id
       WHERE ai.assignee_id = $1
-      ORDER BY
-        ai.due_date ASC NULLS LAST,
-        CASE ai.priority
-          WHEN 'critical' THEN 1
-          WHEN 'high' THEN 2
-          WHEN 'medium' THEN 3
-          WHEN 'low' THEN 4
-          ELSE 5
-        END,
-        ai.created_at DESC
+        AND ai.status != 'done'
+      ORDER BY ai.due_date ASC NULLS LAST
     `, [adminId]);
 
     res.json({ tasks: result.rows });
