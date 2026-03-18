@@ -266,8 +266,8 @@ export default function ProfileNew() {
           <div className="profile-grid">
             {/* Left Column */}
             <div className="profile-left">
-              {/* Committee Strategy Document - Admin Only */}
-              {user?.isAdmin && (
+              {/* Committee Strategy Document - Non-Registry Admins Only */}
+              {(user?.is_super_admin || (user?.isAdmin && user?.hasNonRegistryPermissions)) && (
                 <div className="profile-card strategy-card">
                   <button
                     className="strategy-toggle"
