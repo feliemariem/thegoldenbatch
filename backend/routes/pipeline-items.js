@@ -84,17 +84,17 @@ router.post('/', authenticateToken, async (req, res) => {
       return res.status(403).json({ error: 'Admins only' });
     }
 
-    const { task, due_date, priority, assignee_id } = req.body;
+    const { task, due_date, priority, assignee_id, status } = req.body;
 
     if (!task) {
       return res.status(400).json({ error: 'Task description is required' });
     }
 
     const result = await db.query(`
-      INSERT INTO action_items (meeting_id, task, due_date, priority, assignee_id, show_in_pipeline)
-      VALUES (NULL, $1, $2, $3, $4, true)
+      INSERT INTO action_items (meeting_id, task, due_date, priority, assignee_id, status, show_in_pipeline)
+      VALUES (NULL, $1, $2, $3, $4, $5, true)
       RETURNING *
-    `, [task, due_date || null, priority || 'Medium', assignee_id || null]);
+    `, [task, due_date || null, priority || 'Medium', assignee_id || null, status || 'not_started']);
 
     // Fetch the full item with assignee info
     const fullResult = await db.query(`
