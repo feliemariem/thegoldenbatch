@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { apiGet, apiPost } from '../api';
@@ -71,6 +71,9 @@ export default function BatchRepVoting() {
     seconds: 0
   });
 
+  // Auto-scroll target — jumps to submit button when candidate is selected
+  const submitBtnRef = useRef(null);
+
   // Phase 1: BOTH checkPhaseAccess AND user?.id === 71 must pass
   // When advancing to Phase 2: remove `&& user?.id === 71`
   // When advancing to Phase 3: remove `&& user?.id === 71`, ensure isGrad is populated
@@ -130,6 +133,13 @@ export default function BatchRepVoting() {
 
     return () => clearInterval(timer);
   }, []);
+
+  // Scroll to submit button as soon as a candidate is selected
+  useEffect(() => {
+    if (selectedCandidate && submitBtnRef.current) {
+      submitBtnRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [selectedCandidate]);
 
   // Handle vote submission
   const handleSubmit = async () => {
@@ -454,6 +464,7 @@ export default function BatchRepVoting() {
                 )}
 
                 <button
+                  ref={submitBtnRef}
                   className="btn btn-primary"
                   onClick={handleSubmit}
                   disabled={!selectedCandidate || submitting}
