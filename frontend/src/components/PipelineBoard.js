@@ -80,7 +80,7 @@ export default function PipelineBoard({ readOnly = true }) {
       if (lastPinTime > lastFetchRef.current) {
         fetchPipelineItems();
       }
-    }, 3000);
+    }, 15000);
 
     return () => {
       window.removeEventListener('pipeline-refresh', handleRefresh);

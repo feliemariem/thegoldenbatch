@@ -140,7 +140,7 @@ export default function AdminDashboard() {
     fetchDashboard();
     fetchAdminUnreadCount();
     fetchDashboardStats();
-  }, [user]);
+  }, []); // mount-only
 
   // Fetch email log count for system admin (id=1)
   useEffect(() => {
