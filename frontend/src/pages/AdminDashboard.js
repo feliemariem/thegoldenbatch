@@ -404,7 +404,7 @@ export default function AdminDashboard() {
             borderRadius: '12px',
             padding: '20px'
           }}>
-            <PipelineBoard readOnly={true} />
+            <PipelineBoard readOnly={false} />
           </div>
         )}
 

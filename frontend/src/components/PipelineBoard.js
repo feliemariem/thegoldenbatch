@@ -113,9 +113,15 @@ export default function PipelineBoard({ readOnly = true }) {
     return null;
   }
 
-  // Don't render anything if no active items
+  // Visibility logic:
+  // - If readOnly and no items → hide completely
+  // - If not readOnly but user can't edit and no items → hide completely
+  // - If not readOnly and user can edit → always show (for adding items)
+  // - If there are items → always show
   if (activeItems.length === 0) {
-    return null;
+    if (readOnly || !canEdit) {
+      return null;
+    }
   }
 
   return (
