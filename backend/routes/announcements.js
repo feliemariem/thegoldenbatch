@@ -47,14 +47,16 @@ router.post('/', authenticateToken, async (req, res) => {
     const { audience, subject, message, sendEmail, template, testMode, testEmail } = req.body;
 
     // Debug: log incoming request
-    console.log('📩 Announcement request:', {
-      audience,
-      subject: subject?.substring(0, 30),
-      sendEmail,
-      template: template || 'standard',
-      testMode,
-      testEmail
-    });
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('📩 Announcement request:', {
+        audience,
+        subject: subject?.substring(0, 30),
+        sendEmail,
+        template: template || 'standard',
+        testMode,
+        testEmail
+      });
+    }
 
     // Validate audience - must be one of the allowed values
     const validAudiences = ['all', 'full_admins', 'registry_admins', 'graduates', 'going', 'maybe', 'not_going'];
@@ -340,13 +342,15 @@ router.post('/', authenticateToken, async (req, res) => {
           }
 
           // Debug: confirm SendGrid call is reached
-          console.log('📧 SendGrid send attempt:', {
-            testMode,
-            testEmail,
-            template: template || 'standard',
-            recipientEmail: recipient.email,
-            subject: emailSubject
-          });
+          if (process.env.NODE_ENV !== 'production') {
+            console.log('📧 SendGrid send attempt:', {
+              testMode,
+              testEmail,
+              template: template || 'standard',
+              recipientEmail: recipient.email,
+              subject: emailSubject
+            });
+          }
 
           await sgMail.send({
             to: recipient.email,
@@ -632,15 +636,21 @@ router.post('/:id/read', authenticateToken, async (req, res) => {
 
 // Get email log (deferred/failed emails in last 7 days) - super admin only (id=1)
 router.get('/email-log', authenticateToken, async (req, res) => {
-  console.log('[EmailLog] GET /email-log called by user:', req.user?.id, req.user?.email);
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('[EmailLog] GET /email-log called by user:', req.user?.id, req.user?.email);
+  }
   try {
     // Only allow super admin (id=1)
     if (req.user.id !== 1) {
-      console.log('[EmailLog] Access denied - user id:', req.user.id);
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('[EmailLog] Access denied - user id:', req.user.id);
+      }
       return res.status(403).json({ error: 'Access denied' });
     }
 
-    console.log('[EmailLog] Querying email_log table...');
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[EmailLog] Querying email_log table...');
+    }
     const result = await db.query(`
       SELECT id, recipient_email, recipient_name, subject, email_type, status, created_at, updated_at
       FROM email_log
@@ -649,7 +659,9 @@ router.get('/email-log', authenticateToken, async (req, res) => {
       ORDER BY created_at DESC
     `);
 
-    console.log('[EmailLog] Query successful, rows:', result.rows.length);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[EmailLog] Query successful, rows:', result.rows.length);
+    }
     res.json({ emails: result.rows });
   } catch (err) {
     console.error('[EmailLog] Error fetching email log:', {

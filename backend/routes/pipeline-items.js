@@ -118,7 +118,9 @@ router.post('/', authenticateToken, async (req, res) => {
 
 // PATCH /api/pipeline-items/:id/toggle-pin - Toggle show_in_pipeline
 router.patch('/:id/toggle-pin', authenticateToken, async (req, res) => {
-  console.log('PATCH toggle-pin called with id:', req.params.id);
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('PATCH toggle-pin called with id:', req.params.id);
+  }
   try {
     // Check canEdit permission
     const hasPermission = await checkMinutesEditPermission(req.user.email);
@@ -131,7 +133,9 @@ router.patch('/:id/toggle-pin', authenticateToken, async (req, res) => {
       return res.status(400).json({ error: 'Invalid action item ID' });
     }
 
-    console.log('Toggling pin for action item:', id);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Toggling pin for action item:', id);
+    }
 
     const result = await db.query(`
       UPDATE action_items
@@ -141,7 +145,9 @@ router.patch('/:id/toggle-pin', authenticateToken, async (req, res) => {
       RETURNING *
     `, [id]);
 
-    console.log('Toggle result rows:', result.rows.length);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Toggle result rows:', result.rows.length);
+    }
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Action item not found' });

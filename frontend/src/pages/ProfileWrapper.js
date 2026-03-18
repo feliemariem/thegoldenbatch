@@ -12,13 +12,15 @@ import Profile from './Profile';
 export default function ProfileWrapper() {
   const { user } = useAuth();
 
-  console.log('ProfileWrapper debug:', {
-    isAdmin: user?.isAdmin,
-    is_super_admin: user?.is_super_admin,
-    hasNonRegistryPermissions: user?.hasNonRegistryPermissions,
-    hasPermissions: user?.hasPermissions,
-    fullUser: user
-  });
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('ProfileWrapper debug:', {
+      isAdmin: user?.isAdmin,
+      is_super_admin: user?.is_super_admin,
+      hasNonRegistryPermissions: user?.hasNonRegistryPermissions,
+      hasPermissions: user?.hasPermissions,
+      fullUser: user
+    });
+  }
 
   // Super admins and admins with non-registry permissions go to ProfileNew
   const goesToNewProfile = user?.is_super_admin || (user?.isAdmin && user?.hasNonRegistryPermissions);

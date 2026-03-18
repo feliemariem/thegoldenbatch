@@ -49,7 +49,9 @@ router.post('/auto', authenticateApiKey, async (req, res) => {
     );
 
     if (existingResult.rows.length > 0) {
-      console.log(`[AUTO-INVITE] Email already invited: ${normalizedEmail}`);
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`[AUTO-INVITE] Email already invited: ${normalizedEmail}`);
+      }
       return res.status(200).json({
         message: 'Already invited',
         status: 'exists'
@@ -74,7 +76,9 @@ router.post('/auto', authenticateApiKey, async (req, res) => {
       if (emailResult.success) {
         emailSent = true;
         emailStatus = 'sent';
-        console.log(`[AUTO-INVITE] Email sent successfully to ${normalizedEmail}`);
+        if (process.env.NODE_ENV !== 'production') {
+          console.log(`[AUTO-INVITE] Email sent successfully to ${normalizedEmail}`);
+        }
       } else {
         emailStatus = 'failed';
         console.error(`[AUTO-INVITE] Email failed for ${normalizedEmail}:`, emailResult.error);
@@ -90,7 +94,9 @@ router.post('/auto', authenticateApiKey, async (req, res) => {
       [emailSent, emailStatus, invite.id]
     );
 
-    console.log(`[AUTO-INVITE] Created invite for ${normalizedEmail} (email_status: ${emailStatus})`);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`[AUTO-INVITE] Created invite for ${normalizedEmail} (email_status: ${emailStatus})`);
+    }
 
     if (emailSent) {
       return res.status(201).json({
@@ -149,7 +155,9 @@ router.post('/', authenticateAdmin, async (req, res) => {
       if (emailResult.success) {
         emailSent = true;
         emailStatus = 'sent';
-        console.log(`[SINGLE-INVITE] Email sent successfully to ${normalizedEmail}`);
+        if (process.env.NODE_ENV !== 'production') {
+          console.log(`[SINGLE-INVITE] Email sent successfully to ${normalizedEmail}`);
+        }
       } else {
         emailStatus = 'failed';
         console.error(`[SINGLE-INVITE] Email failed for ${normalizedEmail}:`, emailResult.error);
@@ -165,7 +173,9 @@ router.post('/', authenticateAdmin, async (req, res) => {
       [emailSent, emailStatus, invite.id]
     );
 
-    console.log(`[SINGLE-INVITE] Created invite for ${normalizedEmail} (email_status: ${emailStatus})`);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`[SINGLE-INVITE] Created invite for ${normalizedEmail} (email_status: ${emailStatus})`);
+    }
 
     res.status(201).json({
       ...invite,
@@ -200,7 +210,9 @@ router.post('/bulk', authenticateAdmin, async (req, res) => {
     const totalInvites = invites.length;
     let emailsSent = 0;
 
-    console.log(`[BULK-INVITE] Starting bulk invite send for ${totalInvites} invites`);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`[BULK-INVITE] Starting bulk invite send for ${totalInvites} invites`);
+    }
 
     for (const invite of invites) {
       try {
@@ -217,7 +229,9 @@ router.post('/bulk', authenticateAdmin, async (req, res) => {
         emailsSent++;
 
         // Log progress
-        console.log(`[BULK-INVITE] Sent invite ${emailsSent}/${totalInvites} to ${invite.email}`);
+        if (process.env.NODE_ENV !== 'production') {
+          console.log(`[BULK-INVITE] Sent invite ${emailsSent}/${totalInvites} to ${invite.email}`);
+        }
 
         // Update email_sent status
         if (emailResult.success) {
@@ -243,7 +257,9 @@ router.post('/bulk', authenticateAdmin, async (req, res) => {
       }
     }
 
-    console.log(`[BULK-INVITE] Completed: ${results.success.length} sent, ${results.duplicates.length} duplicates, ${results.errors.length} errors`);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`[BULK-INVITE] Completed: ${results.success.length} sent, ${results.duplicates.length} duplicates, ${results.errors.length} errors`);
+    }
 
     res.status(201).json({
       message: `Created ${results.success.length} invites`,

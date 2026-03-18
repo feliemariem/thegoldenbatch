@@ -485,7 +485,7 @@ export default function InvitesTab({
                           </td>
                           <td>
                             <span className={`rsvp-badge ${invite.used ? 'going' : 'pending'}`}>
-                              {invite.used ? 'Registered"' : 'Pending'}
+                              {invite.used ? 'Registered' : 'Pending'}
                             </span>
                           </td>
                           {(isSuperAdmin || permissions?.invites_link) && <td>-</td>}
