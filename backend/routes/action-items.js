@@ -110,7 +110,7 @@ router.get('/my-tasks', authenticateToken, async (req, res) => {
       SELECT ai.*,
              m.title as meeting_title
       FROM action_items ai
-      LEFT JOIN meetings m ON ai.meeting_id = m.id
+      LEFT JOIN meeting_minutes m ON ai.meeting_id = m.id
       WHERE ai.assignee_id = $1
         AND ai.status != 'done'
       ORDER BY ai.due_date ASC NULLS LAST
