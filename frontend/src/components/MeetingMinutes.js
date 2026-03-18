@@ -189,10 +189,15 @@ export default function MeetingMinutes({ canEdit = false, initialMeetingId = nul
 
   // Toggle pin to pipeline
   const handleTogglePin = async (item) => {
+    console.log('Toggling pin for item:', item.id, 'URL:', `/api/pipeline-items/${item.id}/toggle-pin`);
     try {
       const res = await apiPatch(`/api/pipeline-items/${item.id}/toggle-pin`, {});
+      console.log('Toggle pin response:', res.status, res.ok);
       if (res.ok) {
         fetchActionItems(selectedMeeting.id);
+      } else {
+        const errorData = await res.json().catch(() => ({}));
+        console.error('Toggle pin failed:', res.status, errorData);
       }
     } catch (err) {
       console.error('Failed to toggle pin:', err);
