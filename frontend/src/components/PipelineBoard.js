@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { apiGet, apiPost } from '../api';
+import { apiGet, apiPost, apiPut, apiDelete } from '../api';
 import ActionItemModal from './ActionItemModal';
 
 export default function PipelineBoard({ readOnly = true }) {
@@ -8,6 +8,7 @@ export default function PipelineBoard({ readOnly = true }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [editingItem, setEditingItem] = useState(null);
   const [admins, setAdmins] = useState([]);
 
   // Permission check
@@ -51,20 +52,61 @@ export default function PipelineBoard({ readOnly = true }) {
     }
   };
 
-  const handleSaveItem = async (formData) => {
+  const handleSaveItem = async (formData, existingItem) => {
     try {
-      const res = await apiPost('/api/pipeline-items', formData);
-      if (res.ok) {
-        setShowModal(false);
-        fetchPipelineItems();
+      if (existingItem) {
+        // Update existing item
+        const res = await apiPut(`/api/action-items/${existingItem.id}`, formData);
+        if (res.ok) {
+          setShowModal(false);
+          setEditingItem(null);
+          fetchPipelineItems();
+        }
+      } else {
+        // Create new item
+        const res = await apiPost('/api/pipeline-items', formData);
+        if (res.ok) {
+          setShowModal(false);
+          fetchPipelineItems();
+        }
       }
     } catch (err) {
-      console.error('Failed to create pipeline item:', err);
+      console.error('Failed to save pipeline item:', err);
     }
   };
 
-  // Filter to active items only (not done)
+  const handleToggleStatus = async (item) => {
+    const newStatus = item.status === 'done' ? 'not_started' : 'done';
+    try {
+      const res = await apiPut(`/api/action-items/${item.id}`, { status: newStatus });
+      if (res.ok) {
+        setItems(items.map(i => i.id === item.id ? { ...i, status: newStatus, updated_at: new Date().toISOString() } : i));
+      }
+    } catch (err) {
+      console.error('Failed to toggle status:', err);
+    }
+  };
+
+  const handleEditItem = (item) => {
+    setEditingItem(item);
+    setShowModal(true);
+  };
+
+  const handleDeleteItem = async (item) => {
+    if (!window.confirm('Delete this action item?')) return;
+    try {
+      const res = await apiDelete(`/api/action-items/${item.id}`);
+      if (res.ok) {
+        setItems(items.filter(i => i.id !== item.id));
+      }
+    } catch (err) {
+      console.error('Failed to delete item:', err);
+    }
+  };
+
+  // Split items into active and done
   const activeItems = items.filter(item => item.status !== 'done');
+  const doneItems = items.filter(item => item.status === 'done');
 
   const getPriorityBadge = (priority) => {
     const styles = {
@@ -114,33 +156,31 @@ export default function PipelineBoard({ readOnly = true }) {
   }
 
   // If no active items and user can't edit → hide completely
-  if (activeItems.length === 0 && !canEdit) {
+  if (activeItems.length === 0 && doneItems.length === 0 && !canEdit) {
     return null;
   }
 
-  // If no active items but user can edit → show only add button
-  if (activeItems.length === 0 && canEdit) {
+  // If no items at all but user can edit → show only add button
+  if (activeItems.length === 0 && doneItems.length === 0 && canEdit) {
     return (
       <div>
         <button
-          onClick={() => setShowModal(true)}
+          onClick={() => { setEditingItem(null); setShowModal(true); }}
           className="btn-secondary"
           style={{ padding: '8px 16px', fontSize: '0.85rem' }}
         >
           + Add Pipeline Item
         </button>
 
-        {!readOnly && (
-          <ActionItemModal
-            isOpen={showModal}
-            onClose={() => setShowModal(false)}
-            onSave={handleSaveItem}
-            editingItem={null}
-            admins={admins}
-            meetingId={null}
-            defaultPinned={true}
-          />
-        )}
+        <ActionItemModal
+          isOpen={showModal}
+          onClose={() => { setShowModal(false); setEditingItem(null); }}
+          onSave={handleSaveItem}
+          editingItem={editingItem}
+          admins={admins}
+          meetingId={null}
+          defaultPinned={true}
+        />
       </div>
     );
   }
@@ -180,7 +220,7 @@ export default function PipelineBoard({ readOnly = true }) {
         {/* Add button - only if canEdit */}
         {canEdit && (
           <button
-            onClick={() => setShowModal(true)}
+            onClick={() => { setEditingItem(null); setShowModal(true); }}
             className="btn-secondary"
             style={{ padding: '6px 14px', fontSize: '0.8rem' }}
           >
@@ -189,104 +229,276 @@ export default function PipelineBoard({ readOnly = true }) {
         )}
       </div>
 
-      {/* Items list */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        {activeItems.map(item => (
-          <div
-            key={item.id}
-            style={{
-              background: 'rgba(255,255,255,0.03)',
-              border: '1px solid rgba(255,255,255,0.06)',
-              borderRadius: '8px',
-              padding: '12px 14px'
-            }}
-          >
-            {/* Task and badges */}
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'flex-start',
-              marginBottom: '8px'
-            }}>
-              <div style={{
-                flex: 1,
-                fontSize: '0.85rem',
-                color: 'var(--text-primary)',
-                fontWeight: '500'
-              }}>
-                {item.task}
-              </div>
-              <div style={{ display: 'flex', gap: '6px', marginLeft: '10px', flexShrink: 0 }}>
-                {getPriorityBadge(item.priority)}
-                {getStatusBadge(item.status)}
+      {/* Active Items list */}
+      {activeItems.length > 0 && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          {activeItems.map(item => (
+            <div
+              key={item.id}
+              style={{
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid rgba(255,255,255,0.06)',
+                borderRadius: '8px',
+                padding: '12px 14px'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+                {/* Check ring - canEdit only */}
+                {canEdit && (
+                  <button
+                    onClick={() => handleToggleStatus(item)}
+                    style={{
+                      width: '20px',
+                      height: '20px',
+                      borderRadius: '50%',
+                      border: '2px solid #888',
+                      background: 'transparent',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      marginTop: '2px'
+                    }}
+                  />
+                )}
+
+                <div style={{ flex: 1 }}>
+                  {/* Task and badges */}
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    marginBottom: '8px'
+                  }}>
+                    <div style={{
+                      flex: 1,
+                      fontSize: '0.85rem',
+                      color: 'var(--text-primary)',
+                      fontWeight: '500'
+                    }}>
+                      {item.task}
+                    </div>
+                    <div style={{ display: 'flex', gap: '6px', marginLeft: '10px', flexShrink: 0 }}>
+                      {getPriorityBadge(item.priority)}
+                      {getStatusBadge(item.status)}
+                    </div>
+                  </div>
+
+                  {/* Meta row */}
+                  <div style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    gap: '10px',
+                    fontSize: '0.75rem',
+                    color: '#888',
+                    alignItems: 'center'
+                  }}>
+                    {/* Assignee */}
+                    {(item.assignee_first_name || item.first_name) && (
+                      <span>
+                        {item.assignee_first_name || item.first_name} {item.assignee_last_name || item.last_name}
+                      </span>
+                    )}
+
+                    {/* Due date */}
+                    {item.due_date && (
+                      <span>
+                        Due: {new Date(item.due_date).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          timeZone: 'UTC'
+                        })}
+                      </span>
+                    )}
+
+                    {/* Meeting chip or standalone */}
+                    {item.meeting_title ? (
+                      <span style={{
+                        background: 'rgba(0, 102, 51, 0.15)',
+                        border: '1px solid rgba(0, 102, 51, 0.3)',
+                        borderRadius: '10px',
+                        padding: '2px 8px',
+                        color: 'var(--color-hover)',
+                        fontSize: '0.7rem'
+                      }}>
+                        {item.meeting_title}
+                      </span>
+                    ) : (
+                      <span style={{
+                        color: '#666',
+                        fontStyle: 'italic',
+                        fontSize: '0.7rem'
+                      }}>
+                        standalone
+                      </span>
+                    )}
+
+                    {/* Edit/Delete buttons - canEdit only */}
+                    {canEdit && (
+                      <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
+                        <button
+                          onClick={() => handleEditItem(item)}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: '#888',
+                            cursor: 'pointer',
+                            fontSize: '0.75rem',
+                            padding: '2px 6px'
+                          }}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteItem(item)}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: '#888',
+                            cursor: 'pointer',
+                            fontSize: '0.75rem',
+                            padding: '2px 6px'
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
-
-            {/* Meta row */}
-            <div style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: '10px',
-              fontSize: '0.75rem',
-              color: '#888',
-              alignItems: 'center'
-            }}>
-              {/* Assignee */}
-              {(item.assignee_first_name || item.first_name) && (
-                <span>
-                  {item.assignee_first_name || item.first_name} {item.assignee_last_name || item.last_name}
-                </span>
-              )}
-
-              {/* Due date */}
-              {item.due_date && (
-                <span>
-                  Due: {new Date(item.due_date).toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                    timeZone: 'UTC'
-                  })}
-                </span>
-              )}
-
-              {/* Meeting chip or standalone */}
-              {item.meeting_title ? (
-                <span style={{
-                  background: 'rgba(0, 102, 51, 0.15)',
-                  border: '1px solid rgba(0, 102, 51, 0.3)',
-                  borderRadius: '10px',
-                  padding: '2px 8px',
-                  color: 'var(--color-hover)',
-                  fontSize: '0.7rem'
-                }}>
-                  {item.meeting_title}
-                </span>
-              ) : (
-                <span style={{
-                  color: '#666',
-                  fontStyle: 'italic',
-                  fontSize: '0.7rem'
-                }}>
-                  standalone
-                </span>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Action Item Modal - only if not readOnly */}
-      {!readOnly && (
-        <ActionItemModal
-          isOpen={showModal}
-          onClose={() => setShowModal(false)}
-          onSave={handleSaveItem}
-          editingItem={null}
-          admins={admins}
-          meetingId={null}
-          defaultPinned={true}
-        />
+          ))}
+        </div>
       )}
+
+      {/* No active items message for canEdit users */}
+      {activeItems.length === 0 && canEdit && doneItems.length > 0 && (
+        <div style={{
+          padding: '12px',
+          color: '#666',
+          fontSize: '0.85rem',
+          fontStyle: 'italic'
+        }}>
+          No active items
+        </div>
+      )}
+
+      {/* Done Items / History section */}
+      {doneItems.length > 0 && (
+        <div style={{ marginTop: '20px' }}>
+          <div style={{
+            fontSize: '0.8rem',
+            color: '#666',
+            marginBottom: '10px',
+            fontWeight: '500'
+          }}>
+            Completed ({doneItems.length})
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            {doneItems.map(item => (
+              <div
+                key={item.id}
+                style={{
+                  background: 'rgba(255,255,255,0.02)',
+                  border: '1px solid rgba(255,255,255,0.04)',
+                  borderRadius: '8px',
+                  padding: '10px 12px',
+                  opacity: 0.6
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+                  {/* Completed check ring */}
+                  <div
+                    style={{
+                      width: '20px',
+                      height: '20px',
+                      borderRadius: '50%',
+                      border: '2px solid var(--color-status-positive)',
+                      background: 'var(--color-status-positive)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      marginTop: '2px'
+                    }}
+                  >
+                    <span style={{ color: '#fff', fontSize: '0.7rem', fontWeight: 'bold' }}>✓</span>
+                  </div>
+
+                  <div style={{ flex: 1 }}>
+                    {/* Task with strikethrough */}
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'flex-start'
+                    }}>
+                      <div style={{
+                        flex: 1,
+                        fontSize: '0.85rem',
+                        color: 'var(--text-primary)',
+                        textDecoration: 'line-through'
+                      }}>
+                        {item.task}
+                      </div>
+
+                      {/* Undo button - canEdit only */}
+                      {canEdit && (
+                        <button
+                          onClick={() => handleToggleStatus(item)}
+                          title="Undo - move back to active"
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: '#888',
+                            cursor: 'pointer',
+                            fontSize: '0.9rem',
+                            padding: '2px 6px',
+                            marginLeft: '10px'
+                          }}
+                        >
+                          ↩
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Meta row */}
+                    <div style={{
+                      display: 'flex',
+                      flexWrap: 'wrap',
+                      gap: '10px',
+                      fontSize: '0.7rem',
+                      color: '#666',
+                      marginTop: '4px'
+                    }}>
+                      {(item.assignee_first_name || item.first_name) && (
+                        <span>
+                          {item.assignee_first_name || item.first_name} {item.assignee_last_name || item.last_name}
+                        </span>
+                      )}
+                      {item.meeting_title && (
+                        <span>{item.meeting_title}</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Action Item Modal */}
+      <ActionItemModal
+        isOpen={showModal}
+        onClose={() => { setShowModal(false); setEditingItem(null); }}
+        onSave={handleSaveItem}
+        editingItem={editingItem}
+        admins={admins}
+        meetingId={null}
+        defaultPinned={true}
+      />
     </div>
   );
 }
