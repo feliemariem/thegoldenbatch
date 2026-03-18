@@ -34,7 +34,8 @@ export default function PermissionsManager() {
     'messages_view',
     'strategic_view',
     'funding_view',
-    'can_approve_media'
+    'can_approve_media',
+    'pipeline_edit'
   ];
 
   const permissionLabels = {
@@ -56,7 +57,8 @@ export default function PermissionsManager() {
     messages_view: 'Show Messages tab',
     strategic_view: 'Show Strategic Planning tab',
     funding_view: 'View Funding Progress & Reality Engine',
-    can_approve_media: 'Media: Review & Approve Photos'
+    can_approve_media: 'Media: Review & Approve Photos',
+    pipeline_edit: 'Pipeline: Manage Action Items'
   };
 
   useEffect(() => {
@@ -367,6 +369,24 @@ export default function PermissionsManager() {
                 <h4 className="perm-section-title">MEDIA</h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingLeft: '12px' }}>
                   {['can_approve_media'].map(perm => (
+                    <label key={perm} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+                      <input
+                        type="checkbox"
+                        checked={permissions[perm] || false}
+                        onChange={() => handlePermissionChange(perm)}
+                        style={{ width: '16px', height: '16px' }}
+                      />
+                      <span className="perm-label">{permissionLabels[perm]}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Pipeline Permissions */}
+              <div style={{ marginBottom: '20px' }}>
+                <h4 className="perm-section-title">PIPELINE</h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingLeft: '12px' }}>
+                  {['pipeline_edit'].map(perm => (
                     <label key={perm} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
                       <input
                         type="checkbox"

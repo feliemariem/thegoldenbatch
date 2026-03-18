@@ -78,6 +78,7 @@ router.get('/', authenticateToken, async (req, res) => {
       let hasPermissions = false;
       let hasNonRegistryPermissions = false;
       let canApproveMedia = false;
+      let pipelineEdit = false;
       if (req.user.isAdmin) {
         const adminCheck = await db.query(
           `SELECT id, is_super_admin FROM admins WHERE LOWER(email) = LOWER($1)`,
@@ -111,6 +112,13 @@ router.get('/', authenticateToken, async (req, res) => {
             [adminData.id]
           );
           canApproveMedia = mediaPermCheck.rows.length > 0 && mediaPermCheck.rows[0].enabled;
+
+          // Check for pipeline_edit permission
+          const pipelinePermCheck = await db.query(
+            `SELECT enabled FROM permissions WHERE admin_id = $1 AND permission = 'pipeline_edit'`,
+            [adminData.id]
+          );
+          pipelineEdit = pipelinePermCheck.rows.length > 0 && pipelinePermCheck.rows[0].enabled;
         }
       }
 
@@ -133,6 +141,7 @@ router.get('/', authenticateToken, async (req, res) => {
         hasPermissions: hasPermissions,
         hasNonRegistryPermissions: hasNonRegistryPermissions,
         can_approve_media: isSuperAdmin || canApproveMedia,
+        pipeline_edit: isSuperAdmin || pipelineEdit,
         visibility: visibility
       });
     }
@@ -167,12 +176,19 @@ router.get('/', authenticateToken, async (req, res) => {
 
       // Check for can_approve_media permission
       let canApproveMedia = false;
+      let pipelineEdit = false;
       if (!admin.is_super_admin) {
         const mediaPermCheck = await db.query(
           `SELECT enabled FROM permissions WHERE admin_id = $1 AND permission = 'can_approve_media'`,
           [admin.id]
         );
         canApproveMedia = mediaPermCheck.rows.length > 0 && mediaPermCheck.rows[0].enabled;
+
+        const pipelinePermCheck = await db.query(
+          `SELECT enabled FROM permissions WHERE admin_id = $1 AND permission = 'pipeline_edit'`,
+          [admin.id]
+        );
+        pipelineEdit = pipelinePermCheck.rows.length > 0 && pipelinePermCheck.rows[0].enabled;
       }
 
       return res.json({
@@ -185,6 +201,7 @@ router.get('/', authenticateToken, async (req, res) => {
         hasPermissions: hasPermissions,
         hasNonRegistryPermissions: hasNonRegistryPermissions,
         can_approve_media: admin.is_super_admin || canApproveMedia,
+        pipeline_edit: admin.is_super_admin || pipelineEdit,
         isAdmin: true
       });
     }
