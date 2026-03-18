@@ -128,7 +128,7 @@ export default function MyTasks() {
     return (
       <span style={{ color, fontSize: '0.8rem' }}>
         {diffDays < 0 ? 'Overdue: ' : diffDays === 0 ? 'Today' : `Due: `}
-        {diffDays !== 0 && date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+        {diffDays !== 0 && date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' })}
       </span>
     );
   };
