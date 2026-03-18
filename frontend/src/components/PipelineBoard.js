@@ -10,19 +10,19 @@ export default function PipelineBoard({ readOnly = true }) {
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [admins, setAdmins] = useState([]);
-  const [expanded, setExpanded] = useState(() => {
-    const saved = localStorage.getItem('pipelineBoardExpanded');
-    return saved === 'true'; // Default to collapsed (false)
+  const [collapsed, setCollapsed] = useState(() => {
+    const saved = localStorage.getItem('pipeline_collapsed');
+    return saved !== 'false'; // Default to collapsed (true)
   });
 
   // Permission check
   const canEdit = user?.is_super_admin || user?.pipeline_edit;
 
-  // Save expanded state to localStorage
-  const toggleExpanded = () => {
-    const newState = !expanded;
-    setExpanded(newState);
-    localStorage.setItem('pipelineBoardExpanded', String(newState));
+  // Save collapsed state to localStorage
+  const toggleCollapsed = () => {
+    const newState = !collapsed;
+    setCollapsed(newState);
+    localStorage.setItem('pipeline_collapsed', String(newState));
   };
 
   // Don't render if user doesn't have permission
@@ -162,12 +162,26 @@ export default function PipelineBoard({ readOnly = true }) {
     );
   };
 
+  // While loading: show slim header with loading indicator
   if (loading) {
-    return null;
+    return (
+      <div>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px'
+        }}>
+          <span style={{ fontWeight: '600', color: 'var(--text-primary)', fontSize: '0.95rem' }}>
+            Pipeline
+          </span>
+          <span style={{ fontSize: '0.75rem', color: '#666' }}>Loading...</span>
+        </div>
+      </div>
+    );
   }
 
-  // If no items and user can't edit → hide completely
-  if (activeItems.length === 0 && doneItems.length === 0 && !canEdit) {
+  // After loading: if no active items and can't edit → hide completely
+  if (activeItems.length === 0 && !canEdit) {
     return null;
   }
 
@@ -175,13 +189,13 @@ export default function PipelineBoard({ readOnly = true }) {
     <div>
       {/* Collapsible Header */}
       <div
-        onClick={toggleExpanded}
+        onClick={toggleCollapsed}
         style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           cursor: 'pointer',
-          marginBottom: expanded ? '16px' : 0
+          marginBottom: collapsed ? 0 : '16px'
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -209,12 +223,12 @@ export default function PipelineBoard({ readOnly = true }) {
 
         {/* Chevron */}
         <span style={{ color: 'var(--color-text-secondary)', fontSize: '0.85rem' }}>
-          {expanded ? '▼' : '▶'}
+          {collapsed ? '▶' : '▼'}
         </span>
       </div>
 
       {/* Expanded Content */}
-      {expanded && (
+      {!collapsed && (
         <>
           {/* Add button - only if canEdit */}
           {canEdit && (
@@ -230,264 +244,263 @@ export default function PipelineBoard({ readOnly = true }) {
           )}
 
           {/* Active Items list */}
-      {activeItems.length > 0 && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          {activeItems.map(item => (
-            <div
-              key={item.id}
-              style={{
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.06)',
-                borderRadius: '8px',
-                padding: '12px 14px'
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-                {/* Check ring - canEdit only */}
-                {canEdit && (
-                  <button
-                    onClick={() => handleToggleStatus(item)}
-                    style={{
-                      width: '20px',
-                      height: '20px',
-                      borderRadius: '50%',
-                      border: '2px solid #888',
-                      background: 'transparent',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0,
-                      marginTop: '2px'
-                    }}
-                  />
-                )}
-
-                <div style={{ flex: 1 }}>
-                  {/* Task and badges */}
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'flex-start',
-                    marginBottom: '8px'
-                  }}>
-                    <div style={{
-                      flex: 1,
-                      fontSize: '0.85rem',
-                      color: 'var(--text-primary)',
-                      fontWeight: '500'
-                    }}>
-                      {item.task}
-                    </div>
-                    <div style={{ display: 'flex', gap: '6px', marginLeft: '10px', flexShrink: 0 }}>
-                      {getPriorityBadge(item.priority)}
-                      {getStatusBadge(item.status)}
-                    </div>
-                  </div>
-
-                  {/* Meta row */}
-                  <div style={{
-                    display: 'flex',
-                    flexWrap: 'wrap',
-                    gap: '10px',
-                    fontSize: '0.75rem',
-                    color: '#888',
-                    alignItems: 'center'
-                  }}>
-                    {/* Assignee */}
-                    {(item.assignee_first_name || item.first_name) && (
-                      <span>
-                        {item.assignee_first_name || item.first_name} {item.assignee_last_name || item.last_name}
-                      </span>
-                    )}
-
-                    {/* Due date */}
-                    {item.due_date && (
-                      <span>
-                        Due: {new Date(item.due_date).toLocaleDateString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                          timeZone: 'UTC'
-                        })}
-                      </span>
-                    )}
-
-                    {/* Meeting chip or standalone */}
-                    {item.meeting_title ? (
-                      <span style={{
-                        background: 'rgba(0, 102, 51, 0.15)',
-                        border: '1px solid rgba(0, 102, 51, 0.3)',
-                        borderRadius: '10px',
-                        padding: '2px 8px',
-                        color: 'var(--color-hover)',
-                        fontSize: '0.7rem'
-                      }}>
-                        {item.meeting_title}
-                      </span>
-                    ) : (
-                      <span style={{
-                        color: '#666',
-                        fontStyle: 'italic',
-                        fontSize: '0.7rem'
-                      }}>
-                        standalone
-                      </span>
-                    )}
-
-                    {/* Edit/Delete buttons - canEdit only */}
+          {activeItems.length > 0 && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {activeItems.map(item => (
+                <div
+                  key={item.id}
+                  style={{
+                    background: 'rgba(255,255,255,0.03)',
+                    border: '1px solid rgba(255,255,255,0.06)',
+                    borderRadius: '8px',
+                    padding: '12px 14px'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+                    {/* Check ring - canEdit only */}
                     {canEdit && (
-                      <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
-                        <button
-                          onClick={() => handleEditItem(item)}
-                          style={{
-                            background: 'none',
-                            border: 'none',
-                            color: '#888',
-                            cursor: 'pointer',
-                            fontSize: '0.75rem',
-                            padding: '2px 6px'
-                          }}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDeleteItem(item)}
-                          style={{
-                            background: 'none',
-                            border: 'none',
-                            color: '#888',
-                            cursor: 'pointer',
-                            fontSize: '0.75rem',
-                            padding: '2px 6px'
-                          }}
-                        >
-                          Delete
-                        </button>
-                      </div>
+                      <button
+                        onClick={() => handleToggleStatus(item)}
+                        style={{
+                          width: '20px',
+                          height: '20px',
+                          borderRadius: '50%',
+                          border: '2px solid #888',
+                          background: 'transparent',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0,
+                          marginTop: '2px'
+                        }}
+                      />
                     )}
+
+                    <div style={{ flex: 1 }}>
+                      {/* Task and badges */}
+                      <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                        marginBottom: '8px'
+                      }}>
+                        <div style={{
+                          flex: 1,
+                          fontSize: '0.85rem',
+                          color: 'var(--text-primary)',
+                          fontWeight: '500'
+                        }}>
+                          {item.task}
+                        </div>
+                        <div style={{ display: 'flex', gap: '6px', marginLeft: '10px', flexShrink: 0 }}>
+                          {getPriorityBadge(item.priority)}
+                          {getStatusBadge(item.status)}
+                        </div>
+                      </div>
+
+                      {/* Meta row */}
+                      <div style={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        gap: '10px',
+                        fontSize: '0.75rem',
+                        color: '#888',
+                        alignItems: 'center'
+                      }}>
+                        {/* Assignee */}
+                        {(item.assignee_first_name || item.first_name) && (
+                          <span>
+                            {item.assignee_first_name || item.first_name} {item.assignee_last_name || item.last_name}
+                          </span>
+                        )}
+
+                        {/* Due date */}
+                        {item.due_date && (
+                          <span>
+                            Due: {new Date(item.due_date).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              timeZone: 'UTC'
+                            })}
+                          </span>
+                        )}
+
+                        {/* Meeting chip or standalone */}
+                        {item.meeting_title ? (
+                          <span style={{
+                            background: 'rgba(0, 102, 51, 0.15)',
+                            border: '1px solid rgba(0, 102, 51, 0.3)',
+                            borderRadius: '10px',
+                            padding: '2px 8px',
+                            color: 'var(--color-hover)',
+                            fontSize: '0.7rem'
+                          }}>
+                            {item.meeting_title}
+                          </span>
+                        ) : (
+                          <span style={{
+                            color: '#666',
+                            fontStyle: 'italic',
+                            fontSize: '0.7rem'
+                          }}>
+                            standalone
+                          </span>
+                        )}
+
+                        {/* Edit/Delete buttons - canEdit only */}
+                        {canEdit && (
+                          <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
+                            <button
+                              onClick={() => handleEditItem(item)}
+                              style={{
+                                background: 'none',
+                                border: 'none',
+                                color: '#888',
+                                cursor: 'pointer',
+                                fontSize: '0.75rem',
+                                padding: '2px 6px'
+                              }}
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteItem(item)}
+                              style={{
+                                background: 'none',
+                                border: 'none',
+                                color: '#888',
+                                cursor: 'pointer',
+                                fontSize: '0.75rem',
+                                padding: '2px 6px'
+                              }}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
-      )}
+          )}
 
-      {/* No active items message for canEdit users */}
-      {activeItems.length === 0 && canEdit && doneItems.length > 0 && (
-        <div style={{
-          padding: '12px',
-          color: '#666',
-          fontSize: '0.85rem',
-          fontStyle: 'italic'
-        }}>
-          No active items
-        </div>
-      )}
+          {/* No active items message for canEdit users */}
+          {activeItems.length === 0 && canEdit && doneItems.length > 0 && (
+            <div style={{
+              padding: '12px',
+              color: '#666',
+              fontSize: '0.85rem',
+              fontStyle: 'italic'
+            }}>
+              No active items
+            </div>
+          )}
 
-      {/* Done Items / History section */}
-      {doneItems.length > 0 && (
-        <div style={{ marginTop: '20px' }}>
-          <div style={{
-            fontSize: '0.8rem',
-            color: '#666',
-            marginBottom: '10px',
-            fontWeight: '500'
-          }}>
-            Completed ({doneItems.length})
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            {doneItems.map(item => (
-              <div
-                key={item.id}
-                style={{
-                  background: 'rgba(255,255,255,0.02)',
-                  border: '1px solid rgba(255,255,255,0.04)',
-                  borderRadius: '8px',
-                  padding: '10px 12px',
-                  opacity: 0.6
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-                  {/* Completed check ring */}
+          {/* Done Items / History section */}
+          {doneItems.length > 0 && (
+            <div style={{ marginTop: '20px' }}>
+              <div style={{
+                fontSize: '0.8rem',
+                color: '#666',
+                marginBottom: '10px',
+                fontWeight: '500'
+              }}>
+                Completed ({doneItems.length})
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                {doneItems.map(item => (
                   <div
+                    key={item.id}
                     style={{
-                      width: '20px',
-                      height: '20px',
-                      borderRadius: '50%',
-                      border: '2px solid var(--color-status-positive)',
-                      background: 'var(--color-status-positive)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0,
-                      marginTop: '2px'
+                      background: 'rgba(255,255,255,0.02)',
+                      border: '1px solid rgba(255,255,255,0.04)',
+                      borderRadius: '8px',
+                      padding: '10px 12px',
+                      opacity: 0.6
                     }}
                   >
-                    <span style={{ color: '#fff', fontSize: '0.7rem', fontWeight: 'bold' }}>✓</span>
-                  </div>
-
-                  <div style={{ flex: 1 }}>
-                    {/* Task with strikethrough */}
-                    <div style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'flex-start'
-                    }}>
-                      <div style={{
-                        flex: 1,
-                        fontSize: '0.85rem',
-                        color: 'var(--text-primary)',
-                        textDecoration: 'line-through'
-                      }}>
-                        {item.task}
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+                      {/* Completed check ring */}
+                      <div
+                        style={{
+                          width: '20px',
+                          height: '20px',
+                          borderRadius: '50%',
+                          border: '2px solid var(--color-status-positive)',
+                          background: 'var(--color-status-positive)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0,
+                          marginTop: '2px'
+                        }}
+                      >
+                        <span style={{ color: '#fff', fontSize: '0.7rem', fontWeight: 'bold' }}>✓</span>
                       </div>
 
-                      {/* Undo button - canEdit only */}
-                      {canEdit && (
-                        <button
-                          onClick={() => handleToggleStatus(item)}
-                          title="Undo - move back to active"
-                          style={{
-                            background: 'none',
-                            border: 'none',
-                            color: '#888',
-                            cursor: 'pointer',
-                            fontSize: '0.9rem',
-                            padding: '2px 6px',
-                            marginLeft: '10px'
-                          }}
-                        >
-                          ↩
-                        </button>
-                      )}
-                    </div>
+                      <div style={{ flex: 1 }}>
+                        {/* Task - no strikethrough, just opacity from parent */}
+                        <div style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'flex-start'
+                        }}>
+                          <div style={{
+                            flex: 1,
+                            fontSize: '0.85rem',
+                            color: 'var(--text-primary)'
+                          }}>
+                            {item.task}
+                          </div>
 
-                    {/* Meta row */}
-                    <div style={{
-                      display: 'flex',
-                      flexWrap: 'wrap',
-                      gap: '10px',
-                      fontSize: '0.7rem',
-                      color: '#666',
-                      marginTop: '4px'
-                    }}>
-                      {(item.assignee_first_name || item.first_name) && (
-                        <span>
-                          {item.assignee_first_name || item.first_name} {item.assignee_last_name || item.last_name}
-                        </span>
-                      )}
-                      {item.meeting_title && (
-                        <span>{item.meeting_title}</span>
-                      )}
+                          {/* Undo button - canEdit only */}
+                          {canEdit && (
+                            <button
+                              onClick={() => handleToggleStatus(item)}
+                              title="Undo - move back to active"
+                              style={{
+                                background: 'none',
+                                border: 'none',
+                                color: '#888',
+                                cursor: 'pointer',
+                                fontSize: '0.9rem',
+                                padding: '2px 6px',
+                                marginLeft: '10px'
+                              }}
+                            >
+                              ↩
+                            </button>
+                          )}
+                        </div>
+
+                        {/* Meta row */}
+                        <div style={{
+                          display: 'flex',
+                          flexWrap: 'wrap',
+                          gap: '10px',
+                          fontSize: '0.7rem',
+                          color: '#666',
+                          marginTop: '4px'
+                        }}>
+                          {(item.assignee_first_name || item.first_name) && (
+                            <span>
+                              {item.assignee_first_name || item.first_name} {item.assignee_last_name || item.last_name}
+                            </span>
+                          )}
+                          {item.meeting_title && (
+                            <span>{item.meeting_title}</span>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
-      )}
+            </div>
+          )}
         </>
       )}
 
