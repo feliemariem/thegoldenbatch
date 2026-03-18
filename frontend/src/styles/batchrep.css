@@ -1776,3 +1776,13 @@
   padding: 24px;
 }
 
+/* Countdown timer box — explicit light/dark theming */
+[data-theme="light"] .batchrep-timer-box {
+  background: #f4f6f4;
+  border: 1px solid #d4e0d4;
+}
+[data-theme="dark"] .batchrep-timer-box {
+  background: rgba(139, 105, 20, 0.12);
+  border: 1px solid rgba(207, 181, 59, 0.25);
+}
+
