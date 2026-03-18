@@ -214,8 +214,9 @@ export default function BatchRepVoting() {
           {/* Countdown Timer */}
           {!isDeadlinePassed && (
             <div style={{
-              background: 'var(--color-card-alt-bg, rgba(139, 105, 20, 0.08))',
+              background: 'var(--color-card-bg)',
               border: '1px solid var(--color-border)',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
               borderRadius: '12px',
               padding: '20px',
               textAlign: 'center',
