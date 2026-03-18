@@ -198,6 +198,7 @@ export default function MeetingMinutes({ canEdit = false, initialMeetingId = nul
         fetchActionItems(selectedMeeting.id);
         // Notify PipelineBoard to refetch
         window.dispatchEvent(new Event('pipeline-refresh'));
+        localStorage.setItem('pipeline_last_pin', Date.now().toString());
       }
     } catch (err) {
       console.error('Failed to toggle pin:', err);

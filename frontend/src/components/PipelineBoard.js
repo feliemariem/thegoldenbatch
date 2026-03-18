@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { apiGet, apiPost, apiPut, apiDelete } from '../api';
 import ActionItemModal from './ActionItemModal';
@@ -15,6 +15,9 @@ export default function PipelineBoard({ readOnly = true }) {
     return saved !== 'false'; // Default to collapsed (true)
   });
 
+  // Track last fetch time
+  const lastFetchRef = useRef(0);
+
   // Permission check
   const canEdit = user?.is_super_admin || user?.pipeline_edit;
 
@@ -25,38 +28,21 @@ export default function PipelineBoard({ readOnly = true }) {
     localStorage.setItem('pipeline_collapsed', String(newState));
   };
 
-  // Don't render if user doesn't have permission
-  if (!user?.is_super_admin && !user?.pipeline_edit) {
-    return null;
-  }
-
-  useEffect(() => {
-    fetchPipelineItems();
-    if (!readOnly) {
-      fetchAdmins();
-    }
-  }, [readOnly]);
-
-  // Listen for pipeline-refresh events from other components (e.g., MeetingMinutes pin toggle)
-  useEffect(() => {
-    const handleRefresh = () => fetchPipelineItems();
-    window.addEventListener('pipeline-refresh', handleRefresh);
-    return () => window.removeEventListener('pipeline-refresh', handleRefresh);
-  }, []);
-
-  const fetchPipelineItems = async () => {
+  // Define fetchPipelineItems with useCallback so it's stable
+  const fetchPipelineItems = useCallback(async () => {
     try {
       const res = await apiGet('/api/pipeline-items');
       if (res.ok) {
         const data = await res.json();
         setItems(data.items || []);
+        lastFetchRef.current = Date.now();
       }
     } catch (err) {
       console.error('Failed to fetch pipeline items:', err);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const fetchAdmins = async () => {
     try {
@@ -69,6 +55,50 @@ export default function PipelineBoard({ readOnly = true }) {
       console.error('Failed to fetch admins:', err);
     }
   };
+
+  // Initial fetch, event listener, and polling - all in one useEffect with no dependencies
+  useEffect(() => {
+    // Initial fetch
+    fetchPipelineItems();
+
+    // Check if there's a recent pin toggle we missed
+    const lastPinTime = parseInt(localStorage.getItem('pipeline_last_pin') || '0', 10);
+    if (lastPinTime > lastFetchRef.current) {
+      fetchPipelineItems();
+    }
+
+    // Listen for pipeline-refresh events from other components
+    const handleRefresh = () => {
+      fetchPipelineItems();
+    };
+    window.addEventListener('pipeline-refresh', handleRefresh);
+
+    // Polling every 3 seconds
+    const pollInterval = setInterval(() => {
+      // Check localStorage for recent pin toggles
+      const lastPinTime = parseInt(localStorage.getItem('pipeline_last_pin') || '0', 10);
+      if (lastPinTime > lastFetchRef.current) {
+        fetchPipelineItems();
+      }
+    }, 3000);
+
+    return () => {
+      window.removeEventListener('pipeline-refresh', handleRefresh);
+      clearInterval(pollInterval);
+    };
+  }, [fetchPipelineItems]);
+
+  // Fetch admins when not readOnly
+  useEffect(() => {
+    if (!readOnly) {
+      fetchAdmins();
+    }
+  }, [readOnly]);
+
+  // Don't render if user doesn't have permission (after all hooks)
+  if (!user?.is_super_admin && !user?.pipeline_edit) {
+    return null;
+  }
 
   const handleSaveItem = async (formData, existingItem) => {
     try {
