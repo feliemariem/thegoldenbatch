@@ -15,6 +15,7 @@ import AdminRoleErrorToast from "../components/AdminRoleErrorToast";
 import AdminMessages from '../components/AdminMessages';
 import EmailLog from '../components/EmailLog';
 import MediaTab from '../components/admin/MediaTab';
+import PipelineBoard from '../components/PipelineBoard';
 import Footer from '../components/Footer';
 import { apiGet } from '../api';
 
@@ -555,6 +556,19 @@ export default function AdminDashboard() {
                 </div>
               )}
             </div>
+
+            {/* Pipeline Board - for admins with non-registry permissions */}
+            {(user?.is_super_admin || user?.hasNonRegistryPermissions) && (
+              <div style={{
+                marginBottom: '24px',
+                background: 'var(--color-bg-card)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '12px',
+                padding: '20px'
+              }}>
+                <PipelineBoard readOnly={true} />
+              </div>
+            )}
 
             {/* Batch Rep Results - System Admin Only */}
             {isSystemAdmin && (
