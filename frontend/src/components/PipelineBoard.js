@@ -315,25 +315,19 @@ export default function PipelineBoard({ readOnly = true }) {
                     )}
 
                     <div style={{ flex: 1 }}>
-                      {/* Task and badges */}
+                      {/* Task text - full width */}
                       <div style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'flex-start',
-                        marginBottom: '8px'
+                        fontSize: '0.85rem',
+                        color: 'var(--text-primary)',
+                        fontWeight: '500',
+                        marginBottom: '6px'
                       }}>
-                        <div style={{
-                          flex: 1,
-                          fontSize: '0.85rem',
-                          color: 'var(--text-primary)',
-                          fontWeight: '500'
-                        }}>
-                          {item.task}
-                        </div>
-                        <div style={{ display: 'flex', gap: '6px', marginLeft: '10px', flexShrink: 0 }}>
-                          {getPriorityBadge(item.priority)}
-                          {getStatusBadge(item.status)}
-                        </div>
+                        {item.task}
+                      </div>
+                      {/* Badges row */}
+                      <div style={{ display: 'flex', gap: '6px', marginBottom: '8px', flexWrap: 'wrap' }}>
+                        {getPriorityBadge(item.priority)}
+                        {getStatusBadge(item.status)}
                       </div>
 
                       {/* Meta row */}
