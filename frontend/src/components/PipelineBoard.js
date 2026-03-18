@@ -113,15 +113,36 @@ export default function PipelineBoard({ readOnly = true }) {
     return null;
   }
 
-  // Visibility logic:
-  // - If readOnly and no items → hide completely
-  // - If not readOnly but user can't edit and no items → hide completely
-  // - If not readOnly and user can edit → always show (for adding items)
-  // - If there are items → always show
-  if (activeItems.length === 0) {
-    if (readOnly || !canEdit) {
-      return null;
-    }
+  // If no active items and user can't edit → hide completely
+  if (activeItems.length === 0 && !canEdit) {
+    return null;
+  }
+
+  // If no active items but user can edit → show only add button
+  if (activeItems.length === 0 && canEdit) {
+    return (
+      <div>
+        <button
+          onClick={() => setShowModal(true)}
+          className="btn-secondary"
+          style={{ padding: '8px 16px', fontSize: '0.85rem' }}
+        >
+          + Add Pipeline Item
+        </button>
+
+        {!readOnly && (
+          <ActionItemModal
+            isOpen={showModal}
+            onClose={() => setShowModal(false)}
+            onSave={handleSaveItem}
+            editingItem={null}
+            admins={admins}
+            meetingId={null}
+            defaultPinned={true}
+          />
+        )}
+      </div>
+    );
   }
 
   return (
@@ -156,8 +177,8 @@ export default function PipelineBoard({ readOnly = true }) {
           </span>
         </div>
 
-        {/* Add button - only if not readOnly */}
-        {!readOnly && canEdit && (
+        {/* Add button - only if canEdit */}
+        {canEdit && (
           <button
             onClick={() => setShowModal(true)}
             className="btn-secondary"
@@ -169,104 +190,90 @@ export default function PipelineBoard({ readOnly = true }) {
       </div>
 
       {/* Items list */}
-      {activeItems.length > 0 ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          {activeItems.map(item => (
-            <div
-              key={item.id}
-              style={{
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.06)',
-                borderRadius: '8px',
-                padding: '12px 14px'
-              }}
-            >
-              {/* Task and badges */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        {activeItems.map(item => (
+          <div
+            key={item.id}
+            style={{
+              background: 'rgba(255,255,255,0.03)',
+              border: '1px solid rgba(255,255,255,0.06)',
+              borderRadius: '8px',
+              padding: '12px 14px'
+            }}
+          >
+            {/* Task and badges */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              marginBottom: '8px'
+            }}>
               <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'flex-start',
-                marginBottom: '8px'
+                flex: 1,
+                fontSize: '0.85rem',
+                color: 'var(--text-primary)',
+                fontWeight: '500'
               }}>
-                <div style={{
-                  flex: 1,
-                  fontSize: '0.85rem',
-                  color: 'var(--text-primary)',
-                  fontWeight: '500'
-                }}>
-                  {item.task}
-                </div>
-                <div style={{ display: 'flex', gap: '6px', marginLeft: '10px', flexShrink: 0 }}>
-                  {getPriorityBadge(item.priority)}
-                  {getStatusBadge(item.status)}
-                </div>
+                {item.task}
               </div>
-
-              {/* Meta row */}
-              <div style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: '10px',
-                fontSize: '0.75rem',
-                color: '#888',
-                alignItems: 'center'
-              }}>
-                {/* Assignee */}
-                {(item.assignee_first_name || item.first_name) && (
-                  <span>
-                    {item.assignee_first_name || item.first_name} {item.assignee_last_name || item.last_name}
-                  </span>
-                )}
-
-                {/* Due date */}
-                {item.due_date && (
-                  <span>
-                    Due: {new Date(item.due_date).toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                      timeZone: 'UTC'
-                    })}
-                  </span>
-                )}
-
-                {/* Meeting chip or standalone */}
-                {item.meeting_title ? (
-                  <span style={{
-                    background: 'rgba(0, 102, 51, 0.15)',
-                    border: '1px solid rgba(0, 102, 51, 0.3)',
-                    borderRadius: '10px',
-                    padding: '2px 8px',
-                    color: 'var(--color-hover)',
-                    fontSize: '0.7rem'
-                  }}>
-                    {item.meeting_title}
-                  </span>
-                ) : (
-                  <span style={{
-                    color: '#666',
-                    fontStyle: 'italic',
-                    fontSize: '0.7rem'
-                  }}>
-                    standalone
-                  </span>
-                )}
+              <div style={{ display: 'flex', gap: '6px', marginLeft: '10px', flexShrink: 0 }}>
+                {getPriorityBadge(item.priority)}
+                {getStatusBadge(item.status)}
               </div>
             </div>
-          ))}
-        </div>
-      ) : (
-        <div style={{
-          background: 'rgba(255,255,255,0.02)',
-          border: '1px dashed rgba(255,255,255,0.1)',
-          borderRadius: '8px',
-          padding: '24px',
-          textAlign: 'center',
-          color: '#666',
-          fontSize: '0.85rem'
-        }}>
-          No active pipeline items
-        </div>
-      )}
+
+            {/* Meta row */}
+            <div style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '10px',
+              fontSize: '0.75rem',
+              color: '#888',
+              alignItems: 'center'
+            }}>
+              {/* Assignee */}
+              {(item.assignee_first_name || item.first_name) && (
+                <span>
+                  {item.assignee_first_name || item.first_name} {item.assignee_last_name || item.last_name}
+                </span>
+              )}
+
+              {/* Due date */}
+              {item.due_date && (
+                <span>
+                  Due: {new Date(item.due_date).toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    timeZone: 'UTC'
+                  })}
+                </span>
+              )}
+
+              {/* Meeting chip or standalone */}
+              {item.meeting_title ? (
+                <span style={{
+                  background: 'rgba(0, 102, 51, 0.15)',
+                  border: '1px solid rgba(0, 102, 51, 0.3)',
+                  borderRadius: '10px',
+                  padding: '2px 8px',
+                  color: 'var(--color-hover)',
+                  fontSize: '0.7rem'
+                }}>
+                  {item.meeting_title}
+                </span>
+              ) : (
+                <span style={{
+                  color: '#666',
+                  fontStyle: 'italic',
+                  fontSize: '0.7rem'
+                }}>
+                  standalone
+                </span>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
 
       {/* Action Item Modal - only if not readOnly */}
       {!readOnly && (
