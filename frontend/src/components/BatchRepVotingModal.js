@@ -402,7 +402,10 @@ export default function BatchRepVotingModal() {
                 </div>
 
                 <div className="batchrep-deadline-notice" style={{ marginTop: '20px', marginBottom: '20px' }}>
-                  All votes are final and cannot be changed. Majority wins by deadline:{' '}
+                  <div style={{ fontWeight: 700, marginBottom: '4px', letterSpacing: '0.5px', textTransform: 'uppercase', fontSize: '0.75rem' }}>
+                    🔒 Responses are confidential
+                  </div>
+                  Votes are final and cannot be changed. Majority wins by deadline:{' '}
                   <strong>March 30, 2026 · 11:59 PM PHT</strong>.
                 </div>
 
