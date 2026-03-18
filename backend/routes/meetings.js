@@ -487,14 +487,15 @@ router.put('/:meetingId/action-items/:actionItemId', authenticateToken, async (r
     }
 
     const { meetingId, actionItemId } = req.params;
-    const { task, assignee_id, due_date, status, priority } = req.body;
+    const { task, assignee_id, due_date, status, priority, show_in_pipeline } = req.body;
 
     const result = await db.query(`
       UPDATE action_items
-      SET task = $1, assignee_id = $2, due_date = $3, status = $4, priority = $5
-      WHERE id = $6 AND meeting_id = $7
+      SET task = $1, assignee_id = $2, due_date = $3, status = $4, priority = $5,
+          show_in_pipeline = $6, updated_at = NOW()
+      WHERE id = $7 AND meeting_id = $8
       RETURNING *
-    `, [task, assignee_id || null, due_date || null, status || 'not_started', priority || 'medium', actionItemId, meetingId]);
+    `, [task, assignee_id || null, due_date || null, status || 'not_started', priority || 'medium', show_in_pipeline ?? false, actionItemId, meetingId]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Action item not found' });

@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import { useAuth } from '../context/AuthContext';
 import { useActionItems } from '../context/ActionItemsContext';
-import { apiGet, apiPost, apiPut, apiPatch, apiDelete, apiUpload } from '../api';
+import { apiGet, apiPost, apiPut, apiDelete, apiUpload } from '../api';
 import ActionItemModal from './ActionItemModal';
 
 export default function MeetingMinutes({ canEdit = false, initialMeetingId = null, onMeetingSelected = null }) {
@@ -189,15 +189,13 @@ export default function MeetingMinutes({ canEdit = false, initialMeetingId = nul
 
   // Toggle pin to pipeline
   const handleTogglePin = async (item) => {
-    console.log('Toggling pin for item:', item.id, 'URL:', `/api/pipeline-items/${item.id}/toggle-pin`);
     try {
-      const res = await apiPatch(`/api/pipeline-items/${item.id}/toggle-pin`, {});
-      console.log('Toggle pin response:', res.status, res.ok);
+      const res = await apiPut(
+        `/api/meetings/${selectedMeeting.id}/action-items/${item.id}`,
+        { ...item, show_in_pipeline: !item.show_in_pipeline }
+      );
       if (res.ok) {
         fetchActionItems(selectedMeeting.id);
-      } else {
-        const errorData = await res.json().catch(() => ({}));
-        console.error('Toggle pin failed:', res.status, errorData);
       }
     } catch (err) {
       console.error('Failed to toggle pin:', err);
