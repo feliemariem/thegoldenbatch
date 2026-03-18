@@ -714,8 +714,7 @@ export default function MeetingMinutes({ canEdit = false, initialMeetingId = nul
                             <div style={{
                               flex: 1,
                               fontSize: '0.85rem',
-                              color: 'var(--text-primary)',
-                              textDecoration: isDone ? 'line-through' : 'none'
+                              color: 'var(--text-primary)'
                             }}>
                               {item.task}
                             </div>
@@ -1402,8 +1401,7 @@ Tip: Use ## for headers, - for bullet points"
                                 flex: 1,
                                 fontSize: '0.9rem',
                                 color: 'var(--text-primary)',
-                                fontWeight: '500',
-                                textDecoration: isDone ? 'line-through' : 'none'
+                                fontWeight: '500'
                               }}>
                                 {item.task}
                               </div>
