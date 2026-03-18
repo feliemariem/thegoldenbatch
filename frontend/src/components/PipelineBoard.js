@@ -110,11 +110,12 @@ export default function PipelineBoard({ readOnly = true }) {
   };
 
   if (loading) {
-    return (
-      <div style={{ padding: '20px', color: '#888', fontSize: '0.9rem' }}>
-        Loading pipeline...
-      </div>
-    );
+    return null;
+  }
+
+  // Don't render anything if no active items
+  if (activeItems.length === 0) {
+    return null;
   }
 
   return (

@@ -395,6 +395,19 @@ export default function AdminDashboard() {
           </div>
         )}
 
+        {/* Pipeline Board - renders above tabs for admins with pipeline access */}
+        {(user?.is_super_admin || user?.pipeline_edit) && (
+          <div style={{
+            marginBottom: '20px',
+            background: 'var(--color-bg-card)',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            borderRadius: '12px',
+            padding: '20px'
+          }}>
+            <PipelineBoard readOnly={true} />
+          </div>
+        )}
+
         {/* Dashboard Mode Toggle */}
         {(() => {
           const showAllTabs = user?.is_super_admin || user?.hasNonRegistryPermissions;
@@ -556,19 +569,6 @@ export default function AdminDashboard() {
                 </div>
               )}
             </div>
-
-            {/* Pipeline Board - for admins with non-registry permissions */}
-            {(user?.is_super_admin || user?.hasNonRegistryPermissions) && (
-              <div style={{
-                marginBottom: '24px',
-                background: 'var(--color-bg-card)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-                borderRadius: '12px',
-                padding: '20px'
-              }}>
-                <PipelineBoard readOnly={true} />
-              </div>
-            )}
 
             {/* Batch Rep Results - System Admin Only */}
             {isSystemAdmin && (
