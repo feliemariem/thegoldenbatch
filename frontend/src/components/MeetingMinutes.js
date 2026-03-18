@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import { useAuth } from '../context/AuthContext';
 import { useActionItems } from '../context/ActionItemsContext';
-import { apiGet, apiPost, apiPut, apiDelete, apiUpload } from '../api';
+import { apiGet, apiPost, apiPut, apiPatch, apiDelete, apiUpload } from '../api';
 import ActionItemModal from './ActionItemModal';
 
 export default function MeetingMinutes({ canEdit = false, initialMeetingId = null, onMeetingSelected = null }) {
@@ -36,6 +36,7 @@ export default function MeetingMinutes({ canEdit = false, initialMeetingId = nul
   const [showActionItemModal, setShowActionItemModal] = useState(false);
   const [editingActionItem, setEditingActionItem] = useState(null);
   const [confirmDeleteActionItem, setConfirmDeleteActionItem] = useState(null);
+  const [uploadingAttachment, setUploadingAttachment] = useState(null); // track which action item is uploading
 
   useEffect(() => {
     fetchMeetings();
@@ -164,6 +165,77 @@ export default function MeetingMinutes({ canEdit = false, initialMeetingId = nul
       }
     } catch (err) {
       console.error('Failed to delete action item:', err);
+    }
+  };
+
+  // Toggle action item status (Done <-> Not Started)
+  const handleToggleStatus = async (item) => {
+    const newStatus = item.status === 'done' ? 'not_started' : 'done';
+    try {
+      const res = await apiPut(`/api/meetings/${selectedMeeting.id}/action-items/${item.id}`, {
+        ...item,
+        status: newStatus
+      });
+      if (res.ok) {
+        setActionItems(actionItems.map(ai =>
+          ai.id === item.id ? { ...ai, status: newStatus } : ai
+        ));
+        notifyActionItemUpdate(item.id, newStatus);
+      }
+    } catch (err) {
+      console.error('Failed to toggle status:', err);
+    }
+  };
+
+  // Toggle pin to pipeline
+  const handleTogglePin = async (item) => {
+    try {
+      const res = await apiPatch(`/api/pipeline-items/${item.id}/toggle-pin`, {});
+      if (res.ok) {
+        fetchActionItems(selectedMeeting.id);
+      }
+    } catch (err) {
+      console.error('Failed to toggle pin:', err);
+    }
+  };
+
+  // Upload action item attachment
+  const handleActionItemAttachmentUpload = async (e, actionItemId) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.size > 15 * 1024 * 1024) {
+      alert('File too large (max 15MB)');
+      e.target.value = '';
+      return;
+    }
+
+    setUploadingAttachment(actionItemId);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const res = await apiUpload(`/api/action-items/${actionItemId}/attachments`, formData);
+      if (res.ok) {
+        fetchActionItems(selectedMeeting.id);
+      }
+    } catch (err) {
+      console.error('Failed to upload attachment:', err);
+    } finally {
+      setUploadingAttachment(null);
+      e.target.value = '';
+    }
+  };
+
+  // Delete action item attachment
+  const handleDeleteActionItemAttachment = async (actionItemId, attachmentId) => {
+    try {
+      const res = await apiDelete(`/api/action-items/${actionItemId}/attachments/${attachmentId}`);
+      if (res.ok) {
+        fetchActionItems(selectedMeeting.id);
+      }
+    } catch (err) {
+      console.error('Failed to delete attachment:', err);
     }
   };
 
@@ -606,66 +678,181 @@ export default function MeetingMinutes({ canEdit = false, initialMeetingId = nul
               {showActionItems && (
                 actionItems.length > 0 ? (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    {actionItems.map(item => (
-                      <div
-                        key={item.id}
-                        style={{
-                          background: 'rgba(255,255,255,0.03)',
-                          border: '1px solid rgba(255,255,255,0.06)',
-                          borderRadius: '8px',
-                          padding: '10px 12px'
-                        }}
-                      >
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '6px' }}>
-                          <div style={{ flex: 1, fontSize: '0.85rem', color: 'var(--text-primary)' }}>
-                            {item.task}
-                          </div>
-                          <div style={{ display: 'flex', gap: '4px', marginLeft: '8px' }}>
-                            {getPriorityBadge(item.priority)}
-                            {getStatusBadge(item.status)}
-                          </div>
-                        </div>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', fontSize: '0.75rem', color: '#888' }}>
-                          {item.assignee_name && (
+                    {actionItems.map(item => {
+                      const isDone = item.status === 'done';
+                      return (
+                        <div
+                          key={item.id}
+                          style={{
+                            background: 'rgba(255,255,255,0.03)',
+                            border: '1px solid rgba(255,255,255,0.06)',
+                            borderRadius: '8px',
+                            padding: '10px 12px',
+                            opacity: isDone ? 0.6 : 1
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginBottom: '6px' }}>
+                            {/* Check ring */}
                             <button
-                              className="meeting-assignee-link"
+                              onClick={() => handleToggleStatus(item)}
                               style={{
-                                color: 'var(--color-hover)',
-                                textDecoration: 'none',
-                                background: 'none',
-                                border: 'none',
-                                padding: 0,
+                                width: '20px',
+                                height: '20px',
+                                borderRadius: '50%',
+                                border: isDone ? '2px solid var(--color-status-positive)' : '2px solid #888',
+                                background: isDone ? 'var(--color-status-positive)' : 'transparent',
                                 cursor: 'pointer',
-                                fontSize: 'inherit',
-                                fontFamily: 'inherit'
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                flexShrink: 0,
+                                marginTop: '2px'
                               }}
-                              onClick={(e) => handleAssigneeClick(e, item.assignee_email, item.assignee_name)}
                             >
-                              {item.assignee_name}
+                              {isDone && <span style={{ color: '#fff', fontSize: '0.7rem', fontWeight: 'bold' }}>✓</span>}
                             </button>
-                          )}
-                          {item.due_date && (
-                            <span>Due: {new Date(item.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' })}</span>
-                          )}
-                          {canEdit && (
-                            <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
-                              <button
-                                onClick={() => handleEditActionItem(item)}
-                                style={{ background: 'none', border: 'none', color: 'var(--color-hover)', cursor: 'pointer', fontSize: '0.75rem' }}
-                              >
-                                Edit
-                              </button>
-                              <button
-                                onClick={() => setConfirmDeleteActionItem(item.id)}
-                                style={{ background: 'none', border: 'none', color: 'var(--color-status-negative)', cursor: 'pointer', fontSize: '0.75rem' }}
-                              >
-                                Delete
-                              </button>
+                            <div style={{
+                              flex: 1,
+                              fontSize: '0.85rem',
+                              color: 'var(--text-primary)',
+                              textDecoration: isDone ? 'line-through' : 'none'
+                            }}>
+                              {item.task}
                             </div>
-                          )}
+                            <div style={{ display: 'flex', gap: '4px', marginLeft: '8px' }}>
+                              {getPriorityBadge(item.priority)}
+                              {getStatusBadge(item.status)}
+                            </div>
+                          </div>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', fontSize: '0.75rem', color: '#888', alignItems: 'center', marginLeft: '30px' }}>
+                            {item.assignee_name && (
+                              <button
+                                className="meeting-assignee-link"
+                                style={{
+                                  color: 'var(--color-hover)',
+                                  textDecoration: 'none',
+                                  background: 'none',
+                                  border: 'none',
+                                  padding: 0,
+                                  cursor: 'pointer',
+                                  fontSize: 'inherit',
+                                  fontFamily: 'inherit'
+                                }}
+                                onClick={(e) => handleAssigneeClick(e, item.assignee_email, item.assignee_name)}
+                              >
+                                {item.assignee_name}
+                              </button>
+                            )}
+                            {item.due_date && (
+                              <span>Due: {new Date(item.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' })}</span>
+                            )}
+                            {canEdit && (
+                              <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                <button
+                                  onClick={() => handleTogglePin(item)}
+                                  title={item.show_in_pipeline ? 'Unpin from Pipeline' : 'Pin to Pipeline'}
+                                  style={{
+                                    background: 'none',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    fontSize: '0.9rem',
+                                    padding: '2px',
+                                    opacity: item.show_in_pipeline ? 1 : 0.5
+                                  }}
+                                >
+                                  <span style={{ color: item.show_in_pipeline ? 'var(--color-hover)' : '#888' }}>📌</span>
+                                </button>
+                                <button
+                                  onClick={() => handleEditActionItem(item)}
+                                  style={{ background: 'none', border: 'none', color: 'var(--color-hover)', cursor: 'pointer', fontSize: '0.75rem' }}
+                                >
+                                  Edit
+                                </button>
+                                <button
+                                  onClick={() => setConfirmDeleteActionItem(item.id)}
+                                  style={{ background: 'none', border: 'none', color: 'var(--color-status-negative)', cursor: 'pointer', fontSize: '0.75rem' }}
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                          {/* Attachments row */}
+                          <div style={{ marginTop: '8px', marginLeft: '30px', display: 'flex', flexWrap: 'wrap', gap: '6px', alignItems: 'center' }}>
+                            {item.attachments?.map(att => (
+                              <div
+                                key={att.id}
+                                style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '4px',
+                                  background: 'rgba(0, 102, 51, 0.15)',
+                                  border: '1px solid rgba(0, 102, 51, 0.3)',
+                                  borderRadius: '12px',
+                                  padding: '3px 8px',
+                                  fontSize: '0.7rem'
+                                }}
+                              >
+                                <a
+                                  href={att.file_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{
+                                    color: 'var(--color-hover)',
+                                    textDecoration: 'none',
+                                    maxWidth: '80px',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap'
+                                  }}
+                                >
+                                  {att.file_name}
+                                </a>
+                                {canEdit && (
+                                  <button
+                                    onClick={() => handleDeleteActionItemAttachment(item.id, att.id)}
+                                    style={{
+                                      background: 'none',
+                                      border: 'none',
+                                      color: '#888',
+                                      cursor: 'pointer',
+                                      padding: 0,
+                                      fontSize: '0.7rem',
+                                      lineHeight: 1
+                                    }}
+                                  >
+                                    ×
+                                  </button>
+                                )}
+                              </div>
+                            ))}
+                            {canEdit && (
+                              <label style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '2px',
+                                background: 'rgba(255,255,255,0.05)',
+                                border: '1px solid rgba(255,255,255,0.15)',
+                                borderRadius: '12px',
+                                padding: '3px 8px',
+                                fontSize: '0.7rem',
+                                color: '#888',
+                                cursor: 'pointer'
+                              }}>
+                                {uploadingAttachment === item.id ? '...' : '+ Attach'}
+                                <input
+                                  type="file"
+                                  onChange={(e) => handleActionItemAttachmentUpload(e, item.id)}
+                                  style={{ display: 'none' }}
+                                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif"
+                                  disabled={uploadingAttachment === item.id}
+                                />
+                              </label>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 ) : (
                   <p style={{ color: '#666', fontSize: '0.8rem', margin: 0 }}>No action items yet</p>
@@ -1178,69 +1365,185 @@ Tip: Use ## for headers, - for bullet points"
                 {showActionItems && (
                   actionItems.length > 0 ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                      {actionItems.map(item => (
-                        <div
-                          key={item.id}
-                          style={{
-                            background: 'rgba(255,255,255,0.03)',
-                            border: '1px solid rgba(255,255,255,0.06)',
-                            borderRadius: '8px',
-                            padding: '14px 16px'
-                          }}
-                        >
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                            <div style={{ flex: 1, fontSize: '0.9rem', color: 'var(--text-primary)', fontWeight: '500' }}>
-                              {item.task}
-                            </div>
-                            <div style={{ display: 'flex', gap: '6px', marginLeft: '12px' }}>
-                              {getPriorityBadge(item.priority)}
-                              {getStatusBadge(item.status)}
-                            </div>
-                          </div>
-                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', fontSize: '0.8rem', color: '#888', alignItems: 'center' }}>
-                            {item.assignee_name && (
-                              <span>
-                                Assigned to:{' '}
-                                <button
-                                  className="meeting-assignee-link"
-                                  style={{
-                                    color: 'var(--color-hover)',
-                                    textDecoration: 'none',
-                                    background: 'none',
-                                    border: 'none',
-                                    padding: 0,
-                                    cursor: 'pointer',
-                                    fontSize: 'inherit',
-                                    fontFamily: 'inherit'
-                                  }}
-                                  onClick={(e) => handleAssigneeClick(e, item.assignee_email, item.assignee_name)}
-                                >
-                                  {item.assignee_name}
-                                </button>
-                              </span>
-                            )}
-                            {item.due_date && (
-                              <span>Due: {new Date(item.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })}</span>
-                            )}
-                            {canEdit && (
-                              <div style={{ marginLeft: 'auto', display: 'flex', gap: '12px' }}>
-                                <button
-                                  onClick={() => handleEditActionItem(item)}
-                                  style={{ background: 'none', border: 'none', color: 'var(--color-hover)', cursor: 'pointer', fontSize: '0.8rem' }}
-                                >
-                                  Edit
-                                </button>
-                                <button
-                                  onClick={() => setConfirmDeleteActionItem(item.id)}
-                                  style={{ background: 'none', border: 'none', color: 'var(--color-status-negative)', cursor: 'pointer', fontSize: '0.8rem' }}
-                                >
-                                  Delete
-                                </button>
+                      {actionItems.map(item => {
+                        const isDone = item.status === 'done';
+                        return (
+                          <div
+                            key={item.id}
+                            style={{
+                              background: 'rgba(255,255,255,0.03)',
+                              border: '1px solid rgba(255,255,255,0.06)',
+                              borderRadius: '8px',
+                              padding: '14px 16px',
+                              opacity: isDone ? 0.6 : 1
+                            }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '8px' }}>
+                              {/* Check ring */}
+                              <button
+                                onClick={() => handleToggleStatus(item)}
+                                style={{
+                                  width: '22px',
+                                  height: '22px',
+                                  borderRadius: '50%',
+                                  border: isDone ? '2px solid var(--color-status-positive)' : '2px solid #888',
+                                  background: isDone ? 'var(--color-status-positive)' : 'transparent',
+                                  cursor: 'pointer',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  flexShrink: 0,
+                                  marginTop: '2px'
+                                }}
+                              >
+                                {isDone && <span style={{ color: '#fff', fontSize: '0.75rem', fontWeight: 'bold' }}>✓</span>}
+                              </button>
+                              <div style={{
+                                flex: 1,
+                                fontSize: '0.9rem',
+                                color: 'var(--text-primary)',
+                                fontWeight: '500',
+                                textDecoration: isDone ? 'line-through' : 'none'
+                              }}>
+                                {item.task}
                               </div>
-                            )}
+                              <div style={{ display: 'flex', gap: '6px', marginLeft: '12px' }}>
+                                {getPriorityBadge(item.priority)}
+                                {getStatusBadge(item.status)}
+                              </div>
+                            </div>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', fontSize: '0.8rem', color: '#888', alignItems: 'center', marginLeft: '34px' }}>
+                              {item.assignee_name && (
+                                <span>
+                                  Assigned to:{' '}
+                                  <button
+                                    className="meeting-assignee-link"
+                                    style={{
+                                      color: 'var(--color-hover)',
+                                      textDecoration: 'none',
+                                      background: 'none',
+                                      border: 'none',
+                                      padding: 0,
+                                      cursor: 'pointer',
+                                      fontSize: 'inherit',
+                                      fontFamily: 'inherit'
+                                    }}
+                                    onClick={(e) => handleAssigneeClick(e, item.assignee_email, item.assignee_name)}
+                                  >
+                                    {item.assignee_name}
+                                  </button>
+                                </span>
+                              )}
+                              {item.due_date && (
+                                <span>Due: {new Date(item.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })}</span>
+                              )}
+                              {canEdit && (
+                                <div style={{ marginLeft: 'auto', display: 'flex', gap: '12px', alignItems: 'center' }}>
+                                  <button
+                                    onClick={() => handleTogglePin(item)}
+                                    title={item.show_in_pipeline ? 'Unpin from Pipeline' : 'Pin to Pipeline'}
+                                    style={{
+                                      background: 'none',
+                                      border: 'none',
+                                      cursor: 'pointer',
+                                      fontSize: '1rem',
+                                      padding: '2px 4px',
+                                      opacity: item.show_in_pipeline ? 1 : 0.5
+                                    }}
+                                  >
+                                    <span style={{ color: item.show_in_pipeline ? 'var(--color-hover)' : '#888' }}>📌</span>
+                                  </button>
+                                  <button
+                                    onClick={() => handleEditActionItem(item)}
+                                    style={{ background: 'none', border: 'none', color: 'var(--color-hover)', cursor: 'pointer', fontSize: '0.8rem' }}
+                                  >
+                                    Edit
+                                  </button>
+                                  <button
+                                    onClick={() => setConfirmDeleteActionItem(item.id)}
+                                    style={{ background: 'none', border: 'none', color: 'var(--color-status-negative)', cursor: 'pointer', fontSize: '0.8rem' }}
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                            {/* Attachments row */}
+                            <div style={{ marginTop: '10px', marginLeft: '34px', display: 'flex', flexWrap: 'wrap', gap: '8px', alignItems: 'center' }}>
+                              {item.attachments?.map(att => (
+                                <div
+                                  key={att.id}
+                                  style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '6px',
+                                    background: 'rgba(0, 102, 51, 0.15)',
+                                    border: '1px solid rgba(0, 102, 51, 0.3)',
+                                    borderRadius: '14px',
+                                    padding: '4px 10px',
+                                    fontSize: '0.75rem'
+                                  }}
+                                >
+                                  <a
+                                    href={att.file_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{
+                                      color: 'var(--color-hover)',
+                                      textDecoration: 'none',
+                                      maxWidth: '120px',
+                                      overflow: 'hidden',
+                                      textOverflow: 'ellipsis',
+                                      whiteSpace: 'nowrap'
+                                    }}
+                                  >
+                                    {att.file_name}
+                                  </a>
+                                  {canEdit && (
+                                    <button
+                                      onClick={() => handleDeleteActionItemAttachment(item.id, att.id)}
+                                      style={{
+                                        background: 'none',
+                                        border: 'none',
+                                        color: '#888',
+                                        cursor: 'pointer',
+                                        padding: 0,
+                                        fontSize: '0.8rem',
+                                        lineHeight: 1
+                                      }}
+                                    >
+                                      ×
+                                    </button>
+                                  )}
+                                </div>
+                              ))}
+                              {canEdit && (
+                                <label style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '4px',
+                                  background: 'rgba(255,255,255,0.05)',
+                                  border: '1px solid rgba(255,255,255,0.15)',
+                                  borderRadius: '14px',
+                                  padding: '4px 10px',
+                                  fontSize: '0.75rem',
+                                  color: '#888',
+                                  cursor: 'pointer'
+                                }}>
+                                  {uploadingAttachment === item.id ? 'Uploading...' : '+ Attach'}
+                                  <input
+                                    type="file"
+                                    onChange={(e) => handleActionItemAttachmentUpload(e, item.id)}
+                                    style={{ display: 'none' }}
+                                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif"
+                                    disabled={uploadingAttachment === item.id}
+                                  />
+                                </label>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   ) : (
                     <p style={{ color: '#666', fontSize: '0.85rem', margin: 0 }}>No action items yet</p>
