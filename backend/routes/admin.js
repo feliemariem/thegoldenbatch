@@ -6,52 +6,51 @@ const { authenticateAdmin } = require('../middleware/auth');
 // Get dashboard summary stats (without user list)
 router.get('/dashboard', authenticateAdmin, async (req, res) => {
   try {
-    // Get summary stats
-    const statsResult = await db.query(`
-      SELECT
-        COUNT(*) as total_registered,
-        COUNT(CASE WHEN r.status = 'going' THEN 1 END) as going,
-        COUNT(CASE WHEN r.status = 'not_going' THEN 1 END) as not_going,
-        COUNT(CASE WHEN r.status = 'maybe' THEN 1 END) as maybe,
-        COUNT(CASE WHEN r.status IS NULL THEN 1 END) as no_response
-      FROM users u
-      LEFT JOIN rsvps r ON u.id = r.user_id
-    `);
-
-    const inviteStats = await db.query(`
-      SELECT
-        COUNT(*) as total_invited,
-        COUNT(CASE WHEN used = true THEN 1 END) as used,
-        COUNT(CASE WHEN used = false THEN 1 END) as pending
-      FROM invites
-    `);
-
-    // Get count of full admins (have non-registry permissions) who are also registered users
-    const fullAdminsCountResult = await db.query(`
-      SELECT COUNT(DISTINCT u.id) as admin_count
-      FROM users u
-      INNER JOIN admins a ON LOWER(u.email) = LOWER(a.email)
-      INNER JOIN permissions p ON p.admin_id = a.id
-      WHERE p.enabled = true
-        AND p.permission NOT LIKE 'invites_%'
-        AND p.permission NOT LIKE 'registered_%'
-        AND p.permission NOT LIKE 'masterlist_%'
-    `);
-
-    // Get count of registry admins (no non-registry permissions) who are also registered users
-    const registryAdminsCountResult = await db.query(`
-      SELECT COUNT(DISTINCT u.id) as admin_count
-      FROM users u
-      INNER JOIN admins a ON LOWER(u.email) = LOWER(a.email)
-      WHERE NOT EXISTS (
-        SELECT 1 FROM permissions p
-        WHERE p.admin_id = a.id
-          AND p.enabled = true
+    // Get summary stats - run all queries in parallel
+    const [statsResult, inviteStats, fullAdminsCountResult, registryAdminsCountResult] = await Promise.all([
+      db.query(`
+        SELECT
+          COUNT(*) as total_registered,
+          COUNT(CASE WHEN r.status = 'going' THEN 1 END) as going,
+          COUNT(CASE WHEN r.status = 'not_going' THEN 1 END) as not_going,
+          COUNT(CASE WHEN r.status = 'maybe' THEN 1 END) as maybe,
+          COUNT(CASE WHEN r.status IS NULL THEN 1 END) as no_response
+        FROM users u
+        LEFT JOIN rsvps r ON u.id = r.user_id
+      `),
+      db.query(`
+        SELECT
+          COUNT(*) as total_invited,
+          COUNT(CASE WHEN used = true THEN 1 END) as used,
+          COUNT(CASE WHEN used = false THEN 1 END) as pending
+        FROM invites
+      `),
+      // Get count of full admins (have non-registry permissions) who are also registered users
+      db.query(`
+        SELECT COUNT(DISTINCT u.id) as admin_count
+        FROM users u
+        INNER JOIN admins a ON LOWER(u.email) = LOWER(a.email)
+        INNER JOIN permissions p ON p.admin_id = a.id
+        WHERE p.enabled = true
           AND p.permission NOT LIKE 'invites_%'
           AND p.permission NOT LIKE 'registered_%'
           AND p.permission NOT LIKE 'masterlist_%'
-      )
-    `);
+      `),
+      // Get count of registry admins (no non-registry permissions) who are also registered users
+      db.query(`
+        SELECT COUNT(DISTINCT u.id) as admin_count
+        FROM users u
+        INNER JOIN admins a ON LOWER(u.email) = LOWER(a.email)
+        WHERE NOT EXISTS (
+          SELECT 1 FROM permissions p
+          WHERE p.admin_id = a.id
+            AND p.enabled = true
+            AND p.permission NOT LIKE 'invites_%'
+            AND p.permission NOT LIKE 'registered_%'
+            AND p.permission NOT LIKE 'masterlist_%'
+        )
+      `)
+    ]);
 
     // Parse stats from strings to integers (PostgreSQL COUNT returns strings)
     const raw = statsResult.rows[0];
@@ -119,67 +118,67 @@ router.get('/users', authenticateAdmin, async (req, res) => {
 
     const whereClause = conditions.length > 0 ? ` WHERE ${conditions.join(' AND ')}` : '';
 
-    // Get paginated results
-    const result = await db.query(`
-      SELECT
-        u.id,
-        u.email,
-        u.first_name,
-        u.last_name,
-        u.birthday,
-        u.mobile,
-        u.address,
-        u.city,
-        u.country,
-        u.occupation,
-        u.company,
-        u.shirt_size,
-        u.jacket_size,
-        u.has_alumni_card,
-        u.created_at as registered_at,
-        r.status as rsvp_status,
-        r.updated_at as rsvp_updated_at,
-        m.section
-      FROM users u
-      LEFT JOIN rsvps r ON u.id = r.user_id
-      LEFT JOIN invites i ON u.invite_id = i.id
-      LEFT JOIN master_list m ON i.master_list_id = m.id
-      ${whereClause}
-      ORDER BY u.last_name ASC NULLS LAST, u.first_name ASC
-      LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
-    `, [...params, limitNum, offset]);
-
-    // Get total count for pagination
-    const countResult = await db.query(`
-      SELECT COUNT(*) FROM users u
-      LEFT JOIN rsvps r ON u.id = r.user_id
-      ${whereClause}
-    `, params);
+    // Run all queries in parallel
+    const [result, countResult, statsResult, gradGoingResult] = await Promise.all([
+      // Get paginated results
+      db.query(`
+        SELECT
+          u.id,
+          u.email,
+          u.first_name,
+          u.last_name,
+          u.birthday,
+          u.mobile,
+          u.address,
+          u.city,
+          u.country,
+          u.occupation,
+          u.company,
+          u.shirt_size,
+          u.jacket_size,
+          u.has_alumni_card,
+          u.created_at as registered_at,
+          r.status as rsvp_status,
+          r.updated_at as rsvp_updated_at,
+          m.section
+        FROM users u
+        LEFT JOIN rsvps r ON u.id = r.user_id
+        LEFT JOIN invites i ON u.invite_id = i.id
+        LEFT JOIN master_list m ON i.master_list_id = m.id
+        ${whereClause}
+        ORDER BY u.last_name ASC NULLS LAST, u.first_name ASC
+        LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
+      `, [...params, limitNum, offset]),
+      // Get total count for pagination
+      db.query(`
+        SELECT COUNT(*) FROM users u
+        LEFT JOIN rsvps r ON u.id = r.user_id
+        ${whereClause}
+      `, params),
+      // Get stats
+      db.query(`
+        SELECT
+          COUNT(*) as total,
+          COUNT(CASE WHEN r.status = 'going' THEN 1 END) as going,
+          COUNT(CASE WHEN r.status = 'not_going' THEN 1 END) as not_going,
+          COUNT(CASE WHEN r.status = 'maybe' THEN 1 END) as maybe,
+          COUNT(CASE WHEN r.status IS NULL THEN 1 END) as no_response
+        FROM users u
+        LEFT JOIN rsvps r ON u.id = r.user_id
+      `),
+      // Grad RSVP going count for progress tracker
+      db.query(`
+        SELECT
+          COUNT(CASE WHEN m.section != 'Non-Graduate' AND r.status = 'going' THEN 1 END) as grads_going,
+          COUNT(CASE WHEN m.section = 'Non-Graduate' AND r.status = 'going' THEN 1 END) as non_grads_going
+        FROM users u
+        LEFT JOIN rsvps r ON u.id = r.user_id
+        LEFT JOIN invites i ON u.invite_id = i.id
+        LEFT JOIN master_list m ON i.master_list_id = m.id
+      `)
+    ]);
     const totalCount = parseInt(countResult.rows[0].count);
     const totalPages = Math.ceil(totalCount / limitNum);
-
-    // Get stats
-    const statsResult = await db.query(`
-      SELECT
-        COUNT(*) as total,
-        COUNT(CASE WHEN r.status = 'going' THEN 1 END) as going,
-        COUNT(CASE WHEN r.status = 'not_going' THEN 1 END) as not_going,
-        COUNT(CASE WHEN r.status = 'maybe' THEN 1 END) as maybe,
-        COUNT(CASE WHEN r.status IS NULL THEN 1 END) as no_response
-      FROM users u
-      LEFT JOIN rsvps r ON u.id = r.user_id
-    `);
-
-    // Grad RSVP going count for progress tracker
-    const gradGoingResult = await db.query(`
-      SELECT
-        COUNT(CASE WHEN m.section != 'Non-Graduate' AND r.status = 'going' THEN 1 END) as grads_going,
-        COUNT(CASE WHEN m.section = 'Non-Graduate' AND r.status = 'going' THEN 1 END) as non_grads_going
-      FROM users u
-      LEFT JOIN rsvps r ON u.id = r.user_id
-      LEFT JOIN invites i ON u.invite_id = i.id
-      LEFT JOIN master_list m ON i.master_list_id = m.id
-    `);
 
     // Parse stats from strings to integers (PostgreSQL COUNT returns strings)
     const rawStats = statsResult.rows[0];

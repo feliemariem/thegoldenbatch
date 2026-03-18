@@ -175,81 +175,98 @@ router.get('/', authenticateAdmin, async (req, res) => {
     const totalCount = parseInt(countResult.rows[0].count);
     const totalPages = Math.ceil(totalCount / limitNum);
 
-    // Get stats (using stored status column)
-    const statsResult = await db.query(`
-      SELECT
-        COUNT(*) as total,
-        COUNT(CASE WHEN m.status = 'Registered' AND (m.in_memoriam IS NULL OR m.in_memoriam = false) AND (m.is_unreachable IS NULL OR m.is_unreachable = false) THEN 1 END) as registered,
-        COUNT(CASE WHEN m.status = 'Registered' AND m.section != 'Non-Graduate' AND (m.in_memoriam IS NULL OR m.in_memoriam = false) AND (m.is_unreachable IS NULL OR m.is_unreachable = false) THEN 1 END) as registered_graduates,
-        COUNT(CASE WHEN m.status = 'Registered' AND m.section = 'Non-Graduate' AND (m.in_memoriam IS NULL OR m.in_memoriam = false) AND (m.is_unreachable IS NULL OR m.is_unreachable = false) THEN 1 END) as registered_non_graduates,
-        COUNT(CASE WHEN m.status = 'Pending' AND (m.in_memoriam IS NULL OR m.in_memoriam = false) AND (m.is_unreachable IS NULL OR m.is_unreachable = false) THEN 1 END) as pending,
-        COUNT(CASE WHEN m.status = 'Not Invited' AND (m.in_memoriam IS NULL OR m.in_memoriam = false) AND (m.is_unreachable IS NULL OR m.is_unreachable = false) THEN 1 END) as not_invited,
-        COUNT(CASE WHEN m.in_memoriam = true THEN 1 END) as in_memoriam,
-        COUNT(CASE WHEN m.is_unreachable = true THEN 1 END) as unreachable
-      FROM master_list m
-    `);
-
-    // Get payment stats (graduates with builder tier, excluding in memoriam)
-    // Only verified (OK) deposits count toward pledge calculations
-    const paymentStatsResult = await db.query(`
-      SELECT
-        COUNT(CASE WHEN m.builder_tier IS NOT NULL THEN 1 END) as total_builders,
-        COUNT(CASE WHEN m.builder_tier IS NOT NULL AND m.builder_tier != 'root' AND COALESCE(ledger_totals.total_paid, 0) >= m.pledge_amount THEN 1 END) as full_paid,
-        COUNT(CASE WHEN m.builder_tier IS NOT NULL AND m.builder_tier != 'root' AND COALESCE(ledger_totals.total_paid, 0) > 0 AND COALESCE(ledger_totals.total_paid, 0) < m.pledge_amount THEN 1 END) as partial_paid,
-        COUNT(CASE WHEN m.builder_tier IS NOT NULL AND m.builder_tier != 'root' AND COALESCE(ledger_totals.total_paid, 0) = 0 THEN 1 END) as unpaid,
-        COUNT(CASE WHEN m.builder_tier = 'root' THEN 1 END) as root_count
-      FROM master_list m
-      LEFT JOIN (
-        SELECT master_list_id, SUM(deposit) as total_paid
-        FROM ledger
-        WHERE master_list_id IS NOT NULL AND deposit > 0 AND verified = 'OK'
-        GROUP BY master_list_id
-      ) ledger_totals ON m.id = ledger_totals.master_list_id
-      WHERE m.section != 'Non-Graduate' AND (m.in_memoriam IS NULL OR m.in_memoriam = false)
-    `);
-
-    // Get tier breakdown stats
-    // Only verified (OK) deposits count toward collected totals
-    const tierStatsResult = await db.query(`
-      SELECT
-        COUNT(CASE WHEN m.builder_tier = 'cornerstone' THEN 1 END) as cornerstone_count,
-        COUNT(CASE WHEN m.builder_tier = 'pillar' THEN 1 END) as pillar_count,
-        COUNT(CASE WHEN m.builder_tier = 'anchor' THEN 1 END) as anchor_count,
-        COUNT(CASE WHEN m.builder_tier = 'root' THEN 1 END) as root_count,
-        COUNT(CASE WHEN m.builder_tier IS NOT NULL THEN 1 END) as total_builders,
-        COUNT(CASE WHEN m.builder_tier IS NULL AND m.section != 'Non-Graduate' AND (m.in_memoriam IS NULL OR m.in_memoriam = false) THEN 1 END) as no_tier,
-        COALESCE(SUM(CASE WHEN m.builder_tier IS NOT NULL AND m.builder_tier != 'root' THEN m.pledge_amount ELSE 0 END), 0) as total_pledged,
-        COALESCE(SUM(CASE WHEN m.builder_tier IS NOT NULL THEN ledger_totals.total_paid ELSE 0 END), 0) as total_collected
-      FROM master_list m
-      LEFT JOIN (
-        SELECT master_list_id, SUM(deposit) as total_paid
-        FROM ledger
-        WHERE master_list_id IS NOT NULL AND deposit > 0 AND verified = 'OK'
-        GROUP BY master_list_id
-      ) ledger_totals ON m.id = ledger_totals.master_list_id
-      WHERE m.section != 'Non-Graduate' AND (m.in_memoriam IS NULL OR m.in_memoriam = false)
-    `);
-
-    // Get per-tier detail stats (for Funding Reality Engine)
-    const tierDetailResult = await db.query(`
-      SELECT
-        m.builder_tier,
-        COUNT(*) as count,
-        COALESCE(AVG(CASE WHEN m.builder_tier != 'root' THEN m.pledge_amount END), 0) as avg_pledge,
-        COALESCE(SUM(CASE WHEN m.builder_tier != 'root' THEN m.pledge_amount ELSE 0 END), 0) as total_tier_pledged,
-        COALESCE(SUM(ledger_totals.total_paid), 0) as total_tier_collected
-      FROM master_list m
-      LEFT JOIN (
-        SELECT master_list_id, SUM(deposit) as total_paid
-        FROM ledger
-        WHERE master_list_id IS NOT NULL AND deposit > 0 AND verified = 'OK'
-        GROUP BY master_list_id
-      ) ledger_totals ON m.id = ledger_totals.master_list_id
-      WHERE m.builder_tier IS NOT NULL
-        AND m.section != 'Non-Graduate'
-        AND (m.in_memoriam IS NULL OR m.in_memoriam = false)
-      GROUP BY m.builder_tier
-    `);
+    // Run all stat queries in parallel
+    const [statsResult, paymentStatsResult, tierStatsResult, tierDetailResult, sectionStatsResult, sectionsResult] = await Promise.all([
+      // Get stats (using stored status column)
+      db.query(`
+        SELECT
+          COUNT(*) as total,
+          COUNT(CASE WHEN m.status = 'Registered' AND (m.in_memoriam IS NULL OR m.in_memoriam = false) AND (m.is_unreachable IS NULL OR m.is_unreachable = false) THEN 1 END) as registered,
+          COUNT(CASE WHEN m.status = 'Registered' AND m.section != 'Non-Graduate' AND (m.in_memoriam IS NULL OR m.in_memoriam = false) AND (m.is_unreachable IS NULL OR m.is_unreachable = false) THEN 1 END) as registered_graduates,
+          COUNT(CASE WHEN m.status = 'Registered' AND m.section = 'Non-Graduate' AND (m.in_memoriam IS NULL OR m.in_memoriam = false) AND (m.is_unreachable IS NULL OR m.is_unreachable = false) THEN 1 END) as registered_non_graduates,
+          COUNT(CASE WHEN m.status = 'Pending' AND (m.in_memoriam IS NULL OR m.in_memoriam = false) AND (m.is_unreachable IS NULL OR m.is_unreachable = false) THEN 1 END) as pending,
+          COUNT(CASE WHEN m.status = 'Not Invited' AND (m.in_memoriam IS NULL OR m.in_memoriam = false) AND (m.is_unreachable IS NULL OR m.is_unreachable = false) THEN 1 END) as not_invited,
+          COUNT(CASE WHEN m.in_memoriam = true THEN 1 END) as in_memoriam,
+          COUNT(CASE WHEN m.is_unreachable = true THEN 1 END) as unreachable
+        FROM master_list m
+      `),
+      // Get payment stats (graduates with builder tier, excluding in memoriam)
+      // Only verified (OK) deposits count toward pledge calculations
+      db.query(`
+        SELECT
+          COUNT(CASE WHEN m.builder_tier IS NOT NULL THEN 1 END) as total_builders,
+          COUNT(CASE WHEN m.builder_tier IS NOT NULL AND m.builder_tier != 'root' AND COALESCE(ledger_totals.total_paid, 0) >= m.pledge_amount THEN 1 END) as full_paid,
+          COUNT(CASE WHEN m.builder_tier IS NOT NULL AND m.builder_tier != 'root' AND COALESCE(ledger_totals.total_paid, 0) > 0 AND COALESCE(ledger_totals.total_paid, 0) < m.pledge_amount THEN 1 END) as partial_paid,
+          COUNT(CASE WHEN m.builder_tier IS NOT NULL AND m.builder_tier != 'root' AND COALESCE(ledger_totals.total_paid, 0) = 0 THEN 1 END) as unpaid,
+          COUNT(CASE WHEN m.builder_tier = 'root' THEN 1 END) as root_count
+        FROM master_list m
+        LEFT JOIN (
+          SELECT master_list_id, SUM(deposit) as total_paid
+          FROM ledger
+          WHERE master_list_id IS NOT NULL AND deposit > 0 AND verified = 'OK'
+          GROUP BY master_list_id
+        ) ledger_totals ON m.id = ledger_totals.master_list_id
+        WHERE m.section != 'Non-Graduate' AND (m.in_memoriam IS NULL OR m.in_memoriam = false)
+      `),
+      // Get tier breakdown stats
+      // Only verified (OK) deposits count toward collected totals
+      db.query(`
+        SELECT
+          COUNT(CASE WHEN m.builder_tier = 'cornerstone' THEN 1 END) as cornerstone_count,
+          COUNT(CASE WHEN m.builder_tier = 'pillar' THEN 1 END) as pillar_count,
+          COUNT(CASE WHEN m.builder_tier = 'anchor' THEN 1 END) as anchor_count,
+          COUNT(CASE WHEN m.builder_tier = 'root' THEN 1 END) as root_count,
+          COUNT(CASE WHEN m.builder_tier IS NOT NULL THEN 1 END) as total_builders,
+          COUNT(CASE WHEN m.builder_tier IS NULL AND m.section != 'Non-Graduate' AND (m.in_memoriam IS NULL OR m.in_memoriam = false) THEN 1 END) as no_tier,
+          COALESCE(SUM(CASE WHEN m.builder_tier IS NOT NULL AND m.builder_tier != 'root' THEN m.pledge_amount ELSE 0 END), 0) as total_pledged,
+          COALESCE(SUM(CASE WHEN m.builder_tier IS NOT NULL THEN ledger_totals.total_paid ELSE 0 END), 0) as total_collected
+        FROM master_list m
+        LEFT JOIN (
+          SELECT master_list_id, SUM(deposit) as total_paid
+          FROM ledger
+          WHERE master_list_id IS NOT NULL AND deposit > 0 AND verified = 'OK'
+          GROUP BY master_list_id
+        ) ledger_totals ON m.id = ledger_totals.master_list_id
+        WHERE m.section != 'Non-Graduate' AND (m.in_memoriam IS NULL OR m.in_memoriam = false)
+      `),
+      // Get per-tier detail stats (for Funding Reality Engine)
+      db.query(`
+        SELECT
+          m.builder_tier,
+          COUNT(*) as count,
+          COALESCE(AVG(CASE WHEN m.builder_tier != 'root' THEN m.pledge_amount END), 0) as avg_pledge,
+          COALESCE(SUM(CASE WHEN m.builder_tier != 'root' THEN m.pledge_amount ELSE 0 END), 0) as total_tier_pledged,
+          COALESCE(SUM(ledger_totals.total_paid), 0) as total_tier_collected
+        FROM master_list m
+        LEFT JOIN (
+          SELECT master_list_id, SUM(deposit) as total_paid
+          FROM ledger
+          WHERE master_list_id IS NOT NULL AND deposit > 0 AND verified = 'OK'
+          GROUP BY master_list_id
+        ) ledger_totals ON m.id = ledger_totals.master_list_id
+        WHERE m.builder_tier IS NOT NULL
+          AND m.section != 'Non-Graduate'
+          AND (m.in_memoriam IS NULL OR m.in_memoriam = false)
+        GROUP BY m.builder_tier
+      `),
+      // Get per-section registration stats (for section stat cards)
+      // Excludes in_memoriam members from both total and registered counts
+      db.query(`
+        SELECT
+          m.section,
+          COUNT(*) as total,
+          COUNT(CASE WHEN m.status = 'Registered' AND (m.is_unreachable IS NULL OR m.is_unreachable = false) THEN 1 END) as registered
+        FROM master_list m
+        WHERE m.section IN ('11A', '11B', '11C', '11D', '11E')
+          AND (m.in_memoriam IS NULL OR m.in_memoriam = false)
+        GROUP BY m.section
+        ORDER BY m.section
+      `),
+      // Get sections for dropdown
+      db.query(`
+        SELECT DISTINCT section FROM master_list ORDER BY section
+      `)
+    ]);
 
     const tierDetails = {};
     tierDetailResult.rows.forEach(row => {
@@ -261,31 +278,12 @@ router.get('/', authenticateAdmin, async (req, res) => {
       };
     });
 
-    // Get per-section registration stats (for section stat cards)
-    // Excludes in_memoriam members from both total and registered counts
-    const sectionStatsResult = await db.query(`
-      SELECT
-        m.section,
-        COUNT(*) as total,
-        COUNT(CASE WHEN m.status = 'Registered' AND (m.is_unreachable IS NULL OR m.is_unreachable = false) THEN 1 END) as registered
-      FROM master_list m
-      WHERE m.section IN ('11A', '11B', '11C', '11D', '11E')
-        AND (m.in_memoriam IS NULL OR m.in_memoriam = false)
-      GROUP BY m.section
-      ORDER BY m.section
-    `);
-
     const sectionStats = sectionStatsResult.rows.map(row => ({
       section: row.section,
       total: parseInt(row.total),
       registered: parseInt(row.registered),
       percentage: row.total > 0 ? Math.round((parseInt(row.registered) / parseInt(row.total)) * 100) : 0
     }));
-
-    // Get sections for dropdown
-    const sectionsResult = await db.query(`
-      SELECT DISTINCT section FROM master_list ORDER BY section
-    `);
 
     res.json({
       entries: result.rows,
