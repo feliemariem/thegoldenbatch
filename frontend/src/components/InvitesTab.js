@@ -427,6 +427,7 @@ export default function InvitesTab({
           >
             <option value="all">All Status</option>
             <option value="pending">Pending ({stats.pending})</option>
+            <option value="registered">Registered</option>
           </select>
         </div>
         {(inviteSearch || statusFilter !== 'all') && (
