@@ -344,9 +344,6 @@ export default function BatchRepVoting() {
                   <li>Follows the alumni leadership ladder: AA Rep → Vice President → Alumni Association President (during the Jubilee)</li>
                   <li>Helps ensure the batch fulfills its responsibilities as the Jubilee host batch</li>
                 </ul>
-                <p style={{ fontStyle: 'italic', marginTop: '12px', marginBottom: 0, color: 'var(--color-text-secondary)' }}>
-                  The Alumni Association Representative will not be starting from scratch. There is already an organizing committee in place that has been working since 2023, fully committed and ready to support whoever takes on this role.
-                </p>
               </div>
             </div>
 
@@ -493,9 +490,6 @@ export default function BatchRepVoting() {
                   <li>Helps maintain unity and participation within the batch community</li>
                   <li>Remote participation accepted. No Bacolod presence required</li>
                 </ul>
-                <p style={{ fontStyle: 'italic', marginTop: '12px', marginBottom: 0, color: 'var(--color-text-secondary)' }}>
-                  The Batch Representative will not be starting from scratch. There is already an organizing committee in place that has been working since 2023, fully committed and ready to support whoever takes on this role.
-                </p>
               </div>
             </div>
             {/* Confirmed uncontested header */}
