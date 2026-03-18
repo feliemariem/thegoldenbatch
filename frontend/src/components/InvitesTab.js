@@ -428,12 +428,12 @@ export default function InvitesTab({
             <option value="all">All Status</option>
             <option value="pending">Pending ({stats.pending})</option>
           </select>
-          {(inviteSearch || statusFilter !== 'all') && (
-            <span className="search-count">
-              {totalCount} result{totalCount !== 1 ? 's' : ''}
-            </span>
-          )}
         </div>
+        {(inviteSearch || statusFilter !== 'all') && (
+          <span style={{ display: 'block', marginTop: '6px', fontSize: '0.8rem', color: '#888' }}>
+            {totalCount} result{totalCount !== 1 ? 's' : ''}
+          </span>
+        )}
 
         {invites.length > 0 ? (
           <>
