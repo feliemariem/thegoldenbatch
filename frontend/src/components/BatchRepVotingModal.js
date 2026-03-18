@@ -98,7 +98,9 @@ export default function BatchRepVotingModal() {
     } else {
       setLoading(false);
     }
-  }, [user, hasAccess]);
+  // hasAccess intentionally excluded from deps — it's derived from isGrad which this
+  // effect sets. Including it causes a circular stall. user is the only real trigger.
+  }, [user]);
 
   // Countdown timer
   useEffect(() => {
