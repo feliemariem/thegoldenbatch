@@ -21,8 +21,8 @@ export default function Register() {
   const [step, setStep] = useState(1); // 1: password, 2: disclaimer, 3: form
   const [showPassword, setShowPassword] = useState(false);
 
-  // Graduate self-identification state
-  const [isGraduate, setIsGraduate] = useState(false);
+  // Graduate self-identification state (null = not answered, true = yes, false = no)
+  const [isGraduate, setIsGraduate] = useState(null);
   const [masterListId, setMasterListId] = useState(null);
   const [masterListSelected, setMasterListSelected] = useState(null); // { id, first_name, last_name, current_name, section }
   const [masterListSearch, setMasterListSearch] = useState('');
@@ -179,8 +179,14 @@ export default function Register() {
     e.preventDefault();
     setError('');
 
-    // Validate graduate selection if checkbox is checked
-    if (isGraduate && !masterListId) {
+    // Validate graduate question is answered
+    if (isGraduate === null) {
+      setError('Please answer whether you are a USLS-IS Batch 2003 graduate');
+      return;
+    }
+
+    // Validate graduate selection if answered Yes
+    if (isGraduate === true && !masterListId) {
       setError('Please find and select your name from the graduation list');
       return;
     }
@@ -395,27 +401,44 @@ export default function Register() {
 
               {/* Graduate Self-Identification */}
               <div className="form-group" style={{ marginTop: '16px', marginBottom: '16px' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                  <input
-                    type="checkbox"
-                    checked={isGraduate}
-                    onChange={(e) => {
-                      setIsGraduate(e.target.checked);
-                      if (!e.target.checked) {
-                        // Clear selection if unchecked (unless pre-linked)
+                <label style={{ display: 'block', marginBottom: '10px' }}>
+                  Are you a USLS-IS Batch 2003 graduate? *
+                </label>
+                <div style={{ display: 'flex', gap: '24px' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: masterListPrelinked ? 'default' : 'pointer' }}>
+                    <input
+                      type="radio"
+                      name="isGraduate"
+                      checked={isGraduate === true}
+                      onChange={() => {
+                        setIsGraduate(true);
+                      }}
+                      disabled={masterListPrelinked}
+                      style={{ width: 'auto' }}
+                    />
+                    <span>Yes</span>
+                  </label>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: masterListPrelinked ? 'default' : 'pointer' }}>
+                    <input
+                      type="radio"
+                      name="isGraduate"
+                      checked={isGraduate === false}
+                      onChange={() => {
+                        setIsGraduate(false);
+                        // Clear selection if No (unless pre-linked)
                         if (!masterListPrelinked) {
                           setMasterListId(null);
                           setMasterListSelected(null);
                         }
-                      }
-                    }}
-                    disabled={masterListPrelinked}
-                    style={{ width: 'auto', marginRight: '4px' }}
-                  />
-                  <span>I am a USLS-IS Batch 2003 graduate</span>
-                </label>
+                      }}
+                      disabled={masterListPrelinked}
+                      style={{ width: 'auto' }}
+                    />
+                    <span>No</span>
+                  </label>
+                </div>
 
-                {isGraduate && (
+                {isGraduate === true && (
                   <div style={{ marginTop: '12px' }} ref={dropdownRef}>
                     {masterListSelected ? (
                       // Show selected entry
