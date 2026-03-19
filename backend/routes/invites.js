@@ -10,6 +10,61 @@ const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 // Get frontend URL from environment or fallback to localhost
 const getFrontendUrl = () => process.env.FRONTEND_URL || 'http://localhost:3000';
 
+// Auto-link invite to master_list by matching first_name/last_name
+// Only matches graduates (section IS NOT NULL and != 'Non-Graduate')
+// Fallback order: (1) first+last, (2) first only, (3) last only
+const autoLinkToMasterList = async (inviteId, firstName, lastName) => {
+  if (!firstName && !lastName) return;
+
+  const fn = (firstName || '').trim().toLowerCase();
+  const ln = (lastName || '').trim().toLowerCase();
+
+  // Try first_name AND last_name
+  if (fn && ln) {
+    const result = await db.query(
+      `UPDATE invites SET master_list_id = (
+        SELECT id FROM master_list
+        WHERE LOWER(TRIM(first_name)) = $1
+          AND LOWER(TRIM(last_name)) = $2
+          AND section IS NOT NULL
+          AND section != 'Non-Graduate'
+        LIMIT 1
+      ) WHERE id = $3 AND master_list_id IS NULL`,
+      [fn, ln, inviteId]
+    );
+    if (result.rowCount > 0) return;
+  }
+
+  // Fallback: first_name only
+  if (fn) {
+    const result = await db.query(
+      `UPDATE invites SET master_list_id = (
+        SELECT id FROM master_list
+        WHERE LOWER(TRIM(first_name)) = $1
+          AND section IS NOT NULL
+          AND section != 'Non-Graduate'
+        LIMIT 1
+      ) WHERE id = $2 AND master_list_id IS NULL`,
+      [fn, inviteId]
+    );
+    if (result.rowCount > 0) return;
+  }
+
+  // Fallback: last_name only
+  if (ln) {
+    await db.query(
+      `UPDATE invites SET master_list_id = (
+        SELECT id FROM master_list
+        WHERE LOWER(TRIM(last_name)) = $1
+          AND section IS NOT NULL
+          AND section != 'Non-Graduate'
+        LIMIT 1
+      ) WHERE id = $2 AND master_list_id IS NULL`,
+      [ln, inviteId]
+    );
+  }
+};
+
 // Middleware to authenticate Google Forms API key
 const authenticateApiKey = (req, res, next) => {
   const apiKey = req.headers['x-api-key'];
@@ -65,6 +120,10 @@ router.post('/auto', authenticateApiKey, async (req, res) => {
     );
 
     const invite = result.rows[0];
+
+    // Auto-link to master_list for graduate status
+    await autoLinkToMasterList(invite.id, first_name.trim(), last_name.trim());
+
     const registrationUrl = `${getFrontendUrl()}/register/${invite.invite_token}`;
 
     // Send the invite email
@@ -142,6 +201,9 @@ router.post('/', authenticateAdmin, async (req, res) => {
     );
 
     const invite = result.rows[0];
+
+    // Auto-link to master_list for graduate status
+    await autoLinkToMasterList(invite.id, first_name, last_name);
 
     // Return the full registration URL
     const registrationUrl = `${getFrontendUrl()}/register/${invite.invite_token}`;
@@ -222,6 +284,10 @@ router.post('/bulk', authenticateAdmin, async (req, res) => {
         );
 
         const newInvite = result.rows[0];
+
+        // Auto-link to master_list for graduate status
+        await autoLinkToMasterList(newInvite.id, invite.first_name, invite.last_name);
+
         const registrationUrl = `${getFrontendUrl()}/register/${newInvite.invite_token}`;
 
         // Send email
