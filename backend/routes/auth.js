@@ -45,6 +45,7 @@ router.post('/register', registerLimiter, async (req, res) => {
       country,
       occupation,
       company,
+      master_list_id,  // Optional: user-selected graduation list ID
     } = req.body;
 
     // Validate required fields
@@ -74,6 +75,15 @@ router.post('/register', registerLimiter, async (req, res) => {
 
     if (invite.used) {
       return res.status(400).json({ error: 'Invite already used' });
+    }
+
+    // If user selected a master_list entry and invite isn't already linked, link it now
+    if (master_list_id && !invite.master_list_id) {
+      await db.query(
+        'UPDATE invites SET master_list_id = $1 WHERE id = $2',
+        [master_list_id, invite.id]
+      );
+      invite.master_list_id = master_list_id;
     }
 
     // Hash password

@@ -349,7 +349,12 @@ router.get('/:token/validate', async (req, res) => {
     }
 
     const result = await db.query(
-      'SELECT id, email, first_name, last_name, used FROM invites WHERE invite_token = $1',
+      `SELECT i.id, i.email, i.first_name, i.last_name, i.used, i.master_list_id,
+              m.first_name as ml_first_name, m.last_name as ml_last_name,
+              m.current_name as ml_current_name, m.section as ml_section
+       FROM invites i
+       LEFT JOIN master_list m ON i.master_list_id = m.id
+       WHERE i.invite_token = $1`,
       [token]
     );
 
@@ -363,12 +368,26 @@ router.get('/:token/validate', async (req, res) => {
       return res.status(400).json({ valid: false, error: 'Invite already used' });
     }
 
-    res.json({
+    // Build response with master_list info if linked
+    const response = {
       valid: true,
       email: invite.email,
       first_name: invite.first_name,
       last_name: invite.last_name
-    });
+    };
+
+    if (invite.master_list_id) {
+      response.master_list_id = invite.master_list_id;
+      response.master_list = {
+        id: invite.master_list_id,
+        first_name: invite.ml_first_name,
+        last_name: invite.ml_last_name,
+        current_name: invite.ml_current_name,
+        section: invite.ml_section
+      };
+    }
+
+    res.json(response);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });

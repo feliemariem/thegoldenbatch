@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -20,6 +20,17 @@ export default function Register() {
 
   const [step, setStep] = useState(1); // 1: password, 2: disclaimer, 3: form
   const [showPassword, setShowPassword] = useState(false);
+
+  // Graduate self-identification state
+  const [isGraduate, setIsGraduate] = useState(false);
+  const [masterListId, setMasterListId] = useState(null);
+  const [masterListSelected, setMasterListSelected] = useState(null); // { id, first_name, last_name, current_name, section }
+  const [masterListSearch, setMasterListSearch] = useState('');
+  const [masterListResults, setMasterListResults] = useState([]);
+  const [showMasterListDropdown, setShowMasterListDropdown] = useState(false);
+  const [masterListPrelinked, setMasterListPrelinked] = useState(false); // true if invite was already linked
+  const searchTimeoutRef = useRef(null);
+  const dropdownRef = useRef(null);
 
   const [form, setForm] = useState({
     password: '',
@@ -64,6 +75,13 @@ export default function Register() {
               last_name: data.last_name || ''
             }));
           }
+          // If invite is already linked to master_list, pre-populate graduate info
+          if (data.master_list_id && data.master_list) {
+            setIsGraduate(true);
+            setMasterListId(data.master_list_id);
+            setMasterListSelected(data.master_list);
+            setMasterListPrelinked(true);
+          }
         } else {
           setError(data.error || 'Invalid invite link');
         }
@@ -71,6 +89,66 @@ export default function Register() {
       .catch(() => setError('Could not validate invite'))
       .finally(() => setValidating(false));
   }, [inviteToken]);
+
+  // Search master list for graduates
+  const searchMasterList = useCallback(async (query) => {
+    if (!query || query.length < 2) {
+      setMasterListResults([]);
+      return;
+    }
+
+    try {
+      const res = await api(`/api/master-list/search?q=${encodeURIComponent(query)}`);
+      if (res.ok) {
+        const data = await res.json();
+        setMasterListResults(data);
+        setShowMasterListDropdown(data.length > 0);
+      }
+    } catch (err) {
+      console.error('Error searching master list:', err);
+    }
+  }, []);
+
+  // Debounced search on input change
+  const handleMasterListSearchChange = (e) => {
+    const value = e.target.value;
+    setMasterListSearch(value);
+
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    searchTimeoutRef.current = setTimeout(() => {
+      searchMasterList(value);
+    }, 300);
+  };
+
+  // Select a master list entry
+  const handleSelectMasterList = (entry) => {
+    setMasterListId(entry.id);
+    setMasterListSelected(entry);
+    setMasterListSearch('');
+    setMasterListResults([]);
+    setShowMasterListDropdown(false);
+  };
+
+  // Click outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setShowMasterListDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Format master list entry for display: "Last, First · Section"
+  const formatMasterListEntry = (entry) => {
+    const name = entry.current_name || `${entry.last_name}, ${entry.first_name}`;
+    return `${name} · ${entry.section}`;
+  };
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -101,6 +179,12 @@ export default function Register() {
     e.preventDefault();
     setError('');
 
+    // Validate graduate selection if checkbox is checked
+    if (isGraduate && !masterListId) {
+      setError('Please find and select your name from the graduation list');
+      return;
+    }
+
     if (!form.rsvp) {
       setError('Please select if you are attending');
       return;
@@ -109,10 +193,17 @@ export default function Register() {
     setSubmitting(true);
 
     try {
-      const res = await apiPostPublic('/api/auth/register', {
+      const payload = {
         invite_token: inviteToken,
         ...form,
-      });
+      };
+
+      // Include master_list_id if user selected one
+      if (masterListId) {
+        payload.master_list_id = masterListId;
+      }
+
+      const res = await apiPostPublic('/api/auth/register', payload);
 
       const data = await res.json();
 
@@ -300,6 +391,129 @@ export default function Register() {
                     required
                   />
                 </div>
+              </div>
+
+              {/* Graduate Self-Identification */}
+              <div className="form-group" style={{ marginTop: '16px', marginBottom: '16px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                  <input
+                    type="checkbox"
+                    checked={isGraduate}
+                    onChange={(e) => {
+                      setIsGraduate(e.target.checked);
+                      if (!e.target.checked) {
+                        // Clear selection if unchecked (unless pre-linked)
+                        if (!masterListPrelinked) {
+                          setMasterListId(null);
+                          setMasterListSelected(null);
+                        }
+                      }
+                    }}
+                    disabled={masterListPrelinked}
+                    style={{ width: 'auto', marginRight: '4px' }}
+                  />
+                  <span>I am a USLS-IS Batch 2003 graduate</span>
+                </label>
+
+                {isGraduate && (
+                  <div style={{ marginTop: '12px' }} ref={dropdownRef}>
+                    {masterListSelected ? (
+                      // Show selected entry
+                      <div style={{
+                        padding: '12px 16px',
+                        background: 'rgba(39, 174, 96, 0.1)',
+                        border: '1px solid rgba(39, 174, 96, 0.3)',
+                        borderRadius: '8px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between'
+                      }}>
+                        <div>
+                          <div style={{ fontWeight: 600, color: 'var(--color-text-primary)' }}>
+                            {formatMasterListEntry(masterListSelected)}
+                          </div>
+                          <div style={{ fontSize: '0.8rem', color: 'var(--color-status-positive)' }}>
+                            ✓ {masterListPrelinked ? 'Auto-matched from records' : 'Selected'}
+                          </div>
+                        </div>
+                        {!masterListPrelinked && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setMasterListId(null);
+                              setMasterListSelected(null);
+                            }}
+                            style={{
+                              background: 'none',
+                              border: 'none',
+                              color: 'var(--color-text-secondary)',
+                              cursor: 'pointer',
+                              fontSize: '0.85rem',
+                              textDecoration: 'underline'
+                            }}
+                          >
+                            Change
+                          </button>
+                        )}
+                      </div>
+                    ) : (
+                      // Show search input
+                      <div style={{ position: 'relative' }}>
+                        <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.9rem' }}>
+                          Find your name in the graduation list *
+                        </label>
+                        <input
+                          type="text"
+                          value={masterListSearch}
+                          onChange={handleMasterListSearchChange}
+                          placeholder="Start typing your name..."
+                          autoComplete="off"
+                        />
+                        {showMasterListDropdown && masterListResults.length > 0 && (
+                          <div style={{
+                            position: 'absolute',
+                            top: '100%',
+                            left: 0,
+                            right: 0,
+                            background: 'var(--color-card-bg)',
+                            border: '1px solid var(--color-border)',
+                            borderRadius: '8px',
+                            marginTop: '4px',
+                            maxHeight: '200px',
+                            overflowY: 'auto',
+                            zIndex: 100,
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
+                          }}>
+                            {masterListResults.map((entry) => (
+                              <div
+                                key={entry.id}
+                                onClick={() => handleSelectMasterList(entry)}
+                                style={{
+                                  padding: '10px 14px',
+                                  cursor: 'pointer',
+                                  borderBottom: '1px solid var(--color-border)',
+                                  transition: 'background 0.15s'
+                                }}
+                                onMouseEnter={(e) => e.target.style.background = 'rgba(207, 181, 59, 0.1)'}
+                                onMouseLeave={(e) => e.target.style.background = 'transparent'}
+                              >
+                                <div style={{ fontWeight: 500, color: 'var(--color-text-primary)' }}>
+                                  {entry.last_name}, {entry.first_name}
+                                </div>
+                                <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
+                                  Section {entry.section}
+                                  {entry.current_name && entry.current_name !== `${entry.first_name} ${entry.last_name}` && (
+                                    <span> · Now: {entry.current_name}</span>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="form-row">

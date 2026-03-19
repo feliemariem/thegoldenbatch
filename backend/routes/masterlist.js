@@ -696,4 +696,40 @@ router.get('/directory', authenticateToken, async (req, res) => {
   }
 });
 
+// Public search for graduation self-identification (registration form)
+// Returns graduates only (section NOT NULL and != 'Non-Graduate')
+router.get('/search', async (req, res) => {
+  try {
+    const { q } = req.query;
+
+    if (!q || q.trim().length < 2) {
+      return res.json([]);
+    }
+
+    const searchTerm = `%${q.trim().toLowerCase()}%`;
+
+    const result = await db.query(
+      `SELECT id, first_name, last_name, current_name, section
+       FROM master_list
+       WHERE section IS NOT NULL
+         AND section != 'Non-Graduate'
+         AND in_memoriam = FALSE
+         AND (
+           LOWER(first_name) LIKE $1
+           OR LOWER(last_name) LIKE $1
+           OR LOWER(current_name) LIKE $1
+           OR LOWER(first_name || ' ' || last_name) LIKE $1
+         )
+       ORDER BY last_name, first_name
+       LIMIT 10`,
+      [searchTerm]
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error searching master list:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 module.exports = router;
