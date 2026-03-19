@@ -329,7 +329,7 @@ export default function SystemTest() {
             <p style={{ color: 'var(--color-text-secondary)' }}>No data yet.</p>
           ) : (
             <>
-              {/* Votes by Section */}
+              {/* Voter turnout by section — mirrors batch rep response rate card */}
               <div style={{ marginBottom: '28px' }}>
                 <h4 style={{
                   fontSize: '0.75rem', fontWeight: 600,
@@ -337,46 +337,52 @@ export default function SystemTest() {
                   textTransform: 'uppercase', letterSpacing: '0.5px',
                   marginBottom: '12px'
                 }}>
-                  Votes by Section
+                  Voter Turnout by Section
                 </h4>
-                {(() => {
-                  // Group votesBySection rows into { section: { candidateName: count } }
-                  const sections = {};
-                  (round2Data.votesBySection || []).forEach(row => {
-                    if (!sections[row.section]) sections[row.section] = {};
-                    sections[row.section][row.candidate_name] = parseInt(row.count);
-                  });
-                  return Object.entries(sections).map(([section, votes]) => {
-                    const bianca = votes['Bianca Jison'] || 0;
-                    const mel = votes['Mel Andrea Rivero'] || 0;
-                    const total = bianca + mel;
-                    return (
-                      <div key={section} style={{ marginBottom: '12px' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', alignItems: 'center' }}>
-                          <span style={{
-                            fontSize: '0.8rem', fontWeight: 600,
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(5, 1fr)',
+                  gap: '16px',
+                  marginBottom: '20px'
+                }}>
+                  {(() => {
+                    return (round2Data.votesBySection || []).map((row) => {
+                      const voted = parseInt(row.voted);
+                      const total = parseInt(row.total);
+                      const pct = total > 0 ? Math.round((voted / total) * 100) : 0;
+                      return (
+                        <div key={row.section} style={{ marginBottom: '16px', textAlign: 'center' }}>
+                          <div style={{
+                            fontSize: '0.75rem', fontWeight: 600,
                             color: 'var(--color-text-secondary)',
-                            textTransform: 'uppercase', letterSpacing: '0.5px'
+                            textTransform: 'uppercase', letterSpacing: '0.5px',
+                            marginBottom: '8px'
                           }}>
-                            {section}
-                          </span>
-                          <div style={{ display: 'flex', gap: '16px', fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
-                            <span>Bianca: {total > 0 ? Math.round((bianca / total) * 100) : 0}%</span>
-                            <span>Mel: {total > 0 ? Math.round((mel / total) * 100) : 0}%</span>
+                            {row.section}
+                          </div>
+                          <div style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>
+                            {voted}
+                          </div>
+                          <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginBottom: '8px' }}>
+                            of {total}
+                          </div>
+                          <div style={{
+                            height: '4px', background: 'rgba(255,255,255,0.1)',
+                            borderRadius: '2px', overflow: 'hidden', marginBottom: '6px'
+                          }}>
+                            <div style={{
+                              height: '100%', width: `${pct}%`,
+                              background: '#006633', borderRadius: '2px'
+                            }} />
+                          </div>
+                          <div style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)' }}>
+                            {pct}%
                           </div>
                         </div>
-                        <div style={{ height: '6px', background: 'rgba(255,255,255,0.08)', borderRadius: '3px', overflow: 'hidden' }}>
-                          <div style={{
-                            height: '100%',
-                            width: total > 0 ? `${Math.round((bianca / total) * 100)}%` : '0%',
-                            background: '#006633',
-                            borderRadius: '3px'
-                          }} />
-                        </div>
-                      </div>
-                    );
-                  });
-                })()}
+                      );
+                    });
+                  })()}
+                </div>
               </div>
 
               {/* Individual voter list — sorted by time of vote */}
@@ -394,7 +400,6 @@ export default function SystemTest() {
                     <thead>
                       <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
                         <th style={{ textAlign: 'left', padding: '10px 8px', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Name</th>
-                        <th style={{ textAlign: 'left', padding: '10px 8px', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Section</th>
                         {/* One column per candidate — checkmark shows who they voted for */}
                         <th style={{ textAlign: 'center', padding: '10px 8px', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Bianca</th>
                         <th style={{ textAlign: 'center', padding: '10px 8px', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Mel</th>
@@ -406,9 +411,6 @@ export default function SystemTest() {
                         <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
                           <td style={{ padding: '10px 8px', color: 'var(--color-text-primary)' }}>
                             {row.first_name} {row.last_name}
-                          </td>
-                          <td style={{ padding: '10px 8px', color: 'var(--color-text-secondary)', fontSize: '0.8rem' }}>
-                            {row.section}
                           </td>
                           {/* ✓ appears only in the column matching their vote */}
                           <td style={{ padding: '10px 8px', textAlign: 'center' }}>

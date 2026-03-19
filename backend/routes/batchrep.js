@@ -502,18 +502,22 @@ router.get('/round2/results', authenticateToken, async (req, res) => {
     );
     const totalRegisteredGrads = parseInt(gradsResult.rows[0].total);
 
-    // Votes by section — excludes in_memoriam
+    // Voter turnout by section — count of votes cast per section vs total grads in section
+    // Does NOT reveal who voted for whom — just turnout numbers
+    // Excludes in_memoriam grads from both voted and total counts
     const sectionResult = await db.query(
       `SELECT
          m.section,
-         v.candidate_name,
-         COUNT(*) as count
-       FROM batch_rep_round2_votes v
-       JOIN users u ON u.id = v.voter_id
-       JOIN invites i ON u.invite_id = i.id
-       JOIN master_list m ON i.master_list_id = m.id
-       WHERE m.in_memoriam = FALSE
-       GROUP BY m.section, v.candidate_name
+         COUNT(DISTINCT v.voter_id) as voted,
+         COUNT(DISTINCT u.id) as total
+       FROM master_list m
+       LEFT JOIN invites i ON i.master_list_id = m.id
+       LEFT JOIN users u ON u.invite_id = i.id
+       LEFT JOIN batch_rep_round2_votes v ON v.voter_id = u.id
+       WHERE m.section IS NOT NULL
+         AND m.section != 'Non-Graduate'
+         AND m.in_memoriam = FALSE
+       GROUP BY m.section
        ORDER BY m.section ASC`
     );
     const votesBySection = sectionResult.rows;
