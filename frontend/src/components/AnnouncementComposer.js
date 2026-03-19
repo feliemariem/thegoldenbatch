@@ -24,6 +24,10 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
   const batchRepDeadline = new Date('2026-03-21T23:59:00+08:00');
   const daysRemaining = Math.max(0, Math.ceil((batchRepDeadline - new Date()) / (1000 * 60 * 60 * 24)));
 
+  // Round 2 voting deadline
+  const round2Deadline = new Date('2026-03-30T23:59:00+08:00');
+  const round2DaysRemaining = Math.max(0, Math.ceil((round2Deadline - new Date()) / (1000 * 60 * 60 * 24)));
+
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -35,9 +39,10 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // When template changes to batchrep, lock audience to graduates
+  // When template changes to batchrep or round2voting, lock audience to graduates
   useEffect(() => {
-    if (template === 'batchrep') {
+    if (template === 'batchrep' || template === 'round2voting') {
+      // Both batch rep templates lock to graduates audience
       setAudience('graduates');
     }
   }, [template]);
@@ -77,7 +82,7 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
 
   const getRecipientCount = () => {
     if (testMode) return 1;
-    if (template === 'batchrep') return graduatesCount;
+    if (template === 'batchrep' || template === 'round2voting') return graduatesCount;
     switch (audience) {
       case 'all': return registeredCount;
       case 'full_admins': return fullAdminsCount;
@@ -91,7 +96,7 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
   };
 
   const getAudienceLabelForConfirm = () => {
-    if (template === 'batchrep') return 'graduates';
+    if (template === 'batchrep' || template === 'round2voting') return 'graduates';
     switch (audience) {
       case 'all': return 'registered batchmates';
       case 'full_admins': return 'full admins';
@@ -130,12 +135,22 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
     setResult(null);
 
     try {
+      const isTemplateLocked = template === 'batchrep' || template === 'round2voting';
       const payload = {
-        audience: template === 'batchrep' ? 'graduates' : audience,
-        subject: template === 'batchrep' ? 'The batch needs to hear from you.' : subject,
-        message: template === 'batchrep' ? 'Submit your response on the two official nominees for Batch 2003.' : message,
+        audience: isTemplateLocked ? 'graduates' : audience,
+        subject: template === 'batchrep'
+          ? 'The batch needs to hear from you.'
+          : template === 'round2voting'
+            ? 'Your vote is needed — Round 2'
+            : subject,
+        message: template === 'batchrep'
+          ? 'Submit your response on the two official nominees for Batch 2003.'
+          : template === 'round2voting'
+            ? 'Cast your vote for Alumni Association Representative. Two candidates — Bianca Jison and Mel Andrea Rivero. Log in and the voting modal will open automatically.'
+            : message,
         sendEmail,
-        template: template === 'batchrep' ? 'batchrep' : undefined,
+        // Pass template name to backend for correct email HTML
+        template: template !== 'standard' ? template : undefined,
         testMode: testMode ? true : undefined,
         testEmail: testMode ? testEmail : undefined
       };
@@ -189,6 +204,7 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
     if (sending) return 'Sending...';
     if (testMode) return `Send Test to ${testEmail}`;
     if (template === 'batchrep') return `Send Batch Rep Notification to ${graduatesCount} graduates`;
+    if (template === 'round2voting') return `Send Round 2 Voting Email to ${graduatesCount} graduates`;
     return `Send to ${getRecipientCount()} recipient${getRecipientCount() !== 1 ? 's' : ''}`;
   };
 
@@ -264,10 +280,69 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
     </div>
   );
 
+  // Email preview component for round 2 voting template
+  const Round2VotingEmailPreview = () => (
+    <div className="sa-email-shell">
+      <div className="sa-email-header">
+        <div className="sa-email-logo">GB</div>
+        <div className="sa-email-title">THE GOLDEN BATCH 2003</div>
+        <div className="sa-email-sub">UNIVERSITY OF ST. LA SALLE - IS · 25th Alumni Homecoming</div>
+      </div>
+      <div className="sa-email-body">
+        <div className="sa-email-greeting">Hi [First Name],</div>
+        <div className="sa-email-intro">
+          Round 1 is done. Two willing candidates stepped forward for <strong>Alumni Association Representative</strong> — which means the batch decides. This is your vote.
+        </div>
+        {/* Candidate cards */}
+        <div className="sa-nominee-row" style={{ background: '#f0f9f4', border: '1px solid #c8e6d4', borderRadius: '8px', padding: '12px 14px', marginBottom: '10px' }}>
+          <div>
+            <div className="sa-nominee-role">Position 1 · Alumni Association Representative</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
+              <div className="sa-nominee-avatar">BJ</div>
+              <div>
+                <div className="sa-nominee-name">Bianca Jison</div>
+                <div className="sa-nominee-role">Committee Nominee</div>
+              </div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
+              <div className="sa-nominee-avatar" style={{ background: '#27ae60' }}>MR</div>
+              <div>
+                <div className="sa-nominee-name">Mel Andrea Rivero</div>
+                <div className="sa-nominee-role" style={{ color: '#27ae60' }}>Willing / Contested</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="sa-email-deadline">
+          <span>Voting closes</span>
+          <span className="sa-email-deadline-date">
+            {round2Deadline.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} at 11:59 PM PHT
+          </span>
+          <span className="sa-email-deadline-days">
+            {round2DaysRemaining} day{round2DaysRemaining !== 1 ? 's' : ''} left
+          </span>
+        </div>
+        <div className="sa-email-cta">Submit Vote →</div>
+        <div className="sa-email-footnote">Log in and the voting modal will open automatically.</div>
+      </div>
+      <div className="sa-email-footer">
+        © USLS-IS Golden Batch 2003 · <span>Questions? </span>uslsis.batch2003@gmail.com
+      </div>
+    </div>
+  );
+
   // Inbox preview component
   const InboxPreviewCard = () => {
-    const previewSubject = template === 'batchrep' ? 'The batch needs to hear from you.' : subject;
-    const previewMessage = template === 'batchrep' ? 'Submit your response on the two official nominees for Batch 2003.' : message;
+    const previewSubject = template === 'batchrep'
+      ? 'The batch needs to hear from you.'
+      : template === 'round2voting'
+        ? 'Your vote is needed — Round 2'
+        : subject;
+    const previewMessage = template === 'batchrep'
+      ? 'Submit your response on the two official nominees for Batch 2003.'
+      : template === 'round2voting'
+        ? 'Cast your vote for Alumni Association Representative. Two candidates — Bianca Jison and Mel Andrea Rivero.'
+        : message;
 
     return (
       <div className="sa-inbox-preview">
@@ -298,12 +373,16 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
           >
             <option value="standard">✉️ Standard Announcement</option>
             <option value="batchrep">🗳️ Batch Rep Notification</option>
+            {/* Round 2 voting template — user.id === 1 only */}
+            {user?.id === 1 && (
+              <option value="round2voting">🗳️ Round 2 · AA Rep Voting</option>
+            )}
           </select>
         </div>
       )}
 
       {/* Audience Selector or Locked Audience */}
-      {template === 'batchrep' ? (
+      {(template === 'batchrep' || template === 'round2voting') ? (
         <div className="form-group">
           <label>To:</label>
           <div className="sa-locked-audience">
@@ -355,7 +434,37 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
       )}
 
       {/* Standard Fields or Batch Rep Card */}
-      {template === 'batchrep' ? (
+      {template === 'round2voting' ? (
+        // Round 2 voting template card — user.id === 1 only
+        <div className="sa-batchrep-card">
+          <div className="sa-batchrep-tag">🗳️ Round 2 · AA Rep Vote</div>
+          <div className="sa-batchrep-title">Your vote is needed — Round 2</div>
+          <div className="sa-nominee-row">
+            <div className="sa-nominee-avatar">BJ</div>
+            <div>
+              <div className="sa-nominee-role">Position 1 · Alumni Assoc. Representative</div>
+              <div className="sa-nominee-name">Bianca Jison</div>
+            </div>
+          </div>
+          <div className="sa-nominee-row">
+            <div className="sa-nominee-avatar" style={{ background: '#27ae60' }}>MR</div>
+            <div>
+              <div className="sa-nominee-role" style={{ color: '#27ae60' }}>Willing / Contested</div>
+              <div className="sa-nominee-name">Mel Andrea Rivero</div>
+            </div>
+          </div>
+          <div className="sa-deadline-row">
+            <span>Voting closes</span>
+            <span className="sa-deadline-date">
+              {round2Deadline.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} at 11:59 PM PHT
+            </span>
+            <span className="sa-deadline-days">{round2DaysRemaining} day{round2DaysRemaining !== 1 ? 's' : ''} left</span>
+          </div>
+          <div className="sa-batchrep-note">
+            Responses are confidential. Votes are final. CTA links to /login — modal opens automatically.
+          </div>
+        </div>
+      ) : template === 'batchrep' ? (
         <div className="sa-batchrep-card">
           <div className="sa-batchrep-tag">⚡ Quick Batch Input</div>
           <div className="sa-batchrep-title">The batch needs to hear from you.</div>
@@ -507,7 +616,11 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
                   </div>
                   <div className="sa-preview-hint">What recipients will receive</div>
                 </div>
-                {template === 'batchrep' ? <BatchRepEmailPreview /> : <StandardEmailPreview />}
+                {template === 'round2voting'
+                  ? <Round2VotingEmailPreview />
+                  : template === 'batchrep'
+                    ? <BatchRepEmailPreview />
+                    : <StandardEmailPreview />}
                 <div>
                   <div className="sa-section-label">What they see in their Inbox</div>
                   <InboxPreviewCard />

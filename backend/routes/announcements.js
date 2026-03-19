@@ -271,6 +271,68 @@ router.post('/', authenticateToken, async (req, res) => {
               </div>
             `;
             emailText = `Hi ${recipient.first_name || 'Batchmate'},\n\nThe organizing committee has been working behind the scenes. Now it's time for the batch to choose who will represent Batch 2003 for two official positions.\n\nNominees:\n- Bianca Jison (Alumni Assoc. Representative)\n- Felie Magbanua (Batch Representative)\n\nFeedback window closes ${deadlineFormatted} at 11:59 PM PHT (${daysRemaining} days left)\n\nSubmit your response: ${siteUrl}/login?redirect=/profile&batchrep=1\n\n- The Organizing Committee\n\nUSLS-IS 2003\nQuestions? Email us at uslsis.batch2003@gmail.com`;
+          } else if (template === 'round2voting') {
+            // Round 2 Voting template — Bianca vs Mel, AA Rep only
+            // user.id === 1 guard is enforced at the frontend — backend trusts announce permission
+            const round2Deadline = new Date('2026-03-30T23:59:00+08:00');
+            const round2DaysRemaining = Math.max(0, Math.ceil((round2Deadline - new Date()) / (1000 * 60 * 60 * 24)));
+            const round2DeadlineFormatted = round2Deadline.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+            emailSubject = 'Your vote is needed — Round 2';
+            emailHtml = `
+              <div style="margin: 0; padding: 0; background: #ffffff;">
+                <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif; color: #1a1a1a;">
+                  <div style="background: #0d1a14; padding: 28px; text-align: center;">
+                    <img src="${siteUrl}/images/lasalle.jpg" alt="The Golden Batch Logo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 12px;" />
+                    <div style="color: #CFB53B; letter-spacing: 3px; font-weight: 700; font-size: 28px; font-family: Georgia, 'Times New Roman', serif; margin-bottom: 8px;">THE GOLDEN BATCH 2003</div>
+                    <div style="color: #ffffff; font-size: 16px; font-family: Georgia, 'Times New Roman', serif; letter-spacing: 2px; margin-bottom: 6px;">UNIVERSITY OF ST. LA SALLE - IS</div>
+                    <div style="color: #CFB53B; font-size: 14px; font-family: Arial, sans-serif;">25th Alumni Homecoming</div>
+                  </div>
+                  <div style="padding: 32px 28px; background: #ffffff;">
+                    <p style="font-size: 18px; margin: 0 0 20px; font-family: Arial, sans-serif; color: #1a1a1a;">
+                      Hi ${recipient.first_name || 'Batchmate'},
+                    </p>
+                    <p style="font-size: 15px; color: #444444; line-height: 1.6; margin: 0 0 20px 0;">
+                      Round 1 is done. Two willing candidates stepped forward for <strong>Alumni Association Representative</strong> — which means the batch decides. This is your vote.
+                    </p>
+                    <div style="background: #f0f9f4; border: 1px solid #c8e6d4; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+                      <div style="font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #006633; margin-bottom: 12px;">Position 1 · Alumni Association Representative</div>
+                      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                        <div style="width: 8px; height: 8px; border-radius: 50%; background: #006633; flex-shrink: 0;"></div>
+                        <span style="font-size: 15px; font-weight: 700; color: #1a1a1a;">Bianca Jison</span>
+                        <span style="font-size: 11px; color: #006633; font-weight: 600; margin-left: 4px;">Committee Nominee</span>
+                      </div>
+                      <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 8px; height: 8px; border-radius: 50%; background: #006633; flex-shrink: 0;"></div>
+                        <span style="font-size: 15px; font-weight: 700; color: #1a1a1a;">Mel Andrea Rivero</span>
+                        <span style="font-size: 11px; color: #27ae60; font-weight: 600; margin-left: 4px;">Willing / Contested</span>
+                      </div>
+                    </div>
+                    <p style="font-size: 13px; color: #666666; margin: 0 0 12px 0;">
+                      Voting closes <strong style="color: #c0392b;">${round2DeadlineFormatted} at 11:59 PM PHT</strong>
+                      <span style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; padding: 2px 8px; font-size: 11px; font-weight: 700; color: #856404; margin-left: 6px;">${round2DaysRemaining} day${round2DaysRemaining !== 1 ? 's' : ''} left</span>
+                    </p>
+                    <p style="font-size: 13px; color: #888888; margin: 0 0 28px 0;">
+                      Responses are confidential. Votes are final and cannot be changed.
+                    </p>
+                    <div style="text-align: center; margin: 32px 0;">
+                      <a href="${siteUrl}/login" style="background: #006633; color: #ffffff; padding: 16px 42px; font-size: 18px; font-weight: 700; text-decoration: none; border-radius: 8px; display: inline-block; font-family: Arial, sans-serif;">
+                        Submit Vote →
+                      </a>
+                    </div>
+                    <p style="font-size: 12px; color: #999999; text-align: center; margin: 0;">
+                      Log in and the voting modal will open automatically.
+                    </p>
+                  </div>
+                  <div style="background: #0d1a14; padding: 20px; text-align: center; font-size: 14px; font-family: Arial, sans-serif;">
+                    <span style="color: #CFB53B;">© USLS-IS Golden Batch 2003</span><br/>
+                    <span style="color: #ffffff;">Questions? Email us at</span>
+                    <a href="mailto:uslsis.batch2003@gmail.com" style="color: #CFB53B; text-decoration: none;">uslsis.batch2003@gmail.com</a>
+                  </div>
+                </div>
+              </div>
+            `;
+            emailText = `Hi ${recipient.first_name || 'Batchmate'},\n\nRound 1 is done. Two willing candidates stepped forward for Alumni Association Representative — which means the batch decides.\n\nCandidates:\n- Bianca Jison (Committee Nominee)\n- Mel Andrea Rivero (Willing / Contested)\n\nVoting closes ${round2DeadlineFormatted} at 11:59 PM PHT (${round2DaysRemaining} days left).\nResponses are confidential. Votes are final.\n\nSubmit your vote: ${siteUrl}/login\nLog in and the voting modal will open automatically.\n\n- The Organizing Committee\n\nUSLS-IS 2003\nQuestions? Email us at uslsis.batch2003@gmail.com`;
           } else {
             // Standard announcement template
             emailSubject = 'New message in your Inbox';
@@ -364,7 +426,9 @@ router.post('/', authenticateToken, async (req, res) => {
           await db.query(
             `INSERT INTO email_log (recipient_email, recipient_name, subject, email_type, status)
              VALUES ($1, $2, $3, $4, $5)`,
-            [recipient.email, recipient.first_name || null, emailSubject, template === 'batchrep' ? 'batchrep' : 'announcement', 'sent']
+            [recipient.email, recipient.first_name || null, emailSubject,
+              template === 'batchrep' ? 'batchrep' : template === 'round2voting' ? 'round2voting' : 'announcement',
+              'sent']
           );
 
           emailsSent++;
