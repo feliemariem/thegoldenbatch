@@ -293,7 +293,7 @@ router.post('/', authenticateToken, async (req, res) => {
                       Hi ${recipient.first_name || 'Batchmate'},
                     </p>
                     <p style="font-size: 15px; color: #444444; line-height: 1.6; margin: 0 0 20px 0;">
-                      A batchmate stepped forward and confirmed their willingness to serve as <strong>Alumni Association Representative</strong>. Per the Round 1 process, a willing nomination goes to a batch vote — which means the batch decides. This is your vote.
+                      In Round 1, the batch was asked to confirm the organizing committee's nominee for <strong>Alumni Association Representative</strong>. A batchmate was nominated and confirmed their willingness to serve, which means it goes to a batch vote. This is your vote.
                     </p>
                     <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 20px;">
                       <tr>
@@ -356,7 +356,7 @@ router.post('/', authenticateToken, async (req, res) => {
                 </div>
               </div>
             `;
-            emailText = `Hi ${recipient.first_name || 'Batchmate'},\n\nA batchmate stepped forward and confirmed their willingness to serve as Alumni Association Representative. Per the Round 1 process, a willing nomination goes to a batch vote — which means the batch decides. This is your vote.\n\nCandidates:\n- Bianca Jison (Committee Nominee)\n- Mel Andrea Rivero (Willing / Contested)\n\nVoting closes ${round2DeadlineFormatted} at 11:59 PM PHT (${round2DaysRemaining} days left).\nResponses are confidential. Votes are final.\n\nSubmit your vote: ${siteUrl}/login\nLog in and the voting modal will open automatically.\n\n- The Organizing Committee\n\nUSLS-IS 2003\nQuestions? Email us at uslsis.batch2003@gmail.com`;
+            emailText = `Hi ${recipient.first_name || 'Batchmate'},\n\nIn Round 1, the batch was asked to confirm the organizing committee's nominee for Alumni Association Representative. A batchmate was nominated and confirmed their willingness to serve, which means it goes to a batch vote. This is your vote.\n\nCandidates:\n- Bianca Jison (Committee Nominee)\n- Mel Andrea Rivero (Willing / Contested)\n\nVoting closes ${round2DeadlineFormatted} at 11:59 PM PHT (${round2DaysRemaining} days left).\nResponses are confidential. Votes are final.\n\nSubmit your vote: ${siteUrl}/login\nLog in and the voting modal will open automatically.\n\n- The Organizing Committee\n\nUSLS-IS 2003\nQuestions? Email us at uslsis.batch2003@gmail.com`;
           } else {
             // Standard announcement template
             emailSubject = 'New message in your Inbox';
