@@ -295,29 +295,43 @@ router.post('/', authenticateToken, async (req, res) => {
                     <p style="font-size: 15px; color: #444444; line-height: 1.6; margin: 0 0 20px 0;">
                       Round 1 is done. Two willing candidates stepped forward for <strong>Alumni Association Representative</strong> — which means the batch decides. This is your vote.
                     </p>
-                    <div style="background: #f0f9f4; border: 1px solid #c8e6d4; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
-                      <div style="font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #006633; margin-bottom: 14px;">
-                        Position 1 · Alumni Association Representative
-                      </div>
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 20px;">
+                      <tr>
+                        <td style="background: #f0f9f4; border: 1px solid #c8e6d4; border-radius: 8px; padding: 16px;">
+                          <div style="font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #006633; margin-bottom: 14px; font-family: Arial, sans-serif;">
+                            Position 1 · Alumni Association Representative
+                          </div>
 
-                      <!-- Bianca Jison -->
-                      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-                        <div style="width: 40px; height: 40px; border-radius: 50%; background: #006633; color: #ffffff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: Arial, sans-serif;">BJ</div>
-                        <div>
-                          <div style="font-size: 15px; font-weight: 700; color: #1a1a1a; font-family: Arial, sans-serif;">Bianca Jison</div>
-                          <div style="font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #006633; margin-top: 2px;">Committee Nominee</div>
-                        </div>
-                      </div>
+                          <!-- Bianca Jison -->
+                          <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 12px;">
+                            <tr>
+                              <td width="44" valign="middle">
+                                <div style="width: 40px; height: 40px; border-radius: 50%; background: #006633; color: #ffffff; font-size: 13px; font-weight: 700; text-align: center; line-height: 40px; font-family: Arial, sans-serif;">BJ</div>
+                              </td>
+                              <td width="12"></td>
+                              <td valign="middle">
+                                <div style="font-size: 15px; font-weight: 700; color: #1a1a1a; font-family: Arial, sans-serif;">Bianca Jison</div>
+                                <div style="font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #006633; margin-top: 2px; font-family: Arial, sans-serif;">Committee Nominee</div>
+                              </td>
+                            </tr>
+                          </table>
 
-                      <!-- Mel Andrea Rivero -->
-                      <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="width: 40px; height: 40px; border-radius: 50%; background: #27ae60; color: #ffffff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-family: Arial, sans-serif;">MR</div>
-                        <div>
-                          <div style="font-size: 15px; font-weight: 700; color: #1a1a1a; font-family: Arial, sans-serif;">Mel Andrea Rivero</div>
-                          <div style="font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #27ae60; margin-top: 2px;">Willing / Contested</div>
-                        </div>
-                      </div>
-                    </div>
+                          <!-- Mel Andrea Rivero -->
+                          <table cellpadding="0" cellspacing="0" border="0">
+                            <tr>
+                              <td width="44" valign="middle">
+                                <div style="width: 40px; height: 40px; border-radius: 50%; background: #27ae60; color: #ffffff; font-size: 13px; font-weight: 700; text-align: center; line-height: 40px; font-family: Arial, sans-serif;">MR</div>
+                              </td>
+                              <td width="12"></td>
+                              <td valign="middle">
+                                <div style="font-size: 15px; font-weight: 700; color: #1a1a1a; font-family: Arial, sans-serif;">Mel Andrea Rivero</div>
+                                <div style="font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #27ae60; margin-top: 2px; font-family: Arial, sans-serif;">Willing / Contested</div>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
                     <p style="font-size: 13px; color: #666666; margin: 0 0 12px 0;">
                       Voting closes <strong style="color: #c0392b;">${round2DeadlineFormatted} at 11:59 PM PHT</strong>
                       <span style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; padding: 2px 8px; font-size: 11px; font-weight: 700; color: #856404; margin-left: 6px;">${round2DaysRemaining} day${round2DaysRemaining !== 1 ? 's' : ''} left</span>
