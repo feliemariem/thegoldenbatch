@@ -315,10 +315,6 @@ export default function BatchRepVotingModal() {
             </div>
 
             <div className="batchrep-voting-section">
-            <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginBottom: '16px' }}>
-              Two candidates — select one to cast your vote
-            </p>
-
             {hasVoted ? (
               <div className="batchrep-success">
                 <div className="batchrep-success-icon">✓</div>
