@@ -297,10 +297,9 @@ export default function BatchRepVoting() {
               Felie is confirmed uncontested.
             </p>
             <p style={{ marginBottom: '0' }}>
-              For <strong>Position 1 (Alumni Association Representative)</strong>, a batchmate stepped
-              forward and confirmed their willingness to serve. Per the Round 1 process, a willing
-              nomination goes to a batch vote, which brings us here. This is ultimately the batch's
-              decision.
+              For <strong>Position 1 (Alumni Association Representative)</strong>, a batchmate confirmed
+              their willingness to serve if nominated. Per the Round 1 process, this moves to a batch
+              vote—bringing us here. This is ultimately the batch's decision.
             </p>
             <div className="batchrep-overview-divider batchrep-overview-footer" style={{ marginTop: '16px', paddingTop: '16px' }}>
               <a
@@ -404,7 +403,7 @@ export default function BatchRepVoting() {
                   />
                   <div className="batchrep-candidate-info">
                     <div className="batchrep-nominee-name voting">Mel Andrea Rivero</div>
-                    <span className="batchrep-role-badge" style={{ color: 'var(--color-status-positive)', background: 'rgba(39, 174, 96, 0.15)' }}>Willing / Contested</span>
+                    <span className="batchrep-role-badge" style={{ color: 'var(--color-status-positive)', background: 'rgba(39, 174, 96, 0.15)' }}>Willing / Nominated</span>
                   </div>
                 </div>
 
