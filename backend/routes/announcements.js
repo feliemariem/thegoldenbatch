@@ -295,55 +295,51 @@ router.post('/', authenticateToken, async (req, res) => {
                     <p style="font-size: 15px; color: #444444; line-height: 1.6; margin: 0 0 20px 0;">
                       In Round 1, the batch was asked to confirm the organizing committee's nominee for <strong>Alumni Association Representative</strong>. A batchmate was nominated and confirmed their willingness to serve, which means it goes to a batch vote. This is your vote.
                     </p>
-                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 20px;">
-                      <tr>
-                        <td style="background: #f0f9f4; border: 1px solid #c8e6d4; border-radius: 8px; padding: 16px;">
-                          <div style="font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #006633; margin-bottom: 14px; font-family: Arial, sans-serif;">
-                            Position 1 · Alumni Association Representative
-                          </div>
+                    <div style="margin-bottom: 20px;">
+                      <div style="font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #006633; margin-bottom: 12px; font-family: Arial, sans-serif;">
+                        Position 1 · Alumni Association Representative
+                      </div>
 
-                          <!-- Bianca Jison -->
-                          <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 8px; background: #ffffff; border-radius: 6px;">
-                            <tr>
-                              <td style="padding: 10px 12px;">
-                                <table cellpadding="0" cellspacing="0" border="0">
-                                  <tr>
-                                    <td width="44" valign="middle">
-                                      <img src="${siteUrl}/images/logo.jpeg" alt="" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;" />
-                                    </td>
-                                    <td width="10"></td>
-                                    <td valign="middle">
-                                      <div style="font-size: 15px; font-weight: 700; color: #1a1a1a; font-family: Arial, sans-serif;">Bianca Jison</div>
-                                      <div style="font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #006633; margin-top: 2px; font-family: Arial, sans-serif;">Committee Nominee</div>
-                                    </td>
-                                  </tr>
-                                </table>
-                              </td>
-                            </tr>
-                          </table>
+                      <!-- Bianca Jison -->
+                      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 8px;">
+                        <tr>
+                          <td style="background: #f5f5f5; border-left: 4px solid #006633; border-radius: 4px; padding: 12px 16px;">
+                            <table cellpadding="0" cellspacing="0" border="0">
+                              <tr>
+                                <td width="70" valign="middle">
+                                  <img src="${siteUrl}/images/logo.jpeg" alt="" style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover;" />
+                                </td>
+                                <td width="14"></td>
+                                <td valign="middle">
+                                  <div style="font-size: 16px; font-weight: 700; color: #1a1a1a; font-family: Arial, sans-serif;">Bianca Jison</div>
+                                  <div style="font-size: 13px; font-weight: 500; text-transform: uppercase; color: #006633; margin-top: 2px; font-family: Arial, sans-serif;">COMMITTEE NOMINEE</div>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
 
-                          <!-- Mel Andrea Rivero -->
-                          <table cellpadding="0" cellspacing="0" border="0" style="background: #ffffff; border-radius: 6px;">
-                            <tr>
-                              <td style="padding: 10px 12px;">
-                                <table cellpadding="0" cellspacing="0" border="0">
-                                  <tr>
-                                    <td width="44" valign="middle">
-                                      <img src="${siteUrl}/images/logo.jpeg" alt="" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;" />
-                                    </td>
-                                    <td width="10"></td>
-                                    <td valign="middle">
-                                      <div style="font-size: 15px; font-weight: 700; color: #1a1a1a; font-family: Arial, sans-serif;">Mel Andrea Rivero</div>
-                                      <div style="font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #006633; margin-top: 2px; font-family: Arial, sans-serif;">Willing / Nominated</div>
-                                    </td>
-                                  </tr>
-                                </table>
-                              </td>
-                            </tr>
-                          </table>
-                        </td>
-                      </tr>
-                    </table>
+                      <!-- Mel Andrea Rivero -->
+                      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                        <tr>
+                          <td style="background: #f5f5f5; border-left: 4px solid #006633; border-radius: 4px; padding: 12px 16px;">
+                            <table cellpadding="0" cellspacing="0" border="0">
+                              <tr>
+                                <td width="70" valign="middle">
+                                  <img src="${siteUrl}/images/logo.jpeg" alt="" style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover;" />
+                                </td>
+                                <td width="14"></td>
+                                <td valign="middle">
+                                  <div style="font-size: 16px; font-weight: 700; color: #1a1a1a; font-family: Arial, sans-serif;">Mel Andrea Rivero</div>
+                                  <div style="font-size: 13px; font-weight: 500; text-transform: uppercase; color: #006633; margin-top: 2px; font-family: Arial, sans-serif;">WILLING / NOMINATED</div>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+                    </div>
                     <p style="font-size: 13px; color: #666666; margin: 0 0 12px 0;">
                       Voting closes <strong style="color: #c0392b;">${round2DeadlineFormatted} at 11:59 PM PHT</strong>
                       <span style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; padding: 2px 8px; font-size: 11px; font-weight: 700; color: #856404; margin-left: 6px;">${round2DaysRemaining} day${round2DaysRemaining !== 1 ? 's' : ''} left</span>
