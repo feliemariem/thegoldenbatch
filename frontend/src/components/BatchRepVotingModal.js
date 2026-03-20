@@ -46,6 +46,7 @@ export default function BatchRepVotingModal() {
 
   const [loading, setLoading] = useState(true);
   const [hasVoted, setHasVoted] = useState(false);
+  const [shouldClose, setShouldClose] = useState(false);
   const [existingVote, setExistingVote] = useState(null);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [submitting, setSubmitting] = useState(false);
@@ -163,10 +164,20 @@ export default function BatchRepVotingModal() {
     }
   };
 
+  // Auto-close modal 3 seconds after successful vote
+  useEffect(() => {
+    if (hasVoted) {
+      const timer = setTimeout(() => {
+        setShouldClose(true);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [hasVoted]);
+
   // If not eligible or deadline passed or already voted, render nothing
   if (!hasAccess || loading) return null;
   if (isDeadlinePassed && !hasVoted) return null; // deadline passed and never voted — suppress
-  if (hasVoted) return null; // already voted — suppress permanently
+  if (shouldClose) return null; // close after 3-second success message
 
   return (
     // Backdrop does NOT close on click — voting is the only exit
