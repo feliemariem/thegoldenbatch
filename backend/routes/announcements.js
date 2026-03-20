@@ -293,7 +293,7 @@ router.post('/', authenticateToken, async (req, res) => {
                       Hi ${recipient.first_name || 'Batchmate'},
                     </p>
                     <p style="font-size: 15px; color: #444444; line-height: 1.6; margin: 0 0 20px 0;">
-                      In Round 1, the batch was asked to confirm the organizing committee's nominee for <strong>Alumni Association Representative</strong> or nominate someone else. A batchmate was nominated and confirmed their willingness to serve, which moves the position to a batch vote. This is your vote.
+                      In Round 1, the batch was asked to confirm the organizing committee's nominee for <strong>Alumni Association Representative</strong> or nominate someone else. A batchmate was nominated and confirmed their willingness to serve, which moves the position to a batch vote.
                     </p>
                     <div style="margin-bottom: 20px;">
                       <div style="font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #006633; margin-bottom: 12px; font-family: Arial, sans-serif;">
@@ -364,7 +364,7 @@ router.post('/', authenticateToken, async (req, res) => {
                 </div>
               </div>
             `;
-            emailText = `Hi ${recipient.first_name || 'Batchmate'},\n\nIn Round 1, the batch was asked to confirm the organizing committee's nominee for Alumni Association Representative or nominate someone else. A batchmate was nominated and confirmed their willingness to serve, which moves the position to a batch vote. This is your vote.\n\nCandidates:\n- Bianca Jison (Committee Nominee)\n- Mel Andrea Rivero (Willing / Nominated)\n\nVoting closes ${round2DeadlineFormatted} at 11:59 PM PHT (${round2DaysRemaining} days left).\nResponses are confidential. Votes are final.\n\nSubmit your vote: ${siteUrl}/login\nLog in and the voting modal will open automatically.\n\n- The Organizing Committee\n\nUSLS-IS 2003\nQuestions? Email us at uslsis.batch2003@gmail.com`;
+            emailText = `Hi ${recipient.first_name || 'Batchmate'},\n\nIn Round 1, the batch was asked to confirm the organizing committee's nominee for Alumni Association Representative or nominate someone else. A batchmate was nominated and confirmed their willingness to serve, which moves the position to a batch vote.\n\nCandidates:\n- Bianca Jison (Committee Nominee)\n- Mel Andrea Rivero (Willing / Nominated)\n\nVoting closes ${round2DeadlineFormatted} at 11:59 PM PHT (${round2DaysRemaining} days left).\nResponses are confidential. Votes are final.\n\nSubmit your vote: ${siteUrl}/login\nLog in and the voting modal will open automatically.\n\n- The Organizing Committee\n\nUSLS-IS 2003\nQuestions? Email us at uslsis.batch2003@gmail.com`;
           } else {
             // Standard announcement template
             emailSubject = 'New message in your Inbox';
