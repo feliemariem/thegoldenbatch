@@ -55,10 +55,7 @@ export default function BatchRepVoting() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [rolesOpen1, setRolesOpen1] = useState(false);
-  const [aboutOpenBianca, setAboutOpenBianca] = useState(false);
-  const [aboutOpenMel, setAboutOpenMel] = useState(false);
   const [rolesOpen2, setRolesOpen2] = useState(false);
-  const [aboutOpenFelie, setAboutOpenFelie] = useState(false);
   const [letterOpen, setLetterOpen] = useState(false);
   const [whyVotingOpen, setWhyVotingOpen] = useState(false);
   // true only if backend confirms master_list section is non-null and not 'Non-Graduate'
@@ -381,68 +378,34 @@ export default function BatchRepVoting() {
                 <div
                   onClick={() => setSelectedCandidate('Bianca Jison')}
                   className={`batchrep-confirm-option ${selectedCandidate === 'Bianca Jison' ? 'selected' : ''}`}
-                  style={{ flexDirection: 'column', alignItems: 'flex-start', padding: '16px', cursor: 'pointer', marginBottom: '12px' }}
+                  style={{ padding: '16px', cursor: 'pointer', marginBottom: '12px' }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', marginBottom: '8px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <input
-                        type="radio"
-                        name="candidate"
-                        checked={selectedCandidate === 'Bianca Jison'}
-                        onChange={() => setSelectedCandidate('Bianca Jison')}
-                        onClick={(e) => e.stopPropagation()}
-                      />
-                      <div className="batchrep-nominee-name voting" style={{ marginBottom: 0 }}>Bianca Jison</div>
-                    </div>
-                    <button
-                      className={`batchrep-roles-toggle ${aboutOpenBianca ? 'open' : ''}`}
-                      onClick={(e) => { e.stopPropagation(); setAboutOpenBianca(!aboutOpenBianca); }}
-                    >
-                      About <span className="arrow">▼</span>
-                    </button>
-                  </div>
-                  <div style={{ marginLeft: '30px' }}>
-                    <span className="batchrep-role-badge" style={{ marginBottom: '8px', display: 'inline-block' }}>Committee Nominee</span>
-                    {aboutOpenBianca && (
-                      <div className="batchrep-nominee-blurb" style={{ marginTop: '8px', marginBottom: 0 }}>
-                        Initiated the formation of the organizing committee in 2023 and has co-led its planning and operations since. Has served as the batch's local anchor, attending events, building connections on the ground, and acting as the direct line to the USLS Alumni Association, including attending meetings on behalf of the batch.
-                      </div>
-                    )}
-                  </div>
+                  <input
+                    type="radio"
+                    name="candidate"
+                    checked={selectedCandidate === 'Bianca Jison'}
+                    onChange={() => setSelectedCandidate('Bianca Jison')}
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                  <div className="batchrep-nominee-name voting" style={{ marginBottom: 0 }}>Bianca Jison</div>
+                  <span className="batchrep-role-badge">Committee Nominee</span>
                 </div>
 
                 {/* Mel Andrea Rivero */}
                 <div
                   onClick={() => setSelectedCandidate('Mel Andrea Rivero')}
                   className={`batchrep-confirm-option ${selectedCandidate === 'Mel Andrea Rivero' ? 'selected' : ''}`}
-                  style={{ flexDirection: 'column', alignItems: 'flex-start', padding: '16px', cursor: 'pointer', marginBottom: '0' }}
+                  style={{ padding: '16px', cursor: 'pointer', marginBottom: '0' }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', marginBottom: '8px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <input
-                        type="radio"
-                        name="candidate"
-                        checked={selectedCandidate === 'Mel Andrea Rivero'}
-                        onChange={() => setSelectedCandidate('Mel Andrea Rivero')}
-                        onClick={(e) => e.stopPropagation()}
-                      />
-                      <div className="batchrep-nominee-name voting" style={{ marginBottom: 0 }}>Mel Andrea Rivero</div>
-                    </div>
-                    <button
-                      className={`batchrep-roles-toggle ${aboutOpenMel ? 'open' : ''}`}
-                      onClick={(e) => { e.stopPropagation(); setAboutOpenMel(!aboutOpenMel); }}
-                    >
-                      About <span className="arrow">▼</span>
-                    </button>
-                  </div>
-                  <div style={{ marginLeft: '30px' }}>
-                    <span className="batchrep-role-badge" style={{ marginBottom: '8px', display: 'inline-block', color: 'var(--color-status-positive)', background: 'rgba(39, 174, 96, 0.15)' }}>Willing / Contested</span>
-                    {aboutOpenMel && (
-                      <div className="batchrep-nominee-blurb" style={{ marginTop: '8px', marginBottom: 0 }}>
-                        Confirmed willingness to serve as Alumni Association Representative.
-                      </div>
-                    )}
-                  </div>
+                  <input
+                    type="radio"
+                    name="candidate"
+                    checked={selectedCandidate === 'Mel Andrea Rivero'}
+                    onChange={() => setSelectedCandidate('Mel Andrea Rivero')}
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                  <div className="batchrep-nominee-name voting" style={{ marginBottom: 0 }}>Mel Andrea Rivero</div>
+                  <span className="batchrep-role-badge" style={{ color: 'var(--color-status-positive)', background: 'rgba(39, 174, 96, 0.15)' }}>Willing / Contested</span>
                 </div>
 
                 <div className="batchrep-deadline-notice" style={{ marginTop: '20px', marginBottom: '20px' }}>
@@ -504,36 +467,22 @@ export default function BatchRepVoting() {
               </div>
             </div>
             {/* Confirmed uncontested header */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{
-                  width: '40px', height: '40px', borderRadius: '50%',
-                  background: 'var(--color-status-positive)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: '#fff', fontSize: '1.25rem', flexShrink: '0'
-                }}>
-                  ✓
-                </div>
-                <div>
-                  <div className="batchrep-nominee-name voting">Felie Magbanua</div>
-                  <div style={{ fontSize: '0.8rem', color: 'var(--color-status-positive)', fontWeight: '600' }}>
-                    Confirmed
-                  </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+              <div style={{
+                width: '40px', height: '40px', borderRadius: '50%',
+                background: 'var(--color-status-positive)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: '#fff', fontSize: '1.25rem', flexShrink: '0'
+              }}>
+                ✓
+              </div>
+              <div>
+                <div className="batchrep-nominee-name voting">Felie Magbanua</div>
+                <div style={{ fontSize: '0.8rem', color: 'var(--color-status-positive)', fontWeight: '600' }}>
+                  Confirmed
                 </div>
               </div>
-              <button
-                className={`batchrep-roles-toggle ${aboutOpenFelie ? 'open' : ''}`}
-                onClick={() => setAboutOpenFelie(!aboutOpenFelie)}
-              >
-                About <span className="arrow">▼</span>
-              </button>
             </div>
-
-            {aboutOpenFelie && (
-              <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', lineHeight: '1.6', marginBottom: '12px', fontStyle: 'italic', marginLeft: '52px' }}>
-                Co-led the strategic planning and operations of the organizing committee since 2023. Formalized the committee structure, defined roles and scopes, onboarded additional members, and built the platform that keeps the batch's work organized, moving, and transparent.
-              </p>
-            )}
 
             <p style={{ fontSize: '0.9rem', color: 'var(--color-text-secondary)', lineHeight: '1.6', margin: 0 }}>
               The position is uncontested and therefore confirmed.
