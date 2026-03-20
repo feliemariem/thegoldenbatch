@@ -291,7 +291,7 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
       <div className="sa-email-body">
         <div className="sa-email-greeting">Hi [First Name],</div>
         <div className="sa-email-intro">
-          In Round 1, the batch was asked to confirm the organizing committee's nominee for <strong>Alumni Association Representative</strong>. A batchmate was nominated and confirmed their willingness to serve, which means it goes to a batch vote. This is your vote.
+          In Round 1, the batch was asked to confirm the organizing committee's nominee for <strong>Alumni Association Representative</strong> or nominate someone else. A batchmate was nominated and confirmed their willingness to serve, which moves the position to a batch vote. This is your vote.
         </div>
         {/* Candidate cards */}
         <div style={{ marginBottom: '16px' }}>
