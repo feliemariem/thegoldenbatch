@@ -328,8 +328,8 @@ export default function BatchRepVotingModal() {
             {hasVoted ? (
               <div className="batchrep-success">
                 <div className="batchrep-success-icon">✓</div>
-                <p style={{ marginBottom: '0', fontWeight: '600', color: 'var(--color-text-primary)' }}>
-                  Thank you for voting!
+                <p style={{ marginBottom: '0', fontWeight: '400', color: 'var(--color-text-primary)' }}>
+                  You voted for <strong>{existingVote?.candidate_name}</strong>. Thank you for voting!
                 </p>
               </div>
             ) : isDeadlinePassed ? (
