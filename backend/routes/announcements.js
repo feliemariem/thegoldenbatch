@@ -274,7 +274,7 @@ router.post('/', authenticateToken, async (req, res) => {
           } else if (template === 'round2voting') {
             // Round 2 Voting template — Bianca vs Mel, AA Rep only
             // user.id === 1 guard is enforced at the frontend — backend trusts announce permission
-            const round2Deadline = new Date('2026-03-30T23:59:00+08:00');
+            const round2Deadline = new Date('2026-03-29T23:59:00+08:00');
             const round2DaysRemaining = Math.max(0, Math.ceil((round2Deadline - new Date()) / (1000 * 60 * 60 * 24)));
             const round2DeadlineFormatted = round2Deadline.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 

@@ -984,8 +984,8 @@ export default function AdminDashboard() {
                     <span style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--color-hover)' }}>
                       🗳️ Round 2 · AA Rep Vote Results
                     </span>
-                    {/* Live badge — deadline March 30 2026 */}
-                    {new Date() < new Date('2026-03-30T23:59:00+08:00') && (
+                    {/* Live badge — deadline March 29 2026 */}
+                    {new Date() < new Date('2026-03-29T23:59:00+08:00') && (
                       <span style={{
                         fontSize: '0.7rem',
                         fontWeight: 600,

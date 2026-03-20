@@ -38,8 +38,8 @@ const checkPhaseAccess = (user, isGrad) => {
   }
 };
 
-// Voting deadline: March 30, 2026 at 11:59 PM PHT (UTC+8)
-const VOTING_DEADLINE = new Date('2026-03-30T23:59:00+08:00');
+// Voting deadline: March 29, 2026 at 11:59 PM PHT (UTC+8)
+const VOTING_DEADLINE = new Date('2026-03-29T23:59:00+08:00');
 
 export default function BatchRepVotingModal() {
   const { user } = useAuth();
@@ -238,7 +238,7 @@ export default function BatchRepVotingModal() {
 
           {isDeadlinePassed && (
             <div className="batchrep-deadline">
-              <strong>Voting has ended.</strong> The deadline was March 30, 2026 at 11:59 PM PHT.
+              <strong>Voting has ended.</strong> The deadline was March 29, 2026 at 11:59 PM PHT.
             </div>
           )}
 
@@ -327,7 +327,7 @@ export default function BatchRepVotingModal() {
               </div>
             ) : isDeadlinePassed ? (
               <div className="batchrep-message">
-                <p><strong>Voting is Now Closed.</strong> The deadline was March 30, 2026 at 11:59 PM PHT.</p>
+                <p><strong>Voting is Now Closed.</strong> The deadline was March 29, 2026 at 11:59 PM PHT.</p>
                 <p>Results will be announced by the organizing committee.</p>
               </div>
             ) : (
@@ -375,7 +375,7 @@ export default function BatchRepVotingModal() {
                     🔒 Responses are confidential
                   </div>
                   Votes are final and cannot be changed. Majority wins by deadline:{' '}
-                  <strong>March 30, 2026 · 11:59 PM PHT</strong>.
+                  <strong>March 29, 2026 · 11:59 PM PHT</strong>.
                 </div>
 
                 {error && (

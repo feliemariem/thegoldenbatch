@@ -25,7 +25,7 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
   const daysRemaining = Math.max(0, Math.ceil((batchRepDeadline - new Date()) / (1000 * 60 * 60 * 24)));
 
   // Round 2 voting deadline
-  const round2Deadline = new Date('2026-03-30T23:59:00+08:00');
+  const round2Deadline = new Date('2026-03-29T23:59:00+08:00');
   const round2DaysRemaining = Math.max(0, Math.ceil((round2Deadline - new Date()) / (1000 * 60 * 60 * 24)));
 
   // Close dropdown when clicking outside
