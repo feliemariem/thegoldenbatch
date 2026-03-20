@@ -74,7 +74,7 @@ export default function BatchRepVoting() {
   // Phase 1: BOTH checkPhaseAccess AND user?.id === 71 must pass
   // When advancing to Phase 2: remove `&& user?.id === 71`
   // When advancing to Phase 3: remove `&& user?.id === 71`, ensure isGrad is populated
-  const hasAccess = checkPhaseAccess(user, isGrad) && user?.id === 71;
+  const hasAccess = checkPhaseAccess(user, isGrad);
 
   // Check if deadline has passed
   const isDeadlinePassed = new Date() > VOTING_DEADLINE;
