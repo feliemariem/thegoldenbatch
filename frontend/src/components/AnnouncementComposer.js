@@ -294,22 +294,22 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
           In Round 1, the batch was asked to confirm the organizing committee's nominee for <strong>Alumni Association Representative</strong>. A batchmate was nominated and confirmed their willingness to serve, which means it goes to a batch vote. This is your vote.
         </div>
         {/* Candidate cards */}
-        <div className="sa-nominee-row" style={{ background: '#f0f9f4', border: '1px solid #c8e6d4', borderRadius: '8px', padding: '12px 14px', marginBottom: '10px' }}>
-          <div>
-            <div className="sa-nominee-role">Position 1 · Alumni Association Representative</div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
-              <div className="sa-nominee-avatar">BJ</div>
-              <div>
-                <div className="sa-nominee-name">Bianca Jison</div>
-                <div className="sa-nominee-role">Committee Nominee</div>
-              </div>
+        <div style={{ background: '#f0f9f4', border: '1px solid #c8e6d4', borderRadius: '8px', padding: '12px 14px', marginBottom: '10px' }}>
+          <div className="sa-nominee-role" style={{ color: '#006633' }}>Position 1 · Alumni Association Representative</div>
+          {/* Bianca */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '10px', background: '#ffffff', borderRadius: '6px', padding: '10px 12px' }}>
+            <img src="/images/logo.jpeg" alt="" style={{ width: '36px', height: '36px', borderRadius: '50%', objectFit: 'cover' }} />
+            <div>
+              <div style={{ fontSize: '14px', fontWeight: '700', color: '#1a1a1a' }}>Bianca Jison</div>
+              <div style={{ fontSize: '10px', fontWeight: '700', letterSpacing: '0.5px', textTransform: 'uppercase', color: '#006633' }}>Committee Nominee</div>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
-              <div className="sa-nominee-avatar" style={{ background: '#27ae60' }}>MR</div>
-              <div>
-                <div className="sa-nominee-name">Mel Andrea Rivero</div>
-                <div className="sa-nominee-role" style={{ color: '#27ae60' }}>Willing / Nominated</div>
-              </div>
+          </div>
+          {/* Mel */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '8px', background: '#ffffff', borderRadius: '6px', padding: '10px 12px' }}>
+            <img src="/images/logo.jpeg" alt="" style={{ width: '36px', height: '36px', borderRadius: '50%', objectFit: 'cover' }} />
+            <div>
+              <div style={{ fontSize: '14px', fontWeight: '700', color: '#1a1a1a' }}>Mel Andrea Rivero</div>
+              <div style={{ fontSize: '10px', fontWeight: '700', letterSpacing: '0.5px', textTransform: 'uppercase', color: '#006633' }}>Willing / Nominated</div>
             </div>
           </div>
         </div>

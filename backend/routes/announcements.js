@@ -303,29 +303,41 @@ router.post('/', authenticateToken, async (req, res) => {
                           </div>
 
                           <!-- Bianca Jison -->
-                          <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 12px;">
+                          <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 8px; background: #ffffff; border-radius: 6px;">
                             <tr>
-                              <td width="44" valign="middle">
-                                <div style="width: 40px; height: 40px; border-radius: 50%; background: #006633; color: #ffffff; font-size: 13px; font-weight: 700; text-align: center; line-height: 40px; font-family: Arial, sans-serif;">BJ</div>
-                              </td>
-                              <td width="12"></td>
-                              <td valign="middle">
-                                <div style="font-size: 15px; font-weight: 700; color: #1a1a1a; font-family: Arial, sans-serif;">Bianca Jison</div>
-                                <div style="font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #006633; margin-top: 2px; font-family: Arial, sans-serif;">Committee Nominee</div>
+                              <td style="padding: 10px 12px;">
+                                <table cellpadding="0" cellspacing="0" border="0">
+                                  <tr>
+                                    <td width="44" valign="middle">
+                                      <img src="${siteUrl}/images/logo.jpeg" alt="" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;" />
+                                    </td>
+                                    <td width="10"></td>
+                                    <td valign="middle">
+                                      <div style="font-size: 15px; font-weight: 700; color: #1a1a1a; font-family: Arial, sans-serif;">Bianca Jison</div>
+                                      <div style="font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #006633; margin-top: 2px; font-family: Arial, sans-serif;">Committee Nominee</div>
+                                    </td>
+                                  </tr>
+                                </table>
                               </td>
                             </tr>
                           </table>
 
                           <!-- Mel Andrea Rivero -->
-                          <table cellpadding="0" cellspacing="0" border="0">
+                          <table cellpadding="0" cellspacing="0" border="0" style="background: #ffffff; border-radius: 6px;">
                             <tr>
-                              <td width="44" valign="middle">
-                                <div style="width: 40px; height: 40px; border-radius: 50%; background: #27ae60; color: #ffffff; font-size: 13px; font-weight: 700; text-align: center; line-height: 40px; font-family: Arial, sans-serif;">MR</div>
-                              </td>
-                              <td width="12"></td>
-                              <td valign="middle">
-                                <div style="font-size: 15px; font-weight: 700; color: #1a1a1a; font-family: Arial, sans-serif;">Mel Andrea Rivero</div>
-                                <div style="font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #27ae60; margin-top: 2px; font-family: Arial, sans-serif;">Willing / Contested</div>
+                              <td style="padding: 10px 12px;">
+                                <table cellpadding="0" cellspacing="0" border="0">
+                                  <tr>
+                                    <td width="44" valign="middle">
+                                      <img src="${siteUrl}/images/logo.jpeg" alt="" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;" />
+                                    </td>
+                                    <td width="10"></td>
+                                    <td valign="middle">
+                                      <div style="font-size: 15px; font-weight: 700; color: #1a1a1a; font-family: Arial, sans-serif;">Mel Andrea Rivero</div>
+                                      <div style="font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #006633; margin-top: 2px; font-family: Arial, sans-serif;">Willing / Nominated</div>
+                                    </td>
+                                  </tr>
+                                </table>
                               </td>
                             </tr>
                           </table>
@@ -356,7 +368,7 @@ router.post('/', authenticateToken, async (req, res) => {
                 </div>
               </div>
             `;
-            emailText = `Hi ${recipient.first_name || 'Batchmate'},\n\nIn Round 1, the batch was asked to confirm the organizing committee's nominee for Alumni Association Representative. A batchmate was nominated and confirmed their willingness to serve, which means it goes to a batch vote. This is your vote.\n\nCandidates:\n- Bianca Jison (Committee Nominee)\n- Mel Andrea Rivero (Willing / Contested)\n\nVoting closes ${round2DeadlineFormatted} at 11:59 PM PHT (${round2DaysRemaining} days left).\nResponses are confidential. Votes are final.\n\nSubmit your vote: ${siteUrl}/login\nLog in and the voting modal will open automatically.\n\n- The Organizing Committee\n\nUSLS-IS 2003\nQuestions? Email us at uslsis.batch2003@gmail.com`;
+            emailText = `Hi ${recipient.first_name || 'Batchmate'},\n\nIn Round 1, the batch was asked to confirm the organizing committee's nominee for Alumni Association Representative. A batchmate was nominated and confirmed their willingness to serve, which means it goes to a batch vote. This is your vote.\n\nCandidates:\n- Bianca Jison (Committee Nominee)\n- Mel Andrea Rivero (Willing / Nominated)\n\nVoting closes ${round2DeadlineFormatted} at 11:59 PM PHT (${round2DaysRemaining} days left).\nResponses are confidential. Votes are final.\n\nSubmit your vote: ${siteUrl}/login\nLog in and the voting modal will open automatically.\n\n- The Organizing Committee\n\nUSLS-IS 2003\nQuestions? Email us at uslsis.batch2003@gmail.com`;
           } else {
             // Standard announcement template
             emailSubject = 'New message in your Inbox';
