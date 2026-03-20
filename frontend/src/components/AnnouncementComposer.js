@@ -298,7 +298,7 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
           <div style={{ fontSize: '10px', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', color: '#006633', marginBottom: '10px' }}>Position 1 · Alumni Association Representative</div>
           {/* Bianca */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px', background: '#f5f5f5', borderLeft: '4px solid #006633', borderRadius: '4px', padding: '12px 16px', marginBottom: '8px' }}>
-            <img src="/images/logo.jpeg" alt="" style={{ width: '56px', height: '56px', borderRadius: '50%', objectFit: 'cover' }} />
+            <img src="/images/logo.jpeg" alt="" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
             <div>
               <div style={{ fontSize: '16px', fontWeight: '700', color: '#1a1a1a' }}>Bianca Jison</div>
               <div style={{ fontSize: '13px', fontWeight: '500', textTransform: 'uppercase', color: '#006633', marginTop: '2px' }}>COMMITTEE NOMINEE</div>
@@ -306,7 +306,7 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
           </div>
           {/* Mel */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px', background: '#f5f5f5', borderLeft: '4px solid #006633', borderRadius: '4px', padding: '12px 16px' }}>
-            <img src="/images/logo.jpeg" alt="" style={{ width: '56px', height: '56px', borderRadius: '50%', objectFit: 'cover' }} />
+            <img src="/images/logo.jpeg" alt="" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
             <div>
               <div style={{ fontSize: '16px', fontWeight: '700', color: '#1a1a1a' }}>Mel Andrea Rivero</div>
               <div style={{ fontSize: '13px', fontWeight: '500', textTransform: 'uppercase', color: '#006633', marginTop: '2px' }}>WILLING / NOMINATED</div>
