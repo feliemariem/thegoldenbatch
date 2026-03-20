@@ -306,8 +306,8 @@ router.post('/', authenticateToken, async (req, res) => {
                           <td style="background: #f5f5f5; border-left: 4px solid #006633; border-radius: 4px; padding: 12px 16px;">
                             <table cellpadding="0" cellspacing="0" border="0">
                               <tr>
-                                <td width="70" valign="middle">
-                                  <img src="${siteUrl}/images/logo.jpeg" alt="" style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover;" />
+                                <td width="34" valign="middle">
+                                  <img src="${siteUrl}/images/logo.jpeg" alt="" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover;" />
                                 </td>
                                 <td width="14"></td>
                                 <td valign="middle">
@@ -326,8 +326,8 @@ router.post('/', authenticateToken, async (req, res) => {
                           <td style="background: #f5f5f5; border-left: 4px solid #006633; border-radius: 4px; padding: 12px 16px;">
                             <table cellpadding="0" cellspacing="0" border="0">
                               <tr>
-                                <td width="70" valign="middle">
-                                  <img src="${siteUrl}/images/logo.jpeg" alt="" style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover;" />
+                                <td width="34" valign="middle">
+                                  <img src="${siteUrl}/images/logo.jpeg" alt="" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover;" />
                                 </td>
                                 <td width="14"></td>
                                 <td valign="middle">
