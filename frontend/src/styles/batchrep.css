@@ -500,8 +500,9 @@
 
 .batchrep-candidate-info {
   display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
   flex: 1;
   min-width: 0;
 }
@@ -514,14 +515,6 @@
   white-space: nowrap;
 }
 
-/* Mobile: stack name and badge vertically */
-@media (max-width: 480px) {
-  .batchrep-candidate-info {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-  }
-}
 
 .batchrep-confirm-text {
   font-size: 0.95rem;
