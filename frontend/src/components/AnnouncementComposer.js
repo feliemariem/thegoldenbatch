@@ -17,7 +17,7 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
   // Super admin only features (id=1)
   const isSuperAdmin = user?.id === 1;
   const [template, setTemplate] = useState('standard');
-  const [testMode, setTestMode] = useState(false);
+  const [testMode, setTestMode] = useState(true);
   const [testEmail, setTestEmail] = useState('felie@fnrcore.com');
 
   // Batch rep deadline (hardcoded for now - can be fetched from DB later)
