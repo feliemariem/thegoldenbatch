@@ -488,6 +488,40 @@
   accent-color: #006633;
 }
 
+/* Candidate card layout - radio + info container */
+.batchrep-candidate-card {
+  align-items: flex-start;
+}
+
+.batchrep-candidate-card input[type="radio"] {
+  margin-top: 4px;
+}
+
+.batchrep-candidate-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.batchrep-candidate-info .batchrep-nominee-name {
+  margin-bottom: 0;
+}
+
+.batchrep-candidate-info .batchrep-role-badge {
+  white-space: nowrap;
+}
+
+/* Mobile: stack name and badge vertically */
+@media (max-width: 480px) {
+  .batchrep-candidate-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+}
+
 .batchrep-confirm-text {
   font-size: 0.95rem;
   font-weight: 600;

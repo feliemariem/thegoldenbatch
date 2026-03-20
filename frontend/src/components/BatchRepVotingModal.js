@@ -340,7 +340,7 @@ export default function BatchRepVotingModal() {
                 {/* Bianca Jison */}
                 <div
                   onClick={() => setSelectedCandidate('Bianca Jison')}
-                  className={`batchrep-confirm-option ${selectedCandidate === 'Bianca Jison' ? 'selected' : ''}`}
+                  className={`batchrep-confirm-option batchrep-candidate-card ${selectedCandidate === 'Bianca Jison' ? 'selected' : ''}`}
                   style={{ padding: '16px', cursor: 'pointer', marginBottom: '12px' }}
                 >
                   <input
@@ -350,14 +350,16 @@ export default function BatchRepVotingModal() {
                     onChange={() => setSelectedCandidate('Bianca Jison')}
                     onClick={(e) => e.stopPropagation()}
                   />
-                  <div className="batchrep-nominee-name voting" style={{ marginBottom: 0 }}>Bianca Jison</div>
-                  <span className="batchrep-role-badge">Committee Nominee</span>
+                  <div className="batchrep-candidate-info">
+                    <div className="batchrep-nominee-name voting">Bianca Jison</div>
+                    <span className="batchrep-role-badge">Committee Nominee</span>
+                  </div>
                 </div>
 
                 {/* Mel Andrea Rivero */}
                 <div
                   onClick={() => setSelectedCandidate('Mel Andrea Rivero')}
-                  className={`batchrep-confirm-option ${selectedCandidate === 'Mel Andrea Rivero' ? 'selected' : ''}`}
+                  className={`batchrep-confirm-option batchrep-candidate-card ${selectedCandidate === 'Mel Andrea Rivero' ? 'selected' : ''}`}
                   style={{ padding: '16px', cursor: 'pointer', marginBottom: '0' }}
                 >
                   <input
@@ -367,8 +369,10 @@ export default function BatchRepVotingModal() {
                     onChange={() => setSelectedCandidate('Mel Andrea Rivero')}
                     onClick={(e) => e.stopPropagation()}
                   />
-                  <div className="batchrep-nominee-name voting" style={{ marginBottom: 0 }}>Mel Andrea Rivero</div>
-                  <span className="batchrep-role-badge" style={{ color: 'var(--color-status-positive)', background: 'rgba(39, 174, 96, 0.15)' }}>Willing / Contested</span>
+                  <div className="batchrep-candidate-info">
+                    <div className="batchrep-nominee-name voting">Mel Andrea Rivero</div>
+                    <span className="batchrep-role-badge" style={{ color: 'var(--color-status-positive)', background: 'rgba(39, 174, 96, 0.15)' }}>Willing / Contested</span>
+                  </div>
                 </div>
 
                 <div className="batchrep-deadline-notice" style={{ marginTop: '20px', marginBottom: '20px' }}>
