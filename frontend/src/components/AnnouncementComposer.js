@@ -308,7 +308,7 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
               <div className="sa-nominee-avatar" style={{ background: '#27ae60' }}>MR</div>
               <div>
                 <div className="sa-nominee-name">Mel Andrea Rivero</div>
-                <div className="sa-nominee-role" style={{ color: '#27ae60' }}>Willing / Contested</div>
+                <div className="sa-nominee-role" style={{ color: '#27ae60' }}>Willing / Nominated</div>
               </div>
             </div>
           </div>
@@ -449,7 +449,7 @@ export default function AnnouncementComposer({ registeredCount = 0, goingCount =
           <div className="sa-nominee-row">
             <div className="sa-nominee-avatar" style={{ background: '#27ae60' }}>MR</div>
             <div>
-              <div className="sa-nominee-role" style={{ color: '#27ae60' }}>Willing / Contested</div>
+              <div className="sa-nominee-role" style={{ color: '#27ae60' }}>Willing / Nominated</div>
               <div className="sa-nominee-name">Mel Andrea Rivero</div>
             </div>
           </div>
