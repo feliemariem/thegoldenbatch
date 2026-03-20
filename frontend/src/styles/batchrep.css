@@ -663,6 +663,11 @@
   letter-spacing: 0.5px;
 }
 
+/* Voting section wrapper */
+.batchrep-voting-section {
+  padding: 20px;
+}
+
 /* Mobile adjustments */
 @media (max-width: 600px) {
   .batchrep-section-nav {
@@ -678,7 +683,7 @@
   }
 
   .batchrep-nominee-body {
-    padding: 20px 16px;
+    padding: 20px 12px;
   }
 
   .batchrep-response-body {
@@ -691,6 +696,14 @@
 
   .batchrep-collapsible-body {
     padding: 0 16px 16px;
+  }
+
+  .batchrep-voting-section {
+    padding: 16px 10px;
+  }
+
+  .batchrep-candidate-card {
+    padding: 14px !important;
   }
 }
 

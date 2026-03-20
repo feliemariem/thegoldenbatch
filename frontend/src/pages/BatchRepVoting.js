@@ -351,7 +351,7 @@ export default function BatchRepVoting() {
               </div>
             </div>
 
-            <div style={{ padding: '20px' }}>
+            <div className="batchrep-voting-section">
             <p style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginBottom: '16px' }}>
               Two candidates — select one to cast your vote
             </p>
