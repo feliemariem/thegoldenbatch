@@ -47,6 +47,7 @@ export default function BatchRepVotingModal() {
   const [loading, setLoading] = useState(true);
   const [hasVoted, setHasVoted] = useState(false);
   const [shouldClose, setShouldClose] = useState(false);
+  const [justSubmitted, setJustSubmitted] = useState(false);
   const [existingVote, setExistingVote] = useState(null);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [submitting, setSubmitting] = useState(false);
@@ -151,6 +152,7 @@ export default function BatchRepVotingModal() {
 
       if (res.ok) {
         setHasVoted(true);
+        setJustSubmitted(true);
         setExistingVote({ candidate_name: selectedCandidate });
       } else {
         const data = await res.json();
@@ -164,20 +166,23 @@ export default function BatchRepVotingModal() {
     }
   };
 
-  // Auto-close modal 3 seconds after successful vote
+  // Auto-close modal 3 seconds after fresh submission only
   useEffect(() => {
-    if (hasVoted) {
+    if (justSubmitted && hasVoted) {
       const timer = setTimeout(() => {
         setShouldClose(true);
       }, 3000);
       return () => clearTimeout(timer);
     }
-  }, [hasVoted]);
+  }, [justSubmitted, hasVoted]);
 
   // If not eligible or deadline passed or already voted, render nothing
   if (!hasAccess || loading) return null;
   if (isDeadlinePassed && !hasVoted) return null; // deadline passed and never voted — suppress
-  if (shouldClose) return null; // close after 3-second success message
+  // Close immediately if already voted before this session
+  if (hasVoted && !justSubmitted) return null;
+  // Close after 3-second display if just submitted
+  if (shouldClose) return null;
 
   return (
     // Backdrop does NOT close on click — voting is the only exit
