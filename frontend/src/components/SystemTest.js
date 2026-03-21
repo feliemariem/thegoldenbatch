@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { apiGet } from '../api';
+import { apiGet, apiPost } from '../api';
 import PreviewInbox from './PreviewInbox';
 import PreviewNonGradProfile from './PreviewNonGradProfile';
 import UserProfilePreview from './UserProfilePreview';
@@ -164,21 +164,16 @@ export default function SystemTest({ batchRepResponseStats }) {
         });
       }
 
-      const res = await fetch('/api/admin/engagement-summary', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          context: 'vote-activity',
-          r1Daily: voteActivityData.r1Daily,
-          r2Daily: voteActivityData.r2Daily,
-          r1Hourly: voteActivityData.r1Hourly,
-          r2Hourly: voteActivityData.r2Hourly,
-          geoData: voteActivityData.geoData,
-          r1Turnout,
-          r2Turnout,
-          sectionStats
-        })
+      const res = await apiPost('/api/admin/engagement-summary', {
+        context: 'vote-activity',
+        r1Daily: voteActivityData.r1Daily,
+        r2Daily: voteActivityData.r2Daily,
+        r1Hourly: voteActivityData.r1Hourly,
+        r2Hourly: voteActivityData.r2Hourly,
+        geoData: voteActivityData.geoData,
+        r1Turnout,
+        r2Turnout,
+        sectionStats
       });
 
       if (res.ok) {
