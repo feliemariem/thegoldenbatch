@@ -432,53 +432,33 @@ router.post('/engagement-summary', authenticateAdmin, async (req, res) => {
       return res.status(403).json({ error: 'Access denied' });
     }
 
-    const { context, ...payload } = req.body;
-
-    if (!process.env.OPENAI_API_KEY) {
-      return res.status(500).json({ error: 'OpenAI API key not configured' });
-    }
+    const { context, r1Daily, r2Daily, r1Hourly, r2Hourly, geoData, r1Turnout, r2Turnout, sectionStats } = req.body;
 
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-    let systemPrompt = '';
-    let userPrompt = '';
+    const userPrompt = `
+Round 1 turnout: ${r1Turnout}
+Round 2 turnout: ${r2Turnout}
+Section stats: ${JSON.stringify(sectionStats)}
+Daily R1: ${JSON.stringify(r1Daily)}
+Daily R2: ${JSON.stringify(r2Daily)}
+Hourly R1 (local time): ${JSON.stringify(r1Hourly)}
+Hourly R2 (local time): ${JSON.stringify(r2Hourly)}
+Geographic breakdown: ${JSON.stringify(geoData)}
 
-    if (context === 'vote-activity') {
-      systemPrompt = 'You are a concise analyst for a Filipino alumni batch committee. 2-3 sentences max. No filler. Surface what\'s genuinely interesting about voting patterns, timing, and geography.';
-
-      const { r1Daily, r2Daily, r1Hourly, r2Hourly, geoData, r1Turnout, r2Turnout, sectionStats } = payload;
-
-      userPrompt = `Analyze this voting activity data:
-
-Round 1 Turnout: ${r1Turnout || 'N/A'}
-Round 2 Turnout: ${r2Turnout || 'N/A'}
-
-Daily votes (R1): ${JSON.stringify(r1Daily || [])}
-Daily votes (R2): ${JSON.stringify(r2Daily || [])}
-
-Hourly distribution (R1, local time): ${JSON.stringify(r1Hourly || [])}
-Hourly distribution (R2, local time): ${JSON.stringify(r2Hourly || [])}
-
-Geographic breakdown: ${JSON.stringify(geoData || [])}
-
-Section engagement: ${JSON.stringify(sectionStats || [])}`;
-    } else {
-      return res.status(400).json({ error: 'Unknown context' });
-    }
+Identify which sections are most/least engaged, what the overlap pattern suggests, and any notable timing or geographic patterns.
+    `;
 
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
+      max_tokens: 150,
       messages: [
-        { role: 'system', content: systemPrompt },
+        { role: 'system', content: 'You are a concise analyst for a Filipino alumni batch committee. Write 2-3 sentences max. No filler. Surface what is genuinely interesting about voting patterns, timing, and geography.' },
         { role: 'user', content: userPrompt }
-      ],
-      max_tokens: 200,
-      temperature: 0.7
+      ]
     });
 
-    const summary = completion.choices[0]?.message?.content || 'Unable to generate summary.';
-
-    res.json({ summary });
+    res.json({ summary: completion.choices[0].message.content });
   } catch (err) {
     console.error('Error generating engagement summary:', err);
     res.status(500).json({ error: 'Failed to generate summary' });
