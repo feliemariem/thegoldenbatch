@@ -397,14 +397,9 @@ router.patch('/status', authenticateAdmin, async (req, res) => {
 });
 
 // GET /api/batch-rep/round2/status
-// Returns round 2 voting status for the current user (restricted to user.id === 71)
+// Returns round 2 voting status for the current user
 router.get('/round2/status', authenticateToken, async (req, res) => {
   try {
-    // Guard: only user.id === 71 can access
-    if (req.user.id !== 71) {
-      return res.status(403).json({ error: 'Access denied' });
-    }
-
     // Check if user has voted
     const voteResult = await db.query(
       'SELECT candidate_name, created_at FROM batch_rep_round2_votes WHERE voter_id = $1',
@@ -429,14 +424,9 @@ router.get('/round2/status', authenticateToken, async (req, res) => {
 });
 
 // POST /api/batch-rep/round2/vote
-// Submit round 2 vote (restricted to user.id === 71)
+// Submit round 2 vote
 router.post('/round2/vote', authenticateToken, async (req, res) => {
   try {
-    // Guard: only user.id === 71 can vote
-    if (req.user.id !== 71) {
-      return res.status(403).json({ error: 'Access denied' });
-    }
-
     const { candidate_name } = req.body;
 
     // Validate candidate_name
