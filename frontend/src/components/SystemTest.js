@@ -792,40 +792,198 @@ export default function SystemTest({ batchRepResponseStats }) {
                   }}>
                     Section Engagement
                   </h4>
-                  <div style={{ overflowX: 'auto' }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
-                      <thead>
-                        <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-                          <th style={{ textAlign: 'left', padding: '10px 8px', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Section</th>
-                          <th style={{ textAlign: 'center', padding: '10px 8px', color: 'rgba(59, 139, 212, 0.8)', fontWeight: 600 }}>R1</th>
-                          <th style={{ textAlign: 'center', padding: '10px 8px', color: 'rgba(186, 117, 23, 0.8)', fontWeight: 600 }}>R2</th>
-                          <th style={{ textAlign: 'center', padding: '10px 8px', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Overlap</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {['11A', '11B', '11C', '11D', '11E'].map(section => {
-                          const r1 = batchRepResponseStats?.sections?.find(s => s.section === section);
-                          const r2 = round2Data?.votesBySection?.find(s => s.section === section);
-                          const r1Pct = r1 && r1.total > 0 ? Math.round((r1.responded / r1.total) * 100) : 0;
-                          const r2Pct = r2 && parseInt(r2.total) > 0 ? Math.round((parseInt(r2.voted) / parseInt(r2.total)) * 100) : 0;
-                          return (
-                            <tr key={section} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                              <td style={{ padding: '10px 8px', color: 'var(--color-text-primary)', fontWeight: 600 }}>{section}</td>
-                              <td style={{ padding: '10px 8px', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
-                                {r1 ? `${r1.responded}/${r1.total}` : '—'} <span style={{ color: 'rgba(59, 139, 212, 0.8)' }}>({r1Pct}%)</span>
-                              </td>
-                              <td style={{ padding: '10px 8px', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
-                                {r2 ? `${r2.voted}/${r2.total}` : '—'} <span style={{ color: 'rgba(186, 117, 23, 0.8)' }}>({r2Pct}%)</span>
-                              </td>
-                              <td style={{ padding: '10px 8px', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
-                                {r1Pct > 0 && r2Pct > 0 ? `${Math.round((r2Pct / r1Pct) * 100)}%` : '—'}
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
+                  {(() => {
+                    const totalR1Responded = batchRepResponseStats?.totalResponded || 0;
+                    const totalR1Grads = batchRepResponseStats?.registeredGradsCount || 0;
+                    const totalR2VotesCast = (round2Data?.votesBySection || []).reduce((sum, r) => sum + parseInt(r.voted), 0);
+                    const totalR2Grads = round2Data?.totalRegisteredGrads || 0;
+
+                    const CellContent = ({ value, total, shareTotal, color }) => {
+                      const pct = total > 0 ? Math.round((value / total) * 100) : 0;
+                      const sharePct = shareTotal > 0 ? Math.round((value / shareTotal) * 100) : 0;
+                      return (
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
+                          <div style={{ fontSize: '1rem', fontWeight: 700, color }}>{pct}%</div>
+                          <div style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)' }}>{value} of {total}</div>
+                          <div style={{ width: '100%', maxWidth: '60px', height: '3px', background: 'rgba(255,255,255,0.1)', borderRadius: '2px', overflow: 'hidden' }}>
+                            <div style={{ height: '100%', width: `${Math.min(pct, 100)}%`, background: color, borderRadius: '2px' }} />
+                          </div>
+                        </div>
+                      );
+                    };
+
+                    const ShareCell = ({ value, shareTotal, color }) => {
+                      const sharePct = shareTotal > 0 ? Math.round((value / shareTotal) * 100) : 0;
+                      return (
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
+                          <div style={{ fontSize: '1rem', fontWeight: 700, color }}>{sharePct}%</div>
+                          <div style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)' }}>{value} of {shareTotal}</div>
+                          <div style={{ width: '100%', maxWidth: '60px', height: '3px', background: 'rgba(255,255,255,0.1)', borderRadius: '2px', overflow: 'hidden' }}>
+                            <div style={{ height: '100%', width: `${Math.min(sharePct, 100)}%`, background: color, borderRadius: '2px' }} />
+                          </div>
+                        </div>
+                      );
+                    };
+
+                    return (
+                      <>
+                        <div style={{ overflowX: 'auto' }}>
+                          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
+                            <thead>
+                              <tr>
+                                <th style={{ padding: '8px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}></th>
+                                <th colSpan={2} style={{ padding: '8px', textAlign: 'center', color: '#3B8BD4', fontWeight: 600, fontSize: '0.75rem', borderBottom: '1px solid rgba(59, 139, 212, 0.3)' }}>
+                                  Round 1 · Confirm/Nominate
+                                </th>
+                                <th colSpan={2} style={{ padding: '8px', textAlign: 'center', color: '#BA7517', fontWeight: 600, fontSize: '0.75rem', borderBottom: '1px solid rgba(186, 117, 23, 0.3)' }}>
+                                  Round 2 · AA Rep Vote
+                                </th>
+                              </tr>
+                              <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+                                <th style={{ textAlign: 'left', padding: '8px', color: 'var(--color-text-secondary)', fontWeight: 600, fontSize: '0.7rem' }}>Section</th>
+                                <th style={{ textAlign: 'center', padding: '8px', color: 'var(--color-text-secondary)', fontWeight: 500, fontSize: '0.7rem' }}>Turnout rate</th>
+                                <th style={{ textAlign: 'center', padding: '8px', color: 'var(--color-text-secondary)', fontWeight: 500, fontSize: '0.7rem' }}>Share of votes</th>
+                                <th style={{ textAlign: 'center', padding: '8px', color: 'var(--color-text-secondary)', fontWeight: 500, fontSize: '0.7rem' }}>Turnout rate</th>
+                                <th style={{ textAlign: 'center', padding: '8px', color: 'var(--color-text-secondary)', fontWeight: 500, fontSize: '0.7rem' }}>Share of votes</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {['11A', '11B', '11C', '11D', '11E'].map(section => {
+                                const r1 = batchRepResponseStats?.sections?.find(s => s.section === section);
+                                const r2 = round2Data?.votesBySection?.find(s => s.section === section);
+                                const r1Responded = r1?.responded || 0;
+                                const r1Total = r1?.total || 0;
+                                const r2Voted = r2 ? parseInt(r2.voted) : 0;
+                                const r2Total = r2 ? parseInt(r2.total) : 0;
+                                return (
+                                  <tr key={section} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                                    <td style={{ padding: '12px 8px', color: 'var(--color-text-primary)', fontWeight: 600 }}>{section}</td>
+                                    <td style={{ padding: '12px 8px', textAlign: 'center' }}>
+                                      <CellContent value={r1Responded} total={r1Total} shareTotal={totalR1Responded} color="#3B8BD4" />
+                                    </td>
+                                    <td style={{ padding: '12px 8px', textAlign: 'center' }}>
+                                      <ShareCell value={r1Responded} shareTotal={totalR1Responded} color="#3B8BD4" />
+                                    </td>
+                                    <td style={{ padding: '12px 8px', textAlign: 'center' }}>
+                                      <CellContent value={r2Voted} total={r2Total} shareTotal={totalR2VotesCast} color="#BA7517" />
+                                    </td>
+                                    <td style={{ padding: '12px 8px', textAlign: 'center' }}>
+                                      <ShareCell value={r2Voted} shareTotal={totalR2VotesCast} color="#BA7517" />
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                            <tfoot>
+                              <tr style={{ borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                                <td style={{ padding: '12px 8px', color: 'var(--color-text-primary)', fontWeight: 600 }}>Total</td>
+                                <td style={{ padding: '12px 8px', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
+                                    <div style={{ fontSize: '1rem', fontWeight: 700, color: '#3B8BD4' }}>
+                                      {totalR1Grads > 0 ? Math.round((totalR1Responded / totalR1Grads) * 100) : 0}%
+                                    </div>
+                                    <div style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)' }}>{totalR1Responded} of {totalR1Grads}</div>
+                                  </div>
+                                </td>
+                                <td style={{ padding: '12px 8px', textAlign: 'center' }}>
+                                  <div style={{ fontSize: '1rem', fontWeight: 700, color: '#3B8BD4' }}>100%</div>
+                                </td>
+                                <td style={{ padding: '12px 8px', textAlign: 'center' }}>
+                                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
+                                    <div style={{ fontSize: '1rem', fontWeight: 700, color: '#BA7517' }}>
+                                      {totalR2Grads > 0 ? Math.round((totalR2VotesCast / totalR2Grads) * 100) : 0}%
+                                    </div>
+                                    <div style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)' }}>{totalR2VotesCast} of {totalR2Grads}</div>
+                                  </div>
+                                </td>
+                                <td style={{ padding: '12px 8px', textAlign: 'center' }}>
+                                  <div style={{ fontSize: '1rem', fontWeight: 700, color: '#BA7517' }}>100%</div>
+                                </td>
+                              </tr>
+                            </tfoot>
+                          </table>
+                        </div>
+
+                        {/* Legend */}
+                        <div style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          marginTop: '12px',
+                          padding: '8px 0',
+                          flexWrap: 'wrap',
+                          gap: '8px'
+                        }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#3B8BD4' }} />
+                              <span style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)' }}>Round 1</span>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#BA7517' }} />
+                              <span style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)' }}>Round 2</span>
+                            </div>
+                          </div>
+                          <div style={{ fontSize: '0.65rem', color: 'var(--color-text-secondary)', fontStyle: 'italic' }}>
+                            Turnout rate = voted / registered grads in section · Share = section votes / all votes cast
+                          </div>
+                        </div>
+
+                        {/* Overlap pills */}
+                        {round2Data && (
+                          <div style={{
+                            display: 'flex',
+                            gap: '12px',
+                            marginTop: '12px',
+                            flexWrap: 'wrap'
+                          }}>
+                            <div style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                              padding: '6px 12px',
+                              background: 'rgba(59, 139, 212, 0.1)',
+                              border: '1px solid rgba(59, 139, 212, 0.2)',
+                              borderRadius: '16px'
+                            }}>
+                              <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#3B8BD4' }} />
+                              <span style={{ fontSize: '0.75rem', color: 'var(--color-text-primary)' }}>
+                                {round2Data.repeatVoters || 0} repeat voters — both rounds
+                              </span>
+                            </div>
+                            <div style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                              padding: '6px 12px',
+                              background: 'rgba(186, 117, 23, 0.1)',
+                              border: '1px solid rgba(186, 117, 23, 0.2)',
+                              borderRadius: '16px'
+                            }}>
+                              <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#BA7517' }} />
+                              <span style={{ fontSize: '0.75rem', color: 'var(--color-text-primary)' }}>
+                                {round2Data.newVoters || 0} new voters — Round 2 only
+                              </span>
+                            </div>
+                            <div style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                              padding: '6px 12px',
+                              background: 'rgba(128, 128, 128, 0.1)',
+                              border: '1px solid rgba(128, 128, 128, 0.2)',
+                              borderRadius: '16px'
+                            }}>
+                              <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#808080' }} />
+                              <span style={{ fontSize: '0.75rem', color: 'var(--color-text-primary)' }}>
+                                {totalR1Responded - (round2Data.repeatVoters || 0)} dropped off — Round 1 only
+                              </span>
+                            </div>
+                          </div>
+                        )}
+                      </>
+                    );
+                  })()}
                 </div>
               )}
 

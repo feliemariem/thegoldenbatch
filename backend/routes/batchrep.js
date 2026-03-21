@@ -529,7 +529,18 @@ router.get('/round2/results', authenticateToken, async (req, res) => {
     );
     const voterList = voterResult.rows;
 
-    res.json({ counts, total, totalRegisteredGrads, votesBySection, voterList });
+    // Repeat voters (voted in both rounds) and new voters (round 2 only)
+    const overlapResult = await db.query(`
+      SELECT
+        COUNT(*) FILTER (WHERE r1.voter_id IS NOT NULL AND r2.voter_id IS NOT NULL) as repeat_voters,
+        COUNT(*) FILTER (WHERE r1.voter_id IS NULL AND r2.voter_id IS NOT NULL) as new_voters
+      FROM (SELECT DISTINCT voter_id FROM batch_rep_round2_votes) r2
+      LEFT JOIN (SELECT DISTINCT voter_id FROM batch_rep_submissions) r1 ON r1.voter_id = r2.voter_id
+    `);
+    const repeatVoters = parseInt(overlapResult.rows[0].repeat_voters) || 0;
+    const newVoters = parseInt(overlapResult.rows[0].new_voters) || 0;
+
+    res.json({ counts, total, totalRegisteredGrads, votesBySection, voterList, repeatVoters, newVoters });
   } catch (err) {
     console.error('Error fetching round2 results:', err);
     res.status(500).json({ error: 'Failed to fetch results' });
