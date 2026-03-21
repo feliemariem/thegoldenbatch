@@ -364,6 +364,23 @@ export default function Committee() {
     );
   }
 
+  if (!user || (user.id !== 1 && user.id !== 71)) {
+    return (
+      <div className="container admin-container">
+        <Navbar />
+        <div className="card">
+          <main className="profile-main committee-main">
+            <section className="committee-header">
+              <h2>The Committee</h2>
+              <p>We're currently working on the committee structure and alignment. Check back soon.</p>
+            </section>
+          </main>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="container admin-container">
       <Navbar />
