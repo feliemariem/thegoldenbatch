@@ -25,6 +25,11 @@ export default function SystemTest({ batchRepResponseStats }) {
   const [batchRepVisibleRows, setBatchRepVisibleRows] = useState(10);
   const [round2Data, setRound2Data] = useState(null);
   const [round2Loading, setRound2Loading] = useState(false);
+  const [voteActivityData, setVoteActivityData] = useState(null);
+  const [voteActivityLoading, setVoteActivityLoading] = useState(false);
+  const [aiAnalysis, setAiAnalysis] = useState('');
+  const [aiAnalysisLoading, setAiAnalysisLoading] = useState(false);
+  const [aiPanelOpen, setAiPanelOpen] = useState(false);
 
   const features = [
     { id: 'inbox-preview', label: 'User Inbox Preview', description: 'Preview what any user sees in their inbox' },
@@ -34,7 +39,8 @@ export default function SystemTest({ batchRepResponseStats }) {
     { id: 'name-changes', label: 'Name Change Requests', description: 'Review and approve name change requests' },
     ...(user?.id === 1 ? [
       { id: 'batch-rep-full', label: 'Batch Rep Full View', description: 'View all batch rep submissions' },
-      { id: 'round2-election', label: 'Round 2 Election', description: 'Individual votes and section breakdown' }
+      { id: 'round2-election', label: 'Round 2 Election', description: 'Individual votes and section breakdown' },
+      { id: 'vote-activity', label: 'Vote Activity', description: 'Voting patterns and geographic breakdown' }
     ] : []),
   ];
 
@@ -79,6 +85,113 @@ export default function SystemTest({ batchRepResponseStats }) {
       fetchRound2Data();
     }
   }, [user?.id, activeFeature]);
+
+  useEffect(() => {
+    const fetchVoteActivityData = async () => {
+      setVoteActivityLoading(true);
+      try {
+        const res = await apiGet('/api/batch-rep/vote-activity');
+        if (res.ok) {
+          const data = await res.json();
+          setVoteActivityData(data);
+        }
+      } catch (err) {
+        console.error('Error fetching vote activity data:', err);
+      } finally {
+        setVoteActivityLoading(false);
+      }
+    };
+
+    // Also fetch round2 data if not already fetched (needed for turnout calculation)
+    const fetchRound2IfNeeded = async () => {
+      if (!round2Data) {
+        try {
+          const res = await apiGet('/api/batch-rep/round2/results');
+          if (res.ok) {
+            const data = await res.json();
+            setRound2Data(data);
+          }
+        } catch (err) {
+          console.error('Error fetching round2 data for vote activity:', err);
+        }
+      }
+    };
+
+    if (user?.id === 1 && activeFeature === 'vote-activity') {
+      fetchVoteActivityData();
+      fetchRound2IfNeeded();
+    }
+  }, [user?.id, activeFeature, round2Data]);
+
+  // Load Chart.js from CDN
+  useEffect(() => {
+    if (activeFeature === 'vote-activity' && !window.Chart) {
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js';
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  }, [activeFeature]);
+
+  const fetchAiAnalysis = async () => {
+    if (!voteActivityData) return;
+    setAiAnalysisLoading(true);
+    try {
+      const r1Turnout = batchRepResponseStats
+        ? `${batchRepResponseStats.totalResponded}/${batchRepResponseStats.registeredGradsCount} (${Math.round((batchRepResponseStats.totalResponded / batchRepResponseStats.registeredGradsCount) * 100)}%)`
+        : null;
+
+      const r2TotalVotes = voteActivityData.r2Daily?.reduce((sum, d) => sum + d.count, 0) || 0;
+      const r2Turnout = round2Data?.totalRegisteredGrads
+        ? `${r2TotalVotes}/${round2Data.totalRegisteredGrads} (${Math.round((r2TotalVotes / round2Data.totalRegisteredGrads) * 100)}%)`
+        : null;
+
+      const sectionStats = [];
+      if (batchRepResponseStats?.sections) {
+        batchRepResponseStats.sections.forEach(s => {
+          sectionStats.push({ section: s.section, r1Responded: s.responded, r1Total: s.total });
+        });
+      }
+      if (round2Data?.votesBySection) {
+        round2Data.votesBySection.forEach(s => {
+          const existing = sectionStats.find(x => x.section === s.section);
+          if (existing) {
+            existing.r2Voted = parseInt(s.voted);
+            existing.r2Total = parseInt(s.total);
+          } else {
+            sectionStats.push({ section: s.section, r2Voted: parseInt(s.voted), r2Total: parseInt(s.total) });
+          }
+        });
+      }
+
+      const res = await fetch('/api/admin/engagement-summary', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          context: 'vote-activity',
+          r1Daily: voteActivityData.r1Daily,
+          r2Daily: voteActivityData.r2Daily,
+          r1Hourly: voteActivityData.r1Hourly,
+          r2Hourly: voteActivityData.r2Hourly,
+          geoData: voteActivityData.geoData,
+          r1Turnout,
+          r2Turnout,
+          sectionStats
+        })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setAiAnalysis(data.summary);
+      }
+    } catch (err) {
+      console.error('Error fetching AI analysis:', err);
+      setAiAnalysis('Failed to generate analysis.');
+    } finally {
+      setAiAnalysisLoading(false);
+    }
+  };
 
   const formatResponseTime = (timestamp) => {
     if (!timestamp) return '—';
@@ -595,6 +708,323 @@ export default function SystemTest({ batchRepResponseStats }) {
                     </p>
                   )}
                 </div>
+              </div>
+            </>
+          )}
+        </div>
+      )}
+
+      {activeFeature === 'vote-activity' && user?.id === 1 && (
+        <div style={{
+          padding: '20px',
+          background: 'var(--color-bg-card, rgba(255,255,255,0.03))',
+          border: '1px solid rgba(255,255,255,0.1)',
+          borderRadius: '12px'
+        }}>
+          <h3 style={{ color: 'var(--color-text-primary)', margin: '0 0 20px 0', fontSize: '1.1rem' }}>
+            Vote Activity
+          </h3>
+
+          {voteActivityLoading ? (
+            <p style={{ color: 'var(--color-text-secondary)' }}>Loading...</p>
+          ) : !voteActivityData ? (
+            <p style={{ color: 'var(--color-text-secondary)' }}>No data yet.</p>
+          ) : (
+            <>
+              {/* 1. Summary pills */}
+              <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', flexWrap: 'wrap' }}>
+                {batchRepResponseStats && (
+                  <div style={{
+                    padding: '12px 20px',
+                    background: 'rgba(59, 139, 212, 0.1)',
+                    border: '1px solid rgba(59, 139, 212, 0.3)',
+                    borderRadius: '8px',
+                    flex: '1 1 200px'
+                  }}>
+                    <div style={{ fontSize: '0.7rem', fontWeight: 600, color: 'rgba(59, 139, 212, 0.8)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>
+                      Round 1 Turnout
+                    </div>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>
+                      {Math.round((batchRepResponseStats.totalResponded / batchRepResponseStats.registeredGradsCount) * 100)}%
+                      <span style={{ fontSize: '0.8rem', fontWeight: 400, color: 'var(--color-text-secondary)', marginLeft: '8px' }}>
+                        ({batchRepResponseStats.totalResponded}/{batchRepResponseStats.registeredGradsCount})
+                      </span>
+                    </div>
+                  </div>
+                )}
+                {round2Data && (
+                  <div style={{
+                    padding: '12px 20px',
+                    background: 'rgba(186, 117, 23, 0.1)',
+                    border: '1px solid rgba(186, 117, 23, 0.3)',
+                    borderRadius: '8px',
+                    flex: '1 1 200px'
+                  }}>
+                    <div style={{ fontSize: '0.7rem', fontWeight: 600, color: 'rgba(186, 117, 23, 0.8)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '4px' }}>
+                      Round 2 Turnout
+                    </div>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>
+                      {(() => {
+                        const r2Total = voteActivityData.r2Daily?.reduce((sum, d) => sum + d.count, 0) || 0;
+                        const pct = round2Data.totalRegisteredGrads > 0 ? Math.round((r2Total / round2Data.totalRegisteredGrads) * 100) : 0;
+                        return (
+                          <>
+                            {pct}%
+                            <span style={{ fontSize: '0.8rem', fontWeight: 400, color: 'var(--color-text-secondary)', marginLeft: '8px' }}>
+                              ({r2Total}/{round2Data.totalRegisteredGrads})
+                            </span>
+                          </>
+                        );
+                      })()}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* 2. Section engagement table */}
+              {(batchRepResponseStats || round2Data) && (
+                <div style={{ marginBottom: '24px' }}>
+                  <h4 style={{
+                    fontSize: '0.75rem', fontWeight: 600,
+                    color: 'var(--color-text-secondary)',
+                    textTransform: 'uppercase', letterSpacing: '0.5px',
+                    marginBottom: '12px'
+                  }}>
+                    Section Engagement
+                  </h4>
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
+                      <thead>
+                        <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+                          <th style={{ textAlign: 'left', padding: '10px 8px', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Section</th>
+                          <th style={{ textAlign: 'center', padding: '10px 8px', color: 'rgba(59, 139, 212, 0.8)', fontWeight: 600 }}>R1</th>
+                          <th style={{ textAlign: 'center', padding: '10px 8px', color: 'rgba(186, 117, 23, 0.8)', fontWeight: 600 }}>R2</th>
+                          <th style={{ textAlign: 'center', padding: '10px 8px', color: 'var(--color-text-secondary)', fontWeight: 600 }}>Overlap</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {['11A', '11B', '11C', '11D', '11E'].map(section => {
+                          const r1 = batchRepResponseStats?.sections?.find(s => s.section === section);
+                          const r2 = round2Data?.votesBySection?.find(s => s.section === section);
+                          const r1Pct = r1 && r1.total > 0 ? Math.round((r1.responded / r1.total) * 100) : 0;
+                          const r2Pct = r2 && parseInt(r2.total) > 0 ? Math.round((parseInt(r2.voted) / parseInt(r2.total)) * 100) : 0;
+                          return (
+                            <tr key={section} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                              <td style={{ padding: '10px 8px', color: 'var(--color-text-primary)', fontWeight: 600 }}>{section}</td>
+                              <td style={{ padding: '10px 8px', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
+                                {r1 ? `${r1.responded}/${r1.total}` : '—'} <span style={{ color: 'rgba(59, 139, 212, 0.8)' }}>({r1Pct}%)</span>
+                              </td>
+                              <td style={{ padding: '10px 8px', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
+                                {r2 ? `${r2.voted}/${r2.total}` : '—'} <span style={{ color: 'rgba(186, 117, 23, 0.8)' }}>({r2Pct}%)</span>
+                              </td>
+                              <td style={{ padding: '10px 8px', textAlign: 'center', color: 'var(--color-text-secondary)' }}>
+                                {r1Pct > 0 && r2Pct > 0 ? `${Math.round((r2Pct / r1Pct) * 100)}%` : '—'}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* 3. Daily activity charts */}
+              <div style={{ height: '1px', background: 'rgba(255,255,255,0.08)', margin: '24px 0' }} />
+              <h4 style={{
+                fontSize: '0.75rem', fontWeight: 600,
+                color: 'var(--color-text-secondary)',
+                textTransform: 'uppercase', letterSpacing: '0.5px',
+                marginBottom: '16px'
+              }}>
+                Daily Activity
+              </h4>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '16px' }}>
+                {/* Daily votes chart */}
+                <div>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginBottom: '8px' }}>Votes per day (PHT)</div>
+                  <div style={{ height: '160px', position: 'relative' }}>
+                    <canvas id="dailyChart" />
+                  </div>
+                </div>
+                {/* Hourly chart */}
+                <div>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginBottom: '8px' }}>Time of day (local time)</div>
+                  <div style={{ height: '160px', position: 'relative' }}>
+                    <canvas id="hourlyChart" />
+                  </div>
+                </div>
+              </div>
+              {/* Custom legend */}
+              <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', marginBottom: '24px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <div style={{ width: '12px', height: '12px', background: 'rgba(59, 139, 212, 0.6)', borderRadius: '2px' }} />
+                  <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>Round 1</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <div style={{ width: '12px', height: '12px', background: 'rgba(186, 117, 23, 0.6)', borderRadius: '2px' }} />
+                  <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>Round 2</span>
+                </div>
+              </div>
+
+              {/* Initialize charts */}
+              {(() => {
+                setTimeout(() => {
+                  if (!window.Chart) return;
+                  const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                  const textColor = isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)';
+                  const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+
+                  // Daily chart
+                  const dailyCanvas = document.getElementById('dailyChart');
+                  if (dailyCanvas && !dailyCanvas._chartInstance) {
+                    const allDates = new Set([
+                      ...(voteActivityData.r1Daily || []).map(d => d.date),
+                      ...(voteActivityData.r2Daily || []).map(d => d.date)
+                    ]);
+                    const sortedDates = [...allDates].sort();
+                    const r1Map = Object.fromEntries((voteActivityData.r1Daily || []).map(d => [d.date, d.count]));
+                    const r2Map = Object.fromEntries((voteActivityData.r2Daily || []).map(d => [d.date, d.count]));
+
+                    dailyCanvas._chartInstance = new window.Chart(dailyCanvas, {
+                      type: 'bar',
+                      data: {
+                        labels: sortedDates.map(d => new Date(d).toLocaleDateString('en-PH', { month: 'short', day: 'numeric' })),
+                        datasets: [
+                          { label: 'R1', data: sortedDates.map(d => r1Map[d] || 0), backgroundColor: 'rgba(59, 139, 212, 0.6)' },
+                          { label: 'R2', data: sortedDates.map(d => r2Map[d] || 0), backgroundColor: 'rgba(186, 117, 23, 0.6)' }
+                        ]
+                      },
+                      options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                          x: { ticks: { color: textColor, maxRotation: 45 }, grid: { color: gridColor } },
+                          y: { ticks: { color: textColor }, grid: { color: gridColor }, beginAtZero: true }
+                        }
+                      }
+                    });
+                  }
+
+                  // Hourly chart
+                  const hourlyCanvas = document.getElementById('hourlyChart');
+                  if (hourlyCanvas && !hourlyCanvas._chartInstance) {
+                    const buckets = ['12am', '3am', '6am', '9am', '12pm', '3pm', '6pm', '9pm'];
+                    const bucketData = (hourlyData) => {
+                      const result = [0, 0, 0, 0, 0, 0, 0, 0];
+                      (hourlyData || []).forEach(h => {
+                        const bucketIdx = Math.floor(h.hour / 3) % 8;
+                        result[bucketIdx] += h.count;
+                      });
+                      return result;
+                    };
+
+                    hourlyCanvas._chartInstance = new window.Chart(hourlyCanvas, {
+                      type: 'bar',
+                      data: {
+                        labels: buckets,
+                        datasets: [
+                          { label: 'R1', data: bucketData(voteActivityData.r1Hourly), backgroundColor: 'rgba(59, 139, 212, 0.6)' },
+                          { label: 'R2', data: bucketData(voteActivityData.r2Hourly), backgroundColor: 'rgba(186, 117, 23, 0.6)' }
+                        ]
+                      },
+                      options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                          x: { ticks: { color: textColor }, grid: { color: gridColor } },
+                          y: { ticks: { color: textColor }, grid: { color: gridColor }, beginAtZero: true }
+                        }
+                      }
+                    });
+                  }
+                }, 500);
+                return null;
+              })()}
+
+              {/* 4. Geographic breakdown */}
+              <div style={{ height: '1px', background: 'rgba(255,255,255,0.08)', margin: '24px 0' }} />
+              <h4 style={{
+                fontSize: '0.75rem', fontWeight: 600,
+                color: 'var(--color-text-secondary)',
+                textTransform: 'uppercase', letterSpacing: '0.5px',
+                marginBottom: '16px'
+              }}>
+                Geographic Breakdown
+              </h4>
+              {(() => {
+                const totalVoters = (voteActivityData.geoData || []).reduce((sum, g) => sum + g.count, 0);
+                return (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {(voteActivityData.geoData || []).map(geo => {
+                      const pct = totalVoters > 0 ? Math.round((geo.count / totalVoters) * 100) : 0;
+                      return (
+                        <div key={geo.country} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          <div style={{ width: '120px', fontSize: '0.85rem', color: 'var(--color-text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            {geo.country}
+                          </div>
+                          <div style={{ flex: 1, height: '8px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', overflow: 'hidden' }}>
+                            <div style={{ height: '100%', width: `${pct}%`, background: '#006633', borderRadius: '4px' }} />
+                          </div>
+                          <div style={{ width: '40px', fontSize: '0.8rem', color: 'var(--color-text-secondary)', textAlign: 'right' }}>
+                            {geo.count}
+                          </div>
+                          <div style={{ width: '40px', fontSize: '0.75rem', color: 'var(--color-text-secondary)', textAlign: 'right' }}>
+                            {pct}%
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })()}
+
+              {/* 5. AI analysis panel */}
+              <div style={{ height: '1px', background: 'rgba(255,255,255,0.08)', margin: '24px 0' }} />
+              <div style={{
+                background: 'rgba(207, 181, 59, 0.05)',
+                border: '1px solid rgba(207, 181, 59, 0.2)',
+                borderRadius: '8px',
+                overflow: 'hidden'
+              }}>
+                <button
+                  onClick={() => {
+                    setAiPanelOpen(!aiPanelOpen);
+                    if (!aiPanelOpen && !aiAnalysis && !aiAnalysisLoading) {
+                      fetchAiAnalysis();
+                    }
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '12px 16px',
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
+                  }}
+                >
+                  <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#CFB53B' }}>
+                    AI Analysis
+                  </span>
+                  <span style={{ color: 'var(--color-text-secondary)' }}>
+                    {aiPanelOpen ? '▲' : '▼'}
+                  </span>
+                </button>
+                {aiPanelOpen && (
+                  <div style={{ padding: '0 16px 16px' }}>
+                    {aiAnalysisLoading ? (
+                      <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.85rem', margin: 0 }}>Generating analysis...</p>
+                    ) : aiAnalysis ? (
+                      <p style={{ color: 'var(--color-text-primary)', fontSize: '0.85rem', margin: 0, lineHeight: 1.5 }}>{aiAnalysis}</p>
+                    ) : (
+                      <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.85rem', margin: 0 }}>Click to generate analysis.</p>
+                    )}
+                  </div>
+                )}
               </div>
             </>
           )}

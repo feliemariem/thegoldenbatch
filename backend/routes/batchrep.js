@@ -594,4 +594,118 @@ router.get('/graduates/search', authenticateToken, async (req, res) => {
   }
 });
 
+// GET /api/batch-rep/vote-activity
+// System admin (id=1) only - returns voting activity patterns
+router.get('/vote-activity', authenticateToken, async (req, res) => {
+  try {
+    if (req.user.id !== 1) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    // Run all queries in parallel
+    const [r1DailyResult, r2DailyResult, r1HourlyResult, r2HourlyResult, geoResult] = await Promise.all([
+      // 1. Round 1 daily counts (PHT)
+      db.query(`
+        SELECT
+          DATE(created_at AT TIME ZONE 'Asia/Manila') as date,
+          COUNT(*) as count
+        FROM batch_rep_submissions
+        GROUP BY DATE(created_at AT TIME ZONE 'Asia/Manila')
+        ORDER BY date ASC
+      `),
+
+      // 2. Round 2 daily counts (PHT)
+      db.query(`
+        SELECT
+          DATE(created_at AT TIME ZONE 'Asia/Manila') as date,
+          COUNT(*) as count
+        FROM batch_rep_round2_votes
+        GROUP BY DATE(created_at AT TIME ZONE 'Asia/Manila')
+        ORDER BY date ASC
+      `),
+
+      // 3. Round 1 hourly by local time (using voter's country)
+      db.query(`
+        SELECT
+          EXTRACT(HOUR FROM created_at + INTERVAL '1 hour' * CASE
+            WHEN u.country ILIKE '%Philippines%' THEN 8
+            WHEN u.country ILIKE '%United States%' OR u.country ILIKE '%USA%' THEN -7
+            WHEN u.country ILIKE '%UAE%' OR u.country ILIKE '%United Arab Emirates%' THEN 4
+            WHEN u.country ILIKE '%Australia%' THEN 10
+            WHEN u.country ILIKE '%Canada%' THEN -7
+            ELSE 8
+          END)::int as hour,
+          COUNT(*) as count
+        FROM batch_rep_submissions s
+        JOIN users u ON u.id = s.voter_id
+        GROUP BY hour
+        ORDER BY hour ASC
+      `),
+
+      // 4. Round 2 hourly by local time (using voter's country)
+      db.query(`
+        SELECT
+          EXTRACT(HOUR FROM v.created_at + INTERVAL '1 hour' * CASE
+            WHEN u.country ILIKE '%Philippines%' THEN 8
+            WHEN u.country ILIKE '%United States%' OR u.country ILIKE '%USA%' THEN -7
+            WHEN u.country ILIKE '%UAE%' OR u.country ILIKE '%United Arab Emirates%' THEN 4
+            WHEN u.country ILIKE '%Australia%' THEN 10
+            WHEN u.country ILIKE '%Canada%' THEN -7
+            ELSE 8
+          END)::int as hour,
+          COUNT(*) as count
+        FROM batch_rep_round2_votes v
+        JOIN users u ON u.id = v.voter_id
+        GROUP BY hour
+        ORDER BY hour ASC
+      `),
+
+      // 5. Geographic breakdown (combined from both rounds)
+      db.query(`
+        SELECT u.country, COUNT(DISTINCT voter_id) as count
+        FROM (
+          SELECT voter_id FROM batch_rep_submissions
+          UNION
+          SELECT voter_id FROM batch_rep_round2_votes
+        ) combined
+        JOIN users u ON u.id = combined.voter_id
+        WHERE u.country IS NOT NULL AND u.country != ''
+        GROUP BY u.country
+        ORDER BY count DESC
+      `)
+    ]);
+
+    // Format results
+    const r1Daily = r1DailyResult.rows.map(r => ({
+      date: r.date,
+      count: parseInt(r.count)
+    }));
+
+    const r2Daily = r2DailyResult.rows.map(r => ({
+      date: r.date,
+      count: parseInt(r.count)
+    }));
+
+    const r1Hourly = r1HourlyResult.rows.map(r => ({
+      hour: parseInt(r.hour),
+      count: parseInt(r.count)
+    }));
+
+    const r2Hourly = r2HourlyResult.rows.map(r => ({
+      hour: parseInt(r.hour),
+      count: parseInt(r.count)
+    }));
+
+    const geoData = geoResult.rows.map(r => ({
+      country: r.country,
+      count: parseInt(r.count)
+    }));
+
+    res.json({ r1Daily, r2Daily, r1Hourly, r2Hourly, geoData });
+  } catch (err) {
+    console.error('Error fetching vote activity:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 module.exports = router;
