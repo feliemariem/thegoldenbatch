@@ -385,6 +385,62 @@ export default function SystemTest() {
                 </div>
               </div>
 
+              {/* Section share of total votes */}
+              {(() => {
+                const totalVotesCast = (round2Data.votesBySection || []).reduce((sum, r) => sum + parseInt(r.voted), 0);
+                if (totalVotesCast === 0) return null;
+                return (
+                  <div style={{ marginBottom: '28px' }}>
+                    <h4 style={{
+                      fontSize: '0.75rem', fontWeight: 600,
+                      color: 'var(--color-text-secondary)',
+                      textTransform: 'uppercase', letterSpacing: '0.5px',
+                      marginBottom: '12px'
+                    }}>
+                      Section Share of Total Votes
+                    </h4>
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(5, 1fr)',
+                      gap: '16px',
+                      marginBottom: '20px'
+                    }}>
+                      {(round2Data.votesBySection || []).map((row) => {
+                        const voted = parseInt(row.voted);
+                        const sharePct = Math.round((voted / totalVotesCast) * 100);
+                        return (
+                          <div key={row.section} style={{ marginBottom: '16px', textAlign: 'center' }}>
+                            <div style={{
+                              fontSize: '0.75rem', fontWeight: 600,
+                              color: 'var(--color-text-secondary)',
+                              textTransform: 'uppercase', letterSpacing: '0.5px',
+                              marginBottom: '8px'
+                            }}>
+                              {row.section}
+                            </div>
+                            <div style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>
+                              {sharePct}%
+                            </div>
+                            <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginBottom: '8px' }}>
+                              {voted} of {totalVotesCast}
+                            </div>
+                            <div style={{
+                              height: '4px', background: 'rgba(255,255,255,0.1)',
+                              borderRadius: '2px', overflow: 'hidden'
+                            }}>
+                              <div style={{
+                                height: '100%', width: `${sharePct}%`,
+                                background: '#006633', borderRadius: '2px'
+                              }} />
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })()}
+
               {/* Individual voter list — sorted by time of vote */}
               <div>
                 <h4 style={{
