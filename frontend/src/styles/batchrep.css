@@ -655,6 +655,8 @@
   color: var(--color-text-secondary);
   padding: 24px 0;
   letter-spacing: 0.5px;
+  white-space: nowrap;
+  overflow-x: auto;
 }
 
 /* Voting section wrapper */
