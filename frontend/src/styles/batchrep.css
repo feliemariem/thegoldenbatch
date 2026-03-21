@@ -659,6 +659,12 @@
   overflow-x: auto;
 }
 
+@media (max-width: 640px) {
+  .batchrep-page-footer {
+    font-size: 0.7rem;
+  }
+}
+
 /* Voting section wrapper */
 .batchrep-voting-section {
   padding: 20px;
