@@ -627,7 +627,7 @@ router.get('/vote-activity', authenticateToken, async (req, res) => {
       // 3. Round 1 hourly by local time (using voter's country)
       db.query(`
         SELECT
-          EXTRACT(HOUR FROM created_at + INTERVAL '1 hour' * CASE
+          EXTRACT(HOUR FROM s.created_at + INTERVAL '1 hour' * CASE
             WHEN u.country ILIKE '%Philippines%' THEN 8
             WHEN u.country ILIKE '%United States%' OR u.country ILIKE '%USA%' THEN -7
             WHEN u.country ILIKE '%UAE%' OR u.country ILIKE '%United Arab Emirates%' THEN 4
