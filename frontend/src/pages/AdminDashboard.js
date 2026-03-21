@@ -1349,7 +1349,7 @@ export default function AdminDashboard() {
                 </div>
               </div>
             )}
-            <SystemTest />
+            <SystemTest batchRepResponseStats={batchRepResponseStats} />
           </>
         )}
       </div>

@@ -17,7 +17,7 @@ import NameChangeRequests from './NameChangeRequests';
  * - Engagement Stats: View user activity metrics
  * - (More features can be added here in the future)
  */
-export default function SystemTest() {
+export default function SystemTest({ batchRepResponseStats }) {
   const { user } = useAuth();
   const [activeFeature, setActiveFeature] = useState('inbox-preview');
   const [batchRepData, setBatchRepData] = useState([]);
@@ -186,6 +186,102 @@ export default function SystemTest() {
           <h3 style={{ color: 'var(--text-primary, #fff)', margin: '0 0 16px 0', fontSize: '1.1rem' }}>
             Batch Rep Full View
           </h3>
+
+          {/* Response rate grid */}
+          {batchRepResponseStats && (
+            <div style={{ marginBottom: '24px' }}>
+              {/* Section columns */}
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(5, 1fr)',
+                gap: '16px',
+                marginBottom: '20px'
+              }}>
+                {batchRepResponseStats.sections.map((section) => {
+                  const pct = section.total > 0 ? Math.round((section.responded / section.total) * 100) : 0;
+                  return (
+                    <div key={section.section} style={{ textAlign: 'center' }}>
+                      <div style={{
+                        fontSize: '0.75rem',
+                        fontWeight: 600,
+                        color: 'var(--color-text-secondary)',
+                        marginBottom: '8px',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px'
+                      }}>
+                        {section.section}
+                      </div>
+                      <div style={{
+                        fontSize: '1.25rem',
+                        fontWeight: 700,
+                        color: 'var(--color-text-primary)'
+                      }}>
+                        {section.responded}
+                      </div>
+                      <div style={{
+                        fontSize: '0.75rem',
+                        color: 'var(--color-text-secondary)',
+                        marginBottom: '8px'
+                      }}>
+                        of {section.total}
+                      </div>
+                      <div style={{
+                        height: '4px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        borderRadius: '2px',
+                        overflow: 'hidden',
+                        marginBottom: '6px'
+                      }}>
+                        <div style={{
+                          height: '100%',
+                          width: `${pct}%`,
+                          background: '#006633',
+                          borderRadius: '2px'
+                        }} />
+                      </div>
+                      <div style={{
+                        fontSize: '0.7rem',
+                        color: 'var(--color-text-secondary)'
+                      }}>
+                        {pct}%
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Divider */}
+              <div style={{
+                height: '1px',
+                background: 'rgba(255, 255, 255, 0.08)',
+                margin: '16px 0'
+              }} />
+
+              {/* Total row */}
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}>
+                <span style={{
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  color: 'var(--color-text-primary)'
+                }}>
+                  Total respondents
+                </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <span style={{
+                    fontSize: '0.85rem',
+                    color: 'var(--color-text-secondary)'
+                  }}>
+                    {batchRepResponseStats.totalResponded} of {batchRepResponseStats.registeredGradsCount} grads
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
           {batchRepLoading ? (
             <p style={{ color: 'var(--text-secondary, #888)' }}>Loading...</p>
           ) : batchRepData.length === 0 ? (
