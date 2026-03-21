@@ -1036,21 +1036,23 @@ export default function SystemTest({ batchRepResponseStats }) {
                   // Daily chart
                   const dailyCanvas = document.getElementById('dailyChart');
                   if (dailyCanvas && !dailyCanvas._chartInstance) {
-                    const allDates = new Set([
-                      ...(voteActivityData.r1Daily || []).map(d => d.date),
-                      ...(voteActivityData.r2Daily || []).map(d => d.date)
-                    ]);
-                    const sortedDates = [...allDates].sort();
+                    // Fixed date range: Mar 14-29, 2026 (R1: Mar 14-21, R2: Mar 22-29)
+                    const start = new Date('2026-03-14T00:00:00+08:00');
+                    const allDates = Array.from({ length: 16 }, (_, i) => {
+                      const d = new Date(start);
+                      d.setDate(d.getDate() + i);
+                      return d.toISOString().slice(0, 10);
+                    });
                     const r1Map = Object.fromEntries((voteActivityData.r1Daily || []).map(d => [d.date, d.count]));
                     const r2Map = Object.fromEntries((voteActivityData.r2Daily || []).map(d => [d.date, d.count]));
 
                     dailyCanvas._chartInstance = new window.Chart(dailyCanvas, {
                       type: 'bar',
                       data: {
-                        labels: sortedDates.map(d => new Date(d).toLocaleDateString('en-PH', { month: 'short', day: 'numeric' })),
+                        labels: allDates.map(d => new Date(d).toLocaleDateString('en-PH', { month: 'short', day: 'numeric' })),
                         datasets: [
-                          { label: 'R1', data: sortedDates.map(d => r1Map[d] || 0), backgroundColor: 'rgba(59, 139, 212, 0.6)' },
-                          { label: 'R2', data: sortedDates.map(d => r2Map[d] || 0), backgroundColor: 'rgba(186, 117, 23, 0.6)' }
+                          { label: 'R1', data: allDates.map(d => r1Map[d] || 0), backgroundColor: 'rgba(59, 139, 212, 0.6)' },
+                          { label: 'R2', data: allDates.map(d => r2Map[d] || 0), backgroundColor: 'rgba(186, 117, 23, 0.6)' }
                         ]
                       },
                       options: {
