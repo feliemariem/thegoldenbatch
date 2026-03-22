@@ -109,7 +109,6 @@ export default function SystemTest({ batchRepResponseStats }) {
       }
     };
 
-    // Also fetch round2 data if not already fetched (needed for turnout calculation)
     const fetchRound2IfNeeded = async () => {
       if (!round2Data) {
         try {
@@ -128,6 +127,13 @@ export default function SystemTest({ batchRepResponseStats }) {
       fetchVoteActivityData();
       fetchRound2IfNeeded();
     }
+
+    // Reset on tab leave so next visit always fetches fresh data
+    return () => {
+      if (activeFeature === 'vote-activity') {
+        setVoteActivityData(null);
+      }
+    };
   }, [user?.id, activeFeature, round2Data]);
 
   // Load Chart.js from CDN
