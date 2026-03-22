@@ -766,9 +766,9 @@ export default function SystemTest({ batchRepResponseStats }) {
                       Round 1 Turnout
                     </div>
                     <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>
-                      {Math.round((batchRepResponseStats.totalResponded / batchRepResponseStats.registeredGradsCount) * 100)}%
+                      {Math.round((batchRepResponseStats.totalResponded / voteActivityData.r1EligibleGrads) * 100)}%
                       <span style={{ fontSize: '0.8rem', fontWeight: 400, color: 'var(--color-text-secondary)', marginLeft: '8px' }}>
-                        ({batchRepResponseStats.totalResponded}/{batchRepResponseStats.registeredGradsCount})
+                        ({batchRepResponseStats.totalResponded}/{voteActivityData.r1EligibleGrads})
                       </span>
                     </div>
                   </div>
@@ -815,7 +815,9 @@ export default function SystemTest({ batchRepResponseStats }) {
                   </h4>
                   {(() => {
                     const totalR1Responded = batchRepResponseStats?.totalResponded || 0;
-                    const totalR1Grads = batchRepResponseStats?.registeredGradsCount || 0;
+                    // Use r1EligibleGrads — grads registered before Round 1 closed (March 21 11:59 PM PHT)
+                    // Excludes anyone added after Round 1 (e.g. Friend of Batch added later)
+                    const totalR1Grads = voteActivityData?.r1EligibleGrads || batchRepResponseStats?.registeredGradsCount || 0;
                     const totalR2VotesCast = (round2Data?.votesBySection || []).reduce((sum, r) => sum + parseInt(r.voted), 0);
                     const totalR2Grads = round2Data?.totalRegisteredGrads || 0;
 
