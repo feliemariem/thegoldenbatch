@@ -84,6 +84,13 @@ export default function SystemTest({ batchRepResponseStats }) {
     if (user?.id === 1 && activeFeature === 'round2-election') {
       fetchRound2Data();
     }
+
+    // Reset data when leaving tab so next visit always fetches fresh
+    return () => {
+      if (activeFeature === 'round2-election') {
+        setRound2Data(null);
+      }
+    };
   }, [user?.id, activeFeature]);
 
   useEffect(() => {
@@ -647,14 +654,33 @@ export default function SystemTest({ batchRepResponseStats }) {
 
               {/* Individual voter list — sorted by time of vote */}
               <div>
-                <h4 style={{
-                  fontSize: '0.75rem', fontWeight: 600,
-                  color: 'var(--color-text-secondary)',
-                  textTransform: 'uppercase', letterSpacing: '0.5px',
-                  marginBottom: '12px'
-                }}>
-                  Individual Votes · sorted by time
-                </h4>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+                  <h4 style={{
+                    fontSize: '0.75rem', fontWeight: 600,
+                    color: 'var(--color-text-secondary)',
+                    textTransform: 'uppercase', letterSpacing: '0.5px',
+                    margin: 0
+                  }}>
+                    Individual Votes · sorted by time
+                  </h4>
+                  <button
+                    onClick={() => {
+                      setRound2Data(null);
+                      setRound2Loading(true);
+                      apiGet('/api/batch-rep/round2/results')
+                        .then(res => res.ok ? res.json() : null)
+                        .then(data => { if (data) setRound2Data(data); })
+                        .finally(() => setRound2Loading(false));
+                    }}
+                    style={{
+                      background: 'none', border: 'none',
+                      color: 'var(--color-hover)', cursor: 'pointer',
+                      fontSize: '0.75rem', textDecoration: 'underline'
+                    }}
+                  >
+                    Refresh
+                  </button>
+                </div>
                 <div style={{ overflowX: 'auto' }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
                     <thead>
