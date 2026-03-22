@@ -658,6 +658,24 @@ export default function SystemTest({ batchRepResponseStats }) {
                 );
               })()}
 
+              {/* Vote count summary */}
+              <div style={{ display: 'flex', gap: '24px', marginBottom: '20px', padding: '12px 16px', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <div>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginRight: '8px' }}>Bianca Jison</span>
+                  <strong style={{ color: 'var(--color-text-primary)' }}>{round2Data.counts?.['Bianca Jison'] || 0}</strong>
+                </div>
+                <div style={{ width: '1px', background: 'rgba(255,255,255,0.1)' }} />
+                <div>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginRight: '8px' }}>Mel Andrea Rivero</span>
+                  <strong style={{ color: 'var(--color-text-primary)' }}>{round2Data.counts?.['Mel Andrea Rivero'] || 0}</strong>
+                </div>
+                <div style={{ width: '1px', background: 'rgba(255,255,255,0.1)' }} />
+                <div>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', marginRight: '8px' }}>Total</span>
+                  <strong style={{ color: 'var(--color-text-primary)' }}>{round2Data.total || 0}</strong>
+                </div>
+              </div>
+
               {/* Individual voter list — sorted by time of vote */}
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
