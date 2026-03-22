@@ -9,7 +9,7 @@ import '../styles/batchrep.css';
 // Phase 2: Non-registry admins only (committee members with enabled non-registry permissions)
 //          Registry-only admins do NOT qualify — they must not see this page at their level
 // Phase 3: All registered GRADUATES only — non-graduate registrants are excluded
-const BATCH_REP_PHASE = 2;
+const BATCH_REP_PHASE = 3;
 
 // isGrad — derived from master_list section check on the backend
 // hasNonRegistryPermissions — already on user object from AuthContext,
