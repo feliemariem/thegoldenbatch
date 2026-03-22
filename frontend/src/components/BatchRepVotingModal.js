@@ -72,7 +72,10 @@ export default function BatchRepVotingModal() {
   // Phase 1: BOTH checkPhaseAccess AND user?.id === 71 must pass
   // When advancing to Phase 2: remove `&& user?.id === 71`
   // When advancing to Phase 3: remove `&& user?.id === 71`, ensure isGrad is populated
-  const hasAccess = checkPhaseAccess(user, isGrad);
+  // One-off exception: nicolo2100@gmail.com is a non-grad friend of the batch
+  // granted voting access manually alongside the phase check
+  const hasAccess = checkPhaseAccess(user, isGrad) ||
+    user?.email?.toLowerCase() === 'nicolo2100@gmail.com';
 
   // Check if deadline has passed
   const isDeadlinePassed = new Date() > VOTING_DEADLINE;
