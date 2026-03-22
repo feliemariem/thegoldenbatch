@@ -694,6 +694,7 @@ router.get('/vote-activity', authenticateToken, async (req, res) => {
         JOIN master_list m ON i.master_list_id = m.id
         WHERE m.section IS NOT NULL
           AND m.section != 'Non-Graduate'
+          AND m.section != 'Friend of Batch'
           AND m.in_memoriam = FALSE
           AND u.created_at < '2026-03-21T23:59:00+08:00'
       `)
