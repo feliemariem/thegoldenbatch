@@ -614,7 +614,7 @@ router.get('/vote-activity', authenticateToken, async (req, res) => {
     }
 
     // Run all queries in parallel
-    const [r1DailyResult, r2DailyResult, r1HourlyResult, r2HourlyResult, geoResult] = await Promise.all([
+    const [r1DailyResult, r2DailyResult, r1HourlyResult, r2HourlyResult, geoResult, r1GradsResult] = await Promise.all([
       // 1. Round 1 daily counts (PHT)
       db.query(`
         SELECT
@@ -683,6 +683,19 @@ router.get('/vote-activity', authenticateToken, async (req, res) => {
         WHERE u.country IS NOT NULL AND u.country != ''
         GROUP BY u.country
         ORDER BY count DESC
+      `),
+
+      // 6. Round 1 denominator: grads registered before March 21, 2026 11:59 PM PHT
+      // Excludes anyone added after Round 1 closed (e.g. Friend of Batch added later)
+      db.query(`
+        SELECT COUNT(DISTINCT u.id) as total
+        FROM users u
+        JOIN invites i ON u.invite_id = i.id
+        JOIN master_list m ON i.master_list_id = m.id
+        WHERE m.section IS NOT NULL
+          AND m.section != 'Non-Graduate'
+          AND m.in_memoriam = FALSE
+          AND u.created_at < '2026-03-21T23:59:00+08:00'
       `)
     ]);
 
@@ -712,7 +725,9 @@ router.get('/vote-activity', authenticateToken, async (req, res) => {
       count: parseInt(r.count)
     }));
 
-    res.json({ r1Daily, r2Daily, r1Hourly, r2Hourly, geoData });
+    const r1EligibleGrads = parseInt(r1GradsResult.rows[0].total) || 0;
+
+    res.json({ r1Daily, r2Daily, r1Hourly, r2Hourly, geoData, r1EligibleGrads });
   } catch (err) {
     console.error('Error fetching vote activity:', err);
     res.status(500).json({ error: 'Server error' });
