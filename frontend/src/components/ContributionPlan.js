@@ -1085,7 +1085,7 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
                     <span className={`cp-faq-arrow ${openFaqs.includes('payment-4') ? 'open' : ''}`}>▼</span>
                   </button>
                   <div className={`cp-faq-answer ${openFaqs.includes('payment-4') ? 'open' : ''}`}>
-                    Contributions go to a PNB account under Narciso Javelosa III and our Treasurer, Mary Rose Frances Uy. Every deposit is tracked on the platform. You can see the batch total anytime. We want every peso accounted for and visible.
+                    Contributions go to a PNB account under our co-signatories, Atty. Narciso Javelosa III and our Treasurer, Mary Rose Frances Uy. Every deposit is tracked on the platform. You can see the batch total anytime. We want every peso accounted for and visible.
                   </div>
                 </div>
               </div>
@@ -1180,7 +1180,7 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
                     <span className={`cp-faq-arrow ${openFaqs.includes('gen-2') ? 'open' : ''}`}>▼</span>
                   </button>
                   <div className={`cp-faq-answer ${openFaqs.includes('gen-2') ? 'open' : ''}`}>
-                    Two places. The progress bar is live on the contribution plan inside your profile. There's also a dedicated Fund page on the platform that shows the full picture — every verified contribution, where the money is going, and the running total. Once a payment is verified by the committee, it shows up there. Nothing is hidden. You'll always know where the batch stands.
+                    Two places. The progress bar is live on the contribution plan inside your profile. There's also a dedicated <Link to="/funds" className="cp-faq-link">Fund page</Link> that shows the full picture — every verified contribution, where the money is going, and the running total. Once a payment is verified by the committee, it shows up there. Nothing is hidden. You'll always know where the batch stands.
                   </div>
                 </div>
 
