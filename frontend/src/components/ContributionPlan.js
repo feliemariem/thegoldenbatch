@@ -1085,7 +1085,7 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
                     <span className={`cp-faq-arrow ${openFaqs.includes('payment-4') ? 'open' : ''}`}>▼</span>
                   </button>
                   <div className={`cp-faq-answer ${openFaqs.includes('payment-4') ? 'open' : ''}`}>
-                    Contributions go to a PNB account under our co-signatories, Atty. Narciso Javelosa III and our Treasurer, Mary Rose Frances Uy. Every deposit is tracked on the platform. You can see the batch total anytime. We want every peso accounted for and visible.
+                    Contributions go to a PNB account under our co-signatories, Atty. Narciso Javelosa III and our Treasurer, Mary Rose Frances Uy. Every deposit is tracked on the platform. You can see the batch total anytime on the <Link to="/funds" className="cp-faq-link">Fund page</Link>. We want every peso accounted for and visible.
                   </div>
                 </div>
               </div>
@@ -1190,7 +1190,7 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
                     <span className={`cp-faq-arrow ${openFaqs.includes('gen-3') ? 'open' : ''}`}>▼</span>
                   </button>
                   <div className={`cp-faq-answer ${openFaqs.includes('gen-3') ? 'open' : ''}`}>
-                    Message any committee member directly through the <Link to="/committee" className="cp-faq-link">Committee page</Link> or reach out through the platform. We'll get back to you.
+                    Head to your <Link to="/inbox" className="cp-faq-link">Inbox</Link> and use Contact Committee — we'll get back to you. You can also check the <Link to="/committee" className="cp-faq-link">Committee page</Link> to see who's who and reach out to them outside the platform.
                   </div>
                 </div>
               </div>
