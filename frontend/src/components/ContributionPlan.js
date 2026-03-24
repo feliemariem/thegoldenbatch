@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { apiPut, apiGet } from '../api';
 import '../styles/contributionPlan.css';
 
@@ -121,11 +122,14 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
   const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
   const [removing, setRemoving] = useState(false);
   const [recognitionPublic, setRecognitionPublic] = useState(true);
+  const [openFaqs, setOpenFaqs] = useState([]);
+  const toggleFaq = (id) => setOpenFaqs(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
   const exchangeRatesCache = useRef(null);
   const tierHeadingRef = useRef(null);
   const progressRef = useRef(null);
   const allocationRef = useRef(null);
   const recognitionRef = useRef(null);
+  const faqRef = useRef(null);
 
   // Fetch exchange rates (cached)
   useEffect(() => {
@@ -365,6 +369,9 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
             </button>
             <button className="cp-toc-pill" onClick={() => recognitionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
               Recognition
+            </button>
+            <button className="cp-toc-pill" onClick={() => faqRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
+              FAQ
             </button>
           </nav>
 
@@ -899,6 +906,331 @@ export default function ContributionPlan({ isOpen, onClose, onTierSaved, current
                 <div className="cp-commemorate-title">Commemorative Keepsake</div>
                 <p>Every Builder will receive a commemorative item as a token of gratitude — the form this takes is still being finalized by the committee. It could be anything from a custom piece to a collectible memento. Details will be announced once confirmed.</p>
               </div>
+            </div>
+
+            {/* FAQ Section */}
+            <div className="cp-faq-section" ref={faqRef}>
+              <h2 className="cp-faq-heading">Frequently Asked Questions</h2>
+
+              {/* FAQ Navigation Pills */}
+              <nav className="cp-faq-nav">
+                <a href="#about-the-plan" className="cp-faq-nav-pill">About the Plan</a>
+                <a href="#about-the-tiers" className="cp-faq-nav-pill">About the Tiers</a>
+                <a href="#about-payment" className="cp-faq-nav-pill">About Payment</a>
+                <a href="#about-recognition" className="cp-faq-nav-pill">About Recognition</a>
+                <a href="#about-fundraising" className="cp-faq-nav-pill">About Fundraising</a>
+                <a href="#general" className="cp-faq-nav-pill">General</a>
+                {user && !user.is_graduate && (
+                  <a href="#friends-of-batch" className="cp-faq-nav-pill">Friends of Batch</a>
+                )}
+              </nav>
+
+              {/* About the Plan */}
+              <div className="cp-faq-group" id="about-the-plan">
+                <div className="cp-faq-group-title">About the Plan</div>
+
+                <div className="cp-faq-item">
+                  <button className="cp-faq-question" onClick={() => toggleFaq('plan-1')}>
+                    <span>What is the ₱2.1M for?</span>
+                    <span className={`cp-faq-arrow ${openFaqs.includes('plan-1') ? 'open' : ''}`}>▼</span>
+                  </button>
+                  <div className={`cp-faq-answer ${openFaqs.includes('plan-1') ? 'open' : ''}`}>
+                    That covers everything — the Main Event, Teachers' Dinner, shirts and keepsakes for every batchmate, our giving back project, seed money for the fundraising events, and a buffer just in case. It's the full picture of what we're building together.
+                  </div>
+                </div>
+
+                <div className="cp-faq-item">
+                  <button className="cp-faq-question" onClick={() => toggleFaq('plan-2')}>
+                    <span>How much do you actually need from us?</span>
+                    <span className={`cp-faq-arrow ${openFaqs.includes('plan-2') ? 'open' : ''}`}>▼</span>
+                  </button>
+                  <div className={`cp-faq-answer ${openFaqs.includes('plan-2') ? 'open' : ''}`}>
+                    We need about 100 batchmates to contribute to cover the core celebration. The fundraising events help close the gap to ₱2.1M. The more we raise from contributions, the less pressure we put on those events to carry the load.
+                  </div>
+                </div>
+
+                <div className="cp-faq-item">
+                  <button className="cp-faq-question" onClick={() => toggleFaq('plan-3')}>
+                    <span>Is this just for the party?</span>
+                    <span className={`cp-faq-arrow ${openFaqs.includes('plan-3') ? 'open' : ''}`}>▼</span>
+                  </button>
+                  <div className={`cp-faq-answer ${openFaqs.includes('plan-3') ? 'open' : ''}`}>
+                    No. It also covers the Teachers' Dinner, shirts and keepsakes for every batchmate, something we're giving back to the school, seed money to get our fundraising events going, and a buffer just in case.
+                  </div>
+                </div>
+              </div>
+
+              {/* About the Tiers */}
+              <div className="cp-faq-group" id="about-the-tiers">
+                <div className="cp-faq-group-title">About the Tiers</div>
+
+                <div className="cp-faq-item">
+                  <button className="cp-faq-question" onClick={() => toggleFaq('tiers-1')}>
+                    <span>What are the tiers?</span>
+                    <span className={`cp-faq-arrow ${openFaqs.includes('tiers-1') ? 'open' : ''}`}>▼</span>
+                  </button>
+                  <div className={`cp-faq-answer ${openFaqs.includes('tiers-1') ? 'open' : ''}`}>
+                    We have four. Cornerstone, Pillar, Anchor, and Root. They're not rankings. Think of it like a building — every part carries weight. A Root is not less than a Cornerstone. They just carry different loads in the same foundation. Whatever tier you pick, you're a Builder.
+                  </div>
+                </div>
+
+                <div className="cp-faq-item">
+                  <button className="cp-faq-question" onClick={() => toggleFaq('tiers-2')}>
+                    <span>Why are there tiers?</span>
+                    <span className={`cp-faq-arrow ${openFaqs.includes('tiers-2') ? 'open' : ''}`}>▼</span>
+                  </button>
+                  <div className={`cp-faq-answer ${openFaqs.includes('tiers-2') ? 'open' : ''}`}>
+                    Because not everyone is in the same financial situation and that's okay. We still want everyone to be part of this. The tiers give you a range to choose from based on what works for you. Whatever you pick, it all goes into the same fund that makes this celebration happen. And the more we collect from contributions, the less pressure we put on the fundraising events to carry the gap.
+                  </div>
+                </div>
+
+                <div className="cp-faq-item">
+                  <button className="cp-faq-question" onClick={() => toggleFaq('tiers-3')}>
+                    <span>What's the difference between the tiers?</span>
+                    <span className={`cp-faq-arrow ${openFaqs.includes('tiers-3') ? 'open' : ''}`}>▼</span>
+                  </button>
+                  <div className={`cp-faq-answer ${openFaqs.includes('tiers-3') ? 'open' : ''}`}>
+                    It's how much you personally commit to the collective fund. All contributions go into the same pot that covers the entire celebration. The tiers tell us your share of the load — and the higher the tier, the more you're recognized for it.
+                  </div>
+                </div>
+
+                <div className="cp-faq-item">
+                  <button className="cp-faq-question" onClick={() => toggleFaq('tiers-4')}>
+                    <span>What does Cornerstone get me?</span>
+                    <span className={`cp-faq-arrow ${openFaqs.includes('tiers-4') ? 'open' : ''}`}>▼</span>
+                  </button>
+                  <div className={`cp-faq-answer ${openFaqs.includes('tiers-4') ? 'open' : ''}`}>
+                    ₱25,000 and up. You're carrying one of the biggest individual loads in the batch. Your contribution goes into the heart of the Main Event — the venue, production, and program. And because you're giving the most, you also get the fullest recognition, including a permanent spot on the Giving Back Dedication at the school.
+                  </div>
+                </div>
+
+                <div className="cp-faq-item">
+                  <button className="cp-faq-question" onClick={() => toggleFaq('tiers-5')}>
+                    <span>What about Pillar?</span>
+                    <span className={`cp-faq-arrow ${openFaqs.includes('tiers-5') ? 'open' : ''}`}>▼</span>
+                  </button>
+                  <div className={`cp-faq-answer ${openFaqs.includes('tiers-5') ? 'open' : ''}`}>
+                    ₱18,000 to ₱24,000. You're funding a significant part of the core celebration. Serious commitment, and you get stage acknowledgment and your own spotlight on the website.
+                  </div>
+                </div>
+
+                <div className="cp-faq-item">
+                  <button className="cp-faq-question" onClick={() => toggleFaq('tiers-6')}>
+                    <span>And Anchor?</span>
+                    <span className={`cp-faq-arrow ${openFaqs.includes('tiers-6') ? 'open' : ''}`}>▼</span>
+                  </button>
+                  <div className={`cp-faq-answer ${openFaqs.includes('tiers-6') ? 'open' : ''}`}>
+                    ₱10,000 to ₱17,000. Still a real, meaningful share of what makes this celebration happen. You're on the Builder's Wall and in the souvenir program.
+                  </div>
+                </div>
+
+                <div className="cp-faq-item">
+                  <button className="cp-faq-question" onClick={() => toggleFaq('tiers-7')}>
+                    <span>What if I can't commit to a fixed amount?</span>
+                    <span className={`cp-faq-arrow ${openFaqs.includes('tiers-7') ? 'open' : ''}`}>▼</span>
+                  </button>
+                  <div className={`cp-faq-answer ${openFaqs.includes('tiers-7') ? 'open' : ''}`}>
+                    Pick Root. No minimum, no pressure. Whatever you give goes into the same collective fund. You're still helping build this. You're still a Builder.
+                  </div>
+                </div>
+
+                <div className="cp-faq-item">
+                  <button className="cp-faq-question" onClick={() => toggleFaq('tiers-8')}>
+                    <span>Can I change my tier later?</span>
+                    <span className={`cp-faq-arrow ${openFaqs.includes('tiers-8') ? 'open' : ''}`}>▼</span>
+                  </button>
+                  <div className={`cp-faq-answer ${openFaqs.includes('tiers-8') ? 'open' : ''}`}>
+                    Yes, anytime from your profile.
+                  </div>
+                </div>
+              </div>
+
+              {/* About Payment */}
+              <div className="cp-faq-group" id="about-payment">
+                <div className="cp-faq-group-title">About Payment</div>
+
+                <div className="cp-faq-item">
+                  <button className="cp-faq-question" onClick={() => toggleFaq('payment-1')}>
+                    <span>How do I pay?</span>
+                    <span className={`cp-faq-arrow ${openFaqs.includes('payment-1') ? 'open' : ''}`}>▼</span>
+                  </button>
+                  <div className={`cp-faq-answer ${openFaqs.includes('payment-1') ? 'open' : ''}`}>
+                    For local transfers, deposit to our PNB account under Narciso Javelosa III or Mary Rose Frances Uy, account number 307770014898. For international transfers, we have SWIFT details through PNB Bacolod Lacson Branch. All the details are in the contribution plan on your profile page.
+                  </div>
+                </div>
+
+                <div className="cp-faq-item">
+                  <button className="cp-faq-question" onClick={() => toggleFaq('payment-2')}>
+                    <span>Does it have to be all at once?</span>
+                    <span className={`cp-faq-arrow ${openFaqs.includes('payment-2') ? 'open' : ''}`}>▼</span>
+                  </button>
+                  <div className={`cp-faq-answer ${openFaqs.includes('payment-2') ? 'open' : ''}`}>
+                    No. You have until December 2028 — that's {getMonthsRemaining()} months from now. Pay in parts, at whatever pace works for you. The plan shows you what it looks like monthly, weekly, even daily so you can plan ahead.
+                  </div>
+                </div>
+
+                <div className="cp-faq-item">
+                  <button className="cp-faq-question" onClick={() => toggleFaq('payment-3')}>
+                    <span>How does my payment get recorded?</span>
+                    <span className={`cp-faq-arrow ${openFaqs.includes('payment-3') ? 'open' : ''}`}>▼</span>
+                  </button>
+                  <div className={`cp-faq-answer ${openFaqs.includes('payment-3') ? 'open' : ''}`}>
+                    After you pay, upload a photo of your receipt on your profile page. The committee verifies it within 48 hours. Once verified, it shows up in your contribution progress and the batch Fund page. Make sure your full name is in the transfer reference so it gets matched to you quickly. Nothing gets credited until the receipt is verified.
+                  </div>
+                </div>
+
+                <div className="cp-faq-item">
+                  <button className="cp-faq-question" onClick={() => toggleFaq('payment-4')}>
+                    <span>Who handles the money?</span>
+                    <span className={`cp-faq-arrow ${openFaqs.includes('payment-4') ? 'open' : ''}`}>▼</span>
+                  </button>
+                  <div className={`cp-faq-answer ${openFaqs.includes('payment-4') ? 'open' : ''}`}>
+                    Contributions go to a PNB account under Narciso Javelosa III and our Treasurer, Mary Rose Frances Uy. Every deposit is tracked on the platform. You can see the batch total anytime. We want every peso accounted for and visible.
+                  </div>
+                </div>
+              </div>
+
+              {/* About Recognition */}
+              <div className="cp-faq-group" id="about-recognition">
+                <div className="cp-faq-group-title">About Recognition</div>
+
+                <div className="cp-faq-item">
+                  <button className="cp-faq-question" onClick={() => toggleFaq('recog-1')}>
+                    <span>Will my name be public?</span>
+                    <span className={`cp-faq-arrow ${openFaqs.includes('recog-1') ? 'open' : ''}`}>▼</span>
+                  </button>
+                  <div className={`cp-faq-answer ${openFaqs.includes('recog-1') ? 'open' : ''}`}>
+                    Only if you want it to be. When you select your tier inside the Contribution Plan, there's a toggle at the bottom before you confirm. Switch it on and your name goes on the Builder's Wall, souvenir program, website, and stage acknowledgment. Switch it off and your contribution still counts, your name just stays private. You can change this anytime from your profile.
+                  </div>
+                </div>
+
+                <div className="cp-faq-item">
+                  <button className="cp-faq-question" onClick={() => toggleFaq('recog-2')}>
+                    <span>What is the Builder's Wall?</span>
+                    <span className={`cp-faq-arrow ${openFaqs.includes('recog-2') ? 'open' : ''}`}>▼</span>
+                  </button>
+                  <div className={`cp-faq-answer ${openFaqs.includes('recog-2') ? 'open' : ''}`}>
+                    A physical display at the venue entrance on the night of the event. Every guest sees it when they walk in.
+                  </div>
+                </div>
+
+                <div className="cp-faq-item">
+                  <button className="cp-faq-question" onClick={() => toggleFaq('recog-3')}>
+                    <span>What is the Giving Back Dedication?</span>
+                    <span className={`cp-faq-arrow ${openFaqs.includes('recog-3') ? 'open' : ''}`}>▼</span>
+                  </button>
+                  <div className={`cp-faq-answer ${openFaqs.includes('recog-3') ? 'open' : ''}`}>
+                    A permanent marker at the school for our giving back project. Cornerstone Builders who opt in are listed as founding supporters. It stays there long after the event is over.
+                  </div>
+                </div>
+
+                <div className="cp-faq-item">
+                  <button className="cp-faq-question" onClick={() => toggleFaq('recog-4')}>
+                    <span>What is the commemorative keepsake?</span>
+                    <span className={`cp-faq-arrow ${openFaqs.includes('recog-4') ? 'open' : ''}`}>▼</span>
+                  </button>
+                  <div className={`cp-faq-answer ${openFaqs.includes('recog-4') ? 'open' : ''}`}>
+                    Every Builder gets one. The committee is still deciding what it will be. We'll let everyone know once it's confirmed.
+                  </div>
+                </div>
+              </div>
+
+              {/* About Fundraising */}
+              <div className="cp-faq-group" id="about-fundraising">
+                <div className="cp-faq-group-title">About the Fundraising Events</div>
+
+                <div className="cp-faq-item">
+                  <button className="cp-faq-question" onClick={() => toggleFaq('fund-1')}>
+                    <span>What are the fundraising events?</span>
+                    <span className={`cp-faq-arrow ${openFaqs.includes('fund-1') ? 'open' : ''}`}>▼</span>
+                  </button>
+                  <div className={`cp-faq-answer ${openFaqs.includes('fund-1') ? 'open' : ''}`}>
+                    La Sallian Golf, La Sallian Run, In Memoriam Football Cup, and In Memoriam Basketball Cup. Whatever they earn from entry fees and sponsors goes back into the fund. That's what helps us reach ₱2.1M without putting all the pressure on direct contributions alone.
+                  </div>
+                </div>
+
+                <div className="cp-faq-item">
+                  <button className="cp-faq-question" onClick={() => toggleFaq('fund-2')}>
+                    <span>Do I have to join them?</span>
+                    <span className={`cp-faq-arrow ${openFaqs.includes('fund-2') ? 'open' : ''}`}>▼</span>
+                  </button>
+                  <div className={`cp-faq-answer ${openFaqs.includes('fund-2') ? 'open' : ''}`}>
+                    No. They're completely separate from your Builder tier. We'll share details for each one when the time comes.
+                  </div>
+                </div>
+              </div>
+
+              {/* General */}
+              <div className="cp-faq-group" id="general">
+                <div className="cp-faq-group-title">General</div>
+
+                <div className="cp-faq-item">
+                  <button className="cp-faq-question" onClick={() => toggleFaq('gen-1')}>
+                    <span>What if the target isn't reached?</span>
+                    <span className={`cp-faq-arrow ${openFaqs.includes('gen-1') ? 'open' : ''}`}>▼</span>
+                  </button>
+                  <div className={`cp-faq-answer ${openFaqs.includes('gen-1') ? 'open' : ''}`}>
+                    The core celebration is protected first. The plan is built so that even in a conservative scenario, the Main Event, Teachers' Dinner, and everything that matters most will still happen. The fundraising events and contingency buffer exist exactly for this reason.
+                  </div>
+                </div>
+
+                <div className="cp-faq-item">
+                  <button className="cp-faq-question" onClick={() => toggleFaq('gen-2')}>
+                    <span>Where can I see how much has been raised?</span>
+                    <span className={`cp-faq-arrow ${openFaqs.includes('gen-2') ? 'open' : ''}`}>▼</span>
+                  </button>
+                  <div className={`cp-faq-answer ${openFaqs.includes('gen-2') ? 'open' : ''}`}>
+                    Two places. The progress bar is live on the contribution plan inside your profile. There's also a dedicated Fund page on the platform that shows the full picture — every verified contribution, where the money is going, and the running total. Once a payment is verified by the committee, it shows up there. Nothing is hidden. You'll always know where the batch stands.
+                  </div>
+                </div>
+
+                <div className="cp-faq-item">
+                  <button className="cp-faq-question" onClick={() => toggleFaq('gen-3')}>
+                    <span>I still have questions.</span>
+                    <span className={`cp-faq-arrow ${openFaqs.includes('gen-3') ? 'open' : ''}`}>▼</span>
+                  </button>
+                  <div className={`cp-faq-answer ${openFaqs.includes('gen-3') ? 'open' : ''}`}>
+                    Message any committee member directly through the <Link to="/committee" className="cp-faq-link">Committee page</Link> or reach out through the platform. We'll get back to you.
+                  </div>
+                </div>
+              </div>
+
+              {/* Friends of Batch - Only for non-graduates */}
+              {user && !user.is_graduate && (
+                <div className="cp-faq-group" id="friends-of-batch">
+                  <div className="cp-faq-group-title">For Friends of Batch</div>
+
+                  <div className="cp-faq-item">
+                    <button className="cp-faq-question" onClick={() => toggleFaq('fob-1')}>
+                      <span>I'm not a graduate. Can I still contribute?</span>
+                      <span className={`cp-faq-arrow ${openFaqs.includes('fob-1') ? 'open' : ''}`}>▼</span>
+                    </button>
+                    <div className={`cp-faq-answer ${openFaqs.includes('fob-1') ? 'open' : ''}`}>
+                      Yes, and we're grateful if you do. Friends of Batch are welcome to support the celebration. There's no requirement and no pressure — this is completely voluntary. If you choose to contribute, you'll be recognized as a Friend of Batch sponsor in the souvenir program, Builder's Wall, and website. The same opt-in rules apply.
+                    </div>
+                  </div>
+
+                  <div className="cp-faq-item">
+                    <button className="cp-faq-question" onClick={() => toggleFaq('fob-2')}>
+                      <span>Do I pick a tier as a Friend of Batch?</span>
+                      <span className={`cp-faq-arrow ${openFaqs.includes('fob-2') ? 'open' : ''}`}>▼</span>
+                    </button>
+                    <div className={`cp-faq-answer ${openFaqs.includes('fob-2') ? 'open' : ''}`}>
+                      You can use the same tiers as a reference for how much you'd like to give. But there's no obligation to hit any minimum. Whatever you're comfortable with is welcome.
+                    </div>
+                  </div>
+
+                  <div className="cp-faq-item">
+                    <button className="cp-faq-question" onClick={() => toggleFaq('fob-3')}>
+                      <span>Will I be recognized the same way as graduates?</span>
+                      <span className={`cp-faq-arrow ${openFaqs.includes('fob-3') ? 'open' : ''}`}>▼</span>
+                    </button>
+                    <div className={`cp-faq-answer ${openFaqs.includes('fob-3') ? 'open' : ''}`}>
+                      You'll be listed separately as a Friend of Batch sponsor, not grouped with the Builder tiers. But you're still recognized and still appreciated. Every contribution goes into the same fund that makes this celebration happen.
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Remove Tier Option - Only show if user already has a tier */}
