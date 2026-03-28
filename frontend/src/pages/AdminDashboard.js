@@ -22,6 +22,9 @@ import { apiGet } from '../api';
 // Batch-rep deadline: March 21, 2026 at 11:59 PM PHT (UTC+8)
 const BATCH_REP_DEADLINE = new Date('2026-03-21T23:59:00+08:00');
 
+// Round 2 deadline: March 29, 2026 at 11:59 PM PHT (UTC+8)
+const ROUND2_DEADLINE = new Date('2026-03-29T23:59:00+08:00');
+
 const getDaysUntilBatchRepDeadline = () => {
   const now = new Date();
   const diffTime = BATCH_REP_DEADLINE - now;
@@ -985,7 +988,7 @@ export default function AdminDashboard() {
                       🗳️ Round 2 · AA Rep Vote Results
                     </span>
                     {/* Live badge — deadline March 29 2026 */}
-                    {new Date() < new Date('2026-03-29T23:59:00+08:00') && (
+                    {new Date() < ROUND2_DEADLINE && (
                       <span style={{
                         fontSize: '0.7rem',
                         fontWeight: 600,
@@ -1048,7 +1051,7 @@ export default function AdminDashboard() {
                           <span style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--color-text-primary)' }}>
                             {round2Results.totalRegisteredGrads > 0
                               ? Math.round((round2Results.total / round2Results.totalRegisteredGrads) * 100)
-                              : 0}% · {round2Results.total} of {round2Results.totalRegisteredGrads} registered grads
+                              : 0}% of {round2Results.totalRegisteredGrads} registered grads
                           </span>
                         </div>
 
@@ -1056,34 +1059,62 @@ export default function AdminDashboard() {
                         <h4 style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-text-primary)', marginBottom: '12px' }}>
                           Position 1 · Alumni Association Representative
                         </h4>
-                        {['Bianca Jison', 'Mel Andrea Rivero'].map((name) => {
-                          const votes = round2Results.counts[name] || 0;
-                          const pct = round2Results.total > 0
-                            ? Math.round((votes / round2Results.total) * 100 * 10) / 10
+                        {(() => {
+                          const biancaPct = round2Results.total > 0
+                            ? Math.round(((round2Results.counts['Bianca Jison'] || 0) / round2Results.total) * 100 * 10) / 10
                             : 0;
-                          return (
-                            <div key={name} style={{ marginBottom: '12px' }}>
-                              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                                <span style={{ fontSize: '0.9rem', color: 'var(--color-text-primary)' }}>{name}</span>
-                                {/* Percentages only — no raw vote counts */}
-                                <span style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>{pct}%</span>
-                              </div>
-                              <div style={{
-                                height: '8px',
-                                background: 'rgba(255,255,255,0.1)',
-                                borderRadius: '4px',
-                                overflow: 'hidden'
-                              }}>
+                          const melPct = round2Results.total > 0
+                            ? Math.round(((round2Results.counts['Mel Andrea Rivero'] || 0) / round2Results.total) * 100 * 10) / 10
+                            : 0;
+                          const deadlinePassed = new Date() >= ROUND2_DEADLINE;
+                          const winner = deadlinePassed && biancaPct !== melPct
+                            ? (biancaPct > melPct ? 'Bianca Jison' : 'Mel Andrea Rivero')
+                            : null;
+
+                          return ['Bianca Jison', 'Mel Andrea Rivero'].map((name) => {
+                            const votes = round2Results.counts[name] || 0;
+                            const pct = round2Results.total > 0
+                              ? Math.round((votes / round2Results.total) * 100 * 10) / 10
+                              : 0;
+                            const isWinner = winner === name;
+                            return (
+                              <div key={name} style={{ marginBottom: '12px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <span style={{ fontSize: '0.9rem', color: 'var(--color-text-primary)' }}>{name}</span>
+                                    {isWinner && (
+                                      <span style={{
+                                        fontSize: '0.6rem',
+                                        fontWeight: 600,
+                                        padding: '2px 6px',
+                                        borderRadius: '4px',
+                                        background: 'rgba(207, 181, 59, 0.15)',
+                                        color: 'var(--color-hover)'
+                                      }}>
+                                        Winner
+                                      </span>
+                                    )}
+                                  </div>
+                                  {/* Percentages only — no raw vote counts */}
+                                  <span style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>{pct}%</span>
+                                </div>
                                 <div style={{
-                                  height: '100%',
-                                  width: `${pct}%`,
-                                  background: '#006633',
-                                  borderRadius: '4px'
-                                }} />
+                                  height: '8px',
+                                  background: 'rgba(255,255,255,0.1)',
+                                  borderRadius: '4px',
+                                  overflow: 'hidden'
+                                }}>
+                                  <div style={{
+                                    height: '100%',
+                                    width: `${pct}%`,
+                                    background: '#006633',
+                                    borderRadius: '4px'
+                                  }} />
+                                </div>
                               </div>
-                            </div>
-                          );
-                        })}
+                            );
+                          });
+                        })()}
                       </>
                     ) : (
                       <p style={{ color: 'var(--color-text-secondary)' }}>Failed to load results.</p>
