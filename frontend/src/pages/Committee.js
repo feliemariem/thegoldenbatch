@@ -411,6 +411,15 @@ export default function Committee() {
           </div>
         )}
 
+        {/* How We Work Section */}
+        <section className="committee-section">
+          <div className="committee-how-we-work">
+            <h3 className="committee-how-title">How We Work</h3>
+            <p className="committee-how-body">The committee meets regularly to align on priorities, share updates, and make decisions together. Everything we do is in service of the batch — keeping everyone informed, engaged, and ready for December 2028.</p>
+            <p className="committee-how-body">If you have ideas, concerns, or just want to get involved, reach out. We're here for the batch.</p>
+          </div>
+        </section>
+
         {/* Render sections in order */}
         {SECTIONS.map(section => {
           const sectionMembers = groupedMembers[section.key] || [];
@@ -453,15 +462,6 @@ export default function Committee() {
             </div>
           </section>
         )}
-
-        {/* How We Work Section */}
-        <section className="committee-section">
-          <div className="committee-how-we-work">
-            <h3 className="committee-how-title">How We Work</h3>
-            <p className="committee-how-body">The committee meets regularly to align on priorities, share updates, and make decisions together. Everything we do is in service of the batch — keeping everyone informed, engaged, and ready for December 2028.</p>
-            <p className="committee-how-body">If you have ideas, concerns, or just want to get involved, reach out. We're here for the batch.</p>
-          </div>
-        </section>
 
         {/* Additional Roles Section */}
         <section className="committee-section volunteer-section">
