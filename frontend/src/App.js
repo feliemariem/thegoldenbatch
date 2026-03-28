@@ -6,6 +6,7 @@ import { ActionItemsProvider } from './context/ActionItemsContext';
 import { InboxProvider } from './context/InboxContext';
 import ThemeToggle from './components/ThemeToggle';
 import BirthdayWidget from './components/BirthdayWidget';
+import MaintenanceBanner from './components/MaintenanceBanner';
 import Landing from './pages/Landing';
 import Register from './pages/Register';
 import Login from './pages/Login';
@@ -309,6 +310,10 @@ function App() {
         <InboxProvider>
           <ActionItemsProvider>
             <BrowserRouter>
+              <MaintenanceBanner
+                scheduledTime="2026-04-07T09:00:00-07:00"
+                durationMinutes={5}
+              />
               <ConditionalThemeToggle />
               <ConditionalBirthdayWidget />
               <AppRoutes />
