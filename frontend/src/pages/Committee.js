@@ -26,21 +26,23 @@ const SECTION_MAP = {
 // Role bullets by admin ID
 const ROLE_BULLETS = {
   60: {
-    focus: 'Focus: Vision, networking, external relationships, and on-the-ground coordination',
+    focus: 'Focus: Vision and batch strategy',
     bullets: [
-      'Leads on-the-ground logistics and represents the batch in local networks',
+      'Shapes the strategic direction of batch programs and initiatives',
+      'Drives the vision behind the committee\'s work and priorities',
       'Builds relationships with alumni groups, school networks, and related communities',
-      "Attends alumni and community events to build connections that strengthen the batch's network and presence",
-      'Drives the vision behind batch initiatives',
+      'Contributes ideas and concepts that guide batch initiatives and programs',
+      'Coordinates on-the-ground efforts and local engagements as the batch\'s work progresses',
     ]
   },
   75: {
-    focus: 'Focus: Systems, platform development, and committee operations',
+    focus: 'Focus: Batch representation, committee operations, and platform development',
     bullets: [
-      'Oversees internal operations and committee structure',
+      'Serves as the main point of contact for the batch community',
+      'Communicates updates, decisions, and announcements to batchmates',
+      'Oversees internal committee operations and structure',
       'Facilitates committee discussions and collaborative decision-making',
-      "Designed and maintains the batch's centralized digital platform",
-      'Develops systems and tools that keep the batch organized, informed, and transparent',
+      'Designed and maintains the batch\'s centralized digital platform, keeping everyone organized, informed, and transparent',
     ]
   },
   76: {
@@ -119,7 +121,7 @@ const ROLE_BULLETS = {
 
 // Section configuration - uppercase labels
 const SECTIONS = [
-  { key: 'leadership', label: 'COMMITTEE LEADERSHIP' },
+  { key: 'leadership', label: 'LEADERSHIP' },
   { key: 'admin', label: 'ADMINISTRATIVE & FINANCIAL' },
   { key: 'legal', label: 'LEGAL' },
   { key: 'functions', label: 'COMMITTEE FUNCTIONS' },
@@ -451,6 +453,15 @@ export default function Committee() {
             </div>
           </section>
         )}
+
+        {/* How We Work Section */}
+        <section className="committee-section">
+          <div className="committee-how-we-work">
+            <h3 className="committee-how-title">How We Work</h3>
+            <p className="committee-how-body">The committee meets regularly to align on priorities, share updates, and make decisions together. Everything we do is in service of the batch — keeping everyone informed, engaged, and ready for December 2028.</p>
+            <p className="committee-how-body">If you have ideas, concerns, or just want to get involved, reach out. We're here for the batch.</p>
+          </div>
+        </section>
 
         {/* Additional Roles Section */}
         <section className="committee-section volunteer-section">

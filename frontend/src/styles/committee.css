@@ -716,6 +716,34 @@ body[data-theme="light"] .committee-role-bullets li::before {
   color: #006633;
 }
 
+/* How We Work Section */
+.committee-how-we-work {
+  background: var(--color-bg-secondary, var(--color-bg-card));
+  border-left: 4px solid var(--color-hover);
+  border-radius: var(--border-radius-md);
+  padding: 20px 24px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.committee-how-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-hover);
+  margin-bottom: 10px;
+}
+
+.committee-how-body {
+  font-size: 0.95rem;
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+  margin-bottom: 8px;
+}
+
+.committee-how-body:last-child {
+  margin-bottom: 0;
+}
+
 /* Responsive Adjustments */
 @media (max-width: 900px) {
   .committee-grid-admin,
