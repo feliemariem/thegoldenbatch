@@ -315,6 +315,7 @@
     font-weight: 700;
     color: var(--gold);
     display: block;
+    min-width: 80px;
   }
 
   .stat-label {
@@ -329,6 +330,34 @@
     color: rgba(255,255,255,0.4);
     letter-spacing: 1px;
     margin-top: 8px;
+  }
+
+  /* LOADING SHIMMER */
+  @keyframes shimmer {
+    0% { opacity: 0.4; }
+    50% { opacity: 1; }
+    100% { opacity: 0.4; }
+  }
+
+  .loading {
+    animation: shimmer 1.2s ease-in-out infinite;
+    color: rgba(207,181,59,0.5) !important;
+    font-size: 1.4rem !important;
+  }
+
+  .live-badge {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    background: rgba(207,181,59,0.2);
+    color: var(--gold-light);
+    border: 1px solid rgba(207,181,59,0.4);
+    padding: 2px 7px;
+    border-radius: 10px;
+    margin-left: 6px;
+    vertical-align: middle;
   }
 
   /* RESPONSIVE */
@@ -369,13 +398,13 @@
       <ul class="phase-items">
         <li>Launch thegoldenbatch.com — registration open to all ~357 batch members</li>
         <li>Website demo to committee (Feb 22 meeting)</li>
-        <li>Confirm December 16, 2028 date with Alumni Office (c/o Bia)</li>
+        <li>Confirm December 16, 2028 date with Alumni Office</li>
         <li>Finalize and vote on funding approach and budget target</li>
-        <li>Discuss and align on contribution tiers (Platinum / Gold / Silver / Monthly)</li>
+        <li>Discuss and align on contribution tiers (Cornerstone / Pillar / Anchor / Root)</li>
         <li>Present contribution framework to the batch once ready</li>
         <li><strong>🌏 Reach overseas batchmates NOW — an estimated 30%+ are abroad. December 2028 means flights, leave applications, and family logistics. They need to plan early. Make noise immediately.</strong></li>
       </ul>
-      <span class="phase-target">💰 Funds in hand: ₱206,950 and growing</span>
+      <span class="phase-target" id="phase1-funds">💰 Funds in hand: <span id="phase1-amount" class="loading">loading...</span></span>
     </div>
   </div>
 
@@ -521,7 +550,7 @@
       </div>
     </div>
     <div class="phase-card">
-      <p class="phase-desc">Only pursued if ₱1.7M homecoming budget is already secured. The batch invests ₱500–600K to run the tournament — golfer fees and sponsorships can earn that back and potentially more. It's a calculated risk, not a requirement.</p>
+      <p class="phase-desc">Only pursued if ₱2.1M homecoming budget is already secured. The batch invests ₱500–600K to run the tournament — golfer fees and sponsorships can earn that back and potentially more. It's a calculated risk, not a requirement.</p>
       <ul class="phase-items">
         <li>Two-day event at Marapara Golf & Country Club (3rd week of November)</li>
         <li>Day 1: Welcome dinner · Day 2: Awarding night (prizes, trophies, giveaways)</li>
@@ -529,7 +558,7 @@
         <li>Event coordinator usually hired; batch focuses on solicitation and sponsorships</li>
         <li>Contacts: Norman Jison, Fidel T. Hinares (One La Salle Golf Committee)</li>
       </ul>
-      <span class="phase-target">💰 Investment: ₱500–600K · Prerequisite: ₱1.7M already secured</span>
+      <span class="phase-target">💰 Investment: ₱500–600K · Prerequisite: ₱2.1M already secured</span>
     </div>
   </div>
 
@@ -573,7 +602,7 @@
         <li>7:00pm — Program: recognition, entertainment, dinner</li>
         <li>250–300 alumni expected across all graduating years</li>
       </ul>
-      <span class="phase-target">🏁 Total budget deployed: ₱1.7M</span>
+      <span class="phase-target">🏁 Total budget deployed: ₱2.1M</span>
     </div>
   </div>
 
@@ -591,15 +620,17 @@
 <div class="stats-footer">
   <div class="stats-row">
     <div class="stat">
-      <span class="stat-num">₱206K</span>
-      <span class="stat-label">Collected</span>
+      <span class="stat-num" id="footer-collected">
+        <span class="loading">...</span>
+      </span>
+      <span class="stat-label">Collected <span class="live-badge" id="live-badge" style="display:none">live</span></span>
     </div>
     <div class="stat">
       <span class="stat-num">35</span>
       <span class="stat-label">Months to Go</span>
     </div>
     <div class="stat">
-      <span class="stat-num">₱1.7M</span>
+      <span class="stat-num">₱2.1M</span>
       <span class="stat-label">Target</span>
     </div>
     <div class="stat">
@@ -609,6 +640,58 @@
   </div>
   <p class="footer-note">The Golden Batch · USLS-IS 2003 · 25th Alumni Homecoming</p>
 </div>
+
+<script>
+  function formatPeso(amount) {
+    if (amount >= 1000000) {
+      return '₱' + (amount / 1000000).toFixed(2).replace(/\.?0+$/, '') + 'M';
+    } else if (amount >= 1000) {
+      return '₱' + Math.round(amount / 1000) + 'K';
+    }
+    return '₱' + amount.toLocaleString();
+  }
+
+  function formatPesoFull(amount) {
+    return '₱' + amount.toLocaleString('en-PH', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  }
+
+  async function loadFunds() {
+    try {
+      const res = await fetch('https://api.thegoldenbatch2003.com/api/ledger/total-raised');
+      if (!res.ok) throw new Error('Non-OK response');
+      const data = await res.json();
+
+      const amount = data.total_raised || 0;
+
+      // Update footer stat
+      const footerEl = document.getElementById('footer-collected');
+      footerEl.classList.remove('loading');
+      footerEl.textContent = formatPeso(amount);
+
+      // Show LIVE badge
+      document.getElementById('live-badge').style.display = 'inline-block';
+
+      // Update Phase 1 badge
+      const phase1El = document.getElementById('phase1-amount');
+      phase1El.classList.remove('loading');
+      phase1El.textContent = formatPesoFull(amount) + ' and growing';
+
+    } catch (err) {
+      console.error('Failed to load funds:', err);
+
+      // Fallback text on error
+      const footerEl = document.getElementById('footer-collected');
+      footerEl.classList.remove('loading');
+      footerEl.textContent = '--';
+
+      const phase1El = document.getElementById('phase1-amount');
+      phase1El.classList.remove('loading');
+      phase1El.textContent = 'unavailable';
+    }
+  }
+
+  loadFunds();
+</script>
 
 </body>
 </html>
