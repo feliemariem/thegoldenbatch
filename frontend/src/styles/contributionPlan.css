@@ -2295,8 +2295,72 @@ body[data-theme="dark"] .cp-faq-link:hover {
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
   }
-
   .cp-tier-grid-inner > div:first-child {
     grid-column: 1 / -1;
   }
+}
+
+.cp-tier-card-beyond {
+  background: #0a0a0a;
+  border: 1px solid #CFB53B;
+  border-radius: 10px;
+  padding: 16px 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.cp-tier-card-beyond:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(207, 181, 59, 0.3);
+}
+
+.cp-tier-card-beyond.selected {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(207, 181, 59, 0.3);
+  border: 2px solid #CFB53B;
+}
+
+.cp-tier-card-beyond .cp-tier-check {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #CFB53B;
+  color: #0a0a0a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cp-tier-card-beyond.selected .cp-tier-check {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.cp-tier-card-beyond-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #CFB53B;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(207, 181, 59, 0.2);
+  margin-bottom: 8px;
+}
+
+.cp-tier-card-beyond-amount {
+  font-family: 'Source Serif 4', serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #CFB53B;
+  margin-top: 10px;
 }

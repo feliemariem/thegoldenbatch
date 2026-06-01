@@ -464,63 +464,52 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
             {/* Minimal Tier Cards Grid */}
             <div className="cp-tier-grid-scroll">
               <div className="cp-tier-grid-inner">
-              {/* Beyond */}
-              <div
-                style={{
-                  background: '#0a0a0a',
-                  border: expandedTier === 'beyond' ? '2px solid #CFB53B' : '1px solid #CFB53B',
-                  borderRadius: '12px',
-                  padding: '20px 16px',
-                  textAlign: 'center',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                  transform: expandedTier === 'beyond' ? 'scale(1.02)' : 'scale(1)'
-                }}
-                onClick={() => handleTierCardClick('beyond')}
-              >
-                <div style={{ color: '#CFB53B', fontSize: '1.1rem', fontWeight: '600', marginBottom: '8px' }}>Beyond</div>
-                <div style={{ color: '#888888', fontSize: '0.9rem' }}>₱100,000+</div>
-              </div>
 
-              {/* Cornerstone */}
-              <div
-                className={`cp-tier-card cornerstone ${expandedTier === 'cornerstone' ? 'selected' : ''}`}
-                onClick={() => handleTierCardClick('cornerstone')}
-                style={{ padding: '20px 16px' }}
-              >
-                <div className="cp-tier-label" style={{ marginBottom: '8px' }}>Cornerstone</div>
-                <div style={{ color: '#888888', fontSize: '0.9rem' }}>₱25,000 – ₱99,999</div>
-              </div>
+                <div
+                  className={`cp-tier-card-beyond ${expandedTier === 'beyond' ? 'selected' : ''}`}
+                  onClick={() => handleTierCardClick('beyond')}
+                >
+                  <div className="cp-tier-check">✓</div>
+                  <div className="cp-tier-card-beyond-label">Beyond</div>
+                  <div className="cp-tier-card-beyond-amount">₱100,000+</div>
+                </div>
 
-              {/* Pillar */}
-              <div
-                className={`cp-tier-card pillar ${expandedTier === 'pillar' ? 'selected' : ''}`}
-                onClick={() => handleTierCardClick('pillar')}
-                style={{ padding: '20px 16px' }}
-              >
-                <div className="cp-tier-label" style={{ marginBottom: '8px' }}>Pillar</div>
-                <div style={{ color: '#888888', fontSize: '0.9rem' }}>₱18,000 – ₱24,000</div>
-              </div>
+                <div
+                  className={`cp-tier-card cornerstone ${expandedTier === 'cornerstone' ? 'selected' : ''}`}
+                  onClick={() => handleTierCardClick('cornerstone')}
+                >
+                  <div className="cp-tier-check">✓</div>
+                  <div className="cp-tier-label">Cornerstone</div>
+                  <div className="cp-tier-amount">₱25,000 – ₱99,999</div>
+                </div>
 
-              {/* Anchor */}
-              <div
-                className={`cp-tier-card anchor ${expandedTier === 'anchor' ? 'selected' : ''}`}
-                onClick={() => handleTierCardClick('anchor')}
-                style={{ padding: '20px 16px' }}
-              >
-                <div className="cp-tier-label" style={{ marginBottom: '8px' }}>Anchor</div>
-                <div style={{ color: '#888888', fontSize: '0.9rem' }}>₱10,000 – ₱17,000</div>
-              </div>
+                <div
+                  className={`cp-tier-card pillar ${expandedTier === 'pillar' ? 'selected' : ''}`}
+                  onClick={() => handleTierCardClick('pillar')}
+                >
+                  <div className="cp-tier-check">✓</div>
+                  <div className="cp-tier-label">Pillar</div>
+                  <div className="cp-tier-amount">₱18,000 – ₱24,000</div>
+                </div>
 
-              {/* Root */}
-              <div
-                className={`cp-tier-card root ${expandedTier === 'root' ? 'selected' : ''}`}
-                onClick={() => handleTierCardClick('root')}
-                style={{ padding: '20px 16px' }}
-              >
-                <div className="cp-tier-label" style={{ marginBottom: '8px' }}>Root</div>
-                <div style={{ color: '#888888', fontSize: '0.9rem' }}>Open amount</div>
-              </div>
+                <div
+                  className={`cp-tier-card anchor ${expandedTier === 'anchor' ? 'selected' : ''}`}
+                  onClick={() => handleTierCardClick('anchor')}
+                >
+                  <div className="cp-tier-check">✓</div>
+                  <div className="cp-tier-label">Anchor</div>
+                  <div className="cp-tier-amount">₱10,000 – ₱17,000</div>
+                </div>
+
+                <div
+                  className={`cp-tier-card root ${expandedTier === 'root' ? 'selected' : ''}`}
+                  onClick={() => handleTierCardClick('root')}
+                >
+                  <div className="cp-tier-check">✓</div>
+                  <div className="cp-tier-label">Root</div>
+                  <div className="cp-tier-amount">Open amount</div>
+                </div>
+
               </div>
             </div>
 
