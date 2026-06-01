@@ -256,115 +256,25 @@ export default function Funds() {
               Total plan supported by contributions and fundraising. {formatPeso(2500000, 0)} Full Batch Vision Target.
             </p>
 
-            {/* Core Celebration — 80% */}
-            <div className="funds-alloc-group">
-              <div className="funds-alloc-section-label">Core Celebration</div>
-              <div className="funds-alloc-row">
-                <div className="funds-alloc-items">
-                  <div className="funds-alloc-item">
-                    <span className="funds-alloc-icon">🎉</span>
-                    <div className="funds-alloc-details">
-                      <div className="funds-alloc-name">Main Event</div>
-                      <div className="funds-alloc-desc">Primary celebration covering venue, catering, production, and full program execution.</div>
-                    </div>
-                    <span className="funds-alloc-pct">50%</span>
-                  </div>
-                  <div className="funds-alloc-item">
-                    <span className="funds-alloc-icon">🎓</span>
-                    <div className="funds-alloc-details">
-                      <div className="funds-alloc-name">Teachers' Dinner</div>
-                      <div className="funds-alloc-desc">A separate evening dedicated to the teachers who shaped us. Our way of saying thank you, long overdue.</div>
-                    </div>
-                    <span className="funds-alloc-pct">12%</span>
-                  </div>
-                  <div className="funds-alloc-item">
-                    <span className="funds-alloc-icon">👕</span>
-                    <div className="funds-alloc-details">
-                      <div className="funds-alloc-name">Merch & Commemorative Items</div>
-                      <div className="funds-alloc-desc">Every batchmate gets a shirt. Premium items sold separately help offset the cost.</div>
-                    </div>
-                    <span className="funds-alloc-pct">8%</span>
-                  </div>
-                  <div className="funds-alloc-item">
-                    <span className="funds-alloc-icon">💚</span>
-                    <div className="funds-alloc-details">
-                      <div className="funds-alloc-name">Charity / Giving Back</div>
-                      <div className="funds-alloc-desc">A portion of what we raise goes back to the school and its community.</div>
-                    </div>
-                    <span className="funds-alloc-pct">7%</span>
-                  </div>
-                  <div className="funds-alloc-item">
-                    <span className="funds-alloc-icon">🔒</span>
-                    <div className="funds-alloc-details">
-                      <div className="funds-alloc-name">Contingency & Buffer</div>
-                      <div className="funds-alloc-desc">Reserved buffer to protect the batch from unforeseen costs.</div>
-                    </div>
-                    <span className="funds-alloc-pct">3%</span>
-                  </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', marginTop: '20px' }}>
+              <div className="donate-card" style={{ borderLeft: '4px solid #006633', borderRadius: '0 8px 8px 0' }}>
+                <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#006633', marginBottom: '6px' }}>80%</div>
+                <h4 className="donate-card-title" style={{ color: '#006633', marginBottom: '8px' }}>Core Celebration</h4>
+                <div style={{ height: '6px', background: 'rgba(0,102,51,0.12)', borderRadius: '4px', marginBottom: '10px' }}>
+                  <div style={{ width: '80%', height: '100%', background: '#006633', borderRadius: '4px' }}></div>
                 </div>
-                <div className="funds-alloc-big-pct">
-                  <div className="funds-alloc-big-num">80%</div>
-                  <div className="funds-alloc-big-label">of total batch vision</div>
-                </div>
+                <p style={{ fontSize: '0.82rem', color: 'var(--color-text-secondary)', margin: 0 }}>Details to be announced soon.</p>
               </div>
-              <div className="funds-alloc-note">
-                <div className="funds-alloc-bar"><div className="funds-alloc-bar-fill green" style={{ width: '80%' }} /></div>
-                80% of our total plan funds the core celebration — the Main Event, Teachers' Dinner, and commemorative items.
+
+              <div className="donate-card" style={{ borderLeft: '4px solid #CFB53B', borderRadius: '0 8px 8px 0' }}>
+                <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#CFB53B', marginBottom: '6px' }}>20%</div>
+                <h4 className="donate-card-title" style={{ color: '#CFB53B', marginBottom: '8px' }}>Fundraising Initiatives</h4>
+                <div style={{ height: '6px', background: 'rgba(207,181,59,0.12)', borderRadius: '4px', marginBottom: '10px' }}>
+                  <div style={{ width: '20%', height: '100%', background: '#CFB53B', borderRadius: '4px' }}></div>
+                </div>
+                <p style={{ fontSize: '0.82rem', color: 'var(--color-text-secondary)', margin: 0 }}>Details to be announced soon.</p>
               </div>
             </div>
-
-            {/* Fundraising Initiatives — 20% */}
-            <div className="funds-alloc-group">
-              <div className="funds-alloc-section-label gold">Fundraising Initiatives</div>
-              <div className="funds-alloc-row">
-                <div className="funds-alloc-items">
-                  <div className="funds-alloc-item">
-                    <span className="funds-alloc-icon">⛳</span>
-                    <div className="funds-alloc-details">
-                      <div className="funds-alloc-name">La Sallian Golf</div>
-                      <div className="funds-alloc-desc">A 2-day event at Negros Occidental Golf & Country Club bringing La Sallians together from across the nation.</div>
-                    </div>
-                    <span className="funds-alloc-pct gold">10%</span>
-                  </div>
-                  <div className="funds-alloc-item">
-                    <span className="funds-alloc-icon">🏃</span>
-                    <div className="funds-alloc-details">
-                      <div className="funds-alloc-name">La Sallian Run</div>
-                      <div className="funds-alloc-desc">A tradition started by our own peers, held first quarter of 2028.</div>
-                    </div>
-                    <span className="funds-alloc-pct gold">6%</span>
-                  </div>
-                  <div className="funds-alloc-item">
-                    <span className="funds-alloc-icon">⚽</span>
-                    <div className="funds-alloc-details">
-                      <div className="funds-alloc-name">In Memoriam Football Cup</div>
-                      <div className="funds-alloc-desc">A tribute to the batchmates we've lost, played in their honor.</div>
-                    </div>
-                    <span className="funds-alloc-pct gold">2%</span>
-                  </div>
-                  <div className="funds-alloc-item">
-                    <span className="funds-alloc-icon">🏀</span>
-                    <div className="funds-alloc-details">
-                      <div className="funds-alloc-name">In Memoriam Basketball Cup</div>
-                      <div className="funds-alloc-desc">A tribute to a batchmate we lost, played in their honor.</div>
-                    </div>
-                    <span className="funds-alloc-pct gold">2%</span>
-                  </div>
-                </div>
-                <div className="funds-alloc-big-pct gold-block">
-                  <div className="funds-alloc-big-num gold">20%</div>
-                  <div className="funds-alloc-big-label">revenue initiative</div>
-                </div>
-              </div>
-              <div className="funds-alloc-note">
-                <div className="funds-alloc-bar"><div className="funds-alloc-bar-fill gold" style={{ width: '20%' }} /></div>
-                Upfront operating allocation. Designed to generate sponsorship and entry-fee returns to support the overall fund.
-              </div>
-            </div>
-
-            <p className="budget-footnote" style={{ marginTop: '16px' }}>
-              Note on fundraising events: The percentages shown reflect gross allocation, not net cost. Any returns generated go back into the overall fund.
-            </p>
           </div>
 
         </div>
