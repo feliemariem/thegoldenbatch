@@ -235,15 +235,17 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
       setExpandedTier(null);
     } else {
       setExpandedTier(tier);
-      handleTierSelect(tier);
     }
   };
 
   const handleCountMeIn = () => {
-    // Scroll to pledge panel
-    if (pledgePanelRef.current) {
-      pledgePanelRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    setSelectedTier(expandedTier);
+    setExpandedTier(null);
+    setPledgeAmount('');
+    setError('');
+    setTimeout(() => {
+      pledgePanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
   };
 
   const handleAmountChange = (e) => {
