@@ -2286,33 +2286,17 @@ body[data-theme="dark"] .cp-faq-link:hover {
 .cp-tier-grid-inner {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 8px;
+  gap: 10px;
   width: 100%;
-}
-
-.cp-tier-grid-inner > div {
-  aspect-ratio: 1 / 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 8px !important;
 }
 
 @media (max-width: 700px) {
   .cp-tier-grid-inner {
-    gap: 6px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
   }
-  .cp-tier-grid-inner > div {
-    padding: 6px !important;
-  }
-  .cp-tier-grid-inner .cp-tier-label,
-  .cp-tier-grid-inner [style*="font-size: 1.1rem"] {
-    font-size: 10px !important;
-    letter-spacing: 0.5px;
-  }
-  .cp-tier-grid-inner [style*="font-size: 0.9rem"] {
-    font-size: 9px !important;
+
+  .cp-tier-grid-inner > div:first-child {
+    grid-column: 1 / -1;
   }
 }
