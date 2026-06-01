@@ -120,11 +120,11 @@ export default function Funds() {
                   <div className="progress-bar-track">
                     <div
                       className="progress-bar-fill"
-                      style={{ width: `${Math.min((balance / 2100000) * 100, 100)}%` }}
+                      style={{ width: `${Math.min((balance / 2500000) * 100, 100)}%` }}
                     />
                   </div>
                   <p className="funds-progress-text">
-                    {((balance / 2100000) * 100).toFixed(1)}% of {formatPeso(2100000, 0)} goal
+                    {((balance / 2500000) * 100).toFixed(1)}% of {formatPeso(2500000, 0)} goal
                   </p>
                 </div>
 
@@ -253,7 +253,7 @@ export default function Funds() {
           <div style={{ marginBottom: '32px' }}>
             <h3 className="budget-heading">Where Your Contribution Goes</h3>
             <p className="budget-description">
-              Total plan supported by contributions and fundraising. {formatPeso(2100000, 0)} Full Batch Vision Target.
+              Total plan supported by contributions and fundraising. {formatPeso(2500000, 0)} Full Batch Vision Target.
             </p>
 
             {/* Core Celebration — 80% */}
