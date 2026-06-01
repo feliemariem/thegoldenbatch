@@ -298,6 +298,7 @@ export default function MasterListTab({
             <div className="status-card">
               <div className="status-card-header">Builder Tiers</div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
+                <span><strong style={{ color: '#8B7FD4' }}>{parseInt(masterListStats.beyond_count) || 0}</strong> Beyond</span>
                 <span><strong style={{ color: '#CFB53B' }}>{parseInt(masterListStats.cornerstone_count) || 0}</strong> Cornerstone</span>
                 <span><strong style={{ color: '#C0C0C0' }}>{parseInt(masterListStats.pillar_count) || 0}</strong> Pillar</span>
                 <span><strong style={{ color: '#CD7F32' }}>{parseInt(masterListStats.anchor_count) || 0}</strong> Anchor</span>

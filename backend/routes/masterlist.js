@@ -212,6 +212,7 @@ router.get('/', authenticateAdmin, async (req, res) => {
       // Only verified (OK) deposits count toward collected totals
       db.query(`
         SELECT
+          COUNT(CASE WHEN m.builder_tier = 'beyond' THEN 1 END) as beyond_count,
           COUNT(CASE WHEN m.builder_tier = 'cornerstone' THEN 1 END) as cornerstone_count,
           COUNT(CASE WHEN m.builder_tier = 'pillar' THEN 1 END) as pillar_count,
           COUNT(CASE WHEN m.builder_tier = 'anchor' THEN 1 END) as anchor_count,
