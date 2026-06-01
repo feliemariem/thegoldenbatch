@@ -175,7 +175,8 @@ export default function MasterListTab({
 
   const getTierRange = (tier) => {
     const ranges = {
-      cornerstone: { min: 25000, max: null, label: 'Min: ₱25,000' },
+      beyond: { min: 100000, max: null, label: 'Min: ₱100,000' },
+      cornerstone: { min: 25000, max: 99999, label: '₱25,000 – ₱99,999' },
       pillar: { min: 18000, max: 24000, label: '₱18,000 – ₱24,000' },
       anchor: { min: 10000, max: 17000, label: '₱10,000 – ₱17,000' },
       root: { min: null, max: null, label: 'Open amount' }
@@ -184,7 +185,7 @@ export default function MasterListTab({
   };
 
   const getTierDefault = (tier) => {
-    const defaults = { cornerstone: 25000, pillar: 18000, anchor: 10000 };
+    const defaults = { beyond: 100000, cornerstone: 25000, pillar: 18000, anchor: 10000 };
     return defaults[tier] || null;
   };
 
@@ -406,6 +407,7 @@ export default function MasterListTab({
             style={{ width: '150px' }}
           >
             <option value="all">All Tiers</option>
+            <option value="beyond">Beyond</option>
             <option value="cornerstone">Cornerstone</option>
             <option value="pillar">Pillar</option>
             <option value="anchor">Anchor</option>
@@ -549,6 +551,7 @@ export default function MasterListTab({
                                 className="edit-tier-select"
                               >
                                 <option value="">None</option>
+                                <option value="beyond">Beyond</option>
                                 <option value="cornerstone">Cornerstone</option>
                                 <option value="pillar">Pillar</option>
                                 <option value="anchor">Anchor</option>
