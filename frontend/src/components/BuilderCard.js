@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { apiGet, apiUpload, apiDelete } from '../api';
 import { formatPeso, getMilestoneMessage } from '../utils/profileUtils';
-import ContributionPlan from './ContributionPlan';
+import ContributionPlan from './ContributionPlanV2';
 
 export default function BuilderCard({ profile, onProfileUpdate, user }) {
   const location = useLocation();
