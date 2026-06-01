@@ -412,11 +412,11 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
             <button className="cp-toc-pill" onClick={() => progressRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
               Progress
             </button>
-            <button className="cp-toc-pill" onClick={() => allocationRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
-              Allocation
-            </button>
             <button className="cp-toc-pill" onClick={() => tierHeadingRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
               Tiers
+            </button>
+            <button className="cp-toc-pill" onClick={() => allocationRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
+              Allocation
             </button>
             <button className="cp-toc-pill" onClick={() => faqRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>
               FAQ
@@ -444,42 +444,12 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
             {/* Letter */}
             <div className="cp-letter">
               <p><b className="cp-green">Dear {user?.first_name || 'Batchmate'},</b></p>
-              <p>As we prepare for our 25th Homecoming, we want to share a clear and complete picture of what we're building together.</p>
-              <p>The ₱2.5M shown here represents our total batch vision — covering the Main Event, Teachers' Dinner, commemorative items, fundraising initiatives, and our Giving Back commitment. This figure is based on itemized budget estimates for each component. This is not an amount expected to come solely from direct contributions. We are using a <b>hybrid model</b>, combining batch contributions with income generated from selected initiatives.</p>
-              <p>The Main Event remains the centerpiece of our milestone celebration, while our fundraising initiatives are structured to generate additional returns to support the overall plan. Our goal is transparency, balance, and a celebration worthy of 25 years.</p>
+              <p>25 years. That's how long it's been since we shared the same hallways, the same teachers, the same inside jokes, the same chaos of being young and figuring everything out together. Some of the best friendships we have today were formed in that building.</p>
+              <p>This homecoming is our chance to relive all of it. Together. And we want to share a clear and complete picture of what we're building.</p>
+              <p>The ₱2.5M target covers everything -- the main event, a separate dinner for the teachers who shaped us, shirts and keepsakes for every batchmate, something we're giving back to the school, and a buffer for the unexpected. This figure is based on itemized budget estimates for each component. It is not an amount expected to come solely from direct contributions.</p>
+              <p>We are funding this through a <b>hybrid model</b> -- combining direct contributions from batchmates with income generated from events we are organizing together. Both streams go into the same fund. Every verified contribution is tracked and visible to the batch on our <Link to="/funds" className="cp-faq-link">Fund page</Link>. Our goal is transparency, balance, and a celebration worthy of 25 years.</p>
+              <p>Ready to be part of this? <button style={{ background: 'none', border: 'none', color: '#CFB53B', fontSize: 'inherit', fontWeight: '600', cursor: 'pointer', textDecoration: 'underline', padding: 0 }} onClick={() => tierHeadingRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>Choose your tier below.</button></p>
               <p className="cp-sign">— USLS-IS Batch 2003 Organizing Committee</p>
-            </div>
-
-            <div className="cp-gold-divider"></div>
-
-            {/* Where Your Contribution Goes - Simplified */}
-            <h2 className="cp-section-title" ref={allocationRef}>Where your contribution goes</h2>
-            <p className="cp-section-subtitle">Total plan supported by contributions and fundraising. ₱2,500,000 Full Batch Vision Target.</p>
-
-            <div className="cp-info-row" style={{ marginBottom: '24px' }}>
-              <div className="cp-info-box green-border" style={{ flex: 1 }}>
-                <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#2ecc71', marginBottom: '8px' }}>80%</div>
-                <div className="cp-info-box-title green" style={{ marginBottom: '12px' }}>Core Celebration</div>
-                <div className="cp-alloc-bar" style={{ marginBottom: '12px' }}>
-                  <div className="cp-alloc-bar-fill green" style={{ width: '80%' }}></div>
-                </div>
-                <p style={{ fontSize: '0.85rem', color: '#888', margin: 0 }}>Details to be announced soon.</p>
-              </div>
-              <div className="cp-info-box gold-border" style={{ flex: 1 }}>
-                <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#CFB53B', marginBottom: '8px' }}>20%</div>
-                <div className="cp-info-box-title gold" style={{ marginBottom: '12px' }}>Fundraising Initiatives</div>
-                <div className="cp-alloc-bar" style={{ marginBottom: '12px' }}>
-                  <div className="cp-alloc-bar-fill gold" style={{ width: '20%' }}></div>
-                </div>
-                <p style={{ fontSize: '0.85rem', color: '#888', margin: 0 }}>Details to be announced soon.</p>
-              </div>
-            </div>
-
-            <div className="cp-info-row">
-              <div className="cp-info-box gold-border" style={{ flex: 1 }}>
-                <div className="cp-info-box-title gold">Flexible monthly commitments.</div>
-                <p>You can contribute in monthly installments from January 2026 through December 2028 — that's 36 months to reach your chosen tier. Every peso counts.</p>
-              </div>
             </div>
 
             <div className="cp-gold-divider"></div>
@@ -827,6 +797,38 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
               </div>
             </div>
 
+            <div className="cp-gold-divider"></div>
+
+            {/* Where Your Contribution Goes - Simplified */}
+            <h2 className="cp-section-title" ref={allocationRef}>Where your contribution goes</h2>
+            <p className="cp-section-subtitle">Total plan supported by contributions and fundraising. ₱2,500,000 Full Batch Vision Target.</p>
+
+            <div className="cp-info-row" style={{ marginBottom: '24px' }}>
+              <div className="cp-info-box green-border" style={{ flex: 1 }}>
+                <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#2ecc71', marginBottom: '8px' }}>80%</div>
+                <div className="cp-info-box-title green" style={{ marginBottom: '12px' }}>Core Celebration</div>
+                <div className="cp-alloc-bar" style={{ marginBottom: '12px' }}>
+                  <div className="cp-alloc-bar-fill green" style={{ width: '80%' }}></div>
+                </div>
+                <p style={{ fontSize: '0.85rem', color: '#888', margin: 0 }}>Details to be announced soon.</p>
+              </div>
+              <div className="cp-info-box gold-border" style={{ flex: 1 }}>
+                <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#CFB53B', marginBottom: '8px' }}>20%</div>
+                <div className="cp-info-box-title gold" style={{ marginBottom: '12px' }}>Fundraising Initiatives</div>
+                <div className="cp-alloc-bar" style={{ marginBottom: '12px' }}>
+                  <div className="cp-alloc-bar-fill gold" style={{ width: '20%' }}></div>
+                </div>
+                <p style={{ fontSize: '0.85rem', color: '#888', margin: 0 }}>Details to be announced soon.</p>
+              </div>
+            </div>
+
+            <div className="cp-info-row">
+              <div className="cp-info-box gold-border" style={{ flex: 1 }}>
+                <div className="cp-info-box-title gold">Flexible monthly commitments.</div>
+                <p>You can contribute in monthly installments from January 2026 through December 2028 — that's 36 months to reach your chosen tier. Every peso counts.</p>
+              </div>
+            </div>
+
             {/* FAQ Section */}
             <div className="cp-faq-section" ref={faqRef}>
               <h2 className="cp-faq-heading">Frequently Asked Questions</h2>
@@ -854,7 +856,7 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
                     <span className={`cp-faq-arrow ${openFaqs.includes('plan-1') ? 'open' : ''}`}>▼</span>
                   </button>
                   <div className={`cp-faq-answer ${openFaqs.includes('plan-1') ? 'open' : ''}`}>
-                    That covers everything — the Main Event, Teachers' Dinner, shirts and keepsakes for every batchmate, our giving back project, seed money for the fundraising events, and a buffer just in case. It's the full picture of what we're building together.
+                    That covers everything -- the main event, Teachers' Dinner, shirts and keepsakes for every batchmate, our giving back project, seed money for the fundraising events, and a buffer just in case. It's the full picture of what we're building together.
                   </div>
                 </div>
 
@@ -864,7 +866,7 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
                     <span className={`cp-faq-arrow ${openFaqs.includes('plan-2') ? 'open' : ''}`}>▼</span>
                   </button>
                   <div className={`cp-faq-answer ${openFaqs.includes('plan-2') ? 'open' : ''}`}>
-                    We need about 100 batchmates to contribute to cover the core celebration. The fundraising events help close the gap to ₱2.5M. The more we raise from contributions, the less pressure we put on those events to carry the load.
+                    We need enough batchmates to contribute to cover the core celebration. The fundraising events help close the gap to ₱2.5M. The more we raise directly from each other, the less we rely on everything else.
                   </div>
                 </div>
 
@@ -889,7 +891,7 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
                     <span className={`cp-faq-arrow ${openFaqs.includes('tiers-1') ? 'open' : ''}`}>▼</span>
                   </button>
                   <div className={`cp-faq-answer ${openFaqs.includes('tiers-1') ? 'open' : ''}`}>
-                    We have five. Beyond, Cornerstone, Pillar, Anchor, and Root. They're not rankings. Think of it like a building — every part carries weight. A Root is not less than a Cornerstone. They just carry different loads in the same foundation. Whatever tier you pick, you're a Builder.
+                    We have five. Beyond, Cornerstone, Pillar, Anchor, and Root. They're not rankings. Think of it like a building -- every part carries weight. A Root is not less than a Beyond. They just carry different loads in the same foundation. Whatever tier you pick, you're a Builder.
                   </div>
                 </div>
 
@@ -919,7 +921,7 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
                     <span className={`cp-faq-arrow ${openFaqs.includes('tiers-0') ? 'open' : ''}`}>▼</span>
                   </button>
                   <div className={`cp-faq-answer ${openFaqs.includes('tiers-0') ? 'open' : ''}`}>
-                    ₱100,000 and up. For those who want to go above and beyond. You're carrying one of the biggest individual loads in the batch and making a significant impact on our collective vision.
+                    ₱100,000 and above. For those who have the capacity to give more, this is the tier for you. And here's why it matters beyond recognition -- every peso contributed at this level directly eases the load for batchmates who can only give a little. The more we raise from those who can give generously, the more breathing room we create for everyone else. That's what makes this truly a batch effort.
                   </div>
                 </div>
 
@@ -929,7 +931,7 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
                     <span className={`cp-faq-arrow ${openFaqs.includes('tiers-4') ? 'open' : ''}`}>▼</span>
                   </button>
                   <div className={`cp-faq-answer ${openFaqs.includes('tiers-4') ? 'open' : ''}`}>
-                    ₱25,000 to ₱99,999. You're carrying a significant load in the batch. Your contribution goes into the heart of the Main Event — the venue, production, and program.
+                    ₱25,000 to ₱99,999. A significant share of what makes this celebration happen. You're contributing to the heart of the main event -- the venue, production, and program.
                   </div>
                 </div>
 
@@ -939,7 +941,7 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
                     <span className={`cp-faq-arrow ${openFaqs.includes('tiers-5') ? 'open' : ''}`}>▼</span>
                   </button>
                   <div className={`cp-faq-answer ${openFaqs.includes('tiers-5') ? 'open' : ''}`}>
-                    ₱18,000 to ₱24,000. You're funding a significant part of the core celebration. Serious commitment.
+                    ₱18,000 to ₱24,000. A serious, meaningful commitment to the core celebration.
                   </div>
                 </div>
 
@@ -949,7 +951,7 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
                     <span className={`cp-faq-arrow ${openFaqs.includes('tiers-6') ? 'open' : ''}`}>▼</span>
                   </button>
                   <div className={`cp-faq-answer ${openFaqs.includes('tiers-6') ? 'open' : ''}`}>
-                    ₱10,000 to ₱17,000. Still a real, meaningful share of what makes this celebration happen.
+                    ₱10,000 to ₱17,000. A real, solid share of what brings this homecoming to life.
                   </div>
                 </div>
 
