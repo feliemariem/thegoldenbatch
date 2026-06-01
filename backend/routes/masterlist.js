@@ -378,7 +378,7 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
     let validatedTier = undefined;
     let validatedPledge = undefined;
     if (isSuperAdmin && builder_tier !== undefined) {
-      const validTiers = ['cornerstone', 'pillar', 'anchor', 'root', null];
+      const validTiers = ['cornerstone', 'pillar', 'anchor', 'root', 'beyond', null];
       if (!validTiers.includes(builder_tier)) {
         return res.status(400).json({ error: 'Invalid tier' });
       }
@@ -405,7 +405,8 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
         }
         // Check range based on tier
         const tierRanges = {
-          cornerstone: { min: 25000, max: null },
+          beyond: { min: 100000, max: null },
+          cornerstone: { min: 25000, max: 99999 },
           pillar: { min: 18000, max: 24000 },
           anchor: { min: 10000, max: 17000 }
         };
