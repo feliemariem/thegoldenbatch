@@ -2274,3 +2274,55 @@ body[data-theme="dark"] .cp-faq-link:hover {
     font-size: 13px;
   }
 }
+
+/* ===========================================
+   TIER GRID SCROLL (MOBILE)
+   =========================================== */
+
+.cp-tier-grid-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  margin: 0 -24px;
+  padding: 0 24px;
+}
+
+.cp-tier-grid-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.cp-tier-grid-inner {
+  display: flex;
+  gap: 10px;
+  padding-right: 24px;
+  width: max-content;
+}
+
+.cp-tier-grid-inner > div {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+}
+
+@media (max-width: 700px) {
+  .cp-tier-grid-inner > div {
+    width: 72vw;
+  }
+}
+
+@media (min-width: 701px) {
+  .cp-tier-grid-scroll {
+    overflow-x: visible;
+    margin: 0;
+    padding: 0;
+  }
+  .cp-tier-grid-inner {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    width: auto;
+  }
+  .cp-tier-grid-inner > div {
+    width: auto;
+  }
+}

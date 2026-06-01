@@ -462,7 +462,8 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
             <p className="cp-tier-hint">Tap a tier to begin.</p>
 
             {/* Minimal Tier Cards Grid */}
-            <div className="cp-tier-grid" style={{ gridTemplateColumns: 'repeat(5, 1fr)' }}>
+            <div className="cp-tier-grid-scroll">
+              <div className="cp-tier-grid-inner">
               {/* Beyond */}
               <div
                 style={{
@@ -519,6 +520,7 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
               >
                 <div className="cp-tier-label" style={{ marginBottom: '8px' }}>Root</div>
                 <div style={{ color: '#888888', fontSize: '0.9rem' }}>Open amount</div>
+              </div>
               </div>
             </div>
 
