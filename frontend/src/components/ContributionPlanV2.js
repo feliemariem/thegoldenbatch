@@ -657,7 +657,7 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
                         </div>
                         <div className="cp-breakdown-remaining">
                           <strong>₱{formatNumber(amount)}</strong> over <strong>{months} months</strong> remaining
-                          <br/>{getStartLabel()} — December 2028
+                          <br/>{getStartLabel()} — June 2028
                         </div>
                         {selectedCurrency !== 'PHP' && exchangeRates && (
                           <div className="cp-breakdown-total-converted">
