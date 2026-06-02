@@ -90,7 +90,7 @@ const TIER_TAGLINES = {
 function getMonthsRemaining() {
   const now = new Date();
   const start = new Date(2026, 0, 1);
-  const end = new Date(2028, 11, 31);
+  const end = new Date(2028, 5, 30);
   const from = now < start ? start : now;
   if (from >= end) return 1;
   const months = (end.getFullYear() - from.getFullYear()) * 12 + (end.getMonth() - from.getMonth());
@@ -438,7 +438,7 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
               <div className="cp-progress-bar-track">
                 <div className="cp-progress-bar-fill" style={{ width: `${(batchProgress.total_raised / batchProgress.goal) * 100}%` }}></div>
               </div>
-              <div className="cp-progress-timeline">January 2026 — December 2028</div>
+              <div className="cp-progress-timeline">January 2026 — June 2028 (encouraged)</div>
             </div>
 
             {/* Letter */}
@@ -449,6 +449,7 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
               <p>The ₱2.5M target covers everything -- the main event, a separate dinner for the teachers who shaped us, shirts and keepsakes for every batchmate, something we're giving back to the school, and a buffer for the unexpected. This figure is based on itemized budget estimates for each component. It is not an amount expected to come solely from direct contributions.</p>
               <p>We are funding this through a <b>hybrid model</b> -- combining direct contributions from batchmates with income generated from events we are organizing together. Both streams go into the same fund. Every verified contribution is tracked and visible to the batch on our <Link to="/funds" className="cp-faq-link">Fund page</Link>. Our goal is transparency, balance, and a celebration worthy of 25 years.</p>
               <p>Ready to be part of this? <button style={{ background: 'none', border: 'none', color: '#CFB53B', fontSize: 'inherit', fontWeight: '600', cursor: 'pointer', textDecoration: 'underline', padding: 0 }} onClick={() => tierHeadingRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>Choose your tier below.</button></p>
+              <p>We strongly encourage all contributions to be received and verified by June 2028. This gives us a clear picture of our budget before we finalize vendors, production, and everything needed for December. Contributions received after June are still welcome -- every peso counts.</p>
               <p className="cp-sign">— USLS-IS Batch 2003 Organizing Committee</p>
             </div>
 
@@ -816,7 +817,7 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
             <div className="cp-info-row">
               <div className="cp-info-box gold-border" style={{ flex: 1 }}>
                 <div className="cp-info-box-title gold">Flexible monthly commitments.</div>
-                <p>You can contribute in monthly installments from January 2026 through December 2028 — that's 36 months to reach your chosen tier. Every peso counts.</p>
+                <p>You can contribute in monthly installments from January 2026 through June 2028 — that's {getMonthsRemaining()} months. We strongly encourage contributions to be completed by June so we can finalize our budget for December.</p>
               </div>
             </div>
 
@@ -1008,6 +1009,16 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
                   </button>
                   <div className={`cp-faq-answer ${openFaqs.includes('payment-4') ? 'open' : ''}`}>
                     Contributions go to a PNB account under our co-signatories, Atty. Narciso Javelosa III and our Treasurer, Mary Rose Frances Uy. Every deposit is tracked on the platform. You can see the batch total anytime on the <Link to="/funds" className="cp-faq-link">Fund page</Link>. We want every peso accounted for and visible.
+                  </div>
+                </div>
+
+                <div className="cp-faq-item">
+                  <button className="cp-faq-question" onClick={() => toggleFaq('payment-5')}>
+                    <span>Is there a deadline for contributions?</span>
+                    <span className={`cp-faq-arrow ${openFaqs.includes('payment-5') ? 'open' : ''}`}>▼</span>
+                  </button>
+                  <div className={`cp-faq-answer ${openFaqs.includes('payment-5') ? 'open' : ''}`}>
+                    We strongly encourage all contributions to be received and verified by June 2028. That's when we need a clear picture of our budget to finalize plans for the December event -- venue deposits, production costs, and everything that needs to be locked in advance. Contributions received after June are still welcome and will still count. But the earlier you contribute, the more it helps us plan with confidence.
                   </div>
                 </div>
               </div>
