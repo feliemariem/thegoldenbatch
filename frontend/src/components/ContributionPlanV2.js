@@ -998,7 +998,7 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
                     <span className={`cp-faq-arrow ${openFaqs.includes('payment-2') ? 'open' : ''}`}>▼</span>
                   </button>
                   <div className={`cp-faq-answer ${openFaqs.includes('payment-2') ? 'open' : ''}`}>
-                    No. You have until December 2028 — that's {getMonthsRemaining()} months from now. Pay in parts, at whatever pace works for you. The plan shows you what it looks like monthly, weekly, even daily so you can plan ahead.
+                    No. We strongly encourage contributions to be in by June 2028 -- that's when we start locking in vendors and finalizing the budget for December. That's {getMonthsRemaining()} months from now. Pay in parts, at whatever pace works for you. The plan shows you what it looks like monthly, weekly, even daily so you can plan ahead. Contributions after June are still welcome.
                   </div>
                 </div>
 
