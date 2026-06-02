@@ -1043,37 +1043,7 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
                     <span className={`cp-faq-arrow ${openFaqs.includes('recog-1') ? 'open' : ''}`}>▼</span>
                   </button>
                   <div className={`cp-faq-answer ${openFaqs.includes('recog-1') ? 'open' : ''}`}>
-                    Only if you want it to be. When you select your tier inside the Contribution Plan, there's a toggle at the bottom before you confirm. Switch it on and your name goes on the Builder's Wall, souvenir program, website, and stage acknowledgment. Switch it off and your contribution still counts, your name just stays private. You can change this anytime from your profile.
-                  </div>
-                </div>
-
-                <div className="cp-faq-item">
-                  <button className="cp-faq-question" onClick={() => toggleFaq('recog-2')}>
-                    <span>What is the Builder's Wall?</span>
-                    <span className={`cp-faq-arrow ${openFaqs.includes('recog-2') ? 'open' : ''}`}>▼</span>
-                  </button>
-                  <div className={`cp-faq-answer ${openFaqs.includes('recog-2') ? 'open' : ''}`}>
-                    A physical display at the venue entrance on the night of the event. Every guest sees it when they walk in.
-                  </div>
-                </div>
-
-                <div className="cp-faq-item">
-                  <button className="cp-faq-question" onClick={() => toggleFaq('recog-3')}>
-                    <span>What is the Giving Back Dedication?</span>
-                    <span className={`cp-faq-arrow ${openFaqs.includes('recog-3') ? 'open' : ''}`}>▼</span>
-                  </button>
-                  <div className={`cp-faq-answer ${openFaqs.includes('recog-3') ? 'open' : ''}`}>
-                    A permanent marker at the school for our giving back project. Beyond and Cornerstone Builders who opt in are listed as founding supporters. It stays there long after the event is over.
-                  </div>
-                </div>
-
-                <div className="cp-faq-item">
-                  <button className="cp-faq-question" onClick={() => toggleFaq('recog-4')}>
-                    <span>What is the commemorative keepsake?</span>
-                    <span className={`cp-faq-arrow ${openFaqs.includes('recog-4') ? 'open' : ''}`}>▼</span>
-                  </button>
-                  <div className={`cp-faq-answer ${openFaqs.includes('recog-4') ? 'open' : ''}`}>
-                    Every Builder gets one. The committee is still deciding what it will be. We'll let everyone know once it's confirmed.
+                    Only if you want it to be. When you confirm your tier, there's a toggle before you submit. Switch it on and your name goes into our Builder recognition. Switch it off and your contribution still counts, your name just stays private. You can change this anytime from your profile.
                   </div>
                 </div>
               </div>
@@ -1088,7 +1058,7 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
                     <span className={`cp-faq-arrow ${openFaqs.includes('fund-1') ? 'open' : ''}`}>▼</span>
                   </button>
                   <div className={`cp-faq-answer ${openFaqs.includes('fund-1') ? 'open' : ''}`}>
-                    La Sallian Golf, La Sallian Run, In Memoriam Football Cup, and In Memoriam Basketball Cup. Whatever they earn from entry fees and sponsors goes back into the fund. That's what helps us reach ₱2.5M without putting all the pressure on direct contributions alone.
+                    We're organizing a series of fundraising events separately from direct contributions. Details on each will be shared as they're confirmed. Whatever they generate goes back into the fund -- that's what helps bridge the gap without putting all the pressure on direct contributions alone.
                   </div>
                 </div>
 
