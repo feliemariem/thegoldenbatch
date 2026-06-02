@@ -443,13 +443,23 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
 
             {/* Letter */}
             <div className="cp-letter">
+              <div className="cp-letter-eyebrow">A message from the committee</div>
               <p><b className="cp-green">Dear {user?.first_name || 'Batchmate'},</b></p>
               <p>25 years. That's how long it's been since we shared the same hallways, the same teachers, the same inside jokes, the same chaos of being young and figuring everything out together. Some of the best friendships we have today were formed in that building.</p>
-              <p>This homecoming is our chance to relive all of it. Together. And we want to share a clear and complete picture of what we're building.</p>
-              <p>The ₱2.5M target covers everything -- the main event, a separate dinner for the teachers who shaped us, shirts and keepsakes for every batchmate, something we're giving back to the school, and a buffer for the unexpected. This figure is based on itemized budget estimates for each component. It is not an amount expected to come solely from direct contributions.</p>
-              <p>We are funding this through a <b>hybrid model</b> -- combining direct contributions from batchmates with income generated from events we are organizing together. Both streams go into the same fund. Every verified contribution is tracked and visible to the batch on our <Link to="/funds" className="cp-faq-link">Fund page</Link>. Our goal is transparency, balance, and a celebration worthy of 25 years.</p>
-              <p>Ready to be part of this? <button style={{ background: 'none', border: 'none', color: '#CFB53B', fontSize: 'inherit', fontWeight: '600', cursor: 'pointer', textDecoration: 'underline', padding: 0 }} onClick={() => tierHeadingRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}>Choose your tier below.</button></p>
-              <p>We strongly encourage all contributions to be received and verified by June 2028. This gives us a clear picture of our budget before we finalize vendors, production, and everything needed for December. Contributions received after June are still welcome -- every peso counts.</p>
+              <p>This December 16, 2028, Batch 2003 will be hosting the USLS General Alumni Homecoming as Silver Jubilarians. 25 years later, we get to be the ones who bring everyone home. That's on us. And we want to make it count.</p>
+              <p>Here's what the ₱2.5M covers:</p>
+              <ul className="cp-letter-list">
+                <li>The main event</li>
+                <li>A separate dinner for the teachers who shaped us</li>
+                <li>Shirts and keepsakes for every batchmate</li>
+                <li>Something we're giving back to the school</li>
+                <li>A buffer for the unexpected</li>
+              </ul>
+              <p>This figure is based on itemized budget estimates for each component. It is not an amount expected to come solely from direct contributions.</p>
+              <p>We are funding this through a <b>hybrid model</b>. One stream is direct contributions from batchmates. The other comes from fundraising events we are organizing separately. Both streams go into the same fund. Every verified contribution is tracked and visible to the batch on our <Link to="/funds" className="cp-faq-link">Fund page</Link>. Our goal is transparency, balance, and a celebration worthy of 25 years.</p>
+              <p>We strongly encourage all contributions to be received and verified by June 2028. This gives us a clear picture of our budget before we finalize vendors, production, and everything needed for December. Contributions received after June are still welcome. Every peso counts.</p>
+              <p>Scroll down, pick the tier that feels right for you, and make your pledge. Monthly installments are completely fine. Your pledge tells us what we can count on. Payment details are right below the tiers.</p>
+              <p>Let's bring everyone home.</p>
               <p className="cp-sign">— USLS-IS Batch 2003 Organizing Committee</p>
             </div>
 
