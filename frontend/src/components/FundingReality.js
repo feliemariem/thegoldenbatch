@@ -14,47 +14,47 @@ const TIER_COLORS = {
 const SCENARIOS = {
   conservative: {
     label: 'Conservative',
-    beyond: { target: 1, avg: 100000 },
+    beyond: { target: 3, avg: 100000 },
     cornerstone: { target: 6, avg: 25000 },
     pillar: { target: 22, avg: 20000 },
     anchor: { target: 27, avg: 12000 },
     root: { target: 15, avg: 3000 },
     fundraising: 300000,
-    totalBuilders: 71,
-    projectedLabel: '₱1.88M'
+    totalBuilders: 73,
+    projectedLabel: '₱2.08M'
   },
   target: {
     label: 'Target',
-    beyond: { target: 2, avg: 100000 },
+    beyond: { target: 10, avg: 100000 },
     cornerstone: { target: 11, avg: 25000 },
     pillar: { target: 22, avg: 21000 },
     anchor: { target: 27, avg: 13000 },
     root: { target: 17, avg: 4000 },
     fundraising: 500000,
-    totalBuilders: 79,
-    projectedLabel: '₱2.37M'
+    totalBuilders: 87,
+    projectedLabel: '₱3.17M'
   },
   realistic: {
     label: 'Realistic Mix',
-    beyond: { target: 1, avg: 100000 },
+    beyond: { target: 5, avg: 100000 },
     cornerstone: { target: 10, avg: 25000 },
     pillar: { target: 18, avg: 20000 },
     anchor: { target: 35, avg: 12000 },
     root: { target: 22, avg: 3000 },
     fundraising: 450000,
-    totalBuilders: 86,
-    projectedLabel: '₱2.09M'
+    totalBuilders: 90,
+    projectedLabel: '₱2.49M'
   },
   strong: {
     label: 'Strong',
-    beyond: { target: 3, avg: 120000 },
+    beyond: { target: 10, avg: 120000 },
     cornerstone: { target: 17, avg: 27000 },
     pillar: { target: 27, avg: 21000 },
     anchor: { target: 27, avg: 14000 },
     root: { target: 17, avg: 5000 },
     fundraising: 650000,
-    totalBuilders: 91,
-    projectedLabel: '₱3.03M'
+    totalBuilders: 98,
+    projectedLabel: '₱3.92M'
   }
 };
 
