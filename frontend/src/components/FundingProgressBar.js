@@ -1,6 +1,6 @@
 export default function FundingProgressBar({ stats }) {
-  const FULL_TARGET = 2100000;
-  const CORE_TARGET = 1680000;
+  const FULL_TARGET = 2500000;
+  const CORE_TARGET = 2000000;
 
   const collected = parseFloat(stats.total_collected) || 0;
   const pledged = parseFloat(stats.total_pledged) || 0;
@@ -130,7 +130,7 @@ export default function FundingProgressBar({ stats }) {
             color: 'var(--color-text-secondary)',
             whiteSpace: 'nowrap'
           }}>
-            ₱1.68M core
+            ₱2M core
           </span>
         </div>
       </div>
@@ -146,7 +146,7 @@ export default function FundingProgressBar({ stats }) {
           {' · '}
           <span style={{ fontWeight: 700, color: 'var(--color-status-warning)' }}>{pledgedPct.toFixed(1)}%</span> pledged
         </span>
-        <span>₱2,100,000 goal</span>
+        <span>₱2,500,000 goal</span>
       </div>
 
       {/* Legend */}
@@ -165,7 +165,7 @@ export default function FundingProgressBar({ stats }) {
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.7rem', color: 'var(--color-text-secondary)' }}>
           <div style={{ width: '10px', height: '10px', borderRadius: '2px', background: 'rgba(128,128,128,0.08)', border: '1px solid rgba(128,128,128,0.15)' }} />
-          Remaining to ₱2.1M
+          Remaining to ₱2.5M
         </div>
       </div>
 

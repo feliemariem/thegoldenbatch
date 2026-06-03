@@ -288,7 +288,7 @@ router.get('/total-raised', async (req, res) => {
     res.json({
       total_raised: parseFloat(totalResult.rows[0].total_raised),
       builder_count: parseInt(builderResult.rows[0].builder_count),
-      goal: 2100000
+      goal: 2500000
     });
   } catch (err) {
     console.error(err);

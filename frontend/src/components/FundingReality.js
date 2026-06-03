@@ -1,9 +1,10 @@
 import { useState, useMemo } from 'react';
 
-const CORE_TARGET = 1680000;
-const FULL_TARGET = 2100000;
+const CORE_TARGET = 2000000;
+const FULL_TARGET = 2500000;
 
 const TIER_COLORS = {
+  beyond: '#8B7FD4',
   cornerstone: '#CFB53B',
   pillar: '#C0C0C0',
   anchor: '#CD7F32',
@@ -13,43 +14,47 @@ const TIER_COLORS = {
 const SCENARIOS = {
   conservative: {
     label: 'Conservative',
+    beyond: { target: 1, avg: 100000 },
     cornerstone: { target: 6, avg: 25000 },
     pillar: { target: 22, avg: 20000 },
     anchor: { target: 27, avg: 12000 },
     root: { target: 15, avg: 3000 },
     fundraising: 300000,
-    totalBuilders: 70,
-    projectedLabel: '₱1.78M'
+    totalBuilders: 71,
+    projectedLabel: '₱1.88M'
   },
   target: {
     label: 'Target',
+    beyond: { target: 2, avg: 100000 },
     cornerstone: { target: 11, avg: 25000 },
     pillar: { target: 22, avg: 21000 },
     anchor: { target: 27, avg: 13000 },
     root: { target: 17, avg: 4000 },
     fundraising: 500000,
-    totalBuilders: 77,
-    projectedLabel: '₱2.17M'
+    totalBuilders: 79,
+    projectedLabel: '₱2.37M'
   },
   realistic: {
     label: 'Realistic Mix',
+    beyond: { target: 1, avg: 100000 },
     cornerstone: { target: 10, avg: 25000 },
     pillar: { target: 18, avg: 20000 },
     anchor: { target: 35, avg: 12000 },
     root: { target: 22, avg: 3000 },
     fundraising: 450000,
-    totalBuilders: 85,
-    projectedLabel: '₱1.99M'
+    totalBuilders: 86,
+    projectedLabel: '₱2.09M'
   },
   strong: {
     label: 'Strong',
+    beyond: { target: 3, avg: 120000 },
     cornerstone: { target: 17, avg: 27000 },
     pillar: { target: 27, avg: 21000 },
     anchor: { target: 27, avg: 14000 },
     root: { target: 17, avg: 5000 },
     fundraising: 650000,
-    totalBuilders: 88,
-    projectedLabel: '₱2.67M'
+    totalBuilders: 91,
+    projectedLabel: '₱3.03M'
   }
 };
 
@@ -79,7 +84,7 @@ export default function FundingReality({ stats }) {
 
   const getProjected = (scenario, fundraising) => {
     let total = 0;
-    ['cornerstone', 'pillar', 'anchor', 'root'].forEach(tier => {
+    ['beyond', 'cornerstone', 'pillar', 'anchor', 'root'].forEach(tier => {
       const actual = getActual(tier);
       const target = scenario[tier];
       const remaining = Math.max(target.target - actual.count, 0);
@@ -111,7 +116,7 @@ export default function FundingReality({ stats }) {
     return `GOLDEN BATCH 2003 BUILDERS — FUNDING UPDATE
 As of ${dateStr}
 
-Goal: ₱2,100,000
+Goal: ₱2,500,000
 ${totalBuilders} builders so far
 
 Here's where we are:
@@ -250,7 +255,7 @@ USLS-IS Batch 2003 | 25th Alumni Homecoming | Dec 16, 2028`;
 
           {/* Tier Ranges Reference */}
           <div style={{ fontSize: '0.68rem', color: 'var(--color-text-secondary)', marginBottom: '14px' }}>
-            Cornerstone ₱25,000+ · Pillar ₱18,000–₱24,000 · Anchor ₱10,000–₱17,000 · Root Open amount
+            Beyond ₱100,000+ · Cornerstone ₱25,000–₱99,999 · Pillar ₱18,000–₱24,000 · Anchor ₱10,000–₱17,000 · Root Open amount
           </div>
 
           {/* Builder Quotas vs Reality */}
@@ -264,7 +269,7 @@ USLS-IS Batch 2003 | 25th Alumni Homecoming | Dec 16, 2028`;
               </span>
             </div>
 
-            {['cornerstone', 'pillar', 'anchor', 'root'].map(tier => {
+            {['beyond', 'cornerstone', 'pillar', 'anchor', 'root'].map(tier => {
               const actual = getActual(tier);
               const target = currentScenario[tier].target;
               const remaining = Math.max(target - actual.count, 0);
@@ -374,7 +379,7 @@ USLS-IS Batch 2003 | 25th Alumni Homecoming | Dec 16, 2028`;
             <div style={{ marginBottom: '12px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', marginBottom: '4px' }}>
                 <span style={{ color: 'var(--color-text-secondary)' }}>Core Celebration</span>
-                <span style={{ color: 'var(--color-text-secondary)' }}>₱1,680,000</span>
+                <span style={{ color: 'var(--color-text-secondary)' }}>₱2,000,000</span>
               </div>
               <div style={{ height: '10px', background: 'rgba(128,128,128,0.1)', borderRadius: '5px', overflow: 'hidden' }}>
                 <div style={{
@@ -394,7 +399,7 @@ USLS-IS Batch 2003 | 25th Alumni Homecoming | Dec 16, 2028`;
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', marginBottom: '4px' }}>
                 <span style={{ color: 'var(--color-text-secondary)' }}>Full Vision</span>
-                <span style={{ color: 'var(--color-text-secondary)' }}>₱2,100,000</span>
+                <span style={{ color: 'var(--color-text-secondary)' }}>₱2,500,000</span>
               </div>
               <div style={{ height: '10px', background: 'rgba(128,128,128,0.1)', borderRadius: '5px', overflow: 'hidden' }}>
                 <div style={{
@@ -562,7 +567,7 @@ USLS-IS Batch 2003 | 25th Alumni Homecoming | Dec 16, 2028`;
                     <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--color-status-positive)' }}>Full Vision Achievable</span>
                   </div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', lineHeight: 1.5 }}>
-                    If the {currentScenario.label} scenario holds — {targetBuilders} builders + ₱{formatPeso(fundraisingAmount)} fundraising — the batch reaches ₱{formatPeso(projected)}, exceeding the ₱2.1M goal by ₱{formatPeso(surplus)}. Currently {actualBuilders} builders locked in. Focus on converting the remaining quotas.
+                    If the {currentScenario.label} scenario holds — {targetBuilders} builders + ₱{formatPeso(fundraisingAmount)} fundraising — the batch reaches ₱{formatPeso(projected)}, exceeding the ₱2.5M goal by ₱{formatPeso(surplus)}. Currently {actualBuilders} builders locked in. Focus on converting the remaining quotas.
                   </div>
                 </div>
               );
@@ -579,7 +584,7 @@ USLS-IS Batch 2003 | 25th Alumni Homecoming | Dec 16, 2028`;
                     <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--color-status-warning)' }}>Core Protected, Full Vision Needs Work</span>
                   </div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', lineHeight: 1.5 }}>
-                    The {currentScenario.label} scenario projects ₱{formatPeso(projected)} — enough to cover the ₱1.68M core celebration. Gap to full vision: ₱{formatPeso(gap)}. Currently {actualBuilders} of {targetBuilders} target builders are in. Close the tier quotas or increase fundraising.
+                    The {currentScenario.label} scenario projects ₱{formatPeso(projected)} — enough to cover the ₱2M core celebration. Gap to full vision: ₱{formatPeso(gap)}. Currently {actualBuilders} of {targetBuilders} target builders are in. Close the tier quotas or increase fundraising.
                   </div>
                 </div>
               );
@@ -596,7 +601,7 @@ USLS-IS Batch 2003 | 25th Alumni Homecoming | Dec 16, 2028`;
                     <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--color-status-negative)' }}>Core Celebration at Risk</span>
                   </div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', lineHeight: 1.5 }}>
-                    Even at {currentScenario.label} targets, projected ₱{formatPeso(projected)} falls ₱{formatPeso(coreGap)} short of the ₱1.68M core budget. Currently only {actualBuilders} builders committed. Immediate outreach required — especially for Cornerstone and Pillar quotas.
+                    Even at {currentScenario.label} targets, projected ₱{formatPeso(projected)} falls ₱{formatPeso(coreGap)} short of the ₱2M core budget. Currently only {actualBuilders} builders committed. Immediate outreach required — especially for Cornerstone and Pillar quotas.
                   </div>
                 </div>
               );
