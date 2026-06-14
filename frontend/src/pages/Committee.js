@@ -9,8 +9,8 @@ import { apiGet, apiPost } from '../api';
 
 // Section mapping by admin ID
 const SECTION_MAP = {
-  60: 'leadership',  // Bianca
   75: 'leadership',  // Felie
+  77: 'leadership',  // Mel
   76: 'admin',       // Mary Rose
   63: 'admin',       // Chaya
   53: 'admin',       // Coycoy
@@ -25,16 +25,6 @@ const SECTION_MAP = {
 
 // Role bullets by admin ID
 const ROLE_BULLETS = {
-  60: {
-    focus: 'Focus: Vision and batch strategy',
-    bullets: [
-      'Shapes the strategic direction of batch programs and initiatives',
-      'Drives the vision behind the committee\'s work and priorities',
-      'Builds relationships with alumni groups, school networks, and related communities',
-      'Contributes ideas and concepts that guide batch initiatives and programs',
-      'Coordinates on-the-ground efforts and local engagements as the batch\'s work progresses',
-    ]
-  },
   75: {
     focus: 'Focus: Batch representation, committee operations, and platform development',
     bullets: [
@@ -43,6 +33,18 @@ const ROLE_BULLETS = {
       'Oversees internal committee operations and structure',
       'Facilitates committee discussions and collaborative decision-making',
       'Designed and maintains the batch\'s centralized digital platform, keeping everyone organized, informed, and transparent',
+    ]
+  },
+  77: {
+    focus: 'Focus: Alumni representation, institutional engagement, and batch strategy',
+    bullets: [
+      "Serves as the batch's official representative within the USLS Alumni Association structure",
+      'Attends alumni association meetings and speaks on behalf of the batch',
+      'Liaises with the Alumni Association board and alumni office',
+      'Represents the batch in official alumni events and institutional activities',
+      'Follows the alumni leadership ladder toward Vice President and Alumni Association President during the Jubilee',
+      'Shapes the strategic direction of batch programs and initiatives',
+      "Drives the vision behind the committee's work and priorities",
     ]
   },
   76: {
