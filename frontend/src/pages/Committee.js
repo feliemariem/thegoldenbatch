@@ -368,7 +368,7 @@ export default function Committee() {
     );
   }
 
-  if (!user || (user.id !== 1 && user.id !== 71)) {
+  if (!user || !user.isAdmin) {
     return (
       <div className="container admin-container">
         <Navbar />
