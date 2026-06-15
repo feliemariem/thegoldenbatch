@@ -75,6 +75,8 @@ const ROLE_BULLETS = {
       'Provides legal perspective during committee discussions',
       'Helps draft and refine formal communications and agreements',
       'Advises on consent, privacy, and responsible handling of batch information',
+      'Leads sponsorship outreach and engages potential partners and donors',
+      'Helps secure and formalize sponsorship agreements for batch events',
     ]
   },
   64: {
@@ -86,23 +88,23 @@ const ROLE_BULLETS = {
   },
   61: {
     bullets: [
-      'Leads the planning and execution of batch events and gatherings',
-      'Works with the committee on program development and activities',
-      'Oversees event preparations as the Jubilee approaches',
+      "Leads planning and execution of the batch's core events, including the main homecoming",
+      'Coordinates programs, logistics, and run-of-show for flagship gatherings',
+      'Oversees core event preparations as the Jubilee approaches',
     ]
   },
   73: {
     bullets: [
-      'Develops official communications to the batch',
-      'Drafts announcements and updates for the batch website',
-      "Ensures clear and consistent messaging around the batch's work",
+      "Manages the batch's social media presence across platforms",
+      'Plans and creates social media content to keep batchmates engaged',
+      'Promotes batch events and milestones online to build visibility',
     ]
   },
   65: {
     bullets: [
-      'Leads outreach to batchmates who have not yet registered',
-      'Grows and manages the batch contact database',
-      'Engages with batchmates and brings feedback to the committee',
+      "Builds and maintains the batch's alumni database and contact records",
+      'Keeps member information accurate, complete, and up to date',
+      'Identifies unregistered or missing batchmates and flags gaps to the committee',
     ]
   },
   62: {
@@ -147,11 +149,11 @@ const VOLUNTEER_ROLES = [
   },
   {
     name: 'Registration',
-    description: 'Assist with batchmate registration, data verification, and managing the batch directory.'
+    description: 'Help with guest sign-in and check-in on-site during the actual batch events.'
   },
   {
     name: 'Annual Tradition Events',
-    description: 'Help organize recurring batch traditions and annual gatherings leading up to the Jubilee.'
+    description: "Help organize the batch's recurring traditional events: One La Salle Golf, the Fun Run, and Football."
   },
   {
     name: 'Special Events',
