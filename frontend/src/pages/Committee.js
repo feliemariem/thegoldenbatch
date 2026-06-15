@@ -9,18 +9,18 @@ import { apiGet, apiPost } from '../api';
 
 // Section mapping by admin ID
 const SECTION_MAP = {
-  75: 'leadership',  // Felie
-  77: 'leadership',  // Mel
-  76: 'admin',       // Mary Rose
-  63: 'admin',       // Chaya
-  53: 'admin',       // Coycoy
-  58: 'legal',       // Nea
-  64: 'legal',       // Narciso
-  61: 'functions',   // Apol
-  73: 'functions',   // Nikki
-  65: 'functions',   // Cedric
-  62: 'operations',  // William
-  54: 'operations',  // JR
+  75: 'leadership',      // Felie
+  77: 'leadership',      // Mel
+  76: 'finance',         // Mary Rose
+  63: 'finance',         // Chaya
+  53: 'finance',         // Coycoy
+  58: 'legal',           // Nea
+  64: 'legal',           // Narciso
+  73: 'communications',  // Nikki
+  65: 'database',        // Cedric
+  61: 'events',          // Apol
+  62: 'operations',      // William
+  54: 'operations',      // JR
 };
 
 // Role bullets by admin ID
@@ -124,9 +124,11 @@ const ROLE_BULLETS = {
 // Section configuration - uppercase labels
 const SECTIONS = [
   { key: 'leadership', label: 'LEADERSHIP' },
-  { key: 'admin', label: 'ADMINISTRATIVE & FINANCIAL' },
-  { key: 'legal', label: 'LEGAL' },
-  { key: 'functions', label: 'COMMITTEE FUNCTIONS' },
+  { key: 'finance', label: 'ADMINISTRATIVE & FINANCE' },
+  { key: 'legal', label: 'LEGAL & SPONSORSHIP' },
+  { key: 'communications', label: 'COMMUNICATIONS' },
+  { key: 'database', label: 'DATABASE & REGISTRATION' },
+  { key: 'events', label: 'EVENTS' },
   { key: 'operations', label: 'OPERATIONS & IMPLEMENTATION' },
 ];
 
@@ -136,40 +138,28 @@ const ATTY_IDS = [58, 64];
 // Role descriptions for additional volunteer positions
 const VOLUNTEER_ROLES = [
   {
+    name: 'Documentation',
+    description: 'Help document batch activities, maintain records, and organize historical materials for the reunion.'
+  },
+  {
+    name: 'School',
+    description: 'Coordinate with USLS administration, teachers, and school officials for reunion-related activities.'
+  },
+  {
+    name: 'Registration',
+    description: 'Assist with batchmate registration, data verification, and managing the batch directory.'
+  },
+  {
+    name: 'Annual Tradition Events',
+    description: 'Help organize recurring batch traditions and annual gatherings leading up to the Jubilee.'
+  },
+  {
+    name: 'Special Events',
+    description: 'Plan and coordinate special one-time events, themed activities, and milestone celebrations.'
+  },
+  {
     name: 'Fundraising',
     description: 'Help organize fundraising activities, coordinate with sponsors, and manage donation drives to support batch events and initiatives.'
-  },
-  {
-    name: 'Logistics',
-    description: 'Coordinate venue arrangements, transportation, accommodations, and all operational details for events and gatherings.'
-  },
-  {
-    name: 'Memorabilia/Merch',
-    description: 'Design and produce batch merchandise, souvenirs, and commemorative items for our 25th reunion.'
-  },
-  {
-    name: 'Entertainment',
-    description: 'Plan and coordinate entertainment programs, performances, games, and activities for batch events.'
-  },
-  {
-    name: 'Events',
-    description: 'Help plan and execute pre-reunion gatherings, mini-reunions, and coordinate event schedules.'
-  },
-  {
-    name: 'Social Media/Multimedia',
-    description: 'Manage batch social media presence, create content, handle photography/videography, and document our journey.'
-  },
-  {
-    name: 'Outreach/Database',
-    description: 'Help locate and reconnect with lost batchmates, maintain contact database, and coordinate communications.'
-  },
-  {
-    name: 'International Relations',
-    description: 'Coordinate with batchmates abroad, organize virtual participation options, and plan international meetups.'
-  },
-  {
-    name: 'Safety & Compliance',
-    description: 'Ensure event safety protocols, manage emergency procedures, and coordinate with relevant authorities.'
   }
 ];
 
