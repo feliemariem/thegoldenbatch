@@ -15,46 +15,46 @@ const SCENARIOS = {
   conservative: {
     label: 'Conservative',
     beyond: { target: 3, avg: 100000 },
-    cornerstone: { target: 6, avg: 25000 },
-    pillar: { target: 22, avg: 20000 },
-    anchor: { target: 27, avg: 12000 },
-    root: { target: 15, avg: 3000 },
+    cornerstone: { target: 14, avg: 25000 },
+    pillar: { target: 16, avg: 20000 },
+    anchor: { target: 54, avg: 13000 },
+    root: { target: 20, avg: 4000 },
     fundraising: 300000,
-    totalBuilders: 73,
-    projectedLabel: '₱2.08M'
+    totalBuilders: 107,
+    projectedLabel: '₱2.05M'
   },
   target: {
     label: 'Target',
-    beyond: { target: 10, avg: 100000 },
-    cornerstone: { target: 11, avg: 25000 },
-    pillar: { target: 22, avg: 21000 },
-    anchor: { target: 27, avg: 13000 },
-    root: { target: 17, avg: 4000 },
+    beyond: { target: 5, avg: 100000 },
+    cornerstone: { target: 20, avg: 25000 },
+    pillar: { target: 19, avg: 20000 },
+    anchor: { target: 44, avg: 13000 },
+    root: { target: 12, avg: 4000 },
     fundraising: 500000,
-    totalBuilders: 87,
-    projectedLabel: '₱3.17M'
+    totalBuilders: 100,
+    projectedLabel: '₱2.50M'
   },
   realistic: {
     label: 'Realistic Mix',
-    beyond: { target: 5, avg: 100000 },
-    cornerstone: { target: 10, avg: 25000 },
+    beyond: { target: 4, avg: 100000 },
+    cornerstone: { target: 17, avg: 25000 },
     pillar: { target: 18, avg: 20000 },
-    anchor: { target: 35, avg: 12000 },
-    root: { target: 22, avg: 3000 },
-    fundraising: 450000,
-    totalBuilders: 90,
-    projectedLabel: '₱2.49M'
+    anchor: { target: 50, avg: 13000 },
+    root: { target: 14, avg: 4000 },
+    fundraising: 400000,
+    totalBuilders: 103,
+    projectedLabel: '₱2.31M'
   },
   strong: {
     label: 'Strong',
-    beyond: { target: 10, avg: 120000 },
-    cornerstone: { target: 17, avg: 27000 },
-    pillar: { target: 27, avg: 21000 },
-    anchor: { target: 27, avg: 14000 },
-    root: { target: 17, avg: 5000 },
-    fundraising: 650000,
-    totalBuilders: 98,
-    projectedLabel: '₱3.92M'
+    beyond: { target: 6, avg: 100000 },
+    cornerstone: { target: 22, avg: 25000 },
+    pillar: { target: 21, avg: 21000 },
+    anchor: { target: 48, avg: 14000 },
+    root: { target: 13, avg: 5000 },
+    fundraising: 600000,
+    totalBuilders: 110,
+    projectedLabel: '₱2.93M'
   }
 };
 
@@ -355,7 +355,7 @@ USLS-IS Batch 2003 | 25th Alumni Homecoming | Dec 16, 2028`;
           {/* Fundraising Revenue */}
           <div style={{ marginBottom: '16px', padding: '12px', background: 'rgba(128,128,128,0.04)', borderRadius: '6px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
-              <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>Fundraising Revenue</span>
+              <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>Net Fundraising</span>
               <span style={{ fontSize: '1rem', fontWeight: 700, color: '#CFB53B' }}>₱{formatPeso(fundraisingAmount)}</span>
             </div>
             <input
