@@ -217,7 +217,7 @@ router.get('/', authenticateToken, async (req, res) => {
 router.put('/builder-tier', authenticateToken, async (req, res) => {
   try {
     const { tier, pledge_amount, recognition_public } = req.body;
-    const validTiers = ['cornerstone', 'pillar', 'anchor', 'root'];
+    const validTiers = ['cornerstone', 'pillar', 'anchor', 'root', 'beyond'];
 
     // Get user's master_list_id
     const linkResult = await db.query(
@@ -248,14 +248,19 @@ router.put('/builder-tier', authenticateToken, async (req, res) => {
 
     // Validate tier
     if (!tier || !validTiers.includes(tier)) {
-      return res.status(400).json({ error: 'Invalid tier. Must be one of: cornerstone, pillar, anchor, root' });
+      return res.status(400).json({ error: 'Invalid tier. Must be one of: cornerstone, pillar, anchor, root, beyond' });
     }
 
     // Validate pledge_amount based on tier
     let finalPledgeAmount;
-    if (tier === 'cornerstone') {
-      if (pledge_amount === null || pledge_amount === undefined || pledge_amount < 25000) {
-        return res.status(400).json({ error: 'Cornerstone tier requires pledge_amount >= 25000' });
+    if (tier === 'beyond') {
+      if (pledge_amount === null || pledge_amount === undefined || pledge_amount < 100000) {
+        return res.status(400).json({ error: 'Beyond tier requires pledge_amount >= 100000' });
+      }
+      finalPledgeAmount = pledge_amount;
+    } else if (tier === 'cornerstone') {
+      if (pledge_amount === null || pledge_amount === undefined || pledge_amount < 25000 || pledge_amount > 99999) {
+        return res.status(400).json({ error: 'Cornerstone tier requires pledge_amount between 25000-99999' });
       }
       finalPledgeAmount = pledge_amount;
     } else if (tier === 'pillar') {
