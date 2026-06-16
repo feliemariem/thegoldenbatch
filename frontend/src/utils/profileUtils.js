@@ -52,3 +52,13 @@ export const getDaysUntilReunion = () => {
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));  // Convert ms to days
   return diffDays;  // Positive = days left, 0 = today, negative = past
 };
+
+// Months remaining from today until the encouraged-completion date (June 30, 2028).
+// Floors at 1 so we never divide by zero once that date passes.
+export function getMonthsUntilJune2028() {
+  const now = new Date();
+  const end = new Date(2028, 5, 30); // June 30, 2028
+  if (now >= end) return 1;
+  const months = (end.getFullYear() - now.getFullYear()) * 12 + (end.getMonth() - now.getMonth());
+  return Math.max(months, 1);
+}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { apiGet, apiUpload, apiDelete } from '../api';
-import { formatPeso, getMilestoneMessage } from '../utils/profileUtils';
+import { formatPeso, getMilestoneMessage, getMonthsUntilJune2028 } from '../utils/profileUtils';
 import ContributionPlan from './ContributionPlanV2';
 
 export default function BuilderCard({ profile, onProfileUpdate, user }) {
@@ -404,9 +404,14 @@ export default function BuilderCard({ profile, onProfileUpdate, user }) {
                 </div>
               )}
               {(profile.total_paid || 0) < (profile.pledge_amount || 0) && (
-                <div className="builder-remaining">
-                  Remaining: <strong>{formatPeso((profile.pledge_amount || 0) - (profile.total_paid || 0))}</strong>
-                </div>
+                <>
+                  <div className="builder-remaining">
+                    Remaining: <strong>{formatPeso((profile.pledge_amount || 0) - (profile.total_paid || 0))}</strong>
+                  </div>
+                  <div className="builder-remaining-monthly">
+                    ≈ <strong>{formatPeso(Math.ceil(((profile.pledge_amount || 0) - (profile.total_paid || 0)) / getMonthsUntilJune2028()))}</strong> / month until June 2028
+                  </div>
+                </>
               )}
               <div className="builder-milestone-message">
                 {getMilestoneMessage(Math.round(((profile.total_paid || 0) / profile.pledge_amount) * 100))}

@@ -3271,6 +3271,21 @@ body[data-theme="light"] .merch-form-hint {
   color: #006633;
 }
 
+.builder-remaining-monthly {
+  font-size: 0.78rem;
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+}
+
+.builder-remaining-monthly strong {
+  color: var(--color-hover);
+  font-weight: 600;
+}
+
+[data-theme="light"] .builder-remaining-monthly strong {
+  color: #006633;
+}
+
 /* Milestone Message */
 .builder-milestone-message {
   font-size: 0.85rem;
