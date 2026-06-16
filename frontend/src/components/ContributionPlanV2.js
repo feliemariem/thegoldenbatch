@@ -361,14 +361,14 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
   const weekly = amount > 0 ? Math.ceil(amount / (months * 4.33)) : 0;
   const daily = amount > 0 ? Math.ceil(amount / (months * 30.44)) : 0;
 
-  // Get monthly estimate for tier card (uses dynamic months remaining, not hardcoded)
+  // Get monthly estimate for tier card
   const getTierMonthlyEstimate = (tier) => {
     const config = TIERS[tier];
     if (tier === 'root') return 'Any pace · Any amount';
-    const minMonthly = config.min ? Math.ceil(config.min / months) : 0;
-    if (tier === 'beyond') return `≈ ₱${formatNumber(minMonthly)}+ / month · ${months} months`;
-    if (tier === 'cornerstone') return `≈ ₱${formatNumber(minMonthly)} – ₱${formatNumber(Math.ceil(config.max / months))} / month · ${months} months`;
-    return `≈ ₱${formatNumber(minMonthly)} – ₱${formatNumber(Math.ceil(config.max / months))} / month · ${months} months`;
+    const minMonthly = config.min ? Math.ceil(config.min / 36) : 0;
+    if (tier === 'beyond') return `≈ ₱${formatNumber(minMonthly)}+ / month · 36 months`;
+    if (tier === 'cornerstone') return `≈ ₱${formatNumber(minMonthly)} – ₱${formatNumber(Math.ceil(config.max / 36))} / month · 36 months`;
+    return `≈ ₱${formatNumber(minMonthly)} – ₱${formatNumber(Math.ceil(config.max / 36))} / month · 36 months`;
   };
 
   // Get amount display for tier card
