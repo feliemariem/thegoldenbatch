@@ -411,6 +411,9 @@ export default function BuilderCard({ profile, onProfileUpdate, user }) {
                   <div className="builder-remaining-monthly">
                     ≈ <strong>{formatPeso(Math.ceil(((profile.pledge_amount || 0) - (profile.total_paid || 0)) / getMonthsUntilJune2028()))}</strong> / month until June 2028
                   </div>
+                  <div className="builder-remaining-note">
+                    June 2028 encouraged · open through December 2028
+                  </div>
                 </>
               )}
               <div className="builder-milestone-message">

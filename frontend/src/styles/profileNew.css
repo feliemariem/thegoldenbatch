@@ -3139,6 +3139,12 @@ body[data-theme="light"] .merch-form-hint {
   margin-bottom: 16px;
 }
 
+.builder-tier-badge.beyond {
+  background: linear-gradient(135deg, #CFB53B 0%, #B8960C 100%);
+  border: 1.5px solid rgba(207, 181, 59, 0.6);
+  color: #1a1a1a;
+}
+
 .builder-tier-badge.cornerstone {
   background: linear-gradient(135deg, #CFB53B 0%, #B8960C 100%);
   border: 1.5px solid rgba(207, 181, 59, 0.6);
@@ -3169,6 +3175,12 @@ body[data-theme="light"] .merch-form-hint {
 }
 
 /* Builder Tier Badge — Light Mode (green bg, white text) */
+[data-theme="light"] .builder-tier-badge.beyond {
+  background: linear-gradient(135deg, #006633 0%, #004d26 100%) !important;
+  border: 1.5px solid rgba(0, 102, 51, 0.6) !important;
+  color: #ffffff !important;
+}
+
 [data-theme="light"] .builder-tier-badge.cornerstone {
   background: linear-gradient(135deg, #006633 0%, #004d26 100%) !important;
   border: 1.5px solid rgba(0, 102, 51, 0.6) !important;
@@ -3284,6 +3296,14 @@ body[data-theme="light"] .merch-form-hint {
 
 [data-theme="light"] .builder-remaining-monthly strong {
   color: #006633;
+}
+
+.builder-remaining-note {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  font-style: italic;
+  margin-top: 3px;
+  line-height: 1.4;
 }
 
 /* Milestone Message */
