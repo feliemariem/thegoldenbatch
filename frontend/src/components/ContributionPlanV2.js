@@ -458,7 +458,7 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
               <div className="cp-tier-grid-inner">
 
                 <div
-                  className={`cp-tier-card-beyond ${expandedTier === 'beyond' || selectedTier === 'beyond' ? 'selected' : ''}`}
+                  className={`cp-tier-card-beyond ${expandedTier ? expandedTier === 'beyond' : selectedTier === 'beyond' ? 'selected' : ''}`}
                   onClick={() => handleTierCardClick('beyond')}
                 >
                   <div className="cp-tier-check">✓</div>
@@ -467,7 +467,7 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
                 </div>
 
                 <div
-                  className={`cp-tier-card cornerstone ${expandedTier === 'cornerstone' || selectedTier === 'cornerstone' ? 'selected' : ''}`}
+                  className={`cp-tier-card cornerstone ${expandedTier ? expandedTier === 'cornerstone' : selectedTier === 'cornerstone' ? 'selected' : ''}`}
                   onClick={() => handleTierCardClick('cornerstone')}
                 >
                   <div className="cp-tier-check">✓</div>
@@ -476,7 +476,7 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
                 </div>
 
                 <div
-                  className={`cp-tier-card pillar ${expandedTier === 'pillar' || selectedTier === 'pillar' ? 'selected' : ''}`}
+                  className={`cp-tier-card pillar ${expandedTier ? expandedTier === 'pillar' : selectedTier === 'pillar' ? 'selected' : ''}`}
                   onClick={() => handleTierCardClick('pillar')}
                 >
                   <div className="cp-tier-check">✓</div>
@@ -485,7 +485,7 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
                 </div>
 
                 <div
-                  className={`cp-tier-card anchor ${expandedTier === 'anchor' || selectedTier === 'anchor' ? 'selected' : ''}`}
+                  className={`cp-tier-card anchor ${expandedTier ? expandedTier === 'anchor' : selectedTier === 'anchor' ? 'selected' : ''}`}
                   onClick={() => handleTierCardClick('anchor')}
                 >
                   <div className="cp-tier-check">✓</div>
@@ -494,7 +494,7 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
                 </div>
 
                 <div
-                  className={`cp-tier-card root ${expandedTier === 'root' || selectedTier === 'root' ? 'selected' : ''}`}
+                  className={`cp-tier-card root ${expandedTier ? expandedTier === 'root' : selectedTier === 'root' ? 'selected' : ''}`}
                   onClick={() => handleTierCardClick('root')}
                 >
                   <div className="cp-tier-check">✓</div>
