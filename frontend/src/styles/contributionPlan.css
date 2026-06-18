@@ -366,6 +366,54 @@ body[data-theme="dark"] .cp-letter-list {
   color: var(--cp-green);
 }
 
+.cp-letter-toggle {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.cp-letter-toggle-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.cp-letter-teaser {
+  font-size: 13px;
+  color: var(--cp-gray);
+}
+
+.cp-letter-arrow {
+  font-size: 10px;
+  color: var(--cp-light-gray);
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.cp-letter-arrow.open {
+  transform: rotate(180deg);
+}
+
+.cp-letter-body {
+  display: none;
+  margin-top: 12px;
+}
+
+.cp-letter-body.open {
+  display: block;
+}
+
+.cp-letter-toggle .cp-letter-eyebrow { margin-bottom: 0; }
+
+body[data-theme="dark"] .cp-letter-teaser { color: #aaaaaa; }
+
 /* ===========================================
    SECTION HEADINGS
    =========================================== */
