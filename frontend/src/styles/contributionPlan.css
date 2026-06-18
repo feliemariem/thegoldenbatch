@@ -2445,3 +2445,78 @@ body[data-theme="dark"] .cp-faq-link:hover {
   color: #9db5a3;
   margin-top: 10px;
 }
+
+/* ===========================================
+   EXPANDED TIER DETAIL PANEL
+   =========================================== */
+.cp-expand-panel {
+  background: var(--cp-panel);
+  border: 1px solid var(--cp-line);
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 16px;
+  animation: cpFadeUp 0.2s ease both;
+}
+
+.cp-expand-tagline {
+  font-size: 15px;
+  font-style: italic;
+  color: var(--cp-black);
+  margin-bottom: 8px;
+}
+
+.cp-expand-estimate {
+  font-size: 13px;
+  color: var(--cp-gray);
+  margin-bottom: 16px;
+}
+
+.cp-expand-inclusions {
+  background: var(--cp-white);
+  border: 1px solid var(--cp-line);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: var(--cp-gray);
+}
+
+.cp-expand-cta {
+  background: var(--cp-dark-green);
+  color: var(--cp-gold);
+  border: 2px solid var(--cp-gold);
+  border-radius: 10px;
+  padding: 12px 32px;
+  font-family: 'Source Serif 4', serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cp-expand-cta:hover {
+  background: var(--cp-green);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 102, 51, 0.3);
+}
+
+/* Dark mode */
+body[data-theme="dark"] .cp-expand-panel {
+  background: rgba(26, 37, 32, 0.8);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+body[data-theme="dark"] .cp-expand-tagline {
+  color: #ffffff;
+}
+
+body[data-theme="dark"] .cp-expand-estimate {
+  color: #aaaaaa;
+}
+
+body[data-theme="dark"] .cp-expand-inclusions {
+  background: rgba(30, 40, 35, 0.6);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #aaaaaa;
+}

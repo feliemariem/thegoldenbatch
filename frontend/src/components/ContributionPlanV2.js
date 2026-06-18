@@ -503,44 +503,17 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
 
             {/* Expanded Detail Panel */}
             {expandedTier && !confirmed && (
-              <div style={{
-                background: 'rgba(0,0,0,0.4)',
-                border: '1px solid rgba(255,255,255,0.1)',
-                borderRadius: '12px',
-                padding: '24px',
-                marginTop: '16px',
-                animation: 'fadeIn 0.2s ease'
-              }}>
-                <div style={{ fontSize: '1rem', color: '#fff', marginBottom: '8px', fontStyle: 'italic' }}>
+              <div className="cp-expand-panel">
+                <div className="cp-expand-tagline">
                   "{TIER_TAGLINES[expandedTier]}"
                 </div>
-                <div style={{ fontSize: '0.9rem', color: '#888', marginBottom: '16px' }}>
+                <div className="cp-expand-estimate">
                   {getTierMonthlyEstimate(expandedTier)}
                 </div>
-                <div style={{
-                  background: 'rgba(255,255,255,0.05)',
-                  borderRadius: '8px',
-                  padding: '12px 16px',
-                  marginBottom: '16px',
-                  fontSize: '0.85rem',
-                  color: '#666'
-                }}>
+                <div className="cp-expand-inclusions">
                   Inclusions to be announced soon.
                 </div>
-                <button
-                  onClick={handleCountMeIn}
-                  style={{
-                    background: 'linear-gradient(135deg, #CFB53B 0%, #9A8531 100%)',
-                    border: 'none',
-                    borderRadius: '8px',
-                    padding: '12px 32px',
-                    color: '#000',
-                    fontWeight: '600',
-                    fontSize: '1rem',
-                    cursor: 'pointer',
-                    transition: 'transform 0.2s ease'
-                  }}
-                >
+                <button className="cp-expand-cta" onClick={handleCountMeIn}>
                   Count Me In
                 </button>
               </div>
