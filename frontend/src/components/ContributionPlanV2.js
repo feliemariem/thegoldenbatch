@@ -393,7 +393,7 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
                 </div>
               </div>
               <div className="cp-header-right">
-                <div className="cp-label">Funding Target</div>
+                <div className="cp-label">Core Events Target</div>
                 <div className="cp-funding-target">₱{batchProgress.goal.toLocaleString()}</div>
               </div>
             </div>
@@ -421,14 +421,17 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
               <div className="cp-progress-label">Our Progress</div>
               <div className="cp-progress-row">
                 <div className="cp-progress-amount">₱{batchProgress.total_raised.toLocaleString()}</div>
-                <div className="cp-progress-pct">{((batchProgress.total_raised / batchProgress.goal) * 100).toFixed(1)}%</div>
+                <div className="cp-progress-pct">{Math.min((batchProgress.total_raised / batchProgress.goal) * 100, 100).toFixed(1)}%</div>
               </div>
               <div className="cp-progress-sub">
                 <span>raised so far</span>
-                <span>of ₱{batchProgress.goal.toLocaleString()} goal</span>
+                <span>of ₱{batchProgress.goal.toLocaleString()} Core Events Target</span>
               </div>
-              <div className="cp-progress-bar-track">
-                <div className="cp-progress-bar-fill" style={{ width: `${(batchProgress.total_raised / batchProgress.goal) * 100}%` }}></div>
+              <div className="cp-progress-bar-track" style={{ display: 'flex' }}>
+                <div className="cp-progress-bar-fill" style={{ width: `${batchProgress.total_raised > batchProgress.goal ? (batchProgress.goal / batchProgress.total_raised) * 100 : (batchProgress.total_raised / batchProgress.goal) * 100}%` }}></div>
+                {batchProgress.total_raised > batchProgress.goal && (
+                  <div style={{ width: `${((batchProgress.total_raised - batchProgress.goal) / batchProgress.total_raised) * 100}%`, height: '100%', background: 'var(--cp-gold)' }}></div>
+                )}
               </div>
               <div className="cp-progress-timeline">January 2026 — June 2028 (encouraged)</div>
             </div>
@@ -793,7 +796,7 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
 
             {/* Where Your Contribution Goes - Simplified */}
             <h2 className="cp-section-title" ref={allocationRef}>Where your contribution goes</h2>
-            <p className="cp-section-subtitle">Total plan supported by contributions and fundraising. ₱2,500,000 Full Batch Vision Target.</p>
+            <p className="cp-section-subtitle">Funded by contributions and fundraising. ₱2,500,000 Core Events Target.</p>
 
             <div className="cp-info-row" style={{ marginBottom: '24px' }}>
               <div className="cp-info-box green-border" style={{ flex: 1 }}>
