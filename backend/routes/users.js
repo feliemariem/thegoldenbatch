@@ -259,18 +259,18 @@ router.put('/builder-tier', authenticateToken, async (req, res) => {
       }
       finalPledgeAmount = pledge_amount;
     } else if (tier === 'cornerstone') {
-      if (pledge_amount === null || pledge_amount === undefined || pledge_amount < 25000 || pledge_amount > 99999) {
-        return res.status(400).json({ error: 'Cornerstone tier requires pledge_amount between 25000-99999' });
+      if (pledge_amount === null || pledge_amount === undefined || pledge_amount < 50000 || pledge_amount > 99999) {
+        return res.status(400).json({ error: 'Cornerstone tier requires pledge_amount between 50000-99999' });
       }
       finalPledgeAmount = pledge_amount;
     } else if (tier === 'pillar') {
-      if (pledge_amount === null || pledge_amount === undefined || pledge_amount < 18000 || pledge_amount > 24000) {
-        return res.status(400).json({ error: 'Pillar tier requires pledge_amount between 18000-24000' });
+      if (pledge_amount === null || pledge_amount === undefined || pledge_amount < 25000 || pledge_amount > 49999) {
+        return res.status(400).json({ error: 'Pillar tier requires pledge_amount between 25000-49999' });
       }
       finalPledgeAmount = pledge_amount;
     } else if (tier === 'anchor') {
-      if (pledge_amount === null || pledge_amount === undefined || pledge_amount < 10000 || pledge_amount > 17000) {
-        return res.status(400).json({ error: 'Anchor tier requires pledge_amount between 10000-17000' });
+      if (pledge_amount === null || pledge_amount === undefined || pledge_amount < 10000 || pledge_amount > 24999) {
+        return res.status(400).json({ error: 'Anchor tier requires pledge_amount between 10000-24999' });
       }
       finalPledgeAmount = pledge_amount;
     } else if (tier === 'root') {

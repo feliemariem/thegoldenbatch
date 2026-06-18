@@ -407,9 +407,9 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
         // Check range based on tier
         const tierRanges = {
           beyond: { min: 100000, max: null },
-          cornerstone: { min: 25000, max: 99999 },
-          pillar: { min: 18000, max: 24000 },
-          anchor: { min: 10000, max: 17000 }
+          cornerstone: { min: 50000, max: 99999 },
+          pillar: { min: 25000, max: 49999 },
+          anchor: { min: 10000, max: 24999 }
         };
         const range = tierRanges[builder_tier];
         if (range) {

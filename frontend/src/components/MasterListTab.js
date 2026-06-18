@@ -176,16 +176,16 @@ export default function MasterListTab({
   const getTierRange = (tier) => {
     const ranges = {
       beyond: { min: 100000, max: null, label: 'Min: ₱100,000' },
-      cornerstone: { min: 25000, max: 99999, label: '₱25,000 – ₱99,999' },
-      pillar: { min: 18000, max: 24000, label: '₱18,000 – ₱24,000' },
-      anchor: { min: 10000, max: 17000, label: '₱10,000 – ₱17,000' },
+      cornerstone: { min: 50000, max: 99999, label: '₱50,000 – ₱99,999' },
+      pillar: { min: 25000, max: 49999, label: '₱25,000 – ₱49,999' },
+      anchor: { min: 10000, max: 24999, label: '₱10,000 – ₱24,999' },
       root: { min: null, max: null, label: 'Open amount' }
     };
     return ranges[tier] || null;
   };
 
   const getTierDefault = (tier) => {
-    const defaults = { beyond: 100000, cornerstone: 25000, pillar: 18000, anchor: 10000 };
+    const defaults = { beyond: 100000, cornerstone: 50000, pillar: 25000, anchor: 10000 };
     return defaults[tier] || null;
   };
 
