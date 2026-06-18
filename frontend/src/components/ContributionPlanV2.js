@@ -798,25 +798,6 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
             <h2 className="cp-section-title" ref={allocationRef}>Where your contribution goes</h2>
             <p className="cp-section-subtitle">Funded by contributions and fundraising. ₱2,500,000 Core Events Target.</p>
 
-            <div className="cp-info-row" style={{ marginBottom: '24px' }}>
-              <div className="cp-info-box green-border" style={{ flex: 1 }}>
-                <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#2ecc71', marginBottom: '8px' }}>80%</div>
-                <div className="cp-info-box-title green" style={{ marginBottom: '12px' }}>Core Celebration</div>
-                <div className="cp-alloc-bar" style={{ marginBottom: '12px' }}>
-                  <div className="cp-alloc-bar-fill green" style={{ width: '80%' }}></div>
-                </div>
-                <p style={{ fontSize: '0.85rem', color: '#888', margin: 0 }}>Details to be announced soon.</p>
-              </div>
-              <div className="cp-info-box gold-border" style={{ flex: 1 }}>
-                <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#CFB53B', marginBottom: '8px' }}>20%</div>
-                <div className="cp-info-box-title gold" style={{ marginBottom: '12px' }}>Fundraising Initiatives</div>
-                <div className="cp-alloc-bar" style={{ marginBottom: '12px' }}>
-                  <div className="cp-alloc-bar-fill gold" style={{ width: '20%' }}></div>
-                </div>
-                <p style={{ fontSize: '0.85rem', color: '#888', margin: 0 }}>Details to be announced soon.</p>
-              </div>
-            </div>
-
             <div className="cp-info-row">
               <div className="cp-info-box gold-border" style={{ flex: 1 }}>
                 <div className="cp-info-box-title gold">Flexible monthly commitments.</div>
