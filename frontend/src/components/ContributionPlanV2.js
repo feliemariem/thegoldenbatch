@@ -421,25 +421,6 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
 
           <main className="cp-main">
             {/* Progress Box */}
-            <div className="cp-progress-box" ref={progressRef}>
-              <div className="cp-progress-label">Our Progress</div>
-              <div className="cp-progress-row">
-                <div className="cp-progress-amount">₱{batchProgress.total_raised.toLocaleString()}</div>
-                <div className="cp-progress-pct">{Math.min((batchProgress.total_raised / batchProgress.goal) * 100, 100).toFixed(1)}%</div>
-              </div>
-              <div className="cp-progress-sub">
-                <span>raised so far</span>
-                <span>of ₱{batchProgress.goal.toLocaleString()} Core Events Target</span>
-              </div>
-              <div className="cp-progress-bar-track" style={{ display: 'flex' }}>
-                <div className="cp-progress-bar-fill" style={{ width: `${batchProgress.total_raised > batchProgress.goal ? (batchProgress.goal / batchProgress.total_raised) * 100 : (batchProgress.total_raised / batchProgress.goal) * 100}%` }}></div>
-                {batchProgress.total_raised > batchProgress.goal && (
-                  <div style={{ width: `${((batchProgress.total_raised - batchProgress.goal) / batchProgress.total_raised) * 100}%`, height: '100%', background: 'var(--cp-gold)' }}></div>
-                )}
-              </div>
-              <div className="cp-progress-timeline">January 2026 — June 2028 (encouraged)</div>
-            </div>
-
             {/* Letter */}
             <div className="cp-letter">
               <button
