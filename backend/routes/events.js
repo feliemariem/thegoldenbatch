@@ -105,6 +105,31 @@ router.get('/my-rsvps', authenticateToken, async (req, res) => {
   }
 });
 
+// Main-event RSVP tallies for any logged-in user.
+// Mirrors the going/maybe/not_going counts from /api/admin/dashboard
+// (counts rsvps.status across all users) so non-admins see the same numbers.
+router.get('/main-event-stats', authenticateToken, async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT
+        COUNT(CASE WHEN r.status = 'going' THEN 1 END) as going,
+        COUNT(CASE WHEN r.status = 'maybe' THEN 1 END) as maybe,
+        COUNT(CASE WHEN r.status = 'not_going' THEN 1 END) as not_going
+      FROM users u
+      LEFT JOIN rsvps r ON u.id = r.user_id
+    `);
+    const raw = result.rows[0];
+    res.json({
+      going: parseInt(raw.going) || 0,
+      maybe: parseInt(raw.maybe) || 0,
+      not_going: parseInt(raw.not_going) || 0,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // Get a single event by ID with full details
 router.get('/:id', authenticateToken, async (req, res) => {
   try {

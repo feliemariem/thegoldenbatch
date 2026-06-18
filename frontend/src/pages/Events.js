@@ -130,13 +130,13 @@ END:VCALENDAR`;
 
   const fetchMainEventStats = async () => {
     try {
-      const res = await apiGet('/api/admin/dashboard');
+      const res = await apiGet('/api/events/main-event-stats');
       if (res.ok) {
         const data = await res.json();
         setMainEventStats({
-          going: data.stats?.going || 0,
-          maybe: data.stats?.maybe || 0,
-          not_going: data.stats?.not_going || 0
+          going: data.going || 0,
+          maybe: data.maybe || 0,
+          not_going: data.not_going || 0
         });
       }
     } catch (err) {
