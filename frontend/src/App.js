@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { isSoftLaunch } from './config/softLaunchConfig';
 import { ThemeProvider } from './context/ThemeContext';
 import { ActionItemsProvider } from './context/ActionItemsContext';
 import { InboxProvider } from './context/InboxContext';
@@ -54,7 +55,7 @@ function ProtectedRoute({ children }) {
 function FullAdminOnly({ children }) {
   const { user } = useAuth();
 
-  if (!user?.is_super_admin && !user?.hasNonRegistryPermissions) {
+  if (!user?.is_super_admin && !user?.hasNonRegistryPermissions && !isSoftLaunch(user)) {
     return <Navigate to="/profile" replace />;
   }
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { isSoftLaunch } from '../config/softLaunchConfig';
 import { useInbox } from '../context/InboxContext';
 import { useTheme } from '../context/ThemeContext';
 import logo from '../images/logo.png';
@@ -110,7 +111,7 @@ export default function Navbar() {
           )}
 
           {/* Community Dropdown - Admin only, hidden from Registry Admins */}
-          {user?.isAdmin && !isRegistryAdmin && (
+          {(user?.isAdmin || isSoftLaunch(user)) && !isRegistryAdmin && (
             <div className={`nav-dropdown ${communityDropdownOpen ? 'open' : ''}`} ref={communityDropdownRef}>
               <button
                 className={`nav-dropdown-trigger ${isCommunityActive ? 'active' : ''} ${communityDropdownOpen ? 'open' : ''}`}
@@ -191,7 +192,7 @@ export default function Navbar() {
         )}
 
         {/* Committee and Directory as separate items on mobile - hidden from Registry Admins */}
-        {user?.isAdmin && !isRegistryAdmin && (
+        {(user?.isAdmin || isSoftLaunch(user)) && !isRegistryAdmin && (
           <>
             <Link to="/committee" className={`mobile-nav-link ${location.pathname === '/committee' ? 'active' : ''}`}>
               Committee

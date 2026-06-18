@@ -2,6 +2,7 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Profile from './Profile';
+import { isSoftLaunch } from '../config/softLaunchConfig';
 
 // Feature flag wrapper - switches between old and new profile
 // Routing logic:
@@ -23,7 +24,7 @@ export default function ProfileWrapper() {
   }
 
   // Super admins and admins with non-registry permissions go to ProfileNew
-  const goesToNewProfile = user?.is_super_admin || (user?.isAdmin && user?.hasNonRegistryPermissions);
+  const goesToNewProfile = user?.is_super_admin || (user?.isAdmin && user?.hasNonRegistryPermissions) || isSoftLaunch(user);
 
   if (goesToNewProfile) {
     return <Navigate to="/profile-preview" replace />;

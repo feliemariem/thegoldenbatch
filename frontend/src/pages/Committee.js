@@ -6,6 +6,7 @@ import Footer from '../components/Footer';
 import '../styles/profileNew.css';
 import '../styles/committee.css';
 import { apiGet, apiPost } from '../api';
+import { isSoftLaunch } from '../config/softLaunchConfig';
 
 // Section mapping by admin ID
 const SECTION_MAP = {
@@ -360,7 +361,7 @@ export default function Committee() {
     );
   }
 
-  if (!user || !user.isAdmin) {
+  if (!user || (!user.isAdmin && !isSoftLaunch(user))) {
     return (
       <div className="container admin-container">
         <Navbar />
