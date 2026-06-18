@@ -798,7 +798,16 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
 
             {/* Where Your Contribution Goes - Simplified */}
             <h2 className="cp-section-title" ref={allocationRef}>Where your contribution goes</h2>
-            <p className="cp-section-subtitle">Funded by contributions and fundraising. ₱2,500,000 Core Events Target.</p>
+            <div className="cp-info-row" style={{ marginBottom: '24px', marginTop: '16px' }}>
+              <div className="cp-info-box green-border" style={{ flex: 1 }}>
+                <div className="cp-info-box-title green" style={{ marginBottom: '8px' }}>Core Events</div>
+                <p style={{ margin: 0 }}>The main homecoming and everything that makes the night happen. Details to be announced soon.</p>
+              </div>
+              <div className="cp-info-box gold-border" style={{ flex: 1 }}>
+                <div className="cp-info-box-title gold" style={{ marginBottom: '8px' }}>Fundraising / Special Events</div>
+                <p style={{ margin: 0 }}>Events we run to raise funds, and the giving-back work beyond the batch. Details to be announced soon.</p>
+              </div>
+            </div>
 
             <div className="cp-info-row">
               <div className="cp-info-box gold-border" style={{ flex: 1 }}>
