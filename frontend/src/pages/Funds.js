@@ -124,7 +124,7 @@ export default function Funds() {
                     />
                   </div>
                   <p className="funds-progress-text">
-                    {((balance / 2500000) * 100).toFixed(1)}% of {formatPeso(2500000, 0)} goal
+                    {((balance / 2500000) * 100).toFixed(1)}% of {formatPeso(2500000, 0)} Core Events Target
                   </p>
                 </div>
 
@@ -253,26 +253,18 @@ export default function Funds() {
           <div style={{ marginBottom: '32px' }}>
             <h3 className="budget-heading">Where Your Contribution Goes</h3>
             <p className="budget-description">
-              Total plan supported by contributions and fundraising. {formatPeso(2500000, 0)} Full Batch Vision Target.
+              Supported by contributions, fundraising, and sponsorships. {formatPeso(2500000, 0)} Core Events Target.
             </p>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', marginTop: '20px' }}>
               <div className="donate-card" style={{ borderLeft: '4px solid #006633', borderRadius: '0 8px 8px 0' }}>
-                <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#006633', marginBottom: '6px' }}>80%</div>
-                <h4 className="donate-card-title" style={{ color: '#006633', marginBottom: '8px' }}>Core Celebration</h4>
-                <div style={{ height: '6px', background: 'rgba(0,102,51,0.12)', borderRadius: '4px', marginBottom: '10px' }}>
-                  <div style={{ width: '80%', height: '100%', background: '#006633', borderRadius: '4px' }}></div>
-                </div>
-                <p style={{ fontSize: '0.82rem', color: 'var(--color-text-secondary)', margin: 0 }}>Details to be announced soon.</p>
+                <h4 className="donate-card-title" style={{ color: '#006633', marginBottom: '8px' }}>Core Events</h4>
+                <p style={{ fontSize: '0.82rem', color: 'var(--color-text-secondary)', margin: 0 }}>The main homecoming and everything that makes the night happen. Details to be announced soon.</p>
               </div>
 
               <div className="donate-card" style={{ borderLeft: '4px solid #CFB53B', borderRadius: '0 8px 8px 0' }}>
-                <div style={{ fontSize: '2.5rem', fontWeight: '700', color: '#CFB53B', marginBottom: '6px' }}>20%</div>
-                <h4 className="donate-card-title" style={{ color: '#CFB53B', marginBottom: '8px' }}>Fundraising Initiatives</h4>
-                <div style={{ height: '6px', background: 'rgba(207,181,59,0.12)', borderRadius: '4px', marginBottom: '10px' }}>
-                  <div style={{ width: '20%', height: '100%', background: '#CFB53B', borderRadius: '4px' }}></div>
-                </div>
-                <p style={{ fontSize: '0.82rem', color: 'var(--color-text-secondary)', margin: 0 }}>Details to be announced soon.</p>
+                <h4 className="donate-card-title" style={{ color: '#CFB53B', marginBottom: '8px' }}>Fundraising / Special Events</h4>
+                <p style={{ fontSize: '0.82rem', color: 'var(--color-text-secondary)', margin: 0 }}>Events we run to raise funds, and the giving-back work beyond the batch. Details to be announced soon.</p>
               </div>
             </div>
           </div>
