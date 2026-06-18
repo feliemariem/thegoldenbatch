@@ -539,11 +539,11 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
       queryParams.push(validatedPledge);
       paramIndex++;
 
-      // Set builder_tier_set_at when tier changes
+      // Set builder_tier_set_at and tier_source when tier changes
       if (validatedTier !== null) {
-        updateFields += `, builder_tier_set_at = NOW()`;
+        updateFields += `, builder_tier_set_at = NOW(), tier_source = 'plan'`;
       } else {
-        updateFields += `, builder_tier_set_at = NULL`;
+        updateFields += `, builder_tier_set_at = NULL, tier_source = NULL`;
       }
     }
 

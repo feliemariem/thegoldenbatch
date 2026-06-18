@@ -234,7 +234,7 @@ router.put('/builder-tier', authenticateToken, async (req, res) => {
     // Handle tier removal (tier = null)
     if (tier === null) {
       const result = await db.query(
-        `UPDATE master_list SET builder_tier = NULL, pledge_amount = NULL, builder_tier_set_at = NULL WHERE id = $1
+        `UPDATE master_list SET builder_tier = NULL, pledge_amount = NULL, builder_tier_set_at = NULL, tier_source = NULL WHERE id = $1
          RETURNING builder_tier, pledge_amount, builder_tier_set_at`,
         [masterListId]
       );
@@ -280,7 +280,7 @@ router.put('/builder-tier', authenticateToken, async (req, res) => {
     // Update master_list (include recognition_public if provided, default to true)
     const recognitionValue = recognition_public !== undefined ? recognition_public : true;
     const result = await db.query(
-      `UPDATE master_list SET builder_tier = $1, pledge_amount = $2, builder_tier_set_at = NOW(), recognition_public = $3 WHERE id = $4
+      `UPDATE master_list SET builder_tier = $1, pledge_amount = $2, builder_tier_set_at = NOW(), recognition_public = $3, tier_source = 'plan' WHERE id = $4
        RETURNING builder_tier, pledge_amount, builder_tier_set_at, recognition_public`,
       [tier, finalPledgeAmount, recognitionValue, masterListId]
     );

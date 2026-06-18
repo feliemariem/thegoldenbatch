@@ -63,6 +63,52 @@ async function createAdminReceiptUpload(ledgerEntry, adminEmail) {
   }
 }
 
+// Helper: Auto-assign tier from verified payments for non-plan pledgers
+async function recomputeLedgerTier(masterListId) {
+  if (!masterListId) return;
+
+  // Only act if this person is NOT a plan pledger.
+  const ml = await db.query(
+    "SELECT builder_tier, tier_source FROM master_list WHERE id = $1",
+    [masterListId]
+  );
+  if (ml.rows.length === 0) return;
+  if (ml.rows[0].tier_source === 'plan') return; // plan pledgers untouched
+
+  // Total verified paid for this person
+  const paidResult = await db.query(
+    "SELECT COALESCE(SUM(deposit),0) AS paid FROM ledger WHERE master_list_id = $1 AND deposit > 0 AND verified = 'OK'",
+    [masterListId]
+  );
+  const paid = parseFloat(paidResult.rows[0].paid) || 0;
+
+  if (paid <= 0) {
+    // No verified money — clear any ledger-assigned tier
+    if (ml.rows[0].tier_source === 'ledger') {
+      await db.query(
+        "UPDATE master_list SET builder_tier = NULL, pledge_amount = NULL, tier_source = NULL WHERE id = $1",
+        [masterListId]
+      );
+    }
+    return;
+  }
+
+  let tier;
+  if (paid >= 100000) tier = 'beyond';
+  else if (paid >= 50000) tier = 'cornerstone';
+  else if (paid >= 25000) tier = 'pillar';
+  else if (paid >= 10000) tier = 'anchor';
+  else tier = 'root';
+
+  // Root has no pledge_amount; others: pledge = total paid (so balance = 0)
+  const pledge = tier === 'root' ? null : paid;
+
+  await db.query(
+    "UPDATE master_list SET builder_tier = $1, pledge_amount = $2, tier_source = 'ledger', builder_tier_set_at = NOW() WHERE id = $3",
+    [tier, pledge, masterListId]
+  );
+}
+
 // =============================================================================
 // IMPORTANT: Route order matters in Express! Specific routes MUST come before
 // dynamic /:id routes, otherwise Express will match /balance as /:id with id="balance"
@@ -504,6 +550,11 @@ router.post('/', authenticateAdmin, async (req, res) => {
       await createAdminReceiptUpload(result.rows[0], req.user.email);
     }
 
+    // Auto-tier for ledger-only contributors
+    if (result.rows[0].master_list_id) {
+      await recomputeLedgerTier(result.rows[0].master_list_id);
+    }
+
     res.status(201).json(result.rows[0]);
   } catch (err) {
     console.error(err);
@@ -591,6 +642,11 @@ router.put('/:id', authenticateAdmin, async (req, res) => {
         `UPDATE receipt_uploads SET status = $1 WHERE ledger_id = $2`,
         [newReceiptStatus, id]
       );
+    }
+
+    // Auto-tier for ledger-only contributors (verified status or amount may have changed)
+    if (result.rows[0].master_list_id) {
+      await recomputeLedgerTier(result.rows[0].master_list_id);
     }
 
     res.json(result.rows[0]);
@@ -698,8 +754,8 @@ router.delete('/:id', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Get ledger entry info
-    const existing = await db.query('SELECT receipt_public_id FROM ledger WHERE id = $1', [id]);
+    // Get ledger entry info (including master_list_id for tier recompute)
+    const existing = await db.query('SELECT receipt_public_id, master_list_id FROM ledger WHERE id = $1', [id]);
 
     if (existing.rows.length === 0) {
       return res.status(404).json({ error: 'Transaction not found' });
@@ -742,8 +798,16 @@ router.delete('/:id', authenticateAdmin, async (req, res) => {
       }
     }
 
+    // Capture master_list_id before deletion
+    const prevDelMlId = existing.rows[0]?.master_list_id || null;
+
     // Delete the ledger entry
     await db.query('DELETE FROM ledger WHERE id = $1', [id]);
+
+    // Recompute tier for the person who lost this payment
+    if (prevDelMlId) {
+      await recomputeLedgerTier(prevDelMlId);
+    }
 
     res.json({ message: 'Transaction deleted' });
   } catch (err) {
@@ -776,6 +840,11 @@ router.put('/:id/link', authenticateAdmin, async (req, res) => {
       await createAdminReceiptUpload(result.rows[0], req.user.email);
     }
 
+    // Auto-tier for ledger-only contributors
+    if (result.rows[0].master_list_id) {
+      await recomputeLedgerTier(result.rows[0].master_list_id);
+    }
+
     res.json(result.rows[0]);
   } catch (err) {
     console.error(err);
@@ -787,6 +856,10 @@ router.put('/:id/link', authenticateAdmin, async (req, res) => {
 router.put('/:id/unlink', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params;
+
+    // Capture old master_list_id before unlinking (for tier recompute)
+    const prev = await db.query("SELECT master_list_id FROM ledger WHERE id = $1", [id]);
+    const prevMlId = prev.rows[0]?.master_list_id || null;
 
     // Remove admin-created receipt_uploads row for this ledger entry
     // (user-uploaded receipts stay linked to their original user)
@@ -802,6 +875,11 @@ router.put('/:id/unlink', authenticateAdmin, async (req, res) => {
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Transaction not found' });
+    }
+
+    // Recompute tier for the person who lost this payment
+    if (prevMlId) {
+      await recomputeLedgerTier(prevMlId);
     }
 
     res.json(result.rows[0]);
