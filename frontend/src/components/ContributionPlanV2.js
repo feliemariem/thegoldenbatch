@@ -72,9 +72,9 @@ const ALL_CURRENCIES = CURRENCY_GROUPS.flatMap(g => g.currencies);
 
 const TIERS = {
   beyond: { label: 'Beyond', min: 100000, max: null },
-  cornerstone: { label: 'Cornerstone', min: 25000, max: 99999 },
-  pillar: { label: 'Pillar', min: 18000, max: 24000 },
-  anchor: { label: 'Anchor', min: 10000, max: 17000 },
+  cornerstone: { label: 'Cornerstone', min: 50000, max: null },
+  pillar: { label: 'Pillar', min: 25000, max: null },
+  anchor: { label: 'Anchor', min: 10000, max: null },
   root: { label: 'Root', min: null, max: null }
 };
 
@@ -272,10 +272,6 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
     if (config.min && amount < config.min) {
       return { valid: false, message: `Minimum for ${config.label} is ₱${formatNumber(config.min)}` };
     }
-    if (config.max && amount > config.max) {
-      const nextTier = selectedTier === 'anchor' ? 'Pillar' : selectedTier === 'pillar' ? 'Cornerstone' : 'Beyond';
-      return { valid: true, message: `₱${formatNumber(amount)} qualifies for ${nextTier}! Consider upgrading.`, isUpgrade: true };
-    }
     return { valid: true, message: '' };
   };
 
@@ -366,18 +362,14 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
     const config = TIERS[tier];
     if (tier === 'root') return 'Any pace · Any amount';
     const minMonthly = config.min ? Math.ceil(config.min / months) : 0;
-    if (tier === 'beyond') return `≈ ₱${formatNumber(minMonthly)}+ / month · ${months} months`;
-    if (tier === 'cornerstone') return `≈ ₱${formatNumber(minMonthly)} – ₱${formatNumber(Math.ceil(config.max / months))} / month · ${months} months`;
-    return `≈ ₱${formatNumber(minMonthly)} – ₱${formatNumber(Math.ceil(config.max / months))} / month · ${months} months`;
+    return `≈ ₱${formatNumber(minMonthly)}+ / month · ${months} months`;
   };
 
   // Get amount display for tier card
   const getTierAmountDisplay = (tier) => {
     const config = TIERS[tier];
     if (tier === 'root') return 'Open amount';
-    if (tier === 'beyond') return '₱100,000+';
-    if (tier === 'cornerstone') return '₱25,000 – ₱99,999';
-    return `₱${formatNumber(config.min)} – ₱${formatNumber(config.max)}`;
+    return `₱${formatNumber(config.min)}+`;
   };
 
   return (
@@ -491,7 +483,7 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
                 >
                   <div className="cp-tier-check">✓</div>
                   <div className="cp-tier-label">Cornerstone</div>
-                  <div className="cp-tier-amount">₱25,000 – ₱99,999</div>
+                  <div className="cp-tier-amount">₱50,000+</div>
                 </div>
 
                 <div
@@ -500,7 +492,7 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
                 >
                   <div className="cp-tier-check">✓</div>
                   <div className="cp-tier-label">Pillar</div>
-                  <div className="cp-tier-amount">₱18,000 – ₱24,000</div>
+                  <div className="cp-tier-amount">₱25,000+</div>
                 </div>
 
                 <div
@@ -509,7 +501,7 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
                 >
                   <div className="cp-tier-check">✓</div>
                   <div className="cp-tier-label">Anchor</div>
-                  <div className="cp-tier-amount">₱10,000 – ₱17,000</div>
+                  <div className="cp-tier-amount">₱10,000+</div>
                 </div>
 
                 <div
@@ -586,9 +578,7 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
                   <div className="cp-pledge-amount-section">
                     <div className="cp-pledge-amount-label">Your pledge amount</div>
                     <div className="cp-pledge-amount-hint">
-                      {selectedTier === 'beyond' ? 'Minimum ₱100,000' :
-                       selectedTier === 'cornerstone' ? '₱25,000 – ₱99,999' :
-                       `₱${formatNumber(TIERS[selectedTier].min)} – ₱${formatNumber(TIERS[selectedTier].max)}`}
+                      {`Minimum ₱${formatNumber(TIERS[selectedTier].min)}`}
                     </div>
                     <div className="cp-pledge-input-row">
                       <div className="cp-pledge-input-wrapper">
@@ -933,7 +923,7 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
                     <span className={`cp-faq-arrow ${openFaqs.includes('tiers-4') ? 'open' : ''}`}>▼</span>
                   </button>
                   <div className={`cp-faq-answer ${openFaqs.includes('tiers-4') ? 'open' : ''}`}>
-                    ₱25,000 to ₱99,999. A significant share of what makes this celebration happen. You're contributing to the heart of the main event -- the venue, production, and program.
+                    ₱50,000 and up. A significant share of what makes this celebration happen. You're contributing to the heart of the main event -- the venue, production, and program.
                   </div>
                 </div>
 
@@ -943,7 +933,7 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
                     <span className={`cp-faq-arrow ${openFaqs.includes('tiers-5') ? 'open' : ''}`}>▼</span>
                   </button>
                   <div className={`cp-faq-answer ${openFaqs.includes('tiers-5') ? 'open' : ''}`}>
-                    ₱18,000 to ₱24,000. A serious, meaningful commitment to the core celebration.
+                    ₱25,000 and up. A serious, meaningful commitment to the core celebration.
                   </div>
                 </div>
 
@@ -953,7 +943,7 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
                     <span className={`cp-faq-arrow ${openFaqs.includes('tiers-6') ? 'open' : ''}`}>▼</span>
                   </button>
                   <div className={`cp-faq-answer ${openFaqs.includes('tiers-6') ? 'open' : ''}`}>
-                    ₱10,000 to ₱17,000. A real, solid share of what brings this homecoming to life.
+                    ₱10,000 and up. A real, solid share of what brings this homecoming to life.
                   </div>
                 </div>
 

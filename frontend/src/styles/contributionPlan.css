@@ -621,24 +621,30 @@ body[data-theme="dark"] .cp-letter-list {
 
 /* Tier card variants */
 .cp-tier-card.cornerstone {
-  background: var(--cp-dark-green);
+  background: #5b4e18;
   color: var(--cp-white);
+  border: 1px solid rgba(207, 181, 59, 0.5);
 }
 
 .cp-tier-card.pillar {
-  background: #6b5a1e;
+  background: #1d7a52;
   color: var(--cp-white);
+  border: 2px solid var(--cp-gold);
+  transform: scale(1.06);
+  z-index: 2;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
 }
 
 .cp-tier-card.anchor {
-  background: #4a4a4a;
+  background: #33373a;
   color: var(--cp-white);
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .cp-tier-card.root {
-  background: var(--cp-white);
-  color: var(--cp-black);
-  border: 2px solid var(--cp-line);
+  background: #0c1a10;
+  color: var(--cp-gold);
+  border: 1px solid rgba(207, 181, 59, 0.5);
 }
 
 .cp-tier-label {
@@ -653,7 +659,7 @@ body[data-theme="dark"] .cp-letter-list {
 .cp-tier-card.cornerstone .cp-tier-label { color: var(--cp-gold); }
 .cp-tier-card.pillar .cp-tier-label { color: var(--cp-gold); }
 .cp-tier-card.anchor .cp-tier-label { color: #cccccc; }
-.cp-tier-card.root .cp-tier-label { color: var(--cp-green); border-bottom-color: rgba(0,0,0,0.1); }
+.cp-tier-card.root .cp-tier-label { color: var(--cp-gold); border-bottom-color: rgba(207,181,59,0.25); }
 
 .cp-tier-tagline {
   font-size: 10px;
@@ -673,8 +679,8 @@ body[data-theme="dark"] .cp-letter-list {
   margin-top: 10px;
 }
 
-.cp-tier-card.root .cp-tier-amount { color: var(--cp-green); font-style: italic; }
-.cp-tier-card.pillar .cp-tier-amount { color: var(--cp-gold); }
+.cp-tier-card.root .cp-tier-amount { color: var(--cp-gold); font-style: italic; }
+.cp-tier-card.pillar .cp-tier-amount { color: var(--cp-white); }
 
 .cp-tier-monthly {
   font-size: 10px;
@@ -1769,8 +1775,8 @@ body[data-theme="dark"] .cp-tier-hint {
 }
 
 body[data-theme="dark"] .cp-tier-card.root {
-  background: rgba(30, 40, 35, 0.8);
-  border-color: rgba(255, 255, 255, 0.15);
+  background: #0c1a10;
+  border-color: rgba(207, 181, 59, 0.5);
 }
 
 /* Pledge Panel */
@@ -2324,11 +2330,12 @@ body[data-theme="dark"] .cp-faq-link:hover {
   .cp-tier-grid-inner > div:first-child {
     grid-column: 1 / -1;
   }
+  .cp-tier-card.pillar { transform: none; box-shadow: none; }
 }
 
 .cp-tier-card-beyond {
-  background: #0a0a0a;
-  border: 1px solid #CFB53B;
+  background: #14271a;
+  border: 1px solid rgba(160, 180, 165, 0.25);
   border-radius: 10px;
   padding: 16px 12px;
   cursor: pointer;
@@ -2377,9 +2384,9 @@ body[data-theme="dark"] .cp-faq-link:hover {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: #CFB53B;
+  color: #8fa896;
   padding-bottom: 6px;
-  border-bottom: 1px solid rgba(207, 181, 59, 0.2);
+  border-bottom: 1px solid rgba(160, 180, 165, 0.2);
   margin-bottom: 8px;
 }
 
@@ -2387,6 +2394,6 @@ body[data-theme="dark"] .cp-faq-link:hover {
   font-family: 'Source Serif 4', serif;
   font-size: 18px;
   font-weight: 700;
-  color: #CFB53B;
+  color: #9db5a3;
   margin-top: 10px;
 }
