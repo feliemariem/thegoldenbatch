@@ -72,9 +72,9 @@ const ALL_CURRENCIES = CURRENCY_GROUPS.flatMap(g => g.currencies);
 
 const TIERS = {
   beyond: { label: 'Beyond', min: 100000, max: null },
-  cornerstone: { label: 'Cornerstone', min: 50000, max: null },
-  pillar: { label: 'Pillar', min: 25000, max: null },
-  anchor: { label: 'Anchor', min: 10000, max: null },
+  cornerstone: { label: 'Cornerstone', min: 50000, max: 99999 },
+  pillar: { label: 'Pillar', min: 25000, max: 49999 },
+  anchor: { label: 'Anchor', min: 10000, max: 24999 },
   root: { label: 'Root', min: null, max: null }
 };
 
@@ -271,7 +271,10 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
     if (!pledgeAmount) return { valid: false, message: '' };
 
     if (config.min && amount < config.min) {
-      return { valid: false, message: `Minimum for ${config.label} is ₱${formatNumber(config.min)}` };
+      return { valid: false, message: `${config.label} starts at ₱${formatNumber(config.min)}.` };
+    }
+    if (config.max && amount > config.max) {
+      return { valid: false, message: `${config.label} goes up to ₱${formatNumber(config.max)}. To give more, pick another tier.` };
     }
     return { valid: true, message: '' };
   };
@@ -474,7 +477,7 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
               <div className="cp-tier-grid-inner">
 
                 <div
-                  className={`cp-tier-card-beyond ${expandedTier === 'beyond' ? 'selected' : ''}`}
+                  className={`cp-tier-card-beyond ${expandedTier === 'beyond' || selectedTier === 'beyond' ? 'selected' : ''}`}
                   onClick={() => handleTierCardClick('beyond')}
                 >
                   <div className="cp-tier-check">✓</div>
@@ -483,7 +486,7 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
                 </div>
 
                 <div
-                  className={`cp-tier-card cornerstone ${expandedTier === 'cornerstone' ? 'selected' : ''}`}
+                  className={`cp-tier-card cornerstone ${expandedTier === 'cornerstone' || selectedTier === 'cornerstone' ? 'selected' : ''}`}
                   onClick={() => handleTierCardClick('cornerstone')}
                 >
                   <div className="cp-tier-check">✓</div>
@@ -492,7 +495,7 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
                 </div>
 
                 <div
-                  className={`cp-tier-card pillar ${expandedTier === 'pillar' ? 'selected' : ''}`}
+                  className={`cp-tier-card pillar ${expandedTier === 'pillar' || selectedTier === 'pillar' ? 'selected' : ''}`}
                   onClick={() => handleTierCardClick('pillar')}
                 >
                   <div className="cp-tier-check">✓</div>
@@ -501,7 +504,7 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
                 </div>
 
                 <div
-                  className={`cp-tier-card anchor ${expandedTier === 'anchor' ? 'selected' : ''}`}
+                  className={`cp-tier-card anchor ${expandedTier === 'anchor' || selectedTier === 'anchor' ? 'selected' : ''}`}
                   onClick={() => handleTierCardClick('anchor')}
                 >
                   <div className="cp-tier-check">✓</div>
@@ -510,7 +513,7 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
                 </div>
 
                 <div
-                  className={`cp-tier-card root ${expandedTier === 'root' ? 'selected' : ''}`}
+                  className={`cp-tier-card root ${expandedTier === 'root' || selectedTier === 'root' ? 'selected' : ''}`}
                   onClick={() => handleTierCardClick('root')}
                 >
                   <div className="cp-tier-check">✓</div>
@@ -581,9 +584,11 @@ export default function ContributionPlanV2({ isOpen, onClose, onTierSaved, curre
                 {/* Amount input (hidden for Root) */}
                 {selectedTier && selectedTier !== 'root' && (
                   <div className="cp-pledge-amount-section">
-                    <div className="cp-pledge-amount-label">Your pledge amount</div>
+                    <div className="cp-pledge-amount-label">Enter amount</div>
                     <div className="cp-pledge-amount-hint">
-                      {`Minimum ₱${formatNumber(TIERS[selectedTier].min)}`}
+                      {selectedTier === 'beyond'
+                        ? 'Beyond: ₱100,000 and up'
+                        : `${TIERS[selectedTier].label}: ₱${formatNumber(TIERS[selectedTier].min)} to ₱${formatNumber(TIERS[selectedTier].max)}`}
                     </div>
                     <div className="cp-pledge-input-row">
                       <div className="cp-pledge-input-wrapper">
