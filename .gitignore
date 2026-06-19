@@ -114,3 +114,4 @@ pids
 # OS / Misc
 ####################################
 Thumbs.db
+production_dump.dump
