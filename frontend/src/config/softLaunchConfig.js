@@ -6,7 +6,7 @@
 
 // Master switch. false = nobody in the list has access (use during the
 // presentation). true = the list is live.
-export const SOFT_LAUNCH_ENABLED = false;
+export const SOFT_LAUNCH_ENABLED = true;
 
 export const SOFT_LAUNCH_EMAILS = [
   'leonardo.francisco.73@gmail.com',
