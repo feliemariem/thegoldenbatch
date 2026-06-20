@@ -17,6 +17,7 @@ DROP TABLE IF EXISTS password_resets;
 DROP TABLE IF EXISTS announcements;
 DROP TABLE IF EXISTS receipt_uploads;
 DROP TABLE IF EXISTS ledger;
+DROP TABLE IF EXISTS rsvp_history;
 DROP TABLE IF EXISTS rsvps;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS invites;
@@ -110,6 +111,37 @@ CREATE TABLE rsvps (
     status VARCHAR(20) CHECK (status IN ('going', 'not_going', 'maybe')) NOT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- RSVP history table (tracks every status change going forward)
+CREATE TABLE rsvp_history (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id),
+    old_status VARCHAR(20),
+    new_status VARCHAR(20) NOT NULL,
+    changed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_rsvp_history_user ON rsvp_history(user_id);
+CREATE INDEX idx_rsvp_history_changed ON rsvp_history(changed_at);
+
+CREATE OR REPLACE FUNCTION log_rsvp_change()
+RETURNS TRIGGER AS $
+BEGIN
+    IF TG_OP = 'INSERT' THEN
+        INSERT INTO rsvp_history (user_id, old_status, new_status)
+        VALUES (NEW.user_id, NULL, NEW.status);
+    ELSIF NEW.status IS DISTINCT FROM OLD.status THEN
+        INSERT INTO rsvp_history (user_id, old_status, new_status)
+        VALUES (NEW.user_id, OLD.status, NEW.status);
+        NEW.updated_at = CURRENT_TIMESTAMP;
+    END IF;
+    RETURN NEW;
+END;
+$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_rsvp_history
+BEFORE INSERT OR UPDATE ON rsvps
+FOR EACH ROW EXECUTE FUNCTION log_rsvp_change();
 
 -- Ledger table
 CREATE TABLE ledger (
