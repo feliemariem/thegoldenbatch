@@ -144,6 +144,22 @@ export default function Funds() {
                   </span>
                 </div>
 
+                <p style={{
+                  textAlign: 'center',
+                  fontSize: '0.78rem',
+                  color: 'var(--color-text-secondary)',
+                  opacity: 0.85,
+                  lineHeight: 1.6,
+                  marginTop: '10px',
+                  maxWidth: '430px',
+                  marginLeft: 'auto',
+                  marginRight: 'auto'
+                }}>
+                  Balance reflects actual funds in the account. Interest earned counts toward{' '}
+                  <span style={{ color: '#4ade80', fontWeight: 500 }}>in</span>. Bank charges and withholding tax count toward{' '}
+                  <span style={{ color: '#f87171', fontWeight: 500 }}>out</span>.
+                </p>
+
                 <p className="funds-date">
                   Last updated: {lastUpdated ? lastUpdated.toLocaleTimeString('en-PH', {
                     hour: '2-digit',
