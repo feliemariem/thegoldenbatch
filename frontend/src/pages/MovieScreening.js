@@ -233,6 +233,15 @@ export default function MovieScreening() {
   if (submitted && reservation) {
     return (
       <div className="ms-page">
+        {/* Theme Toggle */}
+        <button
+          onClick={toggleTheme}
+          className="ms-theme-toggle ms-no-print"
+          aria-label="Toggle theme"
+        >
+          {theme === 'dark' ? '☀️' : '🌙'}
+        </button>
+
         <div className="ms-container">
           <div className="ms-confirmation">
             <div className="ms-confirm-icon">✓</div>
