@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import Footer from '../components/Footer';
@@ -27,6 +27,9 @@ export default function MovieScreening() {
   // Validation errors
   const [mobileError, setMobileError] = useState('');
   const [emailError, setEmailError] = useState('');
+
+  // Ref for scroll-to-form
+  const ticketFieldRef = useRef(null);
 
   // Normalize and validate Philippine mobile number
   const normalizePHMobile = (value) => {
@@ -287,25 +290,25 @@ export default function MovieScreening() {
       <div className="ms-hero">
         <div className="ms-hero-content">
           <div className="ms-pill">USLS-IS BATCH 2003 · MOVIE SCREENING</div>
-          <h1 className="ms-movie-title">{event.title}</h1>
+          <h1 className="ms-movie-title" style={{ color: '#FDF8EE' }}>{event.title}</h1>
 
           <div className="ms-meta">
             <div className="ms-meta-date">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#CFB53B" strokeWidth="2">
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                 <line x1="16" y1="2" x2="16" y2="6"></line>
                 <line x1="8" y1="2" x2="8" y2="6"></line>
                 <line x1="3" y1="10" x2="21" y2="10"></line>
               </svg>
-              <span>{formatDateHero(event.event_date)}</span>
+              <span style={{ color: '#CFB53B' }}>{formatDateHero(event.event_date)}</span>
             </div>
             {event.venue && (
               <div className="ms-meta-venue">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#c2ccc4" strokeWidth="2">
                   <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                   <circle cx="12" cy="10" r="3"></circle>
                 </svg>
-                <span>{event.venue}</span>
+                <span style={{ color: '#c2ccc4' }}>{event.venue}</span>
               </div>
             )}
           </div>
@@ -313,8 +316,8 @@ export default function MovieScreening() {
           <div className="ms-showtime-chips">
             {cinemas.map((cinema) => (
               <div key={cinema.code} className="ms-showtime-chip">
-                <span className="ms-chip-label">{getCinemaName(cinema.code)} · {cinema.label}</span>
-                <span className="ms-chip-time">{cinema.showtime}</span>
+                <span className="ms-chip-label" style={{ color: '#c2ccc4' }}>{getCinemaName(cinema.code)} · {cinema.label}</span>
+                <span className="ms-chip-time" style={{ color: '#FDF8EE' }}>{cinema.showtime}</span>
               </div>
             ))}
           </div>
@@ -322,10 +325,10 @@ export default function MovieScreening() {
           <div className="ms-hero-divider"></div>
 
           <div className="ms-inclusions">
-            <p className="ms-inclusion-line">
-              <strong>Inclusions</strong> · every ticket includes your movie stub plus food and drinks.
+            <p className="ms-inclusion-line" style={{ color: '#b9c2bb' }}>
+              <strong style={{ color: '#CFB53B' }}>Inclusions</strong> · every ticket includes your movie stub plus food and drinks.
             </p>
-            <p className="ms-separate-line">Raffle and merch sold separately onsite.</p>
+            <p className="ms-separate-line" style={{ color: '#b9c2bb' }}>Raffle and merch sold separately onsite.</p>
           </div>
         </div>
       </div>
@@ -401,6 +404,10 @@ export default function MovieScreening() {
                       if (cinema.seats_left > 0) {
                         setSelectedCinema(cinema.code);
                         setQuantity(1);
+                        // Scroll to ticket field after state updates
+                        setTimeout(() => {
+                          ticketFieldRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }, 100);
                       }
                     }}
                   >
@@ -428,7 +435,7 @@ export default function MovieScreening() {
             {selectedCinema && (
               <>
                 {/* Number of Tickets */}
-                <div className="ms-field">
+                <div className="ms-field" ref={ticketFieldRef}>
                   <label className="ms-label">NUMBER OF TICKETS <span className="ms-req">*</span></label>
                   <select
                     className="ms-ticket-select"
