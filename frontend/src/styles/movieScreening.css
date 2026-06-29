@@ -378,7 +378,7 @@
 .ms-cinema-price {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #008a44;
+  color: #CFB53B;
   margin-bottom: 6px;
 }
 
@@ -439,12 +439,12 @@
 }
 
 .ms-seats-plenty {
-  background: rgba(0, 138, 68, 0.13);
-  color: #008a44;
+  background: rgba(207, 181, 59, 0.12);
+  color: #CFB53B;
 }
 
 .ms-seats-plenty svg {
-  stroke: #008a44;
+  stroke: #CFB53B;
 }
 
 .ms-seats-low {
@@ -494,7 +494,7 @@
 .ms-total-amount {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #008a44;
+  color: #CFB53B;
 }
 
 /* ========================================
@@ -573,8 +573,8 @@
   font-size: 1rem;
   font-weight: 600;
   font-family: 'Poppins', sans-serif;
-  background: #006633;
-  color: #FDF8EE;
+  background: #CFB53B;
+  color: #0D1310;
   border: 1.5px solid #CFB53B;
   border-radius: 10px;
   cursor: pointer;
@@ -583,7 +583,7 @@
 }
 
 .ms-submit-btn:hover:not(:disabled) {
-  background: #005528;
+  background: #b8a235;
 }
 
 .ms-submit-btn:active:not(:disabled) {
@@ -732,4 +732,35 @@
 .ms-highlight {
   color: #CFB53B !important;
   font-weight: 500;
+}
+
+/* ========================================
+   LIGHT MODE OVERRIDES (green accents)
+   ======================================== */
+
+body[data-theme="light"] .ms-seats-plenty {
+  background: rgba(0, 102, 51, 0.10);
+  color: #006633;
+}
+
+body[data-theme="light"] .ms-seats-plenty svg {
+  stroke: #006633;
+}
+
+body[data-theme="light"] .ms-cinema-price {
+  color: #008a44;
+}
+
+body[data-theme="light"] .ms-total-amount {
+  color: #008a44;
+}
+
+body[data-theme="light"] .ms-submit-btn {
+  background: #006633;
+  color: #FDF8EE;
+  border-color: #CFB53B;
+}
+
+body[data-theme="light"] .ms-submit-btn:hover:not(:disabled) {
+  background: #005528;
 }
