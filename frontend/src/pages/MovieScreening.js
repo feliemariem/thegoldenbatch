@@ -34,6 +34,9 @@ export default function MovieScreening() {
   const ticketFieldRef = useRef(null);
   const mobileInputRef = useRef(null);
 
+  // Copy feedback
+  const [gcashCopied, setGcashCopied] = useState(false);
+
   // Normalize and validate Philippine mobile number
   const normalizePHMobile = (value) => {
     if (!value || !value.trim()) return null;
@@ -86,6 +89,29 @@ export default function MovieScreening() {
       }
     } else {
       setEmailError('');
+    }
+  };
+
+  // Copy GCash number to clipboard (stripped of spaces)
+  const copyGcashNumber = async () => {
+    if (!event?.gcash_number) return;
+    const rawNumber = event.gcash_number.replace(/\s/g, '');
+    try {
+      await navigator.clipboard.writeText(rawNumber);
+      setGcashCopied(true);
+      setTimeout(() => setGcashCopied(false), 1500);
+    } catch (err) {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = rawNumber;
+      textArea.style.position = 'fixed';
+      textArea.style.opacity = '0';
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      setGcashCopied(true);
+      setTimeout(() => setGcashCopied(false), 1500);
     }
   };
 
@@ -545,7 +571,29 @@ export default function MovieScreening() {
                   <div className="ms-gcash-details">
                     <div className="ms-gcash-row">
                       <span className="ms-gcash-label">Number</span>
-                      <span className="ms-gcash-value">{event.gcash_number}</span>
+                      <span className="ms-gcash-value">
+                        {event.gcash_number}
+                        <button
+                          type="button"
+                          className="ms-copy-btn"
+                          onClick={copyGcashNumber}
+                          aria-label="Copy GCash number"
+                        >
+                          {gcashCopied ? (
+                            <>
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                              </svg>
+                              <span className="ms-copy-text">Copied!</span>
+                            </>
+                          ) : (
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                          )}
+                        </button>
+                      </span>
                     </div>
                     <div className="ms-gcash-row">
                       <span className="ms-gcash-label">Name</span>

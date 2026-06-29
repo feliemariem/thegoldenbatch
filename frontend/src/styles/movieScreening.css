@@ -612,6 +612,43 @@
   font-weight: 600;
   font-family: 'Poppins', monospace;
   letter-spacing: 0.03em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ms-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  border-radius: 6px;
+  padding: 6px 8px;
+  cursor: pointer;
+  color: #ffffff;
+  transition: background 0.2s;
+  min-width: 32px;
+  min-height: 32px;
+  justify-content: center;
+}
+
+.ms-copy-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.ms-copy-btn:active {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.ms-copy-btn svg {
+  flex-shrink: 0;
+}
+
+.ms-copy-text {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0;
 }
 
 .ms-gcash-instruction {
