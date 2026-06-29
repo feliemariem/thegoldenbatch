@@ -78,8 +78,8 @@ function ConditionalThemeToggle() {
   const location = useLocation();
   const { user } = useAuth();
 
-  // Hide on landing page (has its own toggle)
-  if (location.pathname === '/') {
+  // Hide on landing page and movie-screening (they have their own toggles)
+  if (location.pathname === '/' || location.pathname === '/movie-screening') {
     return null;
   }
 

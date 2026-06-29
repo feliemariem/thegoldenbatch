@@ -337,7 +337,7 @@ export default function MovieScreening() {
                   <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                   <circle cx="12" cy="10" r="3"></circle>
                 </svg>
-                <span style={{ color: '#c2ccc4' }}>{event.venue} · Bacolod</span>
+                <span style={{ color: '#c2ccc4' }}>Ayala Malls Capitol Central · Bacolod</span>
               </div>
             )}
           </div>
@@ -523,7 +523,7 @@ export default function MovieScreening() {
 
                 {/* GCash Reference */}
                 <div className="ms-field">
-                  <label className="ms-label">GCASH REFERENCE NUMBER <span className="ms-req">*</span></label>
+                  <label className="ms-label">REFERENCE NUMBER <span className="ms-req">*</span></label>
                   <input
                     type="text"
                     className="ms-input"
