@@ -586,8 +586,6 @@ export default function MovieScreening() {
               </>
             )}
           </form>
-
-          <Link to="/" className="ms-back-link">Back to Home</Link>
         </div>
       </div>
       </div>
