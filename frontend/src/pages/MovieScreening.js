@@ -440,7 +440,24 @@ export default function MovieScreening() {
                       <option key={n} value={n}>{n}</option>
                     ))}
                   </select>
-                  <span className="ms-hint">Max {maxQuantity} tickets available</span>
+                  <div className={`ms-seats-badge ${maxQuantity > 40 ? 'ms-seats-plenty' : 'ms-seats-low'}`}>
+                    {maxQuantity > 40 ? (
+                      <>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M5 11a2 2 0 0 1 2 2v2h10v-2a2 2 0 1 1 4 0v4a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-4a2 2 0 0 1 2 -2z"></path>
+                          <path d="M5 11v-5a3 3 0 0 1 3 -3h8a3 3 0 0 1 3 3v5"></path>
+                        </svg>
+                        <span>{maxQuantity} seats available</span>
+                      </>
+                    ) : (
+                      <>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M12 12c2 -2.96 0 -7 -1 -8c0 3.038 -1.773 4.741 -3 6c-1.226 1.26 -2 3.24 -2 5a6 6 0 1 0 12 0c0 -1.532 -1.056 -3.94 -2 -5c-1.786 3 -2.791 3 -4 2z"></path>
+                        </svg>
+                        <span>Only {maxQuantity} seats left!</span>
+                      </>
+                    )}
+                  </div>
                 </div>
 
                 {quantity >= 20 && (

@@ -422,6 +422,40 @@
   color: #111111;
 }
 
+/* Seats available badge */
+.ms-seats-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 7px 13px;
+  border-radius: 20px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.ms-seats-badge svg {
+  flex-shrink: 0;
+}
+
+.ms-seats-plenty {
+  background: rgba(0, 138, 68, 0.13);
+  color: #008a44;
+}
+
+.ms-seats-plenty svg {
+  stroke: #008a44;
+}
+
+.ms-seats-low {
+  background: rgba(226, 54, 54, 0.13);
+  color: #E23636;
+}
+
+.ms-seats-low svg {
+  stroke: #E23636;
+}
+
 /* ========================================
    SEAT CHOICE NOTE
    ======================================== */
