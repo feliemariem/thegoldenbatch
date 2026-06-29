@@ -168,8 +168,7 @@ export default function MovieScreeningsTab() {
   };
 
   // Parse GCash PDF and match against pending reservations
-  // GCash PDF format: table with columns "Date and Time", "Description", "Reference No.", "Debit", "Credit", "Balance"
-  // Skip summary rows: STARTING BALANCE, ENDING BALANCE, Total Debit, Total Credit
+  // Uses x-coordinates to properly extract data from columns
   const handleGcashUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -181,142 +180,279 @@ export default function MovieScreeningsTab() {
       const arrayBuffer = await file.arrayBuffer();
       const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
 
-      let fullText = '';
+      // Collect all text items with their coordinates across all pages
+      const allItems = [];
       for (let i = 1; i <= pdf.numPages; i++) {
         const page = await pdf.getPage(i);
         const textContent = await page.getTextContent();
-        const pageText = textContent.items.map(item => item.str).join(' ');
-        fullText += pageText + '\n';
+        for (const item of textContent.items) {
+          if (item.str && item.str.trim()) {
+            allItems.push({
+              text: item.str,
+              x: item.transform[4],
+              y: item.transform[5],
+              page: i
+            });
+          }
+        }
       }
 
-      // Parse transactions from GCash PDF
-      // Format: one continuous string, fields separated by spaces, NO line breaks between rows
-      // Each transaction: ...Description... [13-digit RefNo] [Amount] [Balance] ...next row...
-      // Amount is EITHER debit OR credit (not both). Determine by balance change:
-      //   - Balance increased vs previous → CREDIT (incoming payment)
-      //   - Balance decreased vs previous → DEBIT (outgoing payment)
-      const refToCreditMap = {};
+      // Find column header positions by looking for the header text
+      let refColX = null, debitColX = null, creditColX = null, balanceColX = null;
 
-      // First, find the STARTING BALANCE to initialize our running balance tracker
-      const startingBalanceMatch = fullText.match(/STARTING\s+BALANCE\s+(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/i);
-      let previousBalance = startingBalanceMatch
-        ? parseFloat(startingBalanceMatch[1].replace(/,/g, ''))
-        : 0;
+      for (const item of allItems) {
+        const t = item.text.trim().toLowerCase();
+        if (t === 'reference no.' || t === 'reference no') {
+          refColX = item.x;
+        } else if (t === 'debit') {
+          debitColX = item.x;
+        } else if (t === 'credit') {
+          creditColX = item.x;
+        } else if (t === 'balance') {
+          balanceColX = item.x;
+        }
+      }
 
-      // Find all reference numbers (10-15 pure digits, not alphanumeric like invno:xxx)
-      // Use a global regex to find all refs and their positions
-      const refPattern = /\b(\d{10,15})\b/g;
-      const transactions = [];
-      let refMatch;
+      console.log('[GCash Parse] Column X positions:', { refColX, debitColX, creditColX, balanceColX });
 
-      while ((refMatch = refPattern.exec(fullText)) !== null) {
-        const refNo = refMatch[1];
-        const refEndIndex = refMatch.index + refNo.length;
+      // Group items into rows by y-coordinate (items within 3 units are same row)
+      const rowTolerance = 3;
+      const rowMap = new Map();
 
-        // Get text after the reference number to find the two amounts
-        const afterRef = fullText.substring(refEndIndex, refEndIndex + 100); // Look ahead 100 chars
-
-        // Find the next two decimal numbers (amount and balance)
-        // Format: "1,000.00" or "1000.00" or "500.00"
-        const amountPattern = /(\d{1,3}(?:,\d{3})*\.\d{2})/g;
-        const amounts = [];
-        let amtMatch;
-        while ((amtMatch = amountPattern.exec(afterRef)) !== null && amounts.length < 2) {
-          amounts.push(parseFloat(amtMatch[1].replace(/,/g, '')));
+      for (const item of allItems) {
+        // Find existing row or create new one
+        let foundRowY = null;
+        for (const rowY of rowMap.keys()) {
+          if (Math.abs(item.y - rowY) < rowTolerance) {
+            foundRowY = rowY;
+            break;
+          }
         }
 
-        if (amounts.length >= 2) {
+        if (foundRowY !== null) {
+          rowMap.get(foundRowY).push(item);
+        } else {
+          rowMap.set(item.y, [item]);
+        }
+      }
+
+      // Sort rows by y descending (PDF y increases upward, so higher y = earlier in document)
+      const sortedRows = Array.from(rowMap.entries())
+        .sort((a, b) => b[0] - a[0])
+        .map(([y, items]) => ({ y, items: items.sort((a, b) => a.x - b.x) }));
+
+      // Helper to determine which column an x-position belongs to
+      const getColumn = (x) => {
+        if (refColX === null || debitColX === null || creditColX === null || balanceColX === null) {
+          return null;
+        }
+        // Use midpoints between columns as boundaries
+        const refEnd = (refColX + debitColX) / 2;
+        const debitEnd = (debitColX + creditColX) / 2;
+        const creditEnd = (creditColX + balanceColX) / 2;
+
+        if (x < refEnd) return 'ref';
+        if (x < debitEnd) return 'debit';
+        if (x < creditEnd) return 'credit';
+        return 'balance';
+      };
+
+      // Parse transactions from rows
+      // Each transaction row starts with a date (YYYY-MM-DD HH:MM)
+      const datePattern = /^\d{4}-\d{2}-\d{2}/;
+      const transactions = [];
+      let previousBalance = 0;
+
+      // Find STARTING BALANCE first
+      for (const row of sortedRows) {
+        const rowText = row.items.map(i => i.text).join(' ');
+        if (rowText.includes('STARTING BALANCE') || rowText.includes('Starting Balance')) {
+          // Find the balance amount in this row
+          for (const item of row.items) {
+            const amt = item.text.replace(/,/g, '');
+            if (/^\d+\.\d{2}$/.test(amt)) {
+              previousBalance = parseFloat(amt);
+              console.log('[GCash Parse] Starting balance:', previousBalance);
+              break;
+            }
+          }
+          break;
+        }
+      }
+
+      // Process transaction rows
+      for (const row of sortedRows) {
+        const rowText = row.items.map(i => i.text).join(' ');
+
+        // Skip summary rows
+        if (rowText.includes('STARTING BALANCE') || rowText.includes('ENDING BALANCE') ||
+            rowText.includes('Total Debit') || rowText.includes('Total Credit') ||
+            rowText.includes('Starting Balance') || rowText.includes('Ending Balance')) {
+          continue;
+        }
+
+        // Check if row starts with a date (transaction row)
+        const firstItem = row.items[0];
+        if (!firstItem || !datePattern.test(firstItem.text)) {
+          continue;
+        }
+
+        // Extract values by column position
+        let refNo = null;
+        let debitAmt = null;
+        let creditAmt = null;
+        let balanceAmt = null;
+
+        for (const item of row.items) {
+          const col = getColumn(item.x);
+          const text = item.text.trim();
+
+          if (col === 'ref') {
+            // Reference: look for 10-15 digit number
+            const refMatch = text.match(/\d{10,15}/);
+            if (refMatch) {
+              refNo = refMatch[0];
+            }
+          } else if (col === 'debit' || col === 'credit' || col === 'balance') {
+            // Parse amount
+            const cleaned = text.replace(/,/g, '');
+            if (/^\d+\.\d{2}$/.test(cleaned)) {
+              const amt = parseFloat(cleaned);
+              if (col === 'debit') debitAmt = amt;
+              else if (col === 'credit') creditAmt = amt;
+              else if (col === 'balance') balanceAmt = amt;
+            }
+          }
+        }
+
+        // If we have a reference, record the transaction
+        if (refNo) {
           transactions.push({
             refNo,
-            amount: amounts[0],
-            balance: amounts[1],
-            position: refMatch.index
+            debit: debitAmt,
+            credit: creditAmt,
+            balance: balanceAmt,
+            rowText
           });
         }
       }
 
-      // Now classify each transaction as credit or debit based on balance change
-      // Sort by position to process in document order
-      transactions.sort((a, b) => a.position - b.position);
+      console.log('[GCash Parse] Transactions found:', transactions.length);
 
-      for (const txn of transactions) {
-        const balanceChange = txn.balance - previousBalance;
-        const isCredit = balanceChange > 0; // Balance increased = incoming payment
+      // If column-based parsing failed (no columns found), fall back to row-based parsing
+      if (refColX === null || transactions.length === 0) {
+        console.log('[GCash Parse] Falling back to row-based parsing...');
+        transactions.length = 0; // Clear
 
-        if (isCredit) {
-          // This is an incoming payment - add to our map
-          refToCreditMap[txn.refNo] = txn.amount;
+        // Re-parse using the fallback method: segment by date, use balance changes
+        for (const row of sortedRows) {
+          const rowText = row.items.map(i => i.text).join(' ');
+
+          // Skip summary rows
+          if (rowText.includes('STARTING BALANCE') || rowText.includes('ENDING BALANCE') ||
+              rowText.includes('Total Debit') || rowText.includes('Total Credit')) {
+            continue;
+          }
+
+          // Check if row starts with a date
+          if (!datePattern.test(row.items[0]?.text || '')) {
+            continue;
+          }
+
+          // Find reference number (10-15 digits)
+          const refMatch = rowText.match(/\b(\d{10,15})\b/);
+          if (!refMatch) continue;
+          const refNo = refMatch[1];
+
+          // Find all decimal amounts in the row
+          const amounts = [];
+          const amtPattern = /(\d{1,3}(?:,\d{3})*\.\d{2})/g;
+          let m;
+          while ((m = amtPattern.exec(rowText)) !== null) {
+            amounts.push(parseFloat(m[1].replace(/,/g, '')));
+          }
+
+          // Last amount is balance, second-to-last is debit or credit
+          if (amounts.length >= 2) {
+            const balance = amounts[amounts.length - 1];
+            const amount = amounts[amounts.length - 2];
+
+            // Determine if credit or debit by balance change
+            const balanceChange = balance - previousBalance;
+            const isCredit = balanceChange > 0;
+
+            transactions.push({
+              refNo,
+              debit: isCredit ? null : amount,
+              credit: isCredit ? amount : null,
+              balance
+            });
+
+            previousBalance = balance;
+          }
         }
 
-        // Update running balance for next iteration
-        previousBalance = txn.balance;
+        console.log('[GCash Parse] Fallback found transactions:', transactions.length);
       }
 
-      const parsedCount = Object.keys(refToCreditMap).length;
-      const totalTxns = transactions.length;
-
-      // If no transactions parsed at all, show error
-      if (totalTxns === 0) {
-        alert('No transactions found in the PDF. Expected: 10-15 digit reference numbers followed by amount and balance.');
-        return;
+      // Build the reference map: ref -> { credit, debit }
+      const refMap = {};
+      for (const txn of transactions) {
+        const normalizedRef = txn.refNo.replace(/\D/g, '');
+        refMap[normalizedRef] = {
+          credit: txn.credit,
+          debit: txn.debit,
+          balance: txn.balance
+        };
       }
 
-      // Normalize all PDF credit refs to digits only (for consistent comparison)
-      const normalizedPdfRefs = {};
-      for (const [ref, amount] of Object.entries(refToCreditMap)) {
-        const normalizedRef = ref.replace(/\D/g, '');
-        normalizedPdfRefs[normalizedRef] = amount;
-      }
-
-      console.log('[GCash Match] PDF credit refs (normalized):', JSON.stringify(normalizedPdfRefs, null, 2));
-      console.log('[GCash Match] All credit ref keys:', Object.keys(normalizedPdfRefs));
-      console.log('[GCash Match] Credit count:', Object.keys(normalizedPdfRefs).length);
+      console.log('[GCash Match] All ref keys:', Object.keys(refMap));
+      console.log('[GCash Match] Full ref map:', JSON.stringify(refMap, null, 2));
+      console.log('[GCash Match] Total refs:', Object.keys(refMap).length);
 
       // Match against pending reservations
       const matches = {};
       const pendingReservations = reservations.filter(r => r.status === 'pending');
 
       pendingReservations.forEach(reservation => {
-        // Normalize reservation reference: strip ALL non-digits
         const normalizedRef = (reservation.gcash_ref || '').replace(/\D/g, '');
         const expectedAmount = parseFloat(reservation.total_amount);
 
-        console.log(`[GCash Match] Checking reservation ${reservation.id}: ref="${reservation.gcash_ref}" → normalized="${normalizedRef}", expected=${expectedAmount}`);
+        console.log(`[GCash Match] Checking reservation ${reservation.id}: ref="${normalizedRef}", expected=${expectedAmount}`);
 
-        // STEP 1: Determine if the reference is found (independently of amount)
+        // Look for the reference in our map
         let foundRef = null;
-        let foundAmount = null;
+        let foundData = null;
 
         // Exact match first
-        if (normalizedPdfRefs[normalizedRef] !== undefined) {
+        if (refMap[normalizedRef]) {
           foundRef = normalizedRef;
-          foundAmount = normalizedPdfRefs[normalizedRef];
-          console.log(`[GCash Match]   → Exact match found: ref=${foundRef}, pdfAmount=${foundAmount}`);
+          foundData = refMap[normalizedRef];
         } else {
-          // Substring match (for different length variants)
-          for (const pdfRef of Object.keys(normalizedPdfRefs)) {
+          // Substring match
+          for (const pdfRef of Object.keys(refMap)) {
             if (pdfRef.includes(normalizedRef) || normalizedRef.includes(pdfRef)) {
               foundRef = pdfRef;
-              foundAmount = normalizedPdfRefs[pdfRef];
-              console.log(`[GCash Match]   → Substring match found: pdfRef=${pdfRef}, pdfAmount=${foundAmount}`);
+              foundData = refMap[pdfRef];
               break;
             }
           }
         }
 
-        // STEP 2: Classify based on whether ref was found, then check amount
-        if (foundRef === null) {
-          // Reference NOT found in PDF at all
+        if (!foundRef) {
           matches[reservation.id] = 'not_found';
-          console.log(`[GCash Match]   → Result: NOT FOUND`);
+          console.log(`[GCash Match]   → NOT FOUND`);
         } else {
-          // Reference IS found - now check if amount matches
-          if (Math.abs(foundAmount - expectedAmount) < 1) {
+          // Check if this is a credit and if amount matches
+          const creditAmt = foundData.credit;
+          console.log(`[GCash Match]   → Found: credit=${creditAmt}, debit=${foundData.debit}`);
+
+          if (creditAmt !== null && Math.abs(creditAmt - expectedAmount) < 1) {
             matches[reservation.id] = 'match';
-            console.log(`[GCash Match]   → Result: MATCH (amounts equal)`);
+            console.log(`[GCash Match]   → MATCH`);
           } else {
             matches[reservation.id] = 'amount_off';
-            console.log(`[GCash Match]   → Result: AMOUNT OFF (pdf=${foundAmount}, expected=${expectedAmount})`);
+            console.log(`[GCash Match]   → AMOUNT OFF (credit=${creditAmt}, expected=${expectedAmount})`);
           }
         }
       });
