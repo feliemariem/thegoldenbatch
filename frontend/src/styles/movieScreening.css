@@ -616,9 +616,14 @@
 
 .ms-gcash-instruction {
   font-size: 0.8rem;
-  color: #e8f0fc;
+  color: #ffffff !important;
   margin: 0;
   line-height: 1.4;
+}
+
+/* Override global body[data-theme="light"] p { color: !important } rule */
+body[data-theme="light"] .ms-gcash-box .ms-gcash-instruction {
+  color: #ffffff !important;
 }
 
 /* ========================================
