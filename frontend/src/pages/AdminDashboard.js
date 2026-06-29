@@ -16,6 +16,7 @@ import AdminMessages from '../components/AdminMessages';
 import EmailLog from '../components/EmailLog';
 import MediaTab from '../components/admin/MediaTab';
 import PipelineBoard from '../components/PipelineBoard';
+import MovieScreeningsTab from '../components/MovieScreeningsTab';
 import Footer from '../components/Footer';
 import { apiGet } from '../api';
 
@@ -55,7 +56,7 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState(() => {
     return localStorage.getItem('adminActiveTab') || 'invites';
   });
-  const validTabs = ['registry', 'accounting', 'announcements', 'minutes', 'messages', 'strategic', 'permissions', 'emailLog', 'systemTest', 'media'];
+  const validTabs = ['registry', 'accounting', 'announcements', 'minutes', 'messages', 'strategic', 'permissions', 'emailLog', 'systemTest', 'media', 'screenings'];
   const [dashboardMode, setDashboardModeState] = useState(() => {
     const tabFromUrl = new URLSearchParams(window.location.search).get('tab');
     // Handle legacy 'meetings' param
@@ -512,6 +513,15 @@ export default function AdminDashboard() {
                       {mediaPendingCount}
                     </span>
                   )}
+                </button>
+              )}
+              {/* Movie Screenings - only for Felie (75) and Coycoy (53) */}
+              {(user?.id === 75 || user?.id === 53) && (
+                <button
+                  onClick={() => setDashboardMode('screenings')}
+                  className={dashboardMode === 'screenings' ? 'active' : ''}
+                >
+                  Screenings
                 </button>
               )}
               {showAllTabs && isSuperAdmin && (
@@ -1237,6 +1247,11 @@ export default function AdminDashboard() {
         {/* MEDIA MODE */}
         {dashboardMode === 'media' && (isSuperAdmin || permissions?.can_approve_media) && (
           <MediaTab onPendingCountChange={setMediaPendingCount} isSuperAdmin={isSuperAdmin} />
+        )}
+
+        {/* MOVIE SCREENINGS MODE - Felie (75) and Coycoy (53) only */}
+        {dashboardMode === 'screenings' && (user?.id === 75 || user?.id === 53) && (
+          <MovieScreeningsTab />
         )}
 
         {/* PERMISSIONS MODE - Super Admin Only */}

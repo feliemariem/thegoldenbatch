@@ -27,6 +27,7 @@ import Directory from './pages/Directory';
 import BatchRep from './pages/BatchRep';
 import BatchRepVoting from './pages/BatchRepVoting';
 import BatchRepVotingModal from './components/BatchRepVotingModal';
+import MovieScreening from './pages/MovieScreening';
 import './styles/base.css';
 import './styles/components.css';
 import './styles/auth.css';
@@ -35,6 +36,7 @@ import './styles/admin.css';
 import './styles/landing.css';
 import './styles/theme.css';
 import './styles/footer.css';
+import './styles/movieScreening.css';
 
 // Protected route wrapper
 function ProtectedRoute({ children }) {
@@ -129,6 +131,9 @@ function AppRoutes() {
       <Routes>
       {/* Landing: Public marketing page. Access: Anyone. */}
       <Route path="/" element={<Landing />} />
+
+      {/* Movie Screening: Public ticket purchase page. Access: Anyone. */}
+      <Route path="/movie-screening" element={<MovieScreening />} />
 
       {/* Invite redirect: Messenger-safe short link that redirects to /register/:token.
           Access: Anyone. Render rewrites /i/:token to index.html, React handles redirect. */}

@@ -62,6 +62,7 @@ app.use('/api/batch-rep', batchRepRoutes);
 app.use('/api/name-change-requests', nameChangeRequestRoutes);
 app.use('/api/pipeline-items', pipelineItemRoutes);
 app.use('/api/media/photos', require('./routes/mediaPhotos'));
+app.use('/api/movie-screening', require('./routes/movieScreening'));
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -137,6 +138,7 @@ app.listen(PORT, async () => {
   console.log('  /api/webhooks');
   console.log('  /api/media/photos');
   console.log('  /api/pipeline-items');
+  console.log('  /api/movie-screening');
   console.log('  /api/health');
   console.log('  /api/debug/routes');
 
