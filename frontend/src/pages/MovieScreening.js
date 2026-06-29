@@ -25,6 +25,65 @@ export default function MovieScreening() {
   const [submitted, setSubmitted] = useState(false);
   const [reservation, setReservation] = useState(null);
 
+  // Validation errors
+  const [mobileError, setMobileError] = useState('');
+  const [emailError, setEmailError] = useState('');
+
+  // Normalize and validate Philippine mobile number
+  const normalizePHMobile = (value) => {
+    if (!value || !value.trim()) return null;
+
+    // Remove spaces, dashes, parentheses
+    let normalized = value.replace(/[\s\-()]/g, '');
+
+    // Strip leading +63 or 63
+    if (normalized.startsWith('+63')) {
+      normalized = '0' + normalized.slice(3);
+    } else if (normalized.startsWith('63') && normalized.length === 12) {
+      normalized = '0' + normalized.slice(2);
+    }
+
+    // Validate: must be 11 digits starting with 09
+    if (/^09\d{9}$/.test(normalized)) {
+      return normalized;
+    }
+
+    return false; // Invalid
+  };
+
+  // Basic email format validation
+  const isValidEmail = (value) => {
+    if (!value || !value.trim()) return false;
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+  };
+
+  // Validate mobile on blur
+  const handleMobileBlur = () => {
+    if (mobile.trim()) {
+      const result = normalizePHMobile(mobile);
+      if (result === false) {
+        setMobileError('Enter a valid PH mobile, e.g. 09171234567');
+      } else {
+        setMobileError('');
+      }
+    } else {
+      setMobileError('');
+    }
+  };
+
+  // Validate email on blur
+  const handleEmailBlur = () => {
+    if (email.trim()) {
+      if (!isValidEmail(email)) {
+        setEmailError('Enter a valid email address');
+      } else {
+        setEmailError('');
+      }
+    } else {
+      setEmailError('');
+    }
+  };
+
   useEffect(() => {
     fetchActiveEvent();
   }, []);
@@ -63,14 +122,42 @@ export default function MovieScreening() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitError('');
+
+    // Validate mobile if provided
+    let normalizedMobile = null;
+    if (mobile.trim()) {
+      const result = normalizePHMobile(mobile);
+      if (result === false) {
+        setMobileError('Enter a valid PH mobile, e.g. 09171234567');
+        return;
+      }
+      normalizedMobile = result;
+    }
+
+    // Validate email if provided
+    let normalizedEmail = null;
+    if (email.trim()) {
+      if (!isValidEmail(email)) {
+        setEmailError('Enter a valid email address');
+        return;
+      }
+      normalizedEmail = email.trim().toLowerCase();
+    }
+
+    // Ensure at least one contact method
+    if (!normalizedMobile && !normalizedEmail) {
+      setSubmitError('Please provide a valid mobile number or email address');
+      return;
+    }
+
     setSubmitting(true);
 
     try {
       const res = await apiPost('/api/movie-screening/reserve', {
         cinema_code: selectedCinema,
         buyer_name: buyerName,
-        mobile: mobile || null,
-        email: email || null,
+        mobile: normalizedMobile,
+        email: normalizedEmail,
         quantity: parseInt(quantity),
         gcash_ref: gcashRef
       });
@@ -272,9 +359,15 @@ export default function MovieScreening() {
                 <input
                   type="tel"
                   value={mobile}
-                  onChange={(e) => setMobile(e.target.value)}
+                  onChange={(e) => {
+                    setMobile(e.target.value);
+                    if (mobileError) setMobileError('');
+                  }}
+                  onBlur={handleMobileBlur}
                   placeholder="+63 or 09XX"
+                  className={mobileError ? 'input-error' : ''}
                 />
+                {mobileError && <span className="field-error">{mobileError}</span>}
               </div>
 
               <div className="form-group">
@@ -283,9 +376,15 @@ export default function MovieScreening() {
                 <input
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (emailError) setEmailError('');
+                  }}
+                  onBlur={handleEmailBlur}
                   placeholder="your@email.com"
+                  className={emailError ? 'input-error' : ''}
                 />
+                {emailError && <span className="field-error">{emailError}</span>}
               </div>
             </div>
 
@@ -369,7 +468,7 @@ export default function MovieScreening() {
                 <button
                   type="submit"
                   className="btn-primary btn-purchase"
-                  disabled={submitting || !buyerName || (!mobile && !email) || !gcashRef}
+                  disabled={submitting || !buyerName || (!mobile && !email) || !gcashRef || mobileError || emailError}
                 >
                   {submitting ? 'Processing...' : 'Purchase tickets'}
                 </button>

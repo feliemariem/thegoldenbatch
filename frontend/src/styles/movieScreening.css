@@ -92,6 +92,19 @@ body[data-theme="light"] .inclusion-note {
   color: #b91c1c;
 }
 
+/* Field error styling */
+.input-error {
+  border-color: #b91c1c !important;
+  box-shadow: 0 0 0 1px rgba(185, 28, 28, 0.3);
+}
+
+.field-error {
+  display: block;
+  color: #b91c1c;
+  font-size: 0.8rem;
+  margin-top: 6px;
+}
+
 /* Cinema Cards */
 .cinema-cards {
   display: grid;

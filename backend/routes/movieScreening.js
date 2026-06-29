@@ -6,6 +6,36 @@ const { authenticateToken } = require('../middleware/auth');
 // Movie screening admin IDs (Felie and Coycoy)
 const MOVIE_SCREENING_ADMIN_IDS = [75, 53];
 
+// Normalize and validate Philippine mobile number
+// Strips spaces, dashes, leading +63 or 63, then checks for 09XXXXXXXXX pattern
+const normalizePHMobile = (mobile) => {
+  if (!mobile) return null;
+
+  // Remove spaces, dashes, parentheses
+  let normalized = mobile.replace(/[\s\-()]/g, '');
+
+  // Strip leading +63 or 63
+  if (normalized.startsWith('+63')) {
+    normalized = '0' + normalized.slice(3);
+  } else if (normalized.startsWith('63') && normalized.length === 12) {
+    normalized = '0' + normalized.slice(2);
+  }
+
+  // Validate: must be 11 digits starting with 09
+  if (/^09\d{9}$/.test(normalized)) {
+    return normalized;
+  }
+
+  return false; // Invalid
+};
+
+// Basic email format validation
+const isValidEmail = (email) => {
+  if (!email) return false;
+  // Simple regex for basic email format
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+};
+
 // Middleware to check if user is a movie screening admin
 const requireMovieScreeningAdmin = (req, res, next) => {
   if (!MOVIE_SCREENING_ADMIN_IDS.includes(req.user.id)) {
@@ -88,6 +118,30 @@ router.post('/reserve', async (req, res) => {
   if (!mobile && !email) {
     return res.status(400).json({ error: 'Please provide either a mobile number or email address' });
   }
+
+  // Validate and normalize mobile if provided
+  let normalizedMobile = null;
+  if (mobile && mobile.trim()) {
+    normalizedMobile = normalizePHMobile(mobile);
+    if (normalizedMobile === false) {
+      return res.status(400).json({ error: 'Enter a valid PH mobile, e.g. 09171234567' });
+    }
+  }
+
+  // Validate email if provided
+  let normalizedEmail = null;
+  if (email && email.trim()) {
+    if (!isValidEmail(email)) {
+      return res.status(400).json({ error: 'Enter a valid email address' });
+    }
+    normalizedEmail = email.trim().toLowerCase();
+  }
+
+  // Ensure at least one valid contact method
+  if (!normalizedMobile && !normalizedEmail) {
+    return res.status(400).json({ error: 'Please provide a valid mobile number or email address' });
+  }
+
   if (!quantity || quantity < 1) {
     return res.status(400).json({ error: 'Quantity must be at least 1' });
   }
@@ -161,8 +215,8 @@ router.post('/reserve', async (req, res) => {
         eventId,
         cinema_code,
         buyer_name.trim(),
-        mobile ? mobile.trim() : null,
-        email ? email.trim().toLowerCase() : null,
+        normalizedMobile,
+        normalizedEmail,
         requestedQty,
         unitPrice,
         totalAmount,
