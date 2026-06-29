@@ -95,7 +95,7 @@
   font-family: 'Gelasio', serif;
   font-size: 1.85rem;
   font-weight: 700;
-  color: #FDF8EE;
+  color: #FDF8EE !important;
   margin: 0 0 8px 0;
   padding-left: 16px;
   border-left: 3px solid #E23636;
@@ -106,7 +106,7 @@
 .ms-movie-subtitle {
   font-family: 'Gelasio', serif;
   font-size: 1rem;
-  color: #c2ccc4;
+  color: #c2ccc4 !important;
   margin: 0 0 24px 0;
   font-weight: 500;
 }
@@ -134,12 +134,12 @@
 }
 
 .ms-meta-venue {
-  color: #a0a89e;
+  color: #c2ccc4 !important;
   font-size: 0.85rem;
 }
 
 .ms-meta-venue svg {
-  stroke: #a0a89e;
+  stroke: #c2ccc4;
 }
 
 .ms-hero-divider {
@@ -156,7 +156,7 @@
 
 .ms-inclusion-line {
   font-size: 0.85rem;
-  color: #b9c2bb;
+  color: #b9c2bb !important;
   margin: 0 0 12px 0;
   line-height: 1.5;
 }
@@ -168,7 +168,7 @@
 
 .ms-separate-line {
   font-size: 0.8rem;
-  color: #b9c2bb;
+  color: #b9c2bb !important;
   margin: 0;
   padding-top: 10px;
   border-top: 1px solid rgba(253, 248, 238, 0.1);
