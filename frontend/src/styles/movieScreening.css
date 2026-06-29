@@ -64,18 +64,19 @@
 }
 
 /* ========================================
-   HERO BANNER (always dark)
+   HERO BANNER (always dark, left-aligned)
    ======================================== */
 
 .ms-hero {
-  background: radial-gradient(120% 95% at 50% 0%, #0a5a34 0%, #073f24 30%, #0D1310 72%);
+  background-color: #0D1310;
+  background-image: radial-gradient(130% 80% at 15% 0%, #0a5a34 0%, #073f24 32%, #0D1310 74%);
   padding: 36px 24px 32px;
 }
 
 .ms-hero-content {
   max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
+  margin: 0;
+  text-align: left;
 }
 
 .ms-pill {
@@ -93,40 +94,27 @@
 
 .ms-movie-title {
   font-family: 'Gelasio', serif;
-  font-size: 1.85rem;
+  font-size: 2rem;
   font-weight: 700;
   color: #FDF8EE !important;
-  margin: 0 0 8px 0;
+  margin: 0 0 20px 0;
   padding-left: 16px;
   border-left: 3px solid #E23636;
-  text-align: left;
-  display: inline-block;
-}
-
-.ms-movie-subtitle {
-  font-family: 'Gelasio', serif;
-  font-size: 1rem;
-  color: #c2ccc4 !important;
-  margin: 0 0 24px 0;
-  font-weight: 500;
+  display: block;
 }
 
 .ms-meta {
-  margin-bottom: 20px;
-}
-
-.ms-meta-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-bottom: 8px;
+  margin-bottom: 16px;
 }
 
 .ms-meta-date {
-  color: #CFB53B;
-  font-size: 0.95rem;
-  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #CFB53B !important;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 6px;
 }
 
 .ms-meta-date svg {
@@ -134,12 +122,44 @@
 }
 
 .ms-meta-venue {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   color: #c2ccc4 !important;
-  font-size: 0.85rem;
+  font-size: 0.8125rem;
 }
 
 .ms-meta-venue svg {
   stroke: #c2ccc4;
+}
+
+/* Showtime chips */
+.ms-showtime-chips {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.ms-showtime-chip {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(207, 181, 59, 0.3);
+  border-radius: 10px;
+  padding: 10px 16px;
+  text-align: center;
+}
+
+.ms-chip-label {
+  display: block;
+  font-size: 0.7rem;
+  color: #94a09a !important;
+  margin-bottom: 4px;
+}
+
+.ms-chip-time {
+  display: block;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #FDF8EE !important;
 }
 
 .ms-hero-divider {
@@ -150,8 +170,8 @@
 
 .ms-inclusions {
   text-align: left;
-  max-width: 440px;
-  margin: 0 auto;
+  max-width: 100%;
+  margin: 0;
 }
 
 .ms-inclusion-line {
@@ -162,13 +182,13 @@
 }
 
 .ms-inclusion-line strong {
-  color: #CFB53B;
+  color: #CFB53B !important;
   font-weight: 600;
 }
 
 .ms-separate-line {
   font-size: 0.8rem;
-  color: #b9c2bb !important;
+  color: #94a09a !important;
   margin: 0;
   padding-top: 10px;
   border-top: 1px solid rgba(253, 248, 238, 0.1);
@@ -274,38 +294,34 @@
 }
 
 /* ========================================
-   CINEMA CARDS
+   CINEMA CARDS (always 2 columns)
    ======================================== */
 
 .ms-cinema-cards {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-@media (max-width: 440px) {
-  .ms-cinema-cards {
-    grid-template-columns: 1fr;
-  }
+  gap: 10px;
 }
 
 .ms-cinema-card {
   position: relative;
   background: var(--color-bg-card);
   border: 1.5px solid var(--color-border);
-  border-radius: 12px;
-  padding: 20px 16px;
+  border-radius: 10px;
+  padding: 14px 12px;
   cursor: pointer;
-  transition: border-color 0.2s, transform 0.15s;
+  transition: border-color 0.2s;
   text-align: center;
+  font-family: 'Poppins', sans-serif;
 }
 
 .ms-cinema-card:hover:not(.sold-out) {
-  transform: translateY(-2px);
+  border-color: rgba(207, 181, 59, 0.5);
 }
 
 .ms-cinema-card.selected {
   border: 2px solid #CFB53B;
+  background: var(--color-bg-card);
 }
 
 .ms-cinema-card.sold-out {
@@ -317,55 +333,57 @@
   position: absolute;
   top: -8px;
   right: -8px;
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   background: #CFB53B;
   color: #0D1310;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 700;
 }
 
 .ms-cinema-name {
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-size: 1.0625rem;
+  font-weight: 600;
   color: var(--color-text-primary);
-  margin-bottom: 2px;
+  margin-bottom: 1px;
 }
 
 .ms-cinema-type {
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   color: var(--color-text-secondary);
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .ms-cinema-showtime {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  font-size: 0.9rem;
-  font-weight: 600;
+  gap: 5px;
+  font-size: 1.0625rem;
+  font-weight: 700;
   color: var(--color-text-primary);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .ms-clock-icon {
   stroke: #E23636;
+  width: 12px;
+  height: 12px;
 }
 
 .ms-cinema-price {
-  font-size: 1.3rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: #008a44;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .ms-cinema-seats {
-  font-size: 0.8rem;
+  font-size: 0.6875rem;
   color: var(--color-text-secondary);
 }
 
