@@ -345,10 +345,22 @@ export default function MovieScreeningsTab() {
           }
         }
 
+        // Extract invoice number (invno) - look for a second long number in the row
+        // Bank transfers often have an invoice/transaction number separate from the GCash ref
+        let invNo = null;
+        const allNumbers = rowText.match(/\b\d{6,20}\b/g) || [];
+        for (const num of allNumbers) {
+          if (num !== refNo && num.length >= 6) {
+            invNo = num;
+            break;
+          }
+        }
+
         // If we have a reference, record the transaction
         if (refNo) {
           transactions.push({
             refNo,
+            invNo,
             debit: debitAmt,
             credit: creditAmt,
             balance: balanceAmt,
@@ -401,8 +413,19 @@ export default function MovieScreeningsTab() {
             const balanceChange = balance - previousBalance;
             const isCredit = balanceChange > 0;
 
+            // Extract invoice number (invno) - look for a second long number
+            let invNo = null;
+            const allNumbers = rowText.match(/\b\d{6,20}\b/g) || [];
+            for (const num of allNumbers) {
+              if (num !== refNo && num.length >= 6) {
+                invNo = num;
+                break;
+              }
+            }
+
             transactions.push({
               refNo,
+              invNo,
               debit: isCredit ? null : amount,
               credit: isCredit ? amount : null,
               balance
@@ -415,14 +438,15 @@ export default function MovieScreeningsTab() {
         console.log('[GCash Parse] Fallback found transactions:', transactions.length);
       }
 
-      // Build the reference map: ref -> { credit, debit }
+      // Build the reference map: ref -> { credit, debit, invNo }
       const refMap = {};
       for (const txn of transactions) {
         const normalizedRef = txn.refNo.replace(/\D/g, '');
         refMap[normalizedRef] = {
           credit: txn.credit,
           debit: txn.debit,
-          balance: txn.balance
+          balance: txn.balance,
+          invNo: txn.invNo ? txn.invNo.replace(/\D/g, '') : null
         };
       }
 
@@ -460,8 +484,29 @@ export default function MovieScreeningsTab() {
         }
 
         if (!foundRef) {
-          matches[reservation.id] = 'not_found';
-          console.log(`[GCash Match]   → NOT FOUND`);
+          // Try matching against trailing digits of invNo (for bank-to-GCash transfers)
+          let partialMatch = null;
+          for (const [pdfRef, data] of Object.entries(refMap)) {
+            if (data.invNo && data.invNo.endsWith(normalizedRef)) {
+              partialMatch = data;
+              console.log(`[GCash Match]   → Partial match on invNo trailing digits: ${data.invNo}`);
+              break;
+            }
+          }
+
+          if (partialMatch) {
+            const creditAmt = partialMatch.credit;
+            if (creditAmt !== null && Math.abs(creditAmt - expectedAmount) < 1) {
+              matches[reservation.id] = 'partial_match';
+              console.log(`[GCash Match]   → PARTIAL MATCH (invNo trailing digits, amount OK)`);
+            } else {
+              matches[reservation.id] = 'amount_off';
+              console.log(`[GCash Match]   → PARTIAL but AMOUNT OFF (credit=${creditAmt}, expected=${expectedAmount})`);
+            }
+          } else {
+            matches[reservation.id] = 'not_found';
+            console.log(`[GCash Match]   → NOT FOUND`);
+          }
         } else {
           // Check if this is a credit and if amount matches
           const creditAmt = foundData.credit;
@@ -646,6 +691,10 @@ export default function MovieScreeningsTab() {
             Match
           </span>
           <span style={{ marginRight: '16px' }}>
+            <span style={{ display: 'inline-block', width: '12px', height: '12px', borderRadius: '2px', background: '#0369a1', marginRight: '6px' }}></span>
+            Partial match
+          </span>
+          <span style={{ marginRight: '16px' }}>
             <span style={{ display: 'inline-block', width: '12px', height: '12px', borderRadius: '2px', background: '#b45309', marginRight: '6px' }}></span>
             Amount off
           </span>
@@ -685,6 +734,7 @@ export default function MovieScreeningsTab() {
                   key={r.id}
                   style={{
                     background: gcashMatches[r.id] === 'match' ? 'rgba(4, 120, 87, 0.1)' :
+                               gcashMatches[r.id] === 'partial_match' ? 'rgba(3, 105, 161, 0.1)' :
                                gcashMatches[r.id] === 'amount_off' ? 'rgba(180, 83, 9, 0.1)' :
                                gcashMatches[r.id] === 'not_found' ? 'rgba(185, 28, 28, 0.1)' : 'transparent'
                   }}
@@ -725,6 +775,8 @@ export default function MovieScreeningsTab() {
                     ) : (
                       gcashMatches[r.id] === 'match' ? (
                         <span style={{ color: '#047857', fontWeight: 600 }}>Match</span>
+                      ) : gcashMatches[r.id] === 'partial_match' ? (
+                        <span style={{ color: '#0369a1', fontWeight: 600 }}>Partial match</span>
                       ) : gcashMatches[r.id] === 'amount_off' ? (
                         <span style={{ color: '#b45309', fontWeight: 600 }}>Amount off</span>
                       ) : gcashMatches[r.id] === 'not_found' ? (
