@@ -550,7 +550,7 @@ export default function MovieScreening() {
                       <span className="ms-gcash-value">{event.gcash_name}</span>
                     </div>
                   </div>
-                  <p className="ms-gcash-instruction">
+                  <p className="ms-gcash-instruction" style={{ color: '#ffffff' }}>
                     Send the exact amount, then paste your reference number below.
                   </p>
                 </div>
