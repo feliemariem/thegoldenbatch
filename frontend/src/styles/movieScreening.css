@@ -743,6 +743,10 @@ body[data-theme="light"] .ms-receipt-batch {
   color: #006633;
 }
 
+body[data-theme="light"] .ms-what-next h4 {
+  color: #006633;
+}
+
 .ms-order-summary h3 {
   font-size: 0.75rem;
   font-weight: 600;
@@ -785,30 +789,29 @@ body[data-theme="light"] .ms-receipt-batch {
 }
 
 .ms-what-next {
-  background: rgba(207, 181, 59, 0.08);
-  border: 1px solid rgba(207, 181, 59, 0.2);
-  border-radius: 10px;
-  padding: 20px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border);
   text-align: left;
 }
 
-.ms-what-next h3 {
-  font-size: 0.9rem;
+.ms-what-next h4 {
+  font-size: 0.8rem;
   font-weight: 600;
   color: #CFB53B;
-  margin: 0 0 14px 0;
+  margin: 0 0 12px 0;
 }
 
 .ms-what-next ul {
   margin: 0;
-  padding-left: 20px;
+  padding-left: 18px;
   color: var(--color-text-secondary);
-  line-height: 1.8;
-  font-size: 0.85rem;
+  line-height: 1.7;
+  font-size: 0.8rem;
 }
 
 .ms-what-next li {
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .ms-highlight {
@@ -886,7 +889,6 @@ body[data-theme="light"] .ms-receipt-batch {
   .ms-confirm-icon,
   .ms-confirm-title,
   .ms-confirm-subtitle,
-  .ms-what-next,
   footer,
   .site-footer {
     display: none !important;
@@ -977,6 +979,37 @@ body[data-theme="light"] .ms-receipt-batch {
   .ms-pending-note {
     color: #333 !important;
     background: transparent !important;
+  }
+
+  /* What happens next - inside receipt for print */
+  .ms-what-next {
+    margin-top: 16px !important;
+    padding-top: 16px !important;
+    border-top: 1px solid #ccc !important;
+    background: transparent !important;
+  }
+
+  .ms-what-next h4 {
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    color: #000 !important;
+    margin: 0 0 10px 0 !important;
+  }
+
+  .ms-what-next ul {
+    margin: 0 !important;
+    padding-left: 18px !important;
+    font-size: 0.75rem !important;
+    line-height: 1.6 !important;
+  }
+
+  .ms-what-next li {
+    color: #222 !important;
+    margin-bottom: 4px !important;
+  }
+
+  .ms-what-next .ms-highlight {
+    color: #006633 !important;
   }
 }
 

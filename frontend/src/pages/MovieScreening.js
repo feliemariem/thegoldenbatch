@@ -285,20 +285,20 @@ export default function MovieScreening() {
               <p className="ms-pending-note">
                 This confirms your order is received and pending verification. Your official {numWord} will be sent within 24 hours.
               </p>
-            </div>
 
-            <div className="ms-what-next ms-no-print">
-              <h3>What happens next?</h3>
-              <ul>
-                <li>Wait 24 hours for payment verification.</li>
-                <li>A committee member will send you a message with your {numWord}.</li>
-                <li>Your {numWord} {isAre} {stubVoucher} onsite.</li>
-                <li>A committee member will let you know where to pick up your printed {ticketWord}.</li>
-                <li>Raffle and merch sold separately onsite.</li>
-                {qty >= 20 && (
-                  <li className="ms-highlight">A committee member will contact you to pick seats.</li>
-                )}
-              </ul>
+              <div className="ms-what-next">
+                <h4>What happens next?</h4>
+                <ul>
+                  <li>Wait 24 hours for payment verification.</li>
+                  <li>A committee member will send you a message with your {numWord}.</li>
+                  <li>Your {numWord} {isAre} {stubVoucher} onsite.</li>
+                  <li>A committee member will let you know where to pick up your printed {ticketWord}.</li>
+                  <li>Raffle and merch sold separately onsite.</li>
+                  {qty >= 20 && (
+                    <li className="ms-highlight">A committee member will contact you to pick seats.</li>
+                  )}
+                </ul>
+              </div>
             </div>
 
             <button
