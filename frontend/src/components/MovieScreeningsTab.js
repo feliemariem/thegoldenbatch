@@ -268,7 +268,9 @@ export default function MovieScreeningsTab() {
         normalizedPdfRefs[normalizedRef] = amount;
       }
 
-      console.log('[GCash Match] PDF credit refs (normalized):', normalizedPdfRefs);
+      console.log('[GCash Match] PDF credit refs (normalized):', JSON.stringify(normalizedPdfRefs, null, 2));
+      console.log('[GCash Match] All credit ref keys:', Object.keys(normalizedPdfRefs));
+      console.log('[GCash Match] Credit count:', Object.keys(normalizedPdfRefs).length);
 
       // Match against pending reservations
       const matches = {};
