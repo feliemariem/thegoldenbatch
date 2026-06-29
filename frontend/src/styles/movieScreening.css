@@ -13,6 +13,29 @@
   min-height: 100vh;
   font-family: 'Poppins', sans-serif;
   background: var(--color-bg-primary);
+  position: relative;
+}
+
+.ms-theme-toggle {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  transition: background 0.2s;
+}
+
+.ms-theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .ms-container {

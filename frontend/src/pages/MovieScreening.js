@@ -6,7 +6,7 @@ import { apiGet, apiPost } from '../api';
 import '../styles/movieScreening.css';
 
 export default function MovieScreening() {
-  const { theme } = useTheme(); // Theme toggle handled by app's global toggle
+  const { theme, toggleTheme } = useTheme();
   const [event, setEvent] = useState(null);
   const [cinemas, setCinemas] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -293,6 +293,15 @@ export default function MovieScreening() {
 
   return (
     <div className="ms-page">
+      {/* Theme Toggle */}
+      <button
+        onClick={toggleTheme}
+        className="ms-theme-toggle ms-no-print"
+        aria-label="Toggle theme"
+      >
+        {theme === 'dark' ? '☀️' : '🌙'}
+      </button>
+
       <div className="ms-container">
         {/* Film strip top */}
         <div className="ms-film-strip"></div>
