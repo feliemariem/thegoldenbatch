@@ -231,6 +231,12 @@ export default function MovieScreening() {
   }
 
   if (submitted && reservation) {
+    const qty = reservation.quantity;
+    const ticketWord = qty === 1 ? 'ticket' : 'tickets';
+    const numWord = qty === 1 ? 'ticket number' : 'ticket numbers';
+    const isAre = qty === 1 ? 'is' : 'are';
+    const stubVoucher = qty === 1 ? 'your movie stub and food voucher' : 'your movie stubs and food vouchers';
+
     return (
       <div className="ms-page">
         {/* Theme Toggle */}
@@ -256,7 +262,7 @@ export default function MovieScreening() {
               </div>
               <div className="ms-order-row">
                 <span>Tickets</span>
-                <span>{reservation.quantity}</span>
+                <span>{qty} {ticketWord}</span>
               </div>
               <div className="ms-order-row">
                 <span>Total Paid</span>
@@ -267,7 +273,7 @@ export default function MovieScreening() {
                 <span className="ms-order-ref">{reservation.gcash_ref}</span>
               </div>
               <p className="ms-pending-note">
-                This confirms your order is received and pending verification. Your official ticket numbers will be sent within 24 hours.
+                This confirms your order is received and pending verification. Your official {numWord} will be sent within 24 hours.
               </p>
             </div>
 
@@ -275,10 +281,10 @@ export default function MovieScreening() {
               <h3>What happens next?</h3>
               <ul>
                 <li>Wait 24 hours for payment verification.</li>
-                <li>A committee member will message your ticket numbers (your movie stub and food voucher onsite).</li>
-                <li>A committee member will coordinate pickup of your printed tickets.</li>
+                <li>A committee member will send you a message with your {numWord}.</li>
+                <li>Your {numWord} {isAre} {stubVoucher} onsite.</li>
                 <li>Raffle and merch sold separately onsite.</li>
-                {quantity >= 20 && (
+                {qty >= 20 && (
                   <li className="ms-highlight">A committee member will contact you to pick seats.</li>
                 )}
               </ul>
