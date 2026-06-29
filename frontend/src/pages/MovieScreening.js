@@ -267,7 +267,7 @@ export default function MovieScreening() {
                 <span className="ms-order-ref">{reservation.gcash_ref}</span>
               </div>
               <p className="ms-pending-note">
-                This confirms your order is received and pending verification. Your official ticket numbers will be sent by Coycoy within 24 hours.
+                This confirms your order is received and pending verification. Your official ticket numbers will be sent within 24 hours.
               </p>
             </div>
 
@@ -275,11 +275,11 @@ export default function MovieScreening() {
               <h3>What happens next?</h3>
               <ul>
                 <li>Wait 24 hours for payment verification.</li>
-                <li>Coycoy messages your ticket numbers (your movie stub and food voucher onsite).</li>
-                <li>Pick up your printed tickets from Apol, she matches your numbers.</li>
+                <li>A committee member will message your ticket numbers (your movie stub and food voucher onsite).</li>
+                <li>A committee member will coordinate pickup of your printed tickets.</li>
                 <li>Raffle and merch sold separately onsite.</li>
                 {quantity >= 20 && (
-                  <li className="ms-highlight">Felie contacts you to pick seats.</li>
+                  <li className="ms-highlight">A committee member will contact you to pick seats.</li>
                 )}
               </ul>
             </div>
@@ -440,7 +440,7 @@ export default function MovieScreening() {
                 {/* 20+ Seat Choice Note */}
                 {quantity >= 20 && (
                   <div className="ms-seat-note">
-                    For orders of 20+ tickets, you can choose your seats. Felie will contact you after your purchase is verified.
+                    For orders of 20+ tickets, you can choose your seats. A committee member will contact you after your purchase is verified.
                   </div>
                 )}
 
