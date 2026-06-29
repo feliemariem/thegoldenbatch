@@ -261,41 +261,60 @@ export default function MovieScreeningsTab() {
         return;
       }
 
+      // Normalize all PDF credit refs to digits only (for consistent comparison)
+      const normalizedPdfRefs = {};
+      for (const [ref, amount] of Object.entries(refToCreditMap)) {
+        const normalizedRef = ref.replace(/\D/g, '');
+        normalizedPdfRefs[normalizedRef] = amount;
+      }
+
+      console.log('[GCash Match] PDF credit refs (normalized):', normalizedPdfRefs);
+
       // Match against pending reservations
       const matches = {};
       const pendingReservations = reservations.filter(r => r.status === 'pending');
 
       pendingReservations.forEach(reservation => {
-        // Normalize reference: strip non-digits and spaces
-        const normalizedRef = reservation.gcash_ref.replace(/\D/g, '');
+        // Normalize reservation reference: strip ALL non-digits
+        const normalizedRef = (reservation.gcash_ref || '').replace(/\D/g, '');
         const expectedAmount = parseFloat(reservation.total_amount);
 
-        // Look for the reference in our parsed map
-        const foundCredit = refToCreditMap[normalizedRef];
+        console.log(`[GCash Match] Checking reservation ${reservation.id}: ref="${reservation.gcash_ref}" → normalized="${normalizedRef}", expected=${expectedAmount}`);
 
-        if (foundCredit !== undefined) {
-          // Reference found - check if Credit amount matches reservation total
-          if (Math.abs(foundCredit - expectedAmount) < 1) {
+        // STEP 1: Determine if the reference is found (independently of amount)
+        let foundRef = null;
+        let foundAmount = null;
+
+        // Exact match first
+        if (normalizedPdfRefs[normalizedRef] !== undefined) {
+          foundRef = normalizedRef;
+          foundAmount = normalizedPdfRefs[normalizedRef];
+          console.log(`[GCash Match]   → Exact match found: ref=${foundRef}, pdfAmount=${foundAmount}`);
+        } else {
+          // Substring match (for different length variants)
+          for (const pdfRef of Object.keys(normalizedPdfRefs)) {
+            if (pdfRef.includes(normalizedRef) || normalizedRef.includes(pdfRef)) {
+              foundRef = pdfRef;
+              foundAmount = normalizedPdfRefs[pdfRef];
+              console.log(`[GCash Match]   → Substring match found: pdfRef=${pdfRef}, pdfAmount=${foundAmount}`);
+              break;
+            }
+          }
+        }
+
+        // STEP 2: Classify based on whether ref was found, then check amount
+        if (foundRef === null) {
+          // Reference NOT found in PDF at all
+          matches[reservation.id] = 'not_found';
+          console.log(`[GCash Match]   → Result: NOT FOUND`);
+        } else {
+          // Reference IS found - now check if amount matches
+          if (Math.abs(foundAmount - expectedAmount) < 1) {
             matches[reservation.id] = 'match';
+            console.log(`[GCash Match]   → Result: MATCH (amounts equal)`);
           } else {
             matches[reservation.id] = 'amount_off';
-          }
-        } else {
-          // Check if reference exists anywhere (might be different length variant)
-          const foundRef = Object.keys(refToCreditMap).find(ref =>
-            ref.includes(normalizedRef) || normalizedRef.includes(ref)
-          );
-
-          if (foundRef) {
-            // Ref found with different length - check amount
-            const credit = refToCreditMap[foundRef];
-            if (Math.abs(credit - expectedAmount) < 1) {
-              matches[reservation.id] = 'match';
-            } else {
-              matches[reservation.id] = 'amount_off';
-            }
-          } else {
-            matches[reservation.id] = 'not_found';
+            console.log(`[GCash Match]   → Result: AMOUNT OFF (pdf=${foundAmount}, expected=${expectedAmount})`);
           }
         }
       });
