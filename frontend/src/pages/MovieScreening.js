@@ -560,6 +560,8 @@ export default function MovieScreening() {
                   <label className="ms-label">REFERENCE NUMBER <span className="ms-req">*</span></label>
                   <input
                     type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
                     className="ms-input"
                     value={gcashRef}
                     onChange={(e) => setGcashRef(e.target.value)}
