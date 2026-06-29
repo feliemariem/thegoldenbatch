@@ -295,6 +295,17 @@
   margin-bottom: 8px;
 }
 
+.ms-label-secondary {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  opacity: 0.8;
+  margin-bottom: 6px;
+}
+
 .ms-req {
   color: #E23636;
 }
@@ -641,6 +652,23 @@
 .ms-submit-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.ms-support-email {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  margin-top: 16px;
+  margin-bottom: 0;
+}
+
+.ms-support-email a {
+  color: var(--color-text-secondary);
+  text-decoration: underline;
+}
+
+.ms-support-email a:hover {
+  color: var(--color-text-primary);
 }
 
 /* ========================================
@@ -1010,6 +1038,20 @@ body[data-theme="light"] .ms-what-next h4 {
 
   .ms-what-next .ms-highlight {
     color: #006633 !important;
+  }
+
+  /* Support email - dark readable on print */
+  .ms-support-email {
+    margin-top: 16px !important;
+    padding-top: 12px !important;
+    border-top: 1px solid #ccc !important;
+    font-size: 0.75rem !important;
+    color: #222 !important;
+    background: transparent !important;
+  }
+
+  .ms-support-email a {
+    color: #222 !important;
   }
 }
 

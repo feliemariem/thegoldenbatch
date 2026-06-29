@@ -27,9 +27,11 @@ export default function MovieScreening() {
   // Validation errors
   const [mobileError, setMobileError] = useState('');
   const [emailError, setEmailError] = useState('');
+  const [contactError, setContactError] = useState('');
 
-  // Ref for scroll-to-form
+  // Refs
   const ticketFieldRef = useRef(null);
+  const mobileInputRef = useRef(null);
 
   // Normalize and validate Philippine mobile number
   const normalizePHMobile = (value) => {
@@ -124,6 +126,14 @@ export default function MovieScreening() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitError('');
+    setContactError('');
+
+    // Ensure at least one contact method is provided
+    if (!mobile.trim() && !email.trim()) {
+      setContactError('Enter your mobile number or email so we can reach you.');
+      mobileInputRef.current?.focus();
+      return;
+    }
 
     // Validate mobile if provided
     let normalizedMobile = null;
@@ -144,12 +154,6 @@ export default function MovieScreening() {
         return;
       }
       normalizedEmail = email.trim().toLowerCase();
-    }
-
-    // Ensure at least one contact method
-    if (!normalizedMobile && !normalizedEmail) {
-      setSubmitError('Please provide a valid mobile number or email address');
-      return;
     }
 
     setSubmitting(true);
@@ -299,6 +303,11 @@ export default function MovieScreening() {
                   )}
                 </ul>
               </div>
+
+              <p className="ms-support-email">
+                Questions? Email us at{' '}
+                <a href="mailto:uslsis.batch2003@gmail.com">uslsis.batch2003@gmail.com</a>
+              </p>
             </div>
 
             <button
@@ -481,17 +490,24 @@ export default function MovieScreening() {
                 </div>
 
                 {/* Contact Row */}
+                <div className="ms-field">
+                  <label className="ms-label">MOBILE NUMBER OR EMAIL <span className="ms-req">*</span></label>
+                  <span className="ms-hint">at least one required</span>
+                  {contactError && <span className="ms-field-error">{contactError}</span>}
+                </div>
                 <div className="ms-field-row">
                   <div className="ms-field">
-                    <label className="ms-label">MOBILE NUMBER</label>
+                    <label className="ms-label-secondary">MOBILE NUMBER</label>
                     <span className="ms-hint">if in the Philippines</span>
                     <input
+                      ref={mobileInputRef}
                       type="tel"
-                      className={`ms-input ${mobileError ? 'ms-input-error' : ''}`}
+                      className={`ms-input ${mobileError || contactError ? 'ms-input-error' : ''}`}
                       value={mobile}
                       onChange={(e) => {
                         setMobile(e.target.value);
                         if (mobileError) setMobileError('');
+                        if (contactError) setContactError('');
                       }}
                       onBlur={handleMobileBlur}
                       placeholder="+63 or 09XX"
@@ -499,15 +515,16 @@ export default function MovieScreening() {
                     {mobileError && <span className="ms-field-error">{mobileError}</span>}
                   </div>
                   <div className="ms-field">
-                    <label className="ms-label">EMAIL ADDRESS</label>
+                    <label className="ms-label-secondary">EMAIL ADDRESS</label>
                     <span className="ms-hint">if outside the Philippines</span>
                     <input
                       type="email"
-                      className={`ms-input ${emailError ? 'ms-input-error' : ''}`}
+                      className={`ms-input ${emailError || contactError ? 'ms-input-error' : ''}`}
                       value={email}
                       onChange={(e) => {
                         setEmail(e.target.value);
                         if (emailError) setEmailError('');
+                        if (contactError) setContactError('');
                       }}
                       onBlur={handleEmailBlur}
                       placeholder="your@email.com"
@@ -559,6 +576,11 @@ export default function MovieScreening() {
                 >
                   {submitting ? 'Processing...' : 'Purchase tickets'}
                 </button>
+
+                <p className="ms-support-email">
+                  Questions? Email us at{' '}
+                  <a href="mailto:uslsis.batch2003@gmail.com">uslsis.batch2003@gmail.com</a>
+                </p>
               </>
             )}
           </form>
