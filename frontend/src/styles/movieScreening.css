@@ -1,120 +1,401 @@
 /* ========================================
-   MOVIE SCREENING STYLES
-   Public ticket purchase page
+   MOVIE SCREENING - CINEMATIC STYLE
    ======================================== */
 
-.movie-screening-page {
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Gelasio:wght@500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+
+/* ========================================
+   PAGE LAYOUT
+   ======================================== */
+
+.ms-page {
   min-height: 100vh;
-  padding-bottom: 40px;
+  font-family: 'Poppins', sans-serif;
+  background: var(--color-bg-primary);
 }
 
-.movie-screening-card {
-  max-width: 600px;
-  margin: 0 auto;
+.ms-theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 100;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Event Header */
-.event-header {
+.ms-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  color: var(--color-text-secondary);
+}
+
+.ms-no-event {
+  max-width: 400px;
+  margin: 80px auto;
+  padding: 40px;
   text-align: center;
-  margin: 24px 0;
-  padding-bottom: 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--color-bg-card);
+  border-radius: 16px;
+  border: 1px solid var(--color-border);
 }
 
-.event-title {
+.ms-no-event h2 {
   color: #006633;
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 8px;
-}
-
-.event-subtitle {
-  color: #CFB53B;
-  font-size: 1rem;
   margin-bottom: 12px;
 }
 
-.event-details {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+.ms-no-event p {
   color: var(--color-text-secondary);
-  font-size: 0.9rem;
+  margin-bottom: 24px;
 }
 
-.event-date {
+/* ========================================
+   FILM STRIP
+   ======================================== */
+
+.ms-film-strip {
+  height: 14px;
+  background: repeating-linear-gradient(
+    90deg,
+    #0a0d0b 0px,
+    #0a0d0b 9px,
+    #39413b 9px,
+    #39413b 15px
+  );
+}
+
+/* ========================================
+   HERO BANNER (always dark)
+   ======================================== */
+
+.ms-hero {
+  background: radial-gradient(120% 95% at 50% 0%, #0a5a34 0%, #073f24 30%, #0D1310 72%);
+  padding: 48px 24px 40px;
+}
+
+.ms-hero-content {
+  max-width: 560px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.ms-pill {
+  display: inline-block;
+  background: #CFB53B;
+  color: #0D1310;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+
+.ms-movie-title {
+  font-family: 'Gelasio', serif;
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: #FDF8EE;
+  margin: 0 0 8px 0;
+  padding-left: 16px;
+  border-left: 3px solid #E23636;
+  text-align: left;
+  display: inline-block;
+}
+
+.ms-movie-subtitle {
+  font-family: 'Gelasio', serif;
+  font-size: 1rem;
+  color: #CFB53B;
+  margin: 0 0 24px 0;
   font-weight: 500;
 }
 
-.event-venue {
+.ms-meta {
+  margin-bottom: 20px;
+}
+
+.ms-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.ms-meta-date {
+  color: #CFB53B;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.ms-meta-date svg {
+  stroke: #CFB53B;
+}
+
+.ms-meta-venue {
+  color: #a0a89e;
   font-size: 0.85rem;
 }
 
-/* Inclusion Note */
-.inclusion-note {
-  background: rgba(0, 102, 51, 0.1);
-  border: 1px solid rgba(0, 102, 51, 0.2);
-  border-radius: 12px;
-  padding: 16px 20px;
-  margin-bottom: 24px;
-  font-size: 0.9rem;
+.ms-meta-venue svg {
+  stroke: #a0a89e;
+}
+
+.ms-hero-divider {
+  height: 1px;
+  background: rgba(253, 248, 238, 0.15);
+  margin: 20px 0;
+}
+
+.ms-inclusions {
+  text-align: left;
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+.ms-inclusion-line {
+  font-size: 0.85rem;
+  color: #d4d9d2;
+  margin: 0 0 12px 0;
+  line-height: 1.5;
+}
+
+.ms-inclusion-line strong {
+  color: #CFB53B;
+  font-weight: 600;
+}
+
+.ms-separate-line {
+  font-size: 0.8rem;
+  color: #8a918a;
+  margin: 0;
+  padding-top: 10px;
+  border-top: 1px solid rgba(253, 248, 238, 0.1);
+}
+
+/* ========================================
+   FORM SECTION (theme-aware)
+   ======================================== */
+
+.ms-form-section {
+  padding: 32px 20px 48px;
+  background: var(--color-bg-primary);
+}
+
+.ms-form-container {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.ms-error {
+  background: rgba(226, 54, 54, 0.1);
+  border: 1px solid rgba(226, 54, 54, 0.3);
+  color: #E23636;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  margin-bottom: 20px;
+}
+
+/* ========================================
+   FORM FIELDS
+   ======================================== */
+
+.ms-field {
+  margin-bottom: 20px;
+}
+
+.ms-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 500px) {
+  .ms-field-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ms-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  margin-bottom: 8px;
+}
+
+.ms-req {
+  color: #E23636;
+}
+
+.ms-hint {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 8px;
+  margin-top: -4px;
+}
+
+.ms-input {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 16px;
+  font-family: 'Poppins', sans-serif;
+  background: var(--color-bg-card);
   color: var(--color-text-primary);
-  line-height: 1.6;
+  border: 1.5px solid var(--color-border);
+  border-radius: 8px;
+  transition: border-color 0.2s;
 }
 
-body[data-theme="light"] .inclusion-note {
-  background: rgba(0, 102, 51, 0.05);
+.ms-input:focus {
+  outline: none;
+  border-color: #006633;
 }
 
-/* Form Row (for side-by-side fields) */
-.form-row {
+.ms-input::placeholder {
+  color: var(--color-text-secondary);
+  opacity: 0.7;
+}
+
+.ms-input-error {
+  border-color: #E23636 !important;
+}
+
+.ms-field-error {
+  display: block;
+  color: #E23636;
+  font-size: 0.8rem;
+  margin-top: 6px;
+}
+
+/* ========================================
+   CINEMA CARDS
+   ======================================== */
+
+.ms-cinema-cards {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
 }
 
-@media (max-width: 600px) {
-  .form-row {
+@media (max-width: 440px) {
+  .ms-cinema-cards {
     grid-template-columns: 1fr;
   }
 }
 
-/* Form Hints */
-.form-hint {
-  display: block;
+.ms-cinema-card {
+  position: relative;
+  background: var(--color-bg-card);
+  border: 1.5px solid var(--color-border);
+  border-radius: 12px;
+  padding: 20px 16px;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.15s;
+  text-align: center;
+}
+
+.ms-cinema-card:hover:not(.sold-out) {
+  transform: translateY(-2px);
+}
+
+.ms-cinema-card.selected {
+  border: 2px solid #CFB53B;
+}
+
+.ms-cinema-card.sold-out {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ms-check-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 24px;
+  height: 24px;
+  background: #CFB53B;
+  color: #0D1310;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.ms-cinema-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 2px;
+}
+
+.ms-cinema-type {
   font-size: 0.75rem;
   color: var(--color-text-secondary);
-  margin-top: 4px;
+  margin-bottom: 12px;
+}
+
+.ms-cinema-showtime {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
   margin-bottom: 8px;
 }
 
-.required {
-  color: #b91c1c;
+.ms-clock-icon {
+  stroke: #E23636;
 }
 
-/* Field error styling */
-.input-error {
-  border-color: #b91c1c !important;
-  box-shadow: 0 0 0 1px rgba(185, 28, 28, 0.3);
+.ms-cinema-price {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #008a44;
+  margin-bottom: 8px;
 }
 
-.field-error {
-  display: block;
-  color: #b91c1c;
+.ms-cinema-seats {
   font-size: 0.8rem;
-  margin-top: 6px;
+  color: var(--color-text-secondary);
 }
 
-/* Ticket quantity dropdown - white background regardless of theme */
-.ticket-select {
-  width: 100%;
-  min-height: 48px;
-  padding: 12px 16px;
-  font-size: 16px; /* Prevents iOS zoom on focus */
+/* ========================================
+   TICKET SELECT
+   ======================================== */
+
+.ms-ticket-select {
+  width: 120px;
+  min-height: 46px;
+  padding: 10px 36px 10px 14px;
+  font-size: 16px;
   font-weight: 500;
+  font-family: 'Poppins', sans-serif;
   background-color: #ffffff;
   color: #111111;
-  border: 1px solid #d1d5db;
+  border: 1.5px solid #CFB53B;
   border-radius: 8px;
   cursor: pointer;
   appearance: none;
@@ -122,334 +403,294 @@ body[data-theme="light"] .inclusion-note {
   -moz-appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23111111' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 16px center;
+  background-position: right 12px center;
 }
 
-.ticket-select:focus {
+.ms-ticket-select:focus {
   outline: none;
   border-color: #006633;
-  box-shadow: 0 0 0 2px rgba(0, 102, 51, 0.2);
+  box-shadow: 0 0 0 2px rgba(0, 102, 51, 0.15);
 }
 
-.ticket-select option {
+.ms-ticket-select option {
   background-color: #ffffff;
   color: #111111;
-  padding: 8px;
 }
 
-/* Cinema Cards */
-.cinema-cards {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-top: 12px;
-}
+/* ========================================
+   SEAT CHOICE NOTE
+   ======================================== */
 
-@media (max-width: 500px) {
-  .cinema-cards {
-    grid-template-columns: 1fr;
-  }
-}
-
-.cinema-card {
-  background: var(--color-bg-card);
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 20px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-align: center;
-}
-
-.cinema-card:hover:not(.sold-out) {
-  border-color: rgba(0, 102, 51, 0.4);
-  transform: translateY(-2px);
-}
-
-.cinema-card.selected {
-  border-color: #006633;
-  background: rgba(0, 102, 51, 0.1);
-}
-
-.cinema-card.sold-out {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.cinema-name {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--color-text-primary);
-  margin-bottom: 2px;
-}
-
-.cinema-type {
-  font-size: 0.8rem;
-  color: var(--color-text-secondary);
-  margin-bottom: 10px;
-}
-
-.cinema-showtime {
-  font-size: 0.85rem;
-  color: var(--color-text-secondary);
-  margin-bottom: 8px;
-}
-
-.cinema-price {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #006633;
-  margin-bottom: 8px;
-}
-
-.cinema-seats {
-  font-size: 0.8rem;
-  color: var(--color-text-secondary);
-}
-
-.cinema-seats.low {
-  color: #b45309;
-  font-weight: 600;
-}
-
-/* Seat Choice Note */
-.seat-choice-note {
+.ms-seat-note {
   background: rgba(207, 181, 59, 0.1);
-  border: 1px solid rgba(207, 181, 59, 0.2);
-  border-radius: 12px;
-  padding: 14px 18px;
-  margin: 16px 0;
+  border: 1px solid rgba(207, 181, 59, 0.25);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
   font-size: 0.85rem;
   color: #CFB53B;
+  line-height: 1.5;
 }
 
-/* Total Display */
-.total-display {
+/* ========================================
+   TOTAL BOX
+   ======================================== */
+
+.ms-total-box {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
-  background: rgba(0, 102, 51, 0.08);
-  border-radius: 12px;
-  margin: 20px 0;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin-bottom: 20px;
 }
 
-.total-display span:first-child {
-  font-size: 0.95rem;
+.ms-total-label {
+  font-size: 0.9rem;
   color: var(--color-text-secondary);
 }
 
-.total-amount {
+.ms-total-amount {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #006633;
+  color: #008a44;
 }
 
-/* GCash Box */
-.gcash-box {
-  background: linear-gradient(135deg, #007BFF 0%, #0056b3 100%);
-  border-radius: 16px;
-  padding: 24px;
-  margin: 24px 0;
-  color: white;
+/* ========================================
+   GCASH BOX
+   ======================================== */
+
+.ms-gcash-box {
+  background: #0a72e8;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
 }
 
-.gcash-header {
+.ms-gcash-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.gcash-logo {
-  font-size: 1.2rem;
+.ms-gcash-logo {
+  font-size: 1.1rem;
   font-weight: 700;
-  letter-spacing: 0.05em;
+  color: #ffffff;
+  letter-spacing: 0.02em;
 }
 
-.gcash-amount {
-  font-size: 1.5rem;
+.ms-gcash-amount {
+  font-size: 1.4rem;
   font-weight: 700;
+  color: #ffffff;
 }
 
-.gcash-details {
-  margin-bottom: 16px;
+.ms-gcash-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 14px 0;
 }
 
-.gcash-detail-row {
+.ms-gcash-details {
+  margin-bottom: 14px;
+}
+
+.ms-gcash-row {
   display: flex;
   justify-content: space-between;
   margin-bottom: 8px;
   font-size: 0.9rem;
 }
 
-.gcash-detail-row span:first-child {
-  opacity: 0.8;
+.ms-gcash-label {
+  color: #e8f0fc;
 }
 
-.gcash-number,
-.gcash-name {
+.ms-gcash-value {
+  color: #ffffff;
   font-weight: 600;
-  font-family: monospace;
-  letter-spacing: 0.05em;
+  font-family: 'Poppins', monospace;
+  letter-spacing: 0.03em;
 }
 
-.gcash-instruction {
+.ms-gcash-instruction {
   font-size: 0.8rem;
-  opacity: 0.9;
+  color: #e8f0fc;
   margin: 0;
-  line-height: 1.5;
+  line-height: 1.4;
 }
 
-/* Purchase Button */
-.btn-purchase {
+/* ========================================
+   SUBMIT BUTTON
+   ======================================== */
+
+.ms-submit-btn {
   width: 100%;
-  padding: 18px 28px;
-  font-size: 1.1rem;
+  min-height: 50px;
+  padding: 14px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  background: #006633;
+  color: #FDF8EE;
+  border: 1.5px solid #CFB53B;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
   margin-top: 8px;
 }
 
-/* Confirmation Styles */
-.confirmation-box {
-  text-align: center;
-  padding: 32px 20px;
-  margin: 24px 0;
+.ms-submit-btn:hover:not(:disabled) {
+  background: #005528;
 }
 
-.confirmation-check {
-  width: 80px;
-  height: 80px;
+.ms-submit-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.ms-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ========================================
+   BACK LINK
+   ======================================== */
+
+.ms-back-link {
+  display: block;
+  text-align: center;
+  margin-top: 28px;
+  font-size: 0.9rem;
+  color: #006633;
+  text-decoration: none;
+}
+
+.ms-back-link:hover {
+  text-decoration: underline;
+}
+
+/* ========================================
+   CONFIRMATION PAGE
+   ======================================== */
+
+.ms-confirmation {
+  max-width: 480px;
+  margin: 60px auto;
+  padding: 40px 28px;
+  text-align: center;
+  background: var(--color-bg-card);
+  border-radius: 16px;
+  border: 1px solid var(--color-border);
+}
+
+.ms-confirm-icon {
+  width: 72px;
+  height: 72px;
   margin: 0 auto 20px;
   background: linear-gradient(135deg, #006633 0%, #004d26 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.5rem;
-  color: white;
+  font-size: 2rem;
+  color: #FDF8EE;
 }
 
-.confirmation-title {
-  color: #006633;
-  font-size: 1.5rem;
+.ms-confirm-title {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.4rem;
   font-weight: 700;
-  margin-bottom: 8px;
+  color: #006633;
+  margin: 0 0 8px 0;
 }
 
-.confirmation-subtitle {
-  color: var(--color-text-secondary);
+.ms-confirm-subtitle {
   font-size: 1rem;
+  color: var(--color-text-secondary);
+  margin: 0 0 28px 0;
 }
 
-/* Order Summary */
-.order-summary {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
+.ms-order-summary {
+  background: var(--color-bg-primary);
+  border-radius: 10px;
   padding: 20px;
   margin-bottom: 24px;
+  text-align: left;
 }
 
-body[data-theme="light"] .order-summary {
-  background: rgba(0, 0, 0, 0.02);
-  border-color: rgba(0, 0, 0, 0.08);
-}
-
-.order-summary h3 {
-  color: var(--color-text-primary);
-  font-size: 0.9rem;
+.ms-order-summary h3 {
+  font-size: 0.75rem;
   font-weight: 600;
-  margin-bottom: 16px;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  color: var(--color-text-secondary);
+  margin: 0 0 16px 0;
 }
 
-.order-detail {
+.ms-order-row {
   display: flex;
   justify-content: space-between;
   padding: 10px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--color-border);
   font-size: 0.9rem;
 }
 
-body[data-theme="light"] .order-detail {
-  border-bottom-color: rgba(0, 0, 0, 0.05);
-}
-
-.order-detail:last-child {
+.ms-order-row:last-child {
   border-bottom: none;
 }
 
-.order-detail span:first-child {
+.ms-order-row span:first-child {
   color: var(--color-text-secondary);
 }
 
-.order-detail span:last-child {
+.ms-order-row span:last-child {
   color: var(--color-text-primary);
   font-weight: 500;
 }
 
-.order-total {
+.ms-order-total {
   font-size: 1.1rem;
   font-weight: 700;
-  color: #006633 !important;
+  color: #008a44 !important;
 }
 
-.gcash-ref-display {
+.ms-order-ref {
   font-family: monospace;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.03em;
 }
 
-/* What's Next */
-.what-next {
-  background: rgba(207, 181, 59, 0.05);
-  border: 1px solid rgba(207, 181, 59, 0.15);
-  border-radius: 12px;
+.ms-what-next {
+  background: rgba(207, 181, 59, 0.08);
+  border: 1px solid rgba(207, 181, 59, 0.2);
+  border-radius: 10px;
   padding: 20px;
+  text-align: left;
 }
 
-body[data-theme="light"] .what-next {
-  background: rgba(207, 181, 59, 0.03);
-}
-
-.what-next h3 {
-  color: #CFB53B;
+.ms-what-next h3 {
   font-size: 0.9rem;
   font-weight: 600;
-  margin-bottom: 16px;
+  color: #CFB53B;
+  margin: 0 0 14px 0;
 }
 
-.what-next ul {
+.ms-what-next ul {
   margin: 0;
   padding-left: 20px;
   color: var(--color-text-secondary);
   line-height: 1.8;
+  font-size: 0.85rem;
 }
 
-.what-next li {
-  margin-bottom: 8px;
+.ms-what-next li {
+  margin-bottom: 6px;
 }
 
-.what-next .highlight-note {
-  color: #CFB53B;
+.ms-highlight {
+  color: #CFB53B !important;
   font-weight: 500;
-}
-
-/* Light theme adjustments */
-body[data-theme="light"] .event-header {
-  border-bottom-color: rgba(0, 0, 0, 0.08);
-}
-
-body[data-theme="light"] .cinema-card {
-  border-color: rgba(0, 0, 0, 0.1);
-}
-
-body[data-theme="light"] .cinema-card.selected {
-  background: rgba(0, 102, 51, 0.05);
-}
-
-body[data-theme="light"] .total-display {
-  background: rgba(0, 102, 51, 0.05);
 }

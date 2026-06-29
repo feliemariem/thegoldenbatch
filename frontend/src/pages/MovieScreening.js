@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import Footer from '../components/Footer';
-import logo from '../images/lasalle.jpg';
 import { apiGet, apiPost } from '../api';
 import '../styles/movieScreening.css';
 
@@ -186,18 +185,14 @@ export default function MovieScreening() {
     }).format(amount);
   };
 
-  const formatDate = (dateStr) => {
+  const formatDateHero = (dateStr) => {
     if (!dateStr) return '';
     // Parse YYYY-MM-DD directly to avoid timezone shifts
     const [year, month, day] = dateStr.split('-').map(Number);
     const date = new Date(Date.UTC(year, month - 1, day));
-    return date.toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      timeZone: 'UTC'
-    });
+    const weekday = date.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'UTC' });
+    const monthName = date.toLocaleDateString('en-US', { month: 'long', timeZone: 'UTC' });
+    return `${weekday} · ${monthName} ${day}, ${year}`;
   };
 
   // Derive cinema name from code (C3 -> "Cinema 3", C4 -> "Cinema 4")
@@ -209,12 +204,9 @@ export default function MovieScreening() {
 
   if (loading) {
     return (
-      <div className="movie-screening-page">
-        <div className="container">
-          <div className="card">
-            <p>Loading...</p>
-          </div>
-          <Footer />
+      <div className="ms-page">
+        <div className="ms-loading">
+          <p>Loading...</p>
         </div>
       </div>
     );
@@ -222,139 +214,135 @@ export default function MovieScreening() {
 
   if (!event) {
     return (
-      <div className="movie-screening-page">
-        <button
-          onClick={toggleTheme}
-          className="theme-toggle"
-          aria-label="Toggle theme"
-        >
-          {theme === 'dark' ? '\u2600\uFE0F' : '\uD83C\uDF19'}
+      <div className="ms-page">
+        <button onClick={toggleTheme} className="ms-theme-toggle" aria-label="Toggle theme">
+          {theme === 'dark' ? '☀️' : '🌙'}
         </button>
-        <div className="container">
-          <div className="card card-narrow">
-            <img src={logo} alt="USLS Logo" className="logo" />
-            <h1 className="page-title-gold">
-              University of St. La Salle<br />IS 2003
-            </h1>
-            <h2 style={{ textAlign: 'center', marginTop: '20px', color: '#006633' }}>Movie Screening</h2>
-            <p style={{ textAlign: 'center', color: 'var(--color-text-secondary)', marginTop: '16px' }}>
-              No active screening event at this time.
-            </p>
-            <p style={{ textAlign: 'center', marginTop: '24px' }}>
-              <Link to="/" className="btn-link">Back to Home</Link>
-            </p>
-          </div>
-          <Footer />
+        <div className="ms-no-event">
+          <h2>Movie Screening</h2>
+          <p>No active screening event at this time.</p>
+          <Link to="/" className="ms-back-link">Back to Home</Link>
         </div>
+        <Footer />
       </div>
     );
   }
 
   if (submitted && reservation) {
     return (
-      <div className="movie-screening-page">
-        <button
-          onClick={toggleTheme}
-          className="theme-toggle"
-          aria-label="Toggle theme"
-        >
-          {theme === 'dark' ? '\u2600\uFE0F' : '\uD83C\uDF19'}
+      <div className="ms-page">
+        <button onClick={toggleTheme} className="ms-theme-toggle" aria-label="Toggle theme">
+          {theme === 'dark' ? '☀️' : '🌙'}
         </button>
-        <div className="container">
-          <div className="card movie-screening-card">
-            <img src={logo} alt="USLS Logo" className="logo" />
-            <h1 className="page-title-gold">
-              University of St. La Salle<br />IS 2003
-            </h1>
+        <div className="ms-confirmation">
+          <div className="ms-confirm-icon">✓</div>
+          <h2 className="ms-confirm-title">Purchase Received!</h2>
+          <p className="ms-confirm-subtitle">Thank you, {reservation.buyer_name}!</p>
 
-            <div className="confirmation-box">
-              <div className="confirmation-check">✓</div>
-              <h2 className="confirmation-title">Purchase Received!</h2>
-              <p className="confirmation-subtitle">
-                Thank you, {reservation.buyer_name}!
-              </p>
+          <div className="ms-order-summary">
+            <h3>Order Summary</h3>
+            <div className="ms-order-row">
+              <span>Cinema</span>
+              <span>{getCinemaName(reservation.cinema_code)} · {selectedCinemaData?.label}</span>
             </div>
-
-            <div className="order-summary">
-              <h3>Order Summary</h3>
-              <div className="order-detail">
-                <span>Cinema:</span>
-                <span>{selectedCinemaData?.label}</span>
-              </div>
-              <div className="order-detail">
-                <span>Tickets:</span>
-                <span>{reservation.quantity}</span>
-              </div>
-              <div className="order-detail">
-                <span>Total Paid:</span>
-                <span className="order-total">{formatCurrency(reservation.total_amount)}</span>
-              </div>
-              <div className="order-detail">
-                <span>GCash Ref:</span>
-                <span className="gcash-ref-display">{reservation.gcash_ref}</span>
-              </div>
+            <div className="ms-order-row">
+              <span>Tickets</span>
+              <span>{reservation.quantity}</span>
             </div>
-
-            <div className="what-next">
-              <h3>What happens next?</h3>
-              <ul>
-                <li>Wait 24 hours for payment verification.</li>
-                <li>Coycoy messages your ticket numbers (your movie stub and food voucher onsite).</li>
-                <li>Pick up your printed tickets from Apol, she matches your numbers.</li>
-                <li>Raffle and merch sold separately onsite.</li>
-                {quantity >= 20 && (
-                  <li className="highlight-note">Felie contacts you to pick seats.</li>
-                )}
-              </ul>
+            <div className="ms-order-row">
+              <span>Total Paid</span>
+              <span className="ms-order-total">{formatCurrency(reservation.total_amount)}</span>
             </div>
-
-            <p style={{ textAlign: 'center', marginTop: '32px' }}>
-              <Link to="/" className="btn-link">Back to Home</Link>
-            </p>
+            <div className="ms-order-row">
+              <span>GCash Ref</span>
+              <span className="ms-order-ref">{reservation.gcash_ref}</span>
+            </div>
           </div>
-          <Footer />
+
+          <div className="ms-what-next">
+            <h3>What happens next?</h3>
+            <ul>
+              <li>Wait 24 hours for payment verification.</li>
+              <li>Coycoy messages your ticket numbers (your movie stub and food voucher onsite).</li>
+              <li>Pick up your printed tickets from Apol, she matches your numbers.</li>
+              <li>Raffle and merch sold separately onsite.</li>
+              {quantity >= 20 && (
+                <li className="ms-highlight">Felie contacts you to pick seats.</li>
+              )}
+            </ul>
+          </div>
+
+          <Link to="/" className="ms-back-link">Back to Home</Link>
         </div>
+        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="movie-screening-page">
-      <button
-        onClick={toggleTheme}
-        className="theme-toggle"
-        aria-label="Toggle theme"
-      >
-        {theme === 'dark' ? '\u2600\uFE0F' : '\uD83C\uDF19'}
+    <div className="ms-page">
+      <button onClick={toggleTheme} className="ms-theme-toggle" aria-label="Toggle theme">
+        {theme === 'dark' ? '☀️' : '🌙'}
       </button>
-      <div className="container">
-        <div className="card movie-screening-card">
-          <img src={logo} alt="USLS Logo" className="logo" />
-          <h1 className="page-title-gold">
-            University of St. La Salle<br />IS 2003
-          </h1>
 
-          <div className="event-header">
-            <h2 className="event-title">{event.title}</h2>
-            {event.subtitle && <p className="event-subtitle">{event.subtitle}</p>}
-            <p className="event-details">
-              <span className="event-date">{formatDate(event.event_date)}</span>
-              {event.venue && <span className="event-venue">{event.venue}</span>}
+      {/* Film strip top */}
+      <div className="ms-film-strip"></div>
+
+      {/* Hero Banner */}
+      <div className="ms-hero">
+        <div className="ms-hero-content">
+          <div className="ms-pill">USLS-IS BATCH 2003 · MOVIE SCREENING</div>
+          <h1 className="ms-movie-title">{event.title}</h1>
+          {event.subtitle && <p className="ms-movie-subtitle">{event.subtitle}</p>}
+
+          <div className="ms-meta">
+            <div className="ms-meta-row ms-meta-date">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              <span>{formatDateHero(event.event_date)}</span>
+            </div>
+            {event.venue && (
+              <div className="ms-meta-row ms-meta-venue">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+                <span>{event.venue}</span>
+              </div>
+            )}
+          </div>
+
+          <div className="ms-hero-divider"></div>
+
+          <div className="ms-inclusions">
+            <p className="ms-inclusion-line">
+              <strong>Inclusions</strong> · every ticket includes your movie stub plus food and drinks.
             </p>
+            <p className="ms-separate-line">Raffle and merch sold separately onsite.</p>
           </div>
+        </div>
+      </div>
 
-          <div className="inclusion-note">
-            Every ticket includes your movie stub plus food and drinks. Raffle tickets and merch are sold separately onsite.
-          </div>
+      {/* Film strip bottom */}
+      <div className="ms-film-strip"></div>
 
-          {error && <p className="error">{error}</p>}
-          {submitError && <p className="error">{submitError}</p>}
+      {/* Form Section */}
+      <div className="ms-form-section">
+        <div className="ms-form-container">
+          {error && <p className="ms-error">{error}</p>}
+          {submitError && <p className="ms-error">{submitError}</p>}
 
           <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label>Full Name <span className="required">*</span></label>
+            {/* Full Name */}
+            <div className="ms-field">
+              <label className="ms-label">FULL NAME <span className="ms-req">*</span></label>
               <input
                 type="text"
+                className="ms-input"
                 value={buyerName}
                 onChange={(e) => setBuyerName(e.target.value)}
                 placeholder="Enter your full name"
@@ -362,12 +350,14 @@ export default function MovieScreening() {
               />
             </div>
 
-            <div className="form-row">
-              <div className="form-group">
-                <label>Mobile Number</label>
-                <span className="form-hint">if in the Philippines</span>
+            {/* Contact Row */}
+            <div className="ms-field-row">
+              <div className="ms-field">
+                <label className="ms-label">MOBILE NUMBER</label>
+                <span className="ms-hint">if in the Philippines</span>
                 <input
                   type="tel"
+                  className={`ms-input ${mobileError ? 'ms-input-error' : ''}`}
                   value={mobile}
                   onChange={(e) => {
                     setMobile(e.target.value);
@@ -375,16 +365,15 @@ export default function MovieScreening() {
                   }}
                   onBlur={handleMobileBlur}
                   placeholder="+63 or 09XX"
-                  className={mobileError ? 'input-error' : ''}
                 />
-                {mobileError && <span className="field-error">{mobileError}</span>}
+                {mobileError && <span className="ms-field-error">{mobileError}</span>}
               </div>
-
-              <div className="form-group">
-                <label>Email Address</label>
-                <span className="form-hint">if outside the Philippines</span>
+              <div className="ms-field">
+                <label className="ms-label">EMAIL ADDRESS</label>
+                <span className="ms-hint">if outside the Philippines</span>
                 <input
                   type="email"
+                  className={`ms-input ${emailError ? 'ms-input-error' : ''}`}
                   value={email}
                   onChange={(e) => {
                     setEmail(e.target.value);
@@ -392,31 +381,40 @@ export default function MovieScreening() {
                   }}
                   onBlur={handleEmailBlur}
                   placeholder="your@email.com"
-                  className={emailError ? 'input-error' : ''}
                 />
-                {emailError && <span className="field-error">{emailError}</span>}
+                {emailError && <span className="ms-field-error">{emailError}</span>}
               </div>
             </div>
 
-            <div className="form-group">
-              <label>Select Cinema <span className="required">*</span></label>
-              <div className="cinema-cards">
+            {/* Cinema Selection */}
+            <div className="ms-field">
+              <label className="ms-label">SELECT CINEMA <span className="ms-req">*</span></label>
+              <div className="ms-cinema-cards">
                 {cinemas.map((cinema) => (
                   <div
                     key={cinema.code}
-                    className={`cinema-card ${selectedCinema === cinema.code ? 'selected' : ''} ${cinema.seats_left === 0 ? 'sold-out' : ''}`}
+                    className={`ms-cinema-card ${selectedCinema === cinema.code ? 'selected' : ''} ${cinema.seats_left === 0 ? 'sold-out' : ''}`}
                     onClick={() => {
                       if (cinema.seats_left > 0) {
                         setSelectedCinema(cinema.code);
-                        setQuantity(1); // Reset quantity when changing cinema
+                        setQuantity(1);
                       }
                     }}
                   >
-                    <div className="cinema-name">{getCinemaName(cinema.code)}</div>
-                    <div className="cinema-type">{cinema.label}</div>
-                    <div className="cinema-showtime">{cinema.showtime}</div>
-                    <div className="cinema-price">{formatCurrency(cinema.unit_price)}</div>
-                    <div className={`cinema-seats ${cinema.seats_left <= 20 ? 'low' : ''}`}>
+                    {selectedCinema === cinema.code && (
+                      <div className="ms-check-badge">✓</div>
+                    )}
+                    <div className="ms-cinema-name">{getCinemaName(cinema.code)}</div>
+                    <div className="ms-cinema-type">{cinema.label}</div>
+                    <div className="ms-cinema-showtime">
+                      <svg className="ms-clock-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                      </svg>
+                      {cinema.showtime}
+                    </div>
+                    <div className="ms-cinema-price">{formatCurrency(cinema.unit_price)}</div>
+                    <div className="ms-cinema-seats">
                       {cinema.seats_left === 0 ? 'SOLD OUT' : `${cinema.seats_left} seats left`}
                     </div>
                   </div>
@@ -426,10 +424,11 @@ export default function MovieScreening() {
 
             {selectedCinema && (
               <>
-                <div className="form-group">
-                  <label>Number of Tickets <span className="required">*</span></label>
+                {/* Number of Tickets */}
+                <div className="ms-field">
+                  <label className="ms-label">NUMBER OF TICKETS <span className="ms-req">*</span></label>
                   <select
-                    className="ticket-select"
+                    className="ms-ticket-select"
                     value={quantity}
                     onChange={(e) => setQuantity(parseInt(e.target.value))}
                     required
@@ -438,54 +437,60 @@ export default function MovieScreening() {
                       <option key={n} value={n}>{n}</option>
                     ))}
                   </select>
-                  <span className="form-hint">Max {maxQuantity} tickets available</span>
+                  <span className="ms-hint">Max {maxQuantity} tickets available</span>
                 </div>
 
                 {quantity >= 20 && (
-                  <div className="seat-choice-note">
+                  <div className="ms-seat-note">
                     For orders of 20+ tickets, you can choose your seats. Felie will contact you after your purchase is verified.
                   </div>
                 )}
 
-                <div className="total-display">
-                  <span>Total:</span>
-                  <span className="total-amount">{formatCurrency(totalAmount)}</span>
+                {/* Total */}
+                <div className="ms-total-box">
+                  <span className="ms-total-label">Total</span>
+                  <span className="ms-total-amount">{formatCurrency(totalAmount)}</span>
                 </div>
 
-                <div className="gcash-box">
-                  <div className="gcash-header">
-                    <span className="gcash-logo">GCash</span>
-                    <span className="gcash-amount">{formatCurrency(totalAmount)}</span>
+                {/* GCash Box */}
+                <div className="ms-gcash-box">
+                  <div className="ms-gcash-header">
+                    <span className="ms-gcash-logo">GCash</span>
+                    <span className="ms-gcash-amount">{formatCurrency(totalAmount)}</span>
                   </div>
-                  <div className="gcash-details">
-                    <div className="gcash-detail-row">
-                      <span>Number:</span>
-                      <span className="gcash-number">{event.gcash_number}</span>
+                  <div className="ms-gcash-divider"></div>
+                  <div className="ms-gcash-details">
+                    <div className="ms-gcash-row">
+                      <span className="ms-gcash-label">Number</span>
+                      <span className="ms-gcash-value">{event.gcash_number}</span>
                     </div>
-                    <div className="gcash-detail-row">
-                      <span>Name:</span>
-                      <span className="gcash-name">{event.gcash_name}</span>
+                    <div className="ms-gcash-row">
+                      <span className="ms-gcash-label">Name</span>
+                      <span className="ms-gcash-value">{event.gcash_name}</span>
                     </div>
                   </div>
-                  <p className="gcash-instruction">
-                    Send the exact amount above via GCash, then paste your reference number below.
+                  <p className="ms-gcash-instruction">
+                    Send the exact amount, then paste your reference number below.
                   </p>
                 </div>
 
-                <div className="form-group">
-                  <label>GCash Reference Number <span className="required">*</span></label>
+                {/* GCash Reference */}
+                <div className="ms-field">
+                  <label className="ms-label">GCASH REFERENCE NUMBER <span className="ms-req">*</span></label>
                   <input
                     type="text"
+                    className="ms-input"
                     value={gcashRef}
                     onChange={(e) => setGcashRef(e.target.value)}
-                    placeholder="Paste your GCash reference number"
+                    placeholder="Paste your reference number"
                     required
                   />
                 </div>
 
+                {/* Submit Button */}
                 <button
                   type="submit"
-                  className="btn-primary btn-purchase"
+                  className="ms-submit-btn"
                   disabled={submitting || !buyerName || (!mobile && !email) || !gcashRef || mobileError || emailError}
                 >
                   {submitting ? 'Processing...' : 'Purchase tickets'}
@@ -494,12 +499,11 @@ export default function MovieScreening() {
             )}
           </form>
 
-          <p style={{ textAlign: 'center', marginTop: '32px' }}>
-            <Link to="/" className="btn-link">Back to Home</Link>
-          </p>
+          <Link to="/" className="ms-back-link">Back to Home</Link>
         </div>
-        <Footer />
       </div>
+
+      <Footer />
     </div>
   );
 }
