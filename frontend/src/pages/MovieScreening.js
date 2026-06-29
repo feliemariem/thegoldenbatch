@@ -405,7 +405,12 @@ export default function MovieScreening() {
                   <div
                     key={cinema.code}
                     className={`cinema-card ${selectedCinema === cinema.code ? 'selected' : ''} ${cinema.seats_left === 0 ? 'sold-out' : ''}`}
-                    onClick={() => cinema.seats_left > 0 && setSelectedCinema(cinema.code)}
+                    onClick={() => {
+                      if (cinema.seats_left > 0) {
+                        setSelectedCinema(cinema.code);
+                        setQuantity(1); // Reset quantity when changing cinema
+                      }
+                    }}
                   >
                     <div className="cinema-name">{getCinemaName(cinema.code)}</div>
                     <div className="cinema-type">{cinema.label}</div>
@@ -423,14 +428,16 @@ export default function MovieScreening() {
               <>
                 <div className="form-group">
                   <label>Number of Tickets <span className="required">*</span></label>
-                  <input
-                    type="number"
-                    min="1"
-                    max={maxQuantity}
+                  <select
+                    className="ticket-select"
                     value={quantity}
-                    onChange={(e) => setQuantity(Math.min(Math.max(1, parseInt(e.target.value) || 1), maxQuantity))}
+                    onChange={(e) => setQuantity(parseInt(e.target.value))}
                     required
-                  />
+                  >
+                    {Array.from({ length: Math.min(maxQuantity, 50) }, (_, i) => i + 1).map(n => (
+                      <option key={n} value={n}>{n}</option>
+                    ))}
+                  </select>
                   <span className="form-hint">Max {maxQuantity} tickets available</span>
                 </div>
 
