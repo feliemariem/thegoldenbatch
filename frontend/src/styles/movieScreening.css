@@ -15,21 +15,9 @@
   background: var(--color-bg-primary);
 }
 
-.ms-theme-toggle {
-  position: fixed;
-  top: 16px;
-  right: 16px;
-  z-index: 100;
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-radius: 50%;
-  width: 44px;
-  height: 44px;
-  font-size: 1.2rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.ms-container {
+  max-width: 640px;
+  margin: 0 auto;
 }
 
 .ms-loading {
@@ -81,11 +69,11 @@
 
 .ms-hero {
   background: radial-gradient(120% 95% at 50% 0%, #0a5a34 0%, #073f24 30%, #0D1310 72%);
-  padding: 48px 24px 40px;
+  padding: 36px 24px 32px;
 }
 
 .ms-hero-content {
-  max-width: 560px;
+  max-width: 100%;
   margin: 0 auto;
   text-align: center;
 }
@@ -118,7 +106,7 @@
 .ms-movie-subtitle {
   font-family: 'Gelasio', serif;
   font-size: 1rem;
-  color: #CFB53B;
+  color: #c2ccc4;
   margin: 0 0 24px 0;
   font-weight: 500;
 }
@@ -168,7 +156,7 @@
 
 .ms-inclusion-line {
   font-size: 0.85rem;
-  color: #d4d9d2;
+  color: #b9c2bb;
   margin: 0 0 12px 0;
   line-height: 1.5;
 }
@@ -180,7 +168,7 @@
 
 .ms-separate-line {
   font-size: 0.8rem;
-  color: #8a918a;
+  color: #b9c2bb;
   margin: 0;
   padding-top: 10px;
   border-top: 1px solid rgba(253, 248, 238, 0.1);
@@ -191,13 +179,12 @@
    ======================================== */
 
 .ms-form-section {
-  padding: 32px 20px 48px;
+  padding: 28px 20px 40px;
   background: var(--color-bg-primary);
 }
 
 .ms-form-container {
-  max-width: 520px;
-  margin: 0 auto;
+  max-width: 100%;
 }
 
 .ms-error {

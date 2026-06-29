@@ -6,7 +6,7 @@ import { apiGet, apiPost } from '../api';
 import '../styles/movieScreening.css';
 
 export default function MovieScreening() {
-  const { theme, toggleTheme } = useTheme();
+  const { theme } = useTheme(); // Theme toggle handled by app's global toggle
   const [event, setEvent] = useState(null);
   const [cinemas, setCinemas] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -215,13 +215,12 @@ export default function MovieScreening() {
   if (!event) {
     return (
       <div className="ms-page">
-        <button onClick={toggleTheme} className="ms-theme-toggle" aria-label="Toggle theme">
-          {theme === 'dark' ? '☀️' : '🌙'}
-        </button>
-        <div className="ms-no-event">
-          <h2>Movie Screening</h2>
-          <p>No active screening event at this time.</p>
-          <Link to="/" className="ms-back-link">Back to Home</Link>
+        <div className="ms-container">
+          <div className="ms-no-event">
+            <h2>Movie Screening</h2>
+            <p>No active screening event at this time.</p>
+            <Link to="/" className="ms-back-link">Back to Home</Link>
+          </div>
         </div>
         <Footer />
       </div>
@@ -231,48 +230,47 @@ export default function MovieScreening() {
   if (submitted && reservation) {
     return (
       <div className="ms-page">
-        <button onClick={toggleTheme} className="ms-theme-toggle" aria-label="Toggle theme">
-          {theme === 'dark' ? '☀️' : '🌙'}
-        </button>
-        <div className="ms-confirmation">
-          <div className="ms-confirm-icon">✓</div>
-          <h2 className="ms-confirm-title">Purchase Received!</h2>
-          <p className="ms-confirm-subtitle">Thank you, {reservation.buyer_name}!</p>
+        <div className="ms-container">
+          <div className="ms-confirmation">
+            <div className="ms-confirm-icon">✓</div>
+            <h2 className="ms-confirm-title">Purchase Received!</h2>
+            <p className="ms-confirm-subtitle">Thank you, {reservation.buyer_name}!</p>
 
-          <div className="ms-order-summary">
-            <h3>Order Summary</h3>
-            <div className="ms-order-row">
-              <span>Cinema</span>
-              <span>{getCinemaName(reservation.cinema_code)} · {selectedCinemaData?.label}</span>
+            <div className="ms-order-summary">
+              <h3>Order Summary</h3>
+              <div className="ms-order-row">
+                <span>Cinema</span>
+                <span>{getCinemaName(reservation.cinema_code)} · {selectedCinemaData?.label}</span>
+              </div>
+              <div className="ms-order-row">
+                <span>Tickets</span>
+                <span>{reservation.quantity}</span>
+              </div>
+              <div className="ms-order-row">
+                <span>Total Paid</span>
+                <span className="ms-order-total">{formatCurrency(reservation.total_amount)}</span>
+              </div>
+              <div className="ms-order-row">
+                <span>GCash Ref</span>
+                <span className="ms-order-ref">{reservation.gcash_ref}</span>
+              </div>
             </div>
-            <div className="ms-order-row">
-              <span>Tickets</span>
-              <span>{reservation.quantity}</span>
+
+            <div className="ms-what-next">
+              <h3>What happens next?</h3>
+              <ul>
+                <li>Wait 24 hours for payment verification.</li>
+                <li>Coycoy messages your ticket numbers (your movie stub and food voucher onsite).</li>
+                <li>Pick up your printed tickets from Apol, she matches your numbers.</li>
+                <li>Raffle and merch sold separately onsite.</li>
+                {quantity >= 20 && (
+                  <li className="ms-highlight">Felie contacts you to pick seats.</li>
+                )}
+              </ul>
             </div>
-            <div className="ms-order-row">
-              <span>Total Paid</span>
-              <span className="ms-order-total">{formatCurrency(reservation.total_amount)}</span>
-            </div>
-            <div className="ms-order-row">
-              <span>GCash Ref</span>
-              <span className="ms-order-ref">{reservation.gcash_ref}</span>
-            </div>
+
+            <Link to="/" className="ms-back-link">Back to Home</Link>
           </div>
-
-          <div className="ms-what-next">
-            <h3>What happens next?</h3>
-            <ul>
-              <li>Wait 24 hours for payment verification.</li>
-              <li>Coycoy messages your ticket numbers (your movie stub and food voucher onsite).</li>
-              <li>Pick up your printed tickets from Apol, she matches your numbers.</li>
-              <li>Raffle and merch sold separately onsite.</li>
-              {quantity >= 20 && (
-                <li className="ms-highlight">Felie contacts you to pick seats.</li>
-              )}
-            </ul>
-          </div>
-
-          <Link to="/" className="ms-back-link">Back to Home</Link>
         </div>
         <Footer />
       </div>
@@ -281,12 +279,9 @@ export default function MovieScreening() {
 
   return (
     <div className="ms-page">
-      <button onClick={toggleTheme} className="ms-theme-toggle" aria-label="Toggle theme">
-        {theme === 'dark' ? '☀️' : '🌙'}
-      </button>
-
-      {/* Film strip top */}
-      <div className="ms-film-strip"></div>
+      <div className="ms-container">
+        {/* Film strip top */}
+        <div className="ms-film-strip"></div>
 
       {/* Hero Banner */}
       <div className="ms-hero">
@@ -501,6 +496,7 @@ export default function MovieScreening() {
 
           <Link to="/" className="ms-back-link">Back to Home</Link>
         </div>
+      </div>
       </div>
 
       <Footer />
