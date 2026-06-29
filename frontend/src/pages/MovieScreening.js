@@ -321,15 +321,6 @@ export default function MovieScreening() {
               </div>
             ))}
           </div>
-
-          <div className="ms-hero-divider"></div>
-
-          <div className="ms-inclusions">
-            <p className="ms-inclusion-line" style={{ color: '#b9c2bb' }}>
-              <strong style={{ color: '#CFB53B' }}>Inclusions</strong> · every ticket includes your movie stub plus food and drinks.
-            </p>
-            <p className="ms-separate-line" style={{ color: '#b9c2bb' }}>Raffle and merch sold separately onsite.</p>
-          </div>
         </div>
       </div>
 
@@ -342,57 +333,16 @@ export default function MovieScreening() {
           {error && <p className="ms-error">{error}</p>}
           {submitError && <p className="ms-error">{submitError}</p>}
 
+          {/* Inclusions - lead-in to the form */}
+          <div className="ms-form-inclusions">
+            <p className="ms-form-inclusion-line">
+              <strong>Inclusions</strong> · every ticket includes your movie stub plus food and drinks.
+            </p>
+            <p className="ms-form-separate-line">Raffle and merch sold separately onsite.</p>
+          </div>
+
           <form onSubmit={handleSubmit}>
-            {/* Full Name */}
-            <div className="ms-field">
-              <label className="ms-label">FULL NAME <span className="ms-req">*</span></label>
-              <input
-                type="text"
-                className="ms-input"
-                value={buyerName}
-                onChange={(e) => setBuyerName(e.target.value)}
-                placeholder="Enter your full name"
-                required
-              />
-            </div>
-
-            {/* Contact Row */}
-            <div className="ms-field-row">
-              <div className="ms-field">
-                <label className="ms-label">MOBILE NUMBER</label>
-                <span className="ms-hint">if in the Philippines</span>
-                <input
-                  type="tel"
-                  className={`ms-input ${mobileError ? 'ms-input-error' : ''}`}
-                  value={mobile}
-                  onChange={(e) => {
-                    setMobile(e.target.value);
-                    if (mobileError) setMobileError('');
-                  }}
-                  onBlur={handleMobileBlur}
-                  placeholder="+63 or 09XX"
-                />
-                {mobileError && <span className="ms-field-error">{mobileError}</span>}
-              </div>
-              <div className="ms-field">
-                <label className="ms-label">EMAIL ADDRESS</label>
-                <span className="ms-hint">if outside the Philippines</span>
-                <input
-                  type="email"
-                  className={`ms-input ${emailError ? 'ms-input-error' : ''}`}
-                  value={email}
-                  onChange={(e) => {
-                    setEmail(e.target.value);
-                    if (emailError) setEmailError('');
-                  }}
-                  onBlur={handleEmailBlur}
-                  placeholder="your@email.com"
-                />
-                {emailError && <span className="ms-field-error">{emailError}</span>}
-              </div>
-            </div>
-
-            {/* Cinema Selection */}
+            {/* Cinema Selection - FIRST interactive step */}
             <div className="ms-field">
               <label className="ms-label">SELECT CINEMA <span className="ms-req">*</span></label>
               <div className="ms-cinema-cards">
@@ -467,17 +417,66 @@ export default function MovieScreening() {
                   </div>
                 </div>
 
-                {quantity >= 20 && (
-                  <div className="ms-seat-note">
-                    For orders of 20+ tickets, you can choose your seats. Felie will contact you after your purchase is verified.
-                  </div>
-                )}
-
                 {/* Total */}
                 <div className="ms-total-box">
                   <span className="ms-total-label">Total</span>
                   <span className="ms-total-amount">{formatCurrency(totalAmount)}</span>
                 </div>
+
+                {/* Full Name */}
+                <div className="ms-field">
+                  <label className="ms-label">FULL NAME <span className="ms-req">*</span></label>
+                  <input
+                    type="text"
+                    className="ms-input"
+                    value={buyerName}
+                    onChange={(e) => setBuyerName(e.target.value)}
+                    placeholder="Enter your full name"
+                    required
+                  />
+                </div>
+
+                {/* Contact Row */}
+                <div className="ms-field-row">
+                  <div className="ms-field">
+                    <label className="ms-label">MOBILE NUMBER</label>
+                    <span className="ms-hint">if in the Philippines</span>
+                    <input
+                      type="tel"
+                      className={`ms-input ${mobileError ? 'ms-input-error' : ''}`}
+                      value={mobile}
+                      onChange={(e) => {
+                        setMobile(e.target.value);
+                        if (mobileError) setMobileError('');
+                      }}
+                      onBlur={handleMobileBlur}
+                      placeholder="+63 or 09XX"
+                    />
+                    {mobileError && <span className="ms-field-error">{mobileError}</span>}
+                  </div>
+                  <div className="ms-field">
+                    <label className="ms-label">EMAIL ADDRESS</label>
+                    <span className="ms-hint">if outside the Philippines</span>
+                    <input
+                      type="email"
+                      className={`ms-input ${emailError ? 'ms-input-error' : ''}`}
+                      value={email}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        if (emailError) setEmailError('');
+                      }}
+                      onBlur={handleEmailBlur}
+                      placeholder="your@email.com"
+                    />
+                    {emailError && <span className="ms-field-error">{emailError}</span>}
+                  </div>
+                </div>
+
+                {quantity >= 20 && (
+                  <div className="ms-seat-note">
+                    For orders of 20+ tickets, you can choose your seats. Felie will contact you after your purchase is verified.
+                  </div>
+                )}
 
                 {/* GCash Box */}
                 <div className="ms-gcash-box">

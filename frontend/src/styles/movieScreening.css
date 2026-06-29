@@ -207,6 +207,30 @@
   max-width: 100%;
 }
 
+/* Form inclusions (theme-aware, not hardcoded hero colors) */
+.ms-form-inclusions {
+  margin-bottom: 24px;
+}
+
+.ms-form-inclusion-line {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  margin: 0 0 10px 0;
+  line-height: 1.5;
+}
+
+.ms-form-inclusion-line strong {
+  color: #CFB53B;
+  font-weight: 600;
+}
+
+.ms-form-separate-line {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+  opacity: 0.8;
+}
+
 .ms-error {
   background: rgba(226, 54, 54, 0.1);
   border: 1px solid rgba(226, 54, 54, 0.3);
