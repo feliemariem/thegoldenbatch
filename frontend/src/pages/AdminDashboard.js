@@ -515,8 +515,8 @@ export default function AdminDashboard() {
                   )}
                 </button>
               )}
-              {/* Movie Screenings - only for Felie (75) and Coycoy (53) */}
-              {(user?.id === 75 || user?.id === 53) && (
+              {/* Movie Screenings - only for Felie (71) and Coycoy (72) */}
+              {(user?.id === 71 || user?.id === 72) && (
                 <button
                   onClick={() => setDashboardMode('screenings')}
                   className={dashboardMode === 'screenings' ? 'active' : ''}
@@ -1249,8 +1249,8 @@ export default function AdminDashboard() {
           <MediaTab onPendingCountChange={setMediaPendingCount} isSuperAdmin={isSuperAdmin} />
         )}
 
-        {/* MOVIE SCREENINGS MODE - Felie (75) and Coycoy (53) only */}
-        {dashboardMode === 'screenings' && (user?.id === 75 || user?.id === 53) && (
+        {/* MOVIE SCREENINGS MODE - Felie (71) and Coycoy (72) only */}
+        {dashboardMode === 'screenings' && (user?.id === 71 || user?.id === 72) && (
           <MovieScreeningsTab />
         )}
 

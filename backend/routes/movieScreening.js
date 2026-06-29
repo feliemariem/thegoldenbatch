@@ -4,7 +4,7 @@ const db = require('../db');
 const { authenticateToken } = require('../middleware/auth');
 
 // Movie screening admin IDs (Felie and Coycoy)
-const MOVIE_SCREENING_ADMIN_IDS = [75, 53];
+const MOVIE_SCREENING_ADMIN_IDS = [71, 72];
 
 // Normalize and validate Philippine mobile number
 // Strips spaces, dashes, leading +63 or 63, then checks for 09XXXXXXXXX pattern
