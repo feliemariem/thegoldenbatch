@@ -1,14 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import { apiGet, apiPost, apiPatch } from '../api';
-import * as pdfjsLib from 'pdfjs-dist';
-
-// Set PDF.js worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+// Use pdfjs-dist/webpack which auto-configures the worker using import.meta.url
+// This bundles the worker locally so it never depends on a CDN
+import * as pdfjsLib from 'pdfjs-dist/webpack.mjs';
 
 // DEBUG: Log PDF.js initialization status
 console.log('[GCash PDF Debug] pdfjs-dist library loaded:', {
   version: pdfjsLib.version,
-  workerSrc: pdfjsLib.GlobalWorkerOptions.workerSrc,
+  workerPort: pdfjsLib.GlobalWorkerOptions.workerPort ? 'configured' : 'not set',
+  workerSrc: pdfjsLib.GlobalWorkerOptions.workerSrc || 'not set (using workerPort)',
   getDocument: typeof pdfjsLib.getDocument
 });
 
