@@ -207,88 +207,85 @@ export default function MovieScreeningsTab() {
       console.log('[GCash PDF Debug] Step 7: Full text extracted, length:', fullText.length);
       console.log('[GCash PDF Debug] First 1000 chars of raw text:\n', fullText.substring(0, 1000));
 
-      // Parse transactions from the PDF text
-      // Reference numbers are 10-15 digits
-      // We need to find each reference number and its associated Credit amount
+      // Parse transactions from GCash PDF
+      // Format: one continuous string, fields separated by spaces, NO line breaks between rows
+      // Each transaction: ...Description... [13-digit RefNo] [Amount] [Balance] ...next row...
+      // Amount is EITHER debit OR credit (not both). Determine by balance change:
+      //   - Balance increased vs previous → CREDIT (incoming payment)
+      //   - Balance decreased vs previous → DEBIT (outgoing payment)
       const refToCreditMap = {};
 
-      // Skip summary/header rows containing these keywords
-      const skipKeywords = ['STARTING BALANCE', 'ENDING BALANCE', 'Total Debit', 'Total Credit',
-                           'Date and Time', 'Description', 'Reference No.', 'Debit', 'Credit', 'Balance'];
+      // First, find the STARTING BALANCE to initialize our running balance tracker
+      const startingBalanceMatch = fullText.match(/STARTING\s+BALANCE\s+(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/i);
+      let previousBalance = startingBalanceMatch
+        ? parseFloat(startingBalanceMatch[1].replace(/,/g, ''))
+        : 0;
+      console.log('[GCash PDF Debug] Starting balance:', previousBalance);
 
-      // Split text into logical rows (by newlines or multiple spaces)
-      const lines = fullText.split(/\n/).filter(line => line.trim());
+      // Find all reference numbers (10-15 pure digits, not alphanumeric like invno:xxx)
+      // Use a global regex to find all refs and their positions
+      const refPattern = /\b(\d{10,15})\b/g;
+      const transactions = [];
+      let refMatch;
 
-      for (const line of lines) {
-        // Skip header and summary rows
-        if (skipKeywords.some(kw => line.toUpperCase().includes(kw.toUpperCase()))) {
-          continue;
-        }
-
-        // Find reference number (10-15 digits)
-        const refMatch = line.match(/\b(\d{10,15})\b/);
-        if (!refMatch) continue;
-
+      while ((refMatch = refPattern.exec(fullText)) !== null) {
         const refNo = refMatch[1];
+        const refEndIndex = refMatch.index + refNo.length;
 
-        // Extract all currency amounts from the line
-        // Format: numbers with optional commas and decimals (e.g., "1,500.00" or "500.00" or "500")
-        const amountPattern = /(?:PHP\s*)?(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/g;
+        // Get text after the reference number to find the two amounts
+        const afterRef = fullText.substring(refEndIndex, refEndIndex + 100); // Look ahead 100 chars
+
+        // Find the next two decimal numbers (amount and balance)
+        // Format: "1,000.00" or "1000.00" or "500.00"
+        const amountPattern = /(\d{1,3}(?:,\d{3})*\.\d{2})/g;
         const amounts = [];
-        let amountMatch;
-        while ((amountMatch = amountPattern.exec(line)) !== null) {
-          const amt = parseFloat(amountMatch[1].replace(/,/g, ''));
-          // Filter out amounts that look like reference numbers or dates
-          if (amt > 0 && amt < 1000000) {
-            amounts.push(amt);
-          }
+        let amtMatch;
+        while ((amtMatch = amountPattern.exec(afterRef)) !== null && amounts.length < 2) {
+          amounts.push(parseFloat(amtMatch[1].replace(/,/g, '')));
         }
 
-        // In the GCash table format: Date, Description, Reference, Debit, Credit, Balance
-        // After the reference number, we expect: Debit (or empty), Credit (incoming), Balance
-        // The Credit column is the 2nd numeric column after reference (1st is Debit)
-        // However, PDF text extraction may not preserve column order perfectly
+        if (amounts.length >= 2) {
+          transactions.push({
+            refNo,
+            amount: amounts[0],
+            balance: amounts[1],
+            position: refMatch.index
+          });
+        }
+      }
 
-        // Heuristic: Look at text AFTER the reference number to find amounts
-        const refIndex = line.indexOf(refNo);
-        const afterRef = line.substring(refIndex + refNo.length);
+      console.log('[GCash PDF Debug] Found transactions (before credit/debit classification):', transactions);
 
-        const afterRefAmounts = [];
-        const afterRefPattern = /(?:PHP\s*)?(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)/g;
-        let afterMatch;
-        while ((afterMatch = afterRefPattern.exec(afterRef)) !== null) {
-          const amt = parseFloat(afterMatch[1].replace(/,/g, ''));
-          if (amt > 0 && amt < 1000000) {
-            afterRefAmounts.push(amt);
-          }
+      // Now classify each transaction as credit or debit based on balance change
+      // Sort by position to process in document order
+      transactions.sort((a, b) => a.position - b.position);
+
+      for (const txn of transactions) {
+        const balanceChange = txn.balance - previousBalance;
+        const isCredit = balanceChange > 0; // Balance increased = incoming payment
+
+        console.log(`[GCash PDF Debug] Ref ${txn.refNo}: amount=${txn.amount}, balance=${txn.balance}, prevBal=${previousBalance}, change=${balanceChange.toFixed(2)}, isCredit=${isCredit}`);
+
+        if (isCredit) {
+          // This is an incoming payment - add to our map
+          refToCreditMap[txn.refNo] = txn.amount;
         }
 
-        // After Reference No., the order is: Debit, Credit, Balance
-        // For incoming payments (GCash receive), Debit might be empty/0, Credit has the amount
-        // We want the Credit column value (2nd amount after reference, or 1st if Debit is empty)
-        if (afterRefAmounts.length >= 2) {
-          // Assume: [Debit, Credit, Balance] or just [Credit, Balance] if Debit is empty
-          // If we have 3 amounts: [Debit, Credit, Balance] - take index 1 (Credit)
-          // If we have 2 amounts: [Credit, Balance] - take index 0 (Credit)
-          const creditAmount = afterRefAmounts.length >= 3 ? afterRefAmounts[1] : afterRefAmounts[0];
-          refToCreditMap[refNo] = creditAmount;
-        } else if (afterRefAmounts.length === 1) {
-          // Only one amount found - could be Credit or Balance
-          // This is ambiguous, but we'll take it as a potential credit
-          refToCreditMap[refNo] = afterRefAmounts[0];
-        }
+        // Update running balance for next iteration
+        previousBalance = txn.balance;
       }
 
       const parsedCount = Object.keys(refToCreditMap).length;
+      const totalTxns = transactions.length;
 
-      // If no transactions parsed, show clear message and log raw text
-      if (parsedCount === 0) {
+      // If no transactions parsed at all, show error
+      if (totalTxns === 0) {
         console.warn('GCash PDF Parser: No transactions found. Raw text:\n', fullText);
-        alert(`No transactions could be parsed from the PDF.\n\nExpected format: GCash history table with columns "Date and Time", "Description", "Reference No.", "Debit", "Credit", "Balance".\n\nCheck the browser console for the raw extracted text.`);
+        alert(`No transactions could be parsed from the PDF.\n\nExpected: 10-15 digit reference numbers followed by amount and balance.\n\nCheck the browser console for raw text.`);
         return;
       }
 
-      console.log(`GCash PDF Parser: Found ${parsedCount} transactions`, refToCreditMap);
+      console.log(`[GCash PDF Debug] Parsed ${totalTxns} total transactions, ${parsedCount} are credits (incoming payments)`, refToCreditMap);
 
       // Match against pending reservations
       const matches = {};
