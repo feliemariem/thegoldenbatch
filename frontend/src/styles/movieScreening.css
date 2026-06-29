@@ -144,17 +144,23 @@ body[data-theme="light"] .inclusion-note {
   cursor: not-allowed;
 }
 
-.cinema-label {
-  font-size: 1.1rem;
+.cinema-name {
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--color-text-primary);
-  margin-bottom: 4px;
+  margin-bottom: 2px;
+}
+
+.cinema-type {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 10px;
 }
 
 .cinema-showtime {
   font-size: 0.85rem;
   color: var(--color-text-secondary);
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .cinema-price {

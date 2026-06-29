@@ -188,13 +188,23 @@ export default function MovieScreening() {
 
   const formatDate = (dateStr) => {
     if (!dateStr) return '';
-    const date = new Date(dateStr);
+    // Parse YYYY-MM-DD directly to avoid timezone shifts
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const date = new Date(Date.UTC(year, month - 1, day));
     return date.toLocaleDateString('en-US', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
+      timeZone: 'UTC'
     });
+  };
+
+  // Derive cinema name from code (C3 -> "Cinema 3", C4 -> "Cinema 4")
+  const getCinemaName = (code) => {
+    if (!code) return '';
+    const match = code.match(/^C(\d+)$/);
+    return match ? `Cinema ${match[1]}` : code;
   };
 
   if (loading) {
@@ -397,7 +407,8 @@ export default function MovieScreening() {
                     className={`cinema-card ${selectedCinema === cinema.code ? 'selected' : ''} ${cinema.seats_left === 0 ? 'sold-out' : ''}`}
                     onClick={() => cinema.seats_left > 0 && setSelectedCinema(cinema.code)}
                   >
-                    <div className="cinema-label">{cinema.label}</div>
+                    <div className="cinema-name">{getCinemaName(cinema.code)}</div>
+                    <div className="cinema-type">{cinema.label}</div>
                     <div className="cinema-showtime">{cinema.showtime}</div>
                     <div className="cinema-price">{formatCurrency(cinema.unit_price)}</div>
                     <div className={`cinema-seats ${cinema.seats_left <= 20 ? 'low' : ''}`}>

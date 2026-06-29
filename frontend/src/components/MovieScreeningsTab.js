@@ -19,6 +19,13 @@ export default function MovieScreeningsTab() {
   const [gcashParsing, setGcashParsing] = useState(false);
   const fileInputRef = useRef(null);
 
+  // Derive cinema name from code (C3 -> "Cinema 3", C4 -> "Cinema 4")
+  const getCinemaName = (code) => {
+    if (!code) return '';
+    const match = code.match(/^C(\d+)$/);
+    return match ? `Cinema ${match[1]}` : code;
+  };
+
   useEffect(() => {
     fetchActiveEvent();
   }, []);
@@ -319,7 +326,10 @@ export default function MovieScreeningsTab() {
             return (
               <div key={cinema.code} style={{ marginBottom: '12px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                  <span style={{ fontSize: '0.85rem', color: 'var(--color-text-primary)' }}>{cinema.label}</span>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--color-text-primary)' }}>
+                    {getCinemaName(cinema.code)}
+                    <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginLeft: '8px' }}>{cinema.label}</span>
+                  </span>
                   <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
                     {cinema.held_seats} / {cinema.capacity} held
                   </span>
@@ -446,7 +456,10 @@ export default function MovieScreeningsTab() {
                       </span>
                     )}
                   </td>
-                  <td>{r.cinema_label || r.cinema_code}</td>
+                  <td>
+                    <div style={{ fontWeight: 500 }}>{getCinemaName(r.cinema_code)}</div>
+                    {r.cinema_label && <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>{r.cinema_label}</div>}
+                  </td>
                   <td>{r.quantity}</td>
                   <td>{formatCurrency(r.total_amount)}</td>
                   <td style={{ fontFamily: 'monospace', fontSize: '0.85rem' }}>{r.gcash_ref}</td>
