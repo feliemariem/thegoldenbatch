@@ -668,7 +668,7 @@
   font-family: 'Poppins', sans-serif;
   font-size: 1.4rem;
   font-weight: 700;
-  color: #006633;
+  color: #CFB53B;
   margin: 0 0 8px 0;
 }
 
@@ -803,4 +803,8 @@ body[data-theme="light"] .ms-seat-note {
 /* Hero title must stay cream in light mode (override global h1 !important rule) */
 body[data-theme="light"] .ms-movie-title {
   color: #FDF8EE !important;
+}
+
+body[data-theme="light"] .ms-confirm-title {
+  color: #006633;
 }
