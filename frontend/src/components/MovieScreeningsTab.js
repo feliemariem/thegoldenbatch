@@ -5,6 +5,13 @@ import * as pdfjsLib from 'pdfjs-dist';
 // Set PDF.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
 
+// DEBUG: Log PDF.js initialization status
+console.log('[GCash PDF Debug] pdfjs-dist library loaded:', {
+  version: pdfjsLib.version,
+  workerSrc: pdfjsLib.GlobalWorkerOptions.workerSrc,
+  getDocument: typeof pdfjsLib.getDocument
+});
+
 export default function MovieScreeningsTab() {
   const [event, setEvent] = useState(null);
   const [reservations, setReservations] = useState([]);
@@ -169,20 +176,36 @@ export default function MovieScreeningsTab() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    console.log('[GCash PDF Debug] Upload started:', { fileName: file.name, fileSize: file.size, fileType: file.type });
+
     setGcashParsing(true);
     setGcashMatches({});
 
-    try {
-      const arrayBuffer = await file.arrayBuffer();
-      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    let fullText = ''; // Declare outside try so we can log it in catch
 
-      let fullText = '';
+    try {
+      console.log('[GCash PDF Debug] Step 1: Reading file as ArrayBuffer...');
+      const arrayBuffer = await file.arrayBuffer();
+      console.log('[GCash PDF Debug] Step 2: ArrayBuffer ready, size:', arrayBuffer.byteLength);
+
+      console.log('[GCash PDF Debug] Step 3: Calling pdfjsLib.getDocument...');
+      const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+      console.log('[GCash PDF Debug] Step 4: Loading task created:', loadingTask);
+
+      const pdf = await loadingTask.promise;
+      console.log('[GCash PDF Debug] Step 5: PDF loaded, numPages:', pdf.numPages);
+
       for (let i = 1; i <= pdf.numPages; i++) {
+        console.log(`[GCash PDF Debug] Step 6: Getting page ${i}...`);
         const page = await pdf.getPage(i);
         const textContent = await page.getTextContent();
+        console.log(`[GCash PDF Debug] Page ${i} items:`, textContent.items.length);
         const pageText = textContent.items.map(item => item.str).join(' ');
         fullText += pageText + '\n';
       }
+
+      console.log('[GCash PDF Debug] Step 7: Full text extracted, length:', fullText.length);
+      console.log('[GCash PDF Debug] First 1000 chars of raw text:\n', fullText.substring(0, 1000));
 
       // Parse transactions from the PDF text
       // Reference numbers are 10-15 digits
@@ -308,8 +331,17 @@ export default function MovieScreeningsTab() {
 
       setGcashMatches(matches);
     } catch (err) {
-      console.error('Error parsing PDF:', err);
-      alert('Failed to parse PDF file. Please ensure it is a valid GCash history export.');
+      // DEBUG: Log the REAL error with full details
+      console.error('[GCash PDF Debug] REAL ERROR:', err);
+      console.error('[GCash PDF Debug] Error name:', err.name);
+      console.error('[GCash PDF Debug] Error message:', err.message);
+      console.error('[GCash PDF Debug] Error stack:', err.stack);
+      if (fullText) {
+        console.log('[GCash PDF Debug] Text extracted before error (first 1000 chars):\n', fullText.substring(0, 1000));
+      } else {
+        console.log('[GCash PDF Debug] No text was extracted before the error occurred.');
+      }
+      alert(`PDF Parse Error:\n\nName: ${err.name}\nMessage: ${err.message}\n\nCheck browser console (F12) for full stack trace and extracted text.`);
     } finally {
       setGcashParsing(false);
       if (fileInputRef.current) {
