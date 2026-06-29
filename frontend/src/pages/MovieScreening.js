@@ -283,6 +283,7 @@ export default function MovieScreening() {
                 <li>Wait 24 hours for payment verification.</li>
                 <li>A committee member will send you a message with your {numWord}.</li>
                 <li>Your {numWord} {isAre} {stubVoucher} onsite.</li>
+                <li>A committee member will let you know where to pick up your printed {ticketWord}.</li>
                 <li>Raffle and merch sold separately onsite.</li>
                 {qty >= 20 && (
                   <li className="ms-highlight">A committee member will contact you to pick seats.</li>
