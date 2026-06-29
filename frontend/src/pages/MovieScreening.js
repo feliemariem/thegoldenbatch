@@ -312,15 +312,6 @@ export default function MovieScreening() {
               </div>
             )}
           </div>
-
-          <div className="ms-showtime-chips">
-            {cinemas.map((cinema) => (
-              <div key={cinema.code} className="ms-showtime-chip">
-                <span className="ms-chip-label" style={{ color: '#c2ccc4' }}>{getCinemaName(cinema.code)} · {cinema.label}</span>
-                <span className="ms-chip-time" style={{ color: '#FDF8EE' }}>{cinema.showtime}</span>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
 
@@ -417,6 +408,13 @@ export default function MovieScreening() {
                   </div>
                 </div>
 
+                {/* 20+ Seat Choice Note */}
+                {quantity >= 20 && (
+                  <div className="ms-seat-note">
+                    For orders of 20+ tickets, you can choose your seats. Felie will contact you after your purchase is verified.
+                  </div>
+                )}
+
                 {/* Total */}
                 <div className="ms-total-box">
                   <span className="ms-total-label">Total</span>
@@ -471,12 +469,6 @@ export default function MovieScreening() {
                     {emailError && <span className="ms-field-error">{emailError}</span>}
                   </div>
                 </div>
-
-                {quantity >= 20 && (
-                  <div className="ms-seat-note">
-                    For orders of 20+ tickets, you can choose your seats. Felie will contact you after your purchase is verified.
-                  </div>
-                )}
 
                 {/* GCash Box */}
                 <div className="ms-gcash-box">
