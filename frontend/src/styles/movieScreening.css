@@ -798,3 +798,8 @@ body[data-theme="light"] .ms-seat-note {
   border-color: rgba(0, 102, 51, 0.2);
   color: #006633;
 }
+
+/* Hero title must stay cream in light mode (override global h1 !important rule) */
+body[data-theme="light"] .ms-movie-title {
+  color: #FDF8EE !important;
+}
