@@ -18,6 +18,9 @@ export default function MovieScreeningsTab() {
   const [gcashParsing, setGcashParsing] = useState(false);
   const fileInputRef = useRef(null);
 
+  // Copy feedback state: tracks which reservation ID was just copied
+  const [copiedId, setCopiedId] = useState(null);
+
   // Derive cinema name from code (C3 -> "Cinema 3", C4 -> "Cinema 4")
   const getCinemaName = (code) => {
     if (!code) return '';
@@ -138,11 +141,28 @@ export default function MovieScreeningsTab() {
     return `${code}-${start} to ${code}-${end}`;
   };
 
-  const copyTicketRange = (reservation) => {
+  const copyTicketRange = async (reservation) => {
     const range = formatTicketRange(reservation);
     const count = reservation.quantity;
     const text = `${range} (x${count})`;
-    navigator.clipboard.writeText(text);
+
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      // Fallback for older browsers
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+    }
+
+    // Show copied feedback
+    setCopiedId(reservation.id);
+    setTimeout(() => setCopiedId(null), 1500);
   };
 
   const formatCurrency = (amount) => {
@@ -733,16 +753,29 @@ export default function MovieScreeningsTab() {
                         <button
                           onClick={() => copyTicketRange(r)}
                           style={{
-                            background: 'none',
+                            background: copiedId === r.id ? 'rgba(0, 102, 51, 0.15)' : 'none',
                             border: 'none',
+                            borderRadius: '4px',
                             cursor: 'pointer',
-                            padding: '4px',
-                            fontSize: '0.8rem',
-                            color: 'var(--color-text-secondary)'
+                            padding: '6px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            transition: 'background 0.2s'
                           }}
-                          title="Copy ticket range"
+                          title={copiedId === r.id ? 'Copied!' : 'Copy ticket numbers'}
+                          aria-label={copiedId === r.id ? 'Copied!' : 'Copy ticket numbers'}
                         >
-                          Copy
+                          {copiedId === r.id ? (
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#006633" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                          ) : (
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-secondary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                          )}
                         </button>
                       </div>
                     ) : (
