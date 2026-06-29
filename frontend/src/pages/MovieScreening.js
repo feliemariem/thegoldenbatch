@@ -257,9 +257,12 @@ export default function MovieScreening() {
                 <span>GCash Ref</span>
                 <span className="ms-order-ref">{reservation.gcash_ref}</span>
               </div>
+              <p className="ms-pending-note">
+                This confirms your order is received and pending verification. Your official ticket numbers will be sent by Coycoy within 24 hours.
+              </p>
             </div>
 
-            <div className="ms-what-next">
+            <div className="ms-what-next ms-no-print">
               <h3>What happens next?</h3>
               <ul>
                 <li>Wait 24 hours for payment verification.</li>
@@ -272,7 +275,15 @@ export default function MovieScreening() {
               </ul>
             </div>
 
-            <Link to="/" className="ms-back-link">Back to Home</Link>
+            <button
+              type="button"
+              className="ms-print-btn ms-no-print"
+              onClick={() => window.print()}
+            >
+              Print / Save as PDF
+            </button>
+
+            <Link to="/" className="ms-back-link ms-no-print">Back to Home</Link>
           </div>
         </div>
         <Footer />

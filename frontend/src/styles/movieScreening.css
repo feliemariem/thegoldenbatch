@@ -759,6 +759,102 @@
   font-weight: 500;
 }
 
+.ms-pending-note {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  margin: 16px 0 0 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border);
+  line-height: 1.5;
+  opacity: 0.85;
+}
+
+.ms-print-btn {
+  display: block;
+  width: 100%;
+  padding: 12px 20px;
+  margin-top: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  font-family: 'Poppins', sans-serif;
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.ms-print-btn:hover {
+  border-color: #CFB53B;
+  color: #CFB53B;
+}
+
+/* ========================================
+   PRINT STYLES
+   ======================================== */
+
+@media print {
+  /* Hide everything except confirmation */
+  body * {
+    visibility: hidden;
+  }
+
+  .ms-confirmation,
+  .ms-confirmation * {
+    visibility: visible;
+  }
+
+  .ms-confirmation {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background: white !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 20px !important;
+  }
+
+  /* Hide non-print elements */
+  .ms-no-print {
+    display: none !important;
+  }
+
+  /* Black text on white for print */
+  .ms-confirmation,
+  .ms-confirmation h2,
+  .ms-confirmation h3,
+  .ms-confirmation p,
+  .ms-confirmation span,
+  .ms-confirmation li {
+    color: #000 !important;
+    background: white !important;
+  }
+
+  .ms-confirm-icon {
+    background: #006633 !important;
+    color: white !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .ms-order-summary {
+    background: #f5f5f5 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .ms-order-total {
+    color: #006633 !important;
+  }
+
+  .ms-pending-note {
+    color: #666 !important;
+    opacity: 1;
+  }
+}
+
 /* ========================================
    LIGHT MODE OVERRIDES (green accents)
    ======================================== */
