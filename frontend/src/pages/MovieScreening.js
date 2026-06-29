@@ -255,6 +255,12 @@ export default function MovieScreening() {
             <p className="ms-confirm-subtitle">Thank you, {reservation.buyer_name}!</p>
 
             <div className="ms-order-summary">
+              <div className="ms-receipt-header">
+                <div className="ms-receipt-batch">USLS-IS Batch 2003 · Movie Screening</div>
+                <div className="ms-receipt-title">{event.title}</div>
+                <div className="ms-receipt-meta">{formatDateHero(event.event_date)}</div>
+                <div className="ms-receipt-meta">Ayala Malls Capitol Central · Bacolod</div>
+              </div>
               <h3>Order Summary</h3>
               <div className="ms-order-row">
                 <span>Cinema</span>
@@ -269,7 +275,7 @@ export default function MovieScreening() {
                 <span className="ms-order-total">{formatCurrency(reservation.total_amount)}</span>
               </div>
               <div className="ms-order-row">
-                <span>GCash Ref</span>
+                <span>Reference No.</span>
                 <span className="ms-order-ref">{reservation.gcash_ref}</span>
               </div>
               <p className="ms-pending-note">

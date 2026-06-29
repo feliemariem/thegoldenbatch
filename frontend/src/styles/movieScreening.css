@@ -709,6 +709,40 @@
   text-align: left;
 }
 
+.ms-receipt-header {
+  text-align: center;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.ms-receipt-batch {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #CFB53B;
+  margin-bottom: 8px;
+}
+
+.ms-receipt-title {
+  font-family: 'Gelasio', Georgia, serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 6px;
+}
+
+.ms-receipt-meta {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+body[data-theme="light"] .ms-receipt-batch {
+  color: #006633;
+}
+
 .ms-order-summary h3 {
   font-size: 0.75rem;
   font-weight: 600;
@@ -875,6 +909,16 @@
   .ms-pending-note {
     color: #666 !important;
     opacity: 1;
+  }
+
+  .ms-receipt-batch {
+    color: #006633 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .ms-receipt-title {
+    color: #000 !important;
   }
 }
 
