@@ -267,6 +267,10 @@ export default function MovieScreening() {
                 <span>{getCinemaName(reservation.cinema_code)} · {selectedCinemaData?.label}</span>
               </div>
               <div className="ms-order-row">
+                <span>Showtime</span>
+                <span>{selectedCinemaData?.showtime}</span>
+              </div>
+              <div className="ms-order-row">
                 <span>Tickets</span>
                 <span>{qty} {ticketWord}</span>
               </div>
