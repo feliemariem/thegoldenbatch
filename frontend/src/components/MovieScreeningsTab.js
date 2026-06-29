@@ -4,14 +4,6 @@ import { apiGet, apiPost, apiPatch } from '../api';
 // This bundles the worker locally so it never depends on a CDN
 import * as pdfjsLib from 'pdfjs-dist/webpack.mjs';
 
-// DEBUG: Log PDF.js initialization status
-console.log('[GCash PDF Debug] pdfjs-dist library loaded:', {
-  version: pdfjsLib.version,
-  workerPort: pdfjsLib.GlobalWorkerOptions.workerPort ? 'configured' : 'not set',
-  workerSrc: pdfjsLib.GlobalWorkerOptions.workerSrc || 'not set (using workerPort)',
-  getDocument: typeof pdfjsLib.getDocument
-});
-
 export default function MovieScreeningsTab() {
   const [event, setEvent] = useState(null);
   const [reservations, setReservations] = useState([]);
@@ -176,36 +168,20 @@ export default function MovieScreeningsTab() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    console.log('[GCash PDF Debug] Upload started:', { fileName: file.name, fileSize: file.size, fileType: file.type });
-
     setGcashParsing(true);
     setGcashMatches({});
 
-    let fullText = ''; // Declare outside try so we can log it in catch
-
     try {
-      console.log('[GCash PDF Debug] Step 1: Reading file as ArrayBuffer...');
       const arrayBuffer = await file.arrayBuffer();
-      console.log('[GCash PDF Debug] Step 2: ArrayBuffer ready, size:', arrayBuffer.byteLength);
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
 
-      console.log('[GCash PDF Debug] Step 3: Calling pdfjsLib.getDocument...');
-      const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
-      console.log('[GCash PDF Debug] Step 4: Loading task created:', loadingTask);
-
-      const pdf = await loadingTask.promise;
-      console.log('[GCash PDF Debug] Step 5: PDF loaded, numPages:', pdf.numPages);
-
+      let fullText = '';
       for (let i = 1; i <= pdf.numPages; i++) {
-        console.log(`[GCash PDF Debug] Step 6: Getting page ${i}...`);
         const page = await pdf.getPage(i);
         const textContent = await page.getTextContent();
-        console.log(`[GCash PDF Debug] Page ${i} items:`, textContent.items.length);
         const pageText = textContent.items.map(item => item.str).join(' ');
         fullText += pageText + '\n';
       }
-
-      console.log('[GCash PDF Debug] Step 7: Full text extracted, length:', fullText.length);
-      console.log('[GCash PDF Debug] First 1000 chars of raw text:\n', fullText.substring(0, 1000));
 
       // Parse transactions from GCash PDF
       // Format: one continuous string, fields separated by spaces, NO line breaks between rows
@@ -220,7 +196,6 @@ export default function MovieScreeningsTab() {
       let previousBalance = startingBalanceMatch
         ? parseFloat(startingBalanceMatch[1].replace(/,/g, ''))
         : 0;
-      console.log('[GCash PDF Debug] Starting balance:', previousBalance);
 
       // Find all reference numbers (10-15 pure digits, not alphanumeric like invno:xxx)
       // Use a global regex to find all refs and their positions
@@ -254,8 +229,6 @@ export default function MovieScreeningsTab() {
         }
       }
 
-      console.log('[GCash PDF Debug] Found transactions (before credit/debit classification):', transactions);
-
       // Now classify each transaction as credit or debit based on balance change
       // Sort by position to process in document order
       transactions.sort((a, b) => a.position - b.position);
@@ -263,8 +236,6 @@ export default function MovieScreeningsTab() {
       for (const txn of transactions) {
         const balanceChange = txn.balance - previousBalance;
         const isCredit = balanceChange > 0; // Balance increased = incoming payment
-
-        console.log(`[GCash PDF Debug] Ref ${txn.refNo}: amount=${txn.amount}, balance=${txn.balance}, prevBal=${previousBalance}, change=${balanceChange.toFixed(2)}, isCredit=${isCredit}`);
 
         if (isCredit) {
           // This is an incoming payment - add to our map
@@ -280,12 +251,9 @@ export default function MovieScreeningsTab() {
 
       // If no transactions parsed at all, show error
       if (totalTxns === 0) {
-        console.warn('GCash PDF Parser: No transactions found. Raw text:\n', fullText);
-        alert(`No transactions could be parsed from the PDF.\n\nExpected: 10-15 digit reference numbers followed by amount and balance.\n\nCheck the browser console for raw text.`);
+        alert('No transactions found in the PDF. Expected: 10-15 digit reference numbers followed by amount and balance.');
         return;
       }
-
-      console.log(`[GCash PDF Debug] Parsed ${totalTxns} total transactions, ${parsedCount} are credits (incoming payments)`, refToCreditMap);
 
       // Match against pending reservations
       const matches = {};
@@ -328,17 +296,8 @@ export default function MovieScreeningsTab() {
 
       setGcashMatches(matches);
     } catch (err) {
-      // DEBUG: Log the REAL error with full details
-      console.error('[GCash PDF Debug] REAL ERROR:', err);
-      console.error('[GCash PDF Debug] Error name:', err.name);
-      console.error('[GCash PDF Debug] Error message:', err.message);
-      console.error('[GCash PDF Debug] Error stack:', err.stack);
-      if (fullText) {
-        console.log('[GCash PDF Debug] Text extracted before error (first 1000 chars):\n', fullText.substring(0, 1000));
-      } else {
-        console.log('[GCash PDF Debug] No text was extracted before the error occurred.');
-      }
-      alert(`PDF Parse Error:\n\nName: ${err.name}\nMessage: ${err.message}\n\nCheck browser console (F12) for full stack trace and extracted text.`);
+      console.error('GCash PDF parse error:', err);
+      alert('Failed to parse PDF file. Please ensure it is a valid GCash history export.');
     } finally {
       setGcashParsing(false);
       if (fileInputRef.current) {
