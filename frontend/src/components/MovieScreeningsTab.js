@@ -63,7 +63,11 @@ export default function MovieScreeningsTab() {
         return;
       }
 
-      setReservations(data.reservations || []);
+      // Sort by created_at (oldest first) for processing order
+      const sorted = (data.reservations || []).sort((a, b) =>
+        new Date(a.created_at) - new Date(b.created_at)
+      );
+      setReservations(sorted);
       setStats(data.stats);
       setCinemaStats(data.cinemaStats || []);
     } catch (err) {
@@ -153,12 +157,14 @@ export default function MovieScreeningsTab() {
   const formatDate = (dateStr) => {
     if (!dateStr) return '-';
     const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', {
+    return date.toLocaleString('en-US', {
+      timeZone: 'Asia/Manila',
       month: 'short',
       day: 'numeric',
+      year: 'numeric',
       hour: 'numeric',
       minute: '2-digit'
-    });
+    }).replace(',', ' ·');
   };
 
   // Parse GCash PDF and match against pending reservations
@@ -308,9 +314,10 @@ export default function MovieScreeningsTab() {
 
   // Export CSV
   const exportCSV = () => {
-    const headers = ['buyer_name', 'cinema_code', 'quantity', 'unit_price', 'total_amount', 'gcash_ref', 'status', 'ticket_range'];
+    const headers = ['buyer_name', 'purchased', 'cinema_code', 'quantity', 'unit_price', 'total_amount', 'gcash_ref', 'status', 'ticket_range'];
     const rows = reservations.map(r => [
       r.buyer_name,
+      formatDate(r.created_at),
       r.cinema_code,
       r.quantity,
       r.unit_price,
@@ -478,6 +485,7 @@ export default function MovieScreeningsTab() {
           <thead>
             <tr>
               <th>Buyer</th>
+              <th>Purchased</th>
               <th>Cinema</th>
               <th>Qty</th>
               <th>Amount</th>
@@ -490,7 +498,7 @@ export default function MovieScreeningsTab() {
           <tbody>
             {reservations.length === 0 ? (
               <tr>
-                <td colSpan="8" style={{ textAlign: 'center', color: 'var(--color-text-secondary)' }}>
+                <td colSpan="9" style={{ textAlign: 'center', color: 'var(--color-text-secondary)' }}>
                   No reservations yet
                 </td>
               </tr>
@@ -523,6 +531,9 @@ export default function MovieScreeningsTab() {
                         20+ seat choice
                       </span>
                     )}
+                  </td>
+                  <td style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', whiteSpace: 'nowrap' }}>
+                    {formatDate(r.created_at)}
                   </td>
                   <td>
                     <div style={{ fontWeight: 500 }}>{getCinemaName(r.cinema_code)}</div>
