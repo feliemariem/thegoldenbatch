@@ -4,6 +4,7 @@ import { useTheme } from '../context/ThemeContext';
 import Footer from '../components/Footer';
 import { apiGet, apiPost } from '../api';
 import '../styles/movieScreening.css';
+import gcashQr from '../images/gcash-qr.png';
 
 export default function MovieScreening() {
   const { theme, toggleTheme } = useTheme();
@@ -265,6 +266,7 @@ export default function MovieScreening() {
                 <div className="ms-receipt-meta">{formatDateHero(event.event_date)}</div>
                 <div className="ms-receipt-meta">Ayala Malls Capitol Central · Bacolod</div>
               </div>
+              <img src={gcashQr} alt="GCash QR Code" className="ms-gcash-qr ms-receipt-qr" />
               <h3>Order Summary</h3>
               <div className="ms-order-row">
                 <span>Cinema</span>
@@ -550,6 +552,7 @@ export default function MovieScreening() {
                       <span className="ms-gcash-value">{event.gcash_name}</span>
                     </div>
                   </div>
+                  <img src={gcashQr} alt="GCash QR Code" className="ms-gcash-qr" />
                   <p className="ms-gcash-instruction">
                     Send the exact amount, then paste your reference number below.
                   </p>

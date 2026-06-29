@@ -626,6 +626,16 @@ body[data-theme="light"] .ms-gcash-box .ms-gcash-instruction {
   color: #ffffff !important;
 }
 
+.ms-gcash-qr {
+  display: block;
+  width: 200px;
+  margin: 16px auto;
+}
+
+.ms-receipt-qr {
+  margin: 20px auto;
+}
+
 /* ========================================
    SUBMIT BUTTON
    ======================================== */
