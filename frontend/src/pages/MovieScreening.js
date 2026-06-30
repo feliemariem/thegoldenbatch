@@ -348,8 +348,6 @@ export default function MovieScreening() {
             >
               Print / Save as PDF
             </button>
-
-            <Link to="/" className="ms-back-link ms-no-print">Back to Home</Link>
           </div>
         </div>
         <Footer />
