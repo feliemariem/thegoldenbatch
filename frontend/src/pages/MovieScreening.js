@@ -153,6 +153,9 @@ export default function MovieScreening() {
   const unitPrice = selectedCinemaData?.unit_price || 0;
   const totalAmount = unitPrice * quantity;
 
+  // Check if entire event is sold out (all cinemas have 0 seats)
+  const isEventSoldOut = cinemas.length > 0 && cinemas.every(c => c.seats_left === 0);
+
   // Reset form for a new purchase
   const resetForNewPurchase = () => {
     setBuyerName('');
@@ -438,6 +441,17 @@ export default function MovieScreening() {
           {error && <p className="ms-error">{error}</p>}
           {submitError && <p className="ms-error">{submitError}</p>}
 
+          {/* Full Event Sold Out Message */}
+          {isEventSoldOut && (
+            <div className="ms-sold-out-banner">
+              <div className="ms-sold-out-icon">✕</div>
+              <div className="ms-sold-out-text">
+                <strong>This screening is sold out.</strong>
+                <span>Thank you for your interest!</span>
+              </div>
+            </div>
+          )}
+
           {/* Inclusions - lead-in to the form */}
           <div className="ms-form-inclusions">
             <p className="ms-form-inclusion-line">
@@ -446,6 +460,7 @@ export default function MovieScreening() {
             <p className="ms-form-separate-line">Raffle and merch sold separately onsite.</p>
           </div>
 
+          {!isEventSoldOut && (
           <form onSubmit={handleSubmit}>
             {/* Cinema Selection - FIRST interactive step */}
             <div className="ms-field">
@@ -466,7 +481,10 @@ export default function MovieScreening() {
                       }
                     }}
                   >
-                    {selectedCinema === cinema.code && (
+                    {cinema.seats_left === 0 && (
+                      <div className="ms-sold-out-badge">SOLD OUT</div>
+                    )}
+                    {selectedCinema === cinema.code && cinema.seats_left > 0 && (
                       <div className="ms-check-badge">✓</div>
                     )}
                     <div className="ms-cinema-name">{getCinemaName(cinema.code)}</div>
@@ -479,8 +497,8 @@ export default function MovieScreening() {
                       {cinema.showtime}
                     </div>
                     <div className="ms-cinema-price">{formatCurrency(cinema.unit_price)}</div>
-                    <div className="ms-cinema-seats">
-                      {cinema.seats_left === 0 ? 'SOLD OUT' : `${cinema.seats_left} seats left`}
+                    <div className={`ms-cinema-seats ${cinema.seats_left === 0 ? 'sold-out' : ''}`}>
+                      {cinema.seats_left === 0 ? 'Sold out' : `${cinema.seats_left} seats left`}
                     </div>
                   </div>
                 ))}
@@ -685,6 +703,7 @@ export default function MovieScreening() {
               </>
             )}
           </form>
+          )}
         </div>
       </div>
       </div>
