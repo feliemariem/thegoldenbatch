@@ -292,7 +292,6 @@ export default function MovieScreening() {
                 <div className="ms-receipt-meta">{formatDateHero(event.event_date)}</div>
                 <div className="ms-receipt-meta">Ayala Malls Capitol Central · Bacolod</div>
               </div>
-              <img src={gcashQr} alt="GCash QR Code" className="ms-gcash-qr ms-receipt-qr" />
               <h3>Order Summary</h3>
               <div className="ms-order-row">
                 <span>Cinema</span>
