@@ -515,8 +515,8 @@ export default function AdminDashboard() {
                   )}
                 </button>
               )}
-              {/* Movie Screenings - only for Felie (71) and Coycoy (72) */}
-              {(user?.id === 71 || user?.id === 72) && (
+              {/* Movie Screenings - permission-based + legacy ID check during transition */}
+              {((user?.id === 71 || user?.id === 72) || isSuperAdmin || permissions?.screenings_view) && (
                 <button
                   onClick={() => setDashboardMode('screenings')}
                   className={dashboardMode === 'screenings' ? 'active' : ''}
@@ -1249,9 +1249,9 @@ export default function AdminDashboard() {
           <MediaTab onPendingCountChange={setMediaPendingCount} isSuperAdmin={isSuperAdmin} />
         )}
 
-        {/* MOVIE SCREENINGS MODE - Felie (71) and Coycoy (72) only */}
-        {dashboardMode === 'screenings' && (user?.id === 71 || user?.id === 72) && (
-          <MovieScreeningsTab />
+        {/* MOVIE SCREENINGS MODE - permission-based + legacy ID check during transition */}
+        {dashboardMode === 'screenings' && ((user?.id === 71 || user?.id === 72) || isSuperAdmin || permissions?.screenings_view) && (
+          <MovieScreeningsTab permissions={permissions} isSuperAdmin={isSuperAdmin} />
         )}
 
         {/* PERMISSIONS MODE - Super Admin Only */}

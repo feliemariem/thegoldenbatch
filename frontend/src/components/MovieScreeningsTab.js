@@ -4,7 +4,12 @@ import { apiGet, apiPost, apiPatch } from '../api';
 // This bundles the worker locally so it never depends on a CDN
 import * as pdfjsLib from 'pdfjs-dist/webpack.mjs';
 
-export default function MovieScreeningsTab() {
+export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = false }) {
+  // Determine access level from permissions
+  // Super admin has all access; otherwise check specific permissions
+  const hasTrackerAccess = isSuperAdmin || permissions.screenings_tracker || permissions.screenings_edit;
+  const hasEditAccess = isSuperAdmin || permissions.screenings_edit;
+  const hasStatsAccess = isSuperAdmin || permissions.screenings_stats || permissions.screenings_tracker || permissions.screenings_edit;
   const [event, setEvent] = useState(null);
   const [reservations, setReservations] = useState([]);
   const [stats, setStats] = useState(null);
@@ -58,24 +63,40 @@ export default function MovieScreeningsTab() {
 
   const fetchReservations = async (eventId) => {
     try {
-      const res = await apiGet(`/api/movie-screening/admin/reservations?event_id=${eventId}`);
-      const data = await res.json();
+      // If user has tracker access, fetch full reservations; otherwise fetch stats only
+      if (hasTrackerAccess) {
+        const res = await apiGet(`/api/movie-screening/admin/reservations?event_id=${eventId}`);
+        const data = await res.json();
 
-      if (!res.ok) {
-        setError(data.error || 'Failed to load reservations');
-        return;
+        if (!res.ok) {
+          setError(data.error || 'Failed to load reservations');
+          return;
+        }
+
+        // Sort by created_at (oldest first) for processing order
+        const sorted = (data.reservations || []).sort((a, b) =>
+          new Date(a.created_at) - new Date(b.created_at)
+        );
+        setReservations(sorted);
+        setStats(data.stats);
+        setCinemaStats(data.cinemaStats || []);
+      } else {
+        // Stats-only access
+        const res = await apiGet(`/api/movie-screening/admin/stats?event_id=${eventId}`);
+        const data = await res.json();
+
+        if (!res.ok) {
+          setError(data.error || 'Failed to load stats');
+          return;
+        }
+
+        setReservations([]); // No reservation data for stats-only users
+        setStats(data.stats);
+        setCinemaStats(data.cinemaStats || []);
       }
-
-      // Sort by created_at (oldest first) for processing order
-      const sorted = (data.reservations || []).sort((a, b) =>
-        new Date(a.created_at) - new Date(b.created_at)
-      );
-      setReservations(sorted);
-      setStats(data.stats);
-      setCinemaStats(data.cinemaStats || []);
     } catch (err) {
       console.error(err);
-      setError('Failed to fetch reservations');
+      setError('Failed to fetch data');
     } finally {
       setLoading(false);
     }
@@ -651,7 +672,8 @@ export default function MovieScreeningsTab() {
         </div>
       )}
 
-      {/* Action buttons */}
+      {/* Action buttons - only for users with edit access */}
+      {hasTrackerAccess && (
       <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', flexWrap: 'wrap' }}>
         <input
           ref={fileInputRef}
@@ -660,6 +682,7 @@ export default function MovieScreeningsTab() {
           onChange={handleGcashUpload}
           style={{ display: 'none' }}
         />
+        {hasEditAccess && (
         <button
           onClick={() => fileInputRef.current?.click()}
           className="btn-secondary"
@@ -668,6 +691,8 @@ export default function MovieScreeningsTab() {
         >
           {gcashParsing ? 'Parsing...' : 'Upload GCash History'}
         </button>
+        )}
+        {hasEditAccess && (
         <button
           onClick={exportCSV}
           className="btn-secondary"
@@ -675,10 +700,12 @@ export default function MovieScreeningsTab() {
         >
           Export CSV
         </button>
+        )}
       </div>
+      )}
 
-      {/* GCash match legend */}
-      {Object.keys(gcashMatches).length > 0 && (
+      {/* GCash match legend - only for tracker users */}
+      {hasTrackerAccess && Object.keys(gcashMatches).length > 0 && (
         <div style={{
           marginBottom: '16px',
           padding: '12px 16px',
@@ -705,7 +732,22 @@ export default function MovieScreeningsTab() {
         </div>
       )}
 
-      {/* Reservations Table */}
+      {/* Stats-only message for users without tracker access */}
+      {!hasTrackerAccess && hasStatsAccess && (
+        <div style={{
+          padding: '24px',
+          background: 'rgba(255, 255, 255, 0.03)',
+          borderRadius: '8px',
+          textAlign: 'center',
+          color: 'var(--color-text-secondary)'
+        }}>
+          <p style={{ margin: 0 }}>You have view-only access to screening statistics.</p>
+          <p style={{ margin: '8px 0 0 0', fontSize: '0.85rem' }}>Contact a super admin if you need access to the full reservation tracker.</p>
+        </div>
+      )}
+
+      {/* Reservations Table - only for users with tracker access */}
+      {hasTrackerAccess && (
       <div style={{ overflowX: 'auto' }}>
         <table className="admin-table" style={{ minWidth: '900px' }}>
           <thead>
@@ -836,6 +878,7 @@ export default function MovieScreeningsTab() {
                   </td>
                   <td>
                     {r.status === 'pending' ? (
+                      hasEditAccess ? (
                       <div style={{ display: 'flex', gap: '8px' }}>
                         <button
                           onClick={() => handleConfirm(r.id)}
@@ -870,6 +913,19 @@ export default function MovieScreeningsTab() {
                           {actionLoading[r.id] === 'cancel' ? '...' : 'Cancel'}
                         </button>
                       </div>
+                      ) : (
+                      <span style={{
+                        display: 'inline-block',
+                        padding: '4px 10px',
+                        fontSize: '0.8rem',
+                        fontWeight: 600,
+                        borderRadius: '6px',
+                        background: 'rgba(180, 83, 9, 0.1)',
+                        color: '#b45309'
+                      }}>
+                        Pending
+                      </span>
+                      )
                     ) : r.status === 'confirmed' ? (
                       <span style={{
                         display: 'inline-block',
@@ -902,6 +958,7 @@ export default function MovieScreeningsTab() {
           </tbody>
         </table>
       </div>
+      )}
     </div>
   );
 }

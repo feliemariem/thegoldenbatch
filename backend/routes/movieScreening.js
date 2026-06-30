@@ -37,11 +37,68 @@ const isValidEmail = (email) => {
 };
 
 // Middleware to check if user is a movie screening admin
+// NOTE: This legacy check will be removed once new permissions are verified working
 const requireMovieScreeningAdmin = (req, res, next) => {
   if (!MOVIE_SCREENING_ADMIN_IDS.includes(req.user.id)) {
     return res.status(403).json({ error: 'Access denied. Movie screening admin required.' });
   }
   next();
+};
+
+// ============================================
+// PERMISSION HELPERS (uses admins table, same as other permissions)
+// ============================================
+
+// Check a specific screening permission for a user by email
+const checkScreeningPermission = async (email, requiredPermission) => {
+  const adminResult = await db.query(
+    'SELECT id, is_super_admin FROM admins WHERE LOWER(email) = $1',
+    [email.toLowerCase()]
+  );
+
+  if (adminResult.rows.length === 0) return false;
+
+  const admin = adminResult.rows[0];
+  if (admin.is_super_admin) return true; // Super admin bypasses all
+
+  const permResult = await db.query(
+    'SELECT enabled FROM permissions WHERE admin_id = $1 AND permission = $2',
+    [admin.id, requiredPermission]
+  );
+
+  return permResult.rows.length > 0 && permResult.rows[0].enabled;
+};
+
+// Check if user has the gate permission (screenings_view)
+const hasScreeningsAccess = async (email) => {
+  return await checkScreeningPermission(email, 'screenings_view');
+};
+
+// Check if user can view stats (needs view + stats/tracker/edit)
+const canViewStats = async (email) => {
+  const hasView = await checkScreeningPermission(email, 'screenings_view');
+  if (!hasView) return false;
+
+  return await checkScreeningPermission(email, 'screenings_stats') ||
+         await checkScreeningPermission(email, 'screenings_tracker') ||
+         await checkScreeningPermission(email, 'screenings_edit');
+};
+
+// Check if user can view full tracker with contact info
+const canViewTracker = async (email) => {
+  const hasView = await checkScreeningPermission(email, 'screenings_view');
+  if (!hasView) return false;
+
+  return await checkScreeningPermission(email, 'screenings_tracker') ||
+         await checkScreeningPermission(email, 'screenings_edit');
+};
+
+// Check if user can edit (confirm, cancel, assign seats, export)
+const canEditTracker = async (email) => {
+  const hasView = await checkScreeningPermission(email, 'screenings_view');
+  if (!hasView) return false;
+
+  return await checkScreeningPermission(email, 'screenings_edit');
 };
 
 // ============================================
@@ -245,10 +302,83 @@ router.post('/reserve', async (req, res) => {
 // ADMIN ENDPOINTS (auth + movie screening admin check)
 // ============================================
 
+// GET /api/movie-screening/admin/stats
+// Stats-only endpoint for VIEW STATS users (no contact info)
+router.get('/admin/stats', authenticateToken, requireMovieScreeningAdmin, async (req, res) => {
+  try {
+    // Permission check: must have screenings_view + (screenings_stats OR screenings_tracker OR screenings_edit)
+    const hasAccess = await canViewStats(req.user.email);
+    if (!hasAccess) {
+      return res.status(403).json({ error: 'Access denied. Screenings stats permission required.' });
+    }
+
+    const { event_id } = req.query;
+
+    if (!event_id) {
+      return res.status(400).json({ error: 'event_id is required' });
+    }
+
+    // Get stats only (no buyer details)
+    const statsResult = await db.query(
+      `SELECT
+         COUNT(*) as total_reservations,
+         COUNT(*) FILTER (WHERE status = 'pending') as pending_count,
+         COUNT(*) FILTER (WHERE status = 'confirmed') as confirmed_count,
+         COALESCE(SUM(total_amount) FILTER (WHERE status = 'confirmed'), 0) as total_collected,
+         COALESCE(SUM(quantity) FILTER (WHERE status IN ('pending', 'confirmed')), 0) as total_tickets_held
+       FROM reservations
+       WHERE event_id = $1`,
+      [event_id]
+    );
+
+    // Get cinema capacity stats
+    const cinemaStatsResult = await db.query(
+      `SELECT
+         ec.code,
+         ec.label,
+         ec.capacity,
+         COALESCE(
+           (SELECT SUM(r.quantity)
+            FROM reservations r
+            WHERE r.event_id = ec.event_id
+              AND r.cinema_code = ec.code
+              AND r.status IN ('pending', 'confirmed')
+           ), 0
+         ) as held_seats
+       FROM event_cinemas ec
+       WHERE ec.event_id = $1
+       ORDER BY ec.code ASC`,
+      [event_id]
+    );
+
+    res.json({
+      stats: {
+        ...statsResult.rows[0],
+        total_collected: parseFloat(statsResult.rows[0].total_collected),
+        total_tickets_held: parseInt(statsResult.rows[0].total_tickets_held)
+      },
+      cinemaStats: cinemaStatsResult.rows.map(c => ({
+        ...c,
+        capacity: parseInt(c.capacity),
+        held_seats: parseInt(c.held_seats)
+      }))
+    });
+  } catch (err) {
+    console.error('Error fetching stats:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // GET /api/movie-screening/admin/reservations
-// List all reservations for an event
+// List all reservations for an event (requires tracker permission - includes contact info)
 router.get('/admin/reservations', authenticateToken, requireMovieScreeningAdmin, async (req, res) => {
   try {
+    // Permission check: must have screenings_view + (screenings_tracker OR screenings_edit)
+    const hasAccess = await canViewTracker(req.user.email);
+    if (!hasAccess) {
+      return res.status(403).json({ error: 'Access denied. Screenings tracker permission required.' });
+    }
+
     const { event_id } = req.query;
 
     if (!event_id) {
@@ -323,6 +453,12 @@ router.get('/admin/reservations', authenticateToken, requireMovieScreeningAdmin,
 // POST /api/movie-screening/admin/:id/confirm
 // Confirm a reservation and assign ticket numbers
 router.post('/admin/:id/confirm', authenticateToken, requireMovieScreeningAdmin, async (req, res) => {
+  // Permission check: must have screenings_view + screenings_edit
+  const hasAccess = await canEditTracker(req.user.email);
+  if (!hasAccess) {
+    return res.status(403).json({ error: 'Access denied. Screenings edit permission required.' });
+  }
+
   const { id } = req.params;
   const adminId = req.user.id;
 
@@ -402,6 +538,12 @@ router.post('/admin/:id/confirm', authenticateToken, requireMovieScreeningAdmin,
 // POST /api/movie-screening/admin/:id/cancel
 // Cancel a reservation
 router.post('/admin/:id/cancel', authenticateToken, requireMovieScreeningAdmin, async (req, res) => {
+  // Permission check: must have screenings_view + screenings_edit
+  const hasAccess = await canEditTracker(req.user.email);
+  if (!hasAccess) {
+    return res.status(403).json({ error: 'Access denied. Screenings edit permission required.' });
+  }
+
   const { id } = req.params;
 
   try {

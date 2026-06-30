@@ -23,7 +23,11 @@ const ALL_PERMISSIONS = [
   'messages_view',
   'strategic_view',
   'funding_view',
-  'can_approve_media'
+  'can_approve_media',
+  'screenings_view',
+  'screenings_stats',
+  'screenings_tracker',
+  'screenings_edit'
 ];
 
 // Middleware to check if user is super admin

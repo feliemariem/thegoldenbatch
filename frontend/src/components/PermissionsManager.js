@@ -35,7 +35,11 @@ export default function PermissionsManager() {
     'strategic_view',
     'funding_view',
     'can_approve_media',
-    'pipeline_edit'
+    'pipeline_edit',
+    'screenings_view',
+    'screenings_stats',
+    'screenings_tracker',
+    'screenings_edit'
   ];
 
   const permissionLabels = {
@@ -58,7 +62,11 @@ export default function PermissionsManager() {
     strategic_view: 'Show Strategic Planning tab',
     funding_view: 'View Funding Progress & Reality Engine',
     can_approve_media: 'Media: Review & Approve Photos',
-    pipeline_edit: 'Pipeline: Manage Action Items'
+    pipeline_edit: 'Pipeline: Manage Action Items',
+    screenings_view: 'Show Screenings tab',
+    screenings_stats: 'View Stats (totals only)',
+    screenings_tracker: 'View Tracker (buyer contact info)',
+    screenings_edit: 'Edit Tracker (confirm, cancel, export)'
   };
 
   useEffect(() => {
@@ -387,6 +395,24 @@ export default function PermissionsManager() {
                 <h4 className="perm-section-title">PIPELINE</h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingLeft: '12px' }}>
                   {['pipeline_edit'].map(perm => (
+                    <label key={perm} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+                      <input
+                        type="checkbox"
+                        checked={permissions[perm] || false}
+                        onChange={() => handlePermissionChange(perm)}
+                        style={{ width: '16px', height: '16px' }}
+                      />
+                      <span className="perm-label">{permissionLabels[perm]}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Screenings Permissions */}
+              <div style={{ marginBottom: '20px' }}>
+                <h4 className="perm-section-title">SCREENINGS</h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingLeft: '12px' }}>
+                  {['screenings_view', 'screenings_stats', 'screenings_tracker', 'screenings_edit'].map(perm => (
                     <label key={perm} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
                       <input
                         type="checkbox"
