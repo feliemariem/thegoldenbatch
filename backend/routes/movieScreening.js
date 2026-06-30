@@ -368,10 +368,13 @@ router.get('/admin/reservations', authenticateToken, async (req, res) => {
       return res.status(400).json({ error: 'event_id is required' });
     }
 
+    // Join with admins table to get claimed_by admin name
     const result = await db.query(
-      `SELECT r.*, ec.label as cinema_label, ec.showtime
+      `SELECT r.*, ec.label as cinema_label, ec.showtime,
+              a.first_name as claimed_by_first_name, a.last_name as claimed_by_last_name
        FROM reservations r
        JOIN event_cinemas ec ON ec.event_id = r.event_id AND ec.code = r.cinema_code
+       LEFT JOIN admins a ON r.claimed_by = a.id
        WHERE r.event_id = $1
        ORDER BY r.created_at DESC`,
       [event_id]
@@ -414,7 +417,10 @@ router.get('/admin/reservations', authenticateToken, async (req, res) => {
       reservations: result.rows.map(r => ({
         ...r,
         unit_price: parseFloat(r.unit_price),
-        total_amount: parseFloat(r.total_amount)
+        total_amount: parseFloat(r.total_amount),
+        claimed_by_name: r.claimed_by_first_name && r.claimed_by_last_name
+          ? `${r.claimed_by_first_name} ${r.claimed_by_last_name}`
+          : (r.claimed_by_first_name || r.claimed_by_last_name || null)
       })),
       stats: {
         ...statsResult.rows[0],
@@ -550,6 +556,82 @@ router.post('/admin/:id/cancel', authenticateToken, async (req, res) => {
     });
   } catch (err) {
     console.error('Error cancelling reservation:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// POST /api/movie-screening/admin/:id/claim
+// Toggle claimed status for a reservation (for physical ticket pickup tracking)
+router.post('/admin/:id/claim', authenticateToken, async (req, res) => {
+  // Permission check: must have screenings_view + screenings_edit
+  const hasAccess = await canEditTracker(req.user.email);
+  if (!hasAccess) {
+    return res.status(403).json({ error: 'Access denied. Screenings edit permission required.' });
+  }
+
+  const { id } = req.params;
+
+  try {
+    // Get current claimed status
+    const current = await db.query(
+      'SELECT claimed FROM reservations WHERE id = $1',
+      [id]
+    );
+
+    if (current.rows.length === 0) {
+      return res.status(404).json({ error: 'Reservation not found' });
+    }
+
+    const isClaimed = current.rows[0].claimed;
+
+    // Get admin ID from admins table using user's email
+    const adminResult = await db.query(
+      'SELECT id FROM admins WHERE LOWER(email) = $1',
+      [req.user.email.toLowerCase()]
+    );
+
+    const adminId = adminResult.rows.length > 0 ? adminResult.rows[0].id : null;
+
+    // Toggle claimed status
+    const result = await db.query(
+      `UPDATE reservations
+       SET claimed = $1,
+           claimed_by = $2,
+           claimed_at = $3,
+           updated_at = NOW()
+       WHERE id = $4
+       RETURNING *`,
+      [
+        !isClaimed,
+        !isClaimed ? adminId : null,
+        !isClaimed ? new Date() : null,
+        id
+      ]
+    );
+
+    // Get admin name for response
+    let claimed_by_name = null;
+    if (!isClaimed && adminId) {
+      const nameResult = await db.query(
+        'SELECT first_name, last_name FROM admins WHERE id = $1',
+        [adminId]
+      );
+      if (nameResult.rows.length > 0) {
+        const { first_name, last_name } = nameResult.rows[0];
+        claimed_by_name = first_name && last_name
+          ? `${first_name} ${last_name}`
+          : (first_name || last_name || null);
+      }
+    }
+
+    res.json({
+      ...result.rows[0],
+      unit_price: parseFloat(result.rows[0].unit_price),
+      total_amount: parseFloat(result.rows[0].total_amount),
+      claimed_by_name
+    });
+  } catch (err) {
+    console.error('Error toggling claim status:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });

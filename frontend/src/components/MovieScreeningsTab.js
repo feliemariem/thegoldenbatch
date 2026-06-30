@@ -146,6 +146,31 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
     }
   };
 
+  const handleToggleClaimed = async (id) => {
+    setActionLoading(prev => ({ ...prev, [id]: 'claim' }));
+    try {
+      const res = await apiPost(`/api/movie-screening/admin/${id}/claim`);
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.error || 'Failed to update claim status');
+        return;
+      }
+
+      // Update reservation in local state
+      setReservations(prev => prev.map(r =>
+        r.id === id
+          ? { ...r, claimed: data.claimed, claimed_by: data.claimed_by, claimed_at: data.claimed_at, claimed_by_name: data.claimed_by_name }
+          : r
+      ));
+    } catch (err) {
+      console.error(err);
+      alert('Failed to update claim status');
+    } finally {
+      setActionLoading(prev => ({ ...prev, [id]: null }));
+    }
+  };
+
   const formatTicketRange = (reservation) => {
     if (reservation.status !== 'confirmed' || !reservation.serial_start) {
       return '-';
@@ -567,9 +592,11 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
 
   // Export CSV
   const exportCSV = () => {
-    const headers = ['buyer_name', 'purchased', 'cinema_code', 'quantity', 'unit_price', 'total_amount', 'gcash_ref', 'status', 'ticket_range'];
+    const headers = ['buyer_name', 'mobile', 'email', 'purchased', 'cinema_code', 'quantity', 'unit_price', 'total_amount', 'gcash_ref', 'status', 'chosen_seats', 'claimed', 'claimed_at', 'ticket_range'];
     const rows = reservations.map(r => [
       r.buyer_name,
+      r.mobile || '',
+      r.email || '',
       formatDate(r.created_at),
       r.cinema_code,
       r.quantity,
@@ -577,6 +604,9 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
       r.total_amount,
       r.gcash_ref,
       r.status,
+      r.chosen_seats || '',
+      r.claimed ? 'Yes' : 'No',
+      r.claimed_at ? formatDate(r.claimed_at) : '',
       r.status === 'confirmed' ? formatTicketRange(r) : ''
     ]);
 
@@ -770,13 +800,14 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
               <th>GCash Ref</th>
               <th>GCash Check</th>
               <th>Ticket Numbers</th>
+              <th>Claimed</th>
               <th>Status/Action</th>
             </tr>
           </thead>
           <tbody>
             {reservations.length === 0 ? (
               <tr>
-                <td colSpan="9" style={{ textAlign: 'center', color: 'var(--color-text-secondary)' }}>
+                <td colSpan="10" style={{ textAlign: 'center', color: 'var(--color-text-secondary)' }}>
                   No reservations yet
                 </td>
               </tr>
@@ -943,6 +974,60 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
                           )}
                         </button>
                       </div>
+                    ) : (
+                      <span style={{ color: 'var(--color-text-secondary)' }}>-</span>
+                    )}
+                  </td>
+                  <td>
+                    {r.status === 'confirmed' ? (
+                      hasEditAccess ? (
+                        <button
+                          onClick={() => handleToggleClaimed(r.id)}
+                          disabled={actionLoading[r.id] === 'claim'}
+                          style={{
+                            background: r.claimed ? 'rgba(4, 120, 87, 0.1)' : 'transparent',
+                            border: r.claimed ? '1px solid #047857' : '1px solid var(--color-text-secondary)',
+                            borderRadius: '6px',
+                            padding: '6px 12px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            opacity: actionLoading[r.id] === 'claim' ? 0.6 : 1
+                          }}
+                          title={r.claimed && r.claimed_by_name ? `Claimed by ${r.claimed_by_name} at ${formatDate(r.claimed_at)}` : 'Click to mark as claimed'}
+                        >
+                          {r.claimed ? (
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                          ) : (
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-secondary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            </svg>
+                          )}
+                          <span style={{ fontSize: '0.8rem', color: r.claimed ? '#047857' : 'var(--color-text-secondary)' }}>
+                            {actionLoading[r.id] === 'claim' ? '...' : (r.claimed ? 'Yes' : 'No')}
+                          </span>
+                        </button>
+                      ) : (
+                        <span
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            color: r.claimed ? '#047857' : 'var(--color-text-secondary)'
+                          }}
+                          title={r.claimed && r.claimed_by_name ? `Claimed by ${r.claimed_by_name} at ${formatDate(r.claimed_at)}` : ''}
+                        >
+                          {r.claimed ? (
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#047857" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                          ) : null}
+                          {r.claimed ? 'Yes' : 'No'}
+                        </span>
+                      )
                     ) : (
                       <span style={{ color: 'var(--color-text-secondary)' }}>-</span>
                     )}
