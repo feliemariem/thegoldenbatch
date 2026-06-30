@@ -477,6 +477,12 @@
   font-weight: 600;
 }
 
+/* Sold-out card price strikethrough */
+.ms-cinema-card.sold-out .ms-cinema-price {
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
 /* Full Event Sold Out Banner */
 .ms-sold-out-banner {
   display: flex;
