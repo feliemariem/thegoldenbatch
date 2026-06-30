@@ -23,8 +23,8 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
   const [gcashParsing, setGcashParsing] = useState(false);
   const fileInputRef = useRef(null);
 
-  // Copy feedback state: tracks which reservation ID was just copied
-  const [copiedId, setCopiedId] = useState(null);
+  // Copy feedback state: tracks which field was just copied { id, type }
+  const [copiedField, setCopiedField] = useState(null);
 
   // Derive cinema name from code (C3 -> "Cinema 3", C4 -> "Cinema 4")
   const getCinemaName = (code) => {
@@ -162,11 +162,8 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
     return `${code}-${start} to ${code}-${end}`;
   };
 
-  const copyTicketRange = async (reservation) => {
-    const range = formatTicketRange(reservation);
-    const count = reservation.quantity;
-    const text = `${range} (x${count})`;
-
+  // Generic copy helper
+  const copyToClipboard = async (text, id, type) => {
     try {
       await navigator.clipboard.writeText(text);
     } catch {
@@ -182,8 +179,21 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
     }
 
     // Show copied feedback
-    setCopiedId(reservation.id);
-    setTimeout(() => setCopiedId(null), 1500);
+    setCopiedField({ id, type });
+    setTimeout(() => setCopiedField(null), 1500);
+  };
+
+  const copyTicketRange = async (reservation) => {
+    const range = formatTicketRange(reservation);
+    const text = `${range} (x${reservation.quantity})`;
+    await copyToClipboard(text, reservation.id, 'ticket');
+  };
+
+  const copyContact = async (reservation, type) => {
+    const text = type === 'mobile' ? reservation.mobile : reservation.email;
+    if (text) {
+      await copyToClipboard(text, reservation.id, type);
+    }
   };
 
   const formatCurrency = (amount) => {
@@ -782,10 +792,71 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
                   }}
                 >
                   <td>
-                    <div style={{ fontWeight: 500 }}>{r.buyer_name}</div>
-                    <div style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
-                      {r.mobile || r.email}
-                    </div>
+                    <div style={{ fontWeight: 500, marginBottom: '4px' }}>{r.buyer_name}</div>
+                    {r.mobile && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '2px' }}>
+                        <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', fontFamily: 'monospace' }}>
+                          {r.mobile}
+                        </span>
+                        <button
+                          onClick={() => copyContact(r, 'mobile')}
+                          style={{
+                            background: copiedField?.id === r.id && copiedField?.type === 'mobile' ? 'rgba(0, 102, 51, 0.15)' : 'none',
+                            border: 'none',
+                            borderRadius: '3px',
+                            cursor: 'pointer',
+                            padding: '2px 4px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            transition: 'background 0.2s'
+                          }}
+                          title={copiedField?.id === r.id && copiedField?.type === 'mobile' ? 'Copied!' : 'Copy mobile'}
+                        >
+                          {copiedField?.id === r.id && copiedField?.type === 'mobile' ? (
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#006633" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                          ) : (
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-secondary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                          )}
+                        </button>
+                      </div>
+                    )}
+                    {r.email && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '2px' }}>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', maxWidth: '140px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={r.email}>
+                          {r.email}
+                        </span>
+                        <button
+                          onClick={() => copyContact(r, 'email')}
+                          style={{
+                            background: copiedField?.id === r.id && copiedField?.type === 'email' ? 'rgba(0, 102, 51, 0.15)' : 'none',
+                            border: 'none',
+                            borderRadius: '3px',
+                            cursor: 'pointer',
+                            padding: '2px 4px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            transition: 'background 0.2s'
+                          }}
+                          title={copiedField?.id === r.id && copiedField?.type === 'email' ? 'Copied!' : 'Copy email'}
+                        >
+                          {copiedField?.id === r.id && copiedField?.type === 'email' ? (
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#006633" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                          ) : (
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-secondary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                          )}
+                        </button>
+                      </div>
+                    )}
                     {r.quantity >= 20 && (
                       <span style={{
                         display: 'inline-block',
@@ -847,7 +918,7 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
                         <button
                           onClick={() => copyTicketRange(r)}
                           style={{
-                            background: copiedId === r.id ? 'rgba(0, 102, 51, 0.15)' : 'none',
+                            background: copiedField?.id === r.id && copiedField?.type === 'ticket' ? 'rgba(0, 102, 51, 0.15)' : 'none',
                             border: 'none',
                             borderRadius: '4px',
                             cursor: 'pointer',
@@ -857,10 +928,10 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
                             justifyContent: 'center',
                             transition: 'background 0.2s'
                           }}
-                          title={copiedId === r.id ? 'Copied!' : 'Copy ticket numbers'}
-                          aria-label={copiedId === r.id ? 'Copied!' : 'Copy ticket numbers'}
+                          title={copiedField?.id === r.id && copiedField?.type === 'ticket' ? 'Copied!' : 'Copy ticket numbers'}
+                          aria-label={copiedField?.id === r.id && copiedField?.type === 'ticket' ? 'Copied!' : 'Copy ticket numbers'}
                         >
-                          {copiedId === r.id ? (
+                          {copiedField?.id === r.id && copiedField?.type === 'ticket' ? (
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#006633" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                               <polyline points="20 6 9 17 4 12"></polyline>
                             </svg>
