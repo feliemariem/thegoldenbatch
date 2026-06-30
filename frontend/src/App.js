@@ -28,6 +28,7 @@ import BatchRep from './pages/BatchRep';
 import BatchRepVoting from './pages/BatchRepVoting';
 import BatchRepVotingModal from './components/BatchRepVotingModal';
 import MovieScreening from './pages/MovieScreening';
+import UploadMemories from './pages/UploadMemories';
 import './styles/base.css';
 import './styles/components.css';
 import './styles/auth.css';
@@ -134,6 +135,9 @@ function AppRoutes() {
 
       {/* Movie Screening: Public ticket purchase page. Access: Anyone. */}
       <Route path="/movie-screening" element={<MovieScreening />} />
+
+      {/* Upload Memories: Public page for batchmates to upload photos/videos. Access: Anyone. */}
+      <Route path="/upload-memories" element={<UploadMemories />} />
 
       {/* Invite redirect: Messenger-safe short link that redirects to /register/:token.
           Access: Anyone. Render rewrites /i/:token to index.html, React handles redirect. */}
