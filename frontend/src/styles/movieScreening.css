@@ -352,6 +352,72 @@
 }
 
 /* ========================================
+   CONTACT PURPOSE & PRIVACY DISCLOSURE
+   ======================================== */
+
+.ms-contact-purpose {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  margin: 6px 0 8px 0;
+  line-height: 1.4;
+  opacity: 0.85;
+}
+
+.ms-privacy-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  padding: 4px 0;
+  font-size: 0.7rem;
+  font-family: inherit;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.ms-privacy-toggle:hover {
+  opacity: 1;
+}
+
+.ms-privacy-chevron {
+  display: inline-block;
+  font-size: 0.6rem;
+  transition: transform 0.2s ease;
+}
+
+.ms-privacy-toggle.open .ms-privacy-chevron {
+  transform: rotate(90deg);
+}
+
+.ms-privacy-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, margin 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+}
+
+.ms-privacy-content.open {
+  max-height: 200px;
+  margin: 8px 0;
+  opacity: 1;
+}
+
+.ms-privacy-content p {
+  font-size: 0.7rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  margin: 0;
+  padding: 10px 12px;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  opacity: 0.8;
+}
+
+/* ========================================
    CINEMA CARDS (always 2 columns)
    ======================================== */
 

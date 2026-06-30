@@ -37,6 +37,9 @@ export default function MovieScreening() {
   // Copy feedback
   const [gcashCopied, setGcashCopied] = useState(false);
 
+  // Privacy disclosure toggle
+  const [privacyOpen, setPrivacyOpen] = useState(false);
+
   // Normalize and validate Philippine mobile number
   const normalizePHMobile = (value) => {
     if (!value || !value.trim()) return null;
@@ -522,6 +525,22 @@ export default function MovieScreening() {
                 <div className="ms-field">
                   <label className="ms-label">MOBILE NUMBER OR EMAIL <span className="ms-req">*</span></label>
                   <span className="ms-hint">at least one required</span>
+                  <p className="ms-contact-purpose">
+                    We'll only use this to message your ticket number(s) and coordinate pickup.
+                  </p>
+                  <button
+                    type="button"
+                    className={`ms-privacy-toggle ${privacyOpen ? 'open' : ''}`}
+                    onClick={() => setPrivacyOpen(!privacyOpen)}
+                  >
+                    <span className="ms-privacy-chevron">▸</span>
+                    Data privacy
+                  </button>
+                  <div className={`ms-privacy-content ${privacyOpen ? 'open' : ''}`}>
+                    <p>
+                      By providing your contact information, you consent to the collection and use of your personal information by USLS-IS Batch 2003 in accordance with the Data Privacy Act of 2012 (R.A. 10173). Your information will only be used for purposes related to this movie screening fundraiser and will not be shared with third parties or used for commercial purposes.
+                    </p>
+                  </div>
                   {contactError && <span className="ms-field-error">{contactError}</span>}
                 </div>
                 <div className="ms-field-row">
