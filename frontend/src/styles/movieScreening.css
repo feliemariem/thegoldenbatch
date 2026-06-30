@@ -996,6 +996,30 @@ body[data-theme="light"] .ms-what-next h4 {
   color: #CFB53B;
 }
 
+/* Buy more tickets link */
+.ms-buy-more-link {
+  display: block;
+  background: none;
+  border: none;
+  padding: 0;
+  margin-top: 16px;
+  font-size: 0.85rem;
+  font-family: 'Poppins', sans-serif;
+  color: #CFB53B;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.ms-buy-more-link:hover {
+  text-decoration: underline;
+  opacity: 0.85;
+}
+
+body[data-theme="light"] .ms-buy-more-link {
+  color: #006633;
+}
+
 /* ========================================
    PRINT STYLES
    ======================================== */

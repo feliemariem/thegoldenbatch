@@ -153,6 +153,25 @@ export default function MovieScreening() {
   const unitPrice = selectedCinemaData?.unit_price || 0;
   const totalAmount = unitPrice * quantity;
 
+  // Reset form for a new purchase
+  const resetForNewPurchase = () => {
+    setBuyerName('');
+    setMobile('');
+    setEmail('');
+    setSelectedCinema(null);
+    setQuantity(1);
+    setGcashRef('');
+    setSubmitError('');
+    setMobileError('');
+    setEmailError('');
+    setContactError('');
+    setSubmitted(false);
+    setReservation(null);
+    setPrivacyOpen(false);
+    // Refresh seat availability
+    fetchActiveEvent();
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitError('');
@@ -350,6 +369,14 @@ export default function MovieScreening() {
               onClick={() => window.print()}
             >
               Print / Save as PDF
+            </button>
+
+            <button
+              type="button"
+              className="ms-buy-more-link ms-no-print"
+              onClick={resetForNewPurchase}
+            >
+              Buy more tickets
             </button>
           </div>
         </div>
