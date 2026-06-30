@@ -935,6 +935,15 @@ body[data-theme="light"] .ms-what-next h4 {
    ======================================== */
 
 @media print {
+  /* Override CSS variables for print */
+  :root,
+  body,
+  body[data-theme="light"],
+  body[data-theme="dark"] {
+    --color-bg-primary: #ffffff !important;
+    --color-bg-card: #ffffff !important;
+  }
+
   /* KILL ALL DARK BACKGROUNDS - force white everywhere */
   *,
   *::before,
@@ -944,19 +953,27 @@ body[data-theme="light"] .ms-what-next h4 {
     background-image: none !important;
   }
 
-  html,
+  html {
+    background: #fff !important;
+    background-color: #fff !important;
+    height: auto !important;
+    min-height: 0 !important;
+  }
+
   body {
     background: #fff !important;
+    background-color: #fff !important;
     margin: 0 !important;
     padding: 0 !important;
     height: auto !important;
-    min-height: auto !important;
+    min-height: 0 !important;
   }
 
-  /* Remove height constraints that cause second page */
+  /* Remove height constraints that cause dark blocks */
   .ms-page {
     background: #fff !important;
-    min-height: auto !important;
+    background-color: #fff !important;
+    min-height: 0 !important;
     height: auto !important;
   }
 
@@ -972,6 +989,9 @@ body[data-theme="light"] .ms-what-next h4 {
   footer,
   .site-footer {
     display: none !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
   }
 
   /* Reset container for print */
@@ -980,19 +1000,21 @@ body[data-theme="light"] .ms-what-next h4 {
     margin: 0 !important;
     padding: 0 !important;
     background: #fff !important;
+    background-color: #fff !important;
     height: auto !important;
-    min-height: auto !important;
+    min-height: 0 !important;
   }
 
   /* Confirmation wrapper */
   .ms-confirmation {
     background: #fff !important;
+    background-color: #fff !important;
     border: none !important;
     box-shadow: none !important;
     padding: 0 !important;
     margin: 0 !important;
     height: auto !important;
-    min-height: auto !important;
+    min-height: 0 !important;
     page-break-inside: avoid;
   }
 
