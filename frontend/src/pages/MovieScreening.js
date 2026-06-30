@@ -524,9 +524,11 @@ export default function MovieScreening() {
                 {/* Contact Row */}
                 <div className="ms-field">
                   <label className="ms-label">MOBILE NUMBER OR EMAIL <span className="ms-req">*</span></label>
-                  <span className="ms-hint">at least one required</span>
                   <p className="ms-contact-purpose">
-                    We'll only use this to message your ticket number(s) and coordinate pickup.
+                    At least one required — mobile if you're in the Philippines, email if abroad.
+                  </p>
+                  <p className="ms-contact-purpose">
+                    We'll message your {quantity === 1 ? 'ticket number' : 'ticket numbers'} here within 24 hours of verifying your payment, so please make sure it's correct.
                   </p>
                   <button
                     type="button"
@@ -546,7 +548,6 @@ export default function MovieScreening() {
                 <div className="ms-field-row">
                   <div className="ms-field">
                     <label className="ms-label-secondary">MOBILE NUMBER</label>
-                    <span className="ms-hint">if in the Philippines</span>
                     <input
                       ref={mobileInputRef}
                       type="tel"
@@ -564,7 +565,6 @@ export default function MovieScreening() {
                   </div>
                   <div className="ms-field">
                     <label className="ms-label-secondary">EMAIL ADDRESS</label>
-                    <span className="ms-hint">if outside the Philippines</span>
                     <input
                       type="email"
                       className={`ms-input ${emailError || contactError ? 'ms-input-error' : ''}`}
@@ -629,6 +629,7 @@ export default function MovieScreening() {
                 {/* GCash Reference */}
                 <div className="ms-field">
                   <label className="ms-label">REFERENCE NUMBER <span className="ms-req">*</span></label>
+                  <span className="ms-hint">(we use this to confirm your payment)</span>
                   <input
                     type="text"
                     inputMode="numeric"
