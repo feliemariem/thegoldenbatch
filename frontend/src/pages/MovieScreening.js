@@ -419,7 +419,7 @@ export default function MovieScreening() {
           <form onSubmit={handleSubmit}>
             {/* Cinema Selection - FIRST interactive step */}
             <div className="ms-field">
-              <label className="ms-label">SELECT CINEMA <span className="ms-req">*</span></label>
+              <label className="ms-label">SELECT CINEMA & SHOWTIME <span className="ms-req">*</span></label>
               <div className="ms-cinema-cards">
                 {cinemas.map((cinema) => (
                   <div
