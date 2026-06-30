@@ -325,7 +325,7 @@ export default function MovieScreening() {
                 <h4>What happens next?</h4>
                 <ul>
                   <li>Wait 24 hours for payment verification.</li>
-                  <li>A committee member will send you a message with your {numWord}.</li>
+                  <li>A committee member will message your {numWord}.</li>
                   <li>Your {numWord} {isAre} {stubVoucher} onsite.</li>
                   <li>A committee member will let you know where to pick up your printed {ticketWord}.</li>
                   <li>Raffle and merch sold separately onsite.</li>
