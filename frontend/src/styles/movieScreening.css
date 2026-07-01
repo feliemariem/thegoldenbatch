@@ -1330,15 +1330,31 @@ body[data-theme="light"] .ms-buy-more-link {
   .ms-theme-toggle,
   .ms-form-section,
   .ms-no-print,
-  .ms-confirm-icon,
-  .ms-confirm-title,
-  .ms-confirm-subtitle,
   footer,
   .site-footer {
     display: none !important;
     height: 0 !important;
     min-height: 0 !important;
     overflow: hidden !important;
+  }
+
+  /* Confirmation header - show and style for print */
+  .ms-confirm-icon {
+    width: 48px !important;
+    height: 48px !important;
+    background: none !important;
+    border: 2px solid #000 !important;
+    color: #000 !important;
+    font-size: 1.5rem !important;
+  }
+
+  .ms-confirm-title {
+    color: #000 !important;
+    font-size: 1.5rem !important;
+  }
+
+  .ms-confirm-subtitle {
+    color: #333 !important;
   }
 
   /* Reset container for print */
@@ -1395,9 +1411,8 @@ body[data-theme="light"] .ms-buy-more-link {
   }
 
   .ms-receipt-batch {
-    color: #006633 !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    color: #000 !important;
+    font-weight: 700 !important;
   }
 
   .ms-receipt-title {
@@ -1420,9 +1435,8 @@ body[data-theme="light"] .ms-buy-more-link {
   }
 
   .ms-order-total {
-    color: #006633 !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    color: #000 !important;
+    font-weight: 700 !important;
   }
 
   .ms-pending-note {
