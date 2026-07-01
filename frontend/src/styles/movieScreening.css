@@ -547,6 +547,24 @@ body[data-theme="dark"] .ms-total-label {
 }
 
 /* ========================================
+   DARK MODE CONFIRMATION PAGE
+   ======================================== */
+
+body[data-theme="dark"] .ms-confirmation {
+  background: #141414;
+  border: 1px solid #262626;
+}
+
+body[data-theme="dark"] .ms-order-summary {
+  background: #141414;
+  border: 1px solid #262626;
+}
+
+body[data-theme="dark"] .ms-order-total {
+  color: #CFB53B !important;
+}
+
+/* ========================================
    CINEMA CARDS (always 2 columns)
    ======================================== */
 

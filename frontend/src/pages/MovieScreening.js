@@ -319,7 +319,7 @@ export default function MovieScreening() {
 
             <div className="ms-order-summary">
               <div className="ms-receipt-header">
-                <div className="ms-receipt-batch">USLS-IS Batch 2003 · Movie Screening</div>
+                <div className="ms-receipt-batch">USLS-IS Batch 2003 · Block Screening</div>
                 <div className="ms-receipt-title">{event.title}</div>
                 <div className="ms-receipt-meta">{formatDateHero(event.event_date)}</div>
                 <div className="ms-receipt-meta">Ayala Malls Cinema · Bacolod</div>
