@@ -90,14 +90,16 @@ export default function SeatPicker() {
         return;
       }
 
-      // Already selected - show confirmation
-      if (json.alreadySelected) {
+      // Already reserved - show read-only confirmation
+      if (json.alreadyReserved) {
         setConfirmed(true);
         setConfirmData({
           buyer_name: json.buyer_name,
           cinema_code: json.cinema_code,
           quantity: json.quantity,
-          chosen_seats: json.chosen_seats
+          chosen_seats: json.chosen_seats,
+          gcash_ref: json.gcash_ref,
+          alreadyReserved: true
         });
         setLoading(false);
         return;
@@ -552,7 +554,7 @@ export default function SeatPicker() {
     );
   }
 
-  // Confirmation summary (after confirm or alreadySelected)
+  // Confirmation summary (after confirm or alreadyReserved)
   if (confirmed && confirmData) {
     return (
       <div style={styles.body}>
@@ -566,7 +568,9 @@ export default function SeatPicker() {
               <div style={styles.sumSub}>Ayala Malls Capitol Central · Bacolod</div>
             </div>
             <div style={styles.sumBody}>
-              <div style={styles.sumSection}>Seat Confirmation</div>
+              <div style={styles.sumSection}>
+                {confirmData.alreadyReserved ? 'Your Seats Have Been Reserved' : 'Seat Confirmation'}
+              </div>
               <div style={styles.sumRow}>
                 <span style={styles.sumRowLabel}>Name</span>
                 <b style={styles.sumRowValue}>{confirmData.buyer_name}</b>

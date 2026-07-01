@@ -295,7 +295,7 @@ router.get('/seats/:token', async (req, res) => {
     // Look up the reservation by seat_token with row lock
     const reservationResult = await client.query(
       `SELECT id, event_id, cinema_code, buyer_name, quantity, status,
-              chosen_seats, seats_selected_at, seat_selection_started_at
+              chosen_seats, seats_selected_at, seat_selection_started_at, gcash_ref
        FROM reservations
        WHERE seat_token = $1
        FOR UPDATE`,
@@ -319,11 +319,12 @@ router.get('/seats/:token', async (req, res) => {
     if (reservation.seats_selected_at) {
       await client.query('ROLLBACK');
       return res.json({
-        alreadySelected: true,
-        chosen_seats: reservation.chosen_seats,
+        alreadyReserved: true,
         buyer_name: reservation.buyer_name,
         cinema_code: reservation.cinema_code,
-        quantity: reservation.quantity
+        quantity: reservation.quantity,
+        chosen_seats: reservation.chosen_seats,
+        gcash_ref: reservation.gcash_ref
       });
     }
 
