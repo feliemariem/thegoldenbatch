@@ -821,6 +821,7 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
               <th>GCash Ref</th>
               <th>GCash Check</th>
               <th>Ticket Numbers</th>
+              <th>Seats</th>
               <th>Status/Action</th>
               <th>Claimed</th>
             </tr>
@@ -828,7 +829,7 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
           <tbody>
             {reservations.length === 0 ? (
               <tr>
-                <td colSpan="10" style={{ textAlign: 'center', color: 'var(--color-text-secondary)' }}>
+                <td colSpan="11" style={{ textAlign: 'center', color: 'var(--color-text-secondary)' }}>
                   No reservations yet
                 </td>
               </tr>
@@ -995,47 +996,72 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
                           )}
                         </button>
                         {r.quantity >= 20 && hasEditAccess && (
-                          <button
-                            onClick={() => handleGenerateSeatLink(r.id)}
-                            disabled={actionLoading[r.id] === 'seatlink'}
-                            style={{
-                              background: copiedField?.id === r.id && copiedField?.type === 'seatlink' ? 'rgba(207, 181, 59, 0.15)' : 'rgba(207, 181, 59, 0.08)',
-                              border: '1px solid rgba(207, 181, 59, 0.3)',
-                              borderRadius: '4px',
-                              cursor: 'pointer',
-                              padding: '4px 8px',
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '4px',
-                              fontSize: '0.7rem',
-                              fontWeight: 600,
-                              color: '#CFB53B',
-                              transition: 'background 0.2s',
-                              opacity: actionLoading[r.id] === 'seatlink' ? 0.6 : 1
-                            }}
-                            title={copiedField?.id === r.id && copiedField?.type === 'seatlink' ? 'Link copied!' : 'Generate seat picker link'}
-                          >
-                            {actionLoading[r.id] === 'seatlink' ? '...' : (
-                              copiedField?.id === r.id && copiedField?.type === 'seatlink' ? (
-                                <>
-                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#CFB53B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                  </svg>
-                                  Copied!
-                                </>
-                              ) : (
-                                <>
-                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#CFB53B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-                                  </svg>
-                                  Seat link
-                                </>
-                              )
-                            )}
-                          </button>
+                          r.seats_selected_at ? (
+                            <span style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)', fontStyle: 'italic' }}>
+                              Seats reserved
+                            </span>
+                          ) : (
+                            <button
+                              onClick={() => handleGenerateSeatLink(r.id)}
+                              disabled={actionLoading[r.id] === 'seatlink'}
+                              style={{
+                                background: copiedField?.id === r.id && copiedField?.type === 'seatlink' ? 'rgba(207, 181, 59, 0.15)' : 'rgba(207, 181, 59, 0.08)',
+                                border: '1px solid rgba(207, 181, 59, 0.3)',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                padding: '4px 8px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                                fontSize: '0.7rem',
+                                fontWeight: 600,
+                                color: '#CFB53B',
+                                transition: 'background 0.2s',
+                                opacity: actionLoading[r.id] === 'seatlink' ? 0.6 : 1
+                              }}
+                              title={copiedField?.id === r.id && copiedField?.type === 'seatlink' ? 'Link copied!' : 'Generate seat picker link'}
+                            >
+                              {actionLoading[r.id] === 'seatlink' ? '...' : (
+                                copiedField?.id === r.id && copiedField?.type === 'seatlink' ? (
+                                  <>
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#CFB53B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                      <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                    Copied!
+                                  </>
+                                ) : (
+                                  <>
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#CFB53B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                                    </svg>
+                                    Seat link
+                                  </>
+                                )
+                              )}
+                            </button>
+                          )
                         )}
                       </div>
+                    ) : (
+                      <span style={{ color: 'var(--color-text-secondary)' }}>-</span>
+                    )}
+                  </td>
+                  <td>
+                    {r.chosen_seats ? (
+                      <span
+                        style={{
+                          fontSize: '0.8rem',
+                          maxWidth: '120px',
+                          display: 'inline-block',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap'
+                        }}
+                        title={r.chosen_seats}
+                      >
+                        {r.chosen_seats}
+                      </span>
                     ) : (
                       <span style={{ color: 'var(--color-text-secondary)' }}>-</span>
                     )}

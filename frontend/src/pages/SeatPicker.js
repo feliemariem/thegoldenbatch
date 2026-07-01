@@ -402,8 +402,11 @@ export default function SeatPicker() {
     },
     timer: {
       fontSize: '13px',
-      color: '#b45309',
-      fontWeight: 500
+      color: '#b91c1c',
+      fontWeight: 500,
+      background: '#fff',
+      padding: '4px 12px',
+      borderRadius: '20px'
     },
     timerLow: {
       color: '#b91c1c'
