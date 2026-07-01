@@ -29,6 +29,7 @@ import BatchRepVoting from './pages/BatchRepVoting';
 import BatchRepVotingModal from './components/BatchRepVotingModal';
 import MovieScreening from './pages/MovieScreening';
 import UploadMemories from './pages/UploadMemories';
+import SeatPicker from './pages/SeatPicker';
 import './styles/base.css';
 import './styles/components.css';
 import './styles/auth.css';
@@ -138,6 +139,9 @@ function AppRoutes() {
 
       {/* Upload Memories: Public page for batchmates to upload photos/videos. Access: Anyone. */}
       <Route path="/upload-memories" element={<UploadMemories />} />
+
+      {/* Seat Picker: Public page for 20+ ticket buyers to select their seats. Access: Anyone with valid token. */}
+      <Route path="/seats/:token" element={<SeatPicker />} />
 
       {/* Invite redirect: Messenger-safe short link that redirects to /register/:token.
           Access: Anyone. Render rewrites /i/:token to index.html, React handles redirect. */}
