@@ -648,7 +648,7 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
   if (loading) {
     return (
       <div className="invite-section">
-        <h3>Movie Screenings</h3>
+        <h3>Block Screenings</h3>
         <p style={{ color: 'var(--color-text-secondary)' }}>Loading...</p>
       </div>
     );
@@ -657,7 +657,7 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
   if (!event) {
     return (
       <div className="invite-section">
-        <h3>Movie Screenings</h3>
+        <h3>Block Screenings</h3>
         <p style={{ color: 'var(--color-text-secondary)' }}>No active screening event.</p>
       </div>
     );
@@ -665,7 +665,7 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
 
   return (
     <div className="invite-section">
-      <h3>Movie Screenings</h3>
+      <h3>Block Screenings</h3>
       <p style={{ color: 'var(--color-text-secondary)', marginBottom: '20px' }}>
         {event.title} {event.subtitle ? `- ${event.subtitle}` : ''}
       </p>

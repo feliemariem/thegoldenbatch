@@ -134,7 +134,7 @@ function AppRoutes() {
       {/* Landing: Public marketing page. Access: Anyone. */}
       <Route path="/" element={<Landing />} />
 
-      {/* Movie Screening: Public ticket purchase page. Access: Anyone. */}
+      {/* Block Screening: Public ticket purchase page. Access: Anyone. */}
       <Route path="/movie-screening" element={<MovieScreening />} />
 
       {/* Upload Memories: Public page for batchmates to upload photos/videos. Access: Anyone. */}

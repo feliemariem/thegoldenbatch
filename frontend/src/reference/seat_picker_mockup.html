@@ -1,0 +1,327 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Batch 2003 - Seat Picker Mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Gelasio:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green:#006633;
+    --gold:#CFB53B;
+    --ink:#1a1a1a;
+    --taken:#c9c9c9;
+    --avail-border:#006633;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:#f4f4f0;color:var(--ink);
+    font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    padding:20px;
+  }
+  .wrap{max-width:900px;margin:0 auto}
+  .demo{
+    background:#fff8dc;border:1px dashed #b8a53a;border-radius:8px;
+    padding:12px 14px;margin-bottom:16px;font-size:13px;
+  }
+  .demo b{color:#7a6a10}
+  .demo-row{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:8px}
+  .demo label{font-size:12px;display:flex;flex-direction:column;gap:3px;color:#555}
+  .demo input,.demo select{padding:5px 7px;border:1px solid #ccc;border-radius:5px;font-size:13px}
+
+  .card{background:#fff;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.08);overflow:hidden}
+  .head{
+    background:var(--green);color:#fff;padding:14px 18px;
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;
+  }
+  .head .who{font-size:15px}
+  .head .who b{color:var(--gold)}
+  .head .count{
+    font-size:14px;background:rgba(255,255,255,.15);padding:6px 12px;border-radius:20px;
+    font-variant-numeric:tabular-nums;
+  }
+  .head .count.full{background:var(--gold);color:#1a1a1a;font-weight:600}
+
+  .legend{display:flex;gap:18px;padding:10px 18px;font-size:12px;border-bottom:1px solid #eee;flex-wrap:wrap}
+  .legend span{display:flex;align-items:center;gap:6px}
+  .swatch{width:16px;height:16px;border-radius:3px;display:inline-block}
+  .sw-avail{background:#fff;border:1.5px solid var(--avail-border)}
+  .sw-sel{background:var(--green)}
+  .sw-taken{background:var(--taken)}
+
+  .screenwrap{padding:18px;overflow-x:auto}
+  .map{display:inline-block;min-width:100%}
+  .maprow{display:flex;align-items:center;gap:3px;margin-bottom:3px}
+  .rowlabel{width:20px;text-align:center;font-weight:600;font-size:12px;color:#555;flex:0 0 20px}
+  .cell{width:26px;height:26px;flex:0 0 26px}
+  .seat{
+    width:26px;height:26px;border-radius:4px;border:1.5px solid var(--avail-border);
+    background:#fff;color:var(--ink);font-size:10px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;padding:0;line-height:1;
+    font-variant-numeric:tabular-nums;transition:transform .05s;
+  }
+  .seat:hover{transform:scale(1.12);z-index:2}
+  .seat.sel{background:var(--green);color:#fff;border-color:var(--green)}
+  .seat.taken{background:var(--taken);border-color:var(--taken);color:#8a8a8a;cursor:not-allowed}
+  .seat.taken:hover{transform:none}
+  .seat.disabled{opacity:.4;cursor:not-allowed}
+  .seat.disabled:hover{transform:none}
+
+  .screen{
+    margin:14px auto 2px;max-width:70%;text-align:center;
+    background:linear-gradient(#ddd,#f4f4f0);border-top:3px solid #999;
+    border-radius:0 0 40px 40px/0 0 12px 12px;padding:4px;
+    font-size:11px;letter-spacing:3px;color:#888;
+  }
+
+  .foot{padding:14px 18px;border-top:1px solid #eee;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+  .confirm{
+    background:var(--gold);color:#1a1a1a;border:none;padding:10px 22px;border-radius:6px;
+    font-size:14px;font-weight:600;cursor:pointer;
+  }
+  .confirm:disabled{opacity:.4;cursor:not-allowed}
+  .picked{font-size:13px;color:#333}
+  .picked b{color:var(--green)}
+
+  .backend{
+    margin-top:14px;background:#1e1e1e;color:#8fdca0;padding:12px 14px;border-radius:8px;
+    font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;white-space:pre-wrap;display:none;
+  }
+  .backend .k{color:#c9a84a}
+
+  .summary{max-width:480px;margin-left:auto;margin-right:auto;background:#fff;border:1px solid #e2e2e2}
+  .sum-head{padding:26px 30px 6px;text-align:center}
+  .sum-brand{font-family:'Poppins',sans-serif;font-size:11px;letter-spacing:1.5px;font-weight:600;color:#1a1a1a;text-transform:uppercase}
+  .sum-title{font-family:'Gelasio',Georgia,serif;font-size:25px;font-weight:700;margin:10px 0 8px;color:#1a1a1a;line-height:1.15}
+  .sum-sub{font-family:'Poppins',sans-serif;font-size:13px;color:#333;line-height:1.6}
+  .sum-body{padding:10px 30px 24px}
+  .sum-section{font-family:'Gelasio',Georgia,serif;font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#1a1a1a;border-top:1px solid #ddd;padding-top:20px;margin-bottom:4px}
+  .sum-row{display:flex;justify-content:space-between;gap:14px;padding:13px 0;border-bottom:1px solid #eee;font-size:14px;font-family:'Poppins',sans-serif}
+  .sum-row span{color:#555}
+  .sum-row b{text-align:right;color:#1a1a1a;font-weight:600}
+  .sum-note{margin-top:16px;font-size:12.5px;color:#555;line-height:1.6;font-family:'Poppins',sans-serif}
+  .sum-foot-note{margin-top:16px;padding-top:16px;border-top:1px solid #ddd;text-align:center;font-size:12.5px;color:#555;font-family:'Poppins',sans-serif}
+  .sum-foot-note a{color:#006633}
+  .sum-foot{padding:0 30px 24px;text-align:center}
+
+  @media print{
+    body{background:#fff;padding:0}
+    .demo,.card:not(.summary),.backend,.no-print{display:none !important}
+    .summary{box-shadow:none;border:1px solid #ccc;max-width:100%}
+  }
+</style>
+
+<div class="wrap">
+  <div class="demo">
+    <b>Demo controls</b> (not part of the real buyer link - just so you can test the flow)
+    <div class="demo-row">
+      <label>Cinema
+        <select id="cinemaSel">
+          <option value="c3">Cinema 3 (321 seats)</option>
+          <option value="c4">Cinema 4 (147 seats)</option>
+        </select>
+      </label>
+      <label>Buyer name <span style="color:#999;font-weight:400">(from link)</span>
+        <input id="nameInp" value="Maria Santos" style="width:150px;background:#eee;color:#555;cursor:not-allowed" readonly>
+      </label>
+      <label>Tickets bought (this cinema) <span style="color:#999;font-weight:400">(from link)</span>
+        <input id="qtyInp" type="number" value="20" style="width:70px;background:#eee;color:#555;cursor:not-allowed" readonly>
+      </label>
+      <label style="align-self:flex-end;color:#7a6a10;font-size:11px">Gray seats = already assigned</label>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="head">
+      <div class="who">Seat selection for <b id="whoName">Maria Santos</b> &middot; <span id="whoCinema">Cinema 3</span></div>
+      <div class="count" id="counter">Selected 0 of 20</div>
+    </div>
+    <div class="legend">
+      <span><i class="swatch sw-avail"></i> Available</span>
+      <span><i class="swatch sw-sel"></i> Your selection</span>
+      <span><i class="swatch sw-taken"></i> Taken</span>
+    </div>
+    <div class="screenwrap">
+      <div class="map" id="map"></div>
+      <div class="screen">--- SCREEN ---</div>
+    </div>
+    <div class="foot">
+      <div class="picked">Your seats: <b id="pickedList">none yet</b></div>
+      <button class="confirm" id="confirmBtn" disabled>Confirm seats</button>
+    </div>
+  </div>
+
+  <div class="backend" id="backend"></div>
+
+  <div class="card summary" id="summary" style="display:none;margin-top:16px">
+    <div class="sum-head">
+      <div class="sum-brand">USLS-IS Batch 2003 &middot; Block Screening</div>
+      <div class="sum-title">Spider-Man: Brand New Day</div>
+      <div class="sum-sub">Friday &middot; July 31, 2026</div>
+      <div class="sum-sub">Ayala Malls Capitol Central &middot; Bacolod</div>
+    </div>
+    <div class="sum-body">
+      <div class="sum-section">Seat Confirmation</div>
+      <div class="sum-row"><span>Name</span><b id="sumName"></b></div>
+      <div class="sum-row"><span>Cinema</span><b id="sumCinema"></b></div>
+      <div class="sum-row"><span>Seats</span><b id="sumSeats"></b></div>
+      <div class="sum-row"><span>Total seats</span><b id="sumCount"></b></div>
+      <div class="sum-row"><span>Reference No.</span><b id="sumRef"></b></div>
+      <div class="sum-note">Bring this with your Batch 2003 ticket stubs on screening day. Your reserved seats will be ready for you at the venue.</div>
+      <div class="sum-foot-note">Questions? Email us at <a href="mailto:uslsis.batch2003@gmail.com">uslsis.batch2003@gmail.com</a></div>
+    </div>
+    <div class="sum-foot no-print">
+      <button class="confirm" onclick="window.print()">Print / Save as PDF</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ---- Seat maps copied from the Ayala blueprints (letter + seat number) ----
+// Each row: {letter, cols: {columnIndex: seatNumber}} ; blank columns = gap.
+
+const C3_COLS = 26;
+function c3full(letter){ // rows O..I : seats 1-24
+  const c={};
+  [1,2,3,4,5,6].forEach((s,i)=>c[i+1]=s);          // left cols 1-6
+  for(let s=7;s<=17;s++) c[s+1]=s;                  // middle cols 8-18
+  for(let s=18;s<=24;s++) c[s+2]=s;                 // right cols 20-26
+  return {letter,cols:c};
+}
+function c3short(letter){ // rows H..B : seats 1-20
+  const c={};
+  c[3]=1;c[4]=2;c[5]=3;c[6]=4;                      // left, shifted right
+  for(let s=5;s<=15;s++) c[s+3]=s;                  // middle cols 8-18
+  c[20]=16;c[21]=17;c[22]=18;c[23]=19;c[24]=20;     // right cols 20-24
+  return {letter,cols:c};
+}
+const C3 = {
+  name:"Cinema 3", cols:C3_COLS,
+  rows:[
+    c3full("O"),c3full("N"),c3full("M"),c3full("L"),c3full("K"),c3full("J"),c3full("I"),
+    c3short("H"),c3short("G"),c3short("F"),c3short("E"),c3short("D"),c3short("C"),c3short("B"),
+    {letter:"A",cols:{3:1,4:2, 9:3,10:4,11:5,12:6,13:7,14:8,15:9,16:10, 22:11,23:12,24:13}}
+  ],
+  taken:["K12","K13","J12","J13"]  // demo: pretend already assigned
+};
+
+const C4_COLS = 21;
+function c4big(letter){ // rows I,H,G : seats 1-19
+  const c={};
+  for(let s=1;s<=5;s++) c[s]=s;                     // left cols 1-5
+  for(let s=6;s<=14;s++) c[s+1]=s;                  // middle cols 7-15
+  for(let s=15;s<=19;s++) c[s+2]=s;                 // right cols 17-21
+  return {letter,cols:c};
+}
+function c4mid(letter){ // rows F,E,D,C,B : seats 1-13
+  const c={};
+  c[4]=1;c[5]=2;                                    // left pair
+  for(let s=3;s<=11;s++) c[s+4]=s;                  // middle cols 7-15
+  c[17]=12;c[18]=13;                                // right pair
+  return {letter,cols:c};
+}
+const C4 = {
+  name:"Cinema 4", cols:C4_COLS,
+  rows:[
+    {letter:"J",cols:{1:1,2:2,3:3,4:4,5:5, 8:6,9:7,10:8,11:9,12:10,13:11, 17:12,18:13,19:14,20:15,21:16}},
+    c4big("I"),c4big("H"),c4big("G"),
+    c4mid("F"),c4mid("E"),c4mid("D"),c4mid("C"),c4mid("B"),
+    {letter:"A",cols:{7:1,8:2,9:3,10:4,11:5,12:6,13:7,14:8,15:9}}
+  ],
+  taken:["G8","G9","H8","H9"]
+};
+
+const MAPS={c3:C3,c4:C4};
+
+let current=C3, selected=new Set(), qty=20;
+
+function build(){
+  const map=document.getElementById('map');
+  map.innerHTML='';
+  const takenSet=new Set(current.taken);
+  current.rows.forEach(row=>{
+    const r=document.createElement('div');r.className='maprow';
+    const lab=document.createElement('div');lab.className='rowlabel';lab.textContent=row.letter;
+    r.appendChild(lab);
+    for(let col=1;col<=current.cols;col++){
+      const cell=document.createElement('div');cell.className='cell';
+      const seatNum=row.cols[col];
+      if(seatNum!==undefined){
+        const id=row.letter+seatNum;
+        const b=document.createElement('button');
+        b.className='seat';b.textContent=seatNum;b.dataset.id=id;
+        if(takenSet.has(id)) b.classList.add('taken');
+        else b.onclick=()=>toggle(id,b);
+        cell.appendChild(b);
+      }
+      r.appendChild(cell);
+    }
+    map.appendChild(r);
+  });
+  refresh();
+}
+
+function toggle(id,btn){
+  if(selected.has(id)){selected.delete(id);}
+  else{ if(selected.size>=qty) return; selected.add(id);}
+  refresh();
+}
+
+function seatSort(a,b){
+  const ra=a.match(/[A-Z]+/)[0], rb=b.match(/[A-Z]+/)[0];
+  if(ra!==rb) return ra<rb?-1:1;
+  return parseInt(a.replace(/[A-Z]+/,''))-parseInt(b.replace(/[A-Z]+/,''));
+}
+
+function refresh(){
+  document.querySelectorAll('.seat').forEach(s=>{
+    const id=s.dataset.id;
+    if(s.classList.contains('taken')) return;
+    s.classList.toggle('sel',selected.has(id));
+    const full=selected.size>=qty && !selected.has(id);
+    s.classList.toggle('disabled',full);
+  });
+  const list=[...selected].sort(seatSort);
+  const c=document.getElementById('counter');
+  c.textContent=`Selected ${selected.size} of ${qty}`;
+  c.classList.toggle('full',selected.size===qty);
+  document.getElementById('pickedList').textContent=list.length?list.join(", "):"none yet";
+  document.getElementById('confirmBtn').disabled=(selected.size!==qty);
+}
+
+document.getElementById('confirmBtn').onclick=()=>{
+  const list=[...selected].sort(seatSort);
+  const name=document.getElementById('nameInp').value;
+  const ref='B2003-'+(current===C3?'C3':'C4')+'-'+String(Math.floor(Math.random()*9000)+1000);
+  const bk=document.getElementById('backend');
+  bk.style.display='block';
+  bk.innerHTML=`<span class="k">// what writes to the reservations tracker:</span>\n`+
+    `buyer:  ${name}\n`+
+    `cinema: ${current.name}\n`+
+    `seats:  ${list.join(", ")}\n`+
+    `count:  ${list.length}\n`+
+    `ref:    ${ref}`;
+  document.getElementById('sumName').textContent=name;
+  document.getElementById('sumCinema').textContent=current.name;
+  document.getElementById('sumSeats').textContent=list.join(", ");
+  document.getElementById('sumCount').textContent=list.length;
+  document.getElementById('sumRef').textContent=ref;
+  document.getElementById('summary').style.display='block';
+  document.getElementById('summary').scrollIntoView({behavior:'smooth',block:'nearest'});
+};
+
+document.getElementById('cinemaSel').onchange=e=>{
+  current=MAPS[e.target.value];selected.clear();
+  document.getElementById('whoCinema').textContent=current.name;
+  document.getElementById('backend').style.display='none';
+  build();
+};
+document.getElementById('qtyInp').oninput=e=>{
+  qty=Math.max(1,parseInt(e.target.value)||1);
+  if(selected.size>qty){selected=new Set([...selected].slice(0,qty));}
+  refresh();
+};
+document.getElementById('nameInp').oninput=e=>{
+  document.getElementById('whoName').textContent=e.target.value||"(buyer)";
+};
+
+build();
+</script>

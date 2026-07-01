@@ -283,7 +283,7 @@ export default function MovieScreening() {
       <div className="ms-page">
         <div className="ms-container">
           <div className="ms-no-event">
-            <h2>Movie Screening</h2>
+            <h2>Block Screening</h2>
             <p>No active screening event at this time.</p>
             <Link to="/" className="ms-back-link">Back to Home</Link>
           </div>
@@ -596,7 +596,7 @@ export default function MovieScreening() {
                   </button>
                   <div className={`ms-privacy-content ${privacyOpen ? 'open' : ''}`}>
                     <p>
-                      By providing your contact information, you consent to the collection and use of your personal information by USLS-IS Batch 2003 in accordance with the Data Privacy Act of 2012 (R.A. 10173). Your information will only be used for purposes related to this movie screening fundraiser and will not be shared with third parties or used for commercial purposes.
+                      By providing your contact information, you consent to the collection and use of your personal information by USLS-IS Batch 2003 in accordance with the Data Privacy Act of 2012 (R.A. 10173). Your information will only be used for purposes related to this block screening fundraiser and will not be shared with third parties or used for commercial purposes.
                     </p>
                   </div>
                   {contactError && <span className="ms-field-error">{contactError}</span>}

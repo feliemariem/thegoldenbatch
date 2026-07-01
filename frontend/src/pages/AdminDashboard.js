@@ -515,7 +515,7 @@ export default function AdminDashboard() {
                   )}
                 </button>
               )}
-              {/* Movie Screenings - permission-based */}
+              {/* Block Screenings - permission-based */}
               {(isSuperAdmin || permissions?.screenings_view) && (
                 <button
                   onClick={() => setDashboardMode('screenings')}
@@ -1249,7 +1249,7 @@ export default function AdminDashboard() {
           <MediaTab onPendingCountChange={setMediaPendingCount} isSuperAdmin={isSuperAdmin} />
         )}
 
-        {/* MOVIE SCREENINGS MODE - permission-based */}
+        {/* BLOCK SCREENINGS MODE - permission-based */}
         {dashboardMode === 'screenings' && (isSuperAdmin || permissions?.screenings_view) && (
           <MovieScreeningsTab permissions={permissions} isSuperAdmin={isSuperAdmin} />
         )}
