@@ -12,7 +12,7 @@ if (typeof window !== 'undefined') {
 export function ThemeProvider({ children }) {
   const [theme, setThemeState] = useState(() => {
     const saved = localStorage.getItem('theme');
-    return saved || 'light';
+    return saved || 'dark';
   });
 
   // Track whether to persist the next theme change
