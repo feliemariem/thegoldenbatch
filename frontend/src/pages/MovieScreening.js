@@ -468,7 +468,7 @@ export default function MovieScreening() {
           </div>
 
           {!isEventSoldOut && (
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className="ms-form-section">
             {/* Cinema Selection - FIRST interactive step */}
             <div className="ms-field ms-cinema-section">
               <label className="ms-label">SELECT CINEMA & SHOWTIME <span className="ms-req">*</span></label>

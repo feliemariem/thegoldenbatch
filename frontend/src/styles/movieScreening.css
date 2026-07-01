@@ -445,6 +445,63 @@
 }
 
 /* ========================================
+   DARK MODE CINEMA PALETTE (form fields only)
+   ======================================== */
+
+body[data-theme="dark"] .ms-form-section .ms-label,
+body[data-theme="dark"] .ms-form-section .ms-label-secondary {
+  color: #B8B8B8;
+}
+
+body[data-theme="dark"] .ms-form-section .ms-req {
+  color: #EC1D24;
+}
+
+body[data-theme="dark"] .ms-form-section .ms-hint {
+  color: #B8B8B8;
+}
+
+body[data-theme="dark"] .ms-form-section .ms-contact-purpose {
+  color: #B8B8B8;
+  opacity: 1;
+}
+
+body[data-theme="dark"] .ms-form-section .ms-privacy-toggle {
+  color: #B8B8B8;
+  opacity: 1;
+}
+
+body[data-theme="dark"] .ms-form-section .ms-privacy-content p {
+  color: #B8B8B8;
+}
+
+body[data-theme="dark"] .ms-form-section .ms-input {
+  background: #0F0F0F;
+  border: 1px solid #262626;
+  color: #FFFFFF;
+}
+
+body[data-theme="dark"] .ms-form-section .ms-input:focus {
+  border-color: #CFB53B;
+}
+
+body[data-theme="dark"] .ms-form-section .ms-input::placeholder {
+  color: #7F7F78;
+  opacity: 1;
+}
+
+body[data-theme="dark"] .ms-form-section .ms-ticket-select {
+  background: #0F0F0F;
+  border: 1px solid #262626;
+  color: #FFFFFF;
+}
+
+body[data-theme="dark"] .ms-form-section .ms-ticket-select:focus {
+  border-color: #CFB53B;
+  box-shadow: none;
+}
+
+/* ========================================
    CINEMA CARDS (always 2 columns)
    ======================================== */
 
