@@ -1172,6 +1172,11 @@ body[data-theme="light"] .ms-what-next h4 {
   color: #008a44 !important;
 }
 
+body[data-theme="light"] .ms-order-total {
+  color: #000000 !important;
+  font-weight: 700;
+}
+
 .ms-order-ref {
   font-family: monospace;
   letter-spacing: 0.03em;
