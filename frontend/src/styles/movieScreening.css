@@ -1338,23 +1338,27 @@ body[data-theme="light"] .ms-buy-more-link {
     overflow: hidden !important;
   }
 
-  /* Confirmation header - show and style for print */
+  /* Confirmation header - show and style for print (compact for mobile) */
   .ms-confirm-icon {
-    width: 48px !important;
-    height: 48px !important;
+    width: 28px !important;
+    height: 28px !important;
+    margin: 0 auto 6px !important;
     background: none !important;
     border: 2px solid #000 !important;
     color: #000 !important;
-    font-size: 1.5rem !important;
+    font-size: 0.9rem !important;
   }
 
   .ms-confirm-title {
     color: #000 !important;
-    font-size: 1.5rem !important;
+    font-size: 1.1rem !important;
+    margin: 0 0 2px !important;
   }
 
   .ms-confirm-subtitle {
     color: #333 !important;
+    font-size: 0.85rem !important;
+    margin: 0 0 10px !important;
   }
 
   /* Reset container for print */
@@ -1381,15 +1385,17 @@ body[data-theme="light"] .ms-buy-more-link {
     page-break-inside: avoid;
   }
 
-  /* ORDER SUMMARY / RECEIPT CARD - centered on page */
+  /* ORDER SUMMARY / RECEIPT CARD - compact for mobile print */
   .ms-order-summary {
     background: #fff !important;
     border: 1px solid #bbb !important;
-    border-radius: 8px !important;
-    padding: 24px !important;
-    margin: 24px auto !important;
-    max-width: 460px !important;
+    border-radius: 6px !important;
+    padding: 12px !important;
+    margin: 0 auto !important;
+    max-width: 100% !important;
     page-break-inside: avoid;
+    page-break-before: avoid;
+    font-size: 0.85rem !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
