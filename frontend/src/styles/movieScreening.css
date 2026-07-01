@@ -91,9 +91,21 @@
    ======================================== */
 
 .ms-hero {
-  background-color: #0D1310;
-  background-image: radial-gradient(130% 80% at 15% 0%, #0a5a34 0%, #073f24 32%, #0D1310 74%);
+  position: relative;
+  overflow: hidden;
+  background-color: #0A0A0A;
   padding: 36px 24px 32px;
+}
+
+.ms-hero::before {
+  content: '';
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, rgba(236,29,36,0.30) 0%, rgba(236,29,36,0.10) 40%, rgba(10,10,10,0) 70%);
+  pointer-events: none;
 }
 
 .ms-hero-content {
