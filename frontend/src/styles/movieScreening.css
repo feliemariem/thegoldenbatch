@@ -16,6 +16,10 @@
   position: relative;
 }
 
+body[data-theme="dark"] .ms-page {
+  background: #0A0A0A;
+}
+
 .ms-theme-toggle {
   position: absolute;
   top: 12px;
