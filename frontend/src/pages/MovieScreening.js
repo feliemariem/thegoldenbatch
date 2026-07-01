@@ -122,6 +122,13 @@ export default function MovieScreening() {
     fetchActiveEvent();
   }, []);
 
+  // Scroll to top when confirmation view becomes active
+  useEffect(() => {
+    if (submitted && reservation) {
+      window.scrollTo(0, 0);
+    }
+  }, [submitted, reservation]);
+
   const fetchActiveEvent = async () => {
     try {
       const res = await apiGet('/api/movie-screening/active');
