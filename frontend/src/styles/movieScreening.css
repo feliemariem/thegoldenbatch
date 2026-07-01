@@ -283,9 +283,18 @@ body[data-theme="dark"] .ms-form-section {
   font-weight: 600;
 }
 
+.ms-inclusion-icon {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  margin-right: 6px;
+  vertical-align: -3px;
+  stroke: #CFB53B;
+}
+
 .ms-form-separate-line {
-  font-size: 0.8rem;
-  color: #B8B8B8;
+  font-size: 13px;
+  color: #7F7F78;
   margin: 0;
 }
 
@@ -1501,7 +1510,7 @@ body[data-theme="light"] .ms-form-inclusion-line {
 }
 
 body[data-theme="light"] .ms-form-separate-line {
-  color: #B8B8B8 !important;
+  color: #7F7F78 !important;
 }
 
 body[data-theme="light"] .ms-cinema-section .ms-label {
