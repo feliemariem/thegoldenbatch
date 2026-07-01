@@ -242,14 +242,30 @@
   max-width: 100%;
 }
 
-/* Form inclusions (theme-aware, not hardcoded hero colors) */
+/* Form inclusions (always dark cinema) */
 .ms-form-inclusions {
+  position: relative;
+  overflow: hidden;
+  background: #0A0A0A;
+  border-radius: 12px;
+  padding: 20px 24px;
   margin-bottom: 24px;
+}
+
+.ms-form-inclusions::before {
+  content: '';
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, rgba(236,29,36,0.30) 0%, rgba(236,29,36,0.10) 40%, rgba(10,10,10,0) 70%);
+  pointer-events: none;
 }
 
 .ms-form-inclusion-line {
   font-size: 0.9rem;
-  color: var(--color-text-secondary);
+  color: #B8B8B8;
   margin: 0 0 10px 0;
   line-height: 1.5;
 }
@@ -261,9 +277,8 @@
 
 .ms-form-separate-line {
   font-size: 0.8rem;
-  color: var(--color-text-secondary);
+  color: #B8B8B8;
   margin: 0;
-  opacity: 0.8;
 }
 
 .ms-error {
@@ -433,6 +448,30 @@
    CINEMA CARDS (always 2 columns)
    ======================================== */
 
+/* Cinema section wrapper (always dark cinema) */
+.ms-cinema-section {
+  position: relative;
+  overflow: hidden;
+  background: #0A0A0A;
+  border-radius: 12px;
+  padding: 20px 24px;
+}
+
+.ms-cinema-section::before {
+  content: '';
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, rgba(236,29,36,0.30) 0%, rgba(236,29,36,0.10) 40%, rgba(10,10,10,0) 70%);
+  pointer-events: none;
+}
+
+.ms-cinema-section .ms-label {
+  color: #B8B8B8;
+}
+
 .ms-cinema-cards {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -441,8 +480,8 @@
 
 .ms-cinema-card {
   position: relative;
-  background: var(--color-bg-card);
-  border: 1.5px solid var(--color-border);
+  background: #141414;
+  border: 1px solid #262626;
   border-radius: 10px;
   padding: 14px 12px;
   cursor: pointer;
@@ -457,7 +496,7 @@
 
 .ms-cinema-card.selected {
   border: 2px solid #CFB53B;
-  background: var(--color-bg-card);
+  background: #191919;
 }
 
 .ms-cinema-card.sold-out {
@@ -556,13 +595,13 @@
 .ms-cinema-name {
   font-size: 1.0625rem;
   font-weight: 600;
-  color: var(--color-text-primary);
+  color: #FFFFFF;
   margin-bottom: 1px;
 }
 
 .ms-cinema-type {
   font-size: 0.6875rem;
-  color: var(--color-text-secondary);
+  color: #B8B8B8;
   margin-bottom: 8px;
 }
 
@@ -573,12 +612,12 @@
   gap: 5px;
   font-size: 1.0625rem;
   font-weight: 700;
-  color: var(--color-text-primary);
+  color: #FFFFFF;
   margin-bottom: 6px;
 }
 
 .ms-clock-icon {
-  stroke: #E23636;
+  stroke: #EC1D24;
   width: 12px;
   height: 12px;
 }
@@ -592,7 +631,7 @@
 
 .ms-cinema-seats {
   font-size: 0.6875rem;
-  color: var(--color-text-secondary);
+  color: #7F7F78;
 }
 
 /* ========================================
@@ -1316,9 +1355,6 @@ body[data-theme="light"] .ms-seats-plenty svg {
   stroke: #006633;
 }
 
-body[data-theme="light"] .ms-cinema-price {
-  color: #008a44;
-}
 
 body[data-theme="light"] .ms-total-amount {
   color: #008a44;

@@ -470,7 +470,7 @@ export default function MovieScreening() {
           {!isEventSoldOut && (
           <form onSubmit={handleSubmit}>
             {/* Cinema Selection - FIRST interactive step */}
-            <div className="ms-field">
+            <div className="ms-field ms-cinema-section">
               <label className="ms-label">SELECT CINEMA & SHOWTIME <span className="ms-req">*</span></label>
               <div className="ms-cinema-cards">
                 {cinemas.map((cinema) => (
