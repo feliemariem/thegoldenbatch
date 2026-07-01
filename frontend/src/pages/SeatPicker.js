@@ -300,11 +300,11 @@ export default function SeatPicker() {
     },
     screenwrap: {
       padding: '18px',
-      overflowX: 'auto'
+      overflowX: 'auto',
+      WebkitOverflowScrolling: 'touch'
     },
     map: {
-      display: 'inline-block',
-      minWidth: '100%'
+      display: 'inline-block'
     },
     maprow: {
       display: 'flex',
@@ -359,7 +359,7 @@ export default function SeatPicker() {
     },
     screen: {
       margin: '14px auto 2px',
-      maxWidth: '70%',
+      width: '45%',
       textAlign: 'center',
       background: 'linear-gradient(#ddd, #f4f4f0)',
       borderTop: '3px solid #999',
@@ -704,8 +704,8 @@ export default function SeatPicker() {
                   })}
                 </div>
               ))}
+              <div style={styles.screen}>--- SCREEN ---</div>
             </div>
-            <div style={styles.screen}>--- SCREEN ---</div>
           </div>
 
           <div style={styles.foot}>
