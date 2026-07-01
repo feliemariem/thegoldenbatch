@@ -394,6 +394,162 @@ router.get('/seats/:token', async (req, res) => {
   }
 });
 
+// POST /api/movie-screening/seats/:token/confirm
+// Save a buyer's chosen seats (public, no auth)
+router.post('/seats/:token/confirm', async (req, res) => {
+  const { token } = req.params;
+  const { seats } = req.body;
+
+  const client = await db.pool.connect();
+
+  try {
+    await client.query('BEGIN');
+
+    // 1. Look up the reservation by seat_token with row lock
+    const reservationResult = await client.query(
+      `SELECT id, event_id, cinema_code, buyer_name, quantity, status,
+              gcash_ref, chosen_seats, seats_selected_at, seat_selection_started_at
+       FROM reservations
+       WHERE seat_token = $1
+       FOR UPDATE`,
+      [token]
+    );
+
+    if (reservationResult.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ error: 'Invalid or expired link' });
+    }
+
+    const reservation = reservationResult.rows[0];
+
+    // 2. Check if reservation is cancelled
+    if (reservation.status === 'cancelled') {
+      await client.query('ROLLBACK');
+      return res.status(403).json({ error: 'This reservation is no longer active' });
+    }
+
+    // 3. Check if seats already selected (token is spent)
+    if (reservation.seats_selected_at) {
+      await client.query('ROLLBACK');
+      return res.status(409).json({ error: 'Seats have already been selected for this link.' });
+    }
+
+    // 4. Check timer - must exist and be within 15 minutes
+    const SELECTION_WINDOW_MINUTES = 15;
+
+    if (!reservation.seat_selection_started_at) {
+      await client.query('ROLLBACK');
+      return res.status(410).json({
+        error: 'This selection link has expired. Please contact the committee for a new link.'
+      });
+    }
+
+    const startedAt = new Date(reservation.seat_selection_started_at);
+    const now = new Date();
+    const elapsedMinutes = (now - startedAt) / (1000 * 60);
+
+    if (elapsedMinutes > SELECTION_WINDOW_MINUTES) {
+      await client.query('ROLLBACK');
+      return res.status(410).json({
+        error: 'This selection link has expired. Please contact the committee for a new link.'
+      });
+    }
+
+    // 5. Validate seats is a non-empty array of strings
+    if (!Array.isArray(seats) || seats.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(400).json({ error: 'Seats must be a non-empty array.' });
+    }
+
+    const trimmedSeats = [];
+    for (const seat of seats) {
+      if (typeof seat !== 'string') {
+        await client.query('ROLLBACK');
+        return res.status(400).json({ error: 'Each seat must be a string.' });
+      }
+      const trimmed = seat.trim();
+      if (!trimmed) {
+        await client.query('ROLLBACK');
+        return res.status(400).json({ error: 'Seat labels cannot be empty.' });
+      }
+      trimmedSeats.push(trimmed);
+    }
+
+    // 6. Check seats count matches quantity exactly
+    if (trimmedSeats.length !== reservation.quantity) {
+      await client.query('ROLLBACK');
+      return res.status(400).json({
+        error: `You must select exactly ${reservation.quantity} seat${reservation.quantity === 1 ? '' : 's'}.`
+      });
+    }
+
+    // 7. Check for duplicate seats in submission
+    const seatSet = new Set(trimmedSeats);
+    if (seatSet.size !== trimmedSeats.length) {
+      await client.query('ROLLBACK');
+      return res.status(400).json({ error: 'Duplicate seats selected.' });
+    }
+
+    // 8. Concurrency backstop: check for seats taken by others
+    const takenResult = await client.query(
+      `SELECT chosen_seats
+       FROM reservations
+       WHERE event_id = $1
+         AND cinema_code = $2
+         AND status IN ('pending', 'confirmed')
+         AND chosen_seats IS NOT NULL
+         AND id != $3`,
+      [reservation.event_id, reservation.cinema_code, reservation.id]
+    );
+
+    const takenSet = new Set();
+    for (const row of takenResult.rows) {
+      if (row.chosen_seats) {
+        const existingSeats = row.chosen_seats.split(',').map(s => s.trim()).filter(Boolean);
+        existingSeats.forEach(s => takenSet.add(s));
+      }
+    }
+
+    for (const seat of trimmedSeats) {
+      if (takenSet.has(seat)) {
+        await client.query('ROLLBACK');
+        return res.status(409).json({
+          error: 'One or more of those seats were just taken. Please refresh and pick again.'
+        });
+      }
+    }
+
+    // All validations passed - save the seats
+    const chosenSeatsStr = trimmedSeats.join(', ');
+
+    await client.query(
+      `UPDATE reservations
+       SET chosen_seats = $1,
+           seats_selected_at = NOW(),
+           updated_at = NOW()
+       WHERE id = $2`,
+      [chosenSeatsStr, reservation.id]
+    );
+
+    await client.query('COMMIT');
+
+    res.json({
+      success: true,
+      buyer_name: reservation.buyer_name,
+      cinema_code: reservation.cinema_code,
+      quantity: reservation.quantity,
+      chosen_seats: chosenSeatsStr,
+      gcash_ref: reservation.gcash_ref
+    });
+  } catch (err) {
+    await client.query('ROLLBACK');
+    console.error('Error confirming seat selection:', err);
+    res.status(500).json({ error: 'Server error' });
+  } finally {
+    client.release();
+  }
+});
+
 // ============================================
 // ADMIN ENDPOINTS (auth + movie screening admin check)
 // ============================================
