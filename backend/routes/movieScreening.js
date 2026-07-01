@@ -281,6 +281,119 @@ router.post('/reserve', async (req, res) => {
   }
 });
 
+// GET /api/movie-screening/seats/:token
+// Load seat picker for a buyer by their seat_token (public, no auth)
+router.get('/seats/:token', async (req, res) => {
+  const { token } = req.params;
+
+  const client = await db.pool.connect();
+
+  try {
+    await client.query('BEGIN');
+
+    // Look up the reservation by seat_token with row lock
+    const reservationResult = await client.query(
+      `SELECT id, event_id, cinema_code, buyer_name, quantity, status,
+              chosen_seats, seats_selected_at, seat_selection_started_at
+       FROM reservations
+       WHERE seat_token = $1
+       FOR UPDATE`,
+      [token]
+    );
+
+    if (reservationResult.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ error: 'Invalid or expired link' });
+    }
+
+    const reservation = reservationResult.rows[0];
+
+    // Check if reservation is cancelled
+    if (reservation.status === 'cancelled') {
+      await client.query('ROLLBACK');
+      return res.status(403).json({ error: 'This reservation is no longer active' });
+    }
+
+    // Check if seats already selected (token is spent)
+    if (reservation.seats_selected_at) {
+      await client.query('ROLLBACK');
+      return res.json({
+        alreadySelected: true,
+        chosen_seats: reservation.chosen_seats,
+        buyer_name: reservation.buyer_name,
+        cinema_code: reservation.cinema_code,
+        quantity: reservation.quantity
+      });
+    }
+
+    // Timer logic
+    const SELECTION_WINDOW_MINUTES = 15;
+    let seatSelectionStartedAt = reservation.seat_selection_started_at;
+
+    if (!seatSelectionStartedAt) {
+      // First open - set the timer
+      const updateResult = await client.query(
+        `UPDATE reservations
+         SET seat_selection_started_at = NOW(),
+             updated_at = NOW()
+         WHERE id = $1
+         RETURNING seat_selection_started_at`,
+        [reservation.id]
+      );
+      seatSelectionStartedAt = updateResult.rows[0].seat_selection_started_at;
+    } else {
+      // Check if timer expired
+      const startedAt = new Date(seatSelectionStartedAt);
+      const now = new Date();
+      const elapsedMinutes = (now - startedAt) / (1000 * 60);
+
+      if (elapsedMinutes > SELECTION_WINDOW_MINUTES) {
+        await client.query('ROLLBACK');
+        return res.status(410).json({
+          error: 'This selection link has expired. Please contact the committee for a new link.'
+        });
+      }
+    }
+
+    // Get all taken seats in this cinema for this event (excluding this reservation)
+    const takenResult = await client.query(
+      `SELECT chosen_seats
+       FROM reservations
+       WHERE event_id = $1
+         AND cinema_code = $2
+         AND status IN ('pending', 'confirmed')
+         AND chosen_seats IS NOT NULL
+         AND id != $3`,
+      [reservation.event_id, reservation.cinema_code, reservation.id]
+    );
+
+    // Flatten all chosen_seats into a single array
+    const takenSeats = [];
+    for (const row of takenResult.rows) {
+      if (row.chosen_seats) {
+        const seats = row.chosen_seats.split(',').map(s => s.trim()).filter(Boolean);
+        takenSeats.push(...seats);
+      }
+    }
+
+    await client.query('COMMIT');
+
+    res.json({
+      buyer_name: reservation.buyer_name,
+      cinema_code: reservation.cinema_code,
+      quantity: reservation.quantity,
+      seat_selection_started_at: seatSelectionStartedAt,
+      taken_seats: takenSeats
+    });
+  } catch (err) {
+    await client.query('ROLLBACK');
+    console.error('Error loading seat picker:', err);
+    res.status(500).json({ error: 'Server error' });
+  } finally {
+    client.release();
+  }
+});
+
 // ============================================
 // ADMIN ENDPOINTS (auth + movie screening admin check)
 // ============================================
