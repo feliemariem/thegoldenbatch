@@ -509,6 +509,43 @@ body[data-theme="dark"] .ms-form-section .ms-ticket-select:focus {
   box-shadow: none;
 }
 
+body[data-theme="dark"] .ms-seats-badge.ms-seats-plenty {
+  background: #141414;
+  border: 1px solid #262626;
+  color: #CFB53B;
+}
+
+body[data-theme="dark"] .ms-seats-badge.ms-seats-plenty svg {
+  stroke: #CFB53B;
+}
+
+body[data-theme="dark"] .ms-total-box {
+  position: relative;
+  overflow: hidden;
+  background: #141414;
+  border: 1px solid #262626;
+}
+
+body[data-theme="dark"] .ms-total-box::before {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 180px;
+  height: 180px;
+  background: radial-gradient(circle, rgba(236,29,36,0.22) 0%, rgba(20,20,20,0) 70%);
+  pointer-events: none;
+}
+
+body[data-theme="dark"] .ms-total-label,
+body[data-theme="dark"] .ms-total-amount {
+  position: relative;
+}
+
+body[data-theme="dark"] .ms-total-label {
+  color: #B8B8B8;
+}
+
 /* ========================================
    CINEMA CARDS (always 2 columns)
    ======================================== */
