@@ -1370,6 +1370,19 @@ body[data-theme="light"] .ms-submit-btn:hover:not(:disabled) {
   background: #005528;
 }
 
+/* Override global light mode p/label rules for dark cinema sections */
+body[data-theme="light"] .ms-form-inclusion-line {
+  color: #B8B8B8 !important;
+}
+
+body[data-theme="light"] .ms-form-separate-line {
+  color: #B8B8B8 !important;
+}
+
+body[data-theme="light"] .ms-cinema-section .ms-label {
+  color: #B8B8B8 !important;
+}
+
 body[data-theme="light"] .ms-seat-note {
   background: rgba(0, 102, 51, 0.08);
   border-color: rgba(0, 102, 51, 0.2);
