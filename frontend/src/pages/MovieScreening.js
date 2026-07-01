@@ -322,7 +322,7 @@ export default function MovieScreening() {
                 <div className="ms-receipt-batch">USLS-IS Batch 2003 · Movie Screening</div>
                 <div className="ms-receipt-title">{event.title}</div>
                 <div className="ms-receipt-meta">{formatDateHero(event.event_date)}</div>
-                <div className="ms-receipt-meta">Ayala Malls Capitol Central · Bacolod</div>
+                <div className="ms-receipt-meta">Ayala Malls Cinema · Bacolod</div>
               </div>
               <h3>Order Summary</h3>
               <div className="ms-order-row">
@@ -413,7 +413,7 @@ export default function MovieScreening() {
       {/* Hero Banner */}
       <div className="ms-hero">
         <div className="ms-hero-content">
-          <div className="ms-pill">USLS-IS BATCH 2003 · MOVIE SCREENING</div>
+          <div className="ms-pill">USLS-IS BATCH 2003 · BLOCK SCREENING</div>
           <h1 className="ms-movie-title" style={{ color: '#FDF8EE' }}>{event.title}</h1>
 
           <div className="ms-meta">
@@ -432,7 +432,7 @@ export default function MovieScreening() {
                   <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                   <circle cx="12" cy="10" r="3"></circle>
                 </svg>
-                <span style={{ color: '#c2ccc4' }}>Ayala Malls Capitol Central · Bacolod</span>
+                <span style={{ color: '#c2ccc4' }}>Ayala Malls Cinema · Bacolod</span>
               </div>
             )}
           </div>
