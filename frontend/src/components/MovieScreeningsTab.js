@@ -928,10 +928,7 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
                   <td style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', whiteSpace: 'nowrap' }}>
                     {formatDate(r.created_at)}
                   </td>
-                  <td>
-                    <div style={{ fontWeight: 500 }}>{getCinemaName(r.cinema_code)}</div>
-                    {r.cinema_label && <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>{r.cinema_label}</div>}
-                  </td>
+                  <td>{r.cinema_code}</td>
                   <td>{r.quantity}</td>
                   <td>{formatCurrency(r.total_amount)}</td>
                   <td style={{ fontFamily: 'monospace', fontSize: '0.85rem' }}>{r.gcash_ref}</td>
