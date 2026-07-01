@@ -1370,10 +1370,6 @@ body[data-theme="light"] .ms-submit-btn:hover:not(:disabled) {
   background: #005528;
 }
 
-body[data-theme="light"] .ms-form-inclusion-line strong {
-  color: #006633;
-}
-
 body[data-theme="light"] .ms-seat-note {
   background: rgba(0, 102, 51, 0.08);
   border-color: rgba(0, 102, 51, 0.2);
