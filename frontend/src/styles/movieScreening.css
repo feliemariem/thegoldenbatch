@@ -242,6 +242,10 @@ body[data-theme="dark"] .ms-page {
   background: var(--color-bg-primary);
 }
 
+body[data-theme="dark"] .ms-form-section {
+  background: transparent;
+}
+
 .ms-form-container {
   max-width: 100%;
 }
