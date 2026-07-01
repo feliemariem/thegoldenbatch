@@ -1434,7 +1434,9 @@ body[data-theme="light"] .ms-buy-more-link {
     color: #222 !important;
   }
 
-  .ms-order-total {
+  .ms-order-total,
+  body[data-theme="dark"] .ms-order-total,
+  body[data-theme="light"] .ms-order-total {
     color: #000 !important;
     font-weight: 700 !important;
   }
