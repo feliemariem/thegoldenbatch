@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const crypto = require('crypto');
 const db = require('../db');
 const { authenticateToken } = require('../middleware/auth');
 
@@ -938,6 +939,67 @@ router.patch('/admin/:id/seats', authenticateToken, async (req, res) => {
     });
   } catch (err) {
     console.error('Error updating seats:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// POST /api/movie-screening/admin/:id/generate-seat-link
+// Generate a seat picker link for a reservation (resets timer if re-generating)
+router.post('/admin/:id/generate-seat-link', authenticateToken, async (req, res) => {
+  // Permission check: must have screenings_view + screenings_edit
+  const hasAccess = await canEditTracker(req.user.email);
+  if (!hasAccess) {
+    return res.status(403).json({ error: 'Access denied. Screenings edit permission required.' });
+  }
+
+  const { id } = req.params;
+
+  try {
+    // Load the reservation
+    const reservationResult = await db.query(
+      'SELECT id FROM reservations WHERE id = $1',
+      [id]
+    );
+
+    if (reservationResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Reservation not found' });
+    }
+
+    // Generate a unique URL-safe token (~24 chars)
+    let token;
+    let collision = true;
+
+    while (collision) {
+      // 18 bytes -> 24 base64url chars
+      token = crypto.randomBytes(18).toString('base64url');
+
+      // Check for collision
+      const existing = await db.query(
+        'SELECT id FROM reservations WHERE seat_token = $1',
+        [token]
+      );
+      collision = existing.rows.length > 0;
+    }
+
+    // Update reservation: set token, reset timer fields for fresh 15-minute window
+    await db.query(
+      `UPDATE reservations
+       SET seat_token = $1,
+           seat_selection_started_at = NULL,
+           seats_selected_at = NULL,
+           updated_at = NOW()
+       WHERE id = $2`,
+      [token, id]
+    );
+
+    // Build URL
+    const baseUrl = process.env.FRONTEND_URL || process.env.BASE_URL;
+    const path = `/seats/${token}`;
+    const url = baseUrl ? `${baseUrl}${path}` : path;
+
+    res.json({ token, url });
+  } catch (err) {
+    console.error('Error generating seat link:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });

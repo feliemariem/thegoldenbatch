@@ -171,6 +171,27 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
     }
   };
 
+  const handleGenerateSeatLink = async (id) => {
+    setActionLoading(prev => ({ ...prev, [id]: 'seatlink' }));
+    try {
+      const res = await apiPost(`/api/movie-screening/admin/${id}/generate-seat-link`);
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.error || 'Failed to generate seat link');
+        return;
+      }
+
+      // Copy the URL to clipboard
+      await copyToClipboard(data.url, id, 'seatlink');
+    } catch (err) {
+      console.error(err);
+      alert('Failed to generate seat link');
+    } finally {
+      setActionLoading(prev => ({ ...prev, [id]: null }));
+    }
+  };
+
   const formatTicketRange = (reservation) => {
     if (reservation.status !== 'confirmed' || !reservation.serial_start) {
       return '-';
@@ -973,6 +994,47 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
                             </svg>
                           )}
                         </button>
+                        {r.quantity >= 20 && hasEditAccess && (
+                          <button
+                            onClick={() => handleGenerateSeatLink(r.id)}
+                            disabled={actionLoading[r.id] === 'seatlink'}
+                            style={{
+                              background: copiedField?.id === r.id && copiedField?.type === 'seatlink' ? 'rgba(207, 181, 59, 0.15)' : 'rgba(207, 181, 59, 0.08)',
+                              border: '1px solid rgba(207, 181, 59, 0.3)',
+                              borderRadius: '4px',
+                              cursor: 'pointer',
+                              padding: '4px 8px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                              fontSize: '0.7rem',
+                              fontWeight: 600,
+                              color: '#CFB53B',
+                              transition: 'background 0.2s',
+                              opacity: actionLoading[r.id] === 'seatlink' ? 0.6 : 1
+                            }}
+                            title={copiedField?.id === r.id && copiedField?.type === 'seatlink' ? 'Link copied!' : 'Generate seat picker link'}
+                          >
+                            {actionLoading[r.id] === 'seatlink' ? '...' : (
+                              copiedField?.id === r.id && copiedField?.type === 'seatlink' ? (
+                                <>
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#CFB53B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                  </svg>
+                                  Copied!
+                                </>
+                              ) : (
+                                <>
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#CFB53B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                                  </svg>
+                                  Seat link
+                                </>
+                              )
+                            )}
+                          </button>
+                        )}
                       </div>
                     ) : (
                       <span style={{ color: 'var(--color-text-secondary)' }}>-</span>
