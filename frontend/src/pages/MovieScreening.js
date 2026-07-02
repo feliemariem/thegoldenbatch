@@ -514,6 +514,11 @@ export default function MovieScreening() {
                   </div>
                 ))}
               </div>
+
+              {/* Bulk Reservation Notice */}
+              <p className="ms-bulk-notice">
+                <strong>Seat reservations are for bulk orders only.</strong> Minimum 20 tickets, paid in full. A committee member will reach out to lock in your seats.
+              </p>
             </div>
 
             {selectedCinema && (
