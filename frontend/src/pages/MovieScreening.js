@@ -31,6 +31,7 @@ export default function MovieScreening() {
   const [contactError, setContactError] = useState('');
 
   // Refs
+  const bulkNoticeRef = useRef(null);
   const ticketFieldRef = useRef(null);
   const mobileInputRef = useRef(null);
 
@@ -485,9 +486,9 @@ export default function MovieScreening() {
                       if (cinema.seats_left > 0) {
                         setSelectedCinema(cinema.code);
                         setQuantity(1);
-                        // Scroll to ticket field after state updates
+                        // Scroll to bulk notice after state updates
                         setTimeout(() => {
-                          ticketFieldRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                          bulkNoticeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
                         }, 100);
                       }
                     }}
@@ -519,7 +520,7 @@ export default function MovieScreening() {
             {selectedCinema && (
               <>
                 {/* Bulk Reservation Notice */}
-                <p className="ms-bulk-notice">
+                <p className="ms-bulk-notice" ref={bulkNoticeRef}>
                   <strong>Seat reservations are for bulk orders only.</strong> Minimum 20 tickets, paid in full. A committee member will reach out to lock in your seats.
                 </p>
 
