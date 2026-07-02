@@ -780,6 +780,16 @@ body[data-theme="dark"] .ms-order-total {
   color: #CFB53B;
 }
 
+body[data-theme="light"] .ms-bulk-notice {
+  background: rgba(184, 150, 12, 0.08);
+  border-color: rgba(184, 150, 12, 0.2);
+  color: #555;
+}
+
+body[data-theme="light"] .ms-bulk-notice strong {
+  color: #B8960C;
+}
+
 /* ========================================
    TICKET SELECT
    ======================================== */
