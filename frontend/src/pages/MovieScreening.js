@@ -609,7 +609,7 @@ export default function MovieScreening() {
                 </div>
                 <div className="ms-field-row">
                   <div className="ms-field">
-                    <label className="ms-label-secondary">MOBILE NUMBER</label>
+                    <label className="ms-label-secondary">MOBILE NUMBER <span style={{ textTransform: 'none' }}>(we'll reach you via WhatsApp)</span></label>
                     <input
                       ref={mobileInputRef}
                       type="tel"
