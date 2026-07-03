@@ -698,10 +698,10 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
             <div className="stat-label">Confirmed</div>
           </div>
           <div className="stat-card going">
-            <div className="stat-number">{stats.tickets_sold ?? 0}</div>
+            <div className="stat-number">{Number(stats.tickets_sold ?? 0)}</div>
             <div className="stat-label">Tickets Sold</div>
             <div style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)', marginTop: '4px' }}>
-              {stats.tickets_sold_c3 ?? 0} C3 · {stats.tickets_sold_c4 ?? 0} C4
+              {Number(stats.tickets_sold_c3 ?? 0)} C3 · {Number(stats.tickets_sold_c4 ?? 0)} C4
             </div>
           </div>
           <div className="stat-card" style={{ background: 'rgba(207, 181, 59, 0.1)' }}>
@@ -753,7 +753,7 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
       {/* Milestones Tracker */}
       {stats && (
         (() => {
-          const ticketsSold = stats.tickets_sold ?? 0;
+          const ticketsSold = Number(stats.tickets_sold ?? 0);
           const percentage = Math.min((ticketsSold / MILESTONE_SELLOUT) * 100, 100);
           const today = new Date();
           today.setHours(0, 0, 0, 0);
