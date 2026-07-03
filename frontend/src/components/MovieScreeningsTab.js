@@ -705,7 +705,7 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
             </div>
           </div>
           <div className="stat-card" style={{ background: 'rgba(207, 181, 59, 0.1)' }}>
-            <div className="stat-number" style={{ color: '#CFB53B' }}>{formatCurrency(stats.total_collected)}</div>
+            <div className="stat-number stat-number--currency" style={{ color: '#CFB53B' }}>{formatCurrency(stats.total_collected)}</div>
             <div className="stat-label">Collected</div>
           </div>
         </div>
