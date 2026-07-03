@@ -772,10 +772,10 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
           const selloutHit = ticketsSold >= MILESTONE_SELLOUT;
 
           // Days-left indicator for header
-          const daysLeftText = daysUntilCinema > 0
-            ? `${daysUntilCinema} day${daysUntilCinema === 1 ? '' : 's'} to Jul 24`
-            : daysUntilSellout > 0
-              ? `${daysUntilSellout} day${daysUntilSellout === 1 ? '' : 's'} to event`
+          const daysLeftText = daysUntilSellout > 0
+            ? `${daysUntilSellout} day${daysUntilSellout === 1 ? '' : 's'} to screening`
+            : today <= MILESTONE_SELLOUT_DATE
+              ? 'screening day'
               : null;
 
           return (
