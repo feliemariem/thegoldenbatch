@@ -771,12 +771,19 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
           const breakevenHit = ticketsSold >= MILESTONE_BREAKEVEN;
           const selloutHit = ticketsSold >= MILESTONE_SELLOUT;
 
+          // Days-left indicator for header
+          const daysLeftText = daysUntilCinema > 0
+            ? `${daysUntilCinema} day${daysUntilCinema === 1 ? '' : 's'} to Jul 24`
+            : daysUntilSellout > 0
+              ? `${daysUntilSellout} day${daysUntilSellout === 1 ? '' : 's'} to event`
+              : null;
+
           return (
             <div className="ms-milestones-card">
               <div className="ms-header">
                 <span className="ms-title">Milestones</span>
                 <span className="ms-summary">
-                  {ticketsSold} / {MILESTONE_SELLOUT} tickets sold · {percentage.toFixed(1)}%
+                  {ticketsSold} / {MILESTONE_SELLOUT} tickets sold · {percentage.toFixed(1)}%{daysLeftText && ` · ${daysLeftText}`}
                 </span>
               </div>
 
