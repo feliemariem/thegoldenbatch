@@ -4,6 +4,16 @@ import { apiGet, apiPost, apiPatch } from '../api';
 // This bundles the worker locally so it never depends on a CDN
 import * as pdfjsLib from 'pdfjs-dist/webpack.mjs';
 
+// Milestone constants for block screening tracking
+const MILESTONE_CINEMA_BALANCE = 127;    // Cinema balance paid threshold
+const MILESTONE_BREAKEVEN = 268;         // Break-even, fund repaid
+const MILESTONE_SELLOUT = 468;           // Total capacity / sellout
+const MILESTONE_CINEMA_DATE = new Date('2026-07-24');  // Cinema balance due date
+const MILESTONE_SELLOUT_DATE = new Date('2026-07-31'); // Event date
+const CINEMA_BALANCE_AMOUNT = 70870;     // P70,870 due
+const FUND_AMOUNT = 80000;               // P80,000 fund
+const SELLOUT_PROFIT = 112190;           // P112,190 profit at sellout
+
 export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = false }) {
   // Determine access level from permissions
   // Super admin has all access; otherwise check specific permissions
@@ -687,6 +697,13 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
             <div className="stat-number">{stats.confirmed_count}</div>
             <div className="stat-label">Confirmed</div>
           </div>
+          <div className="stat-card going">
+            <div className="stat-number">{stats.tickets_sold ?? 0}</div>
+            <div className="stat-label">Tickets Sold</div>
+            <div style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)', marginTop: '4px' }}>
+              {stats.tickets_sold_c3 ?? 0} C3 · {stats.tickets_sold_c4 ?? 0} C4
+            </div>
+          </div>
           <div className="stat-card" style={{ background: 'rgba(207, 181, 59, 0.1)' }}>
             <div className="stat-number" style={{ color: '#CFB53B' }}>{formatCurrency(stats.total_collected)}</div>
             <div className="stat-label">Collected</div>
@@ -731,6 +748,97 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
             );
           })}
         </div>
+      )}
+
+      {/* Milestones Tracker */}
+      {stats && (
+        (() => {
+          const ticketsSold = stats.tickets_sold ?? 0;
+          const percentage = Math.min((ticketsSold / MILESTONE_SELLOUT) * 100, 100);
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+
+          const daysUntilCinema = Math.max(0, Math.ceil((MILESTONE_CINEMA_DATE - today) / (1000 * 60 * 60 * 24)));
+          const daysUntilSellout = Math.max(0, Math.ceil((MILESTONE_SELLOUT_DATE - today) / (1000 * 60 * 60 * 24)));
+
+          const remainingCinema = Math.max(0, MILESTONE_CINEMA_BALANCE - ticketsSold);
+          const remainingSellout = Math.max(0, MILESTONE_SELLOUT - ticketsSold);
+
+          const paceToCinema = daysUntilCinema > 0 ? Math.ceil(remainingCinema / daysUntilCinema) : null;
+          const paceToSellout = daysUntilSellout > 0 ? Math.ceil(remainingSellout / daysUntilSellout) : null;
+
+          const cinemaHit = ticketsSold >= MILESTONE_CINEMA_BALANCE;
+          const breakevenHit = ticketsSold >= MILESTONE_BREAKEVEN;
+          const selloutHit = ticketsSold >= MILESTONE_SELLOUT;
+
+          return (
+            <div className="ms-milestones-card">
+              <div className="ms-header">
+                <span className="ms-title">Milestones</span>
+                <span className="ms-summary">
+                  {ticketsSold} / {MILESTONE_SELLOUT} tickets sold · {percentage.toFixed(1)}%
+                </span>
+              </div>
+
+              <div className="ms-progress-container">
+                <div className="ms-progress-bar">
+                  <div className="ms-progress-fill" style={{ width: `${percentage}%` }} />
+                  <div className="ms-marker" style={{ left: `${(MILESTONE_CINEMA_BALANCE / MILESTONE_SELLOUT) * 100}%` }} />
+                  <div className="ms-marker" style={{ left: `${(MILESTONE_BREAKEVEN / MILESTONE_SELLOUT) * 100}%` }} />
+                </div>
+                <div className="ms-tick-labels">
+                  <span style={{ left: `${(MILESTONE_CINEMA_BALANCE / MILESTONE_SELLOUT) * 100}%` }}>{MILESTONE_CINEMA_BALANCE}</span>
+                  <span style={{ left: `${(MILESTONE_BREAKEVEN / MILESTONE_SELLOUT) * 100}%` }}>{MILESTONE_BREAKEVEN}</span>
+                  <span style={{ left: '100%' }}>{MILESTONE_SELLOUT}</span>
+                </div>
+              </div>
+
+              <div className="ms-legend">
+                <div className="ms-legend-row ms-red">
+                  <span className="ms-legend-number">{MILESTONE_CINEMA_BALANCE}</span>
+                  <span className="ms-legend-desc">Cinema balance paid (₱{CINEMA_BALANCE_AMOUNT.toLocaleString()} due Jul 24)</span>
+                  <span className="ms-legend-status">
+                    {cinemaHit ? <span className="ms-done">✓ Done</span> : `${remainingCinema} to go`}
+                  </span>
+                </div>
+                <div className="ms-legend-row ms-gold">
+                  <span className="ms-legend-number">{MILESTONE_BREAKEVEN}</span>
+                  <span className="ms-legend-desc">Break-even, ₱{FUND_AMOUNT.toLocaleString()} fund repaid</span>
+                  <span className="ms-legend-status">
+                    {breakevenHit ? <span className="ms-done">✓ Done</span> : `${Math.max(0, MILESTONE_BREAKEVEN - ticketsSold)} to go`}
+                  </span>
+                </div>
+                <div className="ms-legend-row ms-green">
+                  <span className="ms-legend-number">{MILESTONE_SELLOUT}</span>
+                  <span className="ms-legend-desc">Sellout, ₱{SELLOUT_PROFIT.toLocaleString()} profit</span>
+                  <span className="ms-legend-status">
+                    {selloutHit ? <span className="ms-done">✓ Done</span> : `${remainingSellout} to go`}
+                  </span>
+                </div>
+              </div>
+
+              <div className="ms-pace">
+                {!cinemaHit && paceToCinema !== null && (
+                  <span>Need {paceToCinema}/day to hit {MILESTONE_CINEMA_BALANCE} by Jul 24</span>
+                )}
+                {!cinemaHit && paceToCinema !== null && paceToSellout !== null && <span> · </span>}
+                {!cinemaHit && paceToCinema === null && remainingCinema > 0 && (
+                  <span>{remainingCinema} remaining for cinema balance</span>
+                )}
+                {cinemaHit && !selloutHit && paceToSellout !== null && (
+                  <span>Need {paceToSellout}/day for sellout by Jul 31</span>
+                )}
+                {cinemaHit && !selloutHit && paceToSellout === null && remainingSellout > 0 && (
+                  <span>{remainingSellout} remaining for sellout</span>
+                )}
+                {!cinemaHit && paceToSellout !== null && (
+                  <span>{paceToSellout}/day for sellout</span>
+                )}
+                {selloutHit && <span className="ms-done">🎉 Sold out!</span>}
+              </div>
+            </div>
+          );
+        })()
       )}
 
       {/* Action buttons - only for users with edit access */}

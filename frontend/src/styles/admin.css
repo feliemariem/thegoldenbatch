@@ -2458,3 +2458,174 @@ body[data-theme="light"] .btn-new-meeting:hover {
 .sa-test-send-btn:hover:not(:disabled) {
   background: linear-gradient(135deg, #CFB53B 0%, #B8960C 100%) !important;
 }
+
+/* ========================================
+   MILESTONES TRACKER (ms- prefix)
+   Block Screening ticket milestones
+   ======================================== */
+
+.ms-milestones-card {
+  background: #0A0A0A;
+  border: 1px solid rgba(207, 181, 59, 0.2);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.ms-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.ms-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.ms-summary {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
+.ms-progress-container {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.ms-progress-bar {
+  height: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  overflow: visible;
+  position: relative;
+}
+
+.ms-progress-fill {
+  height: 100%;
+  background: #006633;
+  border-radius: 6px;
+  transition: width 0.3s ease;
+}
+
+.ms-marker {
+  position: absolute;
+  top: 0;
+  width: 2px;
+  height: 12px;
+  background: rgba(255, 255, 255, 0.5);
+  transform: translateX(-50%);
+}
+
+.ms-tick-labels {
+  position: relative;
+  height: 18px;
+  margin-top: 4px;
+}
+
+.ms-tick-labels span {
+  position: absolute;
+  font-size: 0.65rem;
+  color: var(--color-text-secondary);
+  transform: translateX(-50%);
+}
+
+.ms-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.ms-legend-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+}
+
+.ms-legend-number {
+  font-weight: 600;
+  min-width: 32px;
+}
+
+.ms-legend-row.ms-red .ms-legend-number {
+  color: #ef4444;
+}
+
+.ms-legend-row.ms-gold .ms-legend-number {
+  color: #CFB53B;
+}
+
+.ms-legend-row.ms-green .ms-legend-number {
+  color: #22c55e;
+}
+
+.ms-legend-desc {
+  flex: 1;
+  color: var(--color-text-secondary);
+}
+
+.ms-legend-status {
+  color: var(--color-text-secondary);
+  text-align: right;
+  min-width: 70px;
+}
+
+.ms-done {
+  color: #22c55e;
+}
+
+.ms-pace {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Light mode overrides for Milestones */
+body[data-theme="light"] .ms-milestones-card {
+  background: #fafafa;
+  border-color: rgba(0, 102, 51, 0.15);
+}
+
+body[data-theme="light"] .ms-progress-bar {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+body[data-theme="light"] .ms-marker {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+body[data-theme="light"] .ms-pace {
+  border-top-color: rgba(0, 0, 0, 0.1);
+}
+
+body[data-theme="light"] .ms-legend-row.ms-gold .ms-legend-number {
+  color: #8a7420;
+}
+
+/* Mobile adjustments for Milestones */
+@media (max-width: 600px) {
+  .ms-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .ms-legend-row {
+    flex-wrap: wrap;
+  }
+
+  .ms-legend-desc {
+    order: 3;
+    flex-basis: 100%;
+    margin-top: 2px;
+  }
+
+  .ms-legend-status {
+    margin-left: auto;
+  }
+}
