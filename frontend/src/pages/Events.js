@@ -7,6 +7,28 @@ import '../styles/profileNew.css';
 import '../styles/events.css';
 import { apiGet, apiPost, apiPut, apiDelete } from '../api';
 
+// Helper to convert URLs in text to clickable links
+const URL_REGEX = /(https?:\/\/[^\s]+|[a-zA-Z0-9][-a-zA-Z0-9]*\.[a-zA-Z]{2,}(?:\/[^\s]*)?)/g;
+
+const linkifyText = (text) => {
+  if (!text) return null;
+  const parts = text.split(URL_REGEX);
+  return parts.map((part, i) => {
+    if (!part) return null;
+    // Non-global test regex to avoid stateful lastIndex bugs
+    const isUrl = /^(https?:\/\/[^\s]+|[a-zA-Z0-9][-a-zA-Z0-9]*\.[a-zA-Z]{2,}(?:\/[^\s]*)?)$/.test(part);
+    if (isUrl) {
+      const href = part.startsWith('http') ? part : `https://${part}`;
+      return (
+        <a key={i} href={href} target="_blank" rel="noopener noreferrer" style={{ color: '#006633' }}>
+          {part}
+        </a>
+      );
+    }
+    return part;
+  });
+};
+
 export default function Events() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -532,7 +554,7 @@ END:VCALENDAR`;
                       <h4 className="event-title">{event.title}</h4>
                       {event.event_time && <p className="event-time">🕐 {event.event_time}</p>}
                       {event.location && <p className="event-location-text">📍 {event.location}</p>}
-                      {event.description && <p className="event-description">{event.description}</p>}
+                      {event.description && <p className="event-description">{linkifyText(event.description)}</p>}
 
                       {/* Attendees List */}
                       {goingAttendees.length > 0 && (
