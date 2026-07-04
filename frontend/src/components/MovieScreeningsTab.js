@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { apiGet, apiPost, apiPatch } from '../api';
+import { formatName } from '../utils/formatName';
 // Use pdfjs-dist/webpack which auto-configures the worker using import.meta.url
 // This bundles the worker locally so it never depends on a CDN
 import * as pdfjsLib from 'pdfjs-dist/webpack.mjs';
@@ -625,7 +626,7 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
   const exportCSV = () => {
     const headers = ['buyer_name', 'mobile', 'email', 'purchased', 'cinema_code', 'quantity', 'unit_price', 'total_amount', 'gcash_ref', 'status', 'chosen_seats', 'ticket_range', 'claimed', 'claimed_at'];
     const rows = reservations.map(r => [
-      r.buyer_name,
+      formatName(r.buyer_name),
       r.mobile || '',
       r.email || '',
       formatDate(r.created_at),
@@ -960,7 +961,7 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
                   }}
                 >
                   <td>
-                    <div style={{ fontWeight: 500, marginBottom: '4px' }}>{r.buyer_name}</div>
+                    <div style={{ fontWeight: 500, marginBottom: '4px' }}>{formatName(r.buyer_name)}</div>
                     {r.mobile && (
                       <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '2px' }}>
                         <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', fontFamily: 'monospace' }}>
