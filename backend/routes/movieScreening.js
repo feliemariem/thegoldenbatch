@@ -4,6 +4,9 @@ const crypto = require('crypto');
 const db = require('../db');
 const { authenticateToken } = require('../middleware/auth');
 
+const SPONSOR_CAP = 40;
+const SPONSOR_CINEMA = 'C3';
+
 // Normalize and validate Philippine mobile number
 // Strips spaces, dashes, leading +63 or 63, then checks for 09XXXXXXXXX pattern
 const normalizePHMobile = (mobile) => {
@@ -130,13 +133,27 @@ router.get('/active', async (req, res) => {
       [event.id]
     );
 
+    const sponsorHeldResult = await db.query(
+      `SELECT COALESCE(SUM(quantity), 0) as held
+       FROM reservations
+       WHERE event_id = $1 AND is_sponsor = true AND status IN ('pending', 'confirmed')`,
+      [event.id]
+    );
+    const sponsorHeld = parseInt(sponsorHeldResult.rows[0].held);
+
     res.json({
       event,
       cinemas: cinemasResult.rows.map(c => ({
         ...c,
         unit_price: parseFloat(c.unit_price),
         seats_left: parseInt(c.seats_left)
-      }))
+      })),
+      sponsor: {
+        cinema_code: SPONSOR_CINEMA,
+        cap: SPONSOR_CAP,
+        held: sponsorHeld,
+        seats_left: Math.max(0, SPONSOR_CAP - sponsorHeld)
+      }
     });
   } catch (err) {
     console.error('Error fetching active screening:', err);
@@ -147,7 +164,10 @@ router.get('/active', async (req, res) => {
 // POST /api/movie-screening/reserve
 // Create a new reservation (public endpoint)
 router.post('/reserve', async (req, res) => {
-  const { cinema_code, buyer_name, mobile, email, quantity, gcash_ref } = req.body;
+  const { cinema_code: rawCinema, buyer_name, mobile, email, quantity, gcash_ref, is_sponsor, is_anonymous } = req.body;
+  const isSponsor = is_sponsor === true || is_sponsor === 'true';
+  const isAnonymous = isSponsor && (is_anonymous === true || is_anonymous === 'true');
+  const cinema_code = isSponsor ? SPONSOR_CINEMA : rawCinema;
 
   // Validation
   if (!cinema_code) {
@@ -156,7 +176,7 @@ router.post('/reserve', async (req, res) => {
   if (!buyer_name || !buyer_name.trim()) {
     return res.status(400).json({ error: 'Full name is required' });
   }
-  if (!mobile && !email) {
+  if (!isSponsor && !mobile && !email) {
     return res.status(400).json({ error: 'Please provide either a mobile number or email address' });
   }
 
@@ -179,7 +199,7 @@ router.post('/reserve', async (req, res) => {
   }
 
   // Ensure at least one valid contact method
-  if (!normalizedMobile && !normalizedEmail) {
+  if (!isSponsor && !normalizedMobile && !normalizedEmail) {
     return res.status(400).json({ error: 'Please provide a valid mobile number or email address' });
   }
 
@@ -241,6 +261,20 @@ router.post('/reserve', async (req, res) => {
       return res.status(400).json({ error: 'Not enough seats left' });
     }
 
+    if (isSponsor) {
+      const sponsorHeldRes = await client.query(
+        `SELECT COALESCE(SUM(quantity), 0) as held
+         FROM reservations
+         WHERE event_id = $1 AND is_sponsor = true AND status IN ('pending', 'confirmed')`,
+        [eventId]
+      );
+      const sponsorHeld = parseInt(sponsorHeldRes.rows[0].held);
+      if (sponsorHeld + requestedQty > SPONSOR_CAP) {
+        await client.query('ROLLBACK');
+        return res.status(400).json({ error: `Only ${Math.max(0, SPONSOR_CAP - sponsorHeld)} sponsored stubs left` });
+      }
+    }
+
     // Calculate total amount
     const totalAmount = unitPrice * requestedQty;
 
@@ -248,9 +282,9 @@ router.post('/reserve', async (req, res) => {
     const insertResult = await client.query(
       `INSERT INTO reservations (
          event_id, cinema_code, buyer_name, mobile, email,
-         quantity, unit_price, total_amount, gcash_ref, status, created_at
+         quantity, unit_price, total_amount, gcash_ref, is_sponsor, is_anonymous, status, created_at
        )
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'pending', NOW())
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 'pending', NOW())
        RETURNING *`,
       [
         eventId,
@@ -261,7 +295,9 @@ router.post('/reserve', async (req, res) => {
         requestedQty,
         unitPrice,
         totalAmount,
-        gcash_ref.trim()
+        gcash_ref.trim(),
+        isSponsor,
+        isAnonymous
       ]
     );
 
