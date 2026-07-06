@@ -934,9 +934,9 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
 
       {/* Reservations Table - only for users with tracker access */}
       {hasTrackerAccess && (
-      <div style={{ overflowX: 'auto' }}>
+      <div style={{ overflowX: 'auto', overflowY: 'auto', maxHeight: '600px' }}>
         <table className="admin-table" style={{ minWidth: '900px' }}>
-          <thead>
+          <thead style={{ position: 'sticky', top: 0, zIndex: 2 }}>
             <tr>
               <th>Buyer</th>
               <th>Purchased</th>
