@@ -24,6 +24,8 @@ export default function MovieScreening() {
   const [submitError, setSubmitError] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [reservation, setReservation] = useState(null);
+  const [sponsor, setSponsor] = useState(null);
+  const [sponsorAnonymous, setSponsorAnonymous] = useState(false);
 
   // Validation errors
   const [mobileError, setMobileError] = useState('');
@@ -148,6 +150,7 @@ export default function MovieScreening() {
         return a.code.localeCompare(b.code);
       });
       setCinemas(sortedCinemas);
+      setSponsor(data.sponsor || null);
     } catch (err) {
       console.error(err);
       setError('Failed to connect to server');
@@ -156,8 +159,11 @@ export default function MovieScreening() {
     }
   };
 
-  const selectedCinemaData = cinemas.find(c => c.code === selectedCinema);
-  const maxQuantity = selectedCinemaData?.seats_left || 0;
+  const isSponsorMode = selectedCinema === 'SPONSOR';
+  const c3Data = cinemas.find(c => c.code === (sponsor?.cinema_code || 'C3'));
+  const selectedCinemaData = isSponsorMode ? c3Data : cinemas.find(c => c.code === selectedCinema);
+  const sponsorMax = sponsor ? Math.min(sponsor.seats_left, c3Data?.seats_left ?? 0) : 0;
+  const maxQuantity = isSponsorMode ? sponsorMax : (selectedCinemaData?.seats_left || 0);
   const unitPrice = selectedCinemaData?.unit_price || 0;
   const totalAmount = unitPrice * quantity;
 
@@ -171,6 +177,7 @@ export default function MovieScreening() {
     setEmail('');
     setSelectedCinema(null);
     setQuantity(1);
+    setSponsorAnonymous(false);
     setGcashRef('');
     setSubmitError('');
     setMobileError('');
@@ -188,8 +195,8 @@ export default function MovieScreening() {
     setSubmitError('');
     setContactError('');
 
-    // Ensure at least one contact method is provided
-    if (!mobile.trim() && !email.trim()) {
+    // Ensure at least one contact method is provided (optional for sponsors)
+    if (!isSponsorMode && !mobile.trim() && !email.trim()) {
       setContactError('Enter your mobile number or email so we can reach you.');
       mobileInputRef.current?.focus();
       return;
@@ -220,12 +227,14 @@ export default function MovieScreening() {
 
     try {
       const res = await apiPost('/api/movie-screening/reserve', {
-        cinema_code: selectedCinema,
+        cinema_code: isSponsorMode ? (sponsor?.cinema_code || 'C3') : selectedCinema,
         buyer_name: buyerName,
         mobile: normalizedMobile,
         email: normalizedEmail,
         quantity: parseInt(quantity),
-        gcash_ref: gcashRef
+        gcash_ref: gcashRef,
+        is_sponsor: isSponsorMode,
+        is_anonymous: isSponsorMode ? sponsorAnonymous : false
       });
 
       const data = await res.json();
@@ -300,6 +309,9 @@ export default function MovieScreening() {
     const numWord = qty === 1 ? 'ticket number' : 'ticket numbers';
     const isAre = qty === 1 ? 'is' : 'are';
     const stubVoucher = qty === 1 ? 'your movie stub and food voucher' : 'your movie stubs and food vouchers';
+    const isSponsorReceipt = reservation.is_sponsor;
+    const stubWord = qty === 1 ? 'stub' : 'stubs';
+    const sponsorDisplayName = reservation.is_anonymous ? 'Anonymous Sponsor' : reservation.buyer_name;
 
     return (
       <div className="ms-page">
@@ -315,8 +327,8 @@ export default function MovieScreening() {
         <div className="ms-container">
           <div className="ms-confirmation">
             <div className="ms-confirm-icon">✓</div>
-            <h2 className="ms-confirm-title">Purchase Received!</h2>
-            <p className="ms-confirm-subtitle">Thank you, {reservation.buyer_name}!</p>
+            <h2 className="ms-confirm-title">{isSponsorReceipt ? 'Sponsorship Received!' : 'Purchase Received!'}</h2>
+            <p className="ms-confirm-subtitle">{isSponsorReceipt ? 'Thank you for sponsoring a child!' : `Thank you, ${reservation.buyer_name}!`}</p>
 
             <div className="ms-order-summary">
               <div className="ms-receipt-header">
@@ -325,11 +337,17 @@ export default function MovieScreening() {
                 <div className="ms-receipt-meta">{formatDateHero(event.event_date)}</div>
                 <div className="ms-receipt-meta">Ayala Malls Cinema · Bacolod</div>
               </div>
-              <h3>Order Summary</h3>
+              <h3>{isSponsorReceipt ? 'Sponsorship Summary' : 'Order Summary'}</h3>
               <div className="ms-order-row">
-                <span>Name</span>
-                <span>{reservation.buyer_name}</span>
+                <span>{isSponsorReceipt ? 'Sponsor' : 'Name'}</span>
+                <span>{isSponsorReceipt ? sponsorDisplayName : reservation.buyer_name}</span>
               </div>
+              {isSponsorReceipt && (
+                <div className="ms-order-row">
+                  <span>Beneficiary</span>
+                  <span>Bacolod Boys' Home Foundation, Inc.</span>
+                </div>
+              )}
               <div className="ms-order-row">
                 <span>Cinema</span>
                 <span>{getCinemaName(reservation.cinema_code)} · {selectedCinemaData?.label}</span>
@@ -339,8 +357,8 @@ export default function MovieScreening() {
                 <span>{selectedCinemaData?.showtime}</span>
               </div>
               <div className="ms-order-row">
-                <span>Tickets</span>
-                <span>{qty} {ticketWord}</span>
+                <span>{isSponsorReceipt ? 'Sponsored stubs' : 'Tickets'}</span>
+                <span>{qty} {isSponsorReceipt ? stubWord : ticketWord}</span>
               </div>
               <div className="ms-order-row">
                 <span>Total Paid</span>
@@ -351,21 +369,32 @@ export default function MovieScreening() {
                 <span className="ms-order-ref">{reservation.gcash_ref}</span>
               </div>
               <p className="ms-pending-note">
-                This confirms your order is received and pending verification. Your official {numWord} will be sent within 24 hours.
+                {isSponsorReceipt
+                  ? `This confirms your sponsorship is received and pending verification. Your ${qty === 1 ? 'sponsored stub goes' : 'sponsored stubs go'} to a child of Bacolod Boys' Home Foundation, Inc.`
+                  : `This confirms your order is received and pending verification. Your official ${numWord} will be sent within 24 hours.`}
               </p>
 
               <div className="ms-what-next">
                 <h4>What happens next?</h4>
-                <ul>
-                  <li>Wait 24 hours for payment verification.</li>
-                  <li>A committee member will message your {numWord}.</li>
-                  <li>Your {numWord} {isAre} {stubVoucher} onsite.</li>
-                  <li>A committee member will let you know where to pick up your printed {ticketWord}.</li>
-                  <li>Raffle and merch sold separately onsite.</li>
-                  {qty >= 20 && (
-                    <li className="ms-highlight">A committee member will contact you to pick seats.</li>
-                  )}
-                </ul>
+                {isSponsorReceipt ? (
+                  <ul>
+                    <li>Wait 24 hours for payment verification.</li>
+                    <li>Your {stubWord} will be set aside for children of Bacolod Boys' Home Foundation, Inc.</li>
+                    <li>Each stub covers the movie, food, and drinks for one child.</li>
+                    <li>On screening day, our committee hands the {stubWord} to the boys and their chaperones. No pickup needed on your end.</li>
+                  </ul>
+                ) : (
+                  <ul>
+                    <li>Wait 24 hours for payment verification.</li>
+                    <li>A committee member will message your {numWord}.</li>
+                    <li>Your {numWord} {isAre} {stubVoucher} onsite.</li>
+                    <li>A committee member will let you know where to pick up your printed {ticketWord}.</li>
+                    <li>Raffle and merch sold separately onsite.</li>
+                    {qty >= 20 && (
+                      <li className="ms-highlight">A committee member will contact you to pick seats.</li>
+                    )}
+                  </ul>
+                )}
               </div>
 
               <p className="ms-support-email">
@@ -514,15 +543,49 @@ export default function MovieScreening() {
                     </div>
                   </div>
                 ))}
+                {sponsor && (
+                  <div
+                    className={`ms-cinema-card ${isSponsorMode ? 'selected' : ''} ${sponsor.seats_left === 0 ? 'sold-out' : ''}`}
+                    style={{ gridColumn: '1 / -1' }}
+                    onClick={() => {
+                      if (sponsor.seats_left > 0) {
+                        setSelectedCinema('SPONSOR');
+                        setQuantity(1);
+                        setTimeout(() => {
+                          bulkNoticeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }, 100);
+                      }
+                    }}
+                  >
+                    {sponsor.seats_left === 0 && (
+                      <div className="ms-sold-out-badge">FULL</div>
+                    )}
+                    {isSponsorMode && sponsor.seats_left > 0 && (
+                      <div className="ms-check-badge">✓</div>
+                    )}
+                    <div className="ms-cinema-name">Sponsor a Child</div>
+                    <div className="ms-cinema-type">Bacolod Boys' Home Foundation, Inc.</div>
+                    <div className="ms-cinema-price">{formatCurrency(c3Data?.unit_price || 0)}</div>
+                    <div className={`ms-cinema-seats ${sponsor.seats_left === 0 ? 'sold-out' : ''}`}>
+                      {sponsor.seats_left === 0 ? 'Fully sponsored' : `${sponsor.seats_left} of ${sponsor.cap} stubs left`}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
             {selectedCinema && (
               <>
                 {/* Bulk Reservation Notice */}
-                <p className="ms-bulk-notice" ref={bulkNoticeRef}>
-                  <strong>Seat reservations are for bulk orders only.</strong> Minimum 20 tickets, paid in full. A committee member will reach out to lock in your seats.
-                </p>
+                {isSponsorMode ? (
+                  <p className="ms-bulk-notice" ref={bulkNoticeRef}>
+                    <strong>You're sponsoring stubs for Bacolod Boys' Home Foundation, Inc.</strong> On screening day, our committee hands the stubs to the boys and their chaperones. Each stub covers the movie, food, and drinks for one child.
+                  </p>
+                ) : (
+                  <p className="ms-bulk-notice" ref={bulkNoticeRef}>
+                    <strong>Seat reservations are for bulk orders only.</strong> Minimum 20 tickets, paid in full. A committee member will reach out to lock in your seats.
+                  </p>
+                )}
 
                 {/* Number of Tickets */}
                 <div className="ms-field" ref={ticketFieldRef}>
@@ -537,6 +600,15 @@ export default function MovieScreening() {
                       <option key={n} value={n}>{n}</option>
                     ))}
                   </select>
+                  {isSponsorMode ? (
+                    <div className="ms-seats-badge ms-seats-plenty">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M5 11a2 2 0 0 1 2 2v2h10v-2a2 2 0 1 1 4 0v4a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-4a2 2 0 0 1 2 -2z"></path>
+                        <path d="M5 11v-5a3 3 0 0 1 3 -3h8a3 3 0 0 1 3 3v5"></path>
+                      </svg>
+                      <span>{maxQuantity} of {sponsor?.cap ?? 40} stubs available</span>
+                    </div>
+                  ) : (
                   <div className={`ms-seats-badge ${maxQuantity > 40 ? 'ms-seats-plenty' : 'ms-seats-low'}`}>
                     {maxQuantity > 40 ? (
                       <>
@@ -555,10 +627,11 @@ export default function MovieScreening() {
                       </>
                     )}
                   </div>
+                  )}
                 </div>
 
                 {/* 20+ Seat Choice Note */}
-                {quantity >= 20 && (
+                {!isSponsorMode && quantity >= 20 && (
                   <div className="ms-seat-note">
                     For orders of 20+ tickets, you can choose your seats. A committee member will contact you after your purchase is verified.
                   </div>
@@ -585,13 +658,21 @@ export default function MovieScreening() {
 
                 {/* Contact Row */}
                 <div className="ms-field">
-                  <label className="ms-label">MOBILE NUMBER OR EMAIL <span className="ms-req">*</span></label>
-                  <p className="ms-contact-purpose">
-                    At least one required — mobile if you're in the Philippines, email if abroad.
-                  </p>
-                  <p className="ms-contact-purpose">
-                    We'll message your {quantity === 1 ? 'ticket number' : 'ticket numbers'} here within 24 hours of verifying your payment, so please make sure it's correct.
-                  </p>
+                  <label className="ms-label">MOBILE NUMBER OR EMAIL {isSponsorMode ? <span style={{ textTransform: 'none', fontWeight: 400, opacity: 0.7 }}>(optional)</span> : <span className="ms-req">*</span>}</label>
+                  {isSponsorMode ? (
+                    <p className="ms-contact-purpose">
+                      Optional. Leave your mobile or email if you'd like us to send a thank you and a copy of your receipt.
+                    </p>
+                  ) : (
+                    <>
+                      <p className="ms-contact-purpose">
+                        At least one is required. Mobile if you're in the Philippines, email if abroad.
+                      </p>
+                      <p className="ms-contact-purpose">
+                        We'll message your {quantity === 1 ? 'ticket number' : 'ticket numbers'} here within 24 hours of verifying your payment, so please make sure it's correct.
+                      </p>
+                    </>
+                  )}
                   <button
                     type="button"
                     className={`ms-privacy-toggle ${privacyOpen ? 'open' : ''}`}
@@ -642,6 +723,22 @@ export default function MovieScreening() {
                     {emailError && <span className="ms-field-error">{emailError}</span>}
                   </div>
                 </div>
+
+                {isSponsorMode && (
+                  <div className="ms-field">
+                    <label className="ms-label">RECOGNITION</label>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '4px' }}>
+                      <label style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', cursor: 'pointer' }}>
+                        <input type="radio" name="sponsorRecognition" checked={!sponsorAnonymous} onChange={() => setSponsorAnonymous(false)} style={{ marginTop: '3px' }} />
+                        <span style={{ fontSize: '0.85rem', lineHeight: 1.4 }}>List me as a sponsor by name</span>
+                      </label>
+                      <label style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', cursor: 'pointer' }}>
+                        <input type="radio" name="sponsorRecognition" checked={sponsorAnonymous} onChange={() => setSponsorAnonymous(true)} style={{ marginTop: '3px' }} />
+                        <span style={{ fontSize: '0.85rem', lineHeight: 1.4 }}>Keep me anonymous <span style={{ opacity: 0.7 }}>(we still record your name to thank you privately)</span></span>
+                      </label>
+                    </div>
+                  </div>
+                )}
 
                 {/* GCash Box */}
                 <div className="ms-gcash-box">
@@ -708,9 +805,9 @@ export default function MovieScreening() {
                 <button
                   type="submit"
                   className="ms-submit-btn"
-                  disabled={submitting || !buyerName || (!mobile && !email) || !gcashRef || mobileError || emailError}
+                  disabled={submitting || !buyerName || !gcashRef || mobileError || emailError || (!isSponsorMode && !mobile && !email)}
                 >
-                  {submitting ? 'Processing...' : 'Purchase tickets'}
+                  {submitting ? 'Processing...' : (isSponsorMode ? 'Sponsor now' : 'Purchase tickets')}
                 </button>
 
                 <p className="ms-support-email">
