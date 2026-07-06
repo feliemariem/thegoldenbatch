@@ -624,7 +624,7 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
 
   // Export CSV
   const exportCSV = () => {
-    const headers = ['buyer_name', 'mobile', 'email', 'purchased', 'cinema_code', 'quantity', 'unit_price', 'total_amount', 'gcash_ref', 'status', 'chosen_seats', 'ticket_range', 'claimed', 'claimed_at'];
+    const headers = ['buyer_name', 'mobile', 'email', 'purchased', 'cinema_code', 'quantity', 'unit_price', 'total_amount', 'gcash_ref', 'status', 'chosen_seats', 'ticket_range', 'sponsored', 'anonymous', 'claimed', 'claimed_at'];
     const rows = reservations.map(r => [
       formatName(r.buyer_name),
       r.mobile || '',
@@ -638,6 +638,8 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
       r.status,
       r.chosen_seats || '',
       r.status === 'confirmed' ? formatTicketRange(r) : '',
+      r.is_sponsor ? 'Yes' : 'No',
+      r.is_sponsor ? (r.is_anonymous ? 'Yes' : 'No') : '',
       r.claimed ? 'Yes' : 'No',
       r.claimed_at ? formatDate(r.claimed_at) : ''
     ]);
@@ -703,6 +705,13 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
             <div className="stat-label">Tickets Sold</div>
             <div style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)', marginTop: '4px' }}>
               {Number(stats.tickets_sold_c3 ?? 0)} C3 · {Number(stats.tickets_sold_c4 ?? 0)} C4
+            </div>
+          </div>
+          <div className="stat-card" style={{ background: 'rgba(207, 181, 59, 0.06)' }}>
+            <div className="stat-number" style={{ color: '#CFB53B' }}>{Number(stats.sponsored_sold ?? 0)}</div>
+            <div className="stat-label">Sponsored</div>
+            <div style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)', marginTop: '4px' }}>
+              of 40 stubs
             </div>
           </div>
           <div className="stat-card" style={{ background: 'rgba(207, 181, 59, 0.1)' }}>
@@ -938,6 +947,8 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
               <th>GCash Check</th>
               <th>Ticket Numbers</th>
               <th>Seats</th>
+              <th>Sponsored</th>
+              <th>Anonymous</th>
               <th>Status/Action</th>
               <th>Claimed</th>
             </tr>
@@ -945,7 +956,7 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
           <tbody>
             {reservations.length === 0 ? (
               <tr>
-                <td colSpan="11" style={{ textAlign: 'center', color: 'var(--color-text-secondary)' }}>
+                <td colSpan="13" style={{ textAlign: 'center', color: 'var(--color-text-secondary)' }}>
                   No reservations yet
                 </td>
               </tr>
@@ -1178,6 +1189,16 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
                     ) : (
                       <span style={{ color: 'var(--color-text-secondary)' }}>-</span>
                     )}
+                  </td>
+                  <td>
+                    {r.is_sponsor ? (
+                      <span style={{ display:'inline-block', padding:'2px 8px', fontSize:'0.7rem', fontWeight:600, borderRadius:'4px', background:'rgba(207, 181, 59, 0.15)', color:'#CFB53B' }}>Sponsor</span>
+                    ) : (
+                      <span style={{ color: 'var(--color-text-secondary)' }}>-</span>
+                    )}
+                  </td>
+                  <td>
+                    {r.is_sponsor ? (r.is_anonymous ? 'Yes' : 'No') : <span style={{ color: 'var(--color-text-secondary)' }}>-</span>}
                   </td>
                   <td>
                     {r.status === 'pending' ? (

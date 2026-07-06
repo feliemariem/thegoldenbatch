@@ -618,7 +618,8 @@ router.get('/admin/stats', authenticateToken, async (req, res) => {
          COALESCE(SUM(quantity) FILTER (WHERE status IN ('pending', 'confirmed')), 0) as total_tickets_held,
          COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed'), 0) as tickets_sold,
          COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND cinema_code = 'C3'), 0) as tickets_sold_c3,
-         COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND cinema_code = 'C4'), 0) as tickets_sold_c4
+         COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND cinema_code = 'C4'), 0) as tickets_sold_c4,
+         COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND is_sponsor = true), 0) as sponsored_sold
        FROM reservations
        WHERE event_id = $1`,
       [event_id]
@@ -651,7 +652,8 @@ router.get('/admin/stats', authenticateToken, async (req, res) => {
         total_tickets_held: parseInt(statsResult.rows[0].total_tickets_held),
         tickets_sold: parseInt(statsResult.rows[0].tickets_sold),
         tickets_sold_c3: parseInt(statsResult.rows[0].tickets_sold_c3),
-        tickets_sold_c4: parseInt(statsResult.rows[0].tickets_sold_c4)
+        tickets_sold_c4: parseInt(statsResult.rows[0].tickets_sold_c4),
+        sponsored_sold: parseInt(statsResult.rows[0].sponsored_sold)
       },
       cinemaStats: cinemaStatsResult.rows.map(c => ({
         ...c,
@@ -703,7 +705,8 @@ router.get('/admin/reservations', authenticateToken, async (req, res) => {
          COALESCE(SUM(quantity) FILTER (WHERE status IN ('pending', 'confirmed')), 0) as total_tickets_held,
          COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed'), 0) as tickets_sold,
          COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND cinema_code = 'C3'), 0) as tickets_sold_c3,
-         COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND cinema_code = 'C4'), 0) as tickets_sold_c4
+         COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND cinema_code = 'C4'), 0) as tickets_sold_c4,
+         COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND is_sponsor = true), 0) as sponsored_sold
        FROM reservations
        WHERE event_id = $1`,
       [event_id]
@@ -744,7 +747,8 @@ router.get('/admin/reservations', authenticateToken, async (req, res) => {
         total_tickets_held: parseInt(statsResult.rows[0].total_tickets_held),
         tickets_sold: parseInt(statsResult.rows[0].tickets_sold),
         tickets_sold_c3: parseInt(statsResult.rows[0].tickets_sold_c3),
-        tickets_sold_c4: parseInt(statsResult.rows[0].tickets_sold_c4)
+        tickets_sold_c4: parseInt(statsResult.rows[0].tickets_sold_c4),
+        sponsored_sold: parseInt(statsResult.rows[0].sponsored_sold)
       },
       cinemaStats: cinemaStatsResult.rows.map(c => ({
         ...c,
