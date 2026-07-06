@@ -791,8 +791,6 @@ export default function MovieScreening() {
                   <span className="ms-hint">(we use this to confirm your payment)</span>
                   <input
                     type="text"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
                     className="ms-input"
                     value={gcashRef}
                     onChange={(e) => setGcashRef(e.target.value)}
