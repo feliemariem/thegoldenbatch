@@ -310,7 +310,7 @@ export default function MovieScreening() {
     const isAre = qty === 1 ? 'is' : 'are';
     const stubVoucher = qty === 1 ? 'your movie stub and food voucher' : 'your movie stubs and food vouchers';
     const isSponsorReceipt = reservation.is_sponsor;
-    const stubWord = qty === 1 ? 'stub' : 'stubs';
+    const stubWord = qty === 1 ? 'ticket' : 'tickets';
     const sponsorDisplayName = reservation.is_anonymous ? 'Anonymous Sponsor' : reservation.buyer_name;
 
     return (
@@ -370,7 +370,7 @@ export default function MovieScreening() {
               </div>
               <p className="ms-pending-note">
                 {isSponsorReceipt
-                  ? `This confirms your sponsorship is received and pending verification. Your ${qty === 1 ? 'sponsored stub goes' : 'sponsored stubs go'} to a child of Bacolod Boys' Home Foundation, Inc.`
+                  ? `This confirms your sponsorship is received and pending verification. Your ${qty === 1 ? 'sponsored ticket goes' : 'sponsored tickets go'} to a child of Bacolod Boys' Home Foundation, Inc.`
                   : `This confirms your order is received and pending verification. Your official ${numWord} will be sent within 24 hours.`}
               </p>
 
@@ -380,7 +380,7 @@ export default function MovieScreening() {
                   <ul>
                     <li>Wait 24 hours for payment verification.</li>
                     <li>Your {stubWord} will be set aside for children of Bacolod Boys' Home Foundation, Inc.</li>
-                    <li>Each stub covers the movie, food, and drinks for one child.</li>
+                    <li>Each ticket covers the movie, food, and drinks for one child.</li>
                     <li>On screening day, our committee hands the {stubWord} to the boys and their chaperones. No pickup needed on your end.</li>
                   </ul>
                 ) : (
@@ -567,7 +567,7 @@ export default function MovieScreening() {
                     <div className="ms-cinema-type">Bacolod Boys' Home Foundation, Inc.</div>
                     <div className="ms-cinema-price">{formatCurrency(c3Data?.unit_price || 0)}</div>
                     <div className={`ms-cinema-seats ${sponsor.seats_left === 0 ? 'sold-out' : ''}`}>
-                      {sponsor.seats_left === 0 ? 'Fully sponsored' : `${sponsor.seats_left} of ${sponsor.cap} stubs left`}
+                      {sponsor.seats_left === 0 ? 'Fully sponsored' : `${sponsor.seats_left} of ${sponsor.cap} tickets left`}
                     </div>
                   </div>
                 )}
@@ -579,7 +579,7 @@ export default function MovieScreening() {
                 {/* Bulk Reservation Notice */}
                 {isSponsorMode ? (
                   <p className="ms-bulk-notice" ref={bulkNoticeRef}>
-                    <strong>You're sponsoring stubs for Bacolod Boys' Home Foundation, Inc.</strong> On screening day, our committee hands the stubs to the boys and their chaperones. Each stub covers the movie, food, and drinks for one child.
+                    <strong>You're sponsoring tickets for Bacolod Boys' Home Foundation, Inc.</strong> On screening day, our committee hands the tickets to the boys and their chaperones. Each ticket covers the movie, food, and drinks for one child.
                   </p>
                 ) : (
                   <p className="ms-bulk-notice" ref={bulkNoticeRef}>
@@ -606,7 +606,7 @@ export default function MovieScreening() {
                         <path d="M5 11a2 2 0 0 1 2 2v2h10v-2a2 2 0 1 1 4 0v4a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-4a2 2 0 0 1 2 -2z"></path>
                         <path d="M5 11v-5a3 3 0 0 1 3 -3h8a3 3 0 0 1 3 3v5"></path>
                       </svg>
-                      <span>{maxQuantity} of {sponsor?.cap ?? 40} stubs available</span>
+                      <span>{maxQuantity} of {sponsor?.cap ?? 40} tickets available</span>
                     </div>
                   ) : (
                   <div className={`ms-seats-badge ${maxQuantity > 40 ? 'ms-seats-plenty' : 'ms-seats-low'}`}>
