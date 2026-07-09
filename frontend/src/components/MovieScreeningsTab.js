@@ -1119,7 +1119,7 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
                             </svg>
                           )}
                         </button>
-                        {r.quantity >= 20 && hasEditAccess && (
+                        {(r.quantity >= 20 || r.is_sponsor) && hasEditAccess && (
                           r.seats_selected_at ? (
                             <span style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)', fontStyle: 'italic' }}>
                               Seats reserved
