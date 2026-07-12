@@ -1283,12 +1283,13 @@ export default function MovieScreening() {
                         {/* Reference Number */}
                         <div className="ms-field">
                           <label className="ms-label">REFERENCE NUMBER <span className="ms-req">*</span></label>
+                          <span className="ms-hint">(we use this to confirm your payment)</span>
                           <input
                             type="text"
                             className="ms-input"
                             value={physicalPaymentRef}
                             onChange={(e) => setPhysicalPaymentRef(e.target.value)}
-                            placeholder="Enter GCash reference number"
+                            placeholder="Paste your reference number"
                           />
                         </div>
                       </>
