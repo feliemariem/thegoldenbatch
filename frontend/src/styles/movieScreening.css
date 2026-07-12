@@ -1592,44 +1592,39 @@ body[data-theme="light"] .ms-confirm-title {
 }
 
 .ms-committee-btn {
-  width: 100%;
-  padding: 24px 20px;
-  background: rgba(207, 181, 59, 0.08);
-  border: 2px solid #CFB53B;
-  border-radius: 12px;
+  background: #141414;
+  border: 1px solid #262626;
+  border-radius: 10px;
+  padding: 14px 16px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  transition: background 0.2s, transform 0.1s;
+  gap: 4px;
+  transition: border-color 0.2s;
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
 }
 
 .ms-committee-btn:hover {
-  background: rgba(207, 181, 59, 0.15);
+  border-color: rgba(207, 181, 59, 0.5);
 }
 
 .ms-committee-btn:active {
-  transform: scale(0.98);
-}
-
-.ms-committee-icon {
-  font-size: 2rem;
+  transform: scale(0.99);
 }
 
 .ms-committee-label {
   font-family: 'Poppins', sans-serif;
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 600;
-  letter-spacing: 0.02em;
   color: #CFB53B;
 }
 
 .ms-committee-hint {
   font-family: 'Poppins', sans-serif;
-  font-size: 0.8rem;
-  letter-spacing: 0.02em;
-  color: rgba(207, 181, 59, 0.7);
+  font-size: 0.6875rem;
+  color: #7F7F78;
 }
 
 .ms-committee-unlock,

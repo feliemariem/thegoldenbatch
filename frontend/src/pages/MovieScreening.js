@@ -992,7 +992,6 @@ export default function MovieScreening() {
                 className="ms-committee-btn"
                 onClick={() => setCommitteeMode(true)}
               >
-                <span className="ms-committee-icon">🎟</span>
                 <span className="ms-committee-label">Committee Access</span>
                 <span className="ms-committee-hint">Tap to record onsite sales</span>
               </button>
