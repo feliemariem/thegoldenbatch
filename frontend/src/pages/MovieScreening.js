@@ -1266,10 +1266,47 @@ export default function MovieScreening() {
                     {physicalPaymentMethod && (
                       <>
                         {physicalPaymentMethod === 'gcash' && (
-                          <div className="ms-physical-qr-section">
+                          <div className="ms-gcash-box">
+                            <div className="ms-gcash-header">
+                              <span className="ms-gcash-logo">GCash</span>
+                              <span className="ms-gcash-amount">{formatCurrency((cinemas.find(c => c.code === physicalCinema)?.unit_price || 0) * physicalQty)}</span>
+                            </div>
+                            <div className="ms-gcash-divider"></div>
+                            <div className="ms-gcash-details">
+                              <div className="ms-gcash-row">
+                                <span className="ms-gcash-label">Number</span>
+                                <span className="ms-gcash-value">
+                                  {event.gcash_number}
+                                  <button
+                                    type="button"
+                                    className="ms-copy-btn"
+                                    onClick={copyGcashNumber}
+                                    aria-label="Copy GCash number"
+                                  >
+                                    {gcashCopied ? (
+                                      <>
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                          <polyline points="20 6 9 17 4 12"></polyline>
+                                        </svg>
+                                        <span className="ms-copy-text">Copied!</span>
+                                      </>
+                                    ) : (
+                                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                      </svg>
+                                    )}
+                                  </button>
+                                </span>
+                              </div>
+                              <div className="ms-gcash-row">
+                                <span className="ms-gcash-label">Name</span>
+                                <span className="ms-gcash-value">{event.gcash_name}</span>
+                              </div>
+                            </div>
                             <img src={gcashQr} alt="GCash QR Code" className="ms-gcash-qr" />
-                            <p className="ms-physical-helper">
-                              Buyer scans and pays the batch GCash, then enter the reference number from their confirmation screen.
+                            <p className="ms-gcash-instruction">
+                              Send the exact amount, then paste your reference number below.
                             </p>
                           </div>
                         )}
