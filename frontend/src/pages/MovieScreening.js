@@ -43,6 +43,26 @@ export default function MovieScreening() {
   // Privacy disclosure toggle
   const [privacyOpen, setPrivacyOpen] = useState(false);
 
+  // Committee physical sale state
+  const [committeeMode, setCommitteeMode] = useState(false);
+  const [passcodeInput, setPasscodeInput] = useState('');
+  const [verifiedPasscode, setVerifiedPasscode] = useState('');
+  const [passcodeVerified, setPasscodeVerified] = useState(false);
+  const [passcodeError, setPasscodeError] = useState('');
+  const [passcodeLoading, setPasscodeLoading] = useState(false);
+  const [physicalCinema, setPhysicalCinema] = useState(null);
+  const [physicalQty, setPhysicalQty] = useState(1);
+  const [physicalBuyerName, setPhysicalBuyerName] = useState('');
+  const [physicalMobile, setPhysicalMobile] = useState('');
+  const [physicalMobileError, setPhysicalMobileError] = useState('');
+  const [physicalSoldBy, setPhysicalSoldBy] = useState('');
+  const [physicalHighestSerial, setPhysicalHighestSerial] = useState('');
+  const [physicalSubmitting, setPhysicalSubmitting] = useState(false);
+  const [physicalError, setPhysicalError] = useState('');
+  const [physicalSuccess, setPhysicalSuccess] = useState(null);
+  const [lowestPhysicalSerial, setLowestPhysicalSerial] = useState(null);
+  const [serialWarning, setSerialWarning] = useState('');
+
   // Normalize and validate Philippine mobile number
   const normalizePHMobile = (value) => {
     if (!value || !value.trim()) return null;
@@ -121,6 +141,130 @@ export default function MovieScreening() {
     }
   };
 
+  // Fetch lowest physical serial for a cinema
+  const fetchLowestPhysicalSerial = async (cinemaCode) => {
+    if (!cinemaCode) {
+      setLowestPhysicalSerial(null);
+      return;
+    }
+    try {
+      const res = await apiGet(`/api/movie-screening/physical-sale/lowest?cinema_code=${cinemaCode}`);
+      const data = await res.json();
+      if (res.ok) {
+        setLowestPhysicalSerial(data.lowest_serial);
+      }
+    } catch (err) {
+      console.error('Error fetching lowest physical serial:', err);
+    }
+  };
+
+  // Check serial warning
+  const checkSerialWarning = (serial, cinemaCode) => {
+    if (!serial || !cinemaCode) {
+      setSerialWarning('');
+      return;
+    }
+    const serialNum = parseInt(serial);
+    if (isNaN(serialNum)) {
+      setSerialWarning('');
+      return;
+    }
+    const cinemaData = cinemas.find(c => c.code === cinemaCode);
+    const capacity = cinemaData?.capacity || (cinemaCode === 'C3' ? 321 : 147);
+    const threshold = lowestPhysicalSerial !== null ? lowestPhysicalSerial : capacity;
+
+    if (serialNum < threshold - 30) {
+      setSerialWarning('Heads up, this is far from where physical sales have been. Double-check the stub number.');
+    } else {
+      setSerialWarning('');
+    }
+  };
+
+  // Handle passcode verification
+  const handleVerifyPasscode = async () => {
+    setPasscodeError('');
+    setPasscodeLoading(true);
+    try {
+      const res = await apiPost('/api/movie-screening/physical-sale/verify', {
+        passcode: passcodeInput
+      });
+      if (res.ok) {
+        setVerifiedPasscode(passcodeInput);
+        setPasscodeInput('');
+        setPasscodeVerified(true);
+      } else {
+        const data = await res.json();
+        setPasscodeError(data.error || 'Invalid passcode');
+      }
+    } catch (err) {
+      setPasscodeError('Connection error');
+    } finally {
+      setPasscodeLoading(false);
+    }
+  };
+
+  // Handle physical sale submission
+  const handlePhysicalSaleSubmit = async (e) => {
+    e.preventDefault();
+    setPhysicalError('');
+
+    // Validate mobile (normalizePHMobile returns null for empty, false for invalid, or the normalized string)
+    const normalizedMobile = normalizePHMobile(physicalMobile);
+    if (!normalizedMobile) {
+      setPhysicalMobileError('Enter a valid PH mobile, e.g. 09171234567');
+      return;
+    }
+
+    setPhysicalSubmitting(true);
+    try {
+      const res = await apiPost('/api/movie-screening/physical-sale', {
+        passcode: verifiedPasscode,
+        cinema_code: physicalCinema,
+        quantity: physicalQty,
+        highest_serial: parseInt(physicalHighestSerial),
+        buyer_name: physicalBuyerName,
+        mobile: physicalMobile,
+        sold_by: physicalSoldBy
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        if (res.status === 409 && data.collided_serials) {
+          const serials = data.collided_serials.map(s =>
+            `${physicalCinema}-${String(s).padStart(8, '0')}`
+          ).join(', ');
+          setPhysicalError(`These serials are already taken: ${serials}. Set these stubs aside.`);
+        } else {
+          setPhysicalError(data.error || 'Failed to record sale');
+        }
+        return;
+      }
+
+      setPhysicalSuccess(data);
+    } catch (err) {
+      setPhysicalError('Connection error');
+    } finally {
+      setPhysicalSubmitting(false);
+    }
+  };
+
+  // Reset for another physical sale (keep cinema and sold_by)
+  const resetPhysicalSale = () => {
+    setPhysicalBuyerName('');
+    setPhysicalMobile('');
+    setPhysicalMobileError('');
+    setPhysicalQty(1);
+    setPhysicalHighestSerial('');
+    setSerialWarning('');
+    setPhysicalError('');
+    setPhysicalSuccess(null);
+    // Re-fetch lowest serial for current cinema
+    if (physicalCinema) {
+      fetchLowestPhysicalSerial(physicalCinema);
+    }
+  };
+
   useEffect(() => {
     fetchActiveEvent();
   }, []);
@@ -131,6 +275,20 @@ export default function MovieScreening() {
       window.scrollTo(0, 0);
     }
   }, [submitted, reservation]);
+
+  // Fetch lowest physical serial when cinema changes
+  useEffect(() => {
+    if (physicalCinema && passcodeVerified) {
+      fetchLowestPhysicalSerial(physicalCinema);
+    }
+  }, [physicalCinema, passcodeVerified]);
+
+  // Re-check serial warning when lowest serial updates
+  useEffect(() => {
+    if (physicalHighestSerial && physicalCinema) {
+      checkSerialWarning(physicalHighestSerial, physicalCinema);
+    }
+  }, [lowestPhysicalSerial]);
 
   const fetchActiveEvent = async () => {
     try {
@@ -816,6 +974,268 @@ export default function MovieScreening() {
             )}
           </form>
           )}
+
+          {/* Committee Access Section */}
+          <div className="ms-committee-section">
+            {!committeeMode ? (
+              <button
+                type="button"
+                className="ms-committee-btn"
+                onClick={() => setCommitteeMode(true)}
+              >
+                <span className="ms-committee-icon">🎟</span>
+                <span className="ms-committee-label">Committee Access</span>
+                <span className="ms-committee-hint">Tap to record onsite sales</span>
+              </button>
+            ) : !passcodeVerified ? (
+              <div className="ms-committee-unlock">
+                <h3 className="ms-committee-title">Committee Access</h3>
+                <p className="ms-committee-desc">Enter the committee passcode to record physical ticket sales.</p>
+                <div className="ms-field">
+                  <input
+                    type="password"
+                    className={`ms-input ${passcodeError ? 'ms-input-error' : ''}`}
+                    value={passcodeInput}
+                    onChange={(e) => {
+                      setPasscodeInput(e.target.value);
+                      setPasscodeError('');
+                    }}
+                    onKeyDown={(e) => e.key === 'Enter' && handleVerifyPasscode()}
+                    placeholder="Enter passcode"
+                    autoComplete="off"
+                  />
+                  {passcodeError && <span className="ms-field-error">{passcodeError}</span>}
+                </div>
+                <button
+                  type="button"
+                  className="ms-submit-btn"
+                  onClick={handleVerifyPasscode}
+                  disabled={passcodeLoading || !passcodeInput}
+                >
+                  {passcodeLoading ? 'Verifying...' : 'Unlock'}
+                </button>
+                <button
+                  type="button"
+                  className="ms-committee-cancel"
+                  onClick={() => {
+                    setCommitteeMode(false);
+                    setPasscodeInput('');
+                    setPasscodeError('');
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            ) : physicalSuccess ? (
+              <div className="ms-committee-success">
+                <div className="ms-confirm-icon">✓</div>
+                <h3 className="ms-committee-title">Sale Recorded!</h3>
+                <div className="ms-physical-receipt">
+                  <div className="ms-receipt-row">
+                    <span>Buyer</span>
+                    <span>{physicalSuccess.buyer_name}</span>
+                  </div>
+                  <div className="ms-receipt-row">
+                    <span>Cinema</span>
+                    <span>{getCinemaName(physicalSuccess.cinema_code)}</span>
+                  </div>
+                  <div className="ms-receipt-row">
+                    <span>Tickets</span>
+                    <span>
+                      {physicalSuccess.serial_start === physicalSuccess.serial_end
+                        ? `${physicalSuccess.cinema_code}-${String(physicalSuccess.serial_start).padStart(8, '0')}`
+                        : `${physicalSuccess.cinema_code}-${String(physicalSuccess.serial_start).padStart(8, '0')} to ${physicalSuccess.cinema_code}-${String(physicalSuccess.serial_end).padStart(8, '0')}`}
+                      {' '}(x{physicalSuccess.quantity})
+                    </span>
+                  </div>
+                  <div className="ms-receipt-row">
+                    <span>Total</span>
+                    <span className="ms-receipt-total">{formatCurrency(physicalSuccess.total_amount)}</span>
+                  </div>
+                  <div className="ms-receipt-row">
+                    <span>Sold By</span>
+                    <span>{physicalSuccess.sold_by}</span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  className="ms-submit-btn"
+                  onClick={resetPhysicalSale}
+                >
+                  Record Another Sale
+                </button>
+              </div>
+            ) : (
+              <div className="ms-committee-form">
+                <h3 className="ms-committee-title">Record Physical Sale</h3>
+
+                {physicalError && <p className="ms-error">{physicalError}</p>}
+
+                {/* Cinema Selection */}
+                <div className="ms-field">
+                  <label className="ms-label">CINEMA <span className="ms-req">*</span></label>
+                  <div className="ms-cinema-cards ms-cinema-cards-small">
+                    {cinemas.map((cinema) => (
+                      <div
+                        key={cinema.code}
+                        className={`ms-cinema-card ms-cinema-card-small ${physicalCinema === cinema.code ? 'selected' : ''}`}
+                        onClick={() => {
+                          setPhysicalCinema(cinema.code);
+                          setPhysicalHighestSerial('');
+                          setSerialWarning('');
+                        }}
+                      >
+                        {physicalCinema === cinema.code && (
+                          <div className="ms-check-badge">✓</div>
+                        )}
+                        <div className="ms-cinema-name">{getCinemaName(cinema.code)}</div>
+                        <div className="ms-cinema-price">{formatCurrency(cinema.unit_price)}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {physicalCinema && (
+                  <>
+                    {/* Quantity */}
+                    <div className="ms-field">
+                      <label className="ms-label">QUANTITY <span className="ms-req">*</span></label>
+                      <select
+                        className="ms-ticket-select"
+                        value={physicalQty}
+                        onChange={(e) => setPhysicalQty(parseInt(e.target.value))}
+                      >
+                        {Array.from({ length: 50 }, (_, i) => i + 1).map(n => (
+                          <option key={n} value={n}>{n}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Buyer Name */}
+                    <div className="ms-field">
+                      <label className="ms-label">BUYER NAME <span className="ms-req">*</span></label>
+                      <input
+                        type="text"
+                        className="ms-input"
+                        value={physicalBuyerName}
+                        onChange={(e) => setPhysicalBuyerName(e.target.value)}
+                        placeholder="Enter buyer's name"
+                      />
+                    </div>
+
+                    {/* Buyer Mobile */}
+                    <div className="ms-field">
+                      <label className="ms-label">BUYER MOBILE <span className="ms-req">*</span></label>
+                      <input
+                        type="tel"
+                        className={`ms-input ${physicalMobileError ? 'ms-input-error' : ''}`}
+                        value={physicalMobile}
+                        onChange={(e) => {
+                          setPhysicalMobile(e.target.value);
+                          setPhysicalMobileError('');
+                        }}
+                        placeholder="09XX XXX XXXX"
+                      />
+                      {physicalMobileError && <span className="ms-field-error">{physicalMobileError}</span>}
+                    </div>
+
+                    {/* Sold By */}
+                    <div className="ms-field">
+                      <label className="ms-label">SOLD BY <span className="ms-req">*</span></label>
+                      <select
+                        className="ms-ticket-select"
+                        value={physicalSoldBy}
+                        onChange={(e) => setPhysicalSoldBy(e.target.value)}
+                      >
+                        <option value="">Select seller</option>
+                        <option value="Mel">Mel</option>
+                        <option value="Apol">Apol</option>
+                      </select>
+                    </div>
+
+                    {/* Highest Serial */}
+                    <div className="ms-field">
+                      <label className="ms-label">HIGHEST STUB NUMBER <span className="ms-req">*</span></label>
+                      <div className="ms-serial-input">
+                        <span className="ms-serial-prefix">{physicalCinema}-</span>
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          className="ms-input ms-serial-field"
+                          value={physicalHighestSerial}
+                          onChange={(e) => {
+                            const val = e.target.value.replace(/\D/g, '').slice(0, 8);
+                            setPhysicalHighestSerial(val);
+                          }}
+                          onBlur={() => checkSerialWarning(physicalHighestSerial, physicalCinema)}
+                          placeholder="00000000"
+                        />
+                      </div>
+                      {physicalHighestSerial && physicalQty && (
+                        <div className="ms-serial-range">
+                          {(() => {
+                            const high = parseInt(physicalHighestSerial);
+                            const low = high - physicalQty + 1;
+                            if (isNaN(high) || low < 1) return null;
+                            return (
+                              <span>
+                                Range: {physicalCinema}-{String(low).padStart(8, '0')} to {physicalCinema}-{String(high).padStart(8, '0')} (x{physicalQty})
+                              </span>
+                            );
+                          })()}
+                        </div>
+                      )}
+                      {serialWarning && (
+                        <div className="ms-serial-warning">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                          </svg>
+                          <span>{serialWarning}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Total */}
+                    {(() => {
+                      const cinemaData = cinemas.find(c => c.code === physicalCinema);
+                      const total = (cinemaData?.unit_price || 0) * physicalQty;
+                      return (
+                        <div className="ms-total-box">
+                          <span className="ms-total-label">Total</span>
+                          <span className="ms-total-amount">{formatCurrency(total)}</span>
+                        </div>
+                      );
+                    })()}
+
+                    {/* Instructions */}
+                    <p className="ms-physical-note">
+                      Collect payment from the buyer, then send the total to the batch GCash from your own account.
+                    </p>
+
+                    {/* Submit */}
+                    <button
+                      type="button"
+                      className="ms-submit-btn"
+                      onClick={handlePhysicalSaleSubmit}
+                      disabled={
+                        physicalSubmitting ||
+                        !physicalCinema ||
+                        !physicalBuyerName ||
+                        !physicalMobile ||
+                        !physicalSoldBy ||
+                        !physicalHighestSerial ||
+                        parseInt(physicalHighestSerial) - physicalQty + 1 < 1
+                      }
+                    >
+                      {physicalSubmitting ? 'Recording...' : 'Record Sale'}
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
       </div>

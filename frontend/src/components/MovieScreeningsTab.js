@@ -624,7 +624,7 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
 
   // Export CSV
   const exportCSV = () => {
-    const headers = ['buyer_name', 'mobile', 'email', 'purchased', 'cinema_code', 'quantity', 'unit_price', 'total_amount', 'gcash_ref', 'status', 'chosen_seats', 'ticket_range', 'sponsored', 'anonymous', 'claimed', 'claimed_at'];
+    const headers = ['buyer_name', 'mobile', 'email', 'purchased', 'cinema_code', 'quantity', 'unit_price', 'total_amount', 'gcash_ref', 'status', 'chosen_seats', 'ticket_range', 'sponsored', 'anonymous', 'claimed', 'claimed_at', 'source', 'sold_by'];
     const rows = reservations.map(r => [
       formatName(r.buyer_name),
       r.mobile || '',
@@ -641,7 +641,9 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
       r.is_sponsor ? 'Yes' : 'No',
       r.is_sponsor ? (r.is_anonymous ? 'Yes' : 'No') : '',
       r.claimed ? 'Yes' : 'No',
-      r.claimed_at ? formatDate(r.claimed_at) : ''
+      r.claimed_at ? formatDate(r.claimed_at) : '',
+      r.source || 'online',
+      r.sold_by || ''
     ]);
 
     const csvContent = [
@@ -1251,17 +1253,24 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
                       </span>
                       )
                     ) : r.status === 'confirmed' ? (
-                      <span style={{
-                        display: 'inline-block',
-                        padding: '4px 10px',
-                        fontSize: '0.8rem',
-                        fontWeight: 600,
-                        borderRadius: '6px',
-                        background: 'rgba(4, 120, 87, 0.1)',
-                        color: '#047857'
-                      }}>
-                        Confirmed
-                      </span>
+                      <div>
+                        <span style={{
+                          display: 'inline-block',
+                          padding: '4px 10px',
+                          fontSize: '0.8rem',
+                          fontWeight: 600,
+                          borderRadius: '6px',
+                          background: r.source === 'physical' ? 'rgba(207, 181, 59, 0.15)' : 'rgba(4, 120, 87, 0.1)',
+                          color: r.source === 'physical' ? '#CFB53B' : '#047857'
+                        }}>
+                          {r.source === 'physical' ? 'Verified - Onsite' : 'Confirmed'}
+                        </span>
+                        {r.source === 'physical' && r.sold_by && (
+                          <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginTop: '4px' }}>
+                            Sold by {r.sold_by}
+                          </div>
+                        )}
+                      </div>
                     ) : (
                       <span style={{
                         display: 'inline-block',

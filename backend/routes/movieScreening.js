@@ -7,6 +7,44 @@ const { authenticateToken } = require('../middleware/auth');
 const SPONSOR_CAP = 40;
 const SPONSOR_CINEMA = 'C3';
 
+// Brute-force protection for physical sale passcode
+const passcodeAttempts = new Map(); // IP -> { count, lockedUntil }
+const PASSCODE_MAX_ATTEMPTS = 5;
+const PASSCODE_LOCKOUT_MS = 15 * 60 * 1000; // 15 minutes
+
+const checkPasscodeBruteForce = (ip) => {
+  const now = Date.now();
+  const record = passcodeAttempts.get(ip);
+
+  if (record && record.lockedUntil && now < record.lockedUntil) {
+    return false; // Still locked out
+  }
+
+  if (record && record.lockedUntil && now >= record.lockedUntil) {
+    // Lockout expired, reset
+    passcodeAttempts.delete(ip);
+  }
+
+  return true; // Allowed
+};
+
+const recordPasscodeFailure = (ip) => {
+  const now = Date.now();
+  const record = passcodeAttempts.get(ip) || { count: 0, lockedUntil: null };
+
+  record.count += 1;
+
+  if (record.count >= PASSCODE_MAX_ATTEMPTS) {
+    record.lockedUntil = now + PASSCODE_LOCKOUT_MS;
+  }
+
+  passcodeAttempts.set(ip, record);
+};
+
+const clearPasscodeAttempts = (ip) => {
+  passcodeAttempts.delete(ip);
+};
+
 // Normalize and validate Philippine mobile number
 // Strips spaces, dashes, leading +63 or 63, then checks for 09XXXXXXXXX pattern
 const normalizePHMobile = (mobile) => {
@@ -805,16 +843,58 @@ router.post('/admin/:id/confirm', authenticateToken, async (req, res) => {
       return res.status(400).json({ error: 'Cannot confirm a cancelled reservation' });
     }
 
-    // Get the max serial_end for this event and cinema
+    // Get cinema capacity (lock row to serialize concurrent confirms per cinema)
+    const cinemaResult = await client.query(
+      `SELECT capacity FROM event_cinemas WHERE event_id = $1 AND code = $2 FOR UPDATE`,
+      [reservation.event_id, reservation.cinema_code]
+    );
+
+    if (cinemaResult.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(400).json({ error: 'Cinema not found' });
+    }
+
+    const cinemaCapacity = parseInt(cinemaResult.rows[0].capacity);
+
+    // Get the max serial_end for this event and cinema (excluding physical sales)
     const maxSerialResult = await client.query(
       `SELECT COALESCE(MAX(serial_end), 0) as max_serial
        FROM reservations
-       WHERE event_id = $1 AND cinema_code = $2 AND status = 'confirmed'`,
+       WHERE event_id = $1 AND cinema_code = $2 AND status = 'confirmed'
+         AND source IS DISTINCT FROM 'physical'`,
       [reservation.event_id, reservation.cinema_code]
     );
 
     const serialStart = parseInt(maxSerialResult.rows[0].max_serial) + 1;
     const serialEnd = serialStart + parseInt(reservation.quantity) - 1;
+
+    // Guard: check capacity overflow
+    if (serialEnd > cinemaCapacity) {
+      await client.query('ROLLBACK');
+      return res.status(400).json({
+        error: `Not enough remaining serials. Requested ${reservation.quantity} but only ${cinemaCapacity - serialStart + 1} available.`
+      });
+    }
+
+    // Guard: check for overlap with any existing pending or confirmed reservation
+    const overlapResult = await client.query(
+      `SELECT id, serial_start, serial_end
+       FROM reservations
+       WHERE event_id = $1 AND cinema_code = $2
+         AND status IN ('pending', 'confirmed')
+         AND serial_start IS NOT NULL
+         AND serial_end IS NOT NULL
+         AND serial_start <= $4
+         AND serial_end >= $3`,
+      [reservation.event_id, reservation.cinema_code, serialStart, serialEnd]
+    );
+
+    if (overlapResult.rows.length > 0) {
+      await client.query('ROLLBACK');
+      return res.status(400).json({
+        error: 'Not enough remaining serials. The requested range overlaps with existing reservations.'
+      });
+    }
 
     // Update the reservation
     const updateResult = await client.query(
@@ -1054,6 +1134,236 @@ router.post('/admin/:id/generate-seat-link', authenticateToken, async (req, res)
   } catch (err) {
     console.error('Error generating seat link:', err);
     res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// ============================================
+// PHYSICAL SALE ENDPOINTS (passcode protected)
+// ============================================
+
+// GET /api/movie-screening/physical-sale/lowest
+// Returns the lowest serial_start among physical sales for a cinema (no auth needed)
+router.get('/physical-sale/lowest', async (req, res) => {
+  const { cinema_code } = req.query;
+
+  if (!cinema_code) {
+    return res.status(400).json({ error: 'cinema_code is required' });
+  }
+
+  try {
+    // Get active event
+    const eventResult = await db.query(
+      `SELECT id FROM screening_events WHERE status = 'active' LIMIT 1`
+    );
+
+    if (eventResult.rows.length === 0) {
+      return res.json({ lowest_serial: null });
+    }
+
+    const eventId = eventResult.rows[0].id;
+
+    // Get lowest serial_start among physical sales
+    const result = await db.query(
+      `SELECT MIN(serial_start) as lowest_serial
+       FROM reservations
+       WHERE event_id = $1 AND cinema_code = $2
+         AND source = 'physical'
+         AND status IN ('pending', 'confirmed')
+         AND serial_start IS NOT NULL`,
+      [eventId, cinema_code]
+    );
+
+    const lowestSerial = result.rows[0].lowest_serial;
+    res.json({ lowest_serial: lowestSerial ? parseInt(lowestSerial) : null });
+  } catch (err) {
+    console.error('Error fetching lowest physical serial:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// POST /api/movie-screening/physical-sale/verify
+// Verify passcode for committee access (uses same brute-force protection)
+router.post('/physical-sale/verify', async (req, res) => {
+  const clientIp = req.ip || req.socket?.remoteAddress || 'unknown';
+
+  // Brute-force check
+  if (!checkPasscodeBruteForce(clientIp)) {
+    return res.status(429).json({ error: 'Too many attempts. Try again later.' });
+  }
+
+  const { passcode } = req.body;
+
+  // Validate passcode
+  if (!passcode || passcode !== process.env.PHYSICAL_SALE_PASSCODE) {
+    recordPasscodeFailure(clientIp);
+    return res.status(403).json({ error: 'Invalid passcode' });
+  }
+
+  // Passcode correct, clear attempts
+  clearPasscodeAttempts(clientIp);
+
+  res.json({ ok: true });
+});
+
+// POST /api/movie-screening/physical-sale
+// Record a physical ticket sale (passcode protected)
+router.post('/physical-sale', async (req, res) => {
+  const clientIp = req.ip || req.socket?.remoteAddress || 'unknown';
+
+  // Brute-force check
+  if (!checkPasscodeBruteForce(clientIp)) {
+    return res.status(429).json({ error: 'Too many attempts. Try again later.' });
+  }
+
+  const { passcode, cinema_code, quantity, highest_serial, buyer_name, mobile, sold_by } = req.body;
+
+  // Validate passcode
+  if (!passcode || passcode !== process.env.PHYSICAL_SALE_PASSCODE) {
+    recordPasscodeFailure(clientIp);
+    return res.status(403).json({ error: 'Invalid passcode' });
+  }
+
+  // Passcode correct, clear attempts
+  clearPasscodeAttempts(clientIp);
+
+  // Validate required fields
+  if (!cinema_code) {
+    return res.status(400).json({ error: 'Cinema selection is required' });
+  }
+  if (!buyer_name || !buyer_name.trim()) {
+    return res.status(400).json({ error: 'Buyer name is required' });
+  }
+  if (!mobile || !mobile.trim()) {
+    return res.status(400).json({ error: 'Mobile number is required' });
+  }
+  if (!sold_by || !sold_by.trim()) {
+    return res.status(400).json({ error: 'Sold by is required' });
+  }
+
+  // Validate and normalize mobile
+  const normalizedMobile = normalizePHMobile(mobile);
+  if (normalizedMobile === false) {
+    return res.status(400).json({ error: 'Enter a valid PH mobile, e.g. 09171234567' });
+  }
+
+  // Validate quantity
+  const qty = parseInt(quantity);
+  if (!qty || qty < 1) {
+    return res.status(400).json({ error: 'Quantity must be at least 1' });
+  }
+
+  // Validate highest_serial
+  const highSerial = parseInt(highest_serial);
+  if (!highSerial || highSerial < 1) {
+    return res.status(400).json({ error: 'Highest serial number is required' });
+  }
+
+  // Compute serial range (descending from highest)
+  const serialEnd = highSerial;
+  const serialStart = highSerial - qty + 1;
+
+  if (serialStart < 1) {
+    return res.status(400).json({ error: 'Serial range goes below 1. Check quantity and highest serial.' });
+  }
+
+  const client = await db.pool.connect();
+
+  try {
+    await client.query('BEGIN');
+
+    // Get active event
+    const eventResult = await client.query(
+      `SELECT id FROM screening_events WHERE status = 'active' LIMIT 1`
+    );
+
+    if (eventResult.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(400).json({ error: 'No active screening event found' });
+    }
+
+    const eventId = eventResult.rows[0].id;
+
+    // Get cinema capacity and unit price (lock row for concurrency)
+    const cinemaResult = await client.query(
+      `SELECT capacity, unit_price FROM event_cinemas WHERE event_id = $1 AND code = $2 FOR UPDATE`,
+      [eventId, cinema_code]
+    );
+
+    if (cinemaResult.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(400).json({ error: 'Invalid cinema selection' });
+    }
+
+    const cinemaCapacity = parseInt(cinemaResult.rows[0].capacity);
+    const unitPrice = parseFloat(cinemaResult.rows[0].unit_price);
+
+    // Validate serial_end does not exceed capacity
+    if (serialEnd > cinemaCapacity) {
+      await client.query('ROLLBACK');
+      return res.status(400).json({
+        error: `Highest serial ${serialEnd} exceeds cinema capacity of ${cinemaCapacity}`
+      });
+    }
+
+    // Check for overlap with existing pending or confirmed reservations
+    const overlapResult = await client.query(
+      `SELECT serial_start, serial_end
+       FROM reservations
+       WHERE event_id = $1 AND cinema_code = $2
+         AND status IN ('pending', 'confirmed')
+         AND serial_start IS NOT NULL
+         AND serial_end IS NOT NULL
+         AND serial_start <= $4
+         AND serial_end >= $3`,
+      [eventId, cinema_code, serialStart, serialEnd]
+    );
+
+    if (overlapResult.rows.length > 0) {
+      // Find which specific serials collide
+      const collidedSerials = [];
+      for (const row of overlapResult.rows) {
+        const existingStart = parseInt(row.serial_start);
+        const existingEnd = parseInt(row.serial_end);
+        for (let s = Math.max(serialStart, existingStart); s <= Math.min(serialEnd, existingEnd); s++) {
+          collidedSerials.push(s);
+        }
+      }
+      await client.query('ROLLBACK');
+      return res.status(409).json({
+        error: 'Some serials are already taken. Set these stubs aside.',
+        collided_serials: collidedSerials.sort((a, b) => b - a)
+      });
+    }
+
+    // Calculate total
+    const totalAmount = unitPrice * qty;
+
+    // Insert the physical sale reservation with serials
+    const insertResult = await client.query(
+      `INSERT INTO reservations (
+         event_id, cinema_code, buyer_name, mobile, quantity, unit_price, total_amount,
+         gcash_ref, status, source, sold_by, gcash_verified, serial_start, serial_end,
+         confirmed_at, created_at
+       )
+       VALUES ($1, $2, $3, $4, $5, $6, $7, 'PHYSICAL', 'confirmed', 'physical', $8, false, $9, $10, NOW(), NOW())
+       RETURNING *`,
+      [eventId, cinema_code, buyer_name.trim(), normalizedMobile, qty, unitPrice, totalAmount, sold_by.trim(), serialStart, serialEnd]
+    );
+
+    await client.query('COMMIT');
+
+    const reservation = insertResult.rows[0];
+    res.status(201).json({
+      ...reservation,
+      unit_price: parseFloat(reservation.unit_price),
+      total_amount: parseFloat(reservation.total_amount)
+    });
+  } catch (err) {
+    await client.query('ROLLBACK');
+    console.error('Error creating physical sale:', err);
+    res.status(500).json({ error: 'Server error' });
+  } finally {
+    client.release();
   }
 });
 
