@@ -61,11 +61,13 @@ export default function MovieScreening() {
   const [physicalHighestSerial, setPhysicalHighestSerial] = useState('');
   const [physicalSubmitting, setPhysicalSubmitting] = useState(false);
   const [physicalError, setPhysicalError] = useState('');
+  const [physicalSerialError, setPhysicalSerialError] = useState('');
   const [physicalSuccess, setPhysicalSuccess] = useState(null);
   const [lowestPhysicalSerial, setLowestPhysicalSerial] = useState(null);
   const [serialWarning, setSerialWarning] = useState('');
   const [physicalPaymentMethod, setPhysicalPaymentMethod] = useState('');
   const [physicalPaymentRef, setPhysicalPaymentRef] = useState('');
+  const physicalSerialRef = useRef(null);
 
   // Normalize and validate Philippine mobile number
   const normalizePHMobile = (value) => {
@@ -211,6 +213,7 @@ export default function MovieScreening() {
   const handlePhysicalSaleSubmit = async (e) => {
     e.preventDefault();
     setPhysicalError('');
+    setPhysicalSerialError('');
 
     // Validate mobile (normalizePHMobile returns null for empty, false for invalid, or the normalized string)
     const normalizedMobile = normalizePHMobile(physicalMobile);
@@ -247,7 +250,10 @@ export default function MovieScreening() {
           const serials = data.collided_serials.map(s =>
             `${physicalCinema}-${String(s).padStart(8, '0')}`
           ).join(', ');
-          setPhysicalError(`These serials are already taken: ${serials}. Set these stubs aside.`);
+          setPhysicalSerialError(`These serials are already taken: ${serials}. Set these stubs aside.`);
+          setTimeout(() => {
+            physicalSerialRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 100);
         } else {
           setPhysicalError(data.error || 'Failed to record sale');
         }
@@ -277,6 +283,7 @@ export default function MovieScreening() {
     setPhysicalPaymentMethod('');
     setPhysicalPaymentRef('');
     setPhysicalError('');
+    setPhysicalSerialError('');
     setPhysicalSuccess(null);
     // Refresh cinema data and lowest serial
     fetchActiveEvent();
@@ -1224,6 +1231,9 @@ export default function MovieScreening() {
                     </div>
 
                     {/* Highest Serial */}
+                    <div ref={physicalSerialRef}>
+                      {physicalSerialError && <p className="ms-error">{physicalSerialError}</p>}
+                    </div>
                     <div className="ms-field">
                       <label className="ms-label">HIGHEST STUB NUMBER <span className="ms-req">*</span></label>
                       <div className="ms-serial-input">
