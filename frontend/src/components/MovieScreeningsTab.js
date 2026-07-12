@@ -624,7 +624,7 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
 
   // Export CSV
   const exportCSV = () => {
-    const headers = ['buyer_name', 'mobile', 'email', 'purchased', 'cinema_code', 'quantity', 'unit_price', 'total_amount', 'gcash_ref', 'status', 'chosen_seats', 'ticket_range', 'sponsored', 'anonymous', 'claimed', 'claimed_at', 'source', 'sold_by'];
+    const headers = ['buyer_name', 'mobile', 'email', 'purchased', 'cinema_code', 'quantity', 'unit_price', 'total_amount', 'gcash_ref', 'status', 'chosen_seats', 'ticket_range', 'sponsored', 'anonymous', 'claimed', 'claimed_at', 'source', 'sold_by', 'payment_method'];
     const rows = reservations.map(r => [
       formatName(r.buyer_name),
       r.mobile || '',
@@ -643,7 +643,8 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
       r.claimed ? 'Yes' : 'No',
       r.claimed_at ? formatDate(r.claimed_at) : '',
       r.source || 'online',
-      r.sold_by || ''
+      r.sold_by || '',
+      r.payment_method || ''
     ]);
 
     const csvContent = [

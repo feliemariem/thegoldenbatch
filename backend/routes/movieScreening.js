@@ -1215,7 +1215,7 @@ router.post('/physical-sale', async (req, res) => {
     return res.status(429).json({ error: 'Too many attempts. Try again later.' });
   }
 
-  const { passcode, cinema_code, quantity, highest_serial, buyer_name, mobile, sold_by } = req.body;
+  const { passcode, cinema_code, quantity, highest_serial, buyer_name, mobile, sold_by, payment_method, payment_ref } = req.body;
 
   // Validate passcode
   if (!passcode || passcode !== process.env.PHYSICAL_SALE_PASSCODE) {
@@ -1238,6 +1238,16 @@ router.post('/physical-sale', async (req, res) => {
   }
   if (!sold_by || !sold_by.trim()) {
     return res.status(400).json({ error: 'Sold by is required' });
+  }
+
+  // Validate payment method
+  if (!payment_method || !['cash', 'gcash'].includes(payment_method)) {
+    return res.status(400).json({ error: 'Payment method must be cash or gcash' });
+  }
+
+  // Validate payment reference (same validation as gcash_ref in reserve)
+  if (!payment_ref || !payment_ref.trim()) {
+    return res.status(400).json({ error: 'Payment reference number is required' });
   }
 
   // Validate and normalize mobile
@@ -1342,12 +1352,12 @@ router.post('/physical-sale', async (req, res) => {
     const insertResult = await client.query(
       `INSERT INTO reservations (
          event_id, cinema_code, buyer_name, mobile, quantity, unit_price, total_amount,
-         gcash_ref, status, source, sold_by, gcash_verified, serial_start, serial_end,
+         gcash_ref, status, source, sold_by, payment_method, gcash_verified, serial_start, serial_end,
          confirmed_at, created_at
        )
-       VALUES ($1, $2, $3, $4, $5, $6, $7, 'PHYSICAL', 'confirmed', 'physical', $8, false, $9, $10, NOW(), NOW())
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'confirmed', 'physical', $9, $10, false, $11, $12, NOW(), NOW())
        RETURNING *`,
-      [eventId, cinema_code, buyer_name.trim(), normalizedMobile, qty, unitPrice, totalAmount, sold_by.trim(), serialStart, serialEnd]
+      [eventId, cinema_code, buyer_name.trim(), normalizedMobile, qty, unitPrice, totalAmount, payment_ref.trim(), sold_by.trim(), payment_method, serialStart, serialEnd]
     );
 
     await client.query('COMMIT');

@@ -62,6 +62,8 @@ export default function MovieScreening() {
   const [physicalSuccess, setPhysicalSuccess] = useState(null);
   const [lowestPhysicalSerial, setLowestPhysicalSerial] = useState(null);
   const [serialWarning, setSerialWarning] = useState('');
+  const [physicalPaymentMethod, setPhysicalPaymentMethod] = useState('');
+  const [physicalPaymentRef, setPhysicalPaymentRef] = useState('');
 
   // Normalize and validate Philippine mobile number
   const normalizePHMobile = (value) => {
@@ -224,7 +226,9 @@ export default function MovieScreening() {
         highest_serial: parseInt(physicalHighestSerial),
         buyer_name: physicalBuyerName,
         mobile: physicalMobile,
-        sold_by: physicalSoldBy
+        sold_by: physicalSoldBy,
+        payment_method: physicalPaymentMethod,
+        payment_ref: physicalPaymentRef
       });
 
       const data = await res.json();
@@ -259,6 +263,8 @@ export default function MovieScreening() {
     setPhysicalQty(1);
     setPhysicalHighestSerial('');
     setSerialWarning('');
+    setPhysicalPaymentMethod('');
+    setPhysicalPaymentRef('');
     setPhysicalError('');
     setPhysicalSuccess(null);
     // Refresh cinema data and lowest serial
@@ -1059,6 +1065,14 @@ export default function MovieScreening() {
                     <span>Sold By</span>
                     <span>{physicalSuccess.sold_by}</span>
                   </div>
+                  <div className="ms-receipt-row">
+                    <span>Payment</span>
+                    <span>{physicalSuccess.payment_method === 'gcash' ? 'GCash' : 'Cash'}</span>
+                  </div>
+                  <div className="ms-receipt-row">
+                    <span>Reference</span>
+                    <span style={{ fontFamily: 'monospace' }}>{physicalSuccess.gcash_ref}</span>
+                  </div>
                 </div>
                 <button
                   type="button"
@@ -1228,10 +1242,57 @@ export default function MovieScreening() {
                       );
                     })()}
 
-                    {/* Instructions */}
-                    <p className="ms-physical-note">
-                      Collect payment from the buyer, then send the total to the batch GCash from your own account.
-                    </p>
+                    {/* Payment Method */}
+                    <div className="ms-field">
+                      <label className="ms-label">PAYMENT METHOD <span className="ms-req">*</span></label>
+                      <div className="ms-payment-methods">
+                        <div
+                          className={`ms-payment-card ${physicalPaymentMethod === 'gcash' ? 'selected' : ''}`}
+                          onClick={() => setPhysicalPaymentMethod('gcash')}
+                        >
+                          {physicalPaymentMethod === 'gcash' && <div className="ms-check-badge">✓</div>}
+                          <span>GCash</span>
+                        </div>
+                        <div
+                          className={`ms-payment-card ${physicalPaymentMethod === 'cash' ? 'selected' : ''}`}
+                          onClick={() => setPhysicalPaymentMethod('cash')}
+                        >
+                          {physicalPaymentMethod === 'cash' && <div className="ms-check-badge">✓</div>}
+                          <span>Cash</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {physicalPaymentMethod && (
+                      <>
+                        {physicalPaymentMethod === 'gcash' && (
+                          <div className="ms-physical-qr-section">
+                            <img src={gcashQr} alt="GCash QR Code" className="ms-gcash-qr" />
+                            <p className="ms-physical-helper">
+                              Buyer scans and pays the batch GCash, then enter the reference number from their confirmation screen.
+                            </p>
+                          </div>
+                        )}
+
+                        {physicalPaymentMethod === 'cash' && (
+                          <p className="ms-physical-helper">
+                            Send the total to the batch GCash from your own account now, then enter the reference number of your transfer.
+                          </p>
+                        )}
+
+                        {/* Reference Number */}
+                        <div className="ms-field">
+                          <label className="ms-label">REFERENCE NUMBER <span className="ms-req">*</span></label>
+                          <input
+                            type="text"
+                            className="ms-input"
+                            value={physicalPaymentRef}
+                            onChange={(e) => setPhysicalPaymentRef(e.target.value)}
+                            placeholder="Enter GCash reference number"
+                          />
+                        </div>
+                      </>
+                    )}
 
                     {/* Submit */}
                     <button
@@ -1245,7 +1306,9 @@ export default function MovieScreening() {
                         !physicalMobile ||
                         !physicalSoldBy ||
                         !physicalHighestSerial ||
-                        parseInt(physicalHighestSerial) - physicalQty + 1 < 1
+                        parseInt(physicalHighestSerial) - physicalQty + 1 < 1 ||
+                        !physicalPaymentMethod ||
+                        !physicalPaymentRef.trim()
                       }
                     >
                       {physicalSubmitting ? 'Recording...' : 'Record Sale'}

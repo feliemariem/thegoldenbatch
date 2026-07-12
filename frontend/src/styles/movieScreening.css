@@ -1767,3 +1767,48 @@ body[data-theme="light"] .ms-confirm-title {
 .ms-committee-success .ms-confirm-icon {
   margin: 0 auto 16px;
 }
+
+.ms-payment-methods {
+  display: flex;
+  gap: 12px;
+}
+
+.ms-payment-card {
+  flex: 1;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--color-text-primary, #fff);
+  position: relative;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.ms-payment-card:hover {
+  border-color: rgba(207, 181, 59, 0.5);
+}
+
+.ms-payment-card.selected {
+  border-color: #CFB53B;
+  background: rgba(207, 181, 59, 0.1);
+}
+
+.ms-physical-qr-section {
+  text-align: center;
+  margin: 16px 0;
+}
+
+.ms-physical-qr-section .ms-gcash-qr {
+  max-width: 200px;
+  margin: 0 auto 12px;
+}
+
+.ms-physical-helper {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary, #aaa);
+  line-height: 1.5;
+  margin: 12px 0 16px;
+}
