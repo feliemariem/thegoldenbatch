@@ -1618,13 +1618,17 @@ body[data-theme="light"] .ms-confirm-title {
 }
 
 .ms-committee-label {
-  font-size: 1.1rem;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
   font-weight: 600;
+  letter-spacing: 0.02em;
   color: #CFB53B;
 }
 
 .ms-committee-hint {
-  font-size: 0.85rem;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
   color: rgba(207, 181, 59, 0.7);
 }
 
@@ -1638,10 +1642,11 @@ body[data-theme="light"] .ms-confirm-title {
 }
 
 .ms-committee-title {
-  font-size: 1.2rem;
-  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 700;
   color: #CFB53B;
-  margin: 0 0 12px 0;
+  margin: 0 0 16px 0;
   text-align: center;
 }
 
@@ -1666,25 +1671,6 @@ body[data-theme="light"] .ms-confirm-title {
 
 .ms-committee-cancel:hover {
   color: #fff;
-}
-
-.ms-cinema-cards-small {
-  display: flex;
-  gap: 12px;
-}
-
-.ms-cinema-card-small {
-  flex: 1;
-  padding: 16px 12px;
-  min-height: auto;
-}
-
-.ms-cinema-card-small .ms-cinema-name {
-  font-size: 0.95rem;
-}
-
-.ms-cinema-card-small .ms-cinema-price {
-  font-size: 1rem;
 }
 
 .ms-serial-input {

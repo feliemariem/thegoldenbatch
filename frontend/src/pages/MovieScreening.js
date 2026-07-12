@@ -242,6 +242,8 @@ export default function MovieScreening() {
       }
 
       setPhysicalSuccess(data);
+      // Refresh cinema data so seats_left updates
+      fetchActiveEvent();
     } catch (err) {
       setPhysicalError('Connection error');
     } finally {
@@ -259,7 +261,8 @@ export default function MovieScreening() {
     setSerialWarning('');
     setPhysicalError('');
     setPhysicalSuccess(null);
-    // Re-fetch lowest serial for current cinema
+    // Refresh cinema data and lowest serial
+    fetchActiveEvent();
     if (physicalCinema) {
       fetchLowestPhysicalSerial(physicalCinema);
     }
@@ -1072,24 +1075,40 @@ export default function MovieScreening() {
                 {physicalError && <p className="ms-error">{physicalError}</p>}
 
                 {/* Cinema Selection */}
-                <div className="ms-field">
+                <div className="ms-field ms-cinema-section">
                   <label className="ms-label">CINEMA <span className="ms-req">*</span></label>
-                  <div className="ms-cinema-cards ms-cinema-cards-small">
+                  <div className="ms-cinema-cards">
                     {cinemas.map((cinema) => (
                       <div
                         key={cinema.code}
-                        className={`ms-cinema-card ms-cinema-card-small ${physicalCinema === cinema.code ? 'selected' : ''}`}
+                        className={`ms-cinema-card ${physicalCinema === cinema.code ? 'selected' : ''} ${cinema.seats_left === 0 ? 'sold-out' : ''}`}
                         onClick={() => {
-                          setPhysicalCinema(cinema.code);
-                          setPhysicalHighestSerial('');
-                          setSerialWarning('');
+                          if (cinema.seats_left > 0) {
+                            setPhysicalCinema(cinema.code);
+                            setPhysicalHighestSerial('');
+                            setSerialWarning('');
+                          }
                         }}
                       >
-                        {physicalCinema === cinema.code && (
+                        {cinema.seats_left === 0 && (
+                          <div className="ms-sold-out-badge">SOLD OUT</div>
+                        )}
+                        {physicalCinema === cinema.code && cinema.seats_left > 0 && (
                           <div className="ms-check-badge">✓</div>
                         )}
                         <div className="ms-cinema-name">{getCinemaName(cinema.code)}</div>
+                        <div className="ms-cinema-type">{cinema.label}</div>
+                        <div className="ms-cinema-showtime">
+                          <svg className="ms-clock-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                          </svg>
+                          {cinema.showtime}
+                        </div>
                         <div className="ms-cinema-price">{formatCurrency(cinema.unit_price)}</div>
+                        <div className={`ms-cinema-seats ${cinema.seats_left === 0 ? 'sold-out' : ''}`}>
+                          {cinema.seats_left === 0 ? 'Sold out' : `${cinema.seats_left} seats left`}
+                        </div>
                       </div>
                     ))}
                   </div>
