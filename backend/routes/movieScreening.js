@@ -1039,6 +1039,73 @@ router.post('/admin/:id/claim', authenticateToken, async (req, res) => {
   }
 });
 
+// POST /api/movie-screening/admin/:id/mark-audited
+// Mark a physical sale as audited (set gcash_verified = true)
+router.post('/admin/:id/mark-audited', authenticateToken, async (req, res) => {
+  // Permission check: must have screenings_view + screenings_edit
+  const hasAccess = await canEditTracker(req.user.email);
+  if (!hasAccess) {
+    return res.status(403).json({ error: 'Access denied. Screenings edit permission required.' });
+  }
+
+  const { id } = req.params;
+
+  try {
+    // Get current reservation
+    const current = await db.query(
+      'SELECT source, status, gcash_verified FROM reservations WHERE id = $1',
+      [id]
+    );
+
+    if (current.rows.length === 0) {
+      return res.status(404).json({ error: 'Reservation not found' });
+    }
+
+    const reservation = current.rows[0];
+
+    // Only valid for physical sales that are confirmed
+    if (reservation.source !== 'physical') {
+      return res.status(400).json({ error: 'Only physical sales can be marked as audited' });
+    }
+
+    if (reservation.status !== 'confirmed') {
+      return res.status(400).json({ error: 'Only confirmed reservations can be marked as audited' });
+    }
+
+    // Idempotent: if already audited, just return current state
+    if (reservation.gcash_verified) {
+      const result = await db.query(
+        'SELECT * FROM reservations WHERE id = $1',
+        [id]
+      );
+      return res.json({
+        ...result.rows[0],
+        unit_price: parseFloat(result.rows[0].unit_price),
+        total_amount: parseFloat(result.rows[0].total_amount)
+      });
+    }
+
+    // Mark as audited
+    const result = await db.query(
+      `UPDATE reservations
+       SET gcash_verified = true,
+           updated_at = NOW()
+       WHERE id = $1
+       RETURNING *`,
+      [id]
+    );
+
+    res.json({
+      ...result.rows[0],
+      unit_price: parseFloat(result.rows[0].unit_price),
+      total_amount: parseFloat(result.rows[0].total_amount)
+    });
+  } catch (err) {
+    console.error('Error marking reservation as audited:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // PATCH /api/movie-screening/admin/:id/seats
 // Set chosen_seats for a reservation (for 20+ orders)
 router.patch('/admin/:id/seats', authenticateToken, async (req, res) => {

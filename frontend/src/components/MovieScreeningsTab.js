@@ -182,6 +182,27 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
     }
   };
 
+  const handleMarkAudited = async (id) => {
+    setActionLoading(prev => ({ ...prev, [id]: 'audit' }));
+    try {
+      const res = await apiPost(`/api/movie-screening/admin/${id}/mark-audited`);
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.error || 'Failed to mark as audited');
+        return;
+      }
+
+      // Update reservation in state
+      setReservations(prev => prev.map(r => r.id === id ? { ...r, gcash_verified: data.gcash_verified } : r));
+    } catch (err) {
+      console.error(err);
+      alert('Failed to mark as audited');
+    } finally {
+      setActionLoading(prev => ({ ...prev, [id]: null }));
+    }
+  };
+
   const handleGenerateSeatLink = async (id) => {
     setActionLoading(prev => ({ ...prev, [id]: 'seatlink' }));
     try {
@@ -624,7 +645,7 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
 
   // Export CSV
   const exportCSV = () => {
-    const headers = ['buyer_name', 'mobile', 'email', 'purchased', 'cinema_code', 'quantity', 'unit_price', 'total_amount', 'gcash_ref', 'status', 'chosen_seats', 'ticket_range', 'sponsored', 'anonymous', 'claimed', 'claimed_at', 'source', 'sold_by', 'payment_method'];
+    const headers = ['buyer_name', 'mobile', 'email', 'purchased', 'cinema_code', 'quantity', 'unit_price', 'total_amount', 'gcash_ref', 'status', 'chosen_seats', 'ticket_range', 'sponsored', 'anonymous', 'claimed', 'claimed_at', 'source', 'sold_by', 'payment_method', 'audited'];
     const rows = reservations.map(r => [
       formatName(r.buyer_name),
       r.mobile || '',
@@ -644,7 +665,8 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
       r.claimed_at ? formatDate(r.claimed_at) : '',
       r.source || 'online',
       r.sold_by || '',
-      r.payment_method || ''
+      r.payment_method || '',
+      r.source === 'physical' ? (r.gcash_verified ? 'Yes' : 'No') : ''
     ]);
 
     const csvContent = [
@@ -1270,6 +1292,41 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
                           <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginTop: '4px' }}>
                             Sold by {r.sold_by}
                           </div>
+                        )}
+                        {r.source === 'physical' && (
+                          r.gcash_verified ? (
+                            <span style={{
+                              display: 'inline-block',
+                              marginTop: '6px',
+                              padding: '3px 8px',
+                              fontSize: '0.7rem',
+                              fontWeight: 600,
+                              borderRadius: '4px',
+                              background: 'rgba(4, 120, 87, 0.1)',
+                              color: '#047857'
+                            }}>
+                              Audited
+                            </span>
+                          ) : hasEditAccess && (
+                            <button
+                              onClick={() => handleMarkAudited(r.id)}
+                              disabled={actionLoading[r.id]}
+                              style={{
+                                display: 'block',
+                                marginTop: '6px',
+                                padding: '3px 8px',
+                                fontSize: '0.7rem',
+                                background: 'rgba(207, 181, 59, 0.15)',
+                                color: '#CFB53B',
+                                border: '1px solid rgba(207, 181, 59, 0.3)',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                opacity: actionLoading[r.id] === 'audit' ? 0.6 : 1
+                              }}
+                            >
+                              {actionLoading[r.id] === 'audit' ? 'Marking...' : 'Mark audited'}
+                            </button>
+                          )
                         )}
                       </div>
                     ) : (
