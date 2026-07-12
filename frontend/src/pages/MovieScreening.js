@@ -55,6 +55,8 @@ export default function MovieScreening() {
   const [physicalBuyerName, setPhysicalBuyerName] = useState('');
   const [physicalMobile, setPhysicalMobile] = useState('');
   const [physicalMobileError, setPhysicalMobileError] = useState('');
+  const [physicalEmail, setPhysicalEmail] = useState('');
+  const [physicalEmailError, setPhysicalEmailError] = useState('');
   const [physicalSoldBy, setPhysicalSoldBy] = useState('');
   const [physicalHighestSerial, setPhysicalHighestSerial] = useState('');
   const [physicalSubmitting, setPhysicalSubmitting] = useState(false);
@@ -217,6 +219,12 @@ export default function MovieScreening() {
       return;
     }
 
+    // Validate email if provided
+    if (physicalEmail.trim() && !isValidEmail(physicalEmail)) {
+      setPhysicalEmailError('Enter a valid email address');
+      return;
+    }
+
     setPhysicalSubmitting(true);
     try {
       const res = await apiPost('/api/movie-screening/physical-sale', {
@@ -226,6 +234,7 @@ export default function MovieScreening() {
         highest_serial: parseInt(physicalHighestSerial),
         buyer_name: physicalBuyerName,
         mobile: physicalMobile,
+        email: physicalEmail.trim() || null,
         sold_by: physicalSoldBy,
         payment_method: physicalPaymentMethod,
         payment_ref: physicalPaymentRef
@@ -260,6 +269,8 @@ export default function MovieScreening() {
     setPhysicalBuyerName('');
     setPhysicalMobile('');
     setPhysicalMobileError('');
+    setPhysicalEmail('');
+    setPhysicalEmailError('');
     setPhysicalQty(1);
     setPhysicalHighestSerial('');
     setSerialWarning('');
@@ -1043,6 +1054,12 @@ export default function MovieScreening() {
                     <span>Buyer</span>
                     <span>{physicalSuccess.buyer_name}</span>
                   </div>
+                  {physicalSuccess.email && (
+                    <div className="ms-receipt-row">
+                      <span>Email</span>
+                      <span>{physicalSuccess.email}</span>
+                    </div>
+                  )}
                   <div className="ms-receipt-row">
                     <span>Cinema</span>
                     <span>{getCinemaName(physicalSuccess.cinema_code)}</span>
@@ -1169,6 +1186,27 @@ export default function MovieScreening() {
                         placeholder="09XX XXX XXXX"
                       />
                       {physicalMobileError && <span className="ms-field-error">{physicalMobileError}</span>}
+                    </div>
+
+                    {/* Buyer Email (optional) */}
+                    <div className="ms-field">
+                      <label className="ms-label">BUYER EMAIL <span style={{ textTransform: 'none', fontWeight: 400, opacity: 0.7 }}>(optional)</span></label>
+                      <input
+                        type="email"
+                        className={`ms-input ${physicalEmailError ? 'ms-input-error' : ''}`}
+                        value={physicalEmail}
+                        onChange={(e) => {
+                          setPhysicalEmail(e.target.value);
+                          if (physicalEmailError) setPhysicalEmailError('');
+                        }}
+                        onBlur={() => {
+                          if (physicalEmail.trim() && !isValidEmail(physicalEmail)) {
+                            setPhysicalEmailError('Enter a valid email address');
+                          }
+                        }}
+                        placeholder="your@email.com"
+                      />
+                      {physicalEmailError && <span className="ms-field-error">{physicalEmailError}</span>}
                     </div>
 
                     {/* Sold By */}

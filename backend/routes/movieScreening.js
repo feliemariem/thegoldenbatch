@@ -1215,7 +1215,7 @@ router.post('/physical-sale', async (req, res) => {
     return res.status(429).json({ error: 'Too many attempts. Try again later.' });
   }
 
-  const { passcode, cinema_code, quantity, highest_serial, buyer_name, mobile, sold_by, payment_method, payment_ref } = req.body;
+  const { passcode, cinema_code, quantity, highest_serial, buyer_name, mobile, email, sold_by, payment_method, payment_ref } = req.body;
 
   // Validate passcode
   if (!passcode || passcode !== process.env.PHYSICAL_SALE_PASSCODE) {
@@ -1254,6 +1254,12 @@ router.post('/physical-sale', async (req, res) => {
   const normalizedMobile = normalizePHMobile(mobile);
   if (normalizedMobile === false) {
     return res.status(400).json({ error: 'Enter a valid PH mobile, e.g. 09171234567' });
+  }
+
+  // Validate email format when provided
+  const trimmedEmail = email ? email.trim() : null;
+  if (trimmedEmail && !isValidEmail(trimmedEmail)) {
+    return res.status(400).json({ error: 'Please enter a valid email address' });
   }
 
   // Validate quantity
@@ -1351,13 +1357,13 @@ router.post('/physical-sale', async (req, res) => {
     // Insert the physical sale reservation with serials
     const insertResult = await client.query(
       `INSERT INTO reservations (
-         event_id, cinema_code, buyer_name, mobile, quantity, unit_price, total_amount,
+         event_id, cinema_code, buyer_name, mobile, email, quantity, unit_price, total_amount,
          gcash_ref, status, source, sold_by, payment_method, gcash_verified, serial_start, serial_end,
          confirmed_at, created_at
        )
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'confirmed', 'physical', $9, $10, false, $11, $12, NOW(), NOW())
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'confirmed', 'physical', $10, $11, false, $12, $13, NOW(), NOW())
        RETURNING *`,
-      [eventId, cinema_code, buyer_name.trim(), normalizedMobile, qty, unitPrice, totalAmount, payment_ref.trim(), sold_by.trim(), payment_method, serialStart, serialEnd]
+      [eventId, cinema_code, buyer_name.trim(), normalizedMobile, trimmedEmail, qty, unitPrice, totalAmount, payment_ref.trim(), sold_by.trim(), payment_method, serialStart, serialEnd]
     );
 
     await client.query('COMMIT');
