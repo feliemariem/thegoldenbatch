@@ -1250,9 +1250,12 @@ export default function MovieScreening() {
                             setPhysicalHighestSerial(val);
                           }}
                           onBlur={() => checkSerialWarning(physicalHighestSerial, physicalCinema)}
-                          placeholder="00000000"
+                          placeholder={`e.g. ${cinemas.find(c => c.code === physicalCinema)?.capacity || (physicalCinema === 'C3' ? 321 : 147)}`}
                         />
                       </div>
+                      <span className="ms-hint" style={{ marginTop: '6px', marginBottom: '0' }}>
+                        Type just the number from the stub, no leading zeroes needed.
+                      </span>
                       {physicalHighestSerial && physicalQty && (
                         <div className="ms-serial-range">
                           {(() => {
