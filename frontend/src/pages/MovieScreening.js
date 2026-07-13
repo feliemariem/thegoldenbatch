@@ -335,7 +335,7 @@ export default function MovieScreening() {
         return a.code.localeCompare(b.code);
       });
       setCinemas(sortedCinemas);
-      setSponsor(data.sponsor || null);
+      setSponsor(null); // Sponsor a Child fully allocated - card hidden, logic kept for easy restore
     } catch (err) {
       console.error(err);
       setError('Failed to connect to server');
