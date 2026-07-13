@@ -1225,10 +1225,10 @@ export default function MovieScreening() {
                         onChange={(e) => setPhysicalSoldBy(e.target.value)}
                       >
                         <option value="">Select seller</option>
-                        <option value="Mel">Mel</option>
                         <option value="Apol">Apol</option>
                         <option value="JR">JR</option>
                         <option value="Lianne">Lianne</option>
+                        <option value="Mel">Mel</option>
                       </select>
                     </div>
 
