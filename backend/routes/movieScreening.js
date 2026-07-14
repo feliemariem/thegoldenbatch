@@ -454,7 +454,7 @@ router.post('/seats/:token/confirm', async (req, res) => {
     // 1. Look up the reservation by seat_token with row lock
     const reservationResult = await client.query(
       `SELECT id, event_id, cinema_code, buyer_name, quantity, status,
-              gcash_ref, chosen_seats, seats_selected_at, seat_selection_started_at
+              gcash_ref, chosen_seats, seats_selected_at
        FROM reservations
        WHERE seat_token = $1
        FOR UPDATE`,
@@ -480,28 +480,7 @@ router.post('/seats/:token/confirm', async (req, res) => {
       return res.status(409).json({ error: 'Seats have already been selected for this link.' });
     }
 
-    // 4. Check timer - must exist and be within 15 minutes
-    const SELECTION_WINDOW_MINUTES = 15;
-
-    if (!reservation.seat_selection_started_at) {
-      await client.query('ROLLBACK');
-      return res.status(410).json({
-        error: 'This selection link has expired. Please contact the committee for a new link.'
-      });
-    }
-
-    const startedAt = new Date(reservation.seat_selection_started_at);
-    const now = new Date();
-    const elapsedMinutes = (now - startedAt) / (1000 * 60);
-
-    if (elapsedMinutes > SELECTION_WINDOW_MINUTES) {
-      await client.query('ROLLBACK');
-      return res.status(410).json({
-        error: 'This selection link has expired. Please contact the committee for a new link.'
-      });
-    }
-
-    // 5. Validate seats is a non-empty array of strings
+    // 4. Validate seats is a non-empty array of strings
     if (!Array.isArray(seats) || seats.length === 0) {
       await client.query('ROLLBACK');
       return res.status(400).json({ error: 'Seats must be a non-empty array.' });
@@ -521,7 +500,7 @@ router.post('/seats/:token/confirm', async (req, res) => {
       trimmedSeats.push(trimmed);
     }
 
-    // 6. Check seats count matches quantity exactly
+    // 5. Check seats count matches quantity exactly
     if (trimmedSeats.length !== reservation.quantity) {
       await client.query('ROLLBACK');
       return res.status(400).json({
@@ -529,14 +508,14 @@ router.post('/seats/:token/confirm', async (req, res) => {
       });
     }
 
-    // 7. Check for duplicate seats in submission
+    // 6. Check for duplicate seats in submission
     const seatSet = new Set(trimmedSeats);
     if (seatSet.size !== trimmedSeats.length) {
       await client.query('ROLLBACK');
       return res.status(400).json({ error: 'Duplicate seats selected.' });
     }
 
-    // 8. Concurrency backstop: check for seats taken by others
+    // 7. Concurrency backstop: check for seats taken by others
     const takenResult = await client.query(
       `SELECT chosen_seats
        FROM reservations
