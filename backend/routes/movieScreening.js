@@ -1127,12 +1127,21 @@ router.post('/admin/:id/generate-seat-link', authenticateToken, async (req, res)
   try {
     // Load the reservation
     const reservationResult = await db.query(
-      'SELECT id FROM reservations WHERE id = $1',
+      'SELECT id, seat_token FROM reservations WHERE id = $1',
       [id]
     );
 
     if (reservationResult.rows.length === 0) {
       return res.status(404).json({ error: 'Reservation not found' });
+    }
+
+    // If a token already exists, return it (don't regenerate)
+    const existingToken = reservationResult.rows[0].seat_token;
+    if (existingToken) {
+      const baseUrl = process.env.FRONTEND_URL || process.env.BASE_URL;
+      const path = `/seats/${existingToken}`;
+      const url = baseUrl ? `${baseUrl}${path}` : path;
+      return res.json({ token: existingToken, url });
     }
 
     // Generate a unique URL-safe token (~24 chars)

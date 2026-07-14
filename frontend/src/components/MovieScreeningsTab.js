@@ -203,19 +203,26 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
     }
   };
 
-  const handleGenerateSeatLink = async (id) => {
+  const handleGenerateSeatLink = async (id, existingToken) => {
     setActionLoading(prev => ({ ...prev, [id]: 'seatlink' }));
     try {
-      const res = await apiPost(`/api/movie-screening/admin/${id}/generate-seat-link`);
-      const data = await res.json();
+      let url;
+      if (existingToken) {
+        // Already has a token - just build the URL and copy
+        url = `https://thegoldenbatch2003.com/seats/${existingToken}`;
+      } else {
+        // No token yet - call the generate endpoint
+        const res = await apiPost(`/api/movie-screening/admin/${id}/generate-seat-link`);
+        const data = await res.json();
 
-      if (!res.ok) {
-        alert(data.error || 'Failed to generate seat link');
-        return;
+        if (!res.ok) {
+          alert(data.error || 'Failed to generate seat link');
+          return;
+        }
+        url = data.url;
       }
 
-      // Copy the URL to clipboard
-      await copyToClipboard(data.url, id, 'seatlink');
+      await copyToClipboard(url, id, 'seatlink');
     } catch (err) {
       console.error(err);
       alert('Failed to generate seat link');
@@ -1062,48 +1069,6 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
                         </button>
                       </div>
                     )}
-                    {r.seat_token && r.quantity < 20 && !r.is_sponsor && (
-                      r.seats_selected_at ? (
-                        <span style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)', fontStyle: 'italic' }}>
-                          Seats reserved
-                        </span>
-                      ) : (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '2px' }}>
-                          <button
-                            onClick={() => copyToClipboard(`https://thegoldenbatch2003.com/seats/${r.seat_token}`, r.id, 'seaturl')}
-                            style={{
-                              background: copiedField?.id === r.id && copiedField?.type === 'seaturl' ? 'rgba(207, 181, 59, 0.15)' : 'none',
-                              border: 'none',
-                              borderRadius: '3px',
-                              cursor: 'pointer',
-                              padding: '2px 4px',
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '3px',
-                              transition: 'background 0.2s'
-                            }}
-                            title={copiedField?.id === r.id && copiedField?.type === 'seaturl' ? 'Copied!' : 'Copy seat picker link'}
-                          >
-                            {copiedField?.id === r.id && copiedField?.type === 'seaturl' ? (
-                              <>
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#CFB53B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                  <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                                <span style={{ fontSize: '0.7rem', color: '#CFB53B', fontWeight: 500 }}>Copied!</span>
-                              </>
-                            ) : (
-                              <>
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#CFB53B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-                                </svg>
-                                <span style={{ fontSize: '0.7rem', color: '#CFB53B', fontWeight: 500 }}>Seat link</span>
-                              </>
-                            )}
-                          </button>
-                        </div>
-                      )
-                    )}
                     {r.quantity >= 20 && (
                       <span style={{
                         display: 'inline-block',
@@ -1200,14 +1165,14 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
                             </svg>
                           )}
                         </button>
-                        {(r.quantity >= 20 || r.is_sponsor) && hasEditAccess && (
+                        {(r.seat_token || r.quantity >= 20 || r.is_sponsor) && hasEditAccess && (
                           r.seats_selected_at ? (
                             <span style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)', fontStyle: 'italic' }}>
                               Seats reserved
                             </span>
                           ) : (
                             <button
-                              onClick={() => handleGenerateSeatLink(r.id)}
+                              onClick={() => handleGenerateSeatLink(r.id, r.seat_token)}
                               disabled={actionLoading[r.id] === 'seatlink'}
                               style={{
                                 background: copiedField?.id === r.id && copiedField?.type === 'seatlink' ? 'rgba(207, 181, 59, 0.15)' : 'rgba(207, 181, 59, 0.08)',
