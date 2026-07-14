@@ -99,8 +99,13 @@ function ConditionalBirthdayWidget() {
   const location = useLocation();
   const { user } = useAuth();
 
-  // Hide on landing page and when not logged in
-  if (location.pathname === '/' || !user) {
+  // Hide on landing page, public ticket pages, and when not logged in
+  if (
+    location.pathname === '/' ||
+    location.pathname.startsWith('/movie-screening') ||
+    location.pathname.startsWith('/seats') ||
+    !user
+  ) {
     return null;
   }
 
