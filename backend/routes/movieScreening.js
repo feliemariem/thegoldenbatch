@@ -369,7 +369,7 @@ router.get('/seats/:token', async (req, res) => {
     // Look up the reservation by seat_token with row lock
     const reservationResult = await client.query(
       `SELECT id, event_id, cinema_code, buyer_name, quantity, status,
-              chosen_seats, seats_selected_at, seat_selection_started_at, gcash_ref
+              chosen_seats, seats_selected_at, gcash_ref
        FROM reservations
        WHERE seat_token = $1
        FOR UPDATE`,
@@ -402,35 +402,6 @@ router.get('/seats/:token', async (req, res) => {
       });
     }
 
-    // Timer logic
-    const SELECTION_WINDOW_MINUTES = 15;
-    let seatSelectionStartedAt = reservation.seat_selection_started_at;
-
-    if (!seatSelectionStartedAt) {
-      // First open - set the timer
-      const updateResult = await client.query(
-        `UPDATE reservations
-         SET seat_selection_started_at = NOW(),
-             updated_at = NOW()
-         WHERE id = $1
-         RETURNING seat_selection_started_at`,
-        [reservation.id]
-      );
-      seatSelectionStartedAt = updateResult.rows[0].seat_selection_started_at;
-    } else {
-      // Check if timer expired
-      const startedAt = new Date(seatSelectionStartedAt);
-      const now = new Date();
-      const elapsedMinutes = (now - startedAt) / (1000 * 60);
-
-      if (elapsedMinutes > SELECTION_WINDOW_MINUTES) {
-        await client.query('ROLLBACK');
-        return res.status(410).json({
-          error: 'This selection link has expired. Please contact the committee for a new link.'
-        });
-      }
-    }
-
     // Get all taken seats in this cinema for this event (excluding this reservation)
     const takenResult = await client.query(
       `SELECT chosen_seats
@@ -458,7 +429,6 @@ router.get('/seats/:token', async (req, res) => {
       buyer_name: reservation.buyer_name,
       cinema_code: reservation.cinema_code,
       quantity: reservation.quantity,
-      seat_selection_started_at: seatSelectionStartedAt,
       taken_seats: takenSeats
     });
   } catch (err) {

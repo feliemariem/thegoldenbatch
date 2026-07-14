@@ -72,8 +72,6 @@ export default function SeatPicker() {
   const [data, setData] = useState(null);
   const [selected, setSelected] = useState(new Set());
   const [takenSeats, setTakenSeats] = useState(new Set());
-  const [timeLeft, setTimeLeft] = useState(null);
-  const [expired, setExpired] = useState(false);
   const [confirming, setConfirming] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
   const [confirmData, setConfirmData] = useState(null);
@@ -107,19 +105,6 @@ export default function SeatPicker() {
 
       setData(json);
       setTakenSeats(new Set(json.taken_seats || []));
-
-      // Calculate time left
-      if (json.seat_selection_started_at) {
-        const startedAt = new Date(json.seat_selection_started_at);
-        const expiresAt = new Date(startedAt.getTime() + 15 * 60 * 1000);
-        const now = new Date();
-        const remaining = Math.max(0, Math.floor((expiresAt - now) / 1000));
-        setTimeLeft(remaining);
-        if (remaining === 0) {
-          setExpired(true);
-        }
-      }
-
       setLoading(false);
     } catch (err) {
       console.error(err);
@@ -132,27 +117,9 @@ export default function SeatPicker() {
     fetchData();
   }, [fetchData]);
 
-  // Countdown timer
-  useEffect(() => {
-    if (timeLeft === null || timeLeft <= 0 || expired || confirmed) return;
-
-    const interval = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev <= 1) {
-          setExpired(true);
-          clearInterval(interval);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [timeLeft, expired, confirmed]);
-
   // Toggle seat selection
   const toggleSeat = (seatId) => {
-    if (expired || takenSeats.has(seatId)) return;
+    if (takenSeats.has(seatId)) return;
 
     setSelected(prev => {
       const next = new Set(prev);
@@ -204,13 +171,6 @@ export default function SeatPicker() {
     } finally {
       setConfirming(false);
     }
-  };
-
-  // Format time
-  const formatTime = (seconds) => {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${m}:${s.toString().padStart(2, '0')}`;
   };
 
   // Get cinema name
@@ -632,15 +592,8 @@ export default function SeatPicker() {
             <div style={styles.who}>
               Seat selection for <b style={styles.whoName}>{data.buyer_name}</b> · <span>{getCinemaName(data.cinema_code)}</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              {timeLeft !== null && !expired && (
-                <div style={{ ...styles.timer, ...(timeLeft < 60 ? styles.timerLow : {}) }}>
-                  ⏱ {formatTime(timeLeft)}
-                </div>
-              )}
-              <div style={{ ...styles.count, ...(isFull ? styles.countFull : {}) }}>
-                Selected {selected.size} of {data.quantity}
-              </div>
+            <div style={{ ...styles.count, ...(isFull ? styles.countFull : {}) }}>
+              Selected {selected.size} of {data.quantity}
             </div>
           </div>
 
@@ -676,7 +629,7 @@ export default function SeatPicker() {
                       seatStyle = { ...seatStyle, ...styles.seatTaken };
                     } else if (isSelected) {
                       seatStyle = { ...seatStyle, ...styles.seatSel };
-                    } else if (isDisabledByFull || expired) {
+                    } else if (isDisabledByFull) {
                       seatStyle = { ...seatStyle, ...styles.seatDisabled };
                     }
 
@@ -684,10 +637,10 @@ export default function SeatPicker() {
                       <div key={col} style={styles.cell}>
                         <button
                           style={seatStyle}
-                          onClick={() => !isTaken && !expired && toggleSeat(seatId)}
-                          disabled={isTaken || expired}
+                          onClick={() => !isTaken && toggleSeat(seatId)}
+                          disabled={isTaken}
                           onMouseEnter={(e) => {
-                            if (!isTaken && !expired && !isDisabledByFull) {
+                            if (!isTaken && !isDisabledByFull) {
                               e.target.style.transform = 'scale(1.12)';
                               e.target.style.zIndex = '2';
                             }
@@ -713,22 +666,13 @@ export default function SeatPicker() {
               Your seats: <b style={styles.pickedSeats}>{selectedList.length ? selectedList.join(', ') : 'none yet'}</b>
             </div>
             <button
-              style={{ ...styles.confirm, ...(!isFull || confirming || expired ? styles.confirmDisabled : {}) }}
-              disabled={!isFull || confirming || expired}
+              style={{ ...styles.confirm, ...(!isFull || confirming ? styles.confirmDisabled : {}) }}
+              disabled={!isFull || confirming}
               onClick={handleConfirm}
             >
               {confirming ? 'Confirming...' : 'Confirm seats'}
             </button>
           </div>
-
-          {expired && (
-            <div style={styles.expiredOverlay}>
-              <div style={styles.expiredText}>
-                This selection link has expired.<br />
-                Please contact the committee for a new link.
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>
