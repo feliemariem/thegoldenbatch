@@ -1062,6 +1062,42 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
                         </button>
                       </div>
                     )}
+                    {r.seat_token && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '2px' }}>
+                        <button
+                          onClick={() => copyToClipboard(`https://thegoldenbatch2003.com/seats/${r.seat_token}`, r.id, 'seaturl')}
+                          style={{
+                            background: copiedField?.id === r.id && copiedField?.type === 'seaturl' ? 'rgba(207, 181, 59, 0.15)' : 'none',
+                            border: 'none',
+                            borderRadius: '3px',
+                            cursor: 'pointer',
+                            padding: '2px 4px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '3px',
+                            transition: 'background 0.2s'
+                          }}
+                          title={copiedField?.id === r.id && copiedField?.type === 'seaturl' ? 'Copied!' : 'Copy seat picker link'}
+                        >
+                          {copiedField?.id === r.id && copiedField?.type === 'seaturl' ? (
+                            <>
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#CFB53B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                              </svg>
+                              <span style={{ fontSize: '0.7rem', color: '#CFB53B', fontWeight: 500 }}>Copied!</span>
+                            </>
+                          ) : (
+                            <>
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#CFB53B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                              </svg>
+                              <span style={{ fontSize: '0.7rem', color: '#CFB53B', fontWeight: 500 }}>Seat link</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    )}
                     {r.quantity >= 20 && (
                       <span style={{
                         display: 'inline-block',
@@ -1074,6 +1110,20 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
                         color: '#CFB53B'
                       }}>
                         20+ seat choice
+                      </span>
+                    )}
+                    {r.seat_token && r.quantity < 20 && !r.is_sponsor && (
+                      <span style={{
+                        display: 'inline-block',
+                        marginTop: '4px',
+                        fontSize: '0.7rem',
+                        fontWeight: 600,
+                        padding: '2px 6px',
+                        borderRadius: '4px',
+                        background: 'rgba(207, 181, 59, 0.15)',
+                        color: '#CFB53B'
+                      }}>
+                        Early Bird Perk
                       </span>
                     )}
                   </td>
