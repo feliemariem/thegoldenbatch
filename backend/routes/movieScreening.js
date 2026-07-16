@@ -606,7 +606,11 @@ router.get('/admin/stats', authenticateToken, async (req, res) => {
          COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed'), 0) as tickets_sold,
          COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND cinema_code = 'C3'), 0) as tickets_sold_c3,
          COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND cinema_code = 'C4'), 0) as tickets_sold_c4,
-         COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND is_sponsor = true), 0) as sponsored_sold
+         COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND is_sponsor = true), 0) as sponsored_sold,
+         COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND is_sponsor = true AND sponsor_type = 'boys_home'), 0) as sponsored_boys_home,
+         COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND is_sponsor = true AND sponsor_type = 'teacher'), 0) as sponsored_teacher,
+         COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND is_sponsor = true AND sponsor_type = 'vacant'), 0) as sponsored_vacant,
+         COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND is_sponsor = true AND sponsor_type IS NULL), 0) as sponsored_other
        FROM reservations
        WHERE event_id = $1`,
       [event_id]
@@ -640,7 +644,11 @@ router.get('/admin/stats', authenticateToken, async (req, res) => {
         tickets_sold: parseInt(statsResult.rows[0].tickets_sold),
         tickets_sold_c3: parseInt(statsResult.rows[0].tickets_sold_c3),
         tickets_sold_c4: parseInt(statsResult.rows[0].tickets_sold_c4),
-        sponsored_sold: parseInt(statsResult.rows[0].sponsored_sold)
+        sponsored_sold: parseInt(statsResult.rows[0].sponsored_sold),
+        sponsored_boys_home: parseInt(statsResult.rows[0].sponsored_boys_home),
+        sponsored_teacher: parseInt(statsResult.rows[0].sponsored_teacher),
+        sponsored_vacant: parseInt(statsResult.rows[0].sponsored_vacant),
+        sponsored_other: parseInt(statsResult.rows[0].sponsored_other)
       },
       cinemaStats: cinemaStatsResult.rows.map(c => ({
         ...c,
@@ -693,7 +701,11 @@ router.get('/admin/reservations', authenticateToken, async (req, res) => {
          COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed'), 0) as tickets_sold,
          COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND cinema_code = 'C3'), 0) as tickets_sold_c3,
          COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND cinema_code = 'C4'), 0) as tickets_sold_c4,
-         COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND is_sponsor = true), 0) as sponsored_sold
+         COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND is_sponsor = true), 0) as sponsored_sold,
+         COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND is_sponsor = true AND sponsor_type = 'boys_home'), 0) as sponsored_boys_home,
+         COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND is_sponsor = true AND sponsor_type = 'teacher'), 0) as sponsored_teacher,
+         COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND is_sponsor = true AND sponsor_type = 'vacant'), 0) as sponsored_vacant,
+         COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND is_sponsor = true AND sponsor_type IS NULL), 0) as sponsored_other
        FROM reservations
        WHERE event_id = $1`,
       [event_id]
@@ -735,7 +747,11 @@ router.get('/admin/reservations', authenticateToken, async (req, res) => {
         tickets_sold: parseInt(statsResult.rows[0].tickets_sold),
         tickets_sold_c3: parseInt(statsResult.rows[0].tickets_sold_c3),
         tickets_sold_c4: parseInt(statsResult.rows[0].tickets_sold_c4),
-        sponsored_sold: parseInt(statsResult.rows[0].sponsored_sold)
+        sponsored_sold: parseInt(statsResult.rows[0].sponsored_sold),
+        sponsored_boys_home: parseInt(statsResult.rows[0].sponsored_boys_home),
+        sponsored_teacher: parseInt(statsResult.rows[0].sponsored_teacher),
+        sponsored_vacant: parseInt(statsResult.rows[0].sponsored_vacant),
+        sponsored_other: parseInt(statsResult.rows[0].sponsored_other)
       },
       cinemaStats: cinemaStatsResult.rows.map(c => ({
         ...c,

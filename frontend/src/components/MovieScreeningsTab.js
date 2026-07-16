@@ -763,7 +763,7 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
             <div className="stat-number" style={{ color: accentColor }}>{Number(stats.sponsored_sold ?? 0)}</div>
             <div className="stat-label">Sponsored</div>
             <div style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)', marginTop: '4px' }}>
-              of 40 stubs
+              Boys' Home {stats.sponsored_boys_home ?? 0} · Teachers {stats.sponsored_teacher ?? 0} · Vacant {stats.sponsored_vacant ?? 0}{stats.sponsored_other > 0 ? ` · Other ${stats.sponsored_other}` : ''}
             </div>
           </div>
           <div className="stat-card" style={{ background: isDark ? 'rgba(207, 181, 59, 0.1)' : 'rgba(0, 102, 51, 0.1)' }}>
