@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useTheme } from '../context/ThemeContext';
 import { apiGet, apiPost, apiPatch } from '../api';
 import { formatName } from '../utils/formatName';
 // Use pdfjs-dist/webpack which auto-configures the worker using import.meta.url
@@ -36,6 +37,20 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
 
   // Copy feedback state: tracks which field was just copied { id, type }
   const [copiedField, setCopiedField] = useState(null);
+
+  // Theme-aware styling for perk badges
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+  const perkBadgeStyle = {
+    display: 'inline-block',
+    marginTop: '4px',
+    fontSize: '0.7rem',
+    fontWeight: 600,
+    padding: '2px 6px',
+    borderRadius: '4px',
+    background: isDark ? 'rgba(207, 181, 59, 0.15)' : 'rgba(0, 102, 51, 0.12)',
+    color: isDark ? '#CFB53B' : '#006633'
+  };
 
   // Derive cinema name from code (C3 -> "Cinema 3", C4 -> "Cinema 4")
   const getCinemaName = (code) => {
@@ -1083,19 +1098,10 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
                         20+ seat choice
                       </span>
                     )}
-                    {r.seat_token && r.quantity < 20 && !r.is_sponsor && (
-                      <span style={{
-                        display: 'inline-block',
-                        marginTop: '4px',
-                        fontSize: '0.7rem',
-                        fontWeight: 600,
-                        padding: '2px 6px',
-                        borderRadius: '4px',
-                        background: 'rgba(207, 181, 59, 0.15)',
-                        color: '#CFB53B'
-                      }}>
-                        Early Bird Perk
-                      </span>
+                    {r.is_sponsor ? (
+                      <span style={perkBadgeStyle}>Sponsor</span>
+                    ) : r.seat_token && r.quantity < 20 && (
+                      <span style={perkBadgeStyle}>Early Bird Perk</span>
                     )}
                   </td>
                   <td style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', whiteSpace: 'nowrap' }}>
