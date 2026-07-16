@@ -52,6 +52,11 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
     color: isDark ? '#CFB53B' : '#006633'
   };
 
+  // Theme-aware accent colors for gold/green elements
+  const accentColor = isDark ? '#CFB53B' : '#006633';
+  const accentBgSubtle = isDark ? 'rgba(207, 181, 59, 0.08)' : 'rgba(0, 102, 51, 0.08)';
+  const accentBorder = isDark ? 'rgba(207, 181, 59, 0.3)' : '#006633';
+
   // Derive cinema name from code (C3 -> "Cinema 3", C4 -> "Cinema 4")
   const getCinemaName = (code) => {
     if (!code) return '';
@@ -754,15 +759,15 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
               {Number(stats.tickets_sold_c3 ?? 0)} C3 · {Number(stats.tickets_sold_c4 ?? 0)} C4
             </div>
           </div>
-          <div className="stat-card" style={{ background: 'rgba(207, 181, 59, 0.06)' }}>
-            <div className="stat-number" style={{ color: '#CFB53B' }}>{Number(stats.sponsored_sold ?? 0)}</div>
+          <div className="stat-card" style={{ background: isDark ? 'rgba(207, 181, 59, 0.06)' : 'rgba(0, 102, 51, 0.06)' }}>
+            <div className="stat-number" style={{ color: accentColor }}>{Number(stats.sponsored_sold ?? 0)}</div>
             <div className="stat-label">Sponsored</div>
             <div style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)', marginTop: '4px' }}>
               of 40 stubs
             </div>
           </div>
-          <div className="stat-card" style={{ background: 'rgba(207, 181, 59, 0.1)' }}>
-            <div className="stat-number stat-number--currency" style={{ color: '#CFB53B' }}>{formatCurrency(stats.total_collected)}</div>
+          <div className="stat-card" style={{ background: isDark ? 'rgba(207, 181, 59, 0.1)' : 'rgba(0, 102, 51, 0.1)' }}>
+            <div className="stat-number stat-number--currency" style={{ color: accentColor }}>{formatCurrency(stats.total_collected)}</div>
             <div className="stat-label">Collected</div>
           </div>
         </div>
@@ -1085,16 +1090,7 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
                       </div>
                     )}
                     {r.quantity >= 20 && (
-                      <span style={{
-                        display: 'inline-block',
-                        marginTop: '4px',
-                        fontSize: '0.7rem',
-                        fontWeight: 600,
-                        padding: '2px 6px',
-                        borderRadius: '4px',
-                        background: 'rgba(207, 181, 59, 0.15)',
-                        color: '#CFB53B'
-                      }}>
+                      <span style={perkBadgeStyle}>
                         20+ seat choice
                       </span>
                     )}
@@ -1181,8 +1177,8 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
                               onClick={() => handleGenerateSeatLink(r.id, r.seat_token)}
                               disabled={actionLoading[r.id] === 'seatlink'}
                               style={{
-                                background: copiedField?.id === r.id && copiedField?.type === 'seatlink' ? 'rgba(207, 181, 59, 0.15)' : 'rgba(207, 181, 59, 0.08)',
-                                border: '1px solid rgba(207, 181, 59, 0.3)',
+                                background: copiedField?.id === r.id && copiedField?.type === 'seatlink' ? perkBadgeStyle.background : accentBgSubtle,
+                                border: `1px solid ${accentBorder}`,
                                 borderRadius: '4px',
                                 cursor: 'pointer',
                                 padding: '4px 8px',
@@ -1191,7 +1187,7 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
                                 gap: '4px',
                                 fontSize: '0.7rem',
                                 fontWeight: 600,
-                                color: '#CFB53B',
+                                color: accentColor,
                                 transition: 'background 0.2s',
                                 opacity: actionLoading[r.id] === 'seatlink' ? 0.6 : 1
                               }}
@@ -1200,14 +1196,14 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
                               {actionLoading[r.id] === 'seatlink' ? '...' : (
                                 copiedField?.id === r.id && copiedField?.type === 'seatlink' ? (
                                   <>
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#CFB53B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={accentColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                       <polyline points="20 6 9 17 4 12"></polyline>
                                     </svg>
                                     Copied!
                                   </>
                                 ) : (
                                   <>
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#CFB53B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={accentColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                       <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
                                       <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
                                     </svg>
@@ -1244,7 +1240,7 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
                   </td>
                   <td>
                     {r.is_sponsor ? (
-                      <span style={{ display:'inline-block', padding:'2px 8px', fontSize:'0.7rem', fontWeight:600, borderRadius:'4px', background:'rgba(207, 181, 59, 0.15)', color:'#CFB53B' }}>Sponsor</span>
+                      <span style={{ ...perkBadgeStyle, marginTop: 0, padding: '2px 8px' }}>Sponsor</span>
                     ) : (
                       <span style={{ color: 'var(--color-text-secondary)' }}>-</span>
                     )}
