@@ -6,6 +6,9 @@ import { apiGet, apiPost } from '../api';
 import '../styles/movieScreening.css';
 import gcashQr from '../images/gcash-qr.png';
 
+// Cinemas hidden from online purchase (still available for physical sales)
+const HIDDEN_CINEMAS_ONLINE = ['C3'];
+
 export default function MovieScreening() {
   const { theme, toggleTheme } = useTheme();
   const [event, setEvent] = useState(null);
@@ -692,7 +695,7 @@ export default function MovieScreening() {
             <div className="ms-field ms-cinema-section">
               <label className="ms-label">SELECT AN OPTION <span className="ms-req">*</span></label>
               <div className="ms-cinema-cards">
-                {cinemas.map((cinema) => (
+                {cinemas.filter(c => !HIDDEN_CINEMAS_ONLINE.includes(c.code)).map((cinema) => (
                   <div
                     key={cinema.code}
                     className={`ms-cinema-card ${selectedCinema === cinema.code ? 'selected' : ''} ${cinema.seats_left === 0 ? 'sold-out' : ''}`}
