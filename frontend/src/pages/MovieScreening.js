@@ -1118,7 +1118,7 @@ export default function MovieScreening() {
                 <div className="ms-field ms-cinema-section">
                   <label className="ms-label">CINEMA <span className="ms-req">*</span></label>
                   <div className="ms-cinema-cards">
-                    {cinemas.map((cinema) => (
+                    {cinemas.filter(c => !HIDDEN_CINEMAS_ONLINE.includes(c.code)).map((cinema) => (
                       <div
                         key={cinema.code}
                         className={`ms-cinema-card ${physicalCinema === cinema.code ? 'selected' : ''} ${cinema.seats_left === 0 ? 'sold-out' : ''}`}
