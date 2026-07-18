@@ -7,7 +7,7 @@ import '../styles/movieScreening.css';
 import gcashQr from '../images/gcash-qr.png';
 
 // Cinemas hidden from online purchase (still available for physical sales)
-const HIDDEN_CINEMAS_ONLINE = [];
+const HIDDEN_CINEMAS_ONLINE = ['C3'];
 
 export default function MovieScreening() {
   const { theme, toggleTheme } = useTheme();
