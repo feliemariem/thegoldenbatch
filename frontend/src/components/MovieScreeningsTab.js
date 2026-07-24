@@ -672,7 +672,7 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
 
   // Export CSV
   const exportCSV = () => {
-    const headers = ['buyer_name', 'mobile', 'email', 'purchased', 'cinema_code', 'quantity', 'unit_price', 'total_amount', 'gcash_ref', 'status', 'chosen_seats', 'ticket_range', 'sponsored', 'anonymous', 'claimed', 'claimed_at', 'source', 'sold_by', 'payment_method', 'audited'];
+    const headers = ['buyer_name', 'mobile', 'email', 'purchased', 'cinema_code', 'quantity', 'unit_price', 'total_amount', 'gcash_ref', 'status', 'chosen_seats', 'ticket_range', 'sponsored', 'sponsor_type', 'anonymous', 'claimed', 'claimed_at', 'source', 'sold_by', 'payment_method', 'audited', 'has_open_link'];
     const rows = reservations.map(r => [
       formatName(r.buyer_name),
       r.mobile || '',
@@ -687,13 +687,15 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
       r.chosen_seats || '',
       r.status === 'confirmed' ? formatTicketRange(r) : '',
       r.is_sponsor ? 'Yes' : 'No',
+      r.sponsor_type || '',
       r.is_sponsor ? (r.is_anonymous ? 'Yes' : 'No') : '',
       r.claimed ? 'Yes' : 'No',
       r.claimed_at ? formatDate(r.claimed_at) : '',
       r.source || 'online',
       r.sold_by || '',
       r.payment_method || '',
-      r.source === 'physical' ? (r.gcash_verified ? 'Yes' : 'No') : ''
+      r.source === 'physical' ? (r.gcash_verified ? 'Yes' : 'No') : '',
+      (r.seat_token && !r.chosen_seats) ? 'Yes' : 'No'
     ]);
 
     const csvContent = [
