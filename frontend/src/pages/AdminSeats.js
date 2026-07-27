@@ -209,7 +209,7 @@ export default function AdminSeats() {
     },
     cinemasWrap: {
       display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(550px, 1fr))',
+      gridTemplateColumns: '1fr',
       gap: '24px',
       padding: '18px'
     },
