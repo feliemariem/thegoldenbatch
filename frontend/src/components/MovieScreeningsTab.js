@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import { apiGet, apiPost, apiPatch } from '../api';
 import { formatName } from '../utils/formatName';
@@ -940,6 +941,15 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
         >
           Export CSV
         </button>
+        )}
+        {hasTrackerAccess && (
+        <Link
+          to="/admin/seats"
+          className="btn-secondary"
+          style={{ padding: '10px 16px', fontSize: '0.85rem', textDecoration: 'none' }}
+        >
+          View Seat Map
+        </Link>
         )}
       </div>
       )}

@@ -30,6 +30,7 @@ import BatchRepVotingModal from './components/BatchRepVotingModal';
 import MovieScreening from './pages/MovieScreening';
 import UploadMemories from './pages/UploadMemories';
 import SeatPicker from './pages/SeatPicker';
+import AdminSeats from './pages/AdminSeats';
 import './styles/base.css';
 import './styles/components.css';
 import './styles/auth.css';
@@ -210,6 +211,19 @@ function AppRoutes() {
           <ProtectedRoute>
             <AdminRoute>
               <AdminDashboard />
+            </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Admin Seat Map: Visual seat inventory for movie screenings.
+          Access: Any admin with screenings_tracker permission. */}
+      <Route
+        path="/admin/seats"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <AdminSeats />
             </AdminRoute>
           </ProtectedRoute>
         }

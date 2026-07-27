@@ -1178,6 +1178,72 @@ router.post('/admin/:id/generate-seat-link', authenticateToken, async (req, res)
   }
 });
 
+// GET /api/movie-screening/admin/seats
+// Returns seat map data for all cinemas with reservation info
+router.get('/admin/seats', authenticateToken, async (req, res) => {
+  try {
+    // Permission check: must have screenings_view + (screenings_tracker OR screenings_edit)
+    const hasAccess = await canViewTracker(req.user.email);
+    if (!hasAccess) {
+      return res.status(403).json({ error: 'Access denied. Screenings tracker permission required.' });
+    }
+
+    const { event_id } = req.query;
+
+    if (!event_id) {
+      return res.status(400).json({ error: 'event_id is required' });
+    }
+
+    // Get all reservations with chosen_seats for this event
+    const reservationsResult = await db.query(
+      `SELECT id, cinema_code, buyer_name, mobile, email, status, is_sponsor, sponsor_type, gcash_ref, chosen_seats
+       FROM reservations
+       WHERE event_id = $1
+         AND chosen_seats IS NOT NULL
+         AND status IN ('pending', 'confirmed')`,
+      [event_id]
+    );
+
+    // Build seatMap: { "C3:A1" -> { buyer_name, mobile, email, status, is_sponsor, sponsor_type, gcash_ref } }
+    const seatMap = {};
+    for (const row of reservationsResult.rows) {
+      const seats = row.chosen_seats.split(',').map(s => s.trim()).filter(Boolean);
+      for (const seat of seats) {
+        const key = `${row.cinema_code}:${seat}`;
+        seatMap[key] = {
+          buyer_name: row.buyer_name,
+          mobile: row.mobile,
+          email: row.email,
+          status: row.status,
+          is_sponsor: row.is_sponsor,
+          sponsor_type: row.sponsor_type,
+          gcash_ref: row.gcash_ref
+        };
+      }
+    }
+
+    // Get cinema info
+    const cinemasResult = await db.query(
+      `SELECT code, label, capacity
+       FROM event_cinemas
+       WHERE event_id = $1
+       ORDER BY code ASC`,
+      [event_id]
+    );
+
+    res.json({
+      seatMap,
+      cinemas: cinemasResult.rows.map(c => ({
+        ...c,
+        capacity: parseInt(c.capacity)
+      }))
+    });
+  } catch (err) {
+    console.error('Error fetching seat map:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // ============================================
 // PHYSICAL SALE ENDPOINTS (passcode protected)
 // ============================================
