@@ -147,6 +147,160 @@ const canEditTracker = async (email) => {
 };
 
 // ============================================
+// SHARED STATS HELPER
+// ============================================
+
+// Get event stats, showtimes, and by_team breakdown
+const getEventStats = async (eventId) => {
+  // Core stats (removed tickets_sold_c3/c4 and sponsored_* fields)
+  const statsResult = await db.query(
+    `SELECT
+       COUNT(*) as total_reservations,
+       COUNT(*) FILTER (WHERE status = 'pending') as pending_count,
+       COUNT(*) FILTER (WHERE status = 'confirmed') as confirmed_count,
+       COALESCE(SUM(total_amount) FILTER (WHERE status = 'confirmed'), 0) as total_collected,
+       COALESCE(SUM(quantity) FILTER (WHERE status IN ('pending', 'confirmed')), 0) as total_tickets_held,
+       COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed'), 0) as tickets_sold,
+       COALESCE(SUM(quantity) FILTER (WHERE status = 'pending'), 0) as tickets_pending
+     FROM reservations
+     WHERE event_id = $1`,
+    [eventId]
+  );
+
+  // Per-showtime stats with serial_prefix and serial_base
+  const showtimesResult = await db.query(
+    `SELECT
+       ec.code,
+       ec.label,
+       ec.showtime,
+       ec.capacity,
+       COALESCE(ec.serial_prefix, ec.code) as serial_prefix,
+       COALESCE(ec.serial_base, 1) as serial_base,
+       COALESCE(
+         (SELECT SUM(r.quantity)
+          FROM reservations r
+          WHERE r.event_id = ec.event_id
+            AND r.cinema_code = ec.code
+            AND r.status = 'confirmed'
+         ), 0
+       ) as tickets_sold,
+       COALESCE(
+         (SELECT SUM(r.quantity)
+          FROM reservations r
+          WHERE r.event_id = ec.event_id
+            AND r.cinema_code = ec.code
+            AND r.status = 'pending'
+         ), 0
+       ) as tickets_pending,
+       COALESCE(
+         (SELECT SUM(r.quantity)
+          FROM reservations r
+          WHERE r.event_id = ec.event_id
+            AND r.cinema_code = ec.code
+            AND r.status IN ('pending', 'confirmed')
+         ), 0
+       ) + COALESCE(
+         (SELECT COUNT(*)
+          FROM screening_seats ss
+          WHERE ss.event_id = ec.event_id
+            AND ss.cinema_code = ec.code
+            AND ss.reservation_id IS NULL
+            AND ss.expires_at > NOW()
+         ), 0
+       ) as held_seats
+     FROM event_cinemas ec
+     WHERE ec.event_id = $1
+     ORDER BY ec.sort_order NULLS LAST, ec.code ASC`,
+    [eventId]
+  );
+
+  // By-team breakdown (confirmed only for tickets/orders/collected, pending for pending_tickets)
+  const byTeamResult = await db.query(
+    `SELECT
+       COALESCE(sold_by_team, 'batch2003') as team,
+       cinema_code,
+       COUNT(*) FILTER (WHERE status = 'confirmed') as orders,
+       COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed'), 0) as tickets,
+       COALESCE(SUM(quantity) FILTER (WHERE status = 'pending'), 0) as pending_tickets,
+       COALESCE(SUM(total_amount) FILTER (WHERE status = 'confirmed'), 0) as collected
+     FROM reservations
+     WHERE event_id = $1 AND status IN ('pending', 'confirmed')
+     GROUP BY COALESCE(sold_by_team, 'batch2003'), cinema_code`,
+    [eventId]
+  );
+
+  const showtimes = showtimesResult.rows.map(c => ({
+    ...c,
+    capacity: parseInt(c.capacity),
+    serial_base: parseInt(c.serial_base),
+    tickets_sold: parseInt(c.tickets_sold),
+    tickets_pending: parseInt(c.tickets_pending),
+    held_seats: parseInt(c.held_seats)
+  }));
+
+  // Build by_team structure with exact shape, always include both teams
+  const teams = ['batch2003', 'liceo'];
+  const by_team = {};
+
+  for (const team of teams) {
+    // Initialize with zeros and per_showtime for every showtime
+    by_team[team] = {
+      tickets: 0,
+      orders: 0,
+      collected: 0,
+      pending_tickets: 0,
+      per_showtime: showtimes.map(s => ({
+        code: s.code,
+        showtime: s.showtime,
+        tickets: 0
+      }))
+    };
+  }
+
+  // Populate from query results
+  for (const row of byTeamResult.rows) {
+    const team = row.team;
+    if (!by_team[team]) continue; // Skip unknown teams
+
+    by_team[team].tickets += parseInt(row.tickets);
+    by_team[team].orders += parseInt(row.orders);
+    by_team[team].collected += parseFloat(row.collected);
+    by_team[team].pending_tickets += parseInt(row.pending_tickets);
+
+    // Update per_showtime entry for this cinema_code
+    const showtimeEntry = by_team[team].per_showtime.find(s => s.code === row.cinema_code);
+    if (showtimeEntry) {
+      showtimeEntry.tickets += parseInt(row.tickets);
+    }
+  }
+
+  return {
+    stats: {
+      total_reservations: parseInt(statsResult.rows[0].total_reservations),
+      pending_count: parseInt(statsResult.rows[0].pending_count),
+      confirmed_count: parseInt(statsResult.rows[0].confirmed_count),
+      total_collected: parseFloat(statsResult.rows[0].total_collected),
+      total_tickets_held: parseInt(statsResult.rows[0].total_tickets_held),
+      tickets_sold: parseInt(statsResult.rows[0].tickets_sold),
+      tickets_pending: parseInt(statsResult.rows[0].tickets_pending)
+    },
+    showtimes,
+    cinemaStats: showtimes, // backward compatibility alias
+    by_team
+  };
+};
+
+// Format ticket numbers from serial range
+const formatTicketNumbers = (serialPrefix, serialStart, serialEnd) => {
+  if (!serialStart || !serialEnd) return null;
+  const padded = (n) => String(n).padStart(5, '0');
+  if (serialStart === serialEnd) {
+    return `${serialPrefix}-${padded(serialStart)}`;
+  }
+  return `${serialPrefix}-${padded(serialStart)} to ${serialPrefix}-${padded(serialEnd)}`;
+};
+
+// ============================================
 // PUBLIC ENDPOINTS (no auth required)
 // ============================================
 
@@ -926,67 +1080,9 @@ router.get('/admin/stats', authenticateToken, async (req, res) => {
       return res.status(400).json({ error: 'event_id is required' });
     }
 
-    // Get stats only (no buyer details)
-    const statsResult = await db.query(
-      `SELECT
-         COUNT(*) as total_reservations,
-         COUNT(*) FILTER (WHERE status = 'pending') as pending_count,
-         COUNT(*) FILTER (WHERE status = 'confirmed') as confirmed_count,
-         COALESCE(SUM(total_amount) FILTER (WHERE status = 'confirmed'), 0) as total_collected,
-         COALESCE(SUM(quantity) FILTER (WHERE status IN ('pending', 'confirmed')), 0) as total_tickets_held,
-         COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed'), 0) as tickets_sold,
-         COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND cinema_code = 'C3'), 0) as tickets_sold_c3,
-         COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND cinema_code = 'C4'), 0) as tickets_sold_c4,
-         COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND is_sponsor = true), 0) as sponsored_sold,
-         COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND is_sponsor = true AND sponsor_type = 'boys_home'), 0) as sponsored_boys_home,
-         COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND is_sponsor = true AND sponsor_type = 'teacher'), 0) as sponsored_teacher,
-         COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND is_sponsor = true AND sponsor_type = 'vacant'), 0) as sponsored_vacant,
-         COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND is_sponsor = true AND sponsor_type IS NULL), 0) as sponsored_other
-       FROM reservations
-       WHERE event_id = $1`,
-      [event_id]
-    );
+    const eventStats = await getEventStats(event_id);
 
-    // Get cinema capacity stats
-    const cinemaStatsResult = await db.query(
-      `SELECT
-         ec.code,
-         ec.label,
-         ec.capacity,
-         COALESCE(
-           (SELECT SUM(r.quantity)
-            FROM reservations r
-            WHERE r.event_id = ec.event_id
-              AND r.cinema_code = ec.code
-              AND r.status IN ('pending', 'confirmed')
-           ), 0
-         ) as held_seats
-       FROM event_cinemas ec
-       WHERE ec.event_id = $1
-       ORDER BY ec.code ASC`,
-      [event_id]
-    );
-
-    res.json({
-      stats: {
-        ...statsResult.rows[0],
-        total_collected: parseFloat(statsResult.rows[0].total_collected),
-        total_tickets_held: parseInt(statsResult.rows[0].total_tickets_held),
-        tickets_sold: parseInt(statsResult.rows[0].tickets_sold),
-        tickets_sold_c3: parseInt(statsResult.rows[0].tickets_sold_c3),
-        tickets_sold_c4: parseInt(statsResult.rows[0].tickets_sold_c4),
-        sponsored_sold: parseInt(statsResult.rows[0].sponsored_sold),
-        sponsored_boys_home: parseInt(statsResult.rows[0].sponsored_boys_home),
-        sponsored_teacher: parseInt(statsResult.rows[0].sponsored_teacher),
-        sponsored_vacant: parseInt(statsResult.rows[0].sponsored_vacant),
-        sponsored_other: parseInt(statsResult.rows[0].sponsored_other)
-      },
-      cinemaStats: cinemaStatsResult.rows.map(c => ({
-        ...c,
-        capacity: parseInt(c.capacity),
-        held_seats: parseInt(c.held_seats)
-      }))
-    });
+    res.json(eventStats);
   } catch (err) {
     console.error('Error fetching stats:', err);
     res.status(500).json({ error: 'Server error' });
@@ -1012,6 +1108,7 @@ router.get('/admin/reservations', authenticateToken, async (req, res) => {
     // Join with admins table to get claimed_by admin name
     const result = await db.query(
       `SELECT r.*, ec.label as cinema_label, ec.showtime,
+              COALESCE(ec.serial_prefix, ec.code) as serial_prefix,
               a.first_name as claimed_by_first_name, a.last_name as claimed_by_last_name
        FROM reservations r
        JOIN event_cinemas ec ON ec.event_id = r.event_id AND ec.code = r.cinema_code
@@ -1021,74 +1118,19 @@ router.get('/admin/reservations', authenticateToken, async (req, res) => {
       [event_id]
     );
 
-    // Get stats
-    const statsResult = await db.query(
-      `SELECT
-         COUNT(*) as total_reservations,
-         COUNT(*) FILTER (WHERE status = 'pending') as pending_count,
-         COUNT(*) FILTER (WHERE status = 'confirmed') as confirmed_count,
-         COALESCE(SUM(total_amount) FILTER (WHERE status = 'confirmed'), 0) as total_collected,
-         COALESCE(SUM(quantity) FILTER (WHERE status IN ('pending', 'confirmed')), 0) as total_tickets_held,
-         COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed'), 0) as tickets_sold,
-         COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND cinema_code = 'C3'), 0) as tickets_sold_c3,
-         COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND cinema_code = 'C4'), 0) as tickets_sold_c4,
-         COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND is_sponsor = true), 0) as sponsored_sold,
-         COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND is_sponsor = true AND sponsor_type = 'boys_home'), 0) as sponsored_boys_home,
-         COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND is_sponsor = true AND sponsor_type = 'teacher'), 0) as sponsored_teacher,
-         COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND is_sponsor = true AND sponsor_type = 'vacant'), 0) as sponsored_vacant,
-         COALESCE(SUM(quantity) FILTER (WHERE status = 'confirmed' AND is_sponsor = true AND sponsor_type IS NULL), 0) as sponsored_other
-       FROM reservations
-       WHERE event_id = $1`,
-      [event_id]
-    );
-
-    // Get cinema capacity stats
-    const cinemaStatsResult = await db.query(
-      `SELECT
-         ec.code,
-         ec.label,
-         ec.capacity,
-         COALESCE(
-           (SELECT SUM(r.quantity)
-            FROM reservations r
-            WHERE r.event_id = ec.event_id
-              AND r.cinema_code = ec.code
-              AND r.status IN ('pending', 'confirmed')
-           ), 0
-         ) as held_seats
-       FROM event_cinemas ec
-       WHERE ec.event_id = $1
-       ORDER BY ec.code ASC`,
-      [event_id]
-    );
+    const eventStats = await getEventStats(event_id);
 
     res.json({
       reservations: result.rows.map(r => ({
         ...r,
         unit_price: parseFloat(r.unit_price),
         total_amount: parseFloat(r.total_amount),
+        ticket_numbers: formatTicketNumbers(r.serial_prefix, r.serial_start, r.serial_end),
         claimed_by_name: r.claimed_by_first_name && r.claimed_by_last_name
           ? `${r.claimed_by_first_name} ${r.claimed_by_last_name}`
           : (r.claimed_by_first_name || r.claimed_by_last_name || null)
       })),
-      stats: {
-        ...statsResult.rows[0],
-        total_collected: parseFloat(statsResult.rows[0].total_collected),
-        total_tickets_held: parseInt(statsResult.rows[0].total_tickets_held),
-        tickets_sold: parseInt(statsResult.rows[0].tickets_sold),
-        tickets_sold_c3: parseInt(statsResult.rows[0].tickets_sold_c3),
-        tickets_sold_c4: parseInt(statsResult.rows[0].tickets_sold_c4),
-        sponsored_sold: parseInt(statsResult.rows[0].sponsored_sold),
-        sponsored_boys_home: parseInt(statsResult.rows[0].sponsored_boys_home),
-        sponsored_teacher: parseInt(statsResult.rows[0].sponsored_teacher),
-        sponsored_vacant: parseInt(statsResult.rows[0].sponsored_vacant),
-        sponsored_other: parseInt(statsResult.rows[0].sponsored_other)
-      },
-      cinemaStats: cinemaStatsResult.rows.map(c => ({
-        ...c,
-        capacity: parseInt(c.capacity),
-        held_seats: parseInt(c.held_seats)
-      }))
+      ...eventStats
     });
   } catch (err) {
     console.error('Error fetching reservations:', err);
@@ -1139,9 +1181,10 @@ router.post('/admin/:id/confirm', authenticateToken, async (req, res) => {
       return res.status(400).json({ error: 'Cannot confirm a cancelled reservation' });
     }
 
-    // Get cinema capacity (lock row to serialize concurrent confirms per cinema)
+    // Get cinema capacity, serial_base, and serial_prefix (lock row to serialize concurrent confirms per cinema)
     const cinemaResult = await client.query(
-      `SELECT capacity FROM event_cinemas WHERE event_id = $1 AND code = $2 FOR UPDATE`,
+      `SELECT capacity, COALESCE(serial_base, 1) as serial_base, COALESCE(serial_prefix, code) as serial_prefix
+       FROM event_cinemas WHERE event_id = $1 AND code = $2 FOR UPDATE`,
       [reservation.event_id, reservation.cinema_code]
     );
 
@@ -1151,6 +1194,9 @@ router.post('/admin/:id/confirm', authenticateToken, async (req, res) => {
     }
 
     const cinemaCapacity = parseInt(cinemaResult.rows[0].capacity);
+    const serialBase = parseInt(cinemaResult.rows[0].serial_base);
+    const serialLast = serialBase + cinemaCapacity - 1;
+    const serialPrefix = cinemaResult.rows[0].serial_prefix;
 
     // Get the max serial_end for this event and cinema (excluding physical sales)
     const maxSerialResult = await client.query(
@@ -1161,14 +1207,14 @@ router.post('/admin/:id/confirm', authenticateToken, async (req, res) => {
       [reservation.event_id, reservation.cinema_code]
     );
 
-    const serialStart = parseInt(maxSerialResult.rows[0].max_serial) + 1;
+    const serialStart = Math.max(serialBase, parseInt(maxSerialResult.rows[0].max_serial) + 1);
     const serialEnd = serialStart + parseInt(reservation.quantity) - 1;
 
     // Guard: check capacity overflow
-    if (serialEnd > cinemaCapacity) {
+    if (serialEnd > serialLast) {
       await client.query('ROLLBACK');
       return res.status(400).json({
-        error: `Not enough remaining serials. Requested ${reservation.quantity} but only ${cinemaCapacity - serialStart + 1} available.`
+        error: `Not enough remaining serials. Requested ${reservation.quantity} but only ${serialLast - serialStart + 1} available.`
       });
     }
 
@@ -1209,10 +1255,12 @@ router.post('/admin/:id/confirm', authenticateToken, async (req, res) => {
 
     await client.query('COMMIT');
 
+    const updated = updateResult.rows[0];
     res.json({
-      ...updateResult.rows[0],
-      unit_price: parseFloat(updateResult.rows[0].unit_price),
-      total_amount: parseFloat(updateResult.rows[0].total_amount)
+      ...updated,
+      unit_price: parseFloat(updated.unit_price),
+      total_amount: parseFloat(updated.total_amount),
+      ticket_numbers: formatTicketNumbers(serialPrefix, updated.serial_start, updated.serial_end)
     });
   } catch (err) {
     await client.query('ROLLBACK');
