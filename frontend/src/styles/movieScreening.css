@@ -546,6 +546,13 @@
   color: var(--doom-warning-text);
 }
 
+.ms-hold-warning {
+  color: #A7B0AA;
+  font-size: 13px;
+  margin: 4px 0 0 0;
+  text-align: right;
+}
+
 .ms-seat-error {
   background: var(--doom-warning-bg);
   border: 1px solid var(--doom-warning-border);

@@ -4,6 +4,7 @@ import Footer from '../components/Footer';
 import { apiGet, apiPost, apiDelete } from '../api';
 import { getSeatMap } from '../data/seatMaps';
 import gcashQr from '../images/gcash-qr.png';
+import { API_URL } from '../config';
 import '../styles/movieScreening.css';
 
 // Sort seats by row letter (A first) then number
@@ -77,6 +78,11 @@ export default function MovieScreening() {
   const pollRef = useRef(null);
   const step1BottomRef = useRef(null);
   const isFirstShowtimeSelect = useRef(true);
+  // Refs for leave handlers (must see current values in event listeners)
+  const holdTokenRef = useRef(null);
+  const stepRef = useRef(1);
+  const reservationRef = useRef(null);
+  const expiredRef = useRef(false);
 
   // Fetch active event
   const fetchActiveEvent = useCallback(async () => {
@@ -100,6 +106,63 @@ export default function MovieScreening() {
   useEffect(() => {
     fetchActiveEvent();
   }, [fetchActiveEvent]);
+
+  // Keep refs in sync with state
+  useEffect(() => {
+    holdTokenRef.current = holdToken;
+  }, [holdToken]);
+
+  useEffect(() => {
+    stepRef.current = step;
+  }, [step]);
+
+  useEffect(() => {
+    reservationRef.current = reservation;
+  }, [reservation]);
+
+  useEffect(() => {
+    expiredRef.current = expired;
+  }, [expired]);
+
+  // Release holds on page leave/refresh
+  useEffect(() => {
+    const shouldRelease = () =>
+      stepRef.current >= 2 &&
+      holdTokenRef.current &&
+      !reservationRef.current &&
+      !expiredRef.current;
+
+    const handlePageHide = () => {
+      if (shouldRelease()) {
+        fetch(`${API_URL}/api/movie-screening/holds/${holdTokenRef.current}`, {
+          method: 'DELETE',
+          keepalive: true
+        });
+      }
+    };
+
+    const handleBeforeUnload = (e) => {
+      if (shouldRelease()) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+
+    window.addEventListener('pagehide', handlePageHide);
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('pagehide', handlePageHide);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      // Unmount cleanup: release hold if navigating away via React Router
+      if (shouldRelease()) {
+        fetch(`${API_URL}/api/movie-screening/holds/${holdTokenRef.current}`, {
+          method: 'DELETE',
+          keepalive: true
+        });
+      }
+    };
+  }, []);
 
   // Auto-scroll to ticket counter when showtime is selected
   useEffect(() => {
@@ -646,6 +709,9 @@ export default function MovieScreening() {
               <div className={`ms-timer ${timeLeft <= 60 ? 'warning' : ''}`}>
                 Seats held for {formatTimer(timeLeft)}
               </div>
+              <p className="ms-hold-warning">
+                Refreshing or leaving this page will release your seats.
+              </p>
             </div>
 
             {seatError && <p className="ms-seat-error">{seatError}</p>}
@@ -743,6 +809,9 @@ export default function MovieScreening() {
               <div className={`ms-timer ${timeLeft <= 60 ? 'warning' : ''}`}>
                 Seats held for {formatTimer(timeLeft)}
               </div>
+              <p className="ms-hold-warning">
+                Refreshing or leaving this page will release your seats.
+              </p>
             </div>
 
             <form onSubmit={handleSubmit} className="ms-form">
