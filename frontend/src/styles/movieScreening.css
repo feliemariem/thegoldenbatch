@@ -324,12 +324,15 @@
   padding: 20px 16px;
   text-align: center;
   cursor: pointer;
-  transition: border-color 0.2s, background 0.2s;
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
   font-family: 'Poppins', sans-serif;
 }
 
-.ms-showtime-card:hover:not(.disabled) {
-  border-color: var(--doom-dim);
+.ms-showtime-card:hover:not(.disabled):not(.selected),
+.ms-showtime-card:focus-visible:not(.disabled):not(.selected) {
+  border-color: #2F6B40;
+  box-shadow: 0 0 0 1px rgba(76,193,106,0.25), 0 0 24px rgba(76,193,106,0.18);
+  transform: translateY(-2px);
 }
 
 .ms-showtime-card.selected {
@@ -1144,5 +1147,16 @@
   .ms-step3-actions .ms-btn-primary {
     max-width: 100%;
     order: -1;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .ms-showtime-card {
+    transition: none;
+  }
+  .ms-showtime-card:hover:not(.disabled):not(.selected),
+  .ms-showtime-card:focus-visible:not(.disabled):not(.selected) {
+    transform: none;
   }
 }
