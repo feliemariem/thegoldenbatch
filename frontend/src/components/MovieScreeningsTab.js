@@ -51,19 +51,8 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
   const [emailSent, setEmailSent] = useState(false);
   const [emailError, setEmailError] = useState('');
 
-  // Theme-aware styling for perk badges
   const { theme } = useTheme();
   const isDark = theme === 'dark';
-  const perkBadgeStyle = {
-    display: 'inline-block',
-    marginTop: '4px',
-    fontSize: '0.7rem',
-    fontWeight: 600,
-    padding: '2px 6px',
-    borderRadius: '4px',
-    background: isDark ? 'rgba(207, 181, 59, 0.15)' : 'rgba(0, 102, 51, 0.12)',
-    color: isDark ? '#CFB53B' : '#006633'
-  };
 
   // Theme-aware accent colors for gold/green elements
   const accentColor = isDark ? '#CFB53B' : '#006633';
@@ -1229,16 +1218,6 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
                           )}
                         </button>
                       </div>
-                    )}
-                    {r.quantity >= 20 && (
-                      <span style={perkBadgeStyle}>
-                        20+ seat choice
-                      </span>
-                    )}
-                    {r.is_sponsor ? (
-                      <span style={perkBadgeStyle}>Sponsor</span>
-                    ) : r.seat_token && r.quantity < 20 && (
-                      <span style={perkBadgeStyle}>Early Bird Perk</span>
                     )}
                   </td>
                   <td style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', whiteSpace: 'nowrap' }}>
