@@ -45,7 +45,7 @@ const clearPasscodeAttempts = (ip) => {
   passcodeAttempts.delete(ip);
 };
 
-// Normalize and validate Philippine mobile number
+// Normalize and validate Philippine mobile number (used by physical-sale)
 // Strips spaces, dashes, leading +63 or 63, then checks for 09XXXXXXXXX pattern
 const normalizePHMobile = (mobile) => {
   if (!mobile) return null;
@@ -73,6 +73,26 @@ const isValidEmail = (email) => {
   if (!email) return false;
   // Simple regex for basic email format
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+};
+
+// Validate international mobile (optional, lenient)
+const isValidMobile = (mobile) => {
+  if (!mobile) return true; // Optional
+  const trimmed = mobile.trim();
+  if (!trimmed) return true;
+  return /^\+?[0-9\s().\-]{7,20}$/.test(trimmed);
+};
+
+// Helper: get active event row (deterministic: ORDER BY id DESC)
+const getActiveEvent = async (client) => {
+  const result = await client.query(
+    `SELECT id, slug, title, subtitle, event_date, venue, gcash_number, gcash_name, status
+     FROM screening_events
+     WHERE status = 'active'
+     ORDER BY id DESC
+     LIMIT 1`
+  );
+  return result.rows.length > 0 ? result.rows[0] : null;
 };
 
 // ============================================
@@ -134,21 +154,12 @@ const canEditTracker = async (email) => {
 // Returns the active screening event with cinemas and remaining seats
 router.get('/active', async (req, res) => {
   try {
-    // Get the active screening event
-    const eventResult = await db.query(
-      `SELECT id, slug, title, subtitle, event_date, venue, gcash_number, gcash_name, status
-       FROM screening_events
-       WHERE status = 'active'
-       LIMIT 1`
-    );
-
-    if (eventResult.rows.length === 0) {
+    const event = await getActiveEvent(db);
+    if (!event) {
       return res.json({ event: null, cinemas: [] });
     }
 
-    const event = eventResult.rows[0];
-
-    // Get cinemas with remaining seats
+    // Get cinemas with remaining seats (reservations + unexpired holds)
     const cinemasResult = await db.query(
       `SELECT
          ec.id,
@@ -157,17 +168,27 @@ router.get('/active', async (req, res) => {
          ec.showtime,
          ec.unit_price,
          ec.capacity,
-         ec.capacity - COALESCE(
+         ec.layout,
+         ec.sort_order,
+         GREATEST(0, ec.capacity - COALESCE(
            (SELECT SUM(r.quantity)
             FROM reservations r
             WHERE r.event_id = ec.event_id
               AND r.cinema_code = ec.code
               AND r.status IN ('pending', 'confirmed')
-           ), 0
+           ), 0)
+           - COALESCE(
+             (SELECT COUNT(*)
+              FROM screening_seats ss
+              WHERE ss.event_id = ec.event_id
+                AND ss.cinema_code = ec.code
+                AND ss.reservation_id IS NULL
+                AND ss.expires_at > NOW()
+             ), 0)
          ) as seats_left
        FROM event_cinemas ec
        WHERE ec.event_id = $1
-       ORDER BY ec.code ASC`,
+       ORDER BY ec.sort_order NULLS LAST, ec.id`,
       [event.id]
     );
 
@@ -184,7 +205,9 @@ router.get('/active', async (req, res) => {
       cinemas: cinemasResult.rows.map(c => ({
         ...c,
         unit_price: parseFloat(c.unit_price),
-        seats_left: parseInt(c.seats_left)
+        seats_left: parseInt(c.seats_left),
+        layout: c.layout,
+        sort_order: c.sort_order
       })),
       sponsor: {
         cinema_code: SPONSOR_CINEMA,
@@ -199,10 +222,255 @@ router.get('/active', async (req, res) => {
   }
 });
 
+// GET /api/movie-screening/seats/taken?cinema_code=X&hold_token=Y
+// Returns taken seats and seats held by the current token
+router.get('/seats/taken', async (req, res) => {
+  const { cinema_code, hold_token } = req.query;
+
+  if (!cinema_code) {
+    return res.status(400).json({ error: 'cinema_code is required' });
+  }
+
+  try {
+    const event = await getActiveEvent(db);
+    if (!event) {
+      return res.status(400).json({ error: 'No active screening event' });
+    }
+
+    // Validate cinema_code belongs to this event
+    const cinemaCheck = await db.query(
+      `SELECT code FROM event_cinemas WHERE event_id = $1 AND code = $2`,
+      [event.id, cinema_code]
+    );
+    if (cinemaCheck.rows.length === 0) {
+      return res.status(400).json({ error: 'Invalid cinema for this event' });
+    }
+
+    // SOLD seats: reservation_id IS NOT NULL
+    const soldResult = await db.query(
+      `SELECT seat_label FROM screening_seats
+       WHERE event_id = $1 AND cinema_code = $2 AND reservation_id IS NOT NULL`,
+      [event.id, cinema_code]
+    );
+
+    // HELD by others: reservation_id IS NULL AND expires_at > NOW() AND hold_token != ours
+    const heldByOthersResult = await db.query(
+      `SELECT seat_label FROM screening_seats
+       WHERE event_id = $1 AND cinema_code = $2
+         AND reservation_id IS NULL
+         AND expires_at > NOW()
+         AND ($3::text IS NULL OR hold_token != $3)`,
+      [event.id, cinema_code, hold_token || null]
+    );
+
+    const taken = [
+      ...soldResult.rows.map(r => r.seat_label),
+      ...heldByOthersResult.rows.map(r => r.seat_label)
+    ];
+
+    // Mine: seats held by my token (if provided)
+    let mine = [];
+    let expires_at = null;
+    if (hold_token) {
+      const mineResult = await db.query(
+        `SELECT seat_label, expires_at FROM screening_seats
+         WHERE event_id = $1 AND cinema_code = $2
+           AND hold_token = $3
+           AND reservation_id IS NULL
+           AND expires_at > NOW()`,
+        [event.id, cinema_code, hold_token]
+      );
+      mine = mineResult.rows.map(r => r.seat_label);
+      if (mineResult.rows.length > 0) {
+        expires_at = mineResult.rows.reduce((min, r) =>
+          !min || new Date(r.expires_at) < new Date(min) ? r.expires_at : min, null);
+      }
+    }
+
+    res.json({ taken, mine, expires_at });
+  } catch (err) {
+    console.error('Error fetching taken seats:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// POST /api/movie-screening/holds
+// Create or update seat holds
+router.post('/holds', async (req, res) => {
+  let { cinema_code, quantity, seats, hold_token } = req.body;
+
+  // Validation
+  if (!cinema_code) {
+    return res.status(400).json({ error: 'cinema_code is required' });
+  }
+  const qty = parseInt(quantity);
+  if (!Number.isInteger(qty) || qty < 1 || qty > 50) {
+    return res.status(400).json({ error: 'quantity must be an integer between 1 and 50' });
+  }
+  if (!Array.isArray(seats)) {
+    return res.status(400).json({ error: 'seats must be an array' });
+  }
+  if (seats.length > qty) {
+    return res.status(400).json({ error: `seats array length (${seats.length}) exceeds quantity (${qty})` });
+  }
+  const seatSet = new Set();
+  for (const s of seats) {
+    if (typeof s !== 'string' || !/^[A-O][0-9]{1,2}$/.test(s)) {
+      return res.status(400).json({ error: `Invalid seat label: ${s}` });
+    }
+    if (seatSet.has(s)) {
+      return res.status(400).json({ error: `Duplicate seat: ${s}` });
+    }
+    seatSet.add(s);
+  }
+
+  const client = await db.pool.connect();
+  try {
+    await client.query('BEGIN');
+
+    const event = await getActiveEvent(client);
+    if (!event) {
+      await client.query('ROLLBACK');
+      return res.status(400).json({ error: 'No active screening event' });
+    }
+
+    // Validate cinema_code
+    const cinemaCheck = await client.query(
+      `SELECT code FROM event_cinemas WHERE event_id = $1 AND code = $2`,
+      [event.id, cinema_code]
+    );
+    if (cinemaCheck.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(400).json({ error: 'Invalid cinema for this event' });
+    }
+
+    // Generate token if not provided
+    if (!hold_token) {
+      hold_token = crypto.randomBytes(24).toString('hex');
+    }
+
+    // 1. Delete expired holds for this event+cinema
+    await client.query(
+      `DELETE FROM screening_seats
+       WHERE event_id = $1 AND cinema_code = $2
+         AND reservation_id IS NULL AND expires_at < NOW()`,
+      [event.id, cinema_code]
+    );
+
+    // 2. Delete this token's holds in OTHER cinemas (buyer switched showtime)
+    await client.query(
+      `DELETE FROM screening_seats
+       WHERE hold_token = $1 AND cinema_code != $2`,
+      [hold_token, cinema_code]
+    );
+
+    // 3. Session expiry check
+    const existingRows = await client.query(
+      `SELECT MIN(expires_at) as min_exp FROM screening_seats
+       WHERE hold_token = $1 AND reservation_id IS NULL`,
+      [hold_token]
+    );
+    let sessionExpiry;
+    if (existingRows.rows[0].min_exp) {
+      const minExp = new Date(existingRows.rows[0].min_exp);
+      if (minExp < new Date()) {
+        // Session expired - delete all and return 410
+        await client.query(
+          `DELETE FROM screening_seats WHERE hold_token = $1 AND reservation_id IS NULL`,
+          [hold_token]
+        );
+        await client.query('COMMIT');
+        return res.status(410).json({ error: 'expired' });
+      }
+      sessionExpiry = minExp;
+    } else {
+      sessionExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+    }
+
+    // 4. Delete this token's rows whose seat_label is NOT in the new seats array
+    if (seats.length > 0) {
+      await client.query(
+        `DELETE FROM screening_seats
+         WHERE hold_token = $1 AND cinema_code = $2 AND reservation_id IS NULL
+           AND seat_label != ALL($3::text[])`,
+        [hold_token, cinema_code, seats]
+      );
+    } else {
+      await client.query(
+        `DELETE FROM screening_seats
+         WHERE hold_token = $1 AND cinema_code = $2 AND reservation_id IS NULL`,
+        [hold_token, cinema_code]
+      );
+    }
+
+    // 5. Get seats already held by this token
+    const alreadyHeldResult = await client.query(
+      `SELECT seat_label FROM screening_seats
+       WHERE hold_token = $1 AND cinema_code = $2 AND reservation_id IS NULL`,
+      [hold_token, cinema_code]
+    );
+    const alreadyHeld = new Set(alreadyHeldResult.rows.map(r => r.seat_label));
+
+    // Seats to insert (requested but not already held)
+    const seatsToInsert = seats.filter(s => !alreadyHeld.has(s));
+
+    // Insert new holds
+    for (const seat of seatsToInsert) {
+      await client.query(
+        `INSERT INTO screening_seats (event_id, cinema_code, seat_label, hold_token, expires_at, created_at)
+         VALUES ($1, $2, $3, $4, $5, NOW())
+         ON CONFLICT (event_id, cinema_code, seat_label) DO NOTHING`,
+        [event.id, cinema_code, seat, hold_token, sessionExpiry]
+      );
+    }
+
+    // 6. Determine what we now hold and what was unavailable
+    const nowHeldResult = await client.query(
+      `SELECT seat_label FROM screening_seats
+       WHERE hold_token = $1 AND cinema_code = $2 AND reservation_id IS NULL`,
+      [hold_token, cinema_code]
+    );
+    const nowHeld = new Set(nowHeldResult.rows.map(r => r.seat_label));
+    const unavailable = seats.filter(s => !nowHeld.has(s));
+
+    await client.query('COMMIT');
+
+    res.json({
+      hold_token,
+      expires_at: sessionExpiry.toISOString(),
+      held: Array.from(nowHeld),
+      unavailable
+    });
+  } catch (err) {
+    await client.query('ROLLBACK');
+    console.error('Error creating holds:', err);
+    res.status(500).json({ error: 'Server error' });
+  } finally {
+    client.release();
+  }
+});
+
+// DELETE /api/movie-screening/holds/:token
+// Release all holds for a token
+router.delete('/holds/:token', async (req, res) => {
+  const { token } = req.params;
+
+  try {
+    const result = await db.query(
+      `DELETE FROM screening_seats WHERE hold_token = $1 AND reservation_id IS NULL`,
+      [token]
+    );
+    res.json({ released: result.rowCount });
+  } catch (err) {
+    console.error('Error releasing holds:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // POST /api/movie-screening/reserve
 // Create a new reservation (public endpoint)
 router.post('/reserve', async (req, res) => {
-  const { cinema_code: rawCinema, buyer_name, mobile, email, quantity, gcash_ref, is_sponsor, is_anonymous } = req.body;
+  const { cinema_code: rawCinema, buyer_name, mobile, email, quantity, gcash_ref, is_sponsor, is_anonymous, hold_token, sold_by_team } = req.body;
   const isSponsor = is_sponsor === true || is_sponsor === 'true';
   const isAnonymous = isSponsor && (is_anonymous === true || is_anonymous === 'true');
   const cinema_code = isSponsor ? SPONSOR_CINEMA : rawCinema;
@@ -214,31 +482,33 @@ router.post('/reserve', async (req, res) => {
   if (!buyer_name || !buyer_name.trim()) {
     return res.status(400).json({ error: 'Full name is required' });
   }
-  if (!isSponsor && !mobile && !email) {
-    return res.status(400).json({ error: 'Please provide either a mobile number or email address' });
-  }
 
-  // Validate and normalize mobile if provided
+  // Email is now required
+  if (!email || !email.trim()) {
+    return res.status(400).json({ error: 'Email address is required' });
+  }
+  if (!isValidEmail(email)) {
+    return res.status(400).json({ error: 'Enter a valid email address' });
+  }
+  const normalizedEmail = email.trim().toLowerCase();
+
+  // Mobile is now optional and international
   let normalizedMobile = null;
   if (mobile && mobile.trim()) {
-    normalizedMobile = normalizePHMobile(mobile);
-    if (normalizedMobile === false) {
-      return res.status(400).json({ error: 'Enter a valid PH mobile, e.g. 09171234567' });
+    if (!isValidMobile(mobile)) {
+      return res.status(400).json({ error: 'Enter a valid mobile number' });
     }
+    normalizedMobile = mobile.trim();
   }
 
-  // Validate email if provided
-  let normalizedEmail = null;
-  if (email && email.trim()) {
-    if (!isValidEmail(email)) {
-      return res.status(400).json({ error: 'Enter a valid email address' });
-    }
-    normalizedEmail = email.trim().toLowerCase();
+  // hold_token is required
+  if (!hold_token) {
+    return res.status(400).json({ error: 'hold_token is required' });
   }
 
-  // Ensure at least one valid contact method
-  if (!isSponsor && !normalizedMobile && !normalizedEmail) {
-    return res.status(400).json({ error: 'Please provide a valid mobile number or email address' });
+  // sold_by_team is required
+  if (!sold_by_team || !['batch2003', 'liceo'].includes(sold_by_team)) {
+    return res.status(400).json({ error: 'sold_by_team must be batch2003 or liceo' });
   }
 
   if (!quantity || quantity < 1) {
@@ -249,21 +519,17 @@ router.post('/reserve', async (req, res) => {
   }
 
   const client = await db.pool.connect();
+  const requestedQty = parseInt(quantity);
 
   try {
     await client.query('BEGIN');
 
-    // Get the active event
-    const eventResult = await client.query(
-      `SELECT id FROM screening_events WHERE status = 'active' LIMIT 1`
-    );
-
-    if (eventResult.rows.length === 0) {
+    const event = await getActiveEvent(client);
+    if (!event) {
       await client.query('ROLLBACK');
       return res.status(400).json({ error: 'No active screening event found' });
     }
-
-    const eventId = eventResult.rows[0].id;
+    const eventId = event.id;
 
     // Lock the cinema row and get capacity + unit price
     const cinemaResult = await client.query(
@@ -292,7 +558,6 @@ router.post('/reserve', async (req, res) => {
     );
 
     const heldSeats = parseInt(heldResult.rows[0].held);
-    const requestedQty = parseInt(quantity);
 
     if (heldSeats + requestedQty > capacity) {
       await client.query('ROLLBACK');
@@ -313,16 +578,64 @@ router.post('/reserve', async (req, res) => {
       }
     }
 
+    // Verify seat holds
+    const holdCheck = await client.query(
+      `SELECT seat_label, cinema_code, expires_at FROM screening_seats
+       WHERE hold_token = $1 AND reservation_id IS NULL
+       FOR UPDATE`,
+      [hold_token]
+    );
+
+    if (holdCheck.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(409).json({ error: 'Your seat hold expired. Please choose your seats again.' });
+    }
+
+    // Check if any hold is expired
+    const now = new Date();
+    for (const row of holdCheck.rows) {
+      if (new Date(row.expires_at) < now) {
+        await client.query('ROLLBACK');
+        return res.status(409).json({ error: 'Your seat hold expired. Please choose your seats again.' });
+      }
+    }
+
+    // Check all holds are for the same cinema
+    for (const row of holdCheck.rows) {
+      if (row.cinema_code !== cinema_code) {
+        await client.query('ROLLBACK');
+        return res.status(409).json({ error: 'Seat holds are for a different cinema. Please choose your seats again.' });
+      }
+    }
+
+    // Check hold count matches quantity
+    if (holdCheck.rows.length !== requestedQty) {
+      await client.query('ROLLBACK');
+      return res.status(409).json({ error: `Expected ${requestedQty} held seats but found ${holdCheck.rows.length}. Please choose your seats again.` });
+    }
+
+    // Sort seats: row letter first, then number
+    const heldSeatsLabels = holdCheck.rows.map(r => r.seat_label);
+    heldSeatsLabels.sort((a, b) => {
+      const rowA = a.match(/^[A-O]/)[0];
+      const rowB = b.match(/^[A-O]/)[0];
+      if (rowA !== rowB) return rowA.localeCompare(rowB);
+      const numA = parseInt(a.slice(1));
+      const numB = parseInt(b.slice(1));
+      return numA - numB;
+    });
+    const chosenSeatsStr = heldSeatsLabels.join(', ');
+
     // Calculate total amount
     const totalAmount = unitPrice * requestedQty;
 
     // Insert the reservation
     const insertResult = await client.query(
       `INSERT INTO reservations (
-         event_id, cinema_code, buyer_name, mobile, email,
-         quantity, unit_price, total_amount, gcash_ref, is_sponsor, is_anonymous, status, created_at
+         event_id, cinema_code, buyer_name, mobile, email, quantity, unit_price, total_amount,
+         gcash_ref, is_sponsor, is_anonymous, sold_by_team, chosen_seats, status, created_at
        )
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 'pending', NOW())
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, 'pending', NOW())
        RETURNING *`,
       [
         eventId,
@@ -335,9 +648,27 @@ router.post('/reserve', async (req, res) => {
         totalAmount,
         gcash_ref.trim(),
         isSponsor,
-        isAnonymous
+        isAnonymous,
+        sold_by_team,
+        chosenSeatsStr
       ]
     );
+
+    const reservationId = insertResult.rows[0].id;
+
+    // Convert holds to sold seats
+    const updateResult = await client.query(
+      `UPDATE screening_seats
+       SET reservation_id = $1, hold_token = NULL, expires_at = NULL
+       WHERE hold_token = $2`,
+      [reservationId, hold_token]
+    );
+
+    // Verify all holds were converted
+    if (updateResult.rowCount !== requestedQty) {
+      await client.query('ROLLBACK');
+      return res.status(409).json({ error: 'Seat hold mismatch. Please choose your seats again.' });
+    }
 
     await client.query('COMMIT');
 
@@ -903,8 +1234,12 @@ router.post('/admin/:id/cancel', authenticateToken, async (req, res) => {
 
   const { id } = req.params;
 
+  const client = await db.pool.connect();
+
   try {
-    const result = await db.query(
+    await client.query('BEGIN');
+
+    const result = await client.query(
       `UPDATE reservations
        SET status = 'cancelled',
            updated_at = NOW()
@@ -914,8 +1249,17 @@ router.post('/admin/:id/cancel', authenticateToken, async (req, res) => {
     );
 
     if (result.rows.length === 0) {
+      await client.query('ROLLBACK');
       return res.status(404).json({ error: 'Reservation not found' });
     }
+
+    // Free up any screening_seats tied to this reservation
+    await client.query(
+      `DELETE FROM screening_seats WHERE reservation_id = $1`,
+      [id]
+    );
+
+    await client.query('COMMIT');
 
     res.json({
       ...result.rows[0],
@@ -923,8 +1267,11 @@ router.post('/admin/:id/cancel', authenticateToken, async (req, res) => {
       total_amount: parseFloat(result.rows[0].total_amount)
     });
   } catch (err) {
+    await client.query('ROLLBACK');
     console.error('Error cancelling reservation:', err);
     res.status(500).json({ error: 'Server error' });
+  } finally {
+    client.release();
   }
 });
 
