@@ -167,13 +167,14 @@
   flex-shrink: 0;
 }
 
-.ms-title {
+.ms-hero .ms-title {
   font-family: 'Cinzel', serif;
-  font-size: clamp(2rem, 8vw, 4.5rem);
+  font-size: clamp(40px, 7vw, 72px);
   font-weight: 700;
   color: var(--doom-title);
   margin: 0;
-  line-height: 1.1;
+  line-height: 1.05;
+  letter-spacing: 0.02em;
 }
 
 .ms-date-line {
@@ -310,6 +311,12 @@
   margin-bottom: 24px;
 }
 
+@media (max-width: 640px) {
+  .ms-showtime-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .ms-showtime-card {
   background: var(--doom-card-bg);
   border: 1.5px solid var(--doom-card-border);
@@ -356,7 +363,7 @@
 }
 
 .ms-showtime-card.disabled .ms-showtime-seats {
-  color: var(--doom-warning-text);
+  color: var(--doom-muted);
 }
 
 .ms-showtime-divider {
