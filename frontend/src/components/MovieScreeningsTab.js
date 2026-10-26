@@ -51,6 +51,10 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
   const [emailSent, setEmailSent] = useState(false);
   const [emailError, setEmailError] = useState('');
 
+  // Stubs CSV export dropdown state
+  const [stubsMenuOpen, setStubsMenuOpen] = useState(false);
+  const stubsMenuRef = useRef(null);
+
   const { theme } = useTheme();
   const isDark = theme === 'dark';
 
@@ -60,6 +64,19 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
   useEffect(() => {
     fetchActiveEvent();
   }, []);
+
+  // Close stubs menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (stubsMenuRef.current && !stubsMenuRef.current.contains(e.target)) {
+        setStubsMenuOpen(false);
+      }
+    };
+    if (stubsMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [stubsMenuOpen]);
 
   const fetchActiveEvent = async () => {
     try {
@@ -713,6 +730,55 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
     URL.revokeObjectURL(url);
   };
 
+  // Helper to escape CSV cell values (prevent formula injection)
+  const escapeCsvCell = (value) => {
+    const str = String(value);
+    if (str.length > 0 && /^[=+\-@]/.test(str)) {
+      return "'" + str;
+    }
+    return str;
+  };
+
+  // Export stubs CSV for a specific showtime
+  const exportStubsCSV = async (showtime) => {
+    setStubsMenuOpen(false);
+    try {
+      const res = await apiGet(`/api/movie-screening/admin/stubs?event_id=${event.id}&cinema_code=${showtime.code}`);
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.error || 'Failed to fetch stubs data');
+        return;
+      }
+
+      const headers = ['Stub #', 'Seat', 'Buyer name', 'Sold by'];
+      const rows = data.rows.map(r => [
+        escapeCsvCell(r.stub),
+        escapeCsvCell(r.seat),
+        escapeCsvCell(r.buyer_name ? formatName(r.buyer_name) : ''),
+        escapeCsvCell(r.sold_by)
+      ]);
+
+      const csvContent = [
+        headers.map(h => `"${h}"`).join(','),
+        ...rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+      ].join('\n');
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      // Format filename: Doomsday_Stubs_{showtime with ":" -> "."}_{label}.csv
+      const showtimeForFilename = data.showtime.replace(/:/g, '.');
+      link.download = `Doomsday_Stubs_${showtimeForFilename}_${data.label}.csv`;
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+      alert('Failed to export stubs CSV');
+    }
+  };
+
   if (loading) {
     return (
       <div className="invite-section">
@@ -1059,6 +1125,55 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
         >
           Export CSV
         </button>
+        )}
+        {hasTrackerAccess && (
+        <div ref={stubsMenuRef} style={{ position: 'relative', display: 'inline-block' }}>
+          <button
+            onClick={() => setStubsMenuOpen(!stubsMenuOpen)}
+            className="btn-secondary"
+            style={{ padding: '10px 16px', fontSize: '0.85rem' }}
+          >
+            Export stubs CSV ▾
+          </button>
+          {stubsMenuOpen && (
+            <div style={{
+              position: 'absolute',
+              top: '100%',
+              left: 0,
+              marginTop: '4px',
+              background: isDark ? '#2a2a2a' : '#fff',
+              border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
+              borderRadius: '8px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+              zIndex: 100,
+              minWidth: '180px',
+              overflow: 'hidden'
+            }}>
+              {showtimes.map(s => (
+                <button
+                  key={s.code}
+                  onClick={() => exportStubsCSV(s)}
+                  style={{
+                    display: 'block',
+                    width: '100%',
+                    padding: '10px 16px',
+                    textAlign: 'left',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontSize: '0.85rem',
+                    color: 'var(--color-text-primary)',
+                    borderBottom: `1px solid ${isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'}`
+                  }}
+                  onMouseEnter={e => e.target.style.background = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)'}
+                  onMouseLeave={e => e.target.style.background = 'none'}
+                >
+                  {s.showtime} · {s.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
         )}
         {hasTrackerAccess && (
         <Link

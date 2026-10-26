@@ -1744,6 +1744,107 @@ router.get('/admin/seats', authenticateToken, async (req, res) => {
   }
 });
 
+// GET /api/movie-screening/admin/stubs
+// Returns per-stub data for CSV export (one row per stub in the cinema)
+router.get('/admin/stubs', authenticateToken, async (req, res) => {
+  try {
+    // Permission check: must have screenings_view + (screenings_tracker OR screenings_edit)
+    const hasAccess = await canViewTracker(req.user.email);
+    if (!hasAccess) {
+      return res.status(403).json({ error: 'Access denied. Screenings tracker permission required.' });
+    }
+
+    const { event_id, cinema_code } = req.query;
+
+    if (!event_id || !cinema_code) {
+      return res.status(400).json({ error: 'event_id and cinema_code are required' });
+    }
+
+    // Load cinema info
+    const cinemaResult = await db.query(
+      `SELECT code, label, showtime, capacity,
+              COALESCE(serial_prefix, code) as serial_prefix,
+              COALESCE(serial_base, 1) as serial_base
+       FROM event_cinemas
+       WHERE event_id = $1 AND code = $2`,
+      [event_id, cinema_code]
+    );
+
+    if (cinemaResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Cinema not found' });
+    }
+
+    const cinema = cinemaResult.rows[0];
+    const capacity = parseInt(cinema.capacity);
+    const serialBase = parseInt(cinema.serial_base);
+    const serialPrefix = cinema.serial_prefix;
+
+    // Load all confirmed reservations with serial assignments for this cinema
+    const reservationsResult = await db.query(
+      `SELECT buyer_name, chosen_seats, serial_start, serial_end, sold_by_team
+       FROM reservations
+       WHERE event_id = $1 AND cinema_code = $2
+         AND status = 'confirmed'
+         AND serial_start IS NOT NULL
+         AND serial_end IS NOT NULL
+       ORDER BY serial_start ASC`,
+      [event_id, cinema_code]
+    );
+
+    // Build a map: stubSerial -> { buyer_name, seat, sold_by }
+    const stubMap = new Map();
+
+    for (const r of reservationsResult.rows) {
+      const serialStart = parseInt(r.serial_start);
+      const serialEnd = parseInt(r.serial_end);
+      const soldBy = r.sold_by_team === 'liceo' ? 'Liceo' : 'Batch 2003';
+
+      // Parse and sort seats by row letter then number
+      const seats = r.chosen_seats
+        ? r.chosen_seats.split(',').map(s => s.trim()).filter(Boolean).sort((a, b) => {
+            const rowA = a.match(/^[A-O]/)?.[0] || '';
+            const rowB = b.match(/^[A-O]/)?.[0] || '';
+            if (rowA !== rowB) return rowA.localeCompare(rowB);
+            const numA = parseInt(a.slice(1)) || 0;
+            const numB = parseInt(b.slice(1)) || 0;
+            return numA - numB;
+          })
+        : [];
+
+      for (let i = serialStart; i <= serialEnd; i++) {
+        const seatIndex = i - serialStart;
+        stubMap.set(i, {
+          buyer_name: r.buyer_name,
+          seat: seatIndex < seats.length ? seats[seatIndex] : '',
+          sold_by: soldBy
+        });
+      }
+    }
+
+    // Build rows for every stub from serial_base to serial_base + capacity - 1
+    const rows = [];
+    for (let serial = serialBase; serial < serialBase + capacity; serial++) {
+      const stubLabel = `${serialPrefix}-${String(serial).padStart(5, '0')}`;
+      const info = stubMap.get(serial);
+      rows.push({
+        stub: stubLabel,
+        seat: info?.seat || '',
+        buyer_name: info?.buyer_name || '',
+        sold_by: info?.sold_by || ''
+      });
+    }
+
+    res.json({
+      showtime: cinema.showtime,
+      label: cinema.label,
+      rows
+    });
+  } catch (err) {
+    console.error('Error fetching stubs:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // ============================================
 // PHYSICAL SALE ENDPOINTS (passcode protected)
 // ============================================
