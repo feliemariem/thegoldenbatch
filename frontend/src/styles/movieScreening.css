@@ -1,9 +1,33 @@
 /* ========================================
-   BLOCK SCREENING - CINEMATIC STYLE
+   DOOMSDAY BLOCK SCREENING - DARK DOOM THEME
    ======================================== */
 
-/* Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Gelasio:wght@500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+/* ========================================
+   COLOR TOKENS
+   ======================================== */
+
+:root {
+  --doom-page-bg: #070A08;
+  --doom-card-bg: #0E1410;
+  --doom-card-border: #1F2A22;
+  --doom-primary: #4CC16A;
+  --doom-primary-hover: #63CF7F;
+  --doom-primary-text: #05140A;
+  --doom-light-green: #7BD892;
+  --doom-deep-green: #10251A;
+  --doom-green-border: #2F6B40;
+  --doom-text: #E6EBE7;
+  --doom-muted: #A7B0AA;
+  --doom-dim: #5E6E63;
+  --doom-title: #DCE2DD;
+  --doom-input-bg: #070A08;
+  --doom-input-border: #2A362E;
+  --doom-warning-bg: #2A1414;
+  --doom-warning-border: #7A2E2E;
+  --doom-warning-text: #F08A8A;
+  --doom-disabled-bg: #26352B;
+  --doom-disabled-text: #6E7B72;
+}
 
 /* ========================================
    PAGE LAYOUT
@@ -12,39 +36,14 @@
 .ms-page {
   min-height: 100vh;
   font-family: 'Poppins', sans-serif;
-  background: var(--color-bg-primary);
-  position: relative;
-}
-
-body[data-theme="dark"] .ms-page {
-  background: #0A0A0A;
-}
-
-.ms-theme-toggle {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  width: 36px;
-  height: 36px;
-  border: none;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  cursor: pointer;
-  font-size: 1.1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-  transition: background 0.2s;
-}
-
-.ms-theme-toggle:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--doom-page-bg);
+  color: var(--doom-text);
 }
 
 .ms-container {
-  max-width: 640px;
+  max-width: 720px;
   margin: 0 auto;
+  padding: 0 16px;
 }
 
 .ms-loading {
@@ -52,7 +51,7 @@ body[data-theme="dark"] .ms-page {
   align-items: center;
   justify-content: center;
   min-height: 60vh;
-  color: var(--color-text-secondary);
+  color: var(--doom-muted);
 }
 
 .ms-no-event {
@@ -60,1024 +59,24 @@ body[data-theme="dark"] .ms-page {
   margin: 80px auto;
   padding: 40px;
   text-align: center;
-  background: var(--color-bg-card);
+  background: var(--doom-card-bg);
   border-radius: 16px;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--doom-card-border);
 }
 
 .ms-no-event h2 {
-  color: #006633;
+  color: var(--doom-light-green);
   margin-bottom: 12px;
+  font-family: 'Cinzel', serif;
 }
 
 .ms-no-event p {
-  color: var(--color-text-secondary);
+  color: var(--doom-muted);
   margin-bottom: 24px;
 }
-
-/* ========================================
-   FILM STRIP
-   ======================================== */
-
-.ms-film-strip {
-  height: 14px;
-  background: repeating-linear-gradient(
-    90deg,
-    #0a0d0b 0px,
-    #0a0d0b 9px,
-    #39413b 9px,
-    #39413b 15px
-  );
-}
-
-/* ========================================
-   HERO BANNER (always dark, left-aligned)
-   ======================================== */
-
-.ms-hero {
-  position: relative;
-  overflow: hidden;
-  background-color: #0A0A0A;
-  padding: 36px 24px 32px;
-}
-
-.ms-hero::before {
-  content: '';
-  position: absolute;
-  top: -60px;
-  right: -60px;
-  width: 380px;
-  height: 380px;
-  background: radial-gradient(circle, rgba(236,29,36,0.30) 0%, rgba(236,29,36,0.10) 40%, rgba(10,10,10,0) 70%);
-  pointer-events: none;
-}
-
-.ms-hero-content {
-  max-width: 100%;
-  margin: 0;
-  text-align: left;
-}
-
-.ms-pill {
-  display: inline-block;
-  background: #CFB53B;
-  color: #0D1310;
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  padding: 6px 14px;
-  border-radius: 20px;
-  margin-bottom: 20px;
-}
-
-.ms-movie-title {
-  font-family: 'Gelasio', serif;
-  font-size: 2rem;
-  font-weight: 700;
-  color: #FDF8EE !important;
-  margin: 0 0 20px 0;
-  padding-left: 16px;
-  border-left: 3px solid #E23636;
-  display: block;
-}
-
-.ms-meta {
-  margin-bottom: 16px;
-}
-
-.ms-meta-date {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #CFB53B !important;
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin-bottom: 6px;
-}
-
-.ms-meta-date svg {
-  stroke: #CFB53B;
-}
-
-.ms-meta-venue {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: #c2ccc4 !important;
-  font-size: 0.8125rem;
-}
-
-.ms-meta-venue svg {
-  stroke: #c2ccc4;
-}
-
-/* Showtime chips */
-.ms-showtime-chips {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.ms-showtime-chip {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(207, 181, 59, 0.3);
-  border-radius: 10px;
-  padding: 10px 16px;
-  text-align: center;
-}
-
-.ms-chip-label {
-  display: block;
-  font-size: 0.7rem;
-  color: #94a09a !important;
-  margin-bottom: 4px;
-}
-
-.ms-chip-time {
-  display: block;
-  font-size: 1.125rem;
-  font-weight: 700;
-  color: #FDF8EE !important;
-}
-
-.ms-hero-divider {
-  height: 1px;
-  background: rgba(253, 248, 238, 0.15);
-  margin: 20px 0;
-}
-
-.ms-inclusions {
-  text-align: left;
-  max-width: 100%;
-  margin: 0;
-}
-
-.ms-inclusion-line {
-  font-size: 0.85rem;
-  color: #b9c2bb !important;
-  margin: 0 0 12px 0;
-  line-height: 1.5;
-}
-
-.ms-inclusion-line strong {
-  color: #CFB53B !important;
-  font-weight: 600;
-}
-
-.ms-separate-line {
-  font-size: 0.8rem;
-  color: #94a09a !important;
-  margin: 0;
-  padding-top: 10px;
-  border-top: 1px solid rgba(253, 248, 238, 0.1);
-}
-
-/* ========================================
-   FORM SECTION (theme-aware)
-   ======================================== */
-
-.ms-form-section {
-  padding: 28px 20px 40px;
-  background: var(--color-bg-primary);
-}
-
-body[data-theme="dark"] .ms-form-section {
-  background: transparent;
-}
-
-.ms-form-container {
-  max-width: 100%;
-}
-
-/* Form inclusions (always dark cinema) */
-.ms-form-inclusions {
-  position: relative;
-  overflow: hidden;
-  background: #0A0A0A;
-  border-radius: 12px;
-  padding: 20px 24px;
-  margin-bottom: 24px;
-}
-
-.ms-form-inclusions::before {
-  content: '';
-  position: absolute;
-  top: -60px;
-  right: -60px;
-  width: 380px;
-  height: 380px;
-  background: radial-gradient(circle, rgba(236,29,36,0.30) 0%, rgba(236,29,36,0.10) 40%, rgba(10,10,10,0) 70%);
-  pointer-events: none;
-}
-
-.ms-form-inclusion-line {
-  font-size: 0.9rem;
-  color: #B8B8B8;
-  margin: 0 0 10px 0;
-  line-height: 1.5;
-}
-
-.ms-form-inclusion-line strong {
-  color: #CFB53B;
-  font-weight: 600;
-}
-
-.ms-inclusion-icon {
-  display: inline-block;
-  width: 18px;
-  height: 18px;
-  margin-right: 6px;
-  vertical-align: -3px;
-  stroke: #CFB53B;
-}
-
-.ms-form-separate-line {
-  font-size: 13px;
-  color: #7F7F78;
-  margin: 0;
-}
-
-.ms-error {
-  background: rgba(226, 54, 54, 0.1);
-  border: 1px solid rgba(226, 54, 54, 0.3);
-  color: #E23636;
-  padding: 12px 16px;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  margin-bottom: 20px;
-}
-
-/* ========================================
-   FORM FIELDS
-   ======================================== */
-
-.ms-field {
-  margin-bottom: 20px;
-}
-
-.ms-field-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 20px;
-}
-
-@media (max-width: 500px) {
-  .ms-field-row {
-    grid-template-columns: 1fr;
-  }
-}
-
-.ms-label {
-  display: block;
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--color-text-secondary);
-  margin-bottom: 8px;
-}
-
-.ms-label-secondary {
-  display: block;
-  font-size: 0.65rem;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-text-secondary);
-  opacity: 0.8;
-  margin-bottom: 6px;
-}
-
-.ms-req {
-  color: #E23636;
-}
-
-.ms-hint {
-  display: block;
-  font-size: 0.75rem;
-  color: var(--color-text-secondary);
-  margin-bottom: 8px;
-  margin-top: -4px;
-}
-
-.ms-input {
-  width: 100%;
-  padding: 14px 16px;
-  font-size: 16px;
-  font-family: 'Poppins', sans-serif;
-  background: var(--color-bg-card);
-  color: var(--color-text-primary);
-  border: 1.5px solid var(--color-border);
-  border-radius: 8px;
-  transition: border-color 0.2s;
-}
-
-.ms-input:focus {
-  outline: none;
-  border-color: #006633;
-}
-
-.ms-input::placeholder {
-  color: var(--color-text-secondary);
-  opacity: 0.7;
-}
-
-.ms-input-error {
-  border-color: #E23636 !important;
-}
-
-.ms-field-error {
-  display: block;
-  color: #E23636;
-  font-size: 0.8rem;
-  margin-top: 6px;
-}
-
-/* ========================================
-   CONTACT PURPOSE & PRIVACY DISCLOSURE
-   ======================================== */
-
-.ms-contact-purpose {
-  font-size: 0.75rem;
-  color: var(--color-text-secondary);
-  margin: 6px 0 8px 0;
-  line-height: 1.4;
-  opacity: 0.85;
-}
-
-.ms-privacy-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: none;
-  border: none;
-  padding: 4px 0;
-  font-size: 0.7rem;
-  font-family: inherit;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  opacity: 0.7;
-  transition: opacity 0.2s;
-}
-
-.ms-privacy-toggle:hover {
-  opacity: 1;
-}
-
-.ms-privacy-chevron {
-  display: inline-block;
-  font-size: 0.6rem;
-  transition: transform 0.2s ease;
-}
-
-.ms-privacy-toggle.open .ms-privacy-chevron {
-  transform: rotate(90deg);
-}
-
-.ms-privacy-content {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease, margin 0.3s ease, opacity 0.3s ease;
-  opacity: 0;
-}
-
-.ms-privacy-content.open {
-  max-height: 200px;
-  margin: 8px 0;
-  opacity: 1;
-}
-
-.ms-privacy-content p {
-  font-size: 0.7rem;
-  color: var(--color-text-secondary);
-  line-height: 1.5;
-  margin: 0;
-  padding: 10px 12px;
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  opacity: 0.8;
-}
-
-/* ========================================
-   DARK MODE CINEMA PALETTE (form fields only)
-   ======================================== */
-
-body[data-theme="dark"] .ms-form-section .ms-label,
-body[data-theme="dark"] .ms-form-section .ms-label-secondary {
-  color: #B8B8B8;
-}
-
-body[data-theme="dark"] .ms-form-section .ms-req {
-  color: #EC1D24;
-}
-
-body[data-theme="dark"] .ms-form-section .ms-hint {
-  color: #B8B8B8;
-}
-
-body[data-theme="dark"] .ms-form-section .ms-contact-purpose {
-  color: #B8B8B8;
-  opacity: 1;
-}
-
-body[data-theme="dark"] .ms-form-section .ms-privacy-toggle {
-  color: #B8B8B8;
-  opacity: 1;
-}
-
-body[data-theme="dark"] .ms-form-section .ms-privacy-content p {
-  color: #B8B8B8;
-}
-
-body[data-theme="dark"] .ms-form-section .ms-input {
-  background: #0F0F0F;
-  border: 1px solid #262626;
-  color: #FFFFFF;
-}
-
-body[data-theme="dark"] .ms-form-section .ms-input:focus {
-  border-color: #CFB53B;
-}
-
-body[data-theme="dark"] .ms-form-section .ms-input::placeholder {
-  color: #7F7F78;
-  opacity: 1;
-}
-
-body[data-theme="dark"] .ms-form-section .ms-ticket-select {
-  background: #0F0F0F;
-  border: 1px solid #262626;
-  color: #FFFFFF;
-}
-
-body[data-theme="dark"] .ms-form-section .ms-ticket-select:focus {
-  border-color: #CFB53B;
-  box-shadow: none;
-}
-
-body[data-theme="dark"] .ms-seats-badge.ms-seats-plenty {
-  background: #141414;
-  border: 1px solid #262626;
-  color: #CFB53B;
-}
-
-body[data-theme="dark"] .ms-seats-badge.ms-seats-plenty svg {
-  stroke: #CFB53B;
-}
-
-body[data-theme="dark"] .ms-total-box {
-  position: relative;
-  overflow: hidden;
-  background: #141414;
-  border: 1px solid #262626;
-}
-
-body[data-theme="dark"] .ms-total-box::before {
-  content: '';
-  position: absolute;
-  top: -40px;
-  right: -40px;
-  width: 180px;
-  height: 180px;
-  background: radial-gradient(circle, rgba(236,29,36,0.22) 0%, rgba(20,20,20,0) 70%);
-  pointer-events: none;
-}
-
-body[data-theme="dark"] .ms-total-label,
-body[data-theme="dark"] .ms-total-amount {
-  position: relative;
-}
-
-body[data-theme="dark"] .ms-total-label {
-  color: #B8B8B8;
-}
-
-/* ========================================
-   DARK MODE CONFIRMATION PAGE
-   ======================================== */
-
-body[data-theme="dark"] .ms-confirmation {
-  background: #141414;
-  border: 1px solid #262626;
-}
-
-body[data-theme="dark"] .ms-order-summary {
-  background: #141414;
-  border: 1px solid #262626;
-}
-
-body[data-theme="dark"] .ms-order-total {
-  color: #CFB53B !important;
-}
-
-/* ========================================
-   CINEMA CARDS (always 2 columns)
-   ======================================== */
-
-/* Cinema section wrapper (always dark cinema) */
-.ms-cinema-section {
-  position: relative;
-  overflow: hidden;
-  background: #0A0A0A;
-  border-radius: 12px;
-  padding: 20px 24px;
-}
-
-.ms-cinema-section::before {
-  content: '';
-  position: absolute;
-  top: -60px;
-  right: -60px;
-  width: 380px;
-  height: 380px;
-  background: radial-gradient(circle, rgba(236,29,36,0.30) 0%, rgba(236,29,36,0.10) 40%, rgba(10,10,10,0) 70%);
-  pointer-events: none;
-}
-
-.ms-cinema-section .ms-label {
-  color: #B8B8B8;
-}
-
-.ms-cinema-cards {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.ms-cinema-card {
-  position: relative;
-  background: #141414;
-  border: 1px solid #262626;
-  border-radius: 10px;
-  padding: 14px 12px;
-  cursor: pointer;
-  transition: border-color 0.2s;
-  text-align: center;
-  font-family: 'Poppins', sans-serif;
-}
-
-.ms-cinema-card:hover:not(.sold-out) {
-  border-color: rgba(207, 181, 59, 0.5);
-}
-
-.ms-cinema-card.selected {
-  border: 2px solid #CFB53B;
-  background: #191919;
-}
-
-.ms-cinema-card.sold-out {
-  opacity: 0.6;
-  cursor: not-allowed;
-  border-color: rgba(226, 54, 54, 0.3);
-}
-
-.ms-cinema-card.sold-out:hover {
-  border-color: rgba(226, 54, 54, 0.3);
-}
-
-.ms-sold-out-badge {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  padding: 4px 8px;
-  background: #E23636;
-  color: #fff;
-  border-radius: 4px;
-  font-size: 0.6rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
-.ms-cinema-seats.sold-out {
-  color: #E23636;
-  font-weight: 600;
-}
-
-/* Sold-out card price strikethrough */
-.ms-cinema-card.sold-out .ms-cinema-price {
-  text-decoration: line-through;
-  opacity: 0.7;
-}
-
-/* Full Event Sold Out Banner */
-.ms-sold-out-banner {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  background: rgba(226, 54, 54, 0.1);
-  border: 1px solid rgba(226, 54, 54, 0.3);
-  border-radius: 12px;
-  padding: 20px 24px;
-  margin-bottom: 24px;
-}
-
-.ms-sold-out-icon {
-  width: 48px;
-  height: 48px;
-  background: #E23636;
-  color: #fff;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-.ms-sold-out-text {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.ms-sold-out-text strong {
-  font-size: 1.1rem;
-  color: #E23636;
-}
-
-.ms-sold-out-text span {
-  font-size: 0.9rem;
-  color: var(--color-text-secondary);
-}
-
-.ms-check-badge {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  width: 22px;
-  height: 22px;
-  background: #CFB53B;
-  color: #0D1310;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.7rem;
-  font-weight: 700;
-}
-
-.ms-cinema-name {
-  font-size: 1.0625rem;
-  font-weight: 600;
-  color: #FFFFFF;
-  margin-bottom: 1px;
-}
-
-.ms-cinema-type {
-  font-size: 0.6875rem;
-  color: #B8B8B8;
-  margin-bottom: 8px;
-}
-
-.ms-cinema-showtime {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  font-size: 1.0625rem;
-  font-weight: 700;
-  color: #FFFFFF;
-  margin-bottom: 6px;
-}
-
-.ms-clock-icon {
-  stroke: #EC1D24;
-  width: 12px;
-  height: 12px;
-}
-
-.ms-cinema-price {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #CFB53B;
-  margin-bottom: 6px;
-}
-
-.ms-cinema-seats {
-  font-size: 0.6875rem;
-  color: #7F7F78;
-}
-
-/* Bulk reservation notice - inside cinema section (always dark) */
-.ms-bulk-notice {
-  background: rgba(207, 181, 59, 0.08);
-  border: 1px solid rgba(207, 181, 59, 0.2);
-  border-radius: 10px;
-  padding: 14px 16px;
-  margin-bottom: 20px;
-  font-size: 0.8rem;
-  color: #B8B8B8;
-  line-height: 1.5;
-  text-align: center;
-}
-
-.ms-bulk-notice strong {
-  color: #CFB53B;
-}
-
-body[data-theme="light"] .ms-bulk-notice {
-  background: rgba(184, 150, 12, 0.08);
-  border-color: rgba(184, 150, 12, 0.2);
-  color: #555;
-}
-
-body[data-theme="light"] .ms-bulk-notice strong {
-  color: #B8960C;
-}
-
-/* ========================================
-   TICKET SELECT
-   ======================================== */
-
-.ms-ticket-select {
-  width: 120px;
-  min-height: 46px;
-  padding: 10px 36px 10px 14px;
-  font-size: 16px;
-  font-weight: 500;
-  font-family: 'Poppins', sans-serif;
-  background-color: #ffffff;
-  color: #111111;
-  border: 1.5px solid #CFB53B;
-  border-radius: 8px;
-  cursor: pointer;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23111111' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-}
-
-.ms-ticket-select:focus {
-  outline: none;
-  border-color: #006633;
-  box-shadow: 0 0 0 2px rgba(0, 102, 51, 0.15);
-}
-
-.ms-ticket-select option {
-  background-color: #ffffff;
-  color: #111111;
-}
-
-/* Seats available badge */
-.ms-seats-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 12px;
-  margin-left: 12px;
-  padding: 7px 13px;
-  border-radius: 20px;
-  font-size: 0.8125rem;
-  font-weight: 600;
-}
-
-.ms-seats-badge svg {
-  flex-shrink: 0;
-}
-
-.ms-seats-plenty {
-  background: rgba(207, 181, 59, 0.12);
-  color: #CFB53B;
-}
-
-.ms-seats-plenty svg {
-  stroke: #CFB53B;
-}
-
-.ms-seats-low {
-  background: rgba(226, 54, 54, 0.13);
-  color: #E23636;
-}
-
-.ms-seats-low svg {
-  stroke: #E23636;
-}
-
-/* ========================================
-   SEAT CHOICE NOTE
-   ======================================== */
-
-.ms-seat-note {
-  background: rgba(207, 181, 59, 0.1);
-  border: 1px solid rgba(207, 181, 59, 0.25);
-  border-radius: 10px;
-  padding: 14px 16px;
-  margin-bottom: 20px;
-  font-size: 0.85rem;
-  color: #CFB53B;
-  line-height: 1.5;
-}
-
-/* ========================================
-   TOTAL BOX
-   ======================================== */
-
-.ms-total-box {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-radius: 10px;
-  padding: 18px 20px;
-  margin-bottom: 20px;
-}
-
-.ms-total-label {
-  font-size: 0.9rem;
-  color: var(--color-text-secondary);
-}
-
-.ms-total-amount {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #CFB53B;
-}
-
-/* ========================================
-   GCASH BOX
-   ======================================== */
-
-.ms-gcash-box {
-  background: #0a72e8;
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 20px;
-}
-
-.ms-gcash-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.ms-gcash-logo {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #ffffff;
-  letter-spacing: 0.02em;
-}
-
-.ms-gcash-amount {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #ffffff;
-}
-
-.ms-gcash-divider {
-  height: 1px;
-  background: rgba(255, 255, 255, 0.2);
-  margin: 14px 0;
-}
-
-.ms-gcash-details {
-  margin-bottom: 14px;
-}
-
-.ms-gcash-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 8px;
-  font-size: 0.9rem;
-}
-
-.ms-gcash-label {
-  color: #e8f0fc;
-}
-
-.ms-gcash-value {
-  color: #ffffff;
-  font-weight: 600;
-  font-family: 'Poppins', monospace;
-  letter-spacing: 0.03em;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.ms-copy-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: rgba(255, 255, 255, 0.15);
-  border: none;
-  border-radius: 6px;
-  padding: 6px 8px;
-  cursor: pointer;
-  color: #ffffff;
-  transition: background 0.2s;
-  min-width: 32px;
-  min-height: 32px;
-  justify-content: center;
-}
-
-.ms-copy-btn:hover {
-  background: rgba(255, 255, 255, 0.25);
-}
-
-.ms-copy-btn:active {
-  background: rgba(255, 255, 255, 0.35);
-}
-
-.ms-copy-btn svg {
-  flex-shrink: 0;
-}
-
-.ms-copy-text {
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0;
-}
-
-.ms-gcash-instruction {
-  font-size: 0.8rem;
-  color: #ffffff !important;
-  margin: 0;
-  line-height: 1.4;
-}
-
-/* Override global body[data-theme="light"] p { color: !important } rule */
-body[data-theme="light"] .ms-gcash-box .ms-gcash-instruction {
-  color: #ffffff !important;
-}
-
-.ms-gcash-qr {
-  display: block;
-  width: 200px;
-  margin: 16px auto;
-}
-
-.ms-receipt-qr {
-  margin: 20px auto;
-}
-
-/* ========================================
-   SUBMIT BUTTON
-   ======================================== */
-
-.ms-submit-btn {
-  width: 100%;
-  min-height: 50px;
-  padding: 14px 24px;
-  font-size: 1rem;
-  font-weight: 600;
-  font-family: 'Poppins', sans-serif;
-  background: #CFB53B;
-  color: #0D1310;
-  border: 1.5px solid #CFB53B;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
-  margin-top: 8px;
-}
-
-.ms-submit-btn:hover:not(:disabled) {
-  background: #b8a235;
-}
-
-.ms-submit-btn:active:not(:disabled) {
-  transform: scale(0.98);
-}
-
-.ms-submit-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.ms-support-email {
-  text-align: center;
-  font-size: 0.8rem;
-  color: var(--color-text-secondary);
-  margin-top: 16px;
-  margin-bottom: 0;
-}
-
-.ms-support-email a {
-  color: var(--color-text-secondary);
-  text-decoration: underline;
-}
-
-.ms-support-email a:hover {
-  color: var(--color-text-primary);
-}
-
-/* ========================================
-   BACK LINK
-   ======================================== */
 
 .ms-back-link {
-  display: block;
-  text-align: center;
-  margin-top: 28px;
-  font-size: 0.9rem;
-  color: #006633;
+  color: var(--doom-primary);
   text-decoration: none;
 }
 
@@ -1085,727 +84,1042 @@ body[data-theme="light"] .ms-gcash-box .ms-gcash-instruction {
   text-decoration: underline;
 }
 
+.ms-error {
+  background: var(--doom-warning-bg);
+  border: 1px solid var(--doom-warning-border);
+  color: var(--doom-warning-text);
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  margin-bottom: 16px;
+}
+
 /* ========================================
-   CONFIRMATION PAGE
+   FILM STRIP
    ======================================== */
 
-.ms-confirmation {
-  max-width: 480px;
-  margin: 60px auto;
-  padding: 40px 28px;
-  text-align: center;
-  background: var(--color-bg-card);
-  border-radius: 16px;
-  border: 1px solid var(--color-border);
+.ms-film-strip {
+  height: 30px;
+  background: #090C0A;
+  background-image: repeating-linear-gradient(
+    90deg,
+    #34403A 0px,
+    #34403A 8px,
+    transparent 8px,
+    transparent 16px
+  );
+  background-size: 16px 14px;
+  background-position: center;
+  background-repeat: repeat-x;
 }
 
-.ms-confirm-icon {
-  width: 72px;
-  height: 72px;
-  margin: 0 auto 20px;
-  background: linear-gradient(135deg, #006633 0%, #004d26 100%);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-  color: #FDF8EE;
+/* ========================================
+   HERO
+   ======================================== */
+
+.ms-hero {
+  position: relative;
+  background: var(--doom-page-bg);
+  padding: 40px 24px;
+  overflow: hidden;
 }
 
-.ms-confirm-title {
-  font-family: 'Poppins', sans-serif;
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: #CFB53B;
-  margin: 0 0 8px 0;
+.ms-hero-glow {
+  position: absolute;
+  top: -100px;
+  right: -100px;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(60, 160, 80, 0.20) 0%, transparent 70%);
+  pointer-events: none;
 }
 
-.ms-confirm-subtitle {
-  font-size: 1rem;
-  color: var(--color-text-secondary);
-  margin: 0 0 28px 0;
+.ms-hero-content {
+  position: relative;
+  z-index: 1;
 }
 
-.ms-order-summary {
-  background: var(--color-bg-primary);
-  border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 24px;
-  text-align: left;
-}
-
-.ms-receipt-header {
-  text-align: center;
-  padding-bottom: 16px;
-  margin-bottom: 16px;
-  border-bottom: 1px solid var(--color-border);
-}
-
-.ms-receipt-batch {
-  font-size: 0.7rem;
+.ms-pill {
+  display: inline-block;
+  background: var(--doom-deep-green);
+  border: 1px solid var(--doom-green-border);
+  color: var(--doom-light-green);
+  font-size: 0.6875rem;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #CFB53B;
+  padding: 8px 16px;
+  border-radius: 20px;
+  margin-bottom: 24px;
+}
+
+.ms-title-wrap {
+  display: flex;
+  align-items: stretch;
+  margin-bottom: 24px;
+}
+
+.ms-title-bar {
+  width: 5px;
+  background: var(--doom-primary);
+  border-radius: 3px;
+  margin-right: 16px;
+  flex-shrink: 0;
+}
+
+.ms-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(2rem, 8vw, 4.5rem);
+  font-weight: 700;
+  color: var(--doom-title);
+  margin: 0;
+  line-height: 1.1;
+}
+
+.ms-date-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--doom-primary);
+  font-size: clamp(1rem, 4vw, 2rem);
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.ms-date-line svg {
+  flex-shrink: 0;
+}
+
+.ms-venue-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--doom-title);
+  font-size: clamp(0.875rem, 2.5vw, 1.125rem);
+}
+
+.ms-venue-line svg {
+  flex-shrink: 0;
+}
+
+/* ========================================
+   INCLUSIONS
+   ======================================== */
+
+.ms-inclusions {
+  position: relative;
+  background: #0A0E0B;
+  border-radius: 16px;
+  padding: 24px;
+  margin: 24px 0;
+  overflow: hidden;
+}
+
+.ms-inclusions-glow {
+  position: absolute;
+  bottom: -60px;
+  right: -60px;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(60, 160, 80, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.ms-inclusions-line1 {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: clamp(0.9rem, 3vw, 1.5rem);
+  color: var(--doom-title);
   margin-bottom: 8px;
 }
 
-.ms-receipt-title {
-  font-family: 'Gelasio', Georgia, serif;
+.ms-inclusions-line1 strong {
+  color: var(--doom-primary);
+}
+
+.ms-ticket-icon {
+  stroke: var(--doom-primary);
+  flex-shrink: 0;
+}
+
+.ms-inclusions-line2 {
+  position: relative;
+  font-size: clamp(0.8rem, 2.5vw, 1.0625rem);
+  color: var(--doom-muted);
+}
+
+/* ========================================
+   PROGRESS STEPPER
+   ======================================== */
+
+.ms-progress {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  padding: 20px 0;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.ms-progress-step {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--doom-dim);
+  white-space: nowrap;
+}
+
+.ms-progress-step.active {
+  color: var(--doom-primary);
+}
+
+.ms-progress-step.completed {
+  color: var(--doom-muted);
+}
+
+/* ========================================
+   CARD
+   ======================================== */
+
+.ms-card {
+  background: var(--doom-card-bg);
+  border: 1px solid var(--doom-card-border);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.ms-card-heading {
+  font-family: 'Poppins', sans-serif;
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--color-text-primary);
-  margin-bottom: 6px;
+  color: var(--doom-text);
+  margin: 0 0 20px 0;
 }
 
-.ms-receipt-meta {
-  font-size: 0.8rem;
-  color: var(--color-text-secondary);
-  line-height: 1.5;
+/* ========================================
+   STEP 1: SHOWTIME CARDS
+   ======================================== */
+
+.ms-showtime-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
 }
 
-body[data-theme="light"] .ms-receipt-batch {
-  color: #006633;
+.ms-showtime-card {
+  background: var(--doom-card-bg);
+  border: 1.5px solid var(--doom-card-border);
+  border-radius: 12px;
+  padding: 20px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  font-family: 'Poppins', sans-serif;
 }
 
-body[data-theme="light"] .ms-what-next h4 {
-  color: #006633;
+.ms-showtime-card:hover:not(.disabled) {
+  border-color: var(--doom-dim);
 }
 
-.ms-order-summary h3 {
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--color-text-secondary);
-  margin: 0 0 16px 0;
+.ms-showtime-card.selected {
+  border-color: var(--doom-primary);
+  background: var(--doom-deep-green);
 }
 
-.ms-order-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--color-border);
-  font-size: 0.9rem;
+.ms-showtime-card.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
-.ms-order-row:last-child {
-  border-bottom: none;
-}
-
-.ms-order-row span:first-child {
-  color: var(--color-text-secondary);
-}
-
-.ms-order-row span:last-child {
-  color: var(--color-text-primary);
-  font-weight: 500;
-}
-
-.ms-order-total {
-  font-size: 1.1rem;
+.ms-showtime-time {
+  font-family: 'Cinzel', serif;
+  font-size: 1.75rem;
   font-weight: 700;
-  color: #008a44 !important;
-}
-
-body[data-theme="light"] .ms-order-total {
-  color: #000000 !important;
-  font-weight: 700;
-}
-
-.ms-order-ref {
-  font-family: monospace;
-  letter-spacing: 0.03em;
-}
-
-.ms-what-next {
-  margin-top: 20px;
-  padding-top: 16px;
-  border-top: 1px solid var(--color-border);
-  text-align: left;
-}
-
-.ms-what-next h4 {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #CFB53B;
-  margin: 0 0 12px 0;
-}
-
-.ms-what-next ul {
-  margin: 0;
-  padding-left: 18px;
-  color: var(--color-text-secondary);
-  line-height: 1.7;
-  font-size: 0.8rem;
-}
-
-.ms-what-next li {
+  color: var(--doom-title);
   margin-bottom: 4px;
 }
 
-.ms-highlight {
-  color: #CFB53B !important;
-  font-weight: 500;
+.ms-showtime-label {
+  font-size: 0.875rem;
+  color: var(--doom-muted);
+  margin-bottom: 8px;
 }
 
-.ms-pending-note {
-  font-size: 0.75rem;
-  color: var(--color-text-secondary);
-  margin: 16px 0 0 0;
-  padding-top: 12px;
-  border-top: 1px solid var(--color-border);
-  line-height: 1.5;
-  opacity: 0.85;
+.ms-showtime-seats {
+  font-size: 0.8125rem;
+  color: var(--doom-light-green);
+  margin-bottom: 12px;
 }
 
-.ms-print-btn {
-  display: block;
-  width: 100%;
-  padding: 12px 20px;
-  margin-top: 20px;
-  font-size: 0.9rem;
+.ms-showtime-card.disabled .ms-showtime-seats {
+  color: var(--doom-warning-text);
+}
+
+.ms-showtime-divider {
+  height: 1px;
+  background: var(--doom-card-border);
+  margin-bottom: 12px;
+}
+
+.ms-showtime-price {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--doom-text);
+}
+
+/* Step 1 bottom section */
+.ms-step1-bottom {
+  border-top: 1px solid var(--doom-card-border);
+  padding-top: 24px;
+}
+
+.ms-qty-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.ms-qty-label {
+  font-size: 1rem;
   font-weight: 500;
-  font-family: 'Poppins', sans-serif;
-  background: transparent;
-  color: var(--color-text-secondary);
-  border: 1px solid var(--color-border);
+  color: var(--doom-text);
+}
+
+.ms-qty-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ms-qty-btn {
+  width: 44px;
+  height: 44px;
   border-radius: 8px;
+  border: 1px solid var(--doom-card-border);
+  background: var(--doom-card-bg);
+  color: var(--doom-text);
+  font-size: 1.5rem;
   cursor: pointer;
   transition: border-color 0.2s;
 }
 
-.ms-print-btn:hover {
-  border-color: #CFB53B;
-  color: #CFB53B;
+.ms-qty-btn:hover:not(:disabled) {
+  border-color: var(--doom-primary);
 }
 
-/* Buy more tickets link */
-.ms-buy-more-link {
+.ms-qty-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.ms-qty-value {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--doom-text);
+  min-width: 40px;
+  text-align: center;
+}
+
+.ms-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  font-size: 1rem;
+  color: var(--doom-muted);
+}
+
+.ms-total-amount {
+  font-family: 'Cinzel', serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--doom-primary);
+}
+
+.ms-step1-note {
+  font-size: 0.8125rem;
+  color: var(--doom-muted);
+  text-align: center;
+  margin-top: 16px;
+  margin-bottom: 0;
+}
+
+/* ========================================
+   BUTTONS
+   ======================================== */
+
+.ms-btn-primary {
   display: block;
+  width: 100%;
+  min-height: 48px;
+  padding: 14px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  background: var(--doom-primary);
+  color: var(--doom-primary-text);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.ms-btn-primary:hover:not(:disabled) {
+  background: var(--doom-primary-hover);
+}
+
+.ms-btn-primary:disabled {
+  background: var(--doom-disabled-bg);
+  color: var(--doom-disabled-text);
+  cursor: not-allowed;
+}
+
+.ms-btn-text {
   background: none;
   border: none;
-  padding: 0;
-  margin-top: 16px;
-  font-size: 0.85rem;
+  padding: 8px 0;
+  font-size: 0.9375rem;
   font-family: 'Poppins', sans-serif;
-  color: #CFB53B;
+  color: var(--doom-primary);
   cursor: pointer;
   text-decoration: none;
-  transition: opacity 0.2s;
 }
 
-.ms-buy-more-link:hover {
+.ms-btn-text:hover {
   text-decoration: underline;
-  opacity: 0.85;
 }
 
-body[data-theme="light"] .ms-buy-more-link {
-  color: #006633;
+/* ========================================
+   STEP 2: SEATS
+   ======================================== */
+
+.ms-step2-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.ms-step2-subline {
+  font-size: 0.9375rem;
+  color: var(--doom-muted);
+  margin: 4px 0 0 0;
+}
+
+.ms-timer {
+  background: var(--doom-deep-green);
+  border: 1px solid var(--doom-green-border);
+  color: var(--doom-light-green);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.ms-timer.warning {
+  background: var(--doom-warning-bg);
+  border-color: var(--doom-warning-border);
+  color: var(--doom-warning-text);
+}
+
+.ms-seat-error {
+  background: var(--doom-warning-bg);
+  border: 1px solid var(--doom-warning-border);
+  color: var(--doom-warning-text);
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.8125rem;
+  margin-bottom: 16px;
+}
+
+.ms-seat-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+}
+
+.ms-seat-grid {
+  display: inline-block;
+  min-width: 100%;
+}
+
+.ms-seat-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.ms-row-label {
+  width: 24px;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--doom-dim);
+  flex-shrink: 0;
+}
+
+.ms-seat-cell {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.ms-seat {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  border: 1.5px solid var(--doom-dim);
+  background: transparent;
+  color: var(--doom-text);
+  font-size: 0.625rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: transform 0.1s;
+  font-family: 'Poppins', sans-serif;
+}
+
+.ms-seat:hover:not(:disabled):not(.taken) {
+  transform: scale(1.1);
+}
+
+.ms-seat.selected {
+  background: var(--doom-primary);
+  border-color: var(--doom-primary);
+  color: var(--doom-primary-text);
+}
+
+.ms-seat.taken {
+  background: #262C28;
+  border-color: #262C28;
+  color: #4A524D;
+  cursor: not-allowed;
+}
+
+/* Screen indicator */
+.ms-screen-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+  padding: 0 24px;
+}
+
+.ms-screen-bar {
+  width: 60%;
+  height: 6px;
+  background: var(--doom-dim);
+  border-radius: 3px;
+}
+
+.ms-screen-label {
+  margin-top: 6px;
+  font-size: 0.6875rem;
+  letter-spacing: 0.2em;
+  color: #7E8B82;
+}
+
+/* Legend */
+.ms-legend {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  padding: 16px 0;
+  border-top: 1px solid var(--doom-card-border);
+  flex-wrap: wrap;
+}
+
+.ms-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8125rem;
+  color: var(--doom-muted);
+}
+
+.ms-legend-swatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+}
+
+.ms-legend-swatch.available {
+  border: 1.5px solid var(--doom-dim);
+  background: transparent;
+}
+
+.ms-legend-swatch.selected {
+  background: var(--doom-primary);
+}
+
+.ms-legend-swatch.taken {
+  background: #262C28;
+}
+
+/* Step 2 bottom bar */
+.ms-step2-bottom {
+  border-top: 1px solid var(--doom-card-border);
+  padding-top: 16px;
+}
+
+.ms-selected-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  font-size: 0.9375rem;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ms-selected-list {
+  color: var(--doom-light-green);
+  font-weight: 500;
+}
+
+.ms-step2-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.ms-step2-actions .ms-btn-primary {
+  width: auto;
+  flex: 1;
+  max-width: 200px;
+}
+
+/* ========================================
+   STEP 3: FORM
+   ======================================== */
+
+.ms-step3-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.ms-step3-subline {
+  font-size: 0.9375rem;
+  color: var(--doom-muted);
+  margin: 4px 0 0 0;
+}
+
+.ms-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.ms-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ms-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--doom-text);
+}
+
+.ms-input {
+  min-height: 48px;
+  padding: 12px 16px;
+  font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
+  background: var(--doom-input-bg);
+  color: var(--doom-text);
+  border: 1.5px solid var(--doom-input-border);
+  border-radius: 8px;
+  transition: border-color 0.2s;
+}
+
+.ms-input:focus {
+  outline: none;
+  border-color: var(--doom-primary);
+}
+
+.ms-input::placeholder {
+  color: var(--doom-dim);
+}
+
+.ms-field-helper {
+  font-size: 0.8125rem;
+  color: var(--doom-muted);
+}
+
+.ms-fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ms-legend-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--doom-text);
+  margin-bottom: 12px;
+}
+
+.ms-radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ms-radio {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 0.9375rem;
+  color: var(--doom-text);
+}
+
+.ms-radio input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--doom-primary);
+  cursor: pointer;
+}
+
+/* Payment box */
+.ms-payment-box {
+  background: var(--doom-deep-green);
+  border: 1px solid var(--doom-green-border);
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+}
+
+.ms-gcash-qr {
+  width: 180px;
+  height: auto;
+  margin-bottom: 20px;
+  border-radius: 8px;
+}
+
+.ms-payment-amount {
+  margin-bottom: 20px;
+}
+
+.ms-payment-label {
+  display: block;
+  font-size: 0.8125rem;
+  color: var(--doom-muted);
+  margin-bottom: 4px;
+}
+
+.ms-payment-total {
+  display: block;
+  font-family: 'Cinzel', serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--doom-primary);
+  margin-bottom: 4px;
+}
+
+.ms-payment-breakdown {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--doom-muted);
+}
+
+.ms-gcash-details {
+  font-size: 0.9375rem;
+  color: var(--doom-text);
+  line-height: 1.6;
+}
+
+.ms-gcash-details strong {
+  color: var(--doom-light-green);
+}
+
+.ms-submit-error {
+  background: var(--doom-warning-bg);
+  border: 1px solid var(--doom-warning-border);
+  color: var(--doom-warning-text);
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.ms-step3-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding-top: 8px;
+}
+
+.ms-step3-actions .ms-btn-primary {
+  width: auto;
+  flex: 1;
+  max-width: 240px;
+}
+
+/* ========================================
+   EXPIRED SCREEN
+   ======================================== */
+
+.ms-expired-card {
+  max-width: 400px;
+  margin: 80px auto;
+  padding: 40px;
+  text-align: center;
+  background: var(--doom-card-bg);
+  border: 2px solid var(--doom-warning-border);
+  border-radius: 16px;
+}
+
+.ms-expired-heading {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--doom-warning-text);
+  margin: 0 0 16px 0;
+}
+
+.ms-expired-text {
+  font-size: 0.9375rem;
+  color: var(--doom-muted);
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+/* ========================================
+   DONE SCREEN
+   ======================================== */
+
+.ms-done-card {
+  max-width: 480px;
+  margin: 40px auto;
+  padding: 32px;
+  background: var(--doom-card-bg);
+  border: 2px solid var(--doom-green-border);
+  border-radius: 16px;
+}
+
+.ms-done-heading {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--doom-light-green);
+  margin: 0 0 12px 0;
+  text-align: center;
+}
+
+.ms-done-thanks {
+  font-size: 1.125rem;
+  color: var(--doom-text);
+  text-align: center;
+  margin: 0 0 8px 0;
+}
+
+.ms-done-thanks strong {
+  color: var(--doom-primary);
+}
+
+.ms-done-text {
+  font-size: 0.9375rem;
+  color: var(--doom-muted);
+  text-align: center;
+  margin: 0 0 24px 0;
+  line-height: 1.5;
+}
+
+.ms-done-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 400px) {
+  .ms-done-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ms-done-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ms-done-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--doom-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.ms-done-value {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--doom-text);
+}
+
+.ms-done-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
 }
 
 /* ========================================
    PRINT STYLES
    ======================================== */
 
+.ms-print-header,
+.ms-print-footer {
+  display: none;
+}
+
+.ms-no-print {
+  /* Marker class for hiding in print */
+}
+
 @media print {
-  /* Override CSS variables for print */
-  :root,
-  body,
-  body[data-theme="light"],
-  body[data-theme="dark"] {
-    --color-bg-primary: #ffffff !important;
-    --color-bg-card: #ffffff !important;
-  }
-
-  /* KILL ALL DARK BACKGROUNDS - force white everywhere */
-  *,
-  *::before,
-  *::after {
+  * {
     background: #fff !important;
-    background-color: #fff !important;
-    background-image: none !important;
+    color: #000 !important;
+    border-color: #ccc !important;
   }
 
-  html {
-    background: #fff !important;
-    background-color: #fff !important;
-    height: auto !important;
-    min-height: 0 !important;
-  }
-
-  body {
-    background: #fff !important;
-    background-color: #fff !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    height: auto !important;
-    min-height: 0 !important;
-  }
-
-  /* Remove height constraints that cause dark blocks */
   .ms-page {
-    background: #fff !important;
-    background-color: #fff !important;
-    min-height: 0 !important;
-    height: auto !important;
+    min-height: auto;
   }
 
-  /* Hide everything except the receipt */
-  .ms-hero,
   .ms-film-strip,
-  .ms-theme-toggle,
-  .ms-form-section,
+  .ms-hero,
+  .ms-inclusions,
+  .ms-progress,
   .ms-no-print,
   footer,
   .site-footer {
     display: none !important;
-    height: 0 !important;
-    min-height: 0 !important;
-    overflow: hidden !important;
   }
 
-  /* Confirmation header - show and style for print (compact for mobile) */
-  .ms-confirm-icon {
-    width: 28px !important;
-    height: 28px !important;
-    margin: 0 auto 6px !important;
-    background: none !important;
-    border: 2px solid #000 !important;
-    color: #000 !important;
-    font-size: 0.9rem !important;
-  }
-
-  .ms-confirm-title {
-    color: #000 !important;
-    font-size: 1.1rem !important;
-    margin: 0 0 2px !important;
-  }
-
-  .ms-confirm-subtitle {
-    color: #333 !important;
-    font-size: 0.85rem !important;
-    margin: 0 0 10px !important;
-  }
-
-  /* Reset container for print */
   .ms-container {
-    max-width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    background: #fff !important;
-    background-color: #fff !important;
-    height: auto !important;
-    min-height: 0 !important;
+    max-width: 100%;
+    padding: 0;
   }
 
-  /* Confirmation wrapper */
-  .ms-confirmation {
-    background: #fff !important;
-    background-color: #fff !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    height: auto !important;
-    min-height: 0 !important;
-    page-break-inside: avoid;
+  .ms-print-header {
+    display: block;
+    text-align: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #ccc;
   }
 
-  /* ORDER SUMMARY / RECEIPT CARD - compact for mobile print */
-  .ms-order-summary {
-    background: #fff !important;
-    border: 1px solid #bbb !important;
-    border-radius: 6px !important;
-    padding: 12px !important;
-    margin: 0 auto !important;
-    max-width: 100% !important;
-    page-break-inside: avoid;
-    page-break-before: avoid;
-    font-size: 0.85rem !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+  .ms-print-brand {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
   }
 
-  /* Dark readable text */
-  .ms-order-summary,
-  .ms-order-summary h3,
-  .ms-order-summary p,
-  .ms-order-summary span,
-  .ms-order-summary div {
-    color: #000 !important;
-    background: transparent !important;
+  .ms-print-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 4px;
   }
 
-  /* Receipt header */
-  .ms-receipt-header {
-    border-bottom: 1px solid #bbb !important;
-    background: transparent !important;
+  .ms-print-meta {
+    font-size: 0.875rem;
+    color: #555 !important;
   }
 
-  .ms-receipt-batch {
-    color: #000 !important;
-    font-weight: 700 !important;
+  .ms-done-card {
+    margin: 0 auto;
+    padding: 24px;
+    border: 1px solid #ccc !important;
+    box-shadow: none;
   }
 
-  .ms-receipt-title {
+  .ms-done-heading {
     color: #000 !important;
   }
 
-  /* DATE AND VENUE - darker for print legibility */
-  .ms-receipt-meta {
-    color: #222 !important;
-  }
-
-  /* Order rows */
-  .ms-order-row {
-    border-bottom-color: #ccc !important;
-    background: transparent !important;
-  }
-
-  .ms-order-row span:first-child {
-    color: #222 !important;
-  }
-
-  .ms-order-total,
-  body[data-theme="dark"] .ms-order-total,
-  body[data-theme="light"] .ms-order-total {
+  .ms-done-thanks strong {
     color: #000 !important;
-    font-weight: 700 !important;
   }
 
-  .ms-pending-note {
-    color: #333 !important;
-    background: transparent !important;
+  .ms-done-grid {
+    margin-bottom: 16px;
   }
 
-  /* What happens next - inside receipt for print */
-  .ms-what-next {
-    margin-top: 16px !important;
-    padding-top: 16px !important;
-    border-top: 1px solid #ccc !important;
-    background: transparent !important;
+  .ms-done-label {
+    color: #555 !important;
   }
 
-  .ms-what-next h4 {
-    font-size: 0.8rem !important;
-    font-weight: 600 !important;
-    color: #000 !important;
-    margin: 0 0 10px 0 !important;
+  .ms-done-actions {
+    display: none !important;
   }
 
-  .ms-what-next ul {
-    margin: 0 !important;
-    padding-left: 18px !important;
-    font-size: 0.75rem !important;
-    line-height: 1.6 !important;
-  }
-
-  .ms-what-next li {
-    color: #222 !important;
-    margin-bottom: 4px !important;
-  }
-
-  .ms-what-next .ms-highlight {
-    color: #006633 !important;
-  }
-
-  /* Support email - dark readable on print */
-  .ms-support-email {
-    margin-top: 16px !important;
-    padding-top: 12px !important;
-    border-top: 1px solid #ccc !important;
-    font-size: 0.75rem !important;
-    color: #222 !important;
-    background: transparent !important;
-  }
-
-  .ms-support-email a {
-    color: #222 !important;
+  .ms-print-footer {
+    display: block;
+    text-align: center;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #ccc;
+    font-size: 0.8125rem;
+    color: #555 !important;
   }
 }
 
 /* ========================================
-   LIGHT MODE OVERRIDES (green accents)
+   RESPONSIVE
    ======================================== */
 
-body[data-theme="light"] .ms-seats-plenty {
-  background: rgba(0, 102, 51, 0.10);
-  color: #006633;
-}
+@media (max-width: 480px) {
+  .ms-hero {
+    padding: 32px 20px;
+  }
 
-body[data-theme="light"] .ms-seats-plenty svg {
-  stroke: #006633;
-}
+  .ms-card {
+    padding: 20px 16px;
+  }
 
+  .ms-step2-header,
+  .ms-step3-header {
+    flex-direction: column;
+  }
 
-body[data-theme="light"] .ms-total-amount {
-  color: #008a44;
-}
+  .ms-timer {
+    align-self: flex-start;
+  }
 
-body[data-theme="light"] .ms-submit-btn {
-  background: #006633;
-  color: #FDF8EE;
-  border-color: #CFB53B;
-}
+  .ms-step2-actions,
+  .ms-step3-actions {
+    flex-direction: column;
+  }
 
-body[data-theme="light"] .ms-submit-btn:hover:not(:disabled) {
-  background: #005528;
-}
-
-/* Override global light mode p/label rules for dark cinema sections */
-body[data-theme="light"] .ms-form-inclusion-line {
-  color: #B8B8B8 !important;
-}
-
-body[data-theme="light"] .ms-form-separate-line {
-  color: #7F7F78 !important;
-}
-
-body[data-theme="light"] .ms-cinema-section .ms-label {
-  color: #B8B8B8 !important;
-}
-
-body[data-theme="light"] .ms-seat-note {
-  background: rgba(0, 102, 51, 0.08);
-  border-color: rgba(0, 102, 51, 0.2);
-  color: #006633;
-}
-
-/* Hero title must stay cream in light mode (override global h1 !important rule) */
-body[data-theme="light"] .ms-movie-title {
-  color: #FDF8EE !important;
-}
-
-body[data-theme="light"] .ms-confirm-title {
-  color: #006633;
-}
-
-/* ========================================
-   COMMITTEE ACCESS SECTION
-   ======================================== */
-
-.ms-committee-section {
-  margin-top: 40px;
-  padding-top: 32px;
-  border-top: 1px solid rgba(207, 181, 59, 0.2);
-}
-
-.ms-committee-btn {
-  background: #141414;
-  border: 1px solid #262626;
-  border-radius: 10px;
-  padding: 14px 16px;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  transition: border-color 0.2s;
-  text-align: center;
-  font-family: 'Poppins', sans-serif;
-  width: fit-content;
-  margin: 0 auto;
-}
-
-.ms-committee-btn:hover {
-  border-color: rgba(207, 181, 59, 0.5);
-}
-
-.ms-committee-btn:active {
-  transform: scale(0.99);
-}
-
-.ms-committee-label {
-  font-family: 'Poppins', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #CFB53B;
-}
-
-.ms-committee-hint {
-  font-family: 'Poppins', sans-serif;
-  font-size: 0.6875rem;
-  color: #7F7F78;
-}
-
-.ms-committee-unlock,
-.ms-committee-form,
-.ms-committee-success {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(207, 181, 59, 0.3);
-  border-radius: 12px;
-  padding: 24px;
-}
-
-.ms-committee-title {
-  font-family: 'Poppins', sans-serif;
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: #CFB53B;
-  margin: 0 0 16px 0;
-  text-align: center;
-}
-
-.ms-committee-desc {
-  font-size: 0.9rem;
-  color: var(--color-text-secondary, #aaa);
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.ms-committee-cancel {
-  display: block;
-  width: 100%;
-  margin-top: 12px;
-  padding: 12px;
-  background: transparent;
-  border: none;
-  color: var(--color-text-secondary, #aaa);
-  font-size: 0.9rem;
-  cursor: pointer;
-}
-
-.ms-committee-cancel:hover {
-  color: #fff;
-}
-
-.ms-serial-input {
-  display: flex;
-  align-items: center;
-  gap: 0;
-}
-
-.ms-serial-prefix {
-  padding: 12px 0 12px 16px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-right: none;
-  border-radius: 8px 0 0 8px;
-  font-family: monospace;
-  font-size: 1rem;
-  color: var(--color-text-secondary, #aaa);
-}
-
-.ms-serial-field {
-  border-radius: 0 8px 8px 0 !important;
-  font-family: monospace;
-  letter-spacing: 1px;
-}
-
-.ms-serial-range {
-  margin-top: 8px;
-  font-size: 0.85rem;
-  color: #CFB53B;
-  font-family: monospace;
-}
-
-.ms-serial-warning {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  margin-top: 10px;
-  padding: 10px 12px;
-  background: rgba(180, 83, 9, 0.15);
-  border: 1px solid rgba(180, 83, 9, 0.4);
-  border-radius: 8px;
-  color: #f59e0b;
-  font-size: 0.85rem;
-}
-
-.ms-serial-warning svg {
-  flex-shrink: 0;
-  margin-top: 1px;
-}
-
-.ms-physical-note {
-  font-size: 0.85rem;
-  color: var(--color-text-secondary, #aaa);
-  background: rgba(255, 255, 255, 0.03);
-  padding: 12px;
-  border-radius: 8px;
-  margin: 16px 0;
-  line-height: 1.5;
-}
-
-.ms-physical-receipt {
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 8px;
-  padding: 16px;
-  margin: 20px 0;
-}
-
-.ms-receipt-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 8px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  font-size: 0.9rem;
-}
-
-.ms-receipt-row:last-child {
-  border-bottom: none;
-}
-
-.ms-receipt-row span:first-child {
-  color: var(--color-text-secondary, #aaa);
-}
-
-.ms-receipt-row span:last-child {
-  color: #fff;
-  font-weight: 500;
-}
-
-.ms-receipt-total {
-  color: #CFB53B !important;
-  font-weight: 600 !important;
-}
-
-.ms-committee-success .ms-confirm-icon {
-  margin: 0 auto 16px;
-}
-
-.ms-payment-methods {
-  display: flex;
-  gap: 12px;
-}
-
-.ms-payment-card {
-  flex: 1;
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1.5px solid rgba(255, 255, 255, 0.15);
-  border-radius: 10px;
-  text-align: center;
-  cursor: pointer;
-  font-weight: 500;
-  color: var(--color-text-primary, #fff);
-  position: relative;
-  transition: border-color 0.2s, background 0.2s;
-}
-
-.ms-payment-card:hover {
-  border-color: rgba(207, 181, 59, 0.5);
-}
-
-.ms-payment-card.selected {
-  border-color: #CFB53B;
-  background: rgba(207, 181, 59, 0.1);
-}
-
-.ms-physical-qr-section {
-  text-align: center;
-  margin: 16px 0;
-}
-
-.ms-physical-qr-section .ms-gcash-qr {
-  max-width: 200px;
-  margin: 0 auto 12px;
-}
-
-.ms-physical-helper {
-  font-size: 0.85rem;
-  color: var(--color-text-secondary, #aaa);
-  line-height: 1.5;
-  margin: 12px 0 16px;
+  .ms-step2-actions .ms-btn-primary,
+  .ms-step3-actions .ms-btn-primary {
+    max-width: 100%;
+    order: -1;
+  }
 }
