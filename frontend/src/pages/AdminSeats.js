@@ -3,9 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { apiGet } from '../api';
 import Navbar from '../components/Navbar';
-import { SEAT_MAPS } from '../data/seatMaps';
-
-const MAPS = SEAT_MAPS;
+import { getSeatMap } from '../data/seatMaps';
 
 export default function AdminSeats() {
   const { user } = useAuth();
@@ -84,10 +82,11 @@ export default function AdminSeats() {
   };
 
   // Count seats for a cinema
-  const countSeats = (cinemaCode) => {
-    const map = MAPS[cinemaCode];
+  const countSeats = (cinema) => {
+    const map = getSeatMap(cinema.layout);
     if (!map) return { total: 0, reserved: 0, available: 0 };
 
+    const cinemaCode = cinema.code;
     let total = 0;
     let reserved = 0;
 
@@ -306,18 +305,20 @@ export default function AdminSeats() {
     }
   };
 
-  const renderCinema = (cinemaCode) => {
-    const cinemaMap = MAPS[cinemaCode];
+  const renderCinema = (cinema) => {
+    const cinemaMap = getSeatMap(cinema.layout);
     if (!cinemaMap) return null;
 
-    const cinema = cinemas.find(c => c.code === cinemaCode);
-    const counts = countSeats(cinemaCode);
+    const cinemaCode = cinema.code;
+    const counts = countSeats(cinema);
 
     return (
       <div key={cinemaCode} style={styles.cinemaBox}>
         <div style={styles.cinemaTitle}>
-          {cinemaMap.name}
-          {cinema && <span style={{ fontWeight: 400, color: '#666' }}> ({cinema.label})</span>}
+          {cinema.showtime} · {cinema.label}
+          <span style={{ fontWeight: 400, color: '#666', marginLeft: '12px' }}>
+            {counts.reserved} / {cinema.capacity} taken
+          </span>
         </div>
 
         <div style={styles.screenwrap}>
@@ -443,8 +444,7 @@ export default function AdminSeats() {
             </div>
 
             <div style={styles.cinemasWrap}>
-              {renderCinema('C3')}
-              {renderCinema('C4')}
+              {cinemas.map(cinema => renderCinema(cinema))}
             </div>
           </div>
         </div>
@@ -455,6 +455,14 @@ export default function AdminSeats() {
         <div style={{ ...styles.tooltip, left: tooltip.x, top: tooltip.y - 10 }}>
           <div style={styles.tooltipSeat}>Seat {tooltip.seatId}</div>
           <div style={styles.tooltipName}>{tooltip.buyer_name}</div>
+          {tooltip.ticket_numbers && (
+            <div style={{ fontSize: '12px', color: '#006633', fontFamily: 'monospace', marginBottom: '4px' }}>
+              {tooltip.ticket_numbers}
+            </div>
+          )}
+          {tooltip.sold_by && (
+            <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>{tooltip.sold_by}</div>
+          )}
           {tooltip.mobile && (
             <div style={styles.tooltipContact}>{tooltip.mobile}</div>
           )}

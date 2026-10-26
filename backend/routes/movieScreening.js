@@ -1694,17 +1694,20 @@ router.get('/admin/seats', authenticateToken, async (req, res) => {
       return res.status(400).json({ error: 'event_id is required' });
     }
 
-    // Get all reservations with chosen_seats for this event
+    // Get all reservations with chosen_seats for this event (pending or confirmed)
     const reservationsResult = await db.query(
-      `SELECT id, cinema_code, buyer_name, mobile, email, status, is_sponsor, sponsor_type, gcash_ref, chosen_seats
-       FROM reservations
-       WHERE event_id = $1
-         AND chosen_seats IS NOT NULL
-         AND status IN ('pending', 'confirmed')`,
+      `SELECT r.id, r.cinema_code, r.buyer_name, r.mobile, r.email, r.status,
+              r.is_sponsor, r.sponsor_type, r.gcash_ref, r.chosen_seats,
+              r.serial_start, r.serial_end, r.sold_by_team, COALESCE(ec.serial_prefix, ec.code) as serial_prefix
+       FROM reservations r
+       JOIN event_cinemas ec ON ec.event_id = r.event_id AND ec.code = r.cinema_code
+       WHERE r.event_id = $1
+         AND r.chosen_seats IS NOT NULL
+         AND r.status IN ('pending', 'confirmed')`,
       [event_id]
     );
 
-    // Build seatMap: { "C3:A1" -> { buyer_name, mobile, email, status, is_sponsor, sponsor_type, gcash_ref } }
+    // Build seatMap: { "C3:A1" -> { buyer_name, mobile, email, status, is_sponsor, sponsor_type, gcash_ref, ticket_numbers, sold_by } }
     const seatMap = {};
     for (const row of reservationsResult.rows) {
       const seats = row.chosen_seats.split(',').map(s => s.trim()).filter(Boolean);
@@ -1717,17 +1720,20 @@ router.get('/admin/seats', authenticateToken, async (req, res) => {
           status: row.status,
           is_sponsor: row.is_sponsor,
           sponsor_type: row.sponsor_type,
-          gcash_ref: row.gcash_ref
+          gcash_ref: row.gcash_ref,
+          ticket_numbers: formatTicketNumbers(row.serial_prefix, row.serial_start, row.serial_end),
+          sold_by: row.sold_by_team === 'liceo' ? 'Liceo' : 'Batch 2003'
         };
       }
     }
 
     // Get cinema info
     const cinemasResult = await db.query(
-      `SELECT code, label, capacity
+      `SELECT code, label, capacity, showtime, layout,
+              COALESCE(serial_prefix, code) as serial_prefix
        FROM event_cinemas
        WHERE event_id = $1
-       ORDER BY code ASC`,
+       ORDER BY sort_order NULLS LAST, code ASC`,
       [event_id]
     );
 
@@ -1735,7 +1741,9 @@ router.get('/admin/seats', authenticateToken, async (req, res) => {
       seatMap,
       cinemas: cinemasResult.rows.map(c => ({
         ...c,
-        capacity: parseInt(c.capacity)
+        capacity: parseInt(c.capacity),
+        showtime: c.showtime,
+        layout: c.layout
       }))
     });
   } catch (err) {
