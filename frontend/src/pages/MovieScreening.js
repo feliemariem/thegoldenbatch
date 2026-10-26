@@ -510,6 +510,7 @@ export default function MovieScreening() {
             <div className="ms-print-brand">USLS-IS BATCH 2003 · BLOCK SCREENING</div>
             <div className="ms-print-title">{event.title}</div>
             <div className="ms-print-meta">{formatEventDate(event.event_date)} · {event.venue}</div>
+            <div className="ms-print-meta">Beneficiary: Umbrella Project of the USLS Liceo Student Government</div>
           </div>
 
           <div className="ms-done-card">
@@ -619,6 +620,16 @@ export default function MovieScreening() {
                 <circle cx="12" cy="10" r="3"></circle>
               </svg>
               <span>{event.venue}</span>
+            </div>
+            <div className="ms-beneficiary-line">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A7B0AA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="8" r="6"></circle>
+                <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"></path>
+              </svg>
+              <span>
+                <span className="ms-beneficiary-label">Beneficiary: </span>
+                <span className="ms-beneficiary-name">Umbrella Project of the USLS Liceo Student Government</span>
+              </span>
             </div>
           </div>
         </div>

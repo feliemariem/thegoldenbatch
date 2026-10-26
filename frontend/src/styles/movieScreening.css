@@ -203,6 +203,27 @@
   flex-shrink: 0;
 }
 
+.ms-beneficiary-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: clamp(0.875rem, 2.5vw, 1.125rem);
+}
+
+.ms-beneficiary-line svg {
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+.ms-beneficiary-label {
+  color: #A7B0AA;
+}
+
+.ms-beneficiary-name {
+  color: #7BD892;
+  font-weight: 600;
+}
+
 /* ========================================
    INCLUSIONS
    ======================================== */
