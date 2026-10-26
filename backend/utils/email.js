@@ -282,7 +282,7 @@ const sendScreeningConfirmationEmail = async (details) => {
 <!-- Header Image -->
 <tr>
 <td style="padding:0;">
-<img src="https://thegoldenbatch2003.com/images/doomsday-email-header.jpg" alt="USLS-IS Golden Batch 2003 presents Avengers: Doomsday, an opening day block screening fundraiser. Beneficiary: USLS Liceo Student Government." width="600" height="240" style="display:block;width:100%;max-width:600px;height:auto;border:0;">
+<img src="https://thegoldenbatch2003.com/images/doomsday-email-header.jpg" alt="USLS-IS Golden Batch 2003 presents Avengers: Doomsday, an opening weekend block screening fundraiser. Beneficiary: USLS Liceo Student Government." width="600" height="240" style="display:block;width:100%;max-width:600px;height:auto;border:0;">
 </td>
 </tr>
 <!-- Body -->
