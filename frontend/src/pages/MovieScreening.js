@@ -83,6 +83,10 @@ export default function MovieScreening() {
   const stepRef = useRef(1);
   const reservationRef = useRef(null);
   const expiredRef = useRef(false);
+  // Serialization queue for POST /holds requests
+  const holdQueueRef = useRef(Promise.resolve());
+  const pendingSeatsRef = useRef(null); // latest seat selection waiting to be sent
+  const requestInFlightRef = useRef(false);
 
   // Fetch active event
   const fetchActiveEvent = useCallback(async () => {
@@ -132,12 +136,19 @@ export default function MovieScreening() {
       !reservationRef.current &&
       !expiredRef.current;
 
+    const releaseHold = () => {
+      const token = holdTokenRef.current;
+      const url = `${API_URL}/api/movie-screening/holds/${token}/release`;
+      const blob = new Blob([''], { type: 'text/plain' });
+      const sent = navigator.sendBeacon && navigator.sendBeacon(url, blob);
+      if (!sent) {
+        fetch(url, { method: 'POST', keepalive: true, headers: { 'Content-Type': 'text/plain' } });
+      }
+    };
+
     const handlePageHide = () => {
       if (shouldRelease()) {
-        fetch(`${API_URL}/api/movie-screening/holds/${holdTokenRef.current}`, {
-          method: 'DELETE',
-          keepalive: true
-        });
+        releaseHold();
       }
     };
 
@@ -156,10 +167,7 @@ export default function MovieScreening() {
       window.removeEventListener('beforeunload', handleBeforeUnload);
       // Unmount cleanup: release hold if navigating away via React Router
       if (shouldRelease()) {
-        fetch(`${API_URL}/api/movie-screening/holds/${holdTokenRef.current}`, {
-          method: 'DELETE',
-          keepalive: true
-        });
+        releaseHold();
       }
     };
   }, []);
@@ -266,47 +274,70 @@ export default function MovieScreening() {
       newSeats = [...seats, seatId];
     }
 
+    // Optimistic update
     setSeats(newSeats);
     setSeatError('');
 
-    // POST holds
-    if (newSeats.length > 0) {
-      try {
-        const res = await apiPost('/api/movie-screening/holds', {
-          cinema_code: showtime.code,
-          quantity,
-          seats: newSeats,
-          hold_token: holdToken || undefined
-        });
-
-        if (res.status === 410) {
-          handleExpired();
-          return;
-        }
-
-        const data = await res.json();
-        if (!res.ok) {
-          setSeatError(data.error || 'Failed to hold seats');
-          return;
-        }
-
-        setHoldToken(data.hold_token);
-        setExpiresAt(new Date(data.expires_at));
-        setHeldCount(data.held?.length || 0);
-
-        // Handle unavailable seats
-        if (data.unavailable && data.unavailable.length > 0) {
-          const unavailableSet = new Set(data.unavailable);
-          const validSeats = newSeats.filter(s => !unavailableSet.has(s));
-          setSeats(validSeats);
-          setTakenSeats(prev => new Set([...prev, ...data.unavailable]));
-          setSeatError(`Seat ${data.unavailable[0]} was just taken. Please pick another.`);
-        }
-      } catch (err) {
-        console.error('Error creating hold:', err);
-        setSeatError('Connection error');
-      }
+    // Enqueue hold request if we have seats OR if we have a token (to release)
+    if (newSeats.length > 0 || holdTokenRef.current) {
+      pendingSeatsRef.current = newSeats;
+      enqueueHoldRequest();
     }
+  };
+
+  // Serialized hold request processor
+  const enqueueHoldRequest = () => {
+    // If a request is already in flight, it will pick up pendingSeatsRef when done
+    if (requestInFlightRef.current) return;
+
+    const processQueue = async () => {
+      while (pendingSeatsRef.current !== null) {
+        const seatsToSend = pendingSeatsRef.current;
+        pendingSeatsRef.current = null;
+        requestInFlightRef.current = true;
+
+        try {
+          const res = await apiPost('/api/movie-screening/holds', {
+            cinema_code: showtime.code,
+            quantity,
+            seats: seatsToSend,
+            hold_token: holdTokenRef.current || undefined
+          });
+
+          if (res.status === 410) {
+            pendingSeatsRef.current = null;
+            handleExpired();
+            return;
+          }
+
+          const data = await res.json();
+          if (!res.ok) {
+            setSeatError(data.error || 'Failed to hold seats');
+            continue;
+          }
+
+          setHoldToken(data.hold_token);
+          holdTokenRef.current = data.hold_token;
+          setExpiresAt(new Date(data.expires_at));
+          setHeldCount(data.held?.length || 0);
+
+          // Handle unavailable seats (revert optimistic selection)
+          if (data.unavailable && data.unavailable.length > 0) {
+            const unavailableSet = new Set(data.unavailable);
+            setSeats(prev => prev.filter(s => !unavailableSet.has(s)));
+            setTakenSeats(prev => new Set([...prev, ...data.unavailable]));
+            setSeatError(`Seat ${data.unavailable[0]} was just taken. Please pick another.`);
+          }
+        } catch (err) {
+          console.error('Error creating hold:', err);
+          setSeatError('Connection error');
+        } finally {
+          requestInFlightRef.current = false;
+        }
+      }
+    };
+
+    holdQueueRef.current = holdQueueRef.current.then(processQueue);
   };
 
   // Go to step 2

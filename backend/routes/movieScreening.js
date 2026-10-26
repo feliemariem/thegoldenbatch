@@ -622,6 +622,23 @@ router.delete('/holds/:token', async (req, res) => {
   }
 });
 
+// POST /api/movie-screening/holds/:token/release
+// Release all holds for a token (sendBeacon-friendly, no preflight)
+router.post('/holds/:token/release', async (req, res) => {
+  const { token } = req.params;
+
+  try {
+    const result = await db.query(
+      `DELETE FROM screening_seats WHERE hold_token = $1 AND reservation_id IS NULL`,
+      [token]
+    );
+    res.json({ released: result.rowCount });
+  } catch (err) {
+    console.error('Error releasing holds:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // POST /api/movie-screening/reserve
 // Create a new reservation (public endpoint)
 router.post('/reserve', async (req, res) => {
