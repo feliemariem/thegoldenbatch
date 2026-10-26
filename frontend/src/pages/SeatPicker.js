@@ -475,9 +475,6 @@ export default function SeatPicker() {
           <div style={{ ...styles.card, ...styles.summary }}>
             <div style={styles.sumHead}>
               <div style={styles.sumBrand}>USLS-IS Batch 2003 · Block Screening</div>
-              <div style={styles.sumTitle}>Spider-Man: Brand New Day</div>
-              <div style={styles.sumSub}>Friday · July 31, 2026</div>
-              <div style={styles.sumSub}>Ayala Malls Capitol Central · Bacolod</div>
             </div>
             <div style={styles.sumBody}>
               <div style={styles.sumSection}>
