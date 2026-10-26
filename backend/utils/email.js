@@ -253,6 +253,8 @@ const sendScreeningConfirmationEmail = async (details) => {
     '',
     'We will contact you on where to pick up your tickets (movie stub/food voucher). Just present them at the cinema on screening day. See you there!',
     '',
+    'Questions? Email us at uslsis.batch2003@gmail.com.',
+    '',
     'In St. La Salle,',
     '',
     'USLS-IS Batch 2003'
@@ -269,6 +271,7 @@ Tickets: ${quantity}<br/>
 ${seatsLineHtml}Serial numbers: ${escapeHtml(ticketNumbers)}<br/>
 Reference number: ${escapeHtml(reference)}</p>
 <p>We will contact you on where to pick up your tickets (movie stub/food voucher). Just present them at the cinema on screening day. See you there!</p>
+<p>Questions? Email us at <a href="mailto:uslsis.batch2003@gmail.com">uslsis.batch2003@gmail.com</a>.</p>
 <p>In St. La Salle,</p>
 <p>USLS-IS Batch 2003</p>
 </div>`;
@@ -276,6 +279,7 @@ Reference number: ${escapeHtml(reference)}</p>
   const msg = {
     to,
     from: process.env.FROM_EMAIL,
+    reply_to: 'uslsis.batch2003@gmail.com',
     subject: `Your ${eventTitle} tickets are confirmed`,
     text: textLines,
     html: htmlBody
