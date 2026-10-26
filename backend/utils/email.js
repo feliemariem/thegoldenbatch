@@ -282,7 +282,7 @@ const sendScreeningConfirmationEmail = async (details) => {
 <!-- Header Image -->
 <tr>
 <td style="padding:0;">
-<img src="https://thegoldenbatch2003.com/doomsday-email-header.jpg" alt="Avengers: Doomsday block screening, a fundraiser benefiting the Umbrella Project of the USLS BEU Liceo Student Government and the USLS-IS Golden Batch 2003" width="600" height="240" style="display:block;width:100%;max-width:600px;height:auto;border:0;">
+<img src="https://thegoldenbatch2003.com/images/doomsday-email-header.jpg" alt="Avengers: Doomsday block screening, a fundraiser benefiting the Umbrella Project of the USLS BEU Liceo Student Government and the USLS-IS Golden Batch 2003" width="600" height="240" style="display:block;width:100%;max-width:600px;height:auto;border:0;">
 </td>
 </tr>
 <!-- Body -->
