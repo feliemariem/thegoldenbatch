@@ -153,6 +153,39 @@
   margin-bottom: 24px;
 }
 
+.ms-opening-tag {
+  display: inline-flex;
+  align-self: flex-start;
+  border: 2px solid #0A0A0A;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.12), 0 6px 18px rgba(0,0,0,0.6);
+  margin-top: 4px;
+  margin-bottom: 16px;
+}
+
+.ms-opening-tag span {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  font-size: 14px;
+  padding: 6px 14px 6px 18px;
+}
+
+.ms-opening-tag span:first-child {
+  background: #A3141C;
+  color: #FFFFFF;
+}
+
+.ms-opening-tag span:last-child {
+  background: #0A0A0A;
+  color: #F2F5F3;
+}
+
+@media (min-width: 640px) {
+  .ms-opening-tag span {
+    font-size: 16px;
+  }
+}
+
 .ms-title-wrap {
   display: flex;
   align-items: stretch;
@@ -1110,6 +1143,25 @@
     font-weight: 600;
     letter-spacing: 0.1em;
     margin-bottom: 8px;
+  }
+
+  .ms-print-header .ms-opening-tag {
+    display: inline-flex;
+    margin: 8px 0;
+  }
+
+  .ms-print-header .ms-opening-tag span:first-child {
+    background: #A3141C !important;
+    color: #FFFFFF !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .ms-print-header .ms-opening-tag span:last-child {
+    background: #0A0A0A !important;
+    color: #FFFFFF !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 
   .ms-print-title {

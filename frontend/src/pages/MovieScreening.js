@@ -510,6 +510,10 @@ export default function MovieScreening() {
           {/* Print-only header */}
           <div className="ms-print-header">
             <div className="ms-print-brand">USLS-IS BATCH 2003 · BLOCK SCREENING</div>
+            <div className="ms-opening-tag" aria-label="Opening day">
+              <span>OPENING</span>
+              <span>DAY</span>
+            </div>
             <div className="ms-print-title">{event.title}</div>
             <div className="ms-print-meta">{formatEventDate(event.event_date)} · {event.venue}</div>
             <div className="ms-print-meta">Beneficiary: Umbrella Project of the USLS Liceo Student Government</div>
@@ -603,6 +607,10 @@ export default function MovieScreening() {
           <div className="ms-hero-glow"></div>
           <div className="ms-hero-content">
             <div className="ms-pill">USLS-IS BATCH 2003 · BLOCK SCREENING</div>
+            <div className="ms-opening-tag" aria-label="Opening day">
+              <span>OPENING</span>
+              <span>DAY</span>
+            </div>
             <div className="ms-title-wrap">
               <div className="ms-title-bar"></div>
               <h1 className="ms-title">{event.title}</h1>
