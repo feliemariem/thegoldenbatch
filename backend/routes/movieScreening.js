@@ -3,6 +3,7 @@ const router = express.Router();
 const crypto = require('crypto');
 const db = require('../db');
 const { authenticateToken } = require('../middleware/auth');
+const { sendScreeningConfirmationEmail } = require('../utils/email');
 
 const SPONSOR_CAP = 40;
 const SPONSOR_CINEMA = 'C3';
@@ -1256,11 +1257,57 @@ router.post('/admin/:id/confirm', authenticateToken, async (req, res) => {
     await client.query('COMMIT');
 
     const updated = updateResult.rows[0];
+    const ticketNumbers = formatTicketNumbers(serialPrefix, updated.serial_start, updated.serial_end);
+
+    // Send confirmation email (after commit, outside transaction)
+    let emailSent = false;
+    if (updated.email) {
+      try {
+        // Load event details with pre-formatted date
+        const eventResult = await db.query(
+          `SELECT title, TO_CHAR(event_date, 'FMMonth FMDD, YYYY') AS event_date_label, venue
+           FROM screening_events WHERE id = $1`,
+          [updated.event_id]
+        );
+
+        // Load cinema details
+        const cinemaResult = await db.query(
+          `SELECT label, showtime FROM event_cinemas WHERE event_id = $1 AND code = $2`,
+          [updated.event_id, updated.cinema_code]
+        );
+
+        if (eventResult.rows.length > 0 && cinemaResult.rows.length > 0) {
+          const event = eventResult.rows[0];
+          const cinema = cinemaResult.rows[0];
+          const firstName = (updated.buyer_name || '').split(' ')[0] || 'there';
+
+          const emailResult = await sendScreeningConfirmationEmail({
+            to: updated.email,
+            firstName,
+            eventTitle: event.title,
+            eventDate: event.event_date_label,
+            cinemaLabel: cinema.label,
+            showtime: cinema.showtime,
+            venue: event.venue,
+            quantity: updated.quantity,
+            seats: updated.chosen_seats || '',
+            ticketNumbers,
+            reference: updated.gcash_ref
+          });
+
+          emailSent = emailResult.success;
+        }
+      } catch (emailErr) {
+        console.error('Failed to send confirmation email:', emailErr);
+      }
+    }
+
     res.json({
       ...updated,
       unit_price: parseFloat(updated.unit_price),
       total_amount: parseFloat(updated.total_amount),
-      ticket_numbers: formatTicketNumbers(serialPrefix, updated.serial_start, updated.serial_end)
+      ticket_numbers: ticketNumbers,
+      email_sent: emailSent
     });
   } catch (err) {
     await client.query('ROLLBACK');

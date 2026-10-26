@@ -144,6 +144,13 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
         return;
       }
 
+      // Show email status
+      if (data.email_sent === false && data.email) {
+        alert('Confirmed, but the confirmation email did not send. Please contact the buyer.');
+      } else if (data.email_sent === true) {
+        alert(`Confirmed. Email sent to ${data.email}.`);
+      }
+
       // Refresh data
       fetchReservations(event.id);
     } catch (err) {

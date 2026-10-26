@@ -212,4 +212,90 @@ const sendPasswordResetEmail = async (to, firstName, resetUrl) => {
   }
 };
 
-module.exports = { sendInviteEmail, sendPasswordResetEmail };
+// HTML escape helper
+const escapeHtml = (str) => {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+};
+
+const sendScreeningConfirmationEmail = async (details) => {
+  const {
+    to,
+    firstName,
+    eventTitle,
+    eventDate,
+    cinemaLabel,
+    showtime,
+    venue,
+    quantity,
+    seats,
+    ticketNumbers,
+    reference
+  } = details;
+
+  // Build plain text body from array of lines, filtering out empty seats line
+  const textLines = [
+    `Hi, ${firstName}!`,
+    '',
+    `Thank you for supporting the USLS-IS Batch 2003 ${eventTitle} block screening. Your payment is confirmed.`,
+    '',
+    `${cinemaLabel} – ${showtime}, ${eventDate}`,
+    venue,
+    `Tickets: ${quantity}`,
+    seats ? `Seats: ${seats}` : null,
+    `Serial numbers: ${ticketNumbers}`,
+    `Reference number: ${reference}`,
+    '',
+    'We will contact you on where to pick up your tickets (movie stub/food voucher). Just present them at the cinema on screening day. See you there!',
+    '',
+    'In St. La Salle,',
+    '',
+    'USLS-IS Batch 2003'
+  ].filter(line => line !== null).join('\n');
+
+  const seatsLineHtml = seats ? `Seats: ${escapeHtml(seats)}<br/>` : '';
+
+  const htmlBody = `<div style="font-family: Arial, sans-serif; font-size: 14px; line-height: 1.6; color: #1a1a1a;">
+<p>Hi, ${escapeHtml(firstName)}!</p>
+<p>Thank you for supporting the USLS-IS Batch 2003 ${escapeHtml(eventTitle)} block screening. Your payment is confirmed.</p>
+<p><strong>${escapeHtml(cinemaLabel)} – ${escapeHtml(showtime)}, ${escapeHtml(eventDate)}</strong><br/>
+${escapeHtml(venue)}<br/>
+Tickets: ${quantity}<br/>
+${seatsLineHtml}Serial numbers: ${escapeHtml(ticketNumbers)}<br/>
+Reference number: ${escapeHtml(reference)}</p>
+<p>We will contact you on where to pick up your tickets (movie stub/food voucher). Just present them at the cinema on screening day. See you there!</p>
+<p>In St. La Salle,</p>
+<p>USLS-IS Batch 2003</p>
+</div>`;
+
+  const msg = {
+    to,
+    from: process.env.FROM_EMAIL,
+    subject: `Your ${eventTitle} tickets are confirmed`,
+    text: textLines,
+    html: htmlBody
+  };
+
+  try {
+    await sgMail.send(msg);
+
+    // Log to email_log table
+    await db.query(
+      `INSERT INTO email_log (recipient_email, recipient_name, subject, email_type, status)
+       VALUES ($1, $2, $3, $4, $5)`,
+      [to, firstName || null, msg.subject, 'screening_confirmation', 'sent']
+    );
+
+    return { success: true };
+  } catch (error) {
+    console.error('Screening confirmation email error:', error.response?.body || error);
+    return { success: false, error: error.message };
+  }
+};
+
+module.exports = { sendInviteEmail, sendPasswordResetEmail, sendScreeningConfirmationEmail };
