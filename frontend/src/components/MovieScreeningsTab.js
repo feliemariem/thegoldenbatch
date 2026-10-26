@@ -7,15 +7,20 @@ import { formatName } from '../utils/formatName';
 // This bundles the worker locally so it never depends on a CDN
 import * as pdfjsLib from 'pdfjs-dist/webpack.mjs';
 
-// Milestone constants for block screening tracking
-const MILESTONE_CINEMA_BALANCE = 127;    // Cinema balance paid threshold
-const MILESTONE_BREAKEVEN = 268;         // Break-even, fund repaid
-const MILESTONE_SELLOUT = 468;           // Total capacity / sellout
-const MILESTONE_CINEMA_DATE = new Date('2026-07-24');  // Cinema balance due date
-const MILESTONE_SELLOUT_DATE = new Date('2026-07-31'); // Event date
-const CINEMA_BALANCE_AMOUNT = 70870;     // P70,870 due
-const FUND_AMOUNT = 80000;               // P80,000 fund
-const SELLOUT_PROFIT = 112190;           // P112,190 profit at sellout
+// Doomsday milestone constants
+const TOTAL_CAPACITY = 615;
+const MILESTONE_CINEMA = 323;             // Cinema paid
+const MILESTONE_BREAKEVEN = 406;          // Break-even (cinema + food + Liceo)
+const MILESTONE_SELLOUT = 615;            // Sellout
+const CINEMA_DUE_DATE = 'Dec 11';
+const CINEMA_AMOUNT = 193590;
+const BREAKEVEN_AMOUNT = 243150;
+const SELLOUT_NET = 105850;
+
+// Liceo partnership tiers
+const LICEO_TIER_50 = 308;                // 50% = ₱20,000
+const LICEO_TIER_75 = 462;                // 75% = ₱35,000
+const LICEO_TIER_100 = 615;               // 100% = ₱40,000
 
 export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = false }) {
   // Determine access level from permissions
@@ -26,7 +31,8 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
   const [event, setEvent] = useState(null);
   const [reservations, setReservations] = useState([]);
   const [stats, setStats] = useState(null);
-  const [cinemaStats, setCinemaStats] = useState([]);
+  const [showtimes, setShowtimes] = useState([]);
+  const [byTeam, setByTeam] = useState({ batch2003: null, liceo: null });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [actionLoading, setActionLoading] = useState({});
@@ -55,15 +61,6 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
 
   // Theme-aware accent colors for gold/green elements
   const accentColor = isDark ? '#CFB53B' : '#006633';
-  const accentBgSubtle = isDark ? 'rgba(207, 181, 59, 0.08)' : 'rgba(0, 102, 51, 0.08)';
-  const accentBorder = isDark ? 'rgba(207, 181, 59, 0.3)' : '#006633';
-
-  // Derive cinema name from code (C3 -> "Cinema 3", C4 -> "Cinema 4")
-  const getCinemaName = (code) => {
-    if (!code) return '';
-    const match = code.match(/^C(\d+)$/);
-    return match ? `Cinema ${match[1]}` : code;
-  };
 
   useEffect(() => {
     fetchActiveEvent();
@@ -110,8 +107,9 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
           new Date(a.created_at) - new Date(b.created_at)
         );
         setReservations(sorted);
-        setStats(data.stats);
-        setCinemaStats(data.cinemaStats || []);
+        setStats(data.stats || null);
+        setShowtimes(data.showtimes || []);
+        setByTeam(data.by_team || { batch2003: null, liceo: null });
       } else {
         // Stats-only access
         const res = await apiGet(`/api/movie-screening/admin/stats?event_id=${eventId}`);
@@ -123,8 +121,9 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
         }
 
         setReservations([]); // No reservation data for stats-only users
-        setStats(data.stats);
-        setCinemaStats(data.cinemaStats || []);
+        setStats(data.stats || null);
+        setShowtimes(data.showtimes || []);
+        setByTeam(data.by_team || { batch2003: null, liceo: null });
       }
     } catch (err) {
       console.error(err);
@@ -224,50 +223,6 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
     }
   };
 
-  const handleGenerateSeatLink = async (id, existingToken) => {
-    setActionLoading(prev => ({ ...prev, [id]: 'seatlink' }));
-    try {
-      let url;
-      if (existingToken) {
-        // Already has a token - just build the URL and copy
-        url = `https://thegoldenbatch2003.com/seats/${existingToken}`;
-      } else {
-        // No token yet - call the generate endpoint
-        const res = await apiPost(`/api/movie-screening/admin/${id}/generate-seat-link`);
-        const data = await res.json();
-
-        if (!res.ok) {
-          alert(data.error || 'Failed to generate seat link');
-          return;
-        }
-        url = data.url;
-      }
-
-      await copyToClipboard(url, id, 'seatlink');
-    } catch (err) {
-      console.error(err);
-      alert('Failed to generate seat link');
-    } finally {
-      setActionLoading(prev => ({ ...prev, [id]: null }));
-    }
-  };
-
-  const formatTicketRange = (reservation) => {
-    if (reservation.status !== 'confirmed' || !reservation.serial_start) {
-      return '-';
-    }
-
-    const code = reservation.cinema_code;
-    const start = String(reservation.serial_start).padStart(8, '0');
-    const end = String(reservation.serial_end).padStart(8, '0');
-    const count = reservation.quantity;
-
-    if (reservation.serial_start === reservation.serial_end) {
-      return `${code}-${start}`;
-    }
-    return `${code}-${start} to ${code}-${end}`;
-  };
-
   // Generic copy helper
   const copyToClipboard = async (text, id, type) => {
     try {
@@ -290,7 +245,7 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
   };
 
   const copyTicketRange = async (reservation) => {
-    const range = formatTicketRange(reservation);
+    const range = reservation.ticket_numbers || '-';
     const text = `${range} (x${reservation.quantity})`;
     await copyToClipboard(text, reservation.id, 'ticket');
   };
@@ -673,30 +628,27 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
 
   // Export CSV
   const exportCSV = () => {
-    const headers = ['buyer_name', 'mobile', 'email', 'purchased', 'cinema_code', 'quantity', 'unit_price', 'total_amount', 'gcash_ref', 'status', 'chosen_seats', 'ticket_range', 'sponsored', 'sponsor_type', 'anonymous', 'claimed', 'claimed_at', 'source', 'sold_by', 'payment_method', 'audited', 'has_open_link'];
+    const headers = ['buyer_name', 'mobile', 'email', 'purchased', 'showtime', 'quantity', 'unit_price', 'total_amount', 'gcash_ref', 'status', 'chosen_seats', 'ticket_numbers', 'sold_by_team', 'claimed', 'claimed_at', 'source', 'sold_by', 'payment_method', 'audited'];
     const rows = reservations.map(r => [
       formatName(r.buyer_name),
       r.mobile || '',
       r.email || '',
       formatDate(r.created_at),
-      r.cinema_code,
+      `${r.showtime || ''} · ${r.serial_prefix || r.cinema_code}`,
       r.quantity,
       r.unit_price,
       r.total_amount,
       r.gcash_ref,
       r.status,
       r.chosen_seats || '',
-      r.status === 'confirmed' ? formatTicketRange(r) : '',
-      r.is_sponsor ? 'Yes' : 'No',
-      r.sponsor_type || '',
-      r.is_sponsor ? (r.is_anonymous ? 'Yes' : 'No') : '',
+      r.ticket_numbers || '',
+      r.sold_by_team === 'liceo' ? 'Liceo' : 'Batch 2003',
       r.claimed ? 'Yes' : 'No',
       r.claimed_at ? formatDate(r.claimed_at) : '',
       r.source || 'online',
       r.sold_by || '',
       r.payment_method || '',
-      r.source === 'physical' ? (r.gcash_verified ? 'Yes' : 'No') : '',
-      (r.seat_token && !r.chosen_seats) ? 'Yes' : 'No'
+      r.source === 'physical' ? (r.gcash_verified ? 'Yes' : 'No') : ''
     ]);
 
     const csvContent = [
@@ -750,23 +702,24 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
           <div className="stat-card maybe">
             <div className="stat-number">{stats.pending_count}</div>
             <div className="stat-label">Pending</div>
+            <div style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)', marginTop: '4px' }}>
+              {stats.tickets_pending || 0} tickets
+            </div>
           </div>
           <div className="stat-card going">
             <div className="stat-number">{stats.confirmed_count}</div>
             <div className="stat-label">Confirmed</div>
           </div>
           <div className="stat-card going">
-            <div className="stat-number">{Number(stats.tickets_sold ?? 0)}</div>
+            <div className="stat-number">{stats.tickets_sold || 0}</div>
             <div className="stat-label">Tickets Sold</div>
             <div style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)', marginTop: '4px' }}>
-              {Number(stats.tickets_sold_c3 ?? 0)} C3 · {Number(stats.tickets_sold_c4 ?? 0)} C4
-            </div>
-          </div>
-          <div className="stat-card" style={{ background: isDark ? 'rgba(207, 181, 59, 0.06)' : 'rgba(0, 102, 51, 0.06)' }}>
-            <div className="stat-number" style={{ color: accentColor }}>{Number(stats.sponsored_sold ?? 0)}</div>
-            <div className="stat-label">Sponsored</div>
-            <div style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)', marginTop: '4px' }}>
-              Boys' Home {stats.sponsored_boys_home ?? 0} · Teachers {stats.sponsored_teacher ?? 0} · Vacant {stats.sponsored_vacant ?? 0}{stats.sponsored_other > 0 ? ` · Other ${stats.sponsored_other}` : ''}
+              {showtimes.map((s, i) => (
+                <span key={s.code}>
+                  {i > 0 && ' · '}
+                  {s.showtime} {s.tickets_sold}
+                </span>
+              ))}
             </div>
           </div>
           <div className="stat-card" style={{ background: isDark ? 'rgba(207, 181, 59, 0.1)' : 'rgba(0, 102, 51, 0.1)' }}>
@@ -776,23 +729,93 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
         </div>
       )}
 
+      {/* Sold by Panel */}
+      {stats && (byTeam.batch2003 || byTeam.liceo) && (
+        <div className="ms-milestones-card" style={{ marginBottom: '24px' }}>
+          <div className="ms-header">
+            <span className="ms-title">Sold by</span>
+            <span className="ms-summary">Confirmed tickets only</span>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', marginBottom: '16px' }}>
+            {/* Batch 2003 Card */}
+            <div style={{ background: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)', borderRadius: '8px', padding: '16px' }}>
+              <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--color-text-secondary)', marginBottom: '8px' }}>USLS-IS BATCH 2003</div>
+              <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--color-text-primary)' }}>{byTeam.batch2003?.tickets || 0}</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginBottom: '12px' }}>
+                tickets · {stats.tickets_sold > 0 ? Math.round(((byTeam.batch2003?.tickets || 0) / stats.tickets_sold) * 100) : 0}% of sales
+              </div>
+              <div style={{ display: 'flex', gap: '12px', fontSize: '0.7rem', color: 'var(--color-text-secondary)', marginBottom: '8px' }}>
+                {byTeam.batch2003?.per_showtime?.map(ps => (
+                  <span key={ps.code}>{ps.showtime} {ps.tickets}</span>
+                ))}
+              </div>
+              <div style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)' }}>
+                {byTeam.batch2003?.orders || 0} orders · {formatCurrency(byTeam.batch2003?.collected || 0)} collected
+              </div>
+            </div>
+
+            {/* Liceo Card */}
+            <div style={{ background: isDark ? 'rgba(93,168,116,0.12)' : 'rgba(0,102,51,0.05)', borderRadius: '8px', padding: '16px' }}>
+              <div style={{ fontSize: '0.75rem', fontWeight: 600, color: isDark ? '#5DA874' : '#006633', marginBottom: '8px' }}>LICEO STUDENT GOVERNMENT</div>
+              <div style={{ fontSize: '2rem', fontWeight: 700, color: isDark ? '#5DA874' : '#006633' }}>{byTeam.liceo?.tickets || 0}</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginBottom: '12px' }}>
+                tickets · {stats.tickets_sold > 0 ? Math.round(((byTeam.liceo?.tickets || 0) / stats.tickets_sold) * 100) : 0}% of sales
+              </div>
+              <div style={{ display: 'flex', gap: '12px', fontSize: '0.7rem', color: 'var(--color-text-secondary)', marginBottom: '8px' }}>
+                {byTeam.liceo?.per_showtime?.map(ps => (
+                  <span key={ps.code}>{ps.showtime} {ps.tickets}</span>
+                ))}
+              </div>
+              <div style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)' }}>
+                {byTeam.liceo?.orders || 0} orders · {formatCurrency(byTeam.liceo?.collected || 0)} collected
+              </div>
+            </div>
+          </div>
+
+          {/* Split bar */}
+          {(() => {
+            const b2003 = byTeam.batch2003?.tickets || 0;
+            const liceo = byTeam.liceo?.tickets || 0;
+            const total = b2003 + liceo;
+            const b2003Pct = total > 0 ? (b2003 / total) * 100 : 50;
+            const diff = Math.abs(b2003 - liceo);
+            const leadText = b2003 > liceo ? `Batch 2003 ahead by ${diff}` : liceo > b2003 ? `Liceo ahead by ${diff}` : 'Tied';
+
+            return (
+              <div>
+                <div style={{ display: 'flex', height: '8px', borderRadius: '4px', overflow: 'hidden', marginBottom: '8px' }}>
+                  <div style={{ width: `${b2003Pct}%`, background: isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.15)' }} />
+                  <div style={{ width: `${100 - b2003Pct}%`, background: isDark ? '#5DA874' : '#006633' }} />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: 'var(--color-text-secondary)' }}>
+                  <span>Batch 2003 {b2003}</span>
+                  <span>{leadText}</span>
+                  <span>Liceo {liceo}</span>
+                </div>
+              </div>
+            );
+          })()}
+        </div>
+      )}
+
       {/* Seat Bars */}
-      {cinemaStats.length > 0 && (
+      {showtimes.length > 0 && (
         <div style={{ marginBottom: '24px' }}>
           <h4 style={{ fontSize: '0.9rem', fontWeight: 600, marginBottom: '12px', color: 'var(--color-text-primary)' }}>
             Seat Availability
           </h4>
-          {cinemaStats.map((cinema) => {
-            const percentage = cinema.capacity > 0 ? (cinema.held_seats / cinema.capacity) * 100 : 0;
+          {showtimes.map((s) => {
+            const percentage = s.capacity > 0 ? (s.held_seats / s.capacity) * 100 : 0;
             return (
-              <div key={cinema.code} style={{ marginBottom: '12px' }}>
+              <div key={s.code} style={{ marginBottom: '12px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
                   <span style={{ fontSize: '0.85rem', color: 'var(--color-text-primary)' }}>
-                    {getCinemaName(cinema.code)}
-                    <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginLeft: '8px' }}>{cinema.label}</span>
+                    {s.showtime}
+                    <span style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginLeft: '8px' }}>· {s.label}</span>
                   </span>
                   <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
-                    {cinema.held_seats} / {cinema.capacity} held
+                    {s.held_seats} / {s.capacity} held
                   </span>
                 </div>
                 <div style={{
@@ -818,95 +841,142 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
       {/* Milestones Tracker */}
       {stats && (
         (() => {
-          const ticketsSold = Number(stats.tickets_sold ?? 0);
-          const percentage = Math.min((ticketsSold / MILESTONE_SELLOUT) * 100, 100);
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
+          const ticketsSold = stats.tickets_sold || 0;
+          const percentage = Math.min((ticketsSold / TOTAL_CAPACITY) * 100, 100);
 
-          const daysUntilCinema = Math.max(0, Math.ceil((MILESTONE_CINEMA_DATE - today) / (1000 * 60 * 60 * 24)));
-          const daysUntilSellout = Math.max(0, Math.ceil((MILESTONE_SELLOUT_DATE - today) / (1000 * 60 * 60 * 24)));
-
-          const remainingCinema = Math.max(0, MILESTONE_CINEMA_BALANCE - ticketsSold);
-          const remainingSellout = Math.max(0, MILESTONE_SELLOUT - ticketsSold);
-
-          const paceToCinema = daysUntilCinema > 0 ? Math.ceil(remainingCinema / daysUntilCinema) : null;
-          const paceToSellout = daysUntilSellout > 0 ? Math.ceil(remainingSellout / daysUntilSellout) : null;
-
-          const cinemaHit = ticketsSold >= MILESTONE_CINEMA_BALANCE;
+          const cinemaHit = ticketsSold >= MILESTONE_CINEMA;
           const breakevenHit = ticketsSold >= MILESTONE_BREAKEVEN;
           const selloutHit = ticketsSold >= MILESTONE_SELLOUT;
 
-          // Days-left indicator for header
-          const daysLeftText = daysUntilSellout > 0
-            ? `${daysUntilSellout} day${daysUntilSellout === 1 ? '' : 's'} to screening`
-            : today <= MILESTONE_SELLOUT_DATE
-              ? 'screening day'
-              : null;
+          const remainingCinema = Math.max(0, MILESTONE_CINEMA - ticketsSold);
+          const remainingBreakeven = Math.max(0, MILESTONE_BREAKEVEN - ticketsSold);
+          const remainingSellout = Math.max(0, MILESTONE_SELLOUT - ticketsSold);
+
+          // Determine next milestone for footer
+          let footerText = '';
+          if (selloutHit) {
+            footerText = 'Sold out!';
+          } else if (breakevenHit) {
+            footerText = `${remainingSellout} remaining for sellout`;
+          } else if (cinemaHit) {
+            footerText = `${remainingBreakeven} remaining for break-even`;
+          } else {
+            footerText = `${remainingCinema} remaining for cinema payment`;
+          }
 
           return (
             <div className="ms-milestones-card">
               <div className="ms-header">
                 <span className="ms-title">Milestones</span>
                 <span className="ms-summary">
-                  {ticketsSold} / {MILESTONE_SELLOUT} tickets sold · {percentage.toFixed(1)}%{daysLeftText && ` · ${daysLeftText}`}
+                  {ticketsSold} / {TOTAL_CAPACITY} tickets sold · {percentage.toFixed(1)}%
                 </span>
               </div>
 
               <div className="ms-progress-container">
                 <div className="ms-progress-bar">
                   <div className="ms-progress-fill" style={{ width: `${percentage}%` }} />
-                  <div className="ms-marker" style={{ left: `${(MILESTONE_CINEMA_BALANCE / MILESTONE_SELLOUT) * 100}%` }} />
-                  <div className="ms-marker" style={{ left: `${(MILESTONE_BREAKEVEN / MILESTONE_SELLOUT) * 100}%` }} />
+                  <div className="ms-marker" style={{ left: `${(MILESTONE_CINEMA / TOTAL_CAPACITY) * 100}%` }} />
+                  <div className="ms-marker" style={{ left: `${(MILESTONE_BREAKEVEN / TOTAL_CAPACITY) * 100}%` }} />
                 </div>
                 <div className="ms-tick-labels">
-                  <span style={{ left: `${(MILESTONE_CINEMA_BALANCE / MILESTONE_SELLOUT) * 100}%` }}>{MILESTONE_CINEMA_BALANCE}</span>
-                  <span style={{ left: `${(MILESTONE_BREAKEVEN / MILESTONE_SELLOUT) * 100}%` }}>{MILESTONE_BREAKEVEN}</span>
-                  <span style={{ left: '100%' }}>{MILESTONE_SELLOUT}</span>
+                  <span style={{ left: `${(MILESTONE_CINEMA / TOTAL_CAPACITY) * 100}%` }}>{MILESTONE_CINEMA}</span>
+                  <span style={{ left: `${(MILESTONE_BREAKEVEN / TOTAL_CAPACITY) * 100}%` }}>{MILESTONE_BREAKEVEN}</span>
+                  <span style={{ left: '100%' }}>{TOTAL_CAPACITY}</span>
                 </div>
               </div>
 
               <div className="ms-legend">
                 <div className="ms-legend-row ms-red">
-                  <span className="ms-legend-number">{MILESTONE_CINEMA_BALANCE}</span>
-                  <span className="ms-legend-desc">Cinema balance paid (₱{CINEMA_BALANCE_AMOUNT.toLocaleString()} due Jul 24)</span>
+                  <span className="ms-legend-number">{MILESTONE_CINEMA}</span>
+                  <span className="ms-legend-desc">Cinema paid (₱{CINEMA_AMOUNT.toLocaleString()} due {CINEMA_DUE_DATE})</span>
                   <span className="ms-legend-status">
-                    {cinemaHit ? <span className="ms-done">✓ Done</span> : `${remainingCinema} to go`}
+                    {cinemaHit ? <span className="ms-done">Reached</span> : `${remainingCinema} to go`}
                   </span>
                 </div>
                 <div className="ms-legend-row ms-gold">
                   <span className="ms-legend-number">{MILESTONE_BREAKEVEN}</span>
-                  <span className="ms-legend-desc">Break-even, ₱{FUND_AMOUNT.toLocaleString()} fund repaid</span>
+                  <span className="ms-legend-desc">Break-even, cinema, food, and Liceo covered (₱{BREAKEVEN_AMOUNT.toLocaleString()})</span>
                   <span className="ms-legend-status">
-                    {breakevenHit ? <span className="ms-done">✓ Done</span> : `${Math.max(0, MILESTONE_BREAKEVEN - ticketsSold)} to go`}
+                    {breakevenHit ? <span className="ms-done">Reached</span> : `${remainingBreakeven} to go`}
                   </span>
                 </div>
                 <div className="ms-legend-row ms-green">
                   <span className="ms-legend-number">{MILESTONE_SELLOUT}</span>
-                  <span className="ms-legend-desc">Sellout, ₱{SELLOUT_PROFIT.toLocaleString()} profit</span>
+                  <span className="ms-legend-desc">Sellout, ₱{SELLOUT_NET.toLocaleString()} net from tickets</span>
                   <span className="ms-legend-status">
-                    {selloutHit ? <span className="ms-done">✓ Done</span> : `${remainingSellout} to go`}
+                    {selloutHit ? <span className="ms-done">Reached</span> : `${remainingSellout} to go`}
                   </span>
                 </div>
               </div>
 
               <div className="ms-pace">
-                {!cinemaHit && paceToCinema !== null && (
-                  <span>Need {paceToCinema}/day to hit {MILESTONE_CINEMA_BALANCE} by Jul 24</span>
-                )}
-                {!cinemaHit && paceToCinema !== null && paceToSellout !== null && <span> · </span>}
-                {!cinemaHit && paceToCinema === null && remainingCinema > 0 && (
-                  <span>{remainingCinema} remaining for cinema balance</span>
-                )}
-                {cinemaHit && !selloutHit && paceToSellout !== null && (
-                  <span>Need {paceToSellout}/day for sellout by Jul 31</span>
-                )}
-                {cinemaHit && !selloutHit && paceToSellout === null && remainingSellout > 0 && (
-                  <span>{remainingSellout} remaining for sellout</span>
-                )}
-                {!cinemaHit && paceToSellout !== null && (
-                  <span>{paceToSellout}/day for sellout</span>
-                )}
-                {selloutHit && <span className="ms-done">🎉 Sold out!</span>}
+                {selloutHit ? <span className="ms-done">🎉 Sold out!</span> : footerText}
+              </div>
+            </div>
+          );
+        })()
+      )}
+
+      {/* Liceo Partnership Panel */}
+      {stats && (
+        (() => {
+          const ticketsSold = stats.tickets_sold || 0;
+          const pct = Math.round((ticketsSold / TOTAL_CAPACITY) * 100);
+          const tier50Hit = ticketsSold >= LICEO_TIER_50;
+          const tier75Hit = ticketsSold >= LICEO_TIER_75;
+          const tier100Hit = ticketsSold >= LICEO_TIER_100;
+          const earnedAmount = tier100Hit ? 40000 : tier75Hit ? 35000 : tier50Hit ? 20000 : 0;
+          const nextTier = !tier50Hit ? { amount: 20000, at: LICEO_TIER_50 } : !tier75Hit ? { amount: 35000, at: LICEO_TIER_75 } : !tier100Hit ? { amount: 40000, at: LICEO_TIER_100 } : null;
+
+          return (
+            <div className="ms-milestones-card">
+              <div className="ms-header">
+                <div>
+                  <span className="ms-title">Liceo Partnership</span>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>Collective sales, Batch 2003 + Liceo combined</div>
+                </div>
+                <span className="ms-summary">{ticketsSold} / {TOTAL_CAPACITY} tickets · {pct}%</span>
+              </div>
+
+              <div className="ms-progress-container">
+                <div className="ms-progress-bar">
+                  <div className="ms-progress-fill" style={{ width: `${Math.min(pct, 100)}%` }} />
+                  <div className="ms-marker" style={{ left: `${(LICEO_TIER_50 / TOTAL_CAPACITY) * 100}%` }} />
+                  <div className="ms-marker" style={{ left: `${(LICEO_TIER_75 / TOTAL_CAPACITY) * 100}%` }} />
+                </div>
+                <div className="ms-tick-labels">
+                  <span style={{ left: `${(LICEO_TIER_50 / TOTAL_CAPACITY) * 100}%` }}>{LICEO_TIER_50}</span>
+                  <span style={{ left: `${(LICEO_TIER_75 / TOTAL_CAPACITY) * 100}%` }}>{LICEO_TIER_75}</span>
+                  <span style={{ left: '100%' }}>{TOTAL_CAPACITY}</span>
+                </div>
+              </div>
+
+              <div className="ms-legend">
+                <div className="ms-legend-row ms-red">
+                  <span className="ms-legend-number">{LICEO_TIER_50}</span>
+                  <span className="ms-legend-desc">50% sold · ₱20,000 to Liceo</span>
+                  <span className="ms-legend-status">{tier50Hit ? <span className="ms-done">Reached</span> : `${LICEO_TIER_50 - ticketsSold} to go`}</span>
+                </div>
+                <div className="ms-legend-row ms-gold">
+                  <span className="ms-legend-number">{LICEO_TIER_75}</span>
+                  <span className="ms-legend-desc">75% sold · ₱35,000 to Liceo</span>
+                  <span className="ms-legend-status">{tier75Hit ? <span className="ms-done">Reached</span> : `${LICEO_TIER_75 - ticketsSold} to go`}</span>
+                </div>
+                <div className="ms-legend-row ms-green">
+                  <span className="ms-legend-number">{LICEO_TIER_100}</span>
+                  <span className="ms-legend-desc">100% sell-out · ₱40,000 to Liceo</span>
+                  <span className="ms-legend-status">{tier100Hit ? <span className="ms-done">Reached</span> : `${LICEO_TIER_100 - ticketsSold} to go`}</span>
+                </div>
+              </div>
+
+              <div className="ms-pace">
+                Contribution earned so far: {formatCurrency(earnedAmount)}
+                {nextTier && ` · next: ${formatCurrency(nextTier.amount)} at ${nextTier.at}`}
+              </div>
+
+              <div style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)', marginTop: '8px', fontStyle: 'italic' }}>
+                Tiers are not cumulative. Highest tier reached counts, ₱40,000 maximum. Verified, paid sales only.
               </div>
             </div>
           );
@@ -1004,15 +1074,14 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
             <tr>
               <th>Buyer</th>
               <th>Purchased</th>
-              <th>Cinema</th>
+              <th>Showtime</th>
               <th>Qty</th>
               <th>Amount</th>
               <th>GCash Ref</th>
               <th>GCash Check</th>
               <th>Ticket Numbers</th>
               <th>Seats</th>
-              <th>Sponsored</th>
-              <th>Anonymous</th>
+              <th>Sold By</th>
               <th>Status/Action</th>
               <th>Claimed</th>
             </tr>
@@ -1020,7 +1089,7 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
           <tbody>
             {reservations.length === 0 ? (
               <tr>
-                <td colSpan="13" style={{ textAlign: 'center', color: 'var(--color-text-secondary)' }}>
+                <td colSpan="12" style={{ textAlign: 'center', color: 'var(--color-text-secondary)' }}>
                   No reservations yet
                 </td>
               </tr>
@@ -1115,7 +1184,9 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
                   <td style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)', whiteSpace: 'nowrap' }}>
                     {formatDate(r.created_at)}
                   </td>
-                  <td>{r.cinema_code}</td>
+                  <td style={{ fontSize: '0.8rem', whiteSpace: 'nowrap' }}>
+                    {r.showtime} · {r.serial_prefix || r.cinema_code}
+                  </td>
                   <td>{r.quantity}</td>
                   <td>{formatCurrency(r.total_amount)}</td>
                   <td style={{ fontFamily: 'monospace', fontSize: '0.85rem' }}>{r.gcash_ref}</td>
@@ -1137,10 +1208,10 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
                     )}
                   </td>
                   <td>
-                    {r.status === 'confirmed' && r.serial_start ? (
+                    {r.ticket_numbers ? (
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <span style={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>
-                          {formatTicketRange(r)}
+                          {r.ticket_numbers}
                         </span>
                         <span style={{
                           fontSize: '0.7rem',
@@ -1179,53 +1250,6 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
                             </svg>
                           )}
                         </button>
-                        {(r.seat_token || r.quantity >= 20 || r.is_sponsor) && hasEditAccess && (
-                          r.seats_selected_at ? (
-                            <span style={{ fontSize: '0.7rem', color: 'var(--color-text-secondary)', fontStyle: 'italic' }}>
-                              Seats reserved
-                            </span>
-                          ) : (
-                            <button
-                              onClick={() => handleGenerateSeatLink(r.id, r.seat_token)}
-                              disabled={actionLoading[r.id] === 'seatlink'}
-                              style={{
-                                background: copiedField?.id === r.id && copiedField?.type === 'seatlink' ? perkBadgeStyle.background : accentBgSubtle,
-                                border: `1px solid ${accentBorder}`,
-                                borderRadius: '4px',
-                                cursor: 'pointer',
-                                padding: '4px 8px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '4px',
-                                fontSize: '0.7rem',
-                                fontWeight: 600,
-                                color: accentColor,
-                                transition: 'background 0.2s',
-                                opacity: actionLoading[r.id] === 'seatlink' ? 0.6 : 1
-                              }}
-                              title={copiedField?.id === r.id && copiedField?.type === 'seatlink' ? 'Link copied!' : 'Generate seat picker link'}
-                            >
-                              {actionLoading[r.id] === 'seatlink' ? '...' : (
-                                copiedField?.id === r.id && copiedField?.type === 'seatlink' ? (
-                                  <>
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={accentColor} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                      <polyline points="20 6 9 17 4 12"></polyline>
-                                    </svg>
-                                    Copied!
-                                  </>
-                                ) : (
-                                  <>
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={accentColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                                      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-                                    </svg>
-                                    Seat link
-                                  </>
-                                )
-                              )}
-                            </button>
-                          )
-                        )}
                       </div>
                     ) : (
                       <span style={{ color: 'var(--color-text-secondary)' }}>-</span>
@@ -1251,14 +1275,21 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
                     )}
                   </td>
                   <td>
-                    {r.is_sponsor ? (
-                      <span style={{ ...perkBadgeStyle, marginTop: 0, padding: '2px 8px' }}>Sponsor</span>
-                    ) : (
-                      <span style={{ color: 'var(--color-text-secondary)' }}>-</span>
-                    )}
-                  </td>
-                  <td>
-                    {r.is_sponsor ? (r.is_anonymous ? 'Yes' : 'No') : <span style={{ color: 'var(--color-text-secondary)' }}>-</span>}
+                    <span style={{
+                      display: 'inline-block',
+                      padding: '2px 8px',
+                      fontSize: '0.7rem',
+                      fontWeight: 600,
+                      borderRadius: '4px',
+                      background: r.sold_by_team === 'liceo'
+                        ? (isDark ? 'rgba(93,168,116,0.15)' : 'rgba(0,102,51,0.1)')
+                        : (isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'),
+                      color: r.sold_by_team === 'liceo'
+                        ? (isDark ? '#5DA874' : '#006633')
+                        : 'var(--color-text-secondary)'
+                    }}>
+                      {r.sold_by_team === 'liceo' ? 'Liceo' : 'Batch 2003'}
+                    </span>
                   </td>
                   <td>
                     {r.status === 'pending' ? (
