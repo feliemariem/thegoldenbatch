@@ -75,6 +75,8 @@ export default function MovieScreening() {
   // Refs
   const timerRef = useRef(null);
   const pollRef = useRef(null);
+  const step1BottomRef = useRef(null);
+  const isFirstShowtimeSelect = useRef(true);
 
   // Fetch active event
   const fetchActiveEvent = useCallback(async () => {
@@ -98,6 +100,22 @@ export default function MovieScreening() {
   useEffect(() => {
     fetchActiveEvent();
   }, [fetchActiveEvent]);
+
+  // Auto-scroll to ticket counter when showtime is selected
+  useEffect(() => {
+    if (showtime && step === 1) {
+      if (isFirstShowtimeSelect.current) {
+        isFirstShowtimeSelect.current = false;
+      }
+      // Scroll after render
+      requestAnimationFrame(() => {
+        if (step1BottomRef.current) {
+          const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          step1BottomRef.current.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'center' });
+        }
+      });
+    }
+  }, [showtime, step]);
 
   // Fetch taken seats
   const fetchTakenSeats = useCallback(async () => {
@@ -574,7 +592,7 @@ export default function MovieScreening() {
             </div>
 
             {showtime && (
-              <div className="ms-step1-bottom">
+              <div className="ms-step1-bottom" ref={step1BottomRef}>
                 <div className="ms-qty-row">
                   <span className="ms-qty-label">Tickets</span>
                   <div className="ms-qty-controls">

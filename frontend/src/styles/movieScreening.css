@@ -344,21 +344,30 @@
 
 .ms-showtime-time {
   font-family: 'Cinzel', serif;
-  font-size: 1.75rem;
+  font-size: 2rem;
   font-weight: 700;
-  color: var(--doom-title);
   margin-bottom: 4px;
+  background: linear-gradient(180deg, #FFFFFF 0%, #E4E9E6 35%, #A9B2AD 55%, #F2F5F3 75%, #C9D0CC 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #F2F5F3;
+  filter: drop-shadow(0 2px 0 rgba(0,0,0,0.55)) drop-shadow(0 4px 10px rgba(0,0,0,0.45));
+}
+
+.ms-showtime-card.disabled .ms-showtime-time {
+  opacity: 0.5;
 }
 
 .ms-showtime-label {
   font-size: 0.875rem;
-  color: var(--doom-muted);
+  color: #A7B0AA;
   margin-bottom: 8px;
 }
 
 .ms-showtime-seats {
   font-size: 0.8125rem;
-  color: var(--doom-light-green);
+  color: #7E8B82;
   margin-bottom: 12px;
 }
 
