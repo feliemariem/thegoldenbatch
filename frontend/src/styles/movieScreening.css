@@ -807,6 +807,31 @@
   color: var(--doom-dim);
 }
 
+.ms-input-with-toggle {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.ms-input-with-toggle .ms-input {
+  flex: 1;
+  padding-right: 56px;
+}
+
+.ms-keyboard-toggle {
+  position: absolute;
+  right: 8px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 8px;
+  background: none;
+  border: none;
+  color: #A7B0AA;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
 .ms-field-helper {
   font-size: 0.8125rem;
   color: var(--doom-muted);

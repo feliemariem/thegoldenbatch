@@ -66,6 +66,7 @@ export default function MovieScreening() {
   const [phone, setPhone] = useState('');
   const [soldByTeam, setSoldByTeam] = useState('');
   const [gcashRef, setGcashRef] = useState('');
+  const [refKeyboard, setRefKeyboard] = useState('numeric');
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
 
@@ -78,6 +79,7 @@ export default function MovieScreening() {
   const pollRef = useRef(null);
   const step1BottomRef = useRef(null);
   const isFirstShowtimeSelect = useRef(true);
+  const gcashRefInputRef = useRef(null);
   // Refs for leave handlers (must see current values in event listeners)
   const holdTokenRef = useRef(null);
   const stepRef = useRef(1);
@@ -393,7 +395,7 @@ export default function MovieScreening() {
         email: email.trim().toLowerCase(),
         mobile: phone.trim() || null,
         quantity,
-        gcash_ref: gcashRef.trim(),
+        gcash_ref: gcashRef.replace(/\s/g, ''),
         hold_token: holdToken,
         sold_by_team: soldByTeam
       });
@@ -874,6 +876,8 @@ export default function MovieScreening() {
                 <input
                   id="email"
                   type="email"
+                  inputMode="email"
+                  autoComplete="email"
                   className="ms-input"
                   placeholder="you@email.com"
                   value={email}
@@ -887,6 +891,8 @@ export default function MovieScreening() {
                 <input
                   id="phone"
                   type="tel"
+                  inputMode="tel"
+                  autoComplete="tel"
                   className="ms-input"
                   placeholder="+63 917 123 4567"
                   value={phone}
@@ -940,14 +946,34 @@ export default function MovieScreening() {
 
               <div className="ms-field">
                 <label className="ms-label" htmlFor="gcashRef">GCash reference number</label>
-                <input
-                  id="gcashRef"
-                  type="text"
-                  className="ms-input"
-                  value={gcashRef}
-                  onChange={(e) => setGcashRef(e.target.value)}
-                  required
-                />
+                <div className="ms-input-with-toggle">
+                  <input
+                    ref={gcashRefInputRef}
+                    id="gcashRef"
+                    type="text"
+                    inputMode={refKeyboard}
+                    autoComplete="off"
+                    autoCorrect="off"
+                    autoCapitalize="characters"
+                    spellCheck={false}
+                    className="ms-input"
+                    value={gcashRef}
+                    onChange={(e) => setGcashRef(e.target.value)}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="ms-keyboard-toggle"
+                    aria-label={refKeyboard === 'numeric' ? 'Switch keyboard to letters' : 'Switch keyboard to numbers'}
+                    onClick={() => {
+                      setRefKeyboard(prev => prev === 'numeric' ? 'text' : 'numeric');
+                      gcashRefInputRef.current?.blur();
+                      setTimeout(() => gcashRefInputRef.current?.focus(), 10);
+                    }}
+                  >
+                    {refKeyboard === 'numeric' ? 'ABC' : '123'}
+                  </button>
+                </div>
               </div>
 
               {submitError && <p className="ms-submit-error">{submitError}</p>}
