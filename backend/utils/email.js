@@ -260,21 +260,113 @@ const sendScreeningConfirmationEmail = async (details) => {
     'USLS-IS Batch 2003'
   ].filter(line => line !== null).join('\n');
 
-  const seatsLineHtml = seats ? `Seats: ${escapeHtml(seats)}<br/>` : '';
+  const seatsRowHtml = seats ? `<tr>
+  <td style="padding:10px 0;border-bottom:1px solid #1F3A2A;font-family:Poppins,Arial,Helvetica,sans-serif;font-size:14px;color:#A7B0AA;">Seats</td>
+  <td style="padding:10px 0;border-bottom:1px solid #1F3A2A;font-family:Poppins,Arial,Helvetica,sans-serif;font-size:14px;color:#E6EBE7;font-weight:600;text-align:right;">${escapeHtml(seats)}</td>
+</tr>` : '';
 
-  const htmlBody = `<div style="font-family: Arial, sans-serif; font-size: 14px; line-height: 1.6; color: #1a1a1a;">
-<p>Hi, ${escapeHtml(firstName)}!</p>
-<p>Thank you for supporting the USLS-IS Batch 2003 ${escapeHtml(eventTitle)} block screening. Your payment is confirmed.</p>
-<p><strong>${escapeHtml(cinemaLabel)} – ${escapeHtml(showtime)}, ${escapeHtml(eventDate)}</strong><br/>
-${escapeHtml(venue)}<br/>
-Tickets: ${quantity}<br/>
-${seatsLineHtml}Serial numbers: ${escapeHtml(ticketNumbers)}<br/>
-Reference number: ${escapeHtml(reference)}</p>
-<p>We will contact you on where to pick up your tickets (movie stub/food voucher). Just present them at the cinema on screening day. See you there!</p>
-<p>Questions? Email us at <a href="mailto:uslsis.batch2003@gmail.com">uslsis.batch2003@gmail.com</a>.</p>
-<p>In St. La Salle,</p>
-<p>USLS-IS Batch 2003</p>
-</div>`;
+  const htmlBody = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<meta name="supported-color-schemes" content="dark">
+<title>Your tickets are confirmed</title>
+</head>
+<body style="margin:0;padding:0;background:#1B1F1D;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#1B1F1D;">
+<tr>
+<td align="center" style="padding:24px;">
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="max-width:600px;width:100%;background:#0E1410;border:1px solid #1F2A22;border-radius:16px;overflow:hidden;">
+<!-- Header Image -->
+<tr>
+<td style="padding:0;">
+<img src="https://thegoldenbatch2003.com/doomsday-email-header.jpg" alt="Avengers: Doomsday block screening, a fundraiser benefiting the Umbrella Project of the USLS BEU Liceo Student Government and the USLS-IS Golden Batch 2003" width="600" height="240" style="display:block;width:100%;max-width:600px;height:auto;border:0;">
+</td>
+</tr>
+<!-- Body -->
+<tr>
+<td style="padding:36px 40px;font-family:Poppins,Arial,Helvetica,sans-serif;">
+<!-- Greeting -->
+<p style="margin:0 0 20px;font-size:22px;font-weight:600;color:#E6EBE7;">Hi, ${escapeHtml(firstName)}!</p>
+<!-- Thank you -->
+<p style="margin:0 0 24px;font-size:15px;line-height:1.6;color:#C5CCC7;">Thank you for supporting the USLS-IS Batch 2003 ${escapeHtml(eventTitle)} block screening. Your payment is confirmed.</p>
+<!-- Details Box -->
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background:#10251A;border:1px solid #2F6B40;border-radius:12px;">
+<tr>
+<td style="padding:22px 24px;">
+<p style="margin:0 0 4px;font-size:18px;font-weight:600;color:#7BD892;font-family:Poppins,Arial,Helvetica,sans-serif;">${escapeHtml(cinemaLabel)} - ${escapeHtml(showtime)}, ${escapeHtml(eventDate)}</p>
+<p style="margin:0 0 16px;font-size:14px;color:#A7B0AA;font-family:Poppins,Arial,Helvetica,sans-serif;">${escapeHtml(venue)}</p>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+<tr>
+  <td style="padding:10px 0;border-bottom:1px solid #1F3A2A;font-family:Poppins,Arial,Helvetica,sans-serif;font-size:14px;color:#A7B0AA;">Tickets</td>
+  <td style="padding:10px 0;border-bottom:1px solid #1F3A2A;font-family:Poppins,Arial,Helvetica,sans-serif;font-size:14px;color:#E6EBE7;font-weight:600;text-align:right;">${quantity}</td>
+</tr>
+${seatsRowHtml}<tr>
+  <td style="padding:10px 0;border-bottom:1px solid #1F3A2A;font-family:Poppins,Arial,Helvetica,sans-serif;font-size:14px;color:#A7B0AA;">Serial numbers</td>
+  <td style="padding:10px 0;border-bottom:1px solid #1F3A2A;font-family:Poppins,Arial,Helvetica,sans-serif;font-size:14px;color:#E6EBE7;font-weight:600;text-align:right;">${escapeHtml(ticketNumbers)}</td>
+</tr>
+<tr>
+  <td style="padding:10px 0;font-family:Poppins,Arial,Helvetica,sans-serif;font-size:14px;color:#A7B0AA;">Reference number</td>
+  <td style="padding:10px 0;font-family:Poppins,Arial,Helvetica,sans-serif;font-size:14px;color:#E6EBE7;font-weight:600;text-align:right;">${escapeHtml(reference)}</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<!-- Pickup paragraph -->
+<p style="margin:24px 0;font-size:15px;line-height:1.6;color:#C5CCC7;">We will contact you on where to pick up your tickets (movie stub/food voucher). Just present them at the cinema on screening day. See you there!</p>
+<!-- Questions -->
+<p style="margin:0 0 24px;font-size:15px;line-height:1.6;color:#C5CCC7;">Questions? Email us at <a href="mailto:uslsis.batch2003@gmail.com" style="color:#7BD892;text-decoration:none;">uslsis.batch2003@gmail.com</a>.</p>
+<!-- Divider -->
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+<tr><td style="border-top:1px solid #1F2A22;padding-top:24px;"></td></tr>
+</table>
+<!-- Get more tickets -->
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+<tr>
+<td align="center" style="padding-bottom:16px;">
+<p style="margin:0;font-size:14px;color:#A7B0AA;font-family:Poppins,Arial,Helvetica,sans-serif;">Bringing friends or family?</p>
+</td>
+</tr>
+<tr>
+<td align="center" style="padding-bottom:24px;">
+<!--[if mso]>
+<v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="https://thegoldenbatch2003.com/movie-screening" style="height:48px;v-text-anchor:middle;width:180px;" arcsize="21%" fillcolor="#4CC16A" stroke="f">
+<w:anchorlock/>
+<center style="color:#05140A;font-family:Poppins,Arial,Helvetica,sans-serif;font-size:15px;font-weight:600;">Get more tickets</center>
+</v:roundrect>
+<![endif]-->
+<!--[if !mso]><!-->
+<table role="presentation" cellpadding="0" cellspacing="0" border="0">
+<tr>
+<td style="background:#4CC16A;border-radius:10px;padding:14px 32px;">
+<a href="https://thegoldenbatch2003.com/movie-screening" style="color:#05140A;font-family:Poppins,Arial,Helvetica,sans-serif;font-size:15px;font-weight:600;text-decoration:none;display:inline-block;">Get more tickets</a>
+</td>
+</tr>
+</table>
+<!--<![endif]-->
+</td>
+</tr>
+</table>
+<!-- Sign off -->
+<p style="margin:0 0 4px;font-size:15px;color:#C5CCC7;font-family:Poppins,Arial,Helvetica,sans-serif;">In St. La Salle,</p>
+<p style="margin:0;font-size:15px;color:#E6EBE7;font-weight:600;font-family:Poppins,Arial,Helvetica,sans-serif;">USLS-IS Batch 2003</p>
+</td>
+</tr>
+<!-- Footer -->
+<tr>
+<td style="background:#0A0E0B;border-top:1px solid #1F2A22;padding:16px;text-align:center;">
+<p style="margin:0;font-size:12px;color:#7E8B82;font-family:Poppins,Arial,Helvetica,sans-serif;">thegoldenbatch2003.com</p>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</body>
+</html>`;
 
   const msg = {
     to,
