@@ -1259,55 +1259,11 @@ router.post('/admin/:id/confirm', authenticateToken, async (req, res) => {
     const updated = updateResult.rows[0];
     const ticketNumbers = formatTicketNumbers(serialPrefix, updated.serial_start, updated.serial_end);
 
-    // Send confirmation email (after commit, outside transaction)
-    let emailSent = false;
-    if (updated.email) {
-      try {
-        // Load event details with pre-formatted date
-        const eventResult = await db.query(
-          `SELECT title, TO_CHAR(event_date, 'FMMonth FMDD, YYYY') AS event_date_label, venue
-           FROM screening_events WHERE id = $1`,
-          [updated.event_id]
-        );
-
-        // Load cinema details
-        const cinemaResult = await db.query(
-          `SELECT label, showtime FROM event_cinemas WHERE event_id = $1 AND code = $2`,
-          [updated.event_id, updated.cinema_code]
-        );
-
-        if (eventResult.rows.length > 0 && cinemaResult.rows.length > 0) {
-          const event = eventResult.rows[0];
-          const cinema = cinemaResult.rows[0];
-          const firstName = (updated.buyer_name || '').split(' ')[0] || 'there';
-
-          const emailResult = await sendScreeningConfirmationEmail({
-            to: updated.email,
-            firstName,
-            eventTitle: event.title,
-            eventDate: event.event_date_label,
-            cinemaLabel: cinema.label,
-            showtime: cinema.showtime,
-            venue: event.venue,
-            quantity: updated.quantity,
-            seats: updated.chosen_seats || '',
-            ticketNumbers,
-            reference: updated.gcash_ref
-          });
-
-          emailSent = emailResult.success;
-        }
-      } catch (emailErr) {
-        console.error('Failed to send confirmation email:', emailErr);
-      }
-    }
-
     res.json({
       ...updated,
       unit_price: parseFloat(updated.unit_price),
       total_amount: parseFloat(updated.total_amount),
-      ticket_numbers: ticketNumbers,
-      email_sent: emailSent
+      ticket_numbers: ticketNumbers
     });
   } catch (err) {
     await client.query('ROLLBACK');
@@ -1315,6 +1271,91 @@ router.post('/admin/:id/confirm', authenticateToken, async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   } finally {
     client.release();
+  }
+});
+
+// POST /api/movie-screening/admin/:id/send-confirmation
+// Send confirmation email for a confirmed reservation
+router.post('/admin/:id/send-confirmation', authenticateToken, async (req, res) => {
+  // Permission check: must have screenings_view + screenings_edit
+  const hasAccess = await canEditTracker(req.user.email);
+  if (!hasAccess) {
+    return res.status(403).json({ error: 'Access denied. Screenings edit permission required.' });
+  }
+
+  const { id } = req.params;
+
+  try {
+    // Load the reservation
+    const reservationResult = await db.query(
+      `SELECT r.*, ec.label as cinema_label, ec.showtime,
+              COALESCE(ec.serial_prefix, ec.code) as serial_prefix
+       FROM reservations r
+       JOIN event_cinemas ec ON ec.event_id = r.event_id AND ec.code = r.cinema_code
+       WHERE r.id = $1`,
+      [id]
+    );
+
+    if (reservationResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Reservation not found' });
+    }
+
+    const reservation = reservationResult.rows[0];
+
+    if (reservation.status !== 'confirmed') {
+      return res.status(400).json({ error: 'Reservation must be confirmed before sending email' });
+    }
+
+    if (!reservation.email) {
+      return res.status(400).json({ error: 'No email address on this reservation' });
+    }
+
+    // Load event details with pre-formatted date
+    const eventResult = await db.query(
+      `SELECT title, TO_CHAR(event_date, 'FMMonth FMDD, YYYY') AS event_date_label, venue
+       FROM screening_events WHERE id = $1`,
+      [reservation.event_id]
+    );
+
+    if (eventResult.rows.length === 0) {
+      return res.status(400).json({ error: 'Event not found' });
+    }
+
+    const event = eventResult.rows[0];
+    const firstName = (reservation.buyer_name || '').split(' ')[0] || 'there';
+    const ticketNumbers = formatTicketNumbers(reservation.serial_prefix, reservation.serial_start, reservation.serial_end);
+
+    const emailResult = await sendScreeningConfirmationEmail({
+      to: reservation.email,
+      firstName,
+      eventTitle: event.title,
+      eventDate: event.event_date_label,
+      cinemaLabel: reservation.cinema_label,
+      showtime: reservation.showtime,
+      venue: event.venue,
+      quantity: reservation.quantity,
+      seats: reservation.chosen_seats || '',
+      ticketNumbers,
+      reference: reservation.gcash_ref
+    });
+
+    if (!emailResult.success) {
+      return res.status(502).json({ email_sent: false, error: emailResult.error || 'Failed to send email' });
+    }
+
+    // Update confirmation_email_sent_at
+    const updateResult = await db.query(
+      `UPDATE reservations SET confirmation_email_sent_at = NOW() WHERE id = $1 RETURNING confirmation_email_sent_at`,
+      [id]
+    );
+
+    res.json({
+      email_sent: true,
+      confirmation_email_sent_at: updateResult.rows[0].confirmation_email_sent_at
+    });
+  } catch (err) {
+    console.error('Error sending confirmation email:', err);
+    res.status(500).json({ error: 'Server error' });
   }
 });
 

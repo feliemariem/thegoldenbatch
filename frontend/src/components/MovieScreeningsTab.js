@@ -45,6 +45,12 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
   // Copy feedback state: tracks which field was just copied { id, type }
   const [copiedField, setCopiedField] = useState(null);
 
+  // Confirmation modal state
+  const [confirmModal, setConfirmModal] = useState(null); // { reservation, ticketNumbers, gcashStatus }
+  const [emailSending, setEmailSending] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
+  const [emailError, setEmailError] = useState('');
+
   // Theme-aware styling for perk badges
   const { theme } = useTheme();
   const isDark = theme === 'dark';
@@ -144,12 +150,18 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
         return;
       }
 
-      // Show email status
-      if (data.email_sent === false && data.email) {
-        alert('Confirmed, but the confirmation email did not send. Please contact the buyer.');
-      } else if (data.email_sent === true) {
-        alert(`Confirmed. Email sent to ${data.email}.`);
-      }
+      // Find the reservation row for modal display
+      const row = reservations.find(r => r.id === id);
+      const gcashStatus = gcashMatches[id] || null;
+
+      // Open confirmation modal
+      setConfirmModal({
+        reservation: { ...row, ...data },
+        ticketNumbers: data.ticket_numbers,
+        gcashStatus
+      });
+      setEmailSent(false);
+      setEmailError('');
 
       // Refresh data
       fetchReservations(event.id);
@@ -230,6 +242,32 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
     }
   };
 
+  // Send confirmation email from modal
+  const handleSendEmail = async (reservationId, email) => {
+    setEmailSending(true);
+    setEmailError('');
+    try {
+      const res = await apiPost(`/api/movie-screening/admin/${reservationId}/send-confirmation`);
+      const data = await res.json();
+
+      if (!res.ok || data.email_sent === false) {
+        setEmailError(data.error || 'Failed to send email');
+        return;
+      }
+
+      setEmailSent(true);
+      // Update reservation in local state with sent timestamp
+      setReservations(prev => prev.map(r =>
+        r.id === reservationId ? { ...r, confirmation_email_sent_at: data.confirmation_email_sent_at } : r
+      ));
+    } catch (err) {
+      console.error(err);
+      setEmailError('Failed to send email');
+    } finally {
+      setEmailSending(false);
+    }
+  };
+
   // Generic copy helper
   const copyToClipboard = async (text, id, type) => {
     try {
@@ -284,6 +322,19 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
       hour: 'numeric',
       minute: '2-digit'
     }).replace(',', ' ·');
+  };
+
+  // Format date for email sent timestamp (e.g., "Dec 18, 3:45 PM")
+  const formatShortDate = (dateStr) => {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    return date.toLocaleString('en-US', {
+      timeZone: 'Asia/Manila',
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit'
+    });
   };
 
   // Parse GCash PDF and match against pending reservations
@@ -635,7 +686,7 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
 
   // Export CSV
   const exportCSV = () => {
-    const headers = ['buyer_name', 'mobile', 'email', 'purchased', 'showtime', 'quantity', 'unit_price', 'total_amount', 'gcash_ref', 'status', 'chosen_seats', 'ticket_numbers', 'sold_by_team', 'claimed', 'claimed_at', 'source', 'sold_by', 'payment_method', 'audited'];
+    const headers = ['buyer_name', 'mobile', 'email', 'purchased', 'showtime', 'quantity', 'unit_price', 'total_amount', 'gcash_ref', 'status', 'chosen_seats', 'ticket_numbers', 'sold_by_team', 'claimed', 'claimed_at', 'source', 'sold_by', 'payment_method', 'audited', 'emailed'];
     const rows = reservations.map(r => [
       formatName(r.buyer_name),
       r.mobile || '',
@@ -655,7 +706,8 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
       r.source || 'online',
       r.sold_by || '',
       r.payment_method || '',
-      r.source === 'physical' ? (r.gcash_verified ? 'Yes' : 'No') : ''
+      r.source === 'physical' ? (r.gcash_verified ? 'Yes' : 'No') : '',
+      r.confirmation_email_sent_at ? 'Yes' : 'No'
     ]);
 
     const csvContent = [
@@ -1090,6 +1142,7 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
               <th>Seats</th>
               <th>Sold By</th>
               <th>Status/Action</th>
+              <th>Email</th>
               <th>Claimed</th>
             </tr>
           </thead>
@@ -1418,6 +1471,77 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
                   </td>
                   <td>
                     {r.status === 'confirmed' ? (
+                      r.confirmation_email_sent_at ? (
+                        <div>
+                          <span style={{
+                            display: 'inline-block',
+                            padding: '3px 8px',
+                            fontSize: '0.7rem',
+                            fontWeight: 600,
+                            borderRadius: '4px',
+                            background: isDark ? '#1E3A28' : '#E3F2E8',
+                            color: isDark ? '#8FD3A1' : '#1E6B3A'
+                          }}>
+                            ✓ Emailed
+                          </span>
+                          <div style={{ fontSize: '0.65rem', color: 'var(--color-text-secondary)', marginTop: '2px' }}>
+                            {formatShortDate(r.confirmation_email_sent_at)}
+                          </div>
+                          {hasEditAccess && (
+                            <button
+                              onClick={() => {
+                                setConfirmModal({ reservation: r, ticketNumbers: r.ticket_numbers, gcashStatus: gcashMatches[r.id] || null });
+                                setEmailSent(false);
+                                setEmailError('');
+                              }}
+                              style={{
+                                background: 'none',
+                                border: 'none',
+                                padding: 0,
+                                marginTop: '2px',
+                                fontSize: '0.65rem',
+                                color: accentColor,
+                                cursor: 'pointer',
+                                textDecoration: 'underline'
+                              }}
+                            >
+                              Resend
+                            </button>
+                          )}
+                        </div>
+                      ) : r.email ? (
+                        hasEditAccess ? (
+                          <button
+                            onClick={() => {
+                              setConfirmModal({ reservation: r, ticketNumbers: r.ticket_numbers, gcashStatus: gcashMatches[r.id] || null });
+                              setEmailSent(false);
+                              setEmailError('');
+                            }}
+                            style={{
+                              padding: '4px 10px',
+                              fontSize: '0.75rem',
+                              fontWeight: 500,
+                              background: 'transparent',
+                              border: `1.5px solid ${accentColor}`,
+                              borderRadius: '6px',
+                              color: accentColor,
+                              cursor: 'pointer'
+                            }}
+                          >
+                            Send email
+                          </button>
+                        ) : (
+                          <span style={{ color: 'var(--color-text-secondary)', fontSize: '0.75rem' }}>Not sent</span>
+                        )
+                      ) : (
+                        <span style={{ color: 'var(--color-text-secondary)', fontSize: '0.75rem' }}>No email</span>
+                      )
+                    ) : (
+                      <span style={{ color: 'var(--color-text-secondary)' }}>-</span>
+                    )}
+                  </td>
+                  <td>
+                    {r.status === 'confirmed' ? (
                       hasEditAccess ? (
                         <button
                           onClick={() => handleToggleClaimed(r.id)}
@@ -1476,6 +1600,127 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
           </tbody>
         </table>
       </div>
+      )}
+
+      {/* Confirmation Modal */}
+      {confirmModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(0, 0, 0, 0.6)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          padding: '16px'
+        }}>
+          <div style={{
+            background: isDark ? '#1a1a1a' : '#fff',
+            borderRadius: '12px',
+            padding: '24px',
+            maxWidth: '440px',
+            width: '100%',
+            maxHeight: '90vh',
+            overflow: 'auto'
+          }}>
+            <h3 style={{ margin: '0 0 20px 0', fontSize: '1.1rem', color: 'var(--color-text-primary)' }}>
+              Payment confirmed
+            </h3>
+
+            <div style={{ fontSize: '0.85rem', lineHeight: 1.6 }}>
+              <div style={{ marginBottom: '8px' }}>
+                <span style={{ color: 'var(--color-text-secondary)' }}>Buyer name:</span>{' '}
+                <strong>{formatName(confirmModal.reservation.buyer_name)}</strong>
+              </div>
+              <div style={{ marginBottom: '8px' }}>
+                <span style={{ color: 'var(--color-text-secondary)' }}>Email:</span>{' '}
+                <strong>{confirmModal.reservation.email || 'None'}</strong>
+              </div>
+              <div style={{ marginBottom: '8px' }}>
+                <span style={{ color: 'var(--color-text-secondary)' }}>Showtime:</span>{' '}
+                <strong>{confirmModal.reservation.cinema_label || confirmModal.reservation.serial_prefix} · {confirmModal.reservation.showtime}</strong>
+              </div>
+              <div style={{ marginBottom: '8px' }}>
+                <span style={{ color: 'var(--color-text-secondary)' }}>Tickets:</span>{' '}
+                <strong>{confirmModal.reservation.quantity}</strong>
+              </div>
+              <div style={{ marginBottom: '8px' }}>
+                <span style={{ color: 'var(--color-text-secondary)' }}>Seats:</span>{' '}
+                <strong>{confirmModal.reservation.chosen_seats || '-'}</strong>
+              </div>
+              <div style={{ marginBottom: '8px' }}>
+                <span style={{ color: 'var(--color-text-secondary)' }}>Ticket numbers:</span>{' '}
+                <strong style={{ fontFamily: 'monospace' }}>{confirmModal.ticketNumbers || '-'}</strong>
+              </div>
+              <div style={{ marginBottom: '8px' }}>
+                <span style={{ color: 'var(--color-text-secondary)' }}>Amount:</span>{' '}
+                <strong>{formatCurrency(confirmModal.reservation.total_amount)}</strong>
+              </div>
+              <div style={{ marginBottom: '8px' }}>
+                <span style={{ color: 'var(--color-text-secondary)' }}>GCash ref:</span>{' '}
+                <strong style={{ fontFamily: 'monospace' }}>{confirmModal.reservation.gcash_ref}</strong>
+              </div>
+              {confirmModal.gcashStatus && (
+                <div style={{ marginBottom: '8px' }}>
+                  <span style={{ color: 'var(--color-text-secondary)' }}>GCash check:</span>{' '}
+                  <strong style={{
+                    color: confirmModal.gcashStatus === 'match' ? '#047857' :
+                           confirmModal.gcashStatus === 'partial_match' ? '#0369a1' :
+                           confirmModal.gcashStatus === 'amount_off' ? '#b45309' : '#b91c1c'
+                  }}>
+                    {confirmModal.gcashStatus === 'match' ? 'Match' :
+                     confirmModal.gcashStatus === 'partial_match' ? 'Partial match' :
+                     confirmModal.gcashStatus === 'amount_off' ? 'Amount off' : 'Not found'}
+                  </strong>
+                </div>
+              )}
+            </div>
+
+            {emailError && (
+              <div style={{ marginTop: '16px', padding: '10px', background: 'rgba(185, 28, 28, 0.1)', borderRadius: '6px', color: '#b91c1c', fontSize: '0.85rem' }}>
+                {emailError}
+              </div>
+            )}
+
+            {emailSent ? (
+              <div style={{ marginTop: '20px' }}>
+                <div style={{ marginBottom: '16px', color: '#047857', fontWeight: 500 }}>
+                  Email sent to {confirmModal.reservation.email}.
+                </div>
+                <button onClick={() => setConfirmModal(null)} className="btn-primary" style={{ width: '100%' }}>
+                  Done
+                </button>
+              </div>
+            ) : (
+              <div style={{ marginTop: '20px', display: 'flex', gap: '12px' }}>
+                {confirmModal.reservation.email ? (
+                  <button
+                    onClick={() => handleSendEmail(confirmModal.reservation.id, confirmModal.reservation.email)}
+                    disabled={emailSending}
+                    className="btn-primary"
+                    style={{ flex: 1, opacity: emailSending ? 0.6 : 1 }}
+                  >
+                    {emailSending ? 'Sending...' : 'Send email'}
+                  </button>
+                ) : (
+                  <div style={{ flex: 1, padding: '10px', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '6px', textAlign: 'center', color: 'var(--color-text-secondary)', fontSize: '0.85rem' }}>
+                    No email on this order.
+                  </div>
+                )}
+                <button
+                  onClick={() => setConfirmModal(null)}
+                  className="btn-secondary"
+                  style={{ flex: 1 }}
+                >
+                  {confirmModal.reservation.email ? 'Not now' : 'Close'}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       )}
     </div>
   );
