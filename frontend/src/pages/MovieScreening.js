@@ -76,6 +76,15 @@ export default function MovieScreening() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
 
+  // Touched state for validation feedback
+  const [touched, setTouched] = useState({
+    buyerName: false,
+    email: false,
+    phone: false,
+    soldBy: false,
+    gcashRef: false
+  });
+
   // Done / Expired
   const [expired, setExpired] = useState(false);
   const [reservation, setReservation] = useState(null);
@@ -86,6 +95,11 @@ export default function MovieScreening() {
   const step1BottomRef = useRef(null);
   const isFirstShowtimeSelect = useRef(true);
   const gcashRefInputRef = useRef(null);
+  // Form field refs for scroll-to-error
+  const buyerNameRef = useRef(null);
+  const emailRef = useRef(null);
+  const phoneRef = useRef(null);
+  const soldByRef = useRef(null);
   // Refs for leave handlers (must see current values in event listeners)
   const holdTokenRef = useRef(null);
   const stepRef = useRef(1);
@@ -478,7 +492,59 @@ export default function MovieScreening() {
   const sortedSeats = [...seats].sort(seatSort);
 
   // Form validation for step 3
-  const isFormValid = buyerName.trim() && isValidEmail(email) && isValidPhone(phone) && soldByTeam && gcashRef.trim();
+  const nameValid = !!buyerName.trim();
+  const emailEmpty = !email.trim();
+  const emailValid = isValidEmail(email);
+  const phoneEmpty = !phone.trim();
+  const phoneValid = isValidPhone(phone);
+  const soldByValid = !!soldByTeam;
+  const gcashValid = !!gcashRef.trim();
+
+  const isFormValid = nameValid && emailValid && phoneValid && soldByValid && gcashValid;
+
+  // Build list of missing items for summary
+  const missingItems = [];
+  if (!nameValid) missingItems.push('full name');
+  if (!emailValid) missingItems.push('a valid email');
+  if (!phoneValid) missingItems.push('a valid mobile number');
+  if (!soldByValid) missingItems.push('who sold your ticket');
+  if (!gcashValid) missingItems.push('GCash reference number');
+
+  // Mark field as touched on blur
+  const handleBlur = (field) => {
+    setTouched(prev => ({ ...prev, [field]: true }));
+    // Mark soldBy as touched if a later field is touched
+    if (field === 'gcashRef') {
+      setTouched(prev => ({ ...prev, soldBy: true }));
+    }
+  };
+
+  // Mark all fields touched and scroll to first error
+  const handleDisabledSubmitClick = () => {
+    setTouched({
+      buyerName: true,
+      email: true,
+      phone: true,
+      soldBy: true,
+      gcashRef: true
+    });
+    // Find first invalid field and focus it
+    if (!nameValid && buyerNameRef.current) {
+      buyerNameRef.current.focus();
+      buyerNameRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else if (!emailValid && emailRef.current) {
+      emailRef.current.focus();
+      emailRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else if (!phoneValid && phoneRef.current) {
+      phoneRef.current.focus();
+      phoneRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else if (!soldByValid && soldByRef.current) {
+      soldByRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else if (!gcashValid && gcashRefInputRef.current) {
+      gcashRefInputRef.current.focus();
+      gcashRefInputRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
 
   // Loading
   if (loading) {
@@ -509,7 +575,7 @@ export default function MovieScreening() {
 
   // DONE screen
   if (reservation) {
-    const soldByLabel = reservation.sold_by_team === 'batch2003' ? 'USLS-IS Batch 2003' : 'Liceo Student Government';
+    const soldByLabel = reservation.sold_by_team === 'batch2003' ? 'USLS-IS Batch 2003' : 'Liceo';
     return (
       <div className="ms-page">
         <div className="ms-container">
@@ -876,47 +942,67 @@ export default function MovieScreening() {
               <div className="ms-field">
                 <label className="ms-label" htmlFor="buyerName">Full name</label>
                 <input
+                  ref={buyerNameRef}
                   id="buyerName"
                   type="text"
-                  className="ms-input"
+                  className={`ms-input${touched.buyerName && !nameValid ? ' ms-input-error' : ''}`}
                   value={buyerName}
                   onChange={(e) => setBuyerName(e.target.value)}
+                  onBlur={() => handleBlur('buyerName')}
                   required
                 />
+                {touched.buyerName && !nameValid && (
+                  <span className="ms-field-error" role="alert">Full name is required</span>
+                )}
               </div>
 
               <div className="ms-field">
                 <label className="ms-label" htmlFor="email">Email</label>
                 <input
+                  ref={emailRef}
                   id="email"
                   type="email"
                   inputMode="email"
                   autoComplete="email"
-                  className="ms-input"
+                  className={`ms-input${touched.email && !emailValid ? ' ms-input-error' : ''}`}
                   placeholder="you@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  onBlur={() => handleBlur('email')}
                   required
                 />
+                {touched.email && !emailValid && (
+                  <span className="ms-field-error" role="alert">
+                    {emailEmpty ? 'Email is required' : 'Enter a valid email address'}
+                  </span>
+                )}
               </div>
 
               <div className="ms-field">
                 <label className="ms-label" htmlFor="phone">Mobile number</label>
                 <input
+                  ref={phoneRef}
                   id="phone"
                   type="tel"
                   inputMode="tel"
                   autoComplete="tel"
-                  className="ms-input"
+                  className={`ms-input${touched.phone && !phoneValid ? ' ms-input-error' : ''}`}
                   placeholder="0917 123 4567"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
+                  onBlur={() => handleBlur('phone')}
                   required
                 />
-                <span className="ms-field-helper">We'll message you here when your tickets are ready to claim.</span>
+                {touched.phone && !phoneValid ? (
+                  <span className="ms-field-error" role="alert">
+                    {phoneEmpty ? 'Mobile number is required' : 'Enter a valid mobile number'}
+                  </span>
+                ) : (
+                  <span className="ms-field-helper">We'll message you here when your tickets are ready to claim.</span>
+                )}
               </div>
 
-              <fieldset className="ms-fieldset">
+              <fieldset className="ms-fieldset" ref={soldByRef}>
                 <legend className="ms-legend-text">Who sold you this ticket?</legend>
                 <div className="ms-radio-group">
                   <label className="ms-radio">
@@ -937,9 +1023,12 @@ export default function MovieScreening() {
                       checked={soldByTeam === 'liceo'}
                       onChange={(e) => setSoldByTeam(e.target.value)}
                     />
-                    <span>Liceo Student Government</span>
+                    <span>Liceo</span>
                   </label>
                 </div>
+                {touched.soldBy && !soldByValid && (
+                  <span className="ms-field-error" role="alert">Please choose who sold your ticket</span>
+                )}
               </fieldset>
 
               <div className="ms-payment-box">
@@ -961,7 +1050,7 @@ export default function MovieScreening() {
 
               <div className="ms-field">
                 <label className="ms-label" htmlFor="gcashRef">GCash reference number</label>
-                <div className="ms-input-with-toggle">
+                <div className={`ms-input-with-toggle${touched.gcashRef && !gcashValid ? ' ms-input-error' : ''}`}>
                   <input
                     ref={gcashRefInputRef}
                     id="gcashRef"
@@ -974,6 +1063,7 @@ export default function MovieScreening() {
                     className="ms-input"
                     value={gcashRef}
                     onChange={(e) => setGcashRef(e.target.value)}
+                    onBlur={() => handleBlur('gcashRef')}
                     required
                   />
                   <button
@@ -989,6 +1079,9 @@ export default function MovieScreening() {
                     {refKeyboard === 'numeric' ? 'ABC' : '123'}
                   </button>
                 </div>
+                {touched.gcashRef && !gcashValid && (
+                  <span className="ms-field-error" role="alert">GCash reference number is required</span>
+                )}
               </div>
 
               {submitError && <p className="ms-submit-error">{submitError}</p>}
@@ -997,14 +1090,22 @@ export default function MovieScreening() {
                 <button type="button" className="ms-btn-text" onClick={backToSeats}>
                   Back to seats
                 </button>
-                <button
-                  type="submit"
-                  className="ms-btn-primary"
-                  disabled={!isFormValid || submitting}
+                <div
+                  className="ms-submit-wrapper"
+                  onClick={!isFormValid && !submitting ? handleDisabledSubmitClick : undefined}
                 >
-                  {submitting ? 'Submitting...' : 'Submit reservation'}
-                </button>
+                  <button
+                    type="submit"
+                    className="ms-btn-primary"
+                    disabled={!isFormValid || submitting}
+                  >
+                    {submitting ? 'Submitting...' : 'Submit reservation'}
+                  </button>
+                </div>
               </div>
+              {!isFormValid && !submitting && (
+                <p className="ms-missing-summary">Still needed: {missingItems.join(', ')}</p>
+              )}
             </form>
           </div>
         )}

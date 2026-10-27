@@ -870,6 +870,20 @@
   color: var(--doom-muted);
 }
 
+.ms-field-error {
+  font-size: 0.8125rem;
+  color: #F08A8A;
+}
+
+.ms-input-error {
+  border-color: #7A2E2E;
+}
+
+.ms-input-error:focus {
+  border-color: #7A2E2E;
+  box-shadow: 0 0 0 2px rgba(122, 46, 46, 0.25);
+}
+
 .ms-fieldset {
   border: none;
   padding: 0;
@@ -979,6 +993,24 @@
   width: auto;
   flex: 1;
   max-width: 240px;
+}
+
+.ms-submit-wrapper {
+  flex: 1;
+  max-width: 240px;
+  display: flex;
+}
+
+.ms-submit-wrapper .ms-btn-primary {
+  flex: 1;
+  max-width: none;
+}
+
+.ms-missing-summary {
+  font-size: 0.8125rem;
+  color: #A7B0AA;
+  text-align: center;
+  margin: 12px 0 0;
 }
 
 /* ========================================
@@ -1243,6 +1275,11 @@
 
   .ms-step2-actions .ms-btn-primary,
   .ms-step3-actions .ms-btn-primary {
+    max-width: 100%;
+    order: -1;
+  }
+
+  .ms-submit-wrapper {
     max-width: 100%;
     order: -1;
   }

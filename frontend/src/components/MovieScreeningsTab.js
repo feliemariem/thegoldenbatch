@@ -872,7 +872,7 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
 
             {/* Liceo Card */}
             <div style={{ background: isDark ? 'rgba(93,168,116,0.12)' : 'rgba(0,102,51,0.05)', borderRadius: '8px', padding: '16px' }}>
-              <div style={{ fontSize: '0.75rem', fontWeight: 600, color: isDark ? '#5DA874' : '#006633', marginBottom: '8px' }}>LICEO STUDENT GOVERNMENT</div>
+              <div style={{ fontSize: '0.75rem', fontWeight: 600, color: isDark ? '#5DA874' : '#006633', marginBottom: '8px' }}>LICEO</div>
               <div style={{ fontSize: '2rem', fontWeight: 700, color: isDark ? '#5DA874' : '#006633' }}>{byTeam.liceo?.tickets || 0}</div>
               <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', marginBottom: '12px' }}>
                 tickets · {stats.tickets_sold > 0 ? Math.round(((byTeam.liceo?.tickets || 0) / stats.tickets_sold) * 100) : 0}% of sales
