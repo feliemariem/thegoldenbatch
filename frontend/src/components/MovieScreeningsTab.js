@@ -751,11 +751,12 @@ export default function MovieScreeningsTab({ permissions = {}, isSuperAdmin = fa
         return;
       }
 
-      const headers = ['Stub #', 'Seat', 'Buyer name', 'Sold by'];
+      const headers = ['Stub #', 'Seat', 'Buyer name', 'Mobile number', 'Sold by'];
       const rows = data.rows.map(r => [
         escapeCsvCell(r.stub),
         escapeCsvCell(r.seat),
         escapeCsvCell(r.buyer_name ? formatName(r.buyer_name) : ''),
+        r.mobile || '',
         escapeCsvCell(r.sold_by)
       ]);
 

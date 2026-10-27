@@ -1789,7 +1789,7 @@ router.get('/admin/stubs', authenticateToken, async (req, res) => {
 
     // Load all confirmed reservations with serial assignments for this cinema
     const reservationsResult = await db.query(
-      `SELECT buyer_name, chosen_seats, serial_start, serial_end, sold_by_team
+      `SELECT buyer_name, mobile, chosen_seats, serial_start, serial_end, sold_by_team
        FROM reservations
        WHERE event_id = $1 AND cinema_code = $2
          AND status = 'confirmed'
@@ -1799,7 +1799,7 @@ router.get('/admin/stubs', authenticateToken, async (req, res) => {
       [event_id, cinema_code]
     );
 
-    // Build a map: stubSerial -> { buyer_name, seat, sold_by }
+    // Build a map: stubSerial -> { buyer_name, mobile, seat, sold_by }
     const stubMap = new Map();
 
     for (const r of reservationsResult.rows) {
@@ -1823,6 +1823,7 @@ router.get('/admin/stubs', authenticateToken, async (req, res) => {
         const seatIndex = i - serialStart;
         stubMap.set(i, {
           buyer_name: r.buyer_name,
+          mobile: r.mobile || '',
           seat: seatIndex < seats.length ? seats[seatIndex] : '',
           sold_by: soldBy
         });
@@ -1838,6 +1839,7 @@ router.get('/admin/stubs', authenticateToken, async (req, res) => {
         stub: stubLabel,
         seat: info?.seat || '',
         buyer_name: info?.buyer_name || '',
+        mobile: info?.mobile || '',
         sold_by: info?.sold_by || ''
       });
     }
