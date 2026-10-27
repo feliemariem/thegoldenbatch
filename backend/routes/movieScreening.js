@@ -76,11 +76,11 @@ const isValidEmail = (email) => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 };
 
-// Validate international mobile (optional, lenient)
+// Validate international mobile (required, lenient format)
 const isValidMobile = (mobile) => {
-  if (!mobile) return true; // Optional
+  if (!mobile) return false;
   const trimmed = mobile.trim();
-  if (!trimmed) return true;
+  if (!trimmed) return false;
   return /^\+?[0-9\s().\-]{7,20}$/.test(trimmed);
 };
 
@@ -664,14 +664,14 @@ router.post('/reserve', async (req, res) => {
   }
   const normalizedEmail = email.trim().toLowerCase();
 
-  // Mobile is now optional and international
-  let normalizedMobile = null;
-  if (mobile && mobile.trim()) {
-    if (!isValidMobile(mobile)) {
-      return res.status(400).json({ error: 'Enter a valid mobile number' });
-    }
-    normalizedMobile = mobile.trim();
+  // Mobile is required
+  if (!mobile || !mobile.trim()) {
+    return res.status(400).json({ error: 'Mobile number is required' });
   }
+  if (!isValidMobile(mobile)) {
+    return res.status(400).json({ error: 'Enter a valid mobile number' });
+  }
+  const normalizedMobile = mobile.trim();
 
   // hold_token is required
   if (!hold_token) {

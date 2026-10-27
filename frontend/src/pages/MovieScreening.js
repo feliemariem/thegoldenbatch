@@ -38,6 +38,12 @@ function isValidEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 }
 
+// Phone validation (international, lenient)
+function isValidPhone(value) {
+  if (!value || !value.trim()) return false;
+  return /^\+?[0-9\s().\-]{7,20}$/.test(value.trim());
+}
+
 export default function MovieScreening() {
   // Core data
   const [event, setEvent] = useState(null);
@@ -472,7 +478,7 @@ export default function MovieScreening() {
   const sortedSeats = [...seats].sort(seatSort);
 
   // Form validation for step 3
-  const isFormValid = buyerName.trim() && isValidEmail(email) && soldByTeam && gcashRef.trim();
+  const isFormValid = buyerName.trim() && isValidEmail(email) && isValidPhone(phone) && soldByTeam && gcashRef.trim();
 
   // Loading
   if (loading) {
@@ -895,18 +901,19 @@ export default function MovieScreening() {
               </div>
 
               <div className="ms-field">
-                <label className="ms-label" htmlFor="phone">Phone (optional)</label>
+                <label className="ms-label" htmlFor="phone">Mobile number</label>
                 <input
                   id="phone"
                   type="tel"
                   inputMode="tel"
                   autoComplete="tel"
                   className="ms-input"
-                  placeholder="+63 917 123 4567"
+                  placeholder="0917 123 4567"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
+                  required
                 />
-                <span className="ms-field-helper">Any country is fine. Include your country code.</span>
+                <span className="ms-field-helper">We'll message you here when your tickets are ready to claim.</span>
               </div>
 
               <fieldset className="ms-fieldset">
