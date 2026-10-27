@@ -1353,7 +1353,8 @@ router.post('/admin/:id/send-confirmation', authenticateToken, async (req, res) 
       quantity: reservation.quantity,
       seats: reservation.chosen_seats || '',
       ticketNumbers,
-      reference: reservation.gcash_ref
+      reference: reservation.gcash_ref,
+      mobile: reservation.mobile || null
     });
 
     if (!emailResult.success) {

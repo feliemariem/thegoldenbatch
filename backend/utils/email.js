@@ -235,8 +235,14 @@ const sendScreeningConfirmationEmail = async (details) => {
     quantity,
     seats,
     ticketNumbers,
-    reference
+    reference,
+    mobile
   } = details;
+
+  // Build pickup paragraph based on whether mobile is available
+  const pickupTextPlain = mobile
+    ? `We will text you at ${mobile} once your tickets (movie stub/food voucher) are ready to claim, with details on where to pick them up. Please show this email when you claim them, then present your tickets at the cinema on screening day. See you there!`
+    : 'We will text you once your tickets (movie stub/food voucher) are ready to claim, with details on where to pick them up. Please show this email when you claim them, then present your tickets at the cinema on screening day. See you there!';
 
   // Build plain text body from array of lines, filtering out empty seats line
   const textLines = [
@@ -251,7 +257,7 @@ const sendScreeningConfirmationEmail = async (details) => {
     `Serial numbers: ${ticketNumbers}`,
     `Reference number: ${reference}`,
     '',
-    'We will contact you on where to pick up your tickets (movie stub/food voucher). Just present them at the cinema on screening day. See you there!',
+    pickupTextPlain,
     '',
     'Questions? Email us at uslsis.batch2003@gmail.com.',
     '',
@@ -316,7 +322,7 @@ ${seatsRowHtml}<tr>
 </tr>
 </table>
 <!-- Pickup paragraph -->
-<p style="margin:24px 0;font-size:15px;line-height:1.6;color:#C5CCC7;">We will contact you on where to pick up your tickets (movie stub/food voucher). Just present them at the cinema on screening day. See you there!</p>
+<p style="margin:24px 0;font-size:15px;line-height:1.6;color:#C5CCC7;">${mobile ? `We will text you at <strong>${escapeHtml(mobile)}</strong> once your tickets (movie stub/food voucher) are ready to claim, with details on where to pick them up.` : 'We will text you once your tickets (movie stub/food voucher) are ready to claim, with details on where to pick them up.'} Please show this email when you claim them, then present your tickets at the cinema on screening day. See you there!</p>
 <!-- Questions -->
 <p style="margin:0 0 24px;font-size:15px;line-height:1.6;color:#C5CCC7;">Questions? Email us at <a href="mailto:uslsis.batch2003@gmail.com" style="color:#7BD892;text-decoration:none;">uslsis.batch2003@gmail.com</a>.</p>
 <!-- Divider -->

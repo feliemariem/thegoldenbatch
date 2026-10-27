@@ -528,7 +528,7 @@ export default function MovieScreening() {
           <div className="ms-done-card">
             <h2 className="ms-done-heading">Reservation received</h2>
             <p className="ms-done-thanks">Thank you, <strong>{getFirstName(buyerName)}</strong>!</p>
-            <p className="ms-done-text">We will verify your payment within 48 hours and send your confirmation to {email}.</p>
+            <p className="ms-done-text">We will verify your payment within 48 hours and send your confirmation to {email}. We'll also text you when your tickets are ready to claim.</p>
 
             <div className="ms-done-grid">
               <div className="ms-done-item">
@@ -573,7 +573,7 @@ export default function MovieScreening() {
 
           {/* Print-only footer */}
           <div className="ms-print-footer">
-            Pending payment verification. Present this receipt or your confirmation email when claiming your tickets.
+            Pending payment verification. We will text you when your tickets are ready to claim. Bring this receipt or your confirmation email.
           </div>
         </div>
         <Footer />
