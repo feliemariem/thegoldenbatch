@@ -374,13 +374,15 @@ ${seatsRowHtml}<tr>
 </body>
 </html>`;
 
+  const batchInbox = 'uslsis.batch2003@gmail.com';
   const msg = {
     to,
     from: process.env.FROM_EMAIL,
-    reply_to: 'uslsis.batch2003@gmail.com',
+    reply_to: batchInbox,
     subject: `Your ${eventTitle} tickets are confirmed`,
     text: textLines,
-    html: htmlBody
+    html: htmlBody,
+    ...(to.toLowerCase() !== batchInbox && { bcc: batchInbox })
   };
 
   try {
