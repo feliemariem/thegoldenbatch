@@ -402,4 +402,118 @@ ${seatsRowHtml}<tr>
   }
 };
 
-module.exports = { sendInviteEmail, sendPasswordResetEmail, sendScreeningConfirmationEmail };
+const sendNewOrderAlertEmail = async (details) => {
+  const {
+    buyerName,
+    email,
+    mobile,
+    cinemaLabel,
+    showtime,
+    quantity,
+    seats,
+    total,
+    gcashRef,
+    soldByTeam,
+    submittedAt
+  } = details;
+
+  // Format total with commas (ensure number)
+  const formattedTotal = Number(total).toLocaleString('en-PH');
+
+  // Ticket vs tickets
+  const ticketWord = quantity === 1 ? 'ticket' : 'tickets';
+
+  // Sold by label
+  const soldByLabel = soldByTeam === 'liceo' ? 'Liceo' : 'Batch 2003';
+
+  // Format showtime as "6:20 PM" if it looks like a TIME value
+  let showtimeFormatted = showtime;
+  if (showtime && /^\d{2}:\d{2}/.test(showtime)) {
+    const [h, m] = showtime.split(':');
+    const hour = parseInt(h, 10);
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const hour12 = hour % 12 || 12;
+    showtimeFormatted = `${hour12}:${m} ${ampm}`;
+  }
+
+  // Format submitted time in Asia/Manila
+  const submittedFormatted = new Date(submittedAt).toLocaleString('en-US', {
+    timeZone: 'Asia/Manila',
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  });
+
+  // Build admin URL
+  const baseUrl = process.env.FRONTEND_URL || process.env.BASE_URL || 'https://thegoldenbatch2003.com';
+  const trackerUrl = `${baseUrl}/admin?tab=screenings`;
+
+  const subject = `New order: ${buyerName} \u00b7 ${quantity} ${ticketWord} \u00b7 \u20b1${formattedTotal}`;
+
+  const textBody = `New Avengers: Doomsday order (pending verification)
+
+Buyer: ${buyerName}
+Email: ${email}
+Mobile: ${mobile}
+Showtime: ${cinemaLabel} \u00b7 ${showtimeFormatted}
+Tickets: ${quantity}
+Seats: ${seats}
+Amount: \u20b1${formattedTotal}
+GCash reference: ${gcashRef}
+Sold by: ${soldByLabel}
+Submitted: ${submittedFormatted}
+
+Open tracker: ${trackerUrl}`;
+
+  const htmlBody = `<div style="font-family: Arial, sans-serif; color: #222;">
+  <p><strong>New Avengers: Doomsday order (pending verification)</strong></p>
+  <p>
+    <strong>Buyer:</strong> ${escapeHtml(buyerName)}<br>
+    <strong>Email:</strong> ${escapeHtml(email)}<br>
+    <strong>Mobile:</strong> ${escapeHtml(mobile)}<br>
+    <strong>Showtime:</strong> ${escapeHtml(cinemaLabel)} \u00b7 ${escapeHtml(showtimeFormatted)}<br>
+    <strong>Tickets:</strong> ${quantity}<br>
+    <strong>Seats:</strong> ${escapeHtml(seats)}<br>
+    <strong>Amount:</strong> \u20b1${formattedTotal}<br>
+    <strong>GCash reference:</strong> ${escapeHtml(gcashRef)}<br>
+    <strong>Sold by:</strong> ${soldByLabel}<br>
+    <strong>Submitted:</strong> ${submittedFormatted}
+  </p>
+  <p><a href="${trackerUrl}">Open tracker</a></p>
+</div>`;
+
+  // Get recipients from env or default
+  const recipientList = process.env.ORDER_ALERT_EMAILS
+    ? process.env.ORDER_ALERT_EMAILS.split(',').map(e => e.trim()).filter(Boolean)
+    : ['uslsis.batch2003@gmail.com'];
+
+  const msg = {
+    to: recipientList,
+    from: process.env.FROM_EMAIL,
+    reply_to: email,
+    subject,
+    text: textBody,
+    html: htmlBody
+  };
+
+  try {
+    await sgMail.send(msg);
+
+    // Log to email_log table
+    await db.query(
+      `INSERT INTO email_log (recipient_email, recipient_name, subject, email_type, status)
+       VALUES ($1, $2, $3, $4, $5)`,
+      [recipientList.join(', '), buyerName || null, subject, 'order_alert', 'sent']
+    );
+
+    return { success: true };
+  } catch (error) {
+    console.error('Order alert email error:', error.response?.body || error);
+    return { success: false, error: error.message };
+  }
+};
+
+module.exports = { sendInviteEmail, sendPasswordResetEmail, sendScreeningConfirmationEmail, sendNewOrderAlertEmail };

@@ -3,7 +3,7 @@ const router = express.Router();
 const crypto = require('crypto');
 const db = require('../db');
 const { authenticateToken } = require('../middleware/auth');
-const { sendScreeningConfirmationEmail } = require('../utils/email');
+const { sendScreeningConfirmationEmail, sendNewOrderAlertEmail } = require('../utils/email');
 
 const SPONSOR_CAP = 40;
 const SPONSOR_CINEMA = 'C3';
@@ -705,7 +705,7 @@ router.post('/reserve', async (req, res) => {
 
     // Lock the cinema row and get capacity + unit price
     const cinemaResult = await client.query(
-      `SELECT id, unit_price, capacity
+      `SELECT id, unit_price, capacity, label, showtime
        FROM event_cinemas
        WHERE event_id = $1 AND code = $2
        FOR UPDATE`,
@@ -850,6 +850,21 @@ router.post('/reserve', async (req, res) => {
       unit_price: parseFloat(reservation.unit_price),
       total_amount: parseFloat(reservation.total_amount)
     });
+
+    // Fire-and-forget: send order alert email to batch inbox
+    sendNewOrderAlertEmail({
+      buyerName: buyer_name.trim(),
+      email: normalizedEmail,
+      mobile: normalizedMobile,
+      cinemaLabel: cinema.label,
+      showtime: cinema.showtime,
+      quantity: requestedQty,
+      seats: chosenSeatsStr,
+      total: totalAmount,
+      gcashRef: gcash_ref.trim(),
+      soldByTeam: sold_by_team,
+      submittedAt: new Date()
+    }).catch(err => console.error('Order alert email failed:', err));
   } catch (err) {
     await client.query('ROLLBACK');
     console.error('Error creating reservation:', err);
