@@ -44,6 +44,13 @@ function isValidPhone(value) {
   return /^\+?[0-9\s().\-]{7,20}$/.test(value.trim());
 }
 
+// Cinema layouts hidden from public sale for now (admin/Liceo entry still works).
+// Remove 'C3' from this list to bring Cinema 3 back on the public page.
+const HIDDEN_PUBLIC_LAYOUTS = ['C3'];
+
+// Sponsor an Athlete is offered on Cinema 4 showtimes
+const SPONSOR_LAYOUT = 'C4';
+
 export default function MovieScreening() {
   // Core data
   const [event, setEvent] = useState(null);
@@ -55,6 +62,8 @@ export default function MovieScreening() {
   const [step, setStep] = useState(1);
   const [showtime, setShowtime] = useState(null); // selected cinema object
   const [quantity, setQuantity] = useState(1);
+  const [isSponsor, setIsSponsor] = useState(false);
+  const [isAnonymous, setIsAnonymous] = useState(false);
 
   // Step 2: Seats
   const [seats, setSeats] = useState([]); // selected seat IDs
@@ -120,7 +129,7 @@ export default function MovieScreening() {
         return;
       }
       setEvent(data.event);
-      setCinemas(data.cinemas || []);
+      setCinemas((data.cinemas || []).filter(c => !HIDDEN_PUBLIC_LAYOUTS.includes(c.layout)));
     } catch (err) {
       console.error(err);
       setError('Failed to connect to server');
@@ -417,7 +426,9 @@ export default function MovieScreening() {
         quantity,
         gcash_ref: gcashRef.replace(/\s/g, ''),
         hold_token: holdToken,
-        sold_by_team: soldByTeam
+        sold_by_team: soldByTeam,
+        is_sponsor: isSponsor,
+        is_anonymous: isSponsor && isAnonymous
       });
 
       const data = await res.json();
@@ -461,6 +472,8 @@ export default function MovieScreening() {
     setStep(1);
     setShowtime(null);
     setQuantity(1);
+    setIsSponsor(false);
+    setIsAnonymous(false);
     setSeats([]);
     setHoldToken(null);
     setExpiresAt(null);
@@ -625,6 +638,12 @@ export default function MovieScreening() {
                 <span className="ms-done-label">Sold by</span>
                 <span className="ms-done-value">{soldByLabel}</span>
               </div>
+              {reservation.is_sponsor && (
+                <div className="ms-done-item">
+                  <span className="ms-done-label">Sponsor</span>
+                  <span className="ms-done-value">Sponsor an Athlete{reservation.is_anonymous ? ' (anonymous)' : ''}</span>
+                </div>
+              )}
             </div>
 
             <div className="ms-done-actions ms-no-print">
@@ -763,6 +782,10 @@ export default function MovieScreening() {
                     if (cinema.seats_left > 0) {
                       setShowtime(cinema);
                       setQuantity(1);
+                      if (cinema.layout !== SPONSOR_LAYOUT) {
+                        setIsSponsor(false);
+                        setIsAnonymous(false);
+                      }
                     }
                   }}
                   disabled={cinema.seats_left === 0}
@@ -802,6 +825,37 @@ export default function MovieScreening() {
                     </button>
                   </div>
                 </div>
+
+                {showtime.layout === SPONSOR_LAYOUT && (
+                  <div className={`ms-sponsor-box ${isSponsor ? 'selected' : ''}`}>
+                    <label className="ms-sponsor-option">
+                      <input
+                        type="checkbox"
+                        checked={isSponsor}
+                        onChange={(e) => {
+                          setIsSponsor(e.target.checked);
+                          if (!e.target.checked) setIsAnonymous(false);
+                        }}
+                      />
+                      <span>
+                        <strong>Sponsor an Athlete</strong>
+                        <span className="ms-sponsor-hint">
+                          {quantity > 1 ? 'These tickets' : 'This ticket'} will be given to an athlete. You still choose the seats.
+                        </span>
+                      </span>
+                    </label>
+                    {isSponsor && (
+                      <label className="ms-sponsor-option ms-sponsor-sub">
+                        <input
+                          type="checkbox"
+                          checked={isAnonymous}
+                          onChange={(e) => setIsAnonymous(e.target.checked)}
+                        />
+                        <span>Keep my name anonymous</span>
+                      </label>
+                    )}
+                  </div>
+                )}
 
                 <div className="ms-total-row">
                   <span>Total</span>
@@ -928,7 +982,7 @@ export default function MovieScreening() {
             <div className="ms-step3-header">
               <div>
                 <h2 className="ms-card-heading">Your details and payment</h2>
-                <p className="ms-step3-subline">{showtime.label} · {showtime.showtime} · Seats {sortedSeats.join(', ')}</p>
+                <p className="ms-step3-subline">{showtime.label} · {showtime.showtime} · Seats {sortedSeats.join(', ')}{isSponsor ? ' · Sponsor an Athlete' : ''}</p>
               </div>
               <div className={`ms-timer ${timeLeft <= 60 ? 'warning' : ''}`}>
                 Seats held for {formatTimer(timeLeft)}

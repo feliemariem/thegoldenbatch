@@ -514,6 +514,49 @@
   color: var(--doom-primary);
 }
 
+/* Sponsor an Athlete (Cinema 4) */
+.ms-sponsor-box {
+  border: 1px solid var(--doom-card-border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  transition: border-color 0.2s;
+}
+
+.ms-sponsor-box.selected {
+  border-color: var(--doom-primary);
+}
+
+.ms-sponsor-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  color: var(--doom-text);
+  font-size: 1rem;
+}
+
+.ms-sponsor-option input {
+  width: 18px;
+  height: 18px;
+  margin-top: 3px;
+  flex-shrink: 0;
+  accent-color: var(--doom-primary);
+}
+
+.ms-sponsor-hint {
+  display: block;
+  font-size: 0.8125rem;
+  color: var(--doom-muted);
+  margin-top: 2px;
+}
+
+.ms-sponsor-sub {
+  margin-top: 12px;
+  padding-left: 30px;
+  font-size: 0.9375rem;
+}
+
 .ms-step1-note {
   font-size: 0.8125rem;
   color: var(--doom-muted);

@@ -414,8 +414,14 @@ const sendNewOrderAlertEmail = async (details) => {
     total,
     gcashRef,
     soldByTeam,
+    sponsor,
     submittedAt
   } = details;
+
+  // Sponsor an Athlete label (null for regular orders)
+  const sponsorLabel = sponsor
+    ? `Sponsor an Athlete${sponsor.anonymous ? ' (anonymous)' : ''}`
+    : null;
 
   // Format total with commas (ensure number)
   const formattedTotal = Number(total).toLocaleString('en-PH');
@@ -451,7 +457,7 @@ const sendNewOrderAlertEmail = async (details) => {
   const baseUrl = process.env.FRONTEND_URL || process.env.BASE_URL || 'https://thegoldenbatch2003.com';
   const trackerUrl = `${baseUrl}/admin?tab=screenings`;
 
-  const subject = `New order: ${buyerName} \u00b7 ${quantity} ${ticketWord} \u00b7 \u20b1${formattedTotal}`;
+  const subject = `New ${sponsor ? 'sponsor ' : ''}order: ${buyerName} \u00b7 ${quantity} ${ticketWord} \u00b7 \u20b1${formattedTotal}`;
 
   const textBody = `New Avengers: Doomsday order (pending verification)
 
@@ -464,7 +470,7 @@ Seats: ${seats}
 Amount: \u20b1${formattedTotal}
 GCash reference: ${gcashRef}
 Sold by: ${soldByLabel}
-Submitted: ${submittedFormatted}
+${sponsorLabel ? `Sponsor: ${sponsorLabel}\n` : ''}Submitted: ${submittedFormatted}
 
 Open tracker: ${trackerUrl}`;
 
@@ -480,6 +486,7 @@ Open tracker: ${trackerUrl}`;
     <strong>Amount:</strong> \u20b1${formattedTotal}<br>
     <strong>GCash reference:</strong> ${escapeHtml(gcashRef)}<br>
     <strong>Sold by:</strong> ${soldByLabel}<br>
+    ${sponsorLabel ? `<strong>Sponsor:</strong> ${sponsorLabel}<br>` : ''}
     <strong>Submitted:</strong> ${submittedFormatted}
   </p>
   <p><a href="${trackerUrl}">Open tracker</a></p>

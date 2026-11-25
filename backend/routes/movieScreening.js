@@ -5,8 +5,10 @@ const db = require('../db');
 const { authenticateToken } = require('../middleware/auth');
 const { sendScreeningConfirmationEmail, sendNewOrderAlertEmail } = require('../utils/email');
 
-const SPONSOR_CAP = 40;
-const SPONSOR_CINEMA = 'C3';
+// Sponsor an Athlete: allowed on any Cinema 4 showtime (layout 'C4'), no cap.
+// Buyer still picks seats; order is flagged is_sponsor with sponsor_type 'athlete'.
+const SPONSOR_LAYOUT = 'C4';
+const SPONSOR_TYPE = 'athlete';
 
 // Brute-force protection for physical sale passcode
 const passcodeAttempts = new Map(); // IP -> { count, lockedUntil }
@@ -365,10 +367,9 @@ router.get('/active', async (req, res) => {
         sort_order: c.sort_order
       })),
       sponsor: {
-        cinema_code: SPONSOR_CINEMA,
-        cap: SPONSOR_CAP,
-        held: sponsorHeld,
-        seats_left: Math.max(0, SPONSOR_CAP - sponsorHeld)
+        type: SPONSOR_TYPE,
+        layout: SPONSOR_LAYOUT,
+        held: sponsorHeld
       }
     });
   } catch (err) {
@@ -645,7 +646,7 @@ router.post('/reserve', async (req, res) => {
   const { cinema_code: rawCinema, buyer_name, mobile, email, quantity, gcash_ref, is_sponsor, is_anonymous, hold_token, sold_by_team } = req.body;
   const isSponsor = is_sponsor === true || is_sponsor === 'true';
   const isAnonymous = isSponsor && (is_anonymous === true || is_anonymous === 'true');
-  const cinema_code = isSponsor ? SPONSOR_CINEMA : rawCinema;
+  const cinema_code = rawCinema;
 
   // Validation
   if (!cinema_code) {
@@ -705,7 +706,7 @@ router.post('/reserve', async (req, res) => {
 
     // Lock the cinema row and get capacity + unit price
     const cinemaResult = await client.query(
-      `SELECT id, unit_price, capacity, label, showtime
+      `SELECT id, unit_price, capacity, label, showtime, layout
        FROM event_cinemas
        WHERE event_id = $1 AND code = $2
        FOR UPDATE`,
@@ -736,18 +737,9 @@ router.post('/reserve', async (req, res) => {
       return res.status(400).json({ error: 'Not enough seats left' });
     }
 
-    if (isSponsor) {
-      const sponsorHeldRes = await client.query(
-        `SELECT COALESCE(SUM(quantity), 0) as held
-         FROM reservations
-         WHERE event_id = $1 AND is_sponsor = true AND status IN ('pending', 'confirmed')`,
-        [eventId]
-      );
-      const sponsorHeld = parseInt(sponsorHeldRes.rows[0].held);
-      if (sponsorHeld + requestedQty > SPONSOR_CAP) {
-        await client.query('ROLLBACK');
-        return res.status(400).json({ error: `Only ${Math.max(0, SPONSOR_CAP - sponsorHeld)} sponsored stubs left` });
-      }
+    if (isSponsor && cinema.layout !== SPONSOR_LAYOUT) {
+      await client.query('ROLLBACK');
+      return res.status(400).json({ error: 'Sponsor an Athlete is only available for Cinema 4' });
     }
 
     // Verify seat holds
@@ -805,9 +797,9 @@ router.post('/reserve', async (req, res) => {
     const insertResult = await client.query(
       `INSERT INTO reservations (
          event_id, cinema_code, buyer_name, mobile, email, quantity, unit_price, total_amount,
-         gcash_ref, is_sponsor, is_anonymous, sold_by_team, chosen_seats, status, created_at
+         gcash_ref, is_sponsor, is_anonymous, sponsor_type, sold_by_team, chosen_seats, status, created_at
        )
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, 'pending', NOW())
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, 'pending', NOW())
        RETURNING *`,
       [
         eventId,
@@ -821,6 +813,7 @@ router.post('/reserve', async (req, res) => {
         gcash_ref.trim(),
         isSponsor,
         isAnonymous,
+        isSponsor ? SPONSOR_TYPE : null,
         sold_by_team,
         chosenSeatsStr
       ]
@@ -863,6 +856,7 @@ router.post('/reserve', async (req, res) => {
       total: totalAmount,
       gcashRef: gcash_ref.trim(),
       soldByTeam: sold_by_team,
+      sponsor: isSponsor ? { type: SPONSOR_TYPE, anonymous: isAnonymous } : null,
       submittedAt: new Date()
     }).catch(err => console.error('Order alert email failed:', err));
   } catch (err) {
